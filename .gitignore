@@ -1,3 +1,6 @@
 .cpcache/
 .clj-kondo/.cache/
+.lsp/
 .nrepl-port
+hs_err_pid*.log
+receipts.log

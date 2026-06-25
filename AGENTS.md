@@ -12,15 +12,12 @@ fiction. Your role is architect, pair programmer, epistemic partner, and lore
 
 ## What This Project Is
 
-Gates of Truth is a **full simulated universe** rendered in a terminal, written
+Gates of Truth is a **full simulated universe** , written
 entirely in pure Clojure (JVM). It is the 3D redesign of Gates of Aker,
 informed by lessons learned there. The world bootstraps from a **folder of
 media** — markdown, PDF, TXT, images, audio — which seeds the lore layer. A
 multimodal LLM (Gemma4:e4b or equivalent) understands this media. A multimodal
 embedding model (co-modal with the LLM) powers the Facet system.
-
-The game begins as a **terminal world** — a simulated planet rendered via ASCII
-raycast into a terminal viewport.
 
 ---
 
@@ -61,7 +58,6 @@ validator. The `domain/` namespace never imports from `infra/`.
 ```clojure
 ;; Core allowed deps
 org.clojure/clojure          "1.12.0"
-com.googlecode.lanterna/lanterna "3.1.2"   ; terminal rendering
 metosin/malli                "0.16.4"       ; schemas
 org.clojure/core.async       "1.7.701"      ; LOD zone coordination
 djblue/portal                              ; dev REPL inspector
@@ -111,14 +107,6 @@ Three concentric simulation zones around the player:
 
 Zones promote/demote as the player moves. Zones run on independent
 `core.async` pipelines or JVM virtual threads. The off-screen world never stops.
-
-### Rendering (Terminal 3D Raycast)
-
-Per terminal cell, cast a ray from camera through the cell, intersect with the
-sphere (`shape/sphere/ray-intersect`), look up `cell-id`
-(`shape/grid/sph->cell`), map biome + atmosphere + civilization state to a
-character and ANSI color. The camera can orbit, zoom, and descend to surface
-level. The day/night terminator renders as a live shadow line.
 
 ---
 
