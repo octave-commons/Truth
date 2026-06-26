@@ -5,9 +5,9 @@
   (:require
     [domain.ecs.core        :as ecs]
     [domain.ecs.components  :as c]
+    [domain.ecs.parallel    :as par]
     [domain.gravity.barnes-hut :as bh]
-    [domain.orbital.integrator :as integrator]
-    [shape.spatial          :as sp]))
+    [domain.orbital.integrator :as integrator]))
 
 (defn- world->bodies
   "Project ECS world into a seq of body maps for the Barnes-Hut tree."
@@ -29,17 +29,25 @@
       (ecs/put-component eid c/velocity (:velocity body))))
 
 (defn orbital-system
-  "ECS system: advances all entities with position+velocity+mass
-   by one Leapfrog step under mutual gravitational attraction."
-  [G theta dt]
-  (fn [world]
-    (let [bodies (world->bodies world)
-          tree   (bh/build-tree bodies)]
-      (reduce (fn [w body]
-                (let [updated (integrator/leapfrog-step
-                                body
-                                (fn [b] (bh/acceleration G theta tree b))
-                                dt)]
-                  (apply-body-back w (:id body) updated)))
-              world
-              bodies))))
+  "ECS system: advances all entities with position+velocity+mass by one Leapfrog
+   step under mutual gravitational attraction.
+
+   The Barnes–Hut tree is immutable once built, so per-body accelerations are
+   computed in parallel (pmap) across cores — the single most expensive part of
+   the tick — and the results applied sequentially. `softening` is the Plummer
+   length passed to the gravity kernel."
+  ([G theta dt] (orbital-system G theta dt bh/default-softening))
+  ([G theta dt softening]
+   (fn [world]
+     (let [bodies  (world->bodies world)
+           tree    (bh/build-tree bodies)
+           updated (par/par-mapv
+                    (fn [body]
+                      (integrator/leapfrog-step
+                       body
+                       (fn [b] (bh/acceleration G theta softening tree b))
+                       dt))
+                    bodies)]
+       (reduce (fn [w body] (apply-body-back w (:id body) body))
+               world
+               updated)))))

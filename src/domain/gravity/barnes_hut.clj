@@ -150,31 +150,34 @@
 ;; --- Acceleration evaluation ------------------------------------------------
 
 (def ^:const default-theta 0.5)
-(def ^:const softening     1e-4)
+(def ^:const default-softening 1e-4)
+;; Plummer softening length. Tiny by default (point masses), but a
+;; self-gravitating gas cloud must pass a softening comparable to the
+;; inter-particle spacing, or close encounters fling particles to infinity
+;; (the "jitter"/ejection you see). Callers pass it via `acceleration`.
 
 (defn- accel-from-mass
   "Gravitational acceleration on a test body at position `pos`
-   due to aggregate mass `mass` at center-of-mass `com`."
-  [^double G pos mass com]
+   due to aggregate mass `mass` at center-of-mass `com`, Plummer-softened."
+  [G soft2 pos mass com]
   (let [r   (sp/v- com pos)
-        r2  (+ (sp/len2 r) (* softening softening))
+        r2  (+ (sp/len2 r) (double soft2))
         r3  (* r2 (Math/sqrt r2))
-        scale (/ (* G (double mass)) r3)]
+        scale (/ (* (double G) (double mass)) r3)]
     (sp/v* r scale)))
 
 (defn- traverse
   "Recursive Barnes–Hut traversal."
-  [G theta pos acc node]
+  [G theta soft2 pos acc node]
   (cond
     (nil? node) acc
 
     (leaf-node? node)
-    (let [body-ids (set (map :id (:bodies node)))
-          self-id  (:id (meta pos))]
+    (let [self-id  (:id (meta pos))]
       (reduce (fn [acc' body]
                 (if (= (:id body) self-id)
                   acc'
-                  (sp/v+ acc' (accel-from-mass G pos (:mass body) (:position body)))))
+                  (sp/v+ acc' (accel-from-mass G soft2 pos (:mass body) (:position body)))))
               acc
               (:bodies node)))
 
@@ -182,17 +185,21 @@
     (let [s (sp/max-side (:aabb node))
           d (sp/dist pos (:com node))]
       (if (or (zero? d) (< (/ s d) theta))
-        (sp/v+ acc (accel-from-mass G pos (:mass node) (:com node)))
-        (reduce (fn [a child] (traverse G theta pos a child))
+        (sp/v+ acc (accel-from-mass G soft2 pos (:mass node) (:com node)))
+        (reduce (fn [a child] (traverse G theta soft2 pos a child))
                 acc
                 (:children node))))))
 
 (defn acceleration
   "Compute gravitational acceleration on `body` from all bodies in `tree`.
-   G     — gravitational constant
-   theta — Barnes–Hut opening angle (default 0.5)"
+   G        — gravitational constant
+   theta    — Barnes–Hut opening angle (default 0.5)
+   softening — Plummer softening length (default tiny; pass cloud spacing)"
   ([G tree body]
-   (acceleration G default-theta tree body))
+   (acceleration G default-theta default-softening tree body))
   ([G theta tree body]
-   (let [pos (with-meta (:position body) {:id (:id body)})]
-     (traverse G theta pos (sp/vec3 0.0 0.0 0.0) tree))))
+   (acceleration G theta default-softening tree body))
+  ([G theta softening tree body]
+   (let [pos   (with-meta (:position body) {:id (:id body)})
+         soft2 (* (double softening) (double softening))]
+     (traverse G theta soft2 pos (sp/vec3 0.0 0.0 0.0) tree))))

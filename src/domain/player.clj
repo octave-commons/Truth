@@ -33,12 +33,13 @@
 ;; --- Coherence mechanics ----------------------------------------------------
 
 (defn coherence-drain-rate
-  "Coherence lost per unit time: intense, wide focus in a complex region costs
-   the most."
+  "Coherence lost per unit simulated time.  Wide, intense focus in a complex
+   region costs more, but the rate is calibrated so that even a cosmological
+   tick does not instantly dissolve the observer."
   [{:keys [focus-intensity focus-radius]} environmental-complexity]
   (let [focus-cost      (* focus-intensity (Math/log10 (+ 1 focus-radius)))
-        complexity-cost (* 0.001 environmental-complexity)]
-    (+ (* focus-cost 0.01) complexity-cost)))
+        complexity-cost (* 1e-30 environmental-complexity)]
+    (+ (* focus-cost 1e-42) complexity-cost)))
 
 (defn coherence-gain-from-event
   "Coherence restored by witnessing a threshold event, with diminishing returns

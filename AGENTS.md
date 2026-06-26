@@ -39,6 +39,26 @@ src/
 No `utils/`. No `helpers/`. Every cross-boundary call must name a Malli
 validator. The `domain/` namespace never imports from `infra/`.
 
+### Single Simulation Substrate (ONE PATH)
+
+There is **exactly one world model: the ECS world** (`domain.ecs.core`). Every
+phase — Phase 0 stellar nebula through civilization — is a **content layer over
+that one substrate**, never a parallel simulation with its own world type.
+
+- Phase 0 is `domain.phase0` (ECS). It is the only Phase 0 sim. Do not add a
+  second world representation (e.g. a flat particle/array world keyed by
+  `:phase0/field`, `:phase0/mesh`, or `:phase0/mode`). New physics is a new ECS
+  **system + components**, added to the existing tick pipeline — not a new engine.
+- There is **one renderer**: `infra.render`. It consumes the ECS world as pure
+  data. Do not fork a second renderer namespace.
+- New forces/fields attach as **components** on existing entities and run as
+  **ordered systems** (see `domain.phase0/physics-systems`). The magnetic field
+  (`domain.em`) and regime classifier (`domain.regime`) are the worked example.
+
+This is enforced by `test/architecture_test.clj`. If that test fails, you are
+splitting reality in two — stop and converge, don't add a flag. (This rule
+already cost one cleanup; that is why it is now a test.)
+
 ### Code Style (House Rules)
 
 - Threading macros `->` and `->>` over nested `let` chains.

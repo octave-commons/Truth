@@ -9,6 +9,8 @@
    Everything here is pure data transformation; rendering and IO live in infra."
   (:require
    [domain.stellar          :as stellar]
+   [domain.em               :as em]
+   [domain.regime           :as regime]
    [domain.chemistry        :as chemistry]
    [domain.player           :as player]
    [law.stellar             :as law]
@@ -21,59 +23,92 @@
 
 ;; --- Nebula seeding ---------------------------------------------------------
 
+(defn- gas-particle-spec
+  "One equal-mass, self-gravitating gas particle of a cold, rotating, turbulent
+   cloud. Nothing is pre-formed: every particle starts as diffuse gas. Solid-body
+   rotation (sub-virial, so the cloud collapses) plus turbulence and a bias toward
+   `seeds` (overdensity centres) give the cloud the structure it needs to
+   fragment and accrete into clumps, planets, and a star-forming core."
+  [^java.util.Random rng extent pmass prad v-vir omega seeds n-seeds seed-r turb]
+  (let [to-seed? (and (seq seeds) (< (.nextDouble rng) 0.55))
+        [px py pz]
+        (if to-seed?
+          (let [[cx cy cz] (nth seeds (.nextInt rng n-seeds))
+                g (fn [s] (* s extent seed-r (.nextGaussian rng)))]
+            [(+ cx (g 1.0)) (+ cy (g 1.0)) (+ cz (g 0.6))])
+          (let [r  (* extent (Math/pow (.nextDouble rng) 0.6)) ; centrally concentrated
+                th (* 2.0 Math/PI (.nextDouble rng))
+                ph (Math/acos (- (* 2.0 (.nextDouble rng)) 1.0))]
+            [(* r (Math/sin ph) (Math/cos th))
+             (* r (Math/sin ph) (Math/sin th))
+             (* r (Math/cos ph))]))
+        jit (fn [] (* turb v-vir 0.3 (.nextGaussian rng)))]
+    {:position    (sp/vec3 px py pz)
+     :velocity    (sp/vec3 (+ (* (- omega) py) (jit)) ; solid-body spin about z
+                           (+ (* omega px) (jit))
+                           (jit))
+     :mass        pmass
+     :radius      prad
+     :temperature 12.0
+     :body-kind   :body/gas
+     :composition {:H 0.74 :He 0.24 :metals 0.02}}))
+
 (defn seed-nebula
-  "Seed a forming system: one dense central core that can collapse to a star,
-   ringed by smaller, gravitationally stable, planet-mass clumps. Deterministic
-   so simulations and tests are reproducible."
-  [world total-mass extent]
-  (let [core-mass   (* total-mass 0.9)
-        core-radius (* extent 0.005)
-        n           6
-        ring-mass   (/ (* total-mass 0.1) n)
-        ring-radius (* extent 0.4)
-        body-radius (* extent 0.01)
-        [w0 _]      (stellar/spawn-clump world
-                      {:position    (sp/vec3 0 0 0)
-                       :mass        core-mass
-                       :radius      core-radius
-                       :temperature 10.0})]
-    (reduce
-     (fn [w i]
-       (let [a (* 2 Math/PI (/ (double i) n))
-             cx (* ring-radius (Math/cos a))
-             cy (* ring-radius (Math/sin a))
-             v  (Math/sqrt (/ (* law/G core-mass) ring-radius))]
-         (first
-          (stellar/spawn-clump w
-            {:position    (sp/vec3 cx cy 0)
-             :velocity    (sp/vec3 (* (- v) (Math/sin a)) (* v (Math/cos a)) 0)
-             :mass        ring-mass
-             :radius      body-radius
-             :temperature 20.0
-             :composition {:H 0.4 :He 0.1 :O 0.2 :Si 0.15 :Fe 0.1 :metals 0.05}}))))
-     w0
-     (range n))))
+  "Seed a cold, rotating, turbulent, self-gravitating gas cloud on the single ECS
+   world — `gas-count` equal-mass particles, no pre-placed core or planets. Stars,
+   planets, and debris must EMERGE by gravitational collapse and accretion. A few
+   Gaussian overdensity seeds give the cloud something to fragment around.
+   Deterministic (seeded RNG) so runs and tests reproduce."
+  ([world total-mass extent] (seed-nebula world total-mass extent {}))
+  (   [world total-mass extent {:keys [gas-count n-seeds seed-r spin turb seed]
+                             :or   {gas-count 1000 n-seeds 5 seed-r 0.12
+                                    spin 0.55 turb 0.08 seed 42}}]
+   (let [rng    (java.util.Random. (long seed))
+         pmass  (/ (double total-mass) gas-count)
+         ;; Render/visual radius for diffuse gas puffs; collision radius is kept
+         ;; small so the cloud is transparent and many particles fit in the volume.
+         prad   (* extent 0.004)
+         ;; A more diffuse cloud: same mass spread over a larger effective volume
+         ;; by lowering the virial speed used to set rotation/turbulence.
+         extent-factor 2.0
+         v-vir  (Math/sqrt (/ (* law/G total-mass) (* extent extent-factor)))
+         omega  (/ (* spin v-vir) (* extent extent-factor))
+         seeds  (vec (repeatedly n-seeds
+                       (fn [] (sp/vec3 (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
+                                       (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
+                                       (* extent 0.25 (- (* 2.0 (.nextDouble rng)) 1.0))))))
+         specs  (mapv (fn [_] (gas-particle-spec rng extent pmass prad
+                                                 v-vir omega seeds n-seeds seed-r turb))
+                      (range gas-count))
+         ;; anchor the centre of mass: subtract the net momentum (equal masses,
+         ;; so just the mean velocity) so the whole system doesn't drift away.
+         n      (double (count specs))
+         mean-v (reduce (fn [acc s] (sp/v+ acc (:velocity s))) (sp/vec3 0 0 0) specs)
+         mean-v (sp/v* mean-v (/ 1.0 n))
+         specs  (mapv (fn [s] (update s :velocity sp/v- mean-v)) specs)]
+     (reduce (fn [w s] (first (stellar/spawn-clump w s))) world specs))))
 
 ;; --- World construction -----------------------------------------------------
 
 (defn create-world
   "Bootstrap a Phase 0 world ready to tick."
   ([] (create-world {}))
-  ([{:keys [G theta dt nebula-mass nebula-radius collapse-fraction]
-     :or   {G law/G theta 0.5 dt 0.1
-            nebula-mass 2e31 nebula-radius 1e17 collapse-fraction 0.5}}]
+   ([{:keys [G theta dt softening nebula-mass nebula-radius collapse-fraction gas-count]
+      :or   {G law/G theta 0.5 dt 1e12 softening 2.5e14
+             nebula-mass 4e30 nebula-radius 1.5e16 collapse-fraction 0.5
+             gas-count 1000}}]
    (let [base   (-> (ecs/empty-world)
                     (event/with-ledger)
                     (event/register-handler :event/collision
                                             stellar/stellar-merge-handler)
-                    (assoc :sim/G G :sim/theta theta :sim/dt dt
+                    (assoc :sim/G G :sim/theta theta :sim/dt dt :sim/softening softening
                            :phase0/sim-time          0.0
                            :phase0/time-scale        (stellar/time-scale-from-complexity 0)
                            :phase0/complexity        0
                            :phase0/phase             :initializing
                            :phase0/active            true
                            :phase0/collapse-fraction collapse-fraction))
-         seeded (seed-nebula base nebula-mass nebula-radius)
+         seeded (seed-nebula base nebula-mass nebula-radius {:gas-count gas-count})
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
      w)))
 
@@ -86,15 +121,17 @@
   (let [eids    (ecs/entities-with world c/matter-state c/mass)
         regions (mapv #(stellar/entity->region world %) eids)
         stars   (filterv #(= :star (:matter-state %)) regions)
-        non-stars (remove #(= :star (:matter-state %)) regions)
-        planets (filterv law/hydrostatic-equilibrium? non-stars)]
-    {:body-count   (count regions)
-     :star?        (boolean (seq stars))
-     :fusion?      (boolean (seq stars))
-     :planet-count (count planets)
-     :stars        stars
-     :planets      planets
-     :regions      regions}))
+        planets (filterv #(= :planet (:matter-state %)) regions)
+        ;; resolved = anything that has condensed out of the diffuse gas
+        resolved (filterv #(not= :nebula (:matter-state %)) regions)]
+    {:body-count     (count regions)
+     :resolved-count (count resolved)
+     :star?          (boolean (seq stars))
+     :fusion?        (boolean (seq stars))
+     :planet-count   (count planets)
+     :stars          stars
+     :planets        planets
+     :regions        regions}))
 
 (defn detect-phase
   "Detect the current phase of the forming system from its summary."
@@ -121,51 +158,116 @@
                     :entities #{}
                     :payload  {:data data}})))
 
+(defn recenter-system
+  "Shift every body so the system's centre of mass sits at the origin — i.e. view
+   the formation in its COM frame. Asymmetric ejections give the bound remnant a
+   recoil velocity; without this the whole system slowly drifts out of frame. Pure
+   Galilean shift, so dynamics are unchanged."
+  [world]
+  (let [eids (ecs/entities-with world c/position c/mass)]
+    (if (seq eids)
+      (let [[sx sy sz m]
+            (reduce (fn [[ax ay az am] eid]
+                      (let [[x y z] (ecs/get-component world eid c/position)
+                            mm (double (ecs/get-component world eid c/mass))]
+                        [(+ ax (* (double x) mm)) (+ ay (* (double y) mm))
+                         (+ az (* (double z) mm)) (+ am mm)]))
+                    [0.0 0.0 0.0 0.0] eids)]
+        (if (pos? m)
+          (let [cx (/ sx m) cy (/ sy m) cz (/ sz m)]
+            (reduce (fn [w eid]
+                      (let [[x y z] (ecs/get-component world eid c/position)]
+                        (ecs/put-component w eid c/position
+                                           [(- (double x) cx) (- (double y) cy) (- (double z) cz)])))
+                    world eids))
+          world))
+      world)))
+
 (defn physics-systems
   "The ordered physical systems run each tick (everything except the observer,
-   which must run after complexity and events are known)."
-  [{:keys [sim/G sim/theta sim/dt]}]
-  [(orbital/orbital-system G theta dt)
-   stellar/collapse-system
-   stellar/fusion-system
-   (stellar/thermal-system dt)
-   stellar/classify-system
-   collision/collision-detection-system])
+    which must run after complexity and events are known).
+
+   The base tick `dt` is multiplied by the world's current `phase0/time-scale`
+   so that the integrator advances in simulation seconds, not wall-clock
+   seconds.  Without this scaling, the orbital step is too small to see at
+   nebular scales while `sim-time` races ahead."
+  [{:keys [sim/G sim/theta sim/dt sim/softening]}]
+  (let [effective-dt dt]
+    ;; `dt` (`:sim/dt`) is the real integration step in seconds — a fraction of
+    ;; the cloud's orbital/free-fall time so the N-body dynamics actually resolve
+    ;; (collapse, rotation, accretion). It is NOT multiplied by the display
+    ;; `time-scale` (that gave ~1e20 s steps, degenerate motion). `softening` is
+    ;; the gravitational softening that keeps the self-gravitating cloud stable.
+    ;;
+    ;; Tick order: move under gravity → accrete (collisions merge overlapping
+    ;; clumps) → classify each clump by accreted mass → contract any star-forming
+    ;; core → ignite fusion → heat/cool by radiation (starlight + grey-body) →
+    ;; tag dominant-physics regime → evolve the magnetic field. Formation is
+    ;; emergent: nothing is pre-placed.
+    [(orbital/orbital-system G theta effective-dt (or softening 1e14))
+     collision/collision-detection-system
+     stellar/classify-system
+     stellar/collapse-system
+     stellar/fusion-system
+     (stellar/thermal-system effective-dt)
+     regime/regime-system
+     (em/em-system effective-dt)
+     recenter-system]))
 
 (defn tick-world
   "Advance the world by one tick. Pure: world -> world'."
   [world]
   (if-not (:phase0/active world)
     world
-    (let [dt         (:sim/dt world)
-          prev       (system-summary world)
-          prev-phase (:phase0/phase world)
-          ;; advance logical tick first so every event this step shares its tick
-          world1     (ecs/advance-tick world)
-          world2     (ecs/run-systems world1 (physics-systems world1))
-          summ       (system-summary world2)
-          complexity (stellar/complexity-score summ)
-          time-scale (stellar/time-scale-from-complexity complexity)
-          phase      (detect-phase summ (:phase0/sim-time world2))
-          world3     (cond-> world2
-                       (and (:star? summ) (not (:star? prev)))
-                       (emit-threshold :event/stellar-ignition (first (:stars summ)))
+  (let [dt         (:sim/dt world)
+        effective-dt dt
+        prev       (system-summary world)
+        prev-phase (:phase0/phase world)
+        ;; advance logical tick first so every event this step shares its tick
+        world1     (ecs/advance-tick world)
+        world2     (ecs/run-systems world1 (physics-systems world1))
+        summ       (system-summary world2)
+        complexity (stellar/complexity-score summ)
+        time-scale (stellar/time-scale-from-complexity complexity)
+        phase      (detect-phase summ (:phase0/sim-time world2))
+        world3     (cond-> world2
+                     (and (:star? summ) (not (:star? prev)))
+                     (emit-threshold :event/stellar-ignition (first (:stars summ)))
 
-                       (> (:planet-count summ) (:planet-count prev))
-                       (emit-threshold :event/planet-formation (first (:planets summ)))
+                     (> (:planet-count summ) (:planet-count prev))
+                     (emit-threshold :event/planet-formation (first (:planets summ)))
 
-                       (not= phase prev-phase)
-                       (emit-threshold :event/phase-transition {:from prev-phase :to phase}))
-          world4     (assoc world3
-                       :phase0/complexity complexity
-                       :phase0/time-scale time-scale
-                       :phase0/phase      phase
-                       :phase0/sim-time   (+ (:phase0/sim-time world3) (* dt time-scale)))
-          world5     ((player/observer-system dt) world4)
-          obs        (player/get-observer world5)]
-      (assoc world5 :phase0/active
-             (and (player/can-interact? obs)
-                  (not= phase :phase-0/dispersed))))))
+                     (not= phase prev-phase)
+                     (emit-threshold :event/phase-transition {:from prev-phase :to phase}))
+        world4     (assoc world3
+                     :phase0/complexity complexity
+                     :phase0/time-scale time-scale
+                     :phase0/phase      phase
+                     :phase0/sim-time   (+ (:phase0/sim-time world3) dt))
+        world5     ((player/observer-system effective-dt) world4)
+        obs        (player/get-observer world5)]
+    (assoc world5 :phase0/active
+           (and (player/can-interact? obs)
+                (not= phase :phase-0/dispersed))))))
+
+;; --- Field insight ----------------------------------------------------------
+
+(defn field-report
+  "A one-line readout of the live fields for insight: tick/phase, body counts,
+   temperature range, peak magnetic field, and the regime histogram."
+  [world]
+  (let [eids    (ecs/entities-with world c/matter-state)
+        temps   (keep #(ecs/get-component world % c/temperature) eids)
+        bmags   (keep #(some-> (ecs/get-component world % c/b-field) sp/len) eids)
+        regimes (frequencies (keep #(ecs/get-component world % c/regime) eids))
+        summ    (system-summary world)]
+    (format "t=%-4d %-22s | bodies=%-4d resolved=%-3d star=%-5s planets=%d | T=%.0f..%.1e K | Bmax=%.1e T | %s"
+            (:tick world) (name (:phase0/phase world))
+            (:body-count summ) (:resolved-count summ)
+            (str (:star? summ)) (:planet-count summ)
+            (double (reduce min 1.0e30 temps)) (double (reduce max 0.0 temps))
+            (double (reduce max 0.0 bmags))
+            (pr-str regimes))))
 
 ;; --- Player input -----------------------------------------------------------
 

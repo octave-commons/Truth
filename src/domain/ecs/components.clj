@@ -28,6 +28,13 @@
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
 (def matter-state :component/matter-state)  ;; :nebula :protostar :star :planet :debris
 
+;; --- Field / MHD ------------------------------------------------------------
+;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
+;; frozen into a clump; `regime` is the dominant-physics tag the classifier
+;; writes each tick (:gravity-hydro :mhd-dominated :gravitationally-unstable ...).
+(def b-field      :component/b-field)       ;; [bx by bz] tesla
+(def regime       :component/regime)        ;; keyword, see domain.regime/classify
+
 ;; --- Observer (the player spark) --------------------------------------------
 ;; The quantum-oscillation player is a singleton entity carrying this component.
 ;; Holds coherence, focus volume, and witnessed-event memory — see domain.player.

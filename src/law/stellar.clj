@@ -14,6 +14,38 @@
 (def ^:const rounding-mass-threshold 3e20) ;; kg — above this self-gravity pulls a body into hydrostatic roundness
 (def ^:const solar-mass 1.989e30) ;; kg
 
+;; --- Accretion mass hierarchy (Phase 0 emergent formation) ---
+;; A clump's matter-state follows the mass it has accreted from the gas cloud.
+;; These are the toy-scale boundaries between diffuse gas, a planetesimal/debris
+;; clump, a planet-scale body, and a star-forming core. They are RELATIVE tiers
+;; for a few-solar-mass cloud, not literal Earth/Sun masses.
+(def ^:const debris-mass-threshold 1.2e28) ;; kg — gas → planetesimal/debris
+(def ^:const planet-mass-threshold 6e28)   ;; kg — debris → planet-scale
+(def ^:const star-mass-threshold   1.0e30) ;; kg — planet → star-forming core (dominant)
+
+(defn mass-class
+  "Classify an accreted clump's matter-state purely from its mass. A clump that
+   has reached star-forming mass becomes a :protostar — 'big and hot', contracting
+   — and only the fusion test promotes it to a true :star."
+  [mass]
+  (let [m (double (or mass 0.0))]
+    (cond
+      (>= m star-mass-threshold)   :protostar
+      (>= m planet-mass-threshold) :planet
+      (>= m debris-mass-threshold) :debris
+      :else                        :nebula)))
+
+;; --- Material response (collision malleability) ---
+(def ^:const melt-temperature 1500.0)
+;; K — above this a body is molten/malleable and deforms (merges) on impact;
+;; well below it the body is brittle and shatters into debris when struck hard.
+
+(defn malleability
+  "0 (cold, brittle) … 1 (molten, malleable) from temperature. Drives whether a
+   hard impact shatters a body or is absorbed by plastic deformation (merge)."
+  [temperature]
+  (max 0.0 (min 1.0 (/ (double (or temperature 0.0)) melt-temperature))))
+
 ;; --- Matter States ---
 
 (def matter-state-schema

@@ -14,7 +14,14 @@
      (swap! (:camera @w/service-state) assoc :distance 400.0)
      (w/reload-shaders!)   ; recompile after editing infra.render shader vars
      (w/reload-mesh! 3)    ; change sphere subdivision level
-     (w/take-screenshot! \"/tmp/truth-dev.png\")"
+     (w/take-screenshot! \"/tmp/truth-dev.png\")
+
+   Camera controls in the window:
+     C              cycle camera mode (manual / track-largest-cluster / fit-all)
+     [ / ]          decrease / increase fit margin
+     R              reset camera and settings
+     LMB drag       orbit (manual modes)
+     scroll         adjust distance"
   (:require
     [domain.orbital.system :as orbital]
     [infra.render          :as render])
@@ -37,7 +44,7 @@
 
 (defn- ensure-resources [config-atom]
   (swap! config-atom
-         (fn [{:keys [body-program particle-program mesh subdivisions requested-subdivisions] :as cfg}]
+         (fn [{:keys [body-program particle-program line-program mesh subdivisions requested-subdivisions] :as cfg}]
            (let [subdivisions (or requested-subdivisions subdivisions 2)
                  cfg          (assoc cfg :subdivisions subdivisions)]
              (cond-> cfg
@@ -46,6 +53,9 @@
 
                (nil? particle-program)
                (assoc :particle-program (render/create-particle-program))
+
+               (nil? line-program)
+               (assoc :line-program (render/create-line-program))
 
                (or (nil? mesh)
                    (not= subdivisions requested-subdivisions))
@@ -81,8 +91,10 @@
     (swap! frame-atom inc)
     (swap! time-atom + 0.016)
     (let [bodies (bodies-fn @world-atom)]
+      (swap! camera-atom render/update-camera-for-world @world-atom (:camera-settings cfg (render/default-camera-settings)))
       (render/render-scene {:body-program (:body-program cfg)
-                            :particle-program (:particle-program cfg)}
+                            :particle-program (:particle-program cfg)
+                            :line-program (:line-program cfg)}
                            (:mesh cfg)
                            @camera-atom
                            (:width cfg) (:height cfg)
@@ -99,8 +111,10 @@
     (let [{:keys [width height]} @config-atom
           window     (render/create-window width height "Gates of Truth — Dev Window")
           frame-atom (atom 0)
-          time-atom  (atom 0.0)]
+          time-atom  (atom 0.0)
+          keys       (atom {})]
       (swap! service-state assoc :window window)
+      (render/setup-input window camera-atom keys config-atom)
       (loop []
         (when (and (not @stop-atom)
                    (render-frame-once window world-atom camera-atom config-atom frame-atom time-atom))
@@ -118,18 +132,20 @@
    (when @service-state
      (throw (IllegalStateException. "Dev window already running. Call stop! first.")))
    (let [width          (get opts :width 1280)
-         height         (get opts :height 720)
+          height         (get opts :height 720)
           camera-atom    (atom (get opts :camera (render/make-camera)))
-          config-atom    (atom (merge {:width width :height height
+          config-atom    (atom (merge (render/default-camera-settings)
+                                      {:width width :height height
                                        :body-program nil
                                        :particle-program nil
+                                       :line-program nil
                                        :mesh nil
                                        :subdivisions 3}
                                       (select-keys opts [:width :height :subdivisions
                                                          :tick-fn :bodies-fn
                                                          :sim-frame-interval :on-step])))
-         stop-atom      (atom false)
-         thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
+          stop-atom      (atom false)
+          thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
      (.setDaemon thread true)
      (.setName thread "gates-of-truth-dev-window")
      (reset! service-state
@@ -161,9 +177,9 @@
   (when-let [config-atom (:config @service-state)]
     (swap! config-atom
            (fn [cfg]
-             (doseq [p [:body-program :particle-program]]
+             (doseq [p [:body-program :particle-program :line-program]]
                (delete-program (get cfg p)))
-             (assoc cfg :body-program nil :particle-program nil)))))
+             (assoc cfg :body-program nil :particle-program nil :line-program nil)))))
 
 (defn reload-mesh!
   "Change the sphere subdivision level used for bodies."
@@ -176,10 +192,12 @@
               (assoc cfg :requested-subdivisions subdivisions))))))
 
 (defn reset-camera!
-  "Reset the camera to the default orbit position."
+  "Reset the camera and its settings to the default orbit position."
   []
   (when-let [camera-atom (:camera @service-state)]
-    (reset! camera-atom (render/make-camera))))
+    (reset! camera-atom (render/make-camera)))
+  (when-let [config-atom (:config @service-state)]
+    (swap! config-atom merge (render/default-camera-settings))))
 
 (defn take-screenshot!
   "Request a screenshot and block until it has been written to `path`.
@@ -200,4 +218,5 @@
      :thread   (.getName (:thread s))
      :world    (identical? (:world s) (some-> s :world deref))
      :camera   @(:camera s)
-     :config   (select-keys @(:config s) [:width :height :subdivisions])}))
+     :config   (select-keys @(:config s) [:width :height :subdivisions
+                                           :mode :fit-margin :fit-percentile])}))
