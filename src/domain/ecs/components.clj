@@ -8,6 +8,11 @@
 (def velocity  :component/velocity)
 (def mass      :component/mass)
 (def radius    :component/radius)
+;; `accretion-radius` is the gravitational feeding-zone radius of a star-forming
+;; body. It is set when a clump becomes a protostar and, unlike `radius`, does
+;; NOT shrink as the photosphere contracts — so a star keeps sweeping up nearby
+;; gas instead of becoming a pinpoint the cloud streams through. nil for gas.
+(def accretion-radius :component/accretion-radius)
 
 ;; --- Orbital ----------------------------------------------------------------
 (def elements  :component/elements)
@@ -34,6 +39,21 @@
 ;; writes each tick (:gravity-hydro :mhd-dominated :gravitationally-unstable ...).
 (def b-field      :component/b-field)       ;; [bx by bz] tesla
 (def regime       :component/regime)        ;; keyword, see domain.regime/classify
+
+;; --- Rotational / disc geometry ---------------------------------------------
+;; `angular-momentum` is the total orbital+spin L of the clump (kg m²/s).
+;; `spin` is the body-fixed angular velocity vector (rad/s).
+;; `oblateness` is the polar/equatorial axis ratio c/a (1 = spherical).
+;; `rotation-axis` is the unit vector along L; used to orient the flattened body.
+(def angular-momentum :component/angular-momentum) ;; [Lx Ly Lz]
+(def spin             :component/spin)             ;; [ωx ωy ωz]
+(def oblateness       :component/oblateness)       ;; double in (0,1]
+(def rotation-axis    :component/rotation-axis)    ;; unit [nx ny nz]
+
+;; --- Hydrodynamics ----------------------------------------------------------
+;; `hydro-accel` is the pressure-gradient acceleration a = -∇p/ρ (m/s²).
+;; Computed by `domain.hydro` and consumed by `domain.orbital.system`.
+(def hydro-accel :component/hydro-accel) ;; [ax ay az]
 
 ;; --- Observer (the player spark) --------------------------------------------
 ;; The quantum-oscillation player is a singleton entity carrying this component.

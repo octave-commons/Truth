@@ -13,6 +13,24 @@
 (def ^:const fusion-pressure-threshold 1e12) ;; Fusion ignition pressure Pa (stellar-core scale)
 (def ^:const rounding-mass-threshold 3e20) ;; kg — above this self-gravity pulls a body into hydrostatic roundness
 (def ^:const solar-mass 1.989e30) ;; kg
+(def ^:const solar-radius 6.957e8) ;; m
+
+(defn ideal-gas-pressure
+  "Pressure of a gas region from the ideal gas law: P = ρ k_B T / m_H."
+  [density temperature]
+  (/ (* density k-B temperature) m-H))
+
+(defn main-sequence-radius
+  "Approximate zero-age main-sequence radius (m) for a star of `mass`, from the
+   broken power law R/R_sun ≈ (M/M_sun)^0.8 below a solar mass and ^0.57 above.
+   This is the FLOOR a contracting protostar settles to: a star is small and
+   dense, but it is NOT a point. Without a floor the toy collapse halves the
+   radius every tick to ~1e9 m, which collapses the accretion cross-section and
+   produces the jarring 'pinpoint star' the cloud streams straight through."
+  [mass]
+  (let [m (/ (double (or mass solar-mass)) solar-mass)
+        m (max m 1e-3)]
+    (* solar-radius (Math/pow m (if (< m 1.0) 0.8 0.57)))))
 
 ;; --- Accretion mass hierarchy (Phase 0 emergent formation) ---
 ;; A clump's matter-state follows the mass it has accreted from the gas cloud.
@@ -75,6 +93,28 @@
    :turbulence  number? ;; 0.0 to 1.0
    :focus-level number? ;; 0.0 (statistical) to 1.0 (fully resolved)
    })
+
+(def angular-momentum-schema
+  "Specific angular momentum vector [Lx Ly Lz] in kg m²/s."
+  vector?)
+
+(def spin-schema
+  "Body-fixed angular velocity vector [ωx ωy ωz] in rad/s."
+  vector?)
+
+(def oblateness-schema
+  "Polar/equatorial axis ratio c/a. 1 is spherical; smaller values are flatter discs."
+  (some-fn nil? #(and (number? %) (<= 0.0 % 1.0))))
+
+(def rotation-axis-schema
+  "Unit vector [nx ny nz] along the body's angular momentum / spin axis."
+  vector?)
+
+(def accretion-radius-schema
+  "Gravitational feeding-zone radius (m) of a star-forming body. Larger than the
+   photosphere: it is the capture radius within which gas is accreted, and it
+   does NOT shrink when the photosphere contracts. nil for ordinary gas clumps."
+  (some-fn nil? pos?))
 
 (def stellar-system-schema
   "Container for all bodies in a forming star system"

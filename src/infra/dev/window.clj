@@ -44,7 +44,7 @@
 
 (defn- ensure-resources [config-atom]
   (swap! config-atom
-         (fn [{:keys [body-program particle-program line-program mesh subdivisions requested-subdivisions] :as cfg}]
+         (fn [{:keys [body-program particle-program line-program hud-program mesh subdivisions requested-subdivisions] :as cfg}]
            (let [subdivisions (or requested-subdivisions subdivisions 2)
                  cfg          (assoc cfg :subdivisions subdivisions)]
              (cond-> cfg
@@ -56,6 +56,9 @@
 
                (nil? line-program)
                (assoc :line-program (render/create-line-program))
+
+               (nil? hud-program)
+               (assoc :hud-program (render/create-hud-program))
 
                (or (nil? mesh)
                    (not= subdivisions requested-subdivisions))
@@ -76,28 +79,66 @@
   "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo)."
   (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
 
-(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom]
+(defn- advance-sim!
+  "Advance the simulation toward its target wall-clock rate over `wall-dt` real
+   seconds, mutating `world-atom`.
+
+   Phase 0 reports `:phase0/time-scale` (sim-seconds per real second) and an
+   adaptive `:sim/dt`; both shrink as the system gains complexity, so the clock
+   dilates and the steps refine together. We accumulate the sim-seconds owed and
+   run as many `dt`-sized ticks as fit, capped per frame (and the accumulator
+   clamped) so a stall or a tier change can never trigger a runaway burst.
+
+   Worlds without a rate (e.g. the bare gravity demo) fall back to the original
+   fixed `:sim-frame-interval` frame-skip."
+  [world-atom config-atom frame-atom accum-atom wall-dt]
+  (let [cfg     @config-atom
+        tick-fn (:tick-fn cfg default-tick-fn)
+        on-step (:on-step cfg identity)
+        w       @world-atom]
+    (if-let [rate (:phase0/time-scale w)]
+      (let [dt  (double (or (:sim/dt w) 1.0e12))
+            cap (long (:max-steps-per-frame cfg 8))]
+        (swap! accum-atom #(min (* dt cap) (+ (double %) (* (double wall-dt) (double rate)))))
+        (loop [n 0]
+          (when (and (< n cap) (>= (double @accum-atom) dt))
+            (swap! accum-atom - dt)
+            (swap! world-atom (fn [w] (on-step (tick-fn w))))
+            (recur (inc n)))))
+      (let [interval (:sim-frame-interval cfg 1)]
+        (when (zero? (mod @frame-atom interval))
+          (swap! world-atom (fn [w] (on-step (tick-fn w)))))))))
+
+(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom accum-atom last-t-atom]
   (ensure-resources config-atom)
   (GLFW/glfwPollEvents)
   (let [cfg       @config-atom
-        tick-fn   (:tick-fn cfg default-tick-fn)
         bodies-fn (:bodies-fn cfg render/bodies-from-world)
-        interval  (:sim-frame-interval cfg 1)
-        on-step   (:on-step cfg identity)]
-    ;; Advance the simulation only every `interval` frames so astronomical
-    ;; formation is slow enough to watch; render every frame.
-    (when (zero? (mod @frame-atom interval))
-      (swap! world-atom (fn [w] (on-step (tick-fn w)))))
+        now       (GLFW/glfwGetTime)
+        wall-dt   (let [lt @last-t-atom]
+                    (reset! last-t-atom now)
+                    (if lt (min 0.1 (- now lt)) 0.016))]
+    (advance-sim! world-atom config-atom frame-atom accum-atom wall-dt)
     (swap! frame-atom inc)
-    (swap! time-atom + 0.016)
-    (let [bodies (bodies-fn @world-atom)]
+    (swap! time-atom + wall-dt)
+    (let [bodies (bodies-fn @world-atom)
+          ;; Use the live framebuffer size (not the logical window size) so the
+          ;; scene fills a resized or HiDPI window instead of one corner.
+          wbuf   (int-array 1)
+          hbuf   (int-array 1)
+          _      (GLFW/glfwGetFramebufferSize window wbuf hbuf)
+          fb-w   (max 1 (aget wbuf 0))
+          fb-h   (max 1 (aget hbuf 0))]
       (swap! camera-atom render/update-camera-for-world @world-atom (:camera-settings cfg (render/default-camera-settings)))
       (render/render-scene {:body-program (:body-program cfg)
                             :particle-program (:particle-program cfg)
-                            :line-program (:line-program cfg)}
+                            :line-program (:line-program cfg)
+                            :hud-program (:hud-program cfg)
+                            :hud (render/hud-rects-from-world @world-atom)
+                            :hud-text (render/hud-text-from-world @world-atom)}
                            (:mesh cfg)
                            @camera-atom
-                           (:width cfg) (:height cfg)
+                           fb-w fb-h
                            bodies
                            @time-atom)))
   (handle-screenshot-request world-atom config-atom)
@@ -112,12 +153,15 @@
           window     (render/create-window width height "Gates of Truth — Dev Window")
           frame-atom (atom 0)
           time-atom  (atom 0.0)
+          accum-atom (atom 0.0)
+          last-t-atom (atom nil)
           keys       (atom {})]
       (swap! service-state assoc :window window)
-      (render/setup-input window camera-atom keys config-atom)
+      (render/setup-input window camera-atom keys config-atom world-atom)
       (loop []
         (when (and (not @stop-atom)
-                   (render-frame-once window world-atom camera-atom config-atom frame-atom time-atom))
+                   (render-frame-once window world-atom camera-atom config-atom
+                                      frame-atom time-atom accum-atom last-t-atom))
           (recur))))
     (catch Throwable t
       (swap! service-state assoc :error t)
@@ -177,9 +221,9 @@
   (when-let [config-atom (:config @service-state)]
     (swap! config-atom
            (fn [cfg]
-             (doseq [p [:body-program :particle-program :line-program]]
+             (doseq [p [:body-program :particle-program :line-program :hud-program]]
                (delete-program (get cfg p)))
-             (assoc cfg :body-program nil :particle-program nil :line-program nil)))))
+             (assoc cfg :body-program nil :particle-program nil :line-program nil :hud-program nil)))))
 
 (defn reload-mesh!
   "Change the sphere subdivision level used for bodies."

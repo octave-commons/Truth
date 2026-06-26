@@ -12,7 +12,7 @@
   (:import
     (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback)
     (org.lwjgl.opengl GL GL11 GL15 GL20 GL30)
-    (org.lwjgl.stb STBImageWrite)
+    (org.lwjgl.stb STBImageWrite STBEasyFont)
     (org.lwjgl.system MemoryUtil)
     (org.lwjgl BufferUtils)
     (java.nio ByteBuffer)))
@@ -63,6 +63,27 @@
                 0.0 0.0 s   0.0
                 0.0 0.0 0.0 1.0]))
 
+(defn- oblate-scale-matrix [a c]
+  "Scale matrix for an oblate spheroid with equatorial radius a and polar radius c."
+  (float-array [(double a) 0.0      0.0      0.0
+                0.0      (double a) 0.0      0.0
+                0.0      0.0      (double c) 0.0
+                0.0      0.0      0.0        1.0]))
+
+(defn- rotation-align-z [axis]
+  "Rotation matrix (column-major) that aligns the mesh z-axis with `axis`."
+  (let [n (normalize axis)
+        helper (if (< (Math/abs (nth n 2)) 0.9) [0.0 0.0 1.0] [1.0 0.0 0.0])
+        x (normalize (cross helper n))
+        y (cross n x)
+        [x0 x1 x2] x
+        [y0 y1 y2] y
+        [n0 n1 n2] n]
+    (float-array [x0 x1 x2 0.0
+                  y0 y1 y2 0.0
+                  n0 n1 n2 0.0
+                  0.0 0.0 0.0 1.0])))
+
 (defn- mat4* [a b]
   (let [out (float-array 16)]
     (doseq [i (range 4)
@@ -74,8 +95,20 @@
                       (* (aget a (+ (* i 4) 3)) (aget b (+ (* 3 4) j)))))))
     out))
 
-(defn- model-matrix [position radius]
-  (mat4* (translation-matrix position) (scale-matrix radius)))
+(defn- model-matrix
+  ([position radius]
+   (mat4* (translation-matrix position) (scale-matrix radius)))
+  ([position radius oblateness rotation-axis]
+   (let [a (double radius)
+         c (* a (double (or oblateness 1.0)))
+         R (if (and rotation-axis (not= 1.0 c a))
+             (rotation-align-z rotation-axis)
+             (float-array [1.0 0.0 0.0 0.0
+                           0.0 1.0 0.0 0.0
+                           0.0 0.0 1.0 0.0
+                           0.0 0.0 0.0 1.0]))]
+     (mat4* (mat4* (translation-matrix position) R)
+            (oblate-scale-matrix a c)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Shader
@@ -119,12 +152,15 @@
    layout(location = 0) in vec3 aPos;
    layout(location = 1) in vec3 aColor;
    layout(location = 2) in float aSize;
+   layout(location = 3) in float aDensity;
    out vec3 vColor;
+   out float vDensity;
    uniform mat4 view;
    uniform mat4 projection;
    uniform vec3 cameraPos;
    void main() {
      vColor = aColor;
+     vDensity = aDensity;
      gl_Position = projection * view * vec4(aPos, 1.0);
      float dist = length(cameraPos - aPos);
      gl_PointSize = clamp(aSize / (1.0 + dist * 0.005), 2.0, 200.0);
@@ -133,6 +169,7 @@
 (def ^:private particle-fragment-shader
   "#version 330 core
    in vec3 vColor;
+   in float vDensity;
    out vec4 FragColor;
    uniform float time;
    float hash(vec2 p) {
@@ -151,12 +188,17 @@
    void main() {
      vec2 coord = gl_PointCoord - vec2(0.5);
      float dist = length(coord);
-     if (dist > 0.5) discard;
-     float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
+     // Gaussian falloff: no hard disc edge, so overlapping sprites blend
+     // into continuous volumetric fog. The sprite is mostly gone by r=0.5,
+     // but the tail is what makes the volume read as a cloud.
+     float sigma = 0.22;
+     float alpha = exp(-(dist * dist) / (2.0 * sigma * sigma));
      float n = noise(coord * 8.0 + time * 0.3);
-     alpha *= (0.6 + 0.4 * n);
+     alpha *= (0.5 + 0.5 * n) * clamp(vDensity, 0.1, 2.0);
+     if (alpha < 0.003) discard;
+     // Brighter core where density is high, but keep the cloud visible.
      float core = 1.0 - smoothstep(0.0, 0.18, dist);
-     vec3 color = vColor * (0.3 + 0.7 * core);
+     vec3 color = vColor * (0.25 + 0.75 * core) * (1.0 + 0.3 * clamp(vDensity, 0.0, 1.0));
      FragColor = vec4(color * alpha, alpha);
    }")
 
@@ -215,6 +257,190 @@
   (println "Compiling line shaders...")
   (link-program (compile-shader line-vertex-shader GL20/GL_VERTEX_SHADER)
                 (compile-shader line-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+
+;; --- HUD overlay (2D, screen-space) -----------------------------------------
+;; Filled rectangles given directly in normalized device coordinates [-1,1], so
+;; the coherence bar and focus indicator sit fixed on screen regardless of camera.
+
+(def ^:private hud-vertex-shader
+  "#version 330 core
+   layout(location = 0) in vec2 aPos;
+   void main() { gl_Position = vec4(aPos, 0.0, 1.0); }")
+
+(def ^:private hud-fragment-shader
+  "#version 330 core
+   out vec4 FragColor;
+   uniform vec4 hudColor;
+   void main() { FragColor = hudColor; }")
+
+(defn create-hud-program []
+  (println "Compiling HUD shaders...")
+  (link-program (compile-shader hud-vertex-shader GL20/GL_VERTEX_SHADER)
+                (compile-shader hud-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+
+(defn- hud-quad-floats [x0 y0 x1 y1]
+  (float-array [x0 y0  x1 y0  x1 y1   x0 y0  x1 y1  x0 y1]))
+
+(defn render-hud
+  "Draw a list of HUD rectangles. Each rect is {:x0 :y0 :x1 :y1 :color [r g b a]}
+   in NDC. No-op without a program or rects."
+  [hud-program rects]
+  (when (and hud-program (pos? (int hud-program)) (seq rects))
+    (GL20/glUseProgram hud-program)
+    (GL11/glEnable GL11/GL_BLEND)
+    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
+    (GL11/glDepthMask false)
+    (let [loc (GL20/glGetUniformLocation hud-program "hudColor")]
+      (doseq [{:keys [x0 y0 x1 y1 color]} rects]
+        (let [[r g b a] color
+              data (hud-quad-floats x0 y0 x1 y1)
+              fb   (BufferUtils/createFloatBuffer (count data))
+              vao  (GL30/glGenVertexArrays)
+              vbo  (GL15/glGenBuffers)]
+          (doseq [f data] (.put fb (float f)))
+          (.flip fb)
+          (GL30/glBindVertexArray vao)
+          (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+          (GL15/glBufferData GL15/GL_ARRAY_BUFFER fb GL15/GL_STATIC_DRAW)
+          (GL20/glVertexAttribPointer 0 2 GL11/GL_FLOAT false 0 0)
+          (GL20/glEnableVertexAttribArray 0)
+          (GL20/glUniform4f loc (float r) (float g) (float b) (float (or a 1.0)))
+          (GL11/glDrawArrays GL11/GL_TRIANGLES 0 6)
+          (GL30/glBindVertexArray 0)
+          (GL15/glDeleteBuffers vbo)
+          (GL30/glDeleteVertexArrays vao))))
+    (GL11/glDepthMask true)
+    (GL11/glDisable GL11/GL_BLEND)
+    (GL20/glUseProgram 0)))
+
+;; --- HUD text (STBEasyFont → NDC triangles, drawn by the HUD program) -------
+;; STBEasyFont rasterizes ASCII into pixel-space quads (16 bytes/vertex: x,y,z
+;; float + 4 colour bytes; 4 verts/quad). We keep only x,y, magnify by `scale`,
+;; offset to a top-left pixel origin, convert to NDC, and feed triangles through
+;; the same solid-colour HUD program — no extra shader, no font atlas, no deps
+;; beyond lwjgl-stb (already present).
+
+(defn- text->ndc-tris
+  "Triangulate one line of `text` into a float-array of NDC (x,y) pairs.
+   `x`/`y` are the line's top-left pixel origin, `scale` magnifies the ~7px base
+   font, `w`/`h` are the framebuffer size. Returns [float-array vertex-count]."
+  [^CharSequence text x y scale w h]
+  (let [buf   (BufferUtils/createByteBuffer (max 4096 (* (count text) 400)))
+        ^ByteBuffer no-color nil
+        quads (STBEasyFont/stb_easy_font_print
+                (float 0.0) (float 0.0) text no-color buf)
+        ^java.nio.FloatBuffer fb (.asFloatBuffer buf)
+        out   (float-array (* quads 12))
+        ndcx  (fn ^double [^double px] (- (/ (* 2.0 px) w) 1.0))
+        ndcy  (fn ^double [^double py] (- 1.0 (/ (* 2.0 py) h)))]
+    (dotimes [q quads]
+      (let [b  (* q 16)
+            px (fn ^double [i] (ndcx (+ x (* scale (.get fb (int (+ b (* i 4))))))))
+            py (fn ^double [i] (ndcy (+ y (* scale (.get fb (int (+ b (* i 4) 1)))))))
+            x0 (px 0) y0 (py 0) x1 (px 1) y1 (py 1)
+            x2 (px 2) y2 (py 2) x3 (px 3) y3 (py 3)
+            o  (* q 12)]
+        (aset out (+ o 0) (float x0))  (aset out (+ o 1) (float y0))
+        (aset out (+ o 2) (float x1))  (aset out (+ o 3) (float y1))
+        (aset out (+ o 4) (float x2))  (aset out (+ o 5) (float y2))
+        (aset out (+ o 6) (float x0))  (aset out (+ o 7) (float y0))
+        (aset out (+ o 8) (float x2))  (aset out (+ o 9) (float y2))
+        (aset out (+ o 10) (float x3)) (aset out (+ o 11) (float y3))))
+    [out (* quads 6)]))
+
+(defn render-text
+  "Draw HUD text lines via the solid-colour HUD program. Each line is
+   {:text :x :y :color [r g b a] :scale} with a top-left pixel origin.
+   No-op without a program or lines."
+  [hud-program lines width height]
+  (when (and hud-program (pos? (int hud-program)) (seq lines))
+    (GL20/glUseProgram hud-program)
+    (GL11/glEnable GL11/GL_BLEND)
+    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
+    (GL11/glDepthMask false)
+    (let [loc (GL20/glGetUniformLocation hud-program "hudColor")]
+      (doseq [{:keys [text x y color scale] :or {scale 2.0 color [1.0 1.0 1.0 1.0]}} lines]
+        (when (seq text)
+          (let [[verts n] (text->ndc-tris text (double x) (double y) (double scale)
+                                          (double width) (double height))
+                fb  (BufferUtils/createFloatBuffer (alength verts))
+                vao (GL30/glGenVertexArrays)
+                vbo (GL15/glGenBuffers)
+                [r g b a] color]
+            (.put fb verts)
+            (.flip fb)
+            (GL30/glBindVertexArray vao)
+            (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+            (GL15/glBufferData GL15/GL_ARRAY_BUFFER fb GL15/GL_STATIC_DRAW)
+            (GL20/glVertexAttribPointer 0 2 GL11/GL_FLOAT false 0 0)
+            (GL20/glEnableVertexAttribArray 0)
+            (GL20/glUniform4f loc (float r) (float g) (float b) (float (or a 1.0)))
+            (GL11/glDrawArrays GL11/GL_TRIANGLES 0 n)
+            (GL30/glBindVertexArray 0)
+            (GL15/glDeleteBuffers vbo)
+            (GL30/glDeleteVertexArrays vao)))))
+    (GL11/glDepthMask true)
+    (GL11/glDisable GL11/GL_BLEND)
+    (GL20/glUseProgram 0)))
+
+(defn- format-elapsed
+  "Human astronomical duration from elapsed simulation seconds."
+  [sim-seconds]
+  (let [yr (/ (double (or sim-seconds 0.0)) phase0/seconds-per-year)]
+    (cond
+      (< yr 1.0e3) (format "%.0f yr" yr)
+      (< yr 1.0e6) (format "%.1f kyr" (/ yr 1.0e3))
+      (< yr 1.0e9) (format "%.2f Myr" (/ yr 1.0e6))
+      :else        (format "%.2f Gyr" (/ yr 1.0e9)))))
+
+(defn- format-rate
+  "Human clock rate from years-of-sim advanced per real second."
+  [rate-yr]
+  (let [r (double (or rate-yr 0.0))]
+    (cond
+      (>= r 1.0e3) (format "%.0f kyr/s" (/ r 1.0e3))
+      (>= r 1.0)   (format "%.0f yr/s" r)
+      :else        (format "%.1f yr/s" r))))
+
+(defn- phase-label
+  "Player-facing name for a detected formation phase."
+  [phase]
+  (case phase
+    :phase-0/nebula-collapse "Nebula collapsing"
+    :phase-0/protostar       "Protostar forming"
+    :phase-0/ignition        "Ignition"
+    :phase-0/accretion       "Accretion"
+    :phase-0/planets-formed  "Planets formed"
+    :phase-0/dispersed       "Dispersed"
+    :initializing            "Initializing"
+    (when phase (name phase))))
+
+(defn hud-text-from-world
+  "Top-left stats panel for a Phase 0 world: the adaptive clock (elapsed
+   sim-time, current rate, phase) plus total mass, temperature, and body counts.
+   Reads the per-tick `:phase0/stats` cache. Empty for non-phase0/bare worlds."
+  [world]
+  (if-let [rate-yr (:phase0/rate-yr world)]
+    (let [{:keys [total-mass-msun avg-temp peak-temp
+                  body-count resolved-count star-count planet-count]
+           :or   {total-mass-msun 0.0 avg-temp 0.0 peak-temp 0.0
+                  body-count 0 resolved-count 0 star-count 0 planet-count 0}}
+          (:phase0/stats world)
+          lines [(format "%s   %s"
+                         (format-elapsed (:phase0/sim-time world))
+                         (phase-label (:phase0/phase world)))
+                 (format "clock  %s" (format-rate rate-yr))
+                 (format "mass   %.3f Msun" (double total-mass-msun))
+                 (format "temp   %.0f K  (peak %.0f K)"
+                         (double avg-temp) (double peak-temp))
+                 (format "bodies %d  resolved %d  stars %d  planets %d"
+                         (int body-count) (int resolved-count)
+                         (int star-count) (int planet-count))]]
+      (map-indexed (fn [i s]
+                     {:text s :x 16.0 :y (+ 24.0 (* i 22.0))
+                      :scale 2.2 :color [0.86 0.94 1.0 0.95]})
+                   lines))
+    []))
 
 ;; ---------------------------------------------------------------------------
 ;; Sphere mesh
@@ -278,12 +504,16 @@
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo :count vertex-count}))
 
-(defn- particle->floats [{:keys [position color size]}]
+(defn- particle->floats [{:keys [position color size density]}]
+  "Pack a particle into interleaved floats: position 3, color 3, size 1,
+   density 1. Density defaults to 1.0 and is used by the nebula shader to
+   modulate alpha and emission."
   (let [[x y z] position
         [r g b] color]
     [(float x) (float y) (float z)
      (float r) (float g) (float b)
-     (float size)]))
+     (float size)
+     (float (or density 1.0))]))
 
 (defn make-particle-mesh
   "Create a GPU buffer from a seq of particle maps. Each particle must have
@@ -297,11 +527,11 @@
      :count  (count particles)}))
 
 (defn upload-particle-mesh
-  "Upload an interleaved particle buffer (position 3, color 3, size 1)."
+  "Upload an interleaved particle buffer (position 3, color 3, size 1, density 1)."
   [{:keys [buffer count]}]
   (let [vao (GL30/glGenVertexArrays)
         vbo (GL15/glGenBuffers)
-        stride (* 7 4)]
+        stride (* 8 4)]
     (GL30/glBindVertexArray vao)
     (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
     (GL15/glBufferData GL15/GL_ARRAY_BUFFER buffer GL15/GL_STATIC_DRAW)
@@ -314,6 +544,9 @@
     ;; size
     (GL20/glVertexAttribPointer 2 1 GL11/GL_FLOAT false stride (* 6 4))
     (GL20/glEnableVertexAttribArray 2)
+    ;; density
+    (GL20/glVertexAttribPointer 3 1 GL11/GL_FLOAT false stride (* 7 4))
+    (GL20/glEnableVertexAttribArray 3)
     (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo :count count}))
@@ -524,59 +757,90 @@
     (GL/createCapabilities)
     window))
 
-(defn setup-input [window camera-atom keys-atom config-atom]
-  (GLFW/glfwSetKeyCallback
-    window
-    (proxy [GLFWKeyCallback] []
-      (invoke [window key scancode action mods]
-        (when (= action GLFW/GLFW_PRESS)
-          (swap! keys-atom assoc key true))
-        (when (= action GLFW/GLFW_RELEASE)
-          (swap! keys-atom dissoc key))
-        (when (and (= key GLFW/GLFW_KEY_ESCAPE) (= action GLFW/GLFW_PRESS))
-          (GLFW/glfwSetWindowShouldClose window true))
-        ;; Camera mode controls
-        (when (and (= key GLFW/GLFW_KEY_C) (= action GLFW/GLFW_PRESS))
-          (swap! config-atom cycle-camera-mode)
-          (println "Camera mode:" (:mode @config-atom)))
-        (when (and (= key GLFW/GLFW_KEY_LEFT_BRACKET) (= action GLFW/GLFW_PRESS))
-          (swap! config-atom adjust-fit-margin 0.9)
-          (println "Fit margin:" (:fit-margin @config-atom)))
-        (when (and (= key GLFW/GLFW_KEY_RIGHT_BRACKET) (= action GLFW/GLFW_PRESS))
-          (swap! config-atom adjust-fit-margin 1.1)
-          (println "Fit margin:" (:fit-margin @config-atom)))
-        (when (and (= key GLFW/GLFW_KEY_R) (= action GLFW/GLFW_PRESS))
-          (reset! camera-atom (make-camera))
-          (reset! config-atom (default-camera-settings))
-          (println "Camera reset")))))
-  (let [last-pos (atom [0.0 0.0])
-        first    (atom true)]
-    (GLFW/glfwSetCursorPosCallback
-      window
-      (proxy [GLFWCursorPosCallback] []
-        (invoke [window x y]
-          (if @first
-            (do (reset! last-pos [x y]) (reset! first false))
-            (let [[lx ly] @last-pos
-                  dx (- x lx)
-                  dy (- y ly)]
-              (reset! last-pos [x y])
-              (when (= (GLFW/glfwGetMouseButton window GLFW/GLFW_MOUSE_BUTTON_LEFT) GLFW/GLFW_PRESS)
-                (swap! camera-atom
-                       (fn [c]
-                         (-> c
-                             (update :yaw #(+ % (* dx 0.2)))
-                             (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
-                             update-camera-position))))))))))
-  (GLFW/glfwSetScrollCallback
-    window
-    (proxy [GLFWScrollCallback] []
-      (invoke [window xoffset yoffset]
-        (swap! camera-atom
-               (fn [c]
-                 (-> c
-                     (update :distance #(max 10.0 (min 2000.0 (- % (* yoffset 10.0)))))
-                     update-camera-position)))))))
+(defn- move-focus-by
+  "Shift the observer's focus volume by `dpos` (world metres)."
+  [world dpos]
+  (if-let [obs (player/get-observer world)]
+    (phase0/handle-input world :move-focus (sp/v+ (:focus-position obs) dpos))
+    world))
+
+(defn- player-key
+  "Map a key press to a focus / drift / release action on the world's observer.
+   Arrows drift the focus volume, , / . narrow / widen it, Space releases the
+   spark to drift toward the system. This is the player's interaction language."
+  [world-atom key]
+  (let [step 3.0e15]
+    (condp = key
+      GLFW/GLFW_KEY_LEFT   (swap! world-atom move-focus-by [(- step) 0.0 0.0])
+      GLFW/GLFW_KEY_RIGHT  (swap! world-atom move-focus-by [step 0.0 0.0])
+      GLFW/GLFW_KEY_UP     (swap! world-atom move-focus-by [0.0 0.0 (- step)])
+      GLFW/GLFW_KEY_DOWN   (swap! world-atom move-focus-by [0.0 0.0 step])
+      GLFW/GLFW_KEY_COMMA  (swap! world-atom phase0/handle-input :narrow-focus)
+      GLFW/GLFW_KEY_PERIOD (swap! world-atom phase0/handle-input :widen-focus)
+      GLFW/GLFW_KEY_SPACE  (swap! world-atom phase0/handle-input :release)
+      nil)))
+
+(defn setup-input
+  "Install GLFW input callbacks. With a `world-atom`, also wires the player's
+   focus controls (arrows / , . / Space) onto the world's observer."
+  ([window camera-atom keys-atom config-atom]
+   (setup-input window camera-atom keys-atom config-atom nil))
+  ([window camera-atom keys-atom config-atom world-atom]
+   (GLFW/glfwSetKeyCallback
+     window
+     (proxy [GLFWKeyCallback] []
+       (invoke [window key scancode action mods]
+         (when (= action GLFW/GLFW_PRESS)
+           (swap! keys-atom assoc key true))
+         (when (= action GLFW/GLFW_RELEASE)
+           (swap! keys-atom dissoc key))
+         (when (and (= key GLFW/GLFW_KEY_ESCAPE) (= action GLFW/GLFW_PRESS))
+           (GLFW/glfwSetWindowShouldClose window true))
+         ;; Camera mode controls
+         (when (and (= key GLFW/GLFW_KEY_C) (= action GLFW/GLFW_PRESS))
+           (swap! config-atom cycle-camera-mode)
+           (println "Camera mode:" (:mode @config-atom)))
+         (when (and (= key GLFW/GLFW_KEY_LEFT_BRACKET) (= action GLFW/GLFW_PRESS))
+           (swap! config-atom adjust-fit-margin 0.9)
+           (println "Fit margin:" (:fit-margin @config-atom)))
+         (when (and (= key GLFW/GLFW_KEY_RIGHT_BRACKET) (= action GLFW/GLFW_PRESS))
+           (swap! config-atom adjust-fit-margin 1.1)
+           (println "Fit margin:" (:fit-margin @config-atom)))
+         (when (and (= key GLFW/GLFW_KEY_R) (= action GLFW/GLFW_PRESS))
+           (reset! camera-atom (make-camera))
+           (reset! config-atom (default-camera-settings))
+           (println "Camera reset"))
+         ;; Player focus / drift / release controls
+         (when (and world-atom (= action GLFW/GLFW_PRESS))
+           (player-key world-atom key)))))
+   (let [last-pos (atom [0.0 0.0])
+         first    (atom true)]
+     (GLFW/glfwSetCursorPosCallback
+       window
+       (proxy [GLFWCursorPosCallback] []
+         (invoke [window x y]
+           (if @first
+             (do (reset! last-pos [x y]) (reset! first false))
+             (let [[lx ly] @last-pos
+                   dx (- x lx)
+                   dy (- y ly)]
+               (reset! last-pos [x y])
+               (when (= (GLFW/glfwGetMouseButton window GLFW/GLFW_MOUSE_BUTTON_LEFT) GLFW/GLFW_PRESS)
+                 (swap! camera-atom
+                        (fn [c]
+                          (-> c
+                              (update :yaw #(+ % (* dx 0.2)))
+                              (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
+                              update-camera-position))))))))))
+   (GLFW/glfwSetScrollCallback
+     window
+     (proxy [GLFWScrollCallback] []
+       (invoke [window xoffset yoffset]
+         (swap! camera-atom
+                (fn [c]
+                  (-> c
+                      (update :distance #(max 10.0 (min 2000.0 (- % (* yoffset 10.0)))))
+                      update-camera-position))))))))
 
 (defn bodies-from-world [world]
   (map (fn [[eid comps]]
@@ -600,11 +864,6 @@
 ;; six orders of magnitude. We project it into a stylized, view-scaled space so
 ;; a forming solar system reads clearly: gas points, a brightening protostar,
 ;; an ignited star, and planets settling out.
-
-(defn- matter-visual-radius [state]
-  (case state
-    :star 2.0 :protostar 1.5 :planet 1.0 :debris 0.5 :nebula 0.4
-    1.0))
 
 (def regime-tint
   "Per-regime colour multiplier (kept for regime-view tooling and tests)."
@@ -648,6 +907,60 @@
                    (+ g0 (* (- g1 g0) f))
                    (+ b0 (* (- b1 b0) f))]))))))
 
+;; --- Physics-coupled size and material colour -------------------------------
+;; Visual radius and colour are DERIVED from a body's physical state, not chosen
+;; per matter-state. Two consequences the design requires: (1) the diffuse cloud
+;; reads larger than the compact bodies it spawns, because bodies map to a small
+;; render radius while the gas spans the whole view; (2) a body's colour tracks
+;; its composition (until it is hot enough to glow), so as later chemistry
+;; differentiates worlds their appearance diverges with no special-casing.
+
+(def ^:const render-radius-ref
+  "Physical radius (m) that maps to the minimum visible render size. A small gas
+   clump sits here; planets and stars rise above it by log-compression."
+  3.0e13)
+
+(defn phys->render-radius
+  "Map a physical radius (m) to a render-unit radius, log-compressed and clamped
+   so a ~5-order span (gas clump → giant planet) stays legible while preserving
+   order: bigger physical body → bigger on screen. Bodies stay small relative to
+   the cloud on purpose — that is the real size relationship."
+  [r-phys]
+  (let [r (double (or r-phys 0.0))]
+    (if (pos? r)
+      (-> (+ 0.18 (* 0.42 (Math/log10 (/ r render-radius-ref))))
+          (max 0.18) (min 6.0))
+      0.18)))
+
+(defn composition->material-color
+  "Base material colour from bulk composition (mass fractions): hydrogen/helium
+   gas reads pale tan, metal/rock-rich matter warm grey-brown, and an icy/volatile
+   fraction cold blue-white. Primordial gas is mostly tan; differentiated rocky or
+   icy worlds shift toward rock/ice as their composition diverges."
+  [comp]
+  (let [c      (or comp {})
+        metals (double (get c :metals 0.0))
+        ice    (double (+ (double (get c :ice 0.0))
+                          (double (get c :H2O 0.0))
+                          (double (get c :volatiles 0.0))))
+        gas    (max 0.0 (- 1.0 metals ice))
+        rock-c [0.62 0.50 0.40]
+        ice-c  [0.75 0.85 0.95]
+        gas-c  [0.85 0.80 0.62]]
+    (mapv (fn [i] (+ (* gas (nth gas-c i)) (* metals (nth rock-c i)) (* ice (nth ice-c i))))
+          [0 1 2])))
+
+(defn body-render-color
+  "Surface colour of a resolved body: its composition (material) colour when
+   cold, crossfading to its thermal blackbody colour as it heats past ~1000 K.
+   A cold rocky world shows rock; an incandescent one glows by temperature."
+  [temp comp]
+  (let [mat (composition->material-color comp)
+        th  (temp-color temp)
+        t   (double (or temp 10.0))
+        f   (max 0.0 (min 1.0 (/ (- (Math/log10 (max 1.0 t)) 2.7) 2.3)))]
+    (mapv (fn [m h] (+ (* (- 1.0 f) m) (* f h))) mat th)))
+
 (defn- hash01
   "Deterministic [0,1) value from an integer key — for stable, non-shimmering
    per-entity jitter (same entity → same value every frame)."
@@ -667,9 +980,10 @@
 (defn nebula-fog
   "Soft fog puffs through a clump, DETERMINISTIC in `seed` so the cloud is stable
    frame-to-frame (no per-frame RNG → no shimmer). center/extent in render units."
-  [{:keys [center extent color count seed]}]
+  [{:keys [center extent color count seed density]}]
   (let [[cx cy cz] center
-        rng (java.util.Random. (long (or seed 1)))]
+        rng (java.util.Random. (long (or seed 1)))
+        dens (float (or density 1.0))]
     (mapv
      (fn [_]
        (let [theta (* 2 Math/PI (.nextDouble rng))
@@ -680,6 +994,7 @@
                      (+ cz (* r (Math/cos phi)))]
           :color color
           :size (+ 30.0 (* 40.0 (.nextDouble rng)))
+          :density dens
           :render-mode :particle}))
      (range count))))
 
@@ -700,6 +1015,70 @@
       [{:position (vec p0) :color color :size 1.0 :render-mode :line}
        {:position (vec p1) :color color :size 1.0 :render-mode :line}])))
 
+;; --- Player spark + focus reticle (the interactive overlay) ------------------
+
+(defn- ring-segments
+  "Line-segment endpoints approximating a circle of `radius` render units in the
+   xy-plane at `center`, as :line render shapes — the player's focus reticle."
+  [center radius color n]
+  (let [[cx cy cz] center]
+    (vec (mapcat
+           (fn [i]
+             (let [a0 (* 2.0 Math/PI (/ (double i) n))
+                   a1 (* 2.0 Math/PI (/ (double (inc i)) n))]
+               [{:position [(+ cx (* radius (Math/cos a0))) (+ cy (* radius (Math/sin a0))) cz]
+                 :color color :size 1.0 :render-mode :line}
+                {:position [(+ cx (* radius (Math/cos a1))) (+ cy (* radius (Math/sin a1))) cz]
+                 :color color :size 1.0 :render-mode :line}]))
+           (range n)))))
+
+(defn coherence-color
+  "Reticle colour for each decoherence state: teal when highly coherent, warming
+   to red as the spark fades — so the player reads their own coherence at a glance."
+  [state]
+  (case state
+    :highly-coherent [0.40 1.00 0.75]
+    :coherent        [0.45 0.85 1.00]
+    :wavering        [1.00 0.90 0.40]
+    :fading          [1.00 0.55 0.30]
+    :dissolved       [0.65 0.30 0.30]
+    [0.70 0.90 1.00]))
+
+(defn player-overlay-shapes
+  "Render shapes for the player's spark and focus volume: a bright point at the
+   observer position and a reticle ring at the focus, tinted by coherence. Empty
+   when the world has no observer (e.g. bare test worlds)."
+  [world scale]
+  (if-let [obs (player/get-observer world)]
+    (let [scl   (fn [p] (mapv #(/ (double %) scale) p))
+          fpos  (scl (:focus-position obs))
+          fr    (/ (double (:focus-radius obs)) scale)
+          spark (scl (:position obs))
+          col   (coherence-color (player/decoherence-state obs))]
+      (into [{:position spark :color [0.85 0.96 1.0]
+              :size (+ 28.0 (* 44.0 (double (:focus-intensity obs 0.5))))
+              :render-mode :particle}]
+            (ring-segments fpos (max 0.5 fr) col 48)))
+    []))
+
+(defn hud-rects-from-world
+  "HUD rectangles (NDC) for the observer: a coherence track + fill (tinted by
+   decoherence state) bottom-left, and a thin focus-intensity bar above it.
+   Empty when there is no observer."
+  [world]
+  (if-let [obs (player/get-observer world)]
+    (let [coh  (double (or (:coherence obs) 0.0))
+          mx   (double (or (:max-coherence obs) 1.0))
+          frac (max 0.0 (min 1.0 (/ coh (max 1e-9 mx))))
+          fi   (double (or (:focus-intensity obs) 0.5))
+          col  (conj (coherence-color (player/decoherence-state obs)) 0.92)
+          x0 -0.96 x1 -0.46 y0 -0.93 y1 -0.89]
+      [{:x0 x0 :y0 y0 :x1 x1 :y1 y1 :color [0.10 0.10 0.16 0.65]}                 ;; coherence track
+       {:x0 x0 :y0 y0 :x1 (+ x0 (* (- x1 x0) frac)) :y1 y1 :color col}            ;; coherence fill
+       {:x0 x0 :y0 -0.875 :x1 (+ x0 (* (- x1 x0) fi)) :y1 -0.86                   ;; focus intensity
+        :color [0.70 0.86 1.0 0.85]}])
+    []))
+
 (defn phase0-bodies-from-world
   "Project Phase 0 ECS matter entities into stylized, view-scaled render shapes,
    coloured by TEMPERATURE so the thermal field is visible:
@@ -712,57 +1091,94 @@
   ([world] (phase0-bodies-from-world world phase0-view-scale))
   ([world scale]
    (let [focus (player-focus-level world)]
-     (vec
+     (into
+      (player-overlay-shapes world scale)
       (mapcat
        (fn [eid]
          (let [state   (ecs/get-component world eid c/matter-state)
                [x y z] (ecs/get-component world eid c/position)
                center  [(/ x scale) (/ y scale) (/ z scale)]
-               color   (temp-color (ecs/get-component world eid c/temperature))]
+               temp    (ecs/get-component world eid c/temperature)
+               comp    (ecs/get-component world eid c/composition)
+               r-phys  (ecs/get-component world eid c/radius)
+               color   (body-render-color temp comp)
+               ob      (or (ecs/get-component world eid c/oblateness) 1.0)
+               axis    (or (ecs/get-component world eid c/rotation-axis) [0.0 0.0 1.0])]
             (case state
               :nebula
-              [{:position center :color color
-                :size (+ 16.0 (* 24.0 (hash01 eid)))
-                :render-mode :particle}]
+              ;; Diffuse gas is a volumetric cloud of additive samples, not a
+              ;; single point. Density and temperature are passed to the shader
+              ;; so the field varies visually as the physics varies.
+              (let [rho   (or (ecs/get-component world eid c/density) 1e-18)
+                    render-r (phys->render-radius r-phys)]
+                (nebula-fog {:center   center
+                             :extent   (* render-r (Math/pow (+ 1.0 (Math/log10 (max 1.0 (/ r-phys 3e13)))) 0.5))
+                             :color    (temp-color temp)
+                             :count    (fog-sample-count render-r focus)
+                             :seed     eid
+                             :density  (float (max 0.1 (min 2.0 (* 0.5 (Math/log10 (max 1.0 (/ rho 1e-18)))))))}))
 
               :star
-              (let [extent (max 0.8 (/ (or (ecs/get-component world eid c/radius) scale)
-                                      scale))
+              ;; The photosphere is sub-pixel at this scale; a star's apparent
+              ;; size IS its luminosity. Render a small bright core sized by
+              ;; log-luminosity, wrapped in a volumetric corona + field line.
+              (let [lum    (double (or (ecs/get-component world eid c/luminosity) 1.0e26))
+                    core-r (-> (+ 0.6 (* 0.28 (Math/log10 (/ (max 1.0 lum) 1.0e26))))
+                               (max 0.6) (min 3.0))
                     body   {:entity      eid
                             :position    center
-                            :radius      3.0
-                            :color       [1.0 0.95 0.8]
+                            :radius      core-r
+                            :color       [1.0 0.93 0.82]
                             :kind        state
+                            :oblateness  ob
+                            :rotation-axis axis
                             :render-mode :body}]
-                ;; central photosphere + volumetric corona puffs + field line
                 (concat
                  [body]
-                 (nebula-fog {:center center :extent (* extent 6.0)
-                              :color [0.60 0.75 1.0] :count 120 :seed eid})
-                 (field-line center extent (ecs/get-component world eid c/b-field))))
+                 (nebula-fog {:center center :extent (* core-r 3.0)
+                              :color [0.85 0.80 0.55] :count 70 :seed eid})
+                 (field-line center core-r (ecs/get-component world eid c/b-field))))
 
               :protostar
-              (let [extent (max 0.4 (/ (or (ecs/get-component world eid c/radius) scale)
-                                       scale))]
+              ;; A contracting core: render radius follows the physical radius
+              ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
+              ;; by temperature, shrouded in fog + field lines.
+              (let [render-r (phys->render-radius r-phys)]
                 (concat
-                 (nebula-fog {:center center :extent extent :color color
-                              :count  (fog-sample-count extent focus) :seed eid})
-                 (field-line center extent (ecs/get-component world eid c/b-field))))
+                 [{:entity      eid
+                   :position    center
+                   :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
+                   :color       color
+                   :kind        state
+                   :oblateness  ob
+                   :rotation-axis axis
+                   :render-mode :body}]
+                 (nebula-fog {:center center :extent (* render-r 2.0) :color color
+                              :count  (fog-sample-count render-r focus) :seed eid})
+                 (field-line center render-r (ecs/get-component world eid c/b-field))))
 
-              ;; :planet :debris → shaded body, coloured by temperature
+              ;; :planet :debris → shaded body sized by physical radius, coloured
+              ;; by composition crossfading to thermal glow.
               [{:entity      eid
                 :position    center
-                :radius      (matter-visual-radius state)
-                :color       (mapv #(min 1.0 (+ 0.15 (* 0.85 (double %)))) color)
+                :radius      (phys->render-radius r-phys)
+                :color       color
                 :kind        state
+                :oblateness  ob
+                :rotation-axis axis
                 :render-mode :body}])))
-       (ecs/entities-with world c/position c/matter-state))))))
+        (ecs/entities-with world c/position c/matter-state))))))
 
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be `:particle`
    (soft fog puff) or `:body` (shaded sphere). Default is `:body`."
-  [{:keys [body-program particle-program line-program]} mesh-world camera width height bodies time]
+  [{:keys [body-program particle-program line-program hud-program hud hud-text]} mesh-world camera width height bodies time]
+  ;; Match the GL viewport to the actual draw surface every frame. Without this
+  ;; the viewport keeps its context-creation size, so a HiDPI/resized window
+  ;; (framebuffer larger than the logical 1280×720) draws only into the
+  ;; bottom-left corner. `width`/`height` are the real framebuffer pixels.
+  (GL11/glViewport 0 0 (int width) (int height))
   (GL11/glEnable GL11/GL_DEPTH_TEST)
   (GL11/glClearColor 0.02 0.02 0.05 1.0)
   (GL11/glClear (bit-or GL11/GL_COLOR_BUFFER_BIT GL11/GL_DEPTH_BUFFER_BIT))
@@ -822,18 +1238,26 @@
         (GL20/glUniform3f cam-loc (float cx) (float cy) (float cz))
         (GL30/glBindVertexArray (:vao mesh-world))
         (doseq [body bodies]
-          (let [model (model-matrix (:position body) (max 0.5 (:radius body)))
+          (let [model (if-let [ob (:oblateness body)]
+                        (model-matrix (:position body)
+                                      (max 0.5 (:radius body))
+                                      ob
+                                      (:rotation-axis body))
+                        (model-matrix (:position body) (max 0.5 (:radius body))))
                 [r g b] (or (:color body) (body-color (:kind body)))
-             glow (case (:kind body)
-                    :star 2.0
-                    :protostar 1.0
-                    :planet 0.2
-                    0.1)]
+                glow (case (:kind body)
+                       :star 2.0
+                       :protostar 1.0
+                       :planet 0.2
+                       0.1)]
             (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "model") false model)
             (GL20/glUniform3f (GL20/glGetUniformLocation body-program "color") (float r) (float g) (float b))
             (GL20/glUniform1f (GL20/glGetUniformLocation body-program "glow") (float glow))
             (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (:count mesh-world))))
         (GL30/glBindVertexArray 0)))
+    ;; ---- pass 3: 2D HUD overlay (coherence, focus) + stats/clock text ----
+    (render-hud hud-program hud)
+    (render-text hud-program hud-text width height)
     (GL20/glUseProgram 0)
     (GL11/glDisable GL11/GL_BLEND)))
 
@@ -896,7 +1320,7 @@
    Returns the path of the written image. Auto-detects Phase 0 worlds."
   ([world-atom path]
    (render-to-file world-atom path {}))
-  ([world-atom path {:keys [tick-fn bodies-fn]}]
+  ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode]}]
    (println "Rendering offscreen frame to" path)
    (init-glfw)
    (let [width   1280
@@ -905,6 +1329,7 @@
          body-program     (create-program)
          particle-program (create-particle-program)
          line-program     (create-line-program)
+         hud-program      (create-hud-program)
          sphere  (make-sphere-mesh 3)
          mesh    (upload-mesh sphere)
          fbo     (create-fbo width height)]
@@ -919,11 +1344,22 @@
                            phase0-bodies-from-world
                            bodies-from-world))
            w (swap! world-atom tick-fn)
-           camera  (if phase0? (make-camera 60.0) (make-camera))
-           bodies (bodies-fn w)]
+           ;; Frame the whole system: snap an auto-fit camera to the world unless
+           ;; the caller supplied one explicitly.
+           camera  (or camera
+                       (if phase0?
+                         (update-camera-for-world
+                           (make-camera 60.0) w
+                           (assoc (default-camera-settings)
+                                  :mode (or camera-mode :fit-all) :smoothing 1.0))
+                         (make-camera)))
+           bodies (bodies-fn w)
+           hud      (when phase0? (hud-rects-from-world w))
+           hud-text (when phase0? (hud-text-from-world w))]
        (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
        (render-scene {:body-program body-program :particle-program particle-program
-                      :line-program line-program}
+                      :line-program line-program :hud-program hud-program
+                      :hud hud :hud-text hud-text}
                      mesh camera width height bodies 0.0))
      (GL11/glFlush)
      (let [pixels  (read-pixels width height)

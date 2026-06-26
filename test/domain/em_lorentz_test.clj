@@ -1,0 +1,119 @@
+(ns domain.em-lorentz-test
+  "Tests for the Lorentz force and magnetic braking additions to domain.em.
+   These verify that magnetic fields now exert real forces and torques rather
+   than only diagnostics."
+  (:require
+   [clojure.test :refer [deftest testing is]]
+   [domain.em     :as em]
+   [domain.hydro  :as hydro]
+   [domain.stellar :as stellar]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [shape.spatial :as sp]))
+
+(deftest test-curl-estimate-zero-for-uniform-field
+  (testing "A uniform B-field has zero curl"
+    (let [b [0.0 0.0 1.0e-9]
+          data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
+          data-b {:position [0.5 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
+          curl (em/curl-estimate b 1.0 [0.0 0.0 0.0] [data-b])]
+      (is (every? #(< (Math/abs %) 1e-20) curl)))))
+
+(deftest test-lorentz-force-perpendicular-to-b
+  (testing "f · B = 0"
+    (let [curl-b [1.0e-12 0.0 0.0]
+          b      [0.0 0.0 1.0e-9]
+          f      (em/lorentz-force-density b curl-b)]
+      (is (< (Math/abs (sp/dot f b)) 1e-30)
+          "Lorentz force is perpendicular to B"))))
+
+(deftest test-lorentz-acceleration-positive
+  (testing "A non-zero curl and field produce acceleration"
+    (let [b [0.0 0.0 1.0e-9]
+          curl-b [1.0e-12 0.0 0.0]
+          a (em/lorentz-acceleration b curl-b 1.0)]
+      (is (pos? (sp/len a))))))
+
+(deftest test-magnetic-braking-opposes-spin
+  (testing "Braking torque points opposite to angular momentum"
+    (let [cell {:mass 2e30
+                :radius 1e15
+                :density 1e-15
+                :b-field [0.0 0.0 1.0e-5]
+                :angular-momentum [0.0 0.0 1e40]
+                :rotation-axis [0.0 0.0 1.0]}
+          tau (em/magnetic-braking-torque cell)]
+      (is (neg? (nth tau 2)) "torque in -z opposes +z angular momentum")
+      (is (zero? (first tau))
+          "torque is aligned with rotation axis")
+      (is (zero? (second tau))))))
+
+(deftest test-em-system-applies-lorentz-acceleration
+  (testing "em-system adds Lorentz acceleration to c/hydro-accel"
+    (let [base (ecs/empty-world)
+          ;; uniform field → zero curl; add a gradient by tilting one neighbor
+          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 2e14
+                                             :matter-state :nebula
+                                             :density 1.0
+                                             :pressure 1.0
+                                             :b-field [0.0 0.0 1.0]
+                                             :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 2e14
+                                             :matter-state :nebula
+                                             :density 1.0
+                                             :pressure 1.0
+                                             :b-field [0.0 0.0 0.5]
+                                             :angular-momentum [0.0 0.0 0.0]})
+          w3 ((em/em-system 1e10) w2)
+          a-a (ecs/get-component w3 ea c/hydro-accel)
+          a-b (ecs/get-component w3 eb c/hydro-accel)]
+      (is (some? a-a))
+      (is (some? a-b))
+      ;; non-uniform B → non-zero Lorentz acceleration
+      (is (> (sp/len a-a) 1e-20))
+      (is (> (sp/len a-b) 1e-20)))))
+
+(deftest test-em-system-brakes-spin
+  (testing "em-system reduces the magnitude of angular momentum over one tick"
+    (let [base (ecs/empty-world)
+          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 2e30
+                                             :radius 1e15
+                                             :matter-state :protostar
+                                             :density 1e-15
+                                             :pressure 1e-10
+                                             :b-field [0.0 0.0 1.0e-4]
+                                             :angular-momentum [0.0 0.0 1e45]})
+          L0   (ecs/get-component w eid c/angular-momentum)
+          spin0 (ecs/get-component w eid c/spin)
+          w2   ((em/em-system 1e10) w)
+          L1   (ecs/get-component w2 eid c/angular-momentum)
+          spin1 (ecs/get-component w2 eid c/spin)]
+      (is (< (sp/len L1) (sp/len L0))
+          "angular momentum magnitude decreases due to magnetic braking")
+      (is (< (sp/len spin1) (sp/len spin0))
+          "spin magnitude decreases"))))
+
+(deftest test-em-system-conserves-b-field-bounds
+  (testing "Resistive decay keeps B finite"
+    (let [base (ecs/empty-world)
+          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :density 1e-18
+                                             :pressure 1e-13
+                                             :b-field [0.0 0.0 1.0e-9]
+                                             :angular-momentum [0.0 0.0 0.0]})
+          w2   ((em/em-system 1e10) w)
+          b    (ecs/get-component w2 eid c/b-field)]
+      (is (some? b))
+      (is (< (sp/len b) 1.0)))))

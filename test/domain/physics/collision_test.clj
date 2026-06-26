@@ -76,15 +76,18 @@
     (is (= 11.0 (ecs/get-component w' e1 c/mass))
         "Larger body should absorb mass")))
 
-(deftest swept-sphere-catches-tunneling
+(deftest literal-overlap-ignores-non-touching-fast-bodies
+  ;; Detection is literal overlap, NOT swept prediction: two fast bodies that are
+  ;; not touching this instant do not collide, even if their straight-line paths
+  ;; would cross during the step. This is deliberate — linear extrapolation over
+  ;; the astronomical Phase 0 timestep merges gas from unrelated regions of a
+  ;; collapsing (converging) cloud that never actually touches. A high-speed
+  ;; fly-through is not an accretion event.
   (let [[w e1] (ecs/spawn (-> (ecs/empty-world)
                                event/with-ledger
                                event/with-handlers
                                (assoc :sim/dt 1.0)))
         [w e2] (ecs/spawn w)
-        ;; Bodies are 5 units apart and each moves 3 units toward the other in
-        ;; one step, so their surfaces cross during the step even though they do
-        ;; not overlap at either endpoint.
         w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
                                     c/velocity  [3.0 0.0 0.0]
                                     c/mass      1.0
@@ -96,8 +99,8 @@
                                     c/radius    1.0
                                     c/body-kind :body/test})
         w' (col/collision-detection-system w)]
-    (is (seq (event/events-of-kind w' :event/collision))
-        "fast-moving bodies that cross paths during the step must still collide")))
+    (is (empty? (event/events-of-kind w' :event/collision))
+        "bodies that are not overlapping right now do not merge across a gap")))
 
 (deftest ledger-appends-across-ticks
   (let [[w e1 e2] (two-body-world true)

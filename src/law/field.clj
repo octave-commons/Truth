@@ -73,6 +73,14 @@
   {:b-field bounded-b-field?
    :regime  regime-tag?})
 
+(def hydro-accel-schema
+  "Pressure-gradient acceleration vector a = -∇p/ρ in m/s²."
+  finite-vec3?)
+
+(def magnetic-torque-schema
+  "Torque density vector τ = r × f from the Lorentz force, in N/m²."
+  finite-vec3?)
+
 ;; --- Contracts --------------------------------------------------------------
 
 (def field-cell-contract

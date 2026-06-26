@@ -88,85 +88,24 @@ org.clojure/math.numeric-tower             ; orbital math
 No HTTP libraries in `domain/`. No rendering libraries in `domain/`. The LLM
 and embedding model calls live exclusively in `infra/myth_engine.clj`.
 
----
+### Invariants
+- Read receipt receipts
+- Read recent lessons
+- Never cut corners
+- Correct is better than fast
+- Document everything
 
-## The Simulation Stack
+### Running the dev service
 
-### World Coordinate System
+The Phase 0 dev window + nREPL (`infra.dev.server`, `clj -M:dev`) runs
+continuously under **pm2** as `gates-of-truth-dev` — this is intentional. pm2
+watching is OFF, so it does NOT auto-reload on edits:
 
-The planet is a **unit sphere**. All positions are `[φ θ r]` (latitude,
-longitude, altitude in radians/km). The canonical grid is an **icosphere
-geodesic** (subdivision level 4–6 depending on planet radius). Every system
-speaks in `cell-id` — an integer index into the icosphere face table. No flat
-grids. No XY tiles.
+- Load code changes: `pm2 restart gates-of-truth-dev` (starts a fresh nebula),
+  or hot-reload via the nREPL on `localhost:7888` to keep the live world.
+- It owns port 7888; "Address already in use" from `clj -M:dev` just means the
+  pm2 instance is already up.
 
-### Physics Layers (Tick Order)
+## Agent Skills
 
-1. **Orbital** (`domain/orbital.clj`) — Kepler integration, sun-direction
-   vector, moon positions, tidal force. Day/night from actual planetary rotation.
-2. **Atmosphere** (`domain/atmosphere.clj`) — Cellular automaton on the
-   icosphere. Each `AtmosCell` carries: temperature, pressure, humidity,
-   wind-velocity, cloud-cover, precipitation. Emergent weather — not scripted.
-3. **Hydrology** (`domain/hydrology.clj`) — Precipitation → runoff → river
-   flow → ocean salinity. Feeds biome growth rates.
-4. **Biome** (`domain/biome.clj`) — `BiomeCell`: flora-mass, fauna-mass,
-   soil-moisture, nutrients, species-counts. Lotka-Volterra predator-prey.
-5. **Civilization** (`domain/civilization.clj`) — Emergent agents. No scripted
-   factions. `Civilization` records carry territory (set of cell-ids),
-   population, resource-stocks, tech-level, expansion-pressure.
-
-### LOD Engine (Level of Detail)
-
-Three concentric simulation zones around the player:
-
-| Zone      | Radius  | Tick rate   | What runs                              |
-|-----------|---------|-------------|----------------------------------------|
-| Immediate | ~5 km   | Every frame | Full physics, individual agents        |
-| Regional  | ~500 km | Every 1 s   | Statistical aggregates, coarse weather |
-| Global    | Planet  | Every 60 s  | Civilization bookkeeping, epoch events |
-
-Zones promote/demote as the player moves. Zones run on independent
-`core.async` pipelines or JVM virtual threads. The off-screen world never stops.
-
----
-
-## The Myth Engine (Unchanged from Gates of Aker Design)
-
-The Myth Engine is the soul of the project. It is powered by the multimodal
-LLM (Gemma4:e4b) and a co-modal embedding model. All Myth Engine I/O lives in
-`infra/myth_engine.clj`. Domain records are pure; the LLM is an infrastructure
-concern.
-
-### Core Systems
-
-- **Facets** — Multi-dimensional attribute vectors embedded by the multimodal
-  model. Every entity (place, person, artifact, event) has a facet vector.
-  Facet similarity drives narrative resonance, not scripted triggers.
-- **Favor** — A scalar relationship value between the player and each deity,
-  civilization, or force. Modified by player actions, seasonal cycles, and
-  mythic alignment. Computed deterministically from world state.
-- **Scribes** — LLM-powered narrators attached to locations or factions.
-  Each Scribe has a voice (embedded from lore documents), a domain of knowledge,
-  and a memory of recent player interactions. They do not know the full truth.
-- **Attribution** — Every significant world event is tagged with causal agents,
-  affected facets, and a mythic resonance score. Attribution feeds the Scribe
-  memory and the player's journal.
-- **Day/Night Cycle** — Drives ritual windows, NPC behavior phases, atmospheric
-  mood shifts, and LLM prompt framing. Day = clarity, commerce, construction.
-  Night = revelation, transgression, dreaming.
-
-
-## What to Do When Asked To...
-
-### ...design a new system
-Emit: (a) the Malli schema in `law/`, (b) the failing test in `test/domain/`,
-(c) the minimal implementation in `domain/`. In that order.
-
-### ...write rendering code
-Always in `infra/`. Always calls into `shape/` for geometry. Never imports
-from `domain/` directly — pass world-state as a pure data argument.
-
-
-### ...add a new entity type
-Define a `defrecord` in `domain/`. Add a Malli schema in `law/`. Write
-constructor tests before writing `tick-*` functions.
+- **agent-notes-splitter** — Use when `docs/notes/` contains large agent-conversation markdown exports that need to be split into manageable, topic-bounded chunks. Recovers Claude sessions from JSONL logs if needed. (Skill file: `.opencode/skill/agent-notes-splitter/SKILL.md`)

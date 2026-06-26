@@ -52,6 +52,13 @@
   [a b]
   (len (v- b a)))
 
+(defn cross
+  "Cross product of two vec3s."
+  [[ax ay az] [bx by bz]]
+  [(- (* ay bz) (* az by))
+   (- (* az bx) (* ax bz))
+   (- (* ax by) (* ay bx))])
+
 ;; --- AABB -------------------------------------------------------------------
 
 (defrecord AABB [min max])

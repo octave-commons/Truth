@@ -12,17 +12,101 @@
      - resistive decay    : the non-ideal η∇²B hook, reduced to dB/dt = -ηB/L².
                             Negligible in diffuse gas, real only in dense cores —
                             which is exactly where non-ideal MHD matters.
+     - Lorentz force      : (∇ × B) × B / μ₀, applied to velocities via the
+                            orbital integrator (a = f/ρ).
+     - magnetic braking   : poloidal field threading a rotating clump exerts a
+                            torque that transports angular momentum outward.
 
    All formulas are SI (see law.field). Pure data transformation; no IO."
   (:require
    [law.field         :as lf]
    [law.stellar       :as ls]
+   [domain.hydro      :as hydro]
    [shape.spatial     :as sp]
    [domain.ecs.core   :as ecs]
    [domain.ecs.parallel :as par]
    [domain.ecs.components :as c]))
 
 ;; --- Pure field physics -----------------------------------------------------
+
+(defn curl-estimate
+  "Estimate (∇ × B) at a clump from neighboring b-field vectors using an SPH-like
+   curl formula. Returns a vector in T/m. Zero neighbors → zero curl.
+
+   Uses the symmetric SPH curl: (∇ × B)_i = Σ_j m_j/ρ_j (B_i - B_j) × ∇_i W_ij."
+  [b-field density position neighbors]
+  (if (or (not (lf/finite-vec3? b-field))
+          (not (pos? (double density))))
+    [0.0 0.0 0.0]
+    (reduce
+      (fn [acc n]
+        (let [r-ij   (sp/v- position (:position n))
+              h      (* 0.5 (+ (or (:radius n) 1.0) 1.0))
+              grad   (hydro/kernel-gradient r-ij h)
+              db     (sp/v- b-field (:b-field n))
+              ;; ∇ × B contribution from neighbor j
+              contrib (sp/cross db grad)]
+          (sp/v+ acc (sp/v* contrib (/ (double (:mass n 1.0))
+                                        (double (:density n 1.0)))))))
+      [0.0 0.0 0.0]
+      neighbors)))
+
+(defn lorentz-force-density
+  "Lorentz force density f = (∇ × B) × B / μ₀  (SI). N/m³. Always perpendicular
+   to B. Uses the SPH curl estimate above on the N-body substrate."
+  [b-field curl-b]
+  (if (and (lf/finite-vec3? b-field) (lf/finite-vec3? curl-b))
+    (let [cross (sp/cross curl-b b-field)]
+      (sp/v* cross (/ 1.0 lf/mu-0)))
+    [0.0 0.0 0.0]))
+
+(defn lorentz-acceleration
+  "Lorentz acceleration a = f/ρ = (∇ × B) × B / (μ₀ ρ)  (SI). m/s²."
+  [b-field curl-b density]
+  (if (pos? (double density))
+    (sp/v* (lorentz-force-density b-field curl-b) (/ 1.0 (double density)))
+    [0.0 0.0 0.0]))
+
+(defn magnetic-torque
+  "Torque density τ = r × f about the origin, where f is the Lorentz force
+   density. N/m."
+  [position lorentz-force]
+  (sp/cross position lorentz-force))
+
+(defn magnetic-braking-torque
+  "Compute the magnetic braking torque on a rotating clump: τ along the rotation
+   axis. The field is assumed to be primarily poloidal (threading the rotation
+   axis); differential rotation wraps it into a toroidal component whose tension
+   brakes the spin. This is a phenomenological per-body reduction of the full
+   MHD braking torque.
+
+   Returns a torque vector aligned with `rotation-axis`; magnitude is
+   proportional to B² ρ^(-1/2) r³ ω (the characteristic Alfvén-wave torque)."
+  [{:keys [mass radius density b-field angular-momentum rotation-axis]}]
+  (if (and (pos? (double mass))
+           (pos? (double radius))
+           (pos? (double density))
+           (lf/finite-vec3? b-field)
+           (lf/finite-vec3? angular-momentum))
+    (let [B2   (sp/len2 b-field)
+          omega (if (and rotation-axis (lf/finite-vec3? rotation-axis))
+                  (sp/dot angular-momentum rotation-axis)
+                  (sp/len angular-momentum))
+          ;; characteristic Alfvén torque: ~ B² r³ / (μ₀ ρ^(1/2)) · (ω / v_A)
+          ;; simplify to ~ B² r³ ω / √(ρ) / μ₀, clamped by dynamical time
+          base (* B2 (Math/pow (double radius) 3) (Math/abs omega))
+          denom (* lf/mu-0 (Math/sqrt (double density)))
+          ;; clamp torque so it cannot remove more than a small fraction of L per tick
+          tau-raw  (if (pos? denom) (/ base denom) 0.0)
+          L-mag    (sp/len angular-momentum)
+          ;; max torque removes at most 1% of L per tick, and never reverses sign
+          tau-max  (* 0.01 L-mag)
+          tau      (min tau-raw tau-max)
+          ;; direction opposes angular momentum
+          axis (or rotation-axis [0.0 0.0 1.0])
+          sign (- (if (pos? omega) 1.0 -1.0))]
+      (sp/v* axis (* sign (min tau (* 1e30 mass)))))
+    [0.0 0.0 0.0]))
 
 (defn magnetic-pressure
   "Magnetic pressure of a field, P_B = |B|² / (2μ₀)  (SI). Pascals."
@@ -39,25 +123,30 @@
     0.0))
 
 (defn flux-freeze
-  "Ideal induction under spherical compression: as a clump's density rises from
-   `old-density` to `new-density`, frozen-in flux amplifies the field by
-   (ρ'/ρ)^(2/3), preserving direction. Returns the new B vector.
+  "Ideal induction under compression: as a clump's density rises from
+   `old-density` to `new-density`, frozen-in flux amplifies the field.
 
-   This is what makes a collapsing core's field grow — the visible EM signature
-   of contraction. Capped at law.field/max-b-field so a runaway can't blow up."
-  [b-field old-density new-density]
-  (if (and (lf/finite-vec3? b-field)
-           (pos? (double old-density))
-           (pos? (double new-density)))
-    (let [ratio  (Math/pow (/ (double new-density) (double old-density)) (/ 2.0 3.0))
-          scaled (sp/v* b-field ratio)
-          mag    (sp/len scaled)]
-      (if (> mag lf/max-b-field)
-        ;; clamp magnitude, keep direction; the (1 - ε) factor absorbs the
-        ;; rounding of the rescale so the bounded-b-field? invariant holds.
-        (sp/v* scaled (* (/ lf/max-b-field mag) (- 1.0 1e-12)))
-        scaled))
-    b-field))
+   For isotropic spherical contraction the scaling is B ∝ ρ^(2/3). For collapse
+   along field lines (flux-conserving in the perpendicular plane) B ∝ ρ. The
+   `anisotropy` parameter interpolates: 0 = isotropic, 1 = fully along B.
+   Direction is preserved. Capped at law.field/max-b-field."
+  ([b-field old-density new-density]
+   (flux-freeze b-field old-density new-density 0.0))
+  ([b-field old-density new-density anisotropy]
+   (if (and (lf/finite-vec3? b-field)
+            (pos? (double old-density))
+            (pos? (double new-density)))
+     (let [a     (double (max 0.0 (min 1.0 (or anisotropy 0.0))))
+           ;; effective exponent: 2/3 for isotropic, 1 for collapse along B
+           exp   (+ (* (- 1.0 a) (/ 2.0 3.0)) (* a 1.0))
+           ratio (Math/pow (/ (double new-density) (double old-density)) exp)
+           scaled (sp/v* b-field ratio)
+           mag    (sp/len scaled)]
+       (if (> mag lf/max-b-field)
+         ;; clamp magnitude, keep direction
+         (sp/v* scaled (* (/ lf/max-b-field mag) (- 1.0 1e-12)))
+         scaled))
+     b-field)))
 
 (defn self-gravity-pressure
   "Central pressure of a self-gravitating uniform sphere, P ≈ GM²/((4/3π)R⁴).
@@ -112,21 +201,99 @@
 
 ;; --- ECS system -------------------------------------------------------------
 
+(defn- entity->em-data
+  "Project an ECS entity into the map the SPH/Lorentz functions expect."
+  [world eid]
+  {:eid      eid
+   :position (ecs/get-component world eid c/position)
+   :mass     (ecs/get-component world eid c/mass)
+   :radius   (ecs/get-component world eid c/radius)
+   :density  (ecs/get-component world eid c/density)
+   :pressure (ecs/get-component world eid c/pressure)
+   :b-field  (ecs/get-component world eid c/b-field)
+   :angular-momentum (ecs/get-component world eid c/angular-momentum)
+   :rotation-axis    (ecs/get-component world eid c/rotation-axis)
+   :state    (ecs/get-component world eid c/matter-state)})
+
+(defn- em-active?
+  "EM force/torque dynamics matter for diffuse and contracting gas."
+  [state]
+  (contains? #{:nebula :protostar} state))
+
+(defn- neighbors-within
+  "All EM-active entities within cutoff distance of `center`."
+  [center cutoff all-data]
+  (let [cut2 (* cutoff cutoff)]
+    (filterv
+      (fn [n]
+        (let [r2 (sp/len2 (sp/v- center (:position n)))]
+          (<= r2 cut2)))
+      all-data)))
+
 (defn em-system
-  "The EM tick step (non-ideal induction). Applies resistive flux decay to every
-   field-bearing clump. Diffuse clumps keep their field essentially unchanged;
-   dense cores slowly shed flux — the design's non-ideal hook. Flux-freezing
-   amplification on contraction lives in domain.stellar/collapse-system, where
-   the density change is known in the same step."
+  "The EM tick step. Computes:
+     1. Lorentz acceleration a = (∇×B)×B / (μ₀ ρ) stored on c/hydro-accel so
+        the orbital integrator applies it alongside gravity and hydro.
+     2. Magnetic braking torque applied to c/angular-momentum and c/spin.
+     3. Resistive flux decay applied to c/b-field.
+
+   Diffuse clumps keep their field essentially unchanged; dense cores slowly
+   shed flux — the design's non-ideal hook."
   [dt]
   (fn [world]
-    (let [eids    (ecs/entities-with world c/b-field c/radius)
-          updates (par/par-mapv
-                   (fn [eid]
-                     [eid (resistive-decay (ecs/get-component world eid c/b-field)
-                                           (ecs/get-component world eid c/radius)
-                                           dt)])
-                   eids)]
-      (reduce (fn [w [eid b]] (ecs/put-component w eid c/b-field b))
-              world
-              updates))))
+    (let [eids     (ecs/entities-with world c/b-field c/radius c/position
+                                      c/density c/angular-momentum)
+          all-data (mapv #(entity->em-data world %) eids)
+          active   (filterv #(em-active? (:state %)) all-data)
+          ;; Lorentz + braking
+          updates1 (par/par-mapv
+                     (fn [data]
+                       (let [h       (* 2.0 (double (or (:radius data) 1.0)))
+                             nbrs    (neighbors-within (:position data) h active)
+                             curl-b  (curl-estimate (:b-field data)
+                                                    (:density data)
+                                                    (:position data)
+                                                    nbrs)
+                             lorentz (lorentz-acceleration (:b-field data)
+                                                           curl-b
+                                                           (:density data))
+                             torque  (magnetic-braking-torque data)]
+                         [(:eid data) lorentz torque]))
+                     active)
+          world1   (reduce (fn [w [eid a torque]]
+                             (let [w' (if (lf/finite-vec3? a)
+                                        (ecs/put-component w eid c/hydro-accel
+                                                           (sp/v+ (or (ecs/get-component w eid c/hydro-accel)
+                                                                      [0.0 0.0 0.0])
+                                                                  a))
+                                        w)
+                                   L  (ecs/get-component w eid c/angular-momentum)
+                                   new-L (if (and (lf/finite-vec3? L) (lf/finite-vec3? torque))
+                                           (sp/v+ L torque)
+                                           L)
+                                   mass  (ecs/get-component w eid c/mass)
+                                   radius (ecs/get-component w eid c/radius)
+                                   new-spin (let [I (* 0.4 mass radius radius)]
+                                              (if (pos? I)
+                                                (sp/v* new-L (/ 1.0 I))
+                                                [0.0 0.0 0.0]))]
+                               (if new-L
+                                 (-> w'
+                                     (ecs/put-component eid c/angular-momentum new-L)
+                                     (ecs/put-component eid c/spin new-spin))
+                                 w')))
+                           world
+                           updates1)
+          ;; Resistive decay
+          updates2 (par/par-mapv
+                     (fn [eid]
+                       [eid (resistive-decay (ecs/get-component world1 eid c/b-field)
+                                             (ecs/get-component world1 eid c/radius)
+                                             dt)])
+                     eids)]
+      (reduce (fn [w [eid b]]
+                (if (lf/bounded-b-field? b)
+                  (ecs/put-component w eid c/b-field b)
+                  w))
+              world1
+              updates2))))

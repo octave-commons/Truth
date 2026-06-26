@@ -46,26 +46,47 @@
     (is (not (law/hydrostatic-equilibrium? {:mass 1e20})))
     (is (not (law/hydrostatic-equilibrium? {:mass nil})))))
 
-(deftest test-time-scale
-  (testing "Time scale starts around centuries per tick and slows as complexity rises"
-    (let [w0 (phase0/create-world)
-          ts0 (:phase0/time-scale w0)]
-      (is (< 1e10 ts0 1e12) "initial time-scale is nebular-scale centuries per tick")
-      (is (> (stellar/time-scale-from-complexity 1)
-             (stellar/time-scale-from-complexity 50)))))
+(deftest test-pacing
+  (testing "Pacing is continuous: rate dilates with thermal progress, dt/softening with orbits"
+    (let [cold   (phase0/pacing-for 0.0 0.0)
+          warm   (phase0/pacing-for 0.5 0.0)
+          hot    (phase0/pacing-for 1.0 0.0)
+          orbits (phase0/pacing-for 1.0 1.0)]
+      (is (> (:rate cold) (:rate warm) (:rate hot))
+          "wall-clock rate dilates smoothly as the core heats")
+      (is (= (:dt cold) (:dt hot))
+          "dt stays large through the Myr-scale collapse/contraction (no orbits yet)")
+      (is (> (:dt hot) (:dt orbits))
+          "dt refines only once tight planetary orbits exist")
+      (is (> (:softening hot) (:softening orbits)))))
 
-  (testing "Physics systems use the scaled dt"
-    (let [w0 (-> (phase0/create-world)
-                 (assoc :phase0/time-scale 1e10))
-          systems (phase0/physics-systems w0)
-          orbital (first systems)]
-      ;; The orbital system closure captures effective-dt. We can't inspect it
-      ;; directly, but we can verify the time-scale is being read and the
-      ;; thermal system is passed a scaled dt by checking the function arity.
-      ;; Nine systems: gravity, collision, classify, collapse, fusion, thermal,
-      ;; regime, EM, recenter.
-      (is (= 9 (count systems)))
-      (is (fn? orbital)))))
+  (testing "Thermal progress climbs monotonically from cold gas toward ignition"
+    (is (< (phase0/thermal-progress 10.0)
+           (phase0/thermal-progress 1.0e4)
+           (phase0/thermal-progress 1.0e7)))
+    (is (<= 0.0 (phase0/thermal-progress 5.0) (phase0/thermal-progress 1.0e8) 1.0)))
+
+  (testing "A fresh world starts cold, at the nebular rate and step"
+    (let [w   (phase0/create-world)
+          neb (phase0/pacing-for 0.0 0.0)]
+      (is (= 1.0e12 (:sim/dt w)) "nebular integration step")
+      (is (pos? (:phase0/rate-yr w)))
+      (is (= (:rate neb) (:phase0/time-scale w))
+          "time-scale is the clock rate in sim-seconds per real second")))
+
+  (testing "Physics pipeline has eleven ordered systems, density first"
+    (let [systems (phase0/physics-systems (phase0/create-world))]
+      (is (= 11 (count systems)))
+      (is (fn? (first systems))))))
+
+(deftest test-stats
+  (testing "Per-tick stats tally mass, temperature, and counts"
+    (let [w1 (phase0/tick-world (phase0/create-world {:gas-count 50}))
+          st (:phase0/stats w1)]
+      (is (pos? (:total-mass-kg st)))
+      (is (pos? (:total-mass-msun st)))
+      (is (<= 0.0 (:avg-temp st) (:peak-temp st)) "mean within [0, peak]")
+      (is (= (:body-count st) (:body-count (phase0/system-summary w1)))))))
 
 (deftest test-orbital-motion-advances
   (testing "Ring clumps move when the world ticks"
@@ -140,7 +161,14 @@
           remaining (ecs/entities-with w3 c/mass)]
       (is (= 1 (count remaining)))
       (is (< (Math/abs (- 3e30 (ecs/get-component w3 (first remaining) c/mass)))
-             1e25)))))
+             1e25))
+      ;; The merged body sits at the MASS-WEIGHTED CENTROID, conserving the
+      ;; system centre of mass. If it snapped to the larger body instead, the
+      ;; COM would jump and recenter-system would teleport the whole cloud.
+      (let [[x] (ecs/get-component w3 (first remaining) c/position)
+            expected (/ (* 1e30 0.5) 3e30)] ; (2e30·0 + 1e30·0.5)/3e30
+        (is (< (Math/abs (- (double x) expected)) 1e-9)
+            "merged position is the mass-weighted centroid, not the larger body")))))
 
 ;; --- Phase detection --------------------------------------------------------
 
@@ -163,10 +191,15 @@
 
 (deftest test-full-simulation
   (testing "A gas cloud collapses and a star + other bodies emerge by accretion"
-    (let [w0 (phase0/create-world {:gas-count 400})
+    ;; A compact, fast-forming cloud: dense (small radius → short free-fall) and
+    ;; quick contraction (τ small), so a star ignites within a bounded tick
+    ;; budget. The production defaults deliberately stretch this to ~tens of Myr
+    ;; (see `create-world`); this test pins the EMERGENCE, not the pace.
+    (let [w0 (phase0/create-world {:gas-count 400 :nebula-radius 1.2e16
+                                   :contraction-time 2e12 :spin 0.55})
           ;; run until a star ignites from the gas or we exhaust the budget
           final (loop [w w0 i 0]
-                  (if (or (> i 260) (:star? (phase0/system-summary w))
+                  (if (or (> i 400) (:star? (phase0/system-summary w))
                           (not (:phase0/active w)))
                     w
                     (recur (phase0/tick-world w) (inc i))))
