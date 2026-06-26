@@ -1,3 +1,7 @@
+// `clj -M:dev` runs infra.dev.server, which opens the GLFW window and runs
+// Phase 0: a stellar nebula collapsing into a solar system (full simulation
+// pipeline, auto-reseeding to a fresh nebula when a system finishes forming).
+// After editing Clojure sources: `pm2 restart gates-of-truth-dev` to recompile.
 module.exports = {
   apps: [{
     name: 'gates-of-truth-dev',

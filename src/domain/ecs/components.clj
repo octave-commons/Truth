@@ -17,6 +17,22 @@
 (def force-accum :component/force-accum)
 (def body-kind   :component/body-kind)
 
+;; --- Stellar / matter state -------------------------------------------------
+;; Thermodynamic + chemical state carried by resolved matter, from nebular gas
+;; through protostar, star, and planet. The same components describe a clump of
+;; gas and a finished world — only the magnitudes change.
+(def temperature  :component/temperature)  ;; kelvin
+(def density      :component/density)       ;; kg/m^3
+(def pressure     :component/pressure)      ;; pascal
+(def composition  :component/composition)   ;; {:H 0.75 :He 0.24 ...} mass fractions
+(def luminosity   :component/luminosity)    ;; watts (0 until fusion)
+(def matter-state :component/matter-state)  ;; :nebula :protostar :star :planet :debris
+
+;; --- Observer (the player spark) --------------------------------------------
+;; The quantum-oscillation player is a singleton entity carrying this component.
+;; Holds coherence, focus volume, and witnessed-event memory — see domain.player.
+(def observer     :component/observer)
+
 ;; --- Atmosphere -------------------------------------------------------------
 (def atmos-cell  :component/atmos-cell)
 

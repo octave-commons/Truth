@@ -20,7 +20,7 @@
     [infra.render          :as render])
   (:import
     (org.lwjgl.glfw GLFW)
-    (org.lwjgl.opengl GL11 GL15 GL20 GL30)))
+    (org.lwjgl.opengl GL15 GL20 GL30)))
 
 (defonce service-state
   (atom nil))
@@ -37,17 +37,20 @@
 
 (defn- ensure-resources [config-atom]
   (swap! config-atom
-         (fn [{:keys [program mesh subdivisions requested-subdivisions] :as cfg}]
+         (fn [{:keys [body-program particle-program mesh subdivisions requested-subdivisions] :as cfg}]
            (let [subdivisions (or requested-subdivisions subdivisions 2)
                  cfg          (assoc cfg :subdivisions subdivisions)]
-              (cond-> cfg
-                (nil? program)
-                (assoc :program (render/create-program))
+             (cond-> cfg
+               (nil? body-program)
+               (assoc :body-program (render/create-program))
 
-                (or (nil? mesh)
-                    (not= subdivisions requested-subdivisions))
-                (assoc :mesh (render/upload-mesh (render/make-sphere-mesh subdivisions))
-                       :requested-subdivisions nil))))))
+               (nil? particle-program)
+               (assoc :particle-program (render/create-particle-program))
+
+               (or (nil? mesh)
+                   (not= subdivisions requested-subdivisions))
+               (assoc :mesh (render/upload-mesh (render/make-sphere-mesh subdivisions))
+                      :requested-subdivisions nil))))))
 
 (defn- handle-screenshot-request [world-atom config-atom]
   (when-let [{:keys [path result]} (:screenshot-request @config-atom)]
@@ -59,16 +62,32 @@
       (finally
         (swap! config-atom dissoc :screenshot-request)))))
 
-(defn- render-frame-once [window world-atom camera-atom config-atom]
+(def ^:private default-tick-fn
+  "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo)."
+  (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
+
+(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom]
   (ensure-resources config-atom)
   (GLFW/glfwPollEvents)
-  (swap! world-atom (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
-  (let [cfg    @config-atom
-        bodies (render/bodies-from-world @world-atom)]
-    (render/render-bodies (:program cfg) (:mesh cfg)
-                          @camera-atom
-                          (:width cfg) (:height cfg)
-                          bodies))
+  (let [cfg       @config-atom
+        tick-fn   (:tick-fn cfg default-tick-fn)
+        bodies-fn (:bodies-fn cfg render/bodies-from-world)
+        interval  (:sim-frame-interval cfg 1)
+        on-step   (:on-step cfg identity)]
+    ;; Advance the simulation only every `interval` frames so astronomical
+    ;; formation is slow enough to watch; render every frame.
+    (when (zero? (mod @frame-atom interval))
+      (swap! world-atom (fn [w] (on-step (tick-fn w)))))
+    (swap! frame-atom inc)
+    (swap! time-atom + 0.016)
+    (let [bodies (bodies-fn @world-atom)]
+      (render/render-scene {:body-program (:body-program cfg)
+                            :particle-program (:particle-program cfg)}
+                           (:mesh cfg)
+                           @camera-atom
+                           (:width cfg) (:height cfg)
+                           bodies
+                           @time-atom)))
   (handle-screenshot-request world-atom config-atom)
   (GLFW/glfwSwapBuffers window)
   (Thread/sleep 16)
@@ -78,11 +97,13 @@
   (try
     (render/init-glfw)
     (let [{:keys [width height]} @config-atom
-          window (render/create-window width height "Gates of Truth — Dev Window")]
+          window     (render/create-window width height "Gates of Truth — Dev Window")
+          frame-atom (atom 0)
+          time-atom  (atom 0.0)]
       (swap! service-state assoc :window window)
       (loop []
         (when (and (not @stop-atom)
-                   (render-frame-once window world-atom camera-atom config-atom))
+                   (render-frame-once window world-atom camera-atom config-atom frame-atom time-atom))
           (recur))))
     (catch Throwable t
       (swap! service-state assoc :error t)
@@ -98,11 +119,15 @@
      (throw (IllegalStateException. "Dev window already running. Call stop! first.")))
    (let [width          (get opts :width 1280)
          height         (get opts :height 720)
-         camera-atom    (atom (render/make-camera))
-         config-atom    (atom (merge {:width width :height height
-                                      :program nil :mesh nil
-                                      :subdivisions 2}
-                                     (select-keys opts [:width :height :subdivisions])))
+          camera-atom    (atom (get opts :camera (render/make-camera)))
+          config-atom    (atom (merge {:width width :height height
+                                       :body-program nil
+                                       :particle-program nil
+                                       :mesh nil
+                                       :subdivisions 3}
+                                      (select-keys opts [:width :height :subdivisions
+                                                         :tick-fn :bodies-fn
+                                                         :sim-frame-interval :on-step])))
          stop-atom      (atom false)
          thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
      (.setDaemon thread true)
@@ -130,15 +155,15 @@
   (println "Dev window stopped."))
 
 (defn reload-shaders!
-  "Force the window thread to recompile the shader program on the next frame.
-   Call this after editing `infra.render/vertex-shader` or
-   `infra.render/fragment-shader` from the REPL."
+  "Force the window thread to recompile both shader programs on the next frame.
+   Call this after editing `infra.render` shader vars from the REPL."
   []
   (when-let [config-atom (:config @service-state)]
     (swap! config-atom
            (fn [cfg]
-             (delete-program (:program cfg))
-             (assoc cfg :program nil)))))
+             (doseq [p [:body-program :particle-program]]
+               (delete-program (get cfg p)))
+             (assoc cfg :body-program nil :particle-program nil)))))
 
 (defn reload-mesh!
   "Change the sphere subdivision level used for bodies."

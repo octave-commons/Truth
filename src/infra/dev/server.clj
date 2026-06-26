@@ -20,14 +20,29 @@
   (:require
     [nrepl.server     :as nrepl]
     [infra.dev.window :as window]
-    [infra.main       :as main]))
+    [infra.render     :as render]
+    [domain.particles.phase0 :as phase0]))
 
 (defn -main
-  "Start the dev window + nREPL background service."
+  "Start the dev window + nREPL background service.
+
+   The window shows Phase 0: a particle gas cloud collapsing under self-gravity,
+   fragmenting into protostars, and flattening into a disk through inelastic
+   accretion. Massive sinks are promoted to resolved stars/planets. When a system
+   finishes forming (or the spark's coherence fades) we drift to a fresh nebula
+   and begin again."
   [& _args]
   (println "Booting Gates of Truth dev service...")
-  (let [world  (main/make-demo-world)
-        _      (window/start! world)
+  (let [world  (atom (phase0/create-world))
+        _      (window/start! world
+                 {:tick-fn            phase0/tick-world
+                  :bodies-fn          render/particle-phase0-bodies-from-world
+                  :camera             (render/make-camera 40.0)
+                  :sim-frame-interval 4
+                  :on-step            (fn [w]
+                                        (if (:phase0/active w)
+                                          w
+                                          (phase0/create-world)))})
         server (nrepl/start-server :port 7888 :bind "127.0.0.1")]
     (println "nREPL server listening on 127.0.0.1:7888")
     (.addShutdownHook

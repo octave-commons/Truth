@@ -2,33 +2,45 @@
 
 **Date:** 2026-06-25  
 **Branch:** main  
-**Tests:** `clj -M:test` → 55 tests, 120 assertions, 0 failures, 0 errors  
+**Tag:** Π-2026.06.25.1  
+**Tests:** `clj -M:test` → 83 tests, 187 assertions, 0 failures, 0 errors  
 **License:** GNU GPL v3 or later (standalone application, per ημΠ.dev.v1 §7)
 
 ## What this snapshot contains
 
-Pivot from terminal renderer to **LWJGL/OpenGL 3D renderer** while preserving the pure `shape`/`law`/`domain` stack.
+Continues the LWJGL pivot with the **Phase 0 stellar nebula** simulation stack, particle systems, and supporting design notes.
 
 ### Changes committed
 
 | File | Change |
 |------|--------|
-| `AGENTS.md` | Removed Lanterna/terminal-raycast references; project is now a full simulated universe with LWJGL rendering. |
-| `deps.edn` | Added LWJGL 3.3.3 (core, GLFW, OpenGL, STB + Linux natives); added `:dev` alias (`infra.dev.server`) and `:run` alias (`infra.main`). |
-| `.gitignore` | Ignore `.lsp/`, `hs_err_pid*.log`, and `receipts.log`; keep `.clj-kondo/.cache/` ignored but allow `.clj-kondo/imports/`. |
-| `.clj-kondo/imports/metosin/malli/config.edn` | Imported clj-kondo config for Malli. |
-| `dev/ecosystem.config.js` | PM2 ecosystem for the dev server (`clj -M:dev`). |
-| `src/infra/main.clj` | Demo entry point: Sun/Earth/Moon world, renders a frame via `infra.render`. |
-| `src/infra/render.clj` | LWJGL renderer: GLSL shaders, icosphere mesh, camera, interactive window + offscreen-to-PNG path. |
-| `src/infra/dev/server.clj` | Dev server bootstrap (REPL/window helper). |
-| `src/infra/dev/window.clj` | Window/input helpers for dev mode. |
+| `.gitignore` | Ignore `.agents/` session state. |
+| `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md` | Handoff artifacts for this snapshot. |
+| `dev/ecosystem.config.js` | Dev process tuning for `clj -M:dev`. |
+| `docs/designs/gates-of-truth-world-gen-phases.md` | World generation phase design. |
+| `docs/designs/truth-phase-0-stellar-nebula-design.md` | Phase 0 stellar nebula design. |
+| `docs/notes/2026.06.25.16.41.16.md` | Session notes. |
+| `src/domain/chemistry.clj` | Chemistry simulation primitives. |
+| `src/domain/ecs/components.clj` | ECS component updates. |
+| `src/domain/particles/fft.clj` | FFT particle helpers. |
+| `src/domain/particles/field.clj` | Particle field simulation. |
+| `src/domain/particles/phase0.clj` | Phase 0 particle dynamics. |
+| `src/domain/particles/pm.clj` | Particle mesh / PM system. |
+| `src/domain/phase0.clj` | Phase 0 top-level simulation. |
+| `src/domain/player.clj` | Player entity records. |
+| `src/domain/stellar.clj` | Stellar body generation. |
+| `src/infra/dev/server.clj` | Dev server updates. |
+| `src/infra/dev/window.clj` | Window/input updates. |
+| `src/infra/main.clj` | Entry point updates. |
+| `src/infra/render.clj` | Renderer updates. |
+| `src/infra/render/phase0_renderer.clj` | Phase 0 nebula renderer. |
+| `src/law/stellar.clj` | Malli schemas for stellar entities. |
+| `test/domain/particles/*_test.clj` | Particle system tests. |
+| `test/domain/phase0_test.clj` | Phase 0 tests. |
 
 ### Residual / ignored
 
-- `.clj-kondo/.cache/` — generated lint cache.
-- `.lsp/.cache/db.transit.json` — LSP index.
-- `hs_err_pid*.log` — JVM crash dumps.
-- `receipts.log` — append-only session ledger (Receipt River).
+- `.agents/` — local agent session state (now ignored).
 
 ## Blockers
 

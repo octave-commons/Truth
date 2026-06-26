@@ -5,14 +5,15 @@
     [domain.ecs.core :as ecs]
     [domain.ecs.components :as c]
     [domain.orbital.system :as orbital]
+    [domain.particles.phase0 :as pphase0]
     [shape.spatial :as sp])
   (:import
     (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback)
-    (org.lwjgl.opengl GL GL11 GL15 GL20 GL30 GL32)
+    (org.lwjgl.opengl GL GL11 GL15 GL20 GL30)
     (org.lwjgl.stb STBImageWrite)
     (org.lwjgl.system MemoryUtil)
     (org.lwjgl BufferUtils)
-    (java.nio FloatBuffer IntBuffer ByteBuffer)))
+    (java.nio ByteBuffer)))
 
 ;; ---------------------------------------------------------------------------
 ;; Math helpers
@@ -42,8 +43,7 @@
 (defn- look-at [eye center up]
   (let [f (normalize (mapv - center eye))
         s (normalize (cross f up))
-        u (cross s f)
-        [ex ey ez] eye]
+        u (cross s f)]
     (float-array [(nth s 0) (nth u 0) (- (nth f 0)) 0.0
                   (nth s 1) (nth u 1) (- (nth f 1)) 0.0
                   (nth s 2) (nth u 2) (- (nth f 2)) 0.0
@@ -79,22 +79,83 @@
 ;; Shader
 ;; ---------------------------------------------------------------------------
 
-(def ^:private vertex-shader
+(def ^:private body-vertex-shader
   "#version 330 core
    layout(location = 0) in vec3 aPos;
+   out vec3 vNormal;
+   out vec3 vWorldPos;
    uniform mat4 model;
    uniform mat4 view;
    uniform mat4 projection;
    void main() {
-     gl_Position = projection * view * model * vec4(aPos, 1.0);
+     vNormal = mat3(transpose(inverse(model))) * aPos;
+     vec4 worldPos = model * vec4(aPos, 1.0);
+     vWorldPos = worldPos.xyz;
+     gl_Position = projection * view * worldPos;
    }")
 
-(def ^:private fragment-shader
+(def ^:private body-fragment-shader
   "#version 330 core
+   in vec3 vNormal;
+   in vec3 vWorldPos;
    out vec4 FragColor;
    uniform vec3 color;
+   uniform vec3 cameraPos;
+   uniform float glow;
    void main() {
-     FragColor = vec4(color, 1.0);
+     vec3 N = normalize(vNormal);
+     vec3 V = normalize(cameraPos - vWorldPos);
+     float diff = max(dot(N, V), 0.0);
+     float fresnel = pow(1.0 - abs(dot(N, V)), 2.0);
+     vec3 surface = color * (0.15 + 0.55 * diff);
+     vec3 glowColor = color * glow * 0.6;
+     FragColor = vec4(surface + glowColor * fresnel, 1.0);
+   }")
+
+(def ^:private particle-vertex-shader
+  "#version 330 core
+   layout(location = 0) in vec3 aPos;
+   layout(location = 1) in vec3 aColor;
+   layout(location = 2) in float aSize;
+   out vec3 vColor;
+   uniform mat4 view;
+   uniform mat4 projection;
+   uniform vec3 cameraPos;
+   void main() {
+     vColor = aColor;
+     gl_Position = projection * view * vec4(aPos, 1.0);
+     float dist = length(cameraPos - aPos);
+     gl_PointSize = clamp(aSize / (1.0 + dist * 0.005), 2.0, 200.0);
+   }")
+
+(def ^:private particle-fragment-shader
+  "#version 330 core
+   in vec3 vColor;
+   out vec4 FragColor;
+   uniform float time;
+   float hash(vec2 p) {
+     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+   }
+   float noise(vec2 p) {
+     vec2 i = floor(p);
+     vec2 f = fract(p);
+     f = f * f * (3.0 - 2.0 * f);
+     float a = hash(i);
+     float b = hash(i + vec2(1.0, 0.0));
+     float c = hash(i + vec2(0.0, 1.0));
+     float d = hash(i + vec2(1.0, 1.0));
+     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+   }
+   void main() {
+     vec2 coord = gl_PointCoord - vec2(0.5);
+     float dist = length(coord);
+     if (dist > 0.5) discard;
+     float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
+     float n = noise(coord * 8.0 + time * 0.3);
+     alpha *= (0.6 + 0.4 * n);
+     float core = 1.0 - smoothstep(0.0, 0.18, dist);
+     vec3 color = vColor * (0.3 + 0.7 * core);
+     FragColor = vec4(color * alpha, alpha);
    }")
 
 (defn compile-shader [source type]
@@ -106,12 +167,8 @@
                       {:log (GL20/glGetShaderInfoLog id)})))
     id))
 
-(defn create-program []
-  (println "Compiling vertex shader...")
-  (let [program (GL20/glCreateProgram)
-        vs      (compile-shader vertex-shader GL20/GL_VERTEX_SHADER)
-        _       (println "Compiling fragment shader...")
-        fs      (compile-shader fragment-shader GL20/GL_FRAGMENT_SHADER)]
+(defn- link-program [vs fs]
+  (let [program (GL20/glCreateProgram)]
     (GL20/glAttachShader program vs)
     (GL20/glAttachShader program fs)
     (GL20/glLinkProgram program)
@@ -120,8 +177,17 @@
                       {:log (GL20/glGetProgramInfoLog program)})))
     (GL20/glDeleteShader vs)
     (GL20/glDeleteShader fs)
-    (println "Shader program linked.")
     program))
+
+(defn create-program []
+  (println "Compiling body shaders...")
+  (link-program (compile-shader body-vertex-shader GL20/GL_VERTEX_SHADER)
+                (compile-shader body-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+
+(defn create-particle-program []
+  (println "Compiling particle shaders...")
+  (link-program (compile-shader particle-vertex-shader GL20/GL_VERTEX_SHADER)
+                (compile-shader particle-fragment-shader GL20/GL_FRAGMENT_SHADER)))
 
 ;; ---------------------------------------------------------------------------
 ;; Sphere mesh
@@ -185,6 +251,46 @@
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo :count vertex-count}))
 
+(defn- particle->floats [{:keys [position color size]}]
+  (let [[x y z] position
+        [r g b] color]
+    [(float x) (float y) (float z)
+     (float r) (float g) (float b)
+     (float size)]))
+
+(defn make-particle-mesh
+  "Create a GPU buffer from a seq of particle maps. Each particle must have
+   :position [x y z], :color [r g b], and :size."
+  [particles]
+  (let [data (float-array (mapcat particle->floats particles))
+        fb   (BufferUtils/createFloatBuffer (count data))]
+    (doseq [f data] (.put fb f))
+    (.flip fb)
+    {:buffer fb
+     :count  (count particles)}))
+
+(defn upload-particle-mesh
+  "Upload an interleaved particle buffer (position 3, color 3, size 1)."
+  [{:keys [buffer count]}]
+  (let [vao (GL30/glGenVertexArrays)
+        vbo (GL15/glGenBuffers)
+        stride (* 7 4)]
+    (GL30/glBindVertexArray vao)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+    (GL15/glBufferData GL15/GL_ARRAY_BUFFER buffer GL15/GL_STATIC_DRAW)
+    ;; position
+    (GL20/glVertexAttribPointer 0 3 GL11/GL_FLOAT false stride 0)
+    (GL20/glEnableVertexAttribArray 0)
+    ;; color
+    (GL20/glVertexAttribPointer 1 3 GL11/GL_FLOAT false stride (* 3 4))
+    (GL20/glEnableVertexAttribArray 1)
+    ;; size
+    (GL20/glVertexAttribPointer 2 1 GL11/GL_FLOAT false stride (* 6 4))
+    (GL20/glEnableVertexAttribArray 2)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
+    (GL30/glBindVertexArray 0)
+    {:vao vao :vbo vbo :count count}))
+
 ;; ---------------------------------------------------------------------------
 ;; Renderer state
 ;; ---------------------------------------------------------------------------
@@ -193,12 +299,13 @@
   [position yaw pitch distance target]
   )
 
-(defn make-camera []
-  (->Camera (sp/vec3 0.0 50.0 150.0) -90.0 -20.0 150.0 (sp/vec3 0.0 0.0 0.0)))
+(defn make-camera
+  ([] (make-camera 50.0))
+  ([distance]
+   (->Camera (sp/vec3 0.0 (* distance 0.33) distance) -90.0 -20.0 distance (sp/vec3 0.0 0.0 0.0))))
 
 (defn camera-forward [camera]
-  (let [yaw-rad   (deg->rad (:yaw camera))
-        pitch-rad (deg->rad (:pitch camera))]
+  (let [pitch-rad (deg->rad (:pitch camera))]
     [(Math/cos pitch-rad) (Math/sin pitch-rad) (Math/sin pitch-rad)]))
 
 (defn update-camera-position [camera]
@@ -286,32 +393,143 @@
   (case kind
     :body/star   [1.0 0.9 0.2]
     :body/planet [0.2 0.5 1.0]
+    :body/debris [0.6 0.6 0.6]
     :body/moon   [0.8 0.8 0.8]
     :body/person [1.0 0.2 0.2]
     [0.7 0.7 0.7]))
 
-(defn render-bodies [program mesh-world camera width height bodies]
+;; --- Phase 0 projection -----------------------------------------------------
+;; Phase 0 lives at astronomical scale (~1e17 m) with raw radii that range over
+;; six orders of magnitude. We project it into a stylized, view-scaled space so
+;; a forming solar system reads clearly: gas points, a brightening protostar,
+;; an ignited star, and planets settling out.
+
+(def ^:const phase0-view-scale
+  "World metres per render unit for the Phase 0 view."
+  1.0e15)
+
+(defn- matter-color [state]
+  (case state
+    :star      [1.0 0.92 0.25]
+    :protostar [1.0 0.55 0.15]
+    :planet    [0.25 0.5 1.0]
+    :nebula    [0.45 0.35 0.65]
+    :debris    [0.6 0.6 0.6]
+    [0.7 0.7 0.7]))
+
+(defn- matter-visual-radius [state]
+  (case state
+    :star 2.0 :protostar 1.5 :planet 1.0 :debris 0.5 :nebula 0.4
+    1.0))
+
+(defn phase0-bodies-from-world
+  "Project Phase 0 matter entities into stylized, view-scaled render bodies."
+  ([world] (phase0-bodies-from-world world phase0-view-scale))
+  ([world scale]
+   (map (fn [[eid comps]]
+          (let [state   (comps c/matter-state)
+                [x y z] (comps c/position)]
+            {:entity   eid
+             :position [(/ x scale) (/ y scale) (/ z scale)]
+             :radius   (matter-visual-radius state)
+             :color    (matter-color state)
+             :kind     state}))
+        (ecs/all-of world c/position c/matter-state))))
+
+(defn particle-phase0-bodies-from-world
+  "Render bodies for the particle-field Phase 0: thousands of gas particles
+   plus any resolved protostar / star / planet sinks promoted from the field.
+   Positions are in natural units (cloud radius ~10), so the view scale is much
+   smaller than the resolved-body Phase 0 projection."
+  ([world] (particle-phase0-bodies-from-world world 1.5))
+  ([world scale]
+   (let [particles (for [p (pphase0/particle-bodies world)
+                         :let [[x y z] (:position p)]]
+                     (assoc p
+                            :position [(/ x scale) (/ y scale) (/ z scale)]
+                            :size     (/ (:size p) scale)
+                            :render-mode :particle))
+         resolved (map (fn [[eid comps]]
+                         (let [state   (comps c/matter-state)
+                               [x y z] (comps c/position)]
+                           {:entity      eid
+                            :position    [(/ x scale) (/ y scale) (/ z scale)]
+                            :radius      (matter-visual-radius state)
+                            :color       (matter-color state)
+                            :kind        state
+                            :render-mode :body}))
+                       (ecs/all-of world c/position c/matter-state))]
+     (vec (concat particles resolved)))))
+
+(defn render-scene
+  "Render a frame with volumetric fog particles and glowing 3D massive bodies.
+   `bodies` is a sequence of render maps; `:render-mode` may be `:particle`
+   (soft fog puff) or `:body` (shaded sphere). Default is `:body`."
+  [{:keys [body-program particle-program]} mesh-world camera width height bodies time]
   (GL11/glEnable GL11/GL_DEPTH_TEST)
   (GL11/glClearColor 0.02 0.02 0.05 1.0)
   (GL11/glClear (bit-or GL11/GL_COLOR_BUFFER_BIT GL11/GL_DEPTH_BUFFER_BIT))
-  (GL20/glUseProgram program)
   (let [proj (perspective 60.0 (/ width (float height)) 0.1 10000.0)
         view (look-at (:position camera) (:target camera) (sp/vec3 0.0 1.0 0.0))
-        proj-loc (GL20/glGetUniformLocation program "projection")
-        view-loc (GL20/glGetUniformLocation program "view")
-        model-loc (GL20/glGetUniformLocation program "model")
-        color-loc (GL20/glGetUniformLocation program "color")]
-    (GL20/glUniformMatrix4fv proj-loc false proj)
-    (GL20/glUniformMatrix4fv view-loc false view)
-    (GL30/glBindVertexArray (:vao mesh-world))
-    (doseq [body bodies]
-      (let [model (model-matrix (:position body) (max 0.5 (:radius body)))
-            [r g b] (body-color (:kind body))]
-        (GL20/glUniformMatrix4fv model-loc false model)
-        (GL20/glUniform3f color-loc (float r) (float g) (float b))
-        (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (:count mesh-world))))
-    (GL30/glBindVertexArray 0)
-    (GL20/glUseProgram 0)))
+        particles (filterv #(= :particle (:render-mode %)) bodies)
+        bodies    (remove #(= :particle (:render-mode %)) bodies)]
+    ;; ---- pass 1: volumetric fog particles (additive, soft depth) ----
+    (when (seq particles)
+      (GL20/glUseProgram particle-program)
+      (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation particle-program "projection") false proj)
+      (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation particle-program "view") false view)
+      (let [cam-pos (:position camera)
+            [cx cy cz] cam-pos]
+        (GL20/glUniform3f (GL20/glGetUniformLocation particle-program "cameraPos")
+                          (float cx) (float cy) (float cz))
+        (GL20/glUniform1f (GL20/glGetUniformLocation particle-program "time") (float time)))
+      (GL11/glEnable GL11/GL_BLEND)
+      (GL11/glBlendFunc GL11/GL_ONE GL11/GL_ONE)
+      (GL11/glEnable 0x8642) ; GL_PROGRAM_POINT_SIZE
+      (GL11/glDepthMask false)
+      (let [pm (upload-particle-mesh (make-particle-mesh particles))]
+        (GL30/glBindVertexArray (:vao pm))
+        (GL11/glDrawArrays GL11/GL_POINTS 0 (:count pm))
+        (GL30/glBindVertexArray 0)
+        (GL15/glDeleteBuffers (:vbo pm))
+        (GL30/glDeleteVertexArrays (:vao pm)))
+      (GL11/glDepthMask true)
+      (GL11/glDisable 0x8642)) ; GL_PROGRAM_POINT_SIZE
+    ;; ---- pass 2: massive bodies as shaded 3D volumes ----
+    (GL11/glDisable GL11/GL_BLEND)
+    (when (seq bodies)
+      (GL20/glUseProgram body-program)
+      (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "projection") false proj)
+      (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "view") false view)
+      (let [cam-pos (:position camera)
+            [cx cy cz] cam-pos
+            cam-loc (GL20/glGetUniformLocation body-program "cameraPos")]
+        (GL20/glUniform3f cam-loc (float cx) (float cy) (float cz))
+        (GL30/glBindVertexArray (:vao mesh-world))
+        (doseq [body bodies]
+          (let [model (model-matrix (:position body) (max 0.5 (:radius body)))
+                [r g b] (or (:color body) (body-color (:kind body)))
+                glow (case (:kind body)
+                       :star 0.8
+                       :protostar 0.5
+                       :planet 0.2
+                       0.1)]
+            (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "model") false model)
+            (GL20/glUniform3f (GL20/glGetUniformLocation body-program "color") (float r) (float g) (float b))
+            (GL20/glUniform1f (GL20/glGetUniformLocation body-program "glow") (float glow))
+            (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (:count mesh-world))))
+        (GL30/glBindVertexArray 0)))
+    (GL20/glUseProgram 0)
+    (GL11/glDisable GL11/GL_BLEND)))
+
+(defn render-bodies
+  "Backward-compatible single-pass renderer for solid-color spheres.
+   Prefer `render-scene` for particle fog + volume bodies."
+  [program mesh-world camera width height bodies]
+  (render-scene {:body-program program :particle-program 0}
+                mesh-world camera width height
+                (remove #(= :particle (:render-mode %)) bodies)
+                0.0))
 
 (defn- create-offscreen-window [width height]
   (GLFW/glfwWindowHint GLFW/GLFW_VISIBLE GLFW/GLFW_FALSE)
@@ -360,31 +578,44 @@
 
 (defn render-to-file
   "Render the current world to a PNG file using an offscreen OpenGL context.
-   Returns the path of the written image."
-  [world-atom path]
-  (println "Rendering offscreen frame to" path)
-  (init-glfw)
-  (let [width   1280
-        height  720
-        window  (create-offscreen-window width height)
-        program (create-program)
-        sphere  (make-sphere-mesh 2)
-        mesh    (upload-mesh sphere)
-        fbo     (create-fbo width height)
-        camera  (make-camera)]
-    (swap! world-atom (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
-    (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
-    (let [bodies (bodies-from-world @world-atom)]
-      (render-bodies program mesh camera width height bodies))
-    (GL11/glFlush)
-    (let [pixels  (read-pixels width height)
-          flipped (flip-rgba-vertical pixels width height)]
-      (STBImageWrite/stbi_write_png path width height 4 flipped (* width 4)))
-    (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)
-    (GLFW/glfwDestroyWindow window)
-    (GLFW/glfwTerminate)
-    (GLFW/glfwSetErrorCallback nil)
-    path))
+   Returns the path of the written image. Auto-detects Phase 0 worlds."
+  ([world-atom path]
+   (render-to-file world-atom path {}))
+  ([world-atom path {:keys [tick-fn bodies-fn]}]
+   (println "Rendering offscreen frame to" path)
+   (init-glfw)
+   (let [width   1280
+         height  720
+         window  (create-offscreen-window width height)
+         body-program     (create-program)
+         particle-program (create-particle-program)
+         sphere  (make-sphere-mesh 3)
+         mesh    (upload-mesh sphere)
+         fbo     (create-fbo width height)]
+     (let [w @world-atom
+           tick-fn   (or tick-fn
+                           (if (= :particle (:phase0/mode w))
+                             pphase0/tick-world
+                             (orbital/orbital-system 6.674e-11 0.5 0.5)))
+           bodies-fn (or bodies-fn
+                         (if (= :particle (:phase0/mode w))
+                           particle-phase0-bodies-from-world
+                           bodies-from-world))
+           w (swap! world-atom tick-fn)
+           camera  (if (= :particle (:phase0/mode w)) (make-camera 35.0) (make-camera))
+           bodies (bodies-fn w)]
+       (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
+       (render-scene {:body-program body-program :particle-program particle-program}
+                     mesh camera width height bodies 0.0))
+     (GL11/glFlush)
+     (let [pixels  (read-pixels width height)
+           flipped (flip-rgba-vertical pixels width height)]
+       (STBImageWrite/stbi_write_png path width height 4 flipped (* width 4)))
+     (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)
+     (GLFW/glfwDestroyWindow window)
+     (GLFW/glfwTerminate)
+     (GLFW/glfwSetErrorCallback nil)
+     path)))
 
 (defn run-window [world-atom]
   (println "Initializing GLFW...")
@@ -394,7 +625,8 @@
         window (create-window width height "Gates of Truth — 3D View")
         camera (atom (make-camera))
         keys   (atom {})
-        program (create-program)
+        body-program     (create-program)
+        particle-program (create-particle-program)
         sphere (make-sphere-mesh 2)
         mesh   (upload-mesh sphere)]
     (println "Window created, entering render loop...")
@@ -405,7 +637,8 @@
         ;; Simulate one tick per frame
         (swap! world-atom (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
         (let [bodies (bodies-from-world @world-atom)]
-          (render-bodies program mesh @camera width height bodies))
+          (render-scene {:body-program body-program :particle-program particle-program}
+                        mesh @camera width height bodies 0.0))
         (GLFW/glfwSwapBuffers window)
         (Thread/sleep 16)
         (recur)))
