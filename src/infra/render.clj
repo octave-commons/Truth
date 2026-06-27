@@ -1509,7 +1509,10 @@
                          temp  (ecs/get-component world eid c/temperature)
                          rphys (double (or (ecs/get-component world eid c/radius) render-radius-ref))]
                      {:p   [(/ (double x) scale) (/ (double y) scale) (/ (double z) scale)]
-                      :h   (max 0.5 (* 2.2 (phys->render-radius rphys)))
+                      ;; VISUAL smoothing: deliberately wider than the physical SPH
+                      ;; h so adjacent parcels' footprints overlap into a continuous
+                      ;; medium (≳ inter-parcel spacing) instead of discrete blobs.
+                      :h   (max 1.5 (* 4.0 (phys->render-radius rphys)))
                       :col (temp-color temp)
                       :dens (max 0.0 (nebula-density-norm rho))})))))
        vec))
@@ -1626,9 +1629,9 @@
       (GL20/glUniform1f (loc "tanHalfFov") (float thf))
       (GL20/glUniform1f (loc "aspect") (float aspect))
       (set3 "boxMin" box-min) (set3 "boxMax" box-max)
-      (GL20/glUniform1f (loc "kappa") (float 6.0))
-      (GL20/glUniform1f (loc "emissionScale") (float 0.9))
-      (GL20/glUniform1f (loc "scatterScale") (float 1.6))
+      (GL20/glUniform1f (loc "kappa") (float 1.2))
+      (GL20/glUniform1f (loc "emissionScale") (float 1.1))
+      (GL20/glUniform1f (loc "scatterScale") (float 3.8))
       (GL20/glUniform1f (loc "jitter") (float 1.0))
       (GL20/glUniform1i (loc "numLights") (int (count lights)))
       (dotimes [i (count lights)]
@@ -1647,6 +1650,19 @@
       (GL30/glBindVertexArray 0)
       (GL11/glDepthMask true)
       (GL11/glBindTexture GL12/GL_TEXTURE_3D 0))))
+
+(defn frame-volume
+  "Build the per-frame volume map (3D texture + lights) for the ray-march pass
+   from the live world, or nil when there is no gas (callers then fall back to the
+   sprite fog). The caller MUST `delete-volume` the result after rendering, since
+   it owns a GPU texture allocated this frame."
+  [world program res]
+  (when program
+    (when-let [vt (build-volume-texture world phase0-view-scale (int (or res 96)))]
+      (assoc vt :program program :lights (volume-lights world phase0-view-scale)))))
+
+(defn delete-volume [volume]
+  (when (:tex volume) (GL11/glDeleteTextures (int (:tex volume)))))
 
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
@@ -1843,17 +1859,13 @@
            bodies (bodies-fn w)
            hud      (when phase0? (hud-rects-from-world w))
            hud-text (when phase0? (hud-text-from-world w))
-           volume   (when volume-program
-                      (when-let [vt (build-volume-texture w phase0-view-scale
-                                                          (int (or volume-res 96)))]
-                        (assoc vt :program volume-program
-                                  :lights (volume-lights w phase0-view-scale))))]
+           volume   (frame-volume w volume-program (or volume-res 96))]
        (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
        (render-scene {:body-program body-program :particle-program particle-program
                       :line-program line-program :hud-program hud-program
                       :hud hud :hud-text hud-text :volume volume}
                      mesh camera width height bodies 0.0)
-       (when (:tex volume) (GL11/glDeleteTextures (int (:tex volume)))))
+       (delete-volume volume))
      (GL11/glFlush)
      (let [pixels  (read-pixels width height)
            flipped (flip-rgba-vertical pixels width height)]

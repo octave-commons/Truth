@@ -60,6 +60,9 @@
                (nil? hud-program)
                (assoc :hud-program (render/create-hud-program))
 
+               (and (:volumetric? cfg) (nil? (:volume-program cfg)))
+               (assoc :volume-program (render/create-volume-program))
+
                (or (nil? mesh)
                    (not= subdivisions requested-subdivisions))
                (assoc :mesh (render/upload-mesh (render/make-sphere-mesh subdivisions))
@@ -130,17 +133,25 @@
           fb-w   (max 1 (aget wbuf 0))
           fb-h   (max 1 (aget hbuf 0))]
       (swap! camera-atom render/update-camera-for-world @world-atom (:camera-settings cfg (render/default-camera-settings)))
-      (render/render-scene {:body-program (:body-program cfg)
-                            :particle-program (:particle-program cfg)
-                            :line-program (:line-program cfg)
-                            :hud-program (:hud-program cfg)
-                            :hud (render/hud-rects-from-world @world-atom)
-                            :hud-text (render/hud-text-from-world @world-atom)}
-                           (:mesh cfg)
-                           @camera-atom
-                           fb-w fb-h
-                           bodies
-                           @time-atom)))
+      ;; Per-frame volumetric fog: bake the gas field into a 3D texture and ray-
+      ;; march it (when enabled and there is gas). nil → render-scene falls back
+      ;; to the sprite fog. The texture is owned by this frame, so delete it after.
+      (let [volume (when (:volumetric? cfg)
+                     (render/frame-volume @world-atom (:volume-program cfg)
+                                          (:volume-res cfg 80)))]
+        (render/render-scene {:body-program (:body-program cfg)
+                              :particle-program (:particle-program cfg)
+                              :line-program (:line-program cfg)
+                              :hud-program (:hud-program cfg)
+                              :hud (render/hud-rects-from-world @world-atom)
+                              :hud-text (render/hud-text-from-world @world-atom)
+                              :volume volume}
+                             (:mesh cfg)
+                             @camera-atom
+                             fb-w fb-h
+                             bodies
+                             @time-atom)
+        (render/delete-volume volume))))
   (handle-screenshot-request world-atom config-atom)
   (GLFW/glfwSwapBuffers window)
   (Thread/sleep 16)
@@ -183,10 +194,14 @@
                                        :body-program nil
                                        :particle-program nil
                                        :line-program nil
+                                       :volume-program nil
+                                       ;; volumetric ray-marched fog is the default
+                                       ;; look; set :volumetric? false for sprites
+                                       :volumetric? true
                                        :mesh nil
                                        :subdivisions 3}
                                       (select-keys opts [:width :height :subdivisions
-                                                         :tick-fn :bodies-fn
+                                                         :tick-fn :bodies-fn :volumetric? :volume-res
                                                          :sim-frame-interval :on-step])))
           stop-atom      (atom false)
           thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
@@ -221,9 +236,10 @@
   (when-let [config-atom (:config @service-state)]
     (swap! config-atom
            (fn [cfg]
-             (doseq [p [:body-program :particle-program :line-program :hud-program]]
+             (doseq [p [:body-program :particle-program :line-program :hud-program :volume-program]]
                (delete-program (get cfg p)))
-             (assoc cfg :body-program nil :particle-program nil :line-program nil :hud-program nil)))))
+             (assoc cfg :body-program nil :particle-program nil :line-program nil
+                        :hud-program nil :volume-program nil)))))
 
 (defn reload-mesh!
   "Change the sphere subdivision level used for bodies."

@@ -1,19 +1,20 @@
 (Π-state
   (repo    octave-commons/Truth)
   (branch  main)
-  (status  :dirty-owned)
-  (actor-session "f7bce7b8-e353-4f2a-8ea8-4f6a0eb202c3")
-  (timestamp "2026-06-27T05:02:53Z")
-  (previous-head "dce60dc6c2b72aeccc5fe0399a8e209dad1754e1")
-  (tag     "Π-2026.06.27.1")
-  (tests   "clojure -M:test => 189 tests, 3516 assertions, 0 failures, 0 errors")
+  (status  :verified-with-failures)
+  (actor-session "3f8dc57d-370f-4df3-bc51-709f39e89640")
+  (timestamp "2026-06-27T05:32:53Z")
+  (previous-head "b460dc14bfd3a49c8b7bd016d7eba4729dc26fe3")
+  (tag     "Π-2026.06.27.2")
+  (tests   "clojure -M:test => 189 tests, 3516 assertions, 4 failures, 0 errors")
   (owned-modified
-    ["docs/notes/2026.06.26-authentic-phase0-formation-physics.md"
-     "src/domain/phase0.clj"
+    [".ημ/Π_LAST.md"
+     ".ημ/Π_STATE.sexp"
      "src/domain/stellar.clj"
-     "src/infra/render.clj"
-     "test/domain/phase0_test.clj"])
-  (owned-added [])
+     "src/infra/dev/window.clj"
+     "src/infra/render.clj"])
+  (owned-added
+    ["docs/notes/2026.06.27.00.24.01.md"])
   (owned-deleted [])
   (manifest
     [".ημ/Π_LAST.md"
@@ -48,6 +49,7 @@
      "docs/notes/2026.06.26.14.15.03.md"
      "docs/notes/2026.06.26-authentic-phase0-formation-physics.md"
      "docs/notes/2026.06.26-ecs-double-buffer-single-writer-spec.md"
+     "docs/notes/2026.06.27.00.24.01.md"
      "docs/notes/architecture-exploration-001-the-simulation-is-moving-too-fast-for-wh.md"
      "docs/notes/architecture-exploration-002-text-rendering-is-the-key-gap-the-hud-on.md"
      "docs/notes/architecture-exploration-003-leapfrog-symplectic-tier-quantized-dt-ch.md"
@@ -82,7 +84,7 @@
      "docs/notes/formation-rendering-investigation-006-now-i-understand-the-playerobserver-mode.md"
      "docs/notes/index.md"
      "docs/notes/phase-0-001-docsdesignstruth-phase-0-stellar-nebula.md"
-     "docs/notes/phase-0-002-i-see-exactly-what-happened-you-have-two.md"
+     "docs/notes/phase-0-002-i-see-exactly-what-you-have-two.md"
      "docs/notes/phase-0-003-i-now-have-the-full-picture-of-both-path.md"
      "docs/notes/phase-0-004-the-engine-is-clean-and-well-factored-th.md"
      "docs/notes/phase-0-005-the-renderer-is-untracked-path-a-code-co.md"
