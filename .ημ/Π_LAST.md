@@ -1,33 +1,30 @@
 # Π Handoff — octave-commons/Truth
 
-**Date:** 2026-06-27T05:32:53Z  
+**Date:** 2026-06-27T06:10:01Z  
 **Branch:** main  
-**Tag:** Π-2026.06.27.2  
-**Tests:** `clojure -M:test` → 189 tests, 3516 assertions, **4 failures**, 0 errors  
+**Tag:** Π-2026.06.27.3  
+**Tests:** `clojure -M:test` → 189 tests, 3516 assertions, **0 failures**, 0 errors  
 **License:** GNU GPL v3 or later (standalone application, per ημΠ.dev.v1 §7)
 
 ## What this snapshot contains
 
-Phase 0 stellar-nebula iteration focusing on **authentic parallel formation physics** and **volumetric fog rendering**.
+Phase 0 stellar-nebula iteration: **Jeans-driven condensation fix** plus **persistent volumetric froxel cache**.
 
-- The `src/domain/stellar.clj`, `src/infra/dev/window.clj`, and `src/infra/render.clj` changes carry the accretion-zone fix and the new ray-marched volumetric fog prototype.
-- `docs/notes/2026.06.27.00.24.01.md` captures the design intent and validation claims from the working session.
+- `src/domain/stellar.clj` removes the sub-grid `condensation-thresholds` spread model and returns to an authentic density/Jeans-unstable trigger for nebula → debris/protostar transitions. This resolves the 4 test failures observed in the previous snapshot (`Π-2026.06.27.2`).
+- `src/infra/render.clj` introduces a persistent `volume-cache` atom for the 3D RGBA16F froxel texture and host float buffers, updating in place with `glTexSubImage3D` instead of allocating a new texture every frame.
 
 ### Changed
 
 | File | Change |
 |------|--------|
-| `src/domain/stellar.clj` | Accretion-zone and condensation physics for authentic parallel star formation. |
-| `src/infra/dev/window.clj` | Dev-window wiring for volumetric fog toggle and fallback. |
-| `src/infra/render.clj` | Ray-marched volumetric fog integration; sprite fallback when no gas. |
+| `src/domain/stellar.clj` | Revert condensation to Jeans-unstable + core-condensation-density or single-parcel mass gate; delete `condensation-spread`, `entity-hash01`, `condensation-thresholds`. |
+| `src/infra/render.clj` | Persistent froxel volume texture/buffer cache; in-place `glTexSubImage3D` updates; `delete-volume` becomes no-op for cached texture. |
 | `.ημ/Π_STATE.sexp` | Fork-tax manifest updated for this snapshot. |
 | `.ημ/Π_LAST.md` | This handoff file. |
 
 ### Added
 
-| File | Change |
-|------|--------|
-| `docs/notes/2026.06.27.00.24.01.md` | Session note: accretion-zone root cause, volumetric fog prototype, known depth-buffer follow-up. |
+None.
 
 ### Deleted
 
@@ -48,23 +45,16 @@ None.
 
 ## Verification notes
 
-- `clojure -M:test` completed with **4 failures, 0 errors** out of 189 tests / 3516 assertions.
-- Failing tests:
-  1. `domain.classifier-test/nebula-condenses-only-when-jeans-unstable-and-accreted`
-     - Jeans-unstable AND accreted past one parcel, sub-stellar ⇒ expected `:debris`, got `:nebula`.
-     - Jeans-unstable AND accreted to stellar-forming mass ⇒ expected `:protostar`, got `:nebula`.
-  2. `domain.phase0-test/test-accretion-zone-tracks-condensation`
-     - Condensing parcel is given a feeding zone ⇒ expected `some?`, got `nil`.
-     - Feeding zone equals `feeding-zone-factor × region radius` ⇒ expected `(* stellar/feeding-zone-factor (:radius region))`, got `nil`.
-- These failures are in the same surface area as the recent formation-physics changes. The session note claims 189 tests passing; the actual run does **not** confirm that claim. Treat the note as design intent, not verified fact.
+- `clojure -M:test` completed with **0 failures, 0 errors** out of 189 tests / 3516 assertions.
+- All previous failures in `domain.classifier-test` and `domain.phase0-test` are resolved by the condensation trigger change.
 - No architecture invariant regressions detected by `test/architecture_test.clj`.
 
 ## Blockers
 
-None for the fork-tax snapshot itself. The 4 test failures are recorded as residual verification debt, not blockers.
+None.
 
 ## Actor session
 
 - **Actor:** fork-tax-actor
-- **Session:** `3f8dc57d-370f-4df3-bc51-709f39e89640`
-- **Previous HEAD:** `b460dc14bfd3a49c8b7bd016d7eba4729dc26fe3`
+- **Session:** `4d50f9b9-06a5-4761-b6fb-c386619dbf71`
+- **Previous HEAD:** `ea9128784955e4962a16e9454de440a406d17088`

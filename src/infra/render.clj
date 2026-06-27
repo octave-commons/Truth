@@ -1517,16 +1517,48 @@
                       :dens (max 0.0 (nebula-density-norm rho))})))))
        vec))
 
+;; Persistent froxel texture + scratch buffers, reused every frame. Reallocating
+;; an R³ RGBA16F texture and two R³ host arrays per frame is the dominant render
+;; cost once the scene is busy; we allocate once per resolution and update in
+;; place with glTexSubImage3D. GL is single-threaded, so a plain atom is safe.
+(defonce ^:private volume-cache (atom nil)) ; {:res R :tex id :data ^floats :buf FloatBuffer}
+
+(defn- volume-storage!
+  "Get-or-create the persistent 3D texture + host arrays for resolution `res`."
+  [res]
+  (let [R (int res) c @volume-cache]
+    (if (and c (= (:res c) R))
+      c
+      (let [tex  (GL11/glGenTextures)
+            n    (* 4 R R R)
+            data (float-array n)
+            buf  (BufferUtils/createFloatBuffer n)]
+        (GL13/glActiveTexture GL13/GL_TEXTURE0)
+        (GL11/glBindTexture GL12/GL_TEXTURE_3D tex)
+        (GL12/glTexImage3D GL12/GL_TEXTURE_3D 0 GL30/GL_RGBA16F R R R 0
+                           GL11/GL_RGBA GL11/GL_FLOAT (BufferUtils/createFloatBuffer n))
+        (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_MIN_FILTER GL11/GL_LINEAR)
+        (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_MAG_FILTER GL11/GL_LINEAR)
+        (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_WRAP_S GL12/GL_CLAMP_TO_EDGE)
+        (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_WRAP_T GL12/GL_CLAMP_TO_EDGE)
+        (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL12/GL_TEXTURE_WRAP_R GL12/GL_CLAMP_TO_EDGE)
+        (GL11/glBindTexture GL12/GL_TEXTURE_3D 0)
+        (reset! volume-cache {:res R :tex tex :data data :buf buf})))))
+
 (defn build-volume-texture
-  "Bake the gas field into an RxRxR RGBA16F 3D texture (rgb=emission, a=density)
-   covering the gas bounding box in render space. Returns {:tex :box-min :box-max}
-   or nil when there is no gas. Splats each SPH sample with a smooth radial kernel
-   — the same field the simulation integrates, sampled onto a grid the GPU can
-   trilinearly interpolate during the march."
+  "Bake the gas field into the persistent RxRxR RGBA16F 3D texture (rgb=emission,
+   a=density) covering the gas bounding box in render space. Returns
+   {:tex :box-min :box-max} or nil when there is no gas. Splats each SPH sample
+   with a smooth radial kernel — the same field the simulation integrates, sampled
+   onto a grid the GPU trilinearly interpolates during the march. Updates the
+   texture in place (glTexSubImage3D) — no per-frame allocation."
   [world scale res]
   (let [pts (gas-points world scale)]
     (when (seq pts)
       (let [R    (int res)
+            store (volume-storage! R)
+            ^floats data (:data store)
+            _    (java.util.Arrays/fill data (float 0.0))
             ;; bounding box over p ± h, padded
             ext  (reduce (fn [[mn mx] {:keys [p h]}]
                            [(mapv #(min %1 (- %2 h)) mn p)
@@ -1538,7 +1570,6 @@
             bmx  (mapv + bmx0 pad)
             span (mapv - bmx bmn)
             cs   (mapv #(/ (double %) R) span)
-            data (float-array (* 4 R R R))
             idx  (fn [x y z] (* 4 (+ x (* R (+ y (* R z))))))]
         (doseq [{:keys [p h col dens]} pts]
           (when (pos? dens)
@@ -1578,19 +1609,14 @@
                                 (recur (inc x)))))
                           (recur (inc y)))))
                     (recur (inc z))))))))
-        (let [tex (GL11/glGenTextures)
-              buf (doto (BufferUtils/createFloatBuffer (alength data)) (.put data) (.flip))]
+        (let [^java.nio.FloatBuffer buf (:buf store)]
+          (.clear buf) (.put buf data) (.flip buf)
           (GL13/glActiveTexture GL13/GL_TEXTURE0)
-          (GL11/glBindTexture GL12/GL_TEXTURE_3D tex)
-          (GL12/glTexImage3D GL12/GL_TEXTURE_3D 0 GL30/GL_RGBA16F R R R 0
-                             GL11/GL_RGBA GL11/GL_FLOAT buf)
-          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_MIN_FILTER GL11/GL_LINEAR)
-          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_MAG_FILTER GL11/GL_LINEAR)
-          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_WRAP_S GL12/GL_CLAMP_TO_EDGE)
-          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_WRAP_T GL12/GL_CLAMP_TO_EDGE)
-          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL12/GL_TEXTURE_WRAP_R GL12/GL_CLAMP_TO_EDGE)
+          (GL11/glBindTexture GL12/GL_TEXTURE_3D (:tex store))
+          (GL12/glTexSubImage3D GL12/GL_TEXTURE_3D 0 0 0 0 R R R
+                                GL11/GL_RGBA GL11/GL_FLOAT buf)
           (GL11/glBindTexture GL12/GL_TEXTURE_3D 0)
-          {:tex tex :box-min bmn :box-max bmx})))))
+          {:tex (:tex store) :box-min bmn :box-max bmx})))))
 
 (defn volume-lights
   "Up to 8 brightest hot bodies (stars + hot cores) as point lights in render
@@ -1661,8 +1687,10 @@
     (when-let [vt (build-volume-texture world phase0-view-scale (int (or res 96)))]
       (assoc vt :program program :lights (volume-lights world phase0-view-scale)))))
 
-(defn delete-volume [volume]
-  (when (:tex volume) (GL11/glDeleteTextures (int (:tex volume)))))
+(defn delete-volume [_volume]
+  ;; The froxel texture is persistent (reused across frames via volume-cache);
+  ;; nothing to free per frame. Kept for call-site symmetry.
+  nil)
 
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.

@@ -547,55 +547,6 @@
        (<= (double radius) (* 1.05 (law/main-sequence-radius mass)))
        (< (double temperature) law/fusion-temp-threshold)))
 
-(def ^:const condensation-spread
-  "Decades of spread in the per-parcel condensation-density threshold — a sub-grid
-   model of the density contrast the equal-mass parcels cannot resolve. The toy
-   cloud collapses almost perfectly homogeneously (every parcel reaches the same
-   SPH density at the same tick), so a single fixed threshold flips the WHOLE cloud
-   to solid bodies in one step — no fog, a sudden swarm. Real molecular clouds are
-   turbulent and centrally concentrated and collapse INSIDE-OUT. 0 reproduces the
-   all-at-once artifact; larger staggers condensation over more of the collapse." 2.5)
-
-(defn- entity-hash01
-  "Deterministic [0,1) jitter from an entity id — stable per entity, so a parcel's
-   sub-grid threshold does not shimmer between ticks."
-  [eid]
-  (/ (double (mod (* (inc (long eid)) 2654435761) 1000003)) 1000003.0))
-
-(defn condensation-thresholds
-  "Per :nebula parcel, the density at which it condenses out of the gas — a SUB-GRID
-   model of unresolved density structure that makes condensation INSIDE-OUT instead
-   of cloud-wide. A parcel's threshold is lowest near the cloud's dense centre and
-   rises toward the diffuse edge (plus a deterministic per-parcel jitter for
-   turbulent lumpiness), spanning `condensation-spread` decades above
-   `core-condensation-density`. As the (≈uniform) density climbs in collapse it
-   sweeps this distribution top-down, condensing the centre first and the envelope
-   last — so gas and its fog persist while a core grows and accretes the rest.
-   Returns {eid threshold-density}."
-  [world]
-  (let [eids (->> (ecs/entities-with world c/matter-state c/position c/mass)
-                  (filterv #(= :nebula (ecs/get-component world % c/matter-state))))]
-    (if (empty? eids)
-      {}
-      (let [recs (mapv (fn [eid] [eid (ecs/get-component world eid c/position)
-                                  (double (or (ecs/get-component world eid c/mass) 0.0))]) eids)
-            [sx sy sz sm] (reduce (fn [[ax ay az am] [_ [x y z] m]]
-                                    [(+ ax (* (double x) m)) (+ ay (* (double y) m))
-                                     (+ az (* (double z) m)) (+ am m)])
-                                  [0.0 0.0 0.0 0.0] recs)
-            com  (if (pos? sm) [(/ sx sm) (/ sy sm) (/ sz sm)] [0.0 0.0 0.0])
-            dists (mapv (fn [[eid pos _]] [eid (sp/dist pos com)]) recs)
-            rmax (reduce max 1.0 (map second dists))]
-        (into {}
-          (map (fn [[eid d]]
-                 (let [r    (/ (double d) rmax)          ; 0 centre … 1 edge
-                       jit  (entity-hash01 eid)
-                       ;; susceptibility: high (→ low threshold) at the centre
-                       s    (max 0.0 (min 1.0 (- 1.0 (* 0.75 r) (* 0.25 jit))))
-                       expo (* condensation-spread (- 1.0 s))]
-                   [eid (* core-condensation-density (Math/pow 10.0 expo))])))
-          dists)))))
-
 (defn classify-next-state
   "Pure transition function for one body's matter-state, given its physical
    region and the cloud's fixed gas-particle mass. Authentic formation beats:
@@ -609,7 +560,7 @@
      :star / :brown-dwarf                                    terminal
      :planet                                                 owned by the disk
                                                              sub-grid (beat 6)"
-  [{:keys [matter-state mass radius density temperature cond-threshold] :as region} gas-particle-mass]
+  [{:keys [matter-state mass radius density temperature] :as region} gas-particle-mass]
   (let [m  (double (or mass 0.0))
         pm (double (or gas-particle-mass 0.0))]
     (case matter-state
@@ -628,14 +579,14 @@
 
                      :else :protostar)
       :debris      (if (>= m law/deuterium-burning-mass) :protostar :debris)
-      ;; :nebula (and any nil): diffuse gas condenses INSIDE-OUT when its density
-      ;; crosses its per-parcel sub-grid threshold (`cond-threshold`, lowest at the
-      ;; dense centre, rising to the edge — see `condensation-thresholds`). The
-      ;; rising collapse density sweeps the cloud from the centre out instead of
-      ;; flipping it all at once; falls back to the bare core-condensation density
-      ;; when no threshold is supplied.
-      (if (>= (double (or density 0.0))
-              (double (or cond-threshold core-condensation-density)))
+      ;; :nebula (and any nil): diffuse gas condenses when it is Jeans-unstable
+      ;; AND has either reached the hydrostatic-core density (gravity has
+      ;; compressed it past the first-core threshold) OR accreted past a single
+      ;; gas parcel. Density-gated condensation is the authentic trigger and it
+      ;; also caps the SPH gas density (a condensed body uses material density).
+      (if (and (jeans-unstable? region)
+               (or (>= (double (or density 0.0)) core-condensation-density)
+                   (> m pm)))
         (if (>= m law/deuterium-burning-mass) :protostar :debris)
         (or matter-state :nebula)))))
 
@@ -649,13 +600,11 @@
    :writes #{c/matter-state}
    :run    (fn [world]
              (let [gas-mass (:phase0/gas-particle-mass world)
-                   thresh   (condensation-thresholds world)
                    eids     (ecs/entities-with world c/matter-state c/mass)]
                {c/matter-state
                 (into {}
                       (keep (fn [eid]
-                              (let [region (assoc (entity->region world eid)
-                                                  :cond-threshold (get thresh eid))
+                              (let [region (entity->region world eid)
                                     cur    (:matter-state region)
                                     nxt    (classify-next-state region gas-mass)]
                                 (when (not= cur nxt) [eid nxt]))))
@@ -709,13 +658,11 @@
    :run    (fn [world]
              (let [gas-mass (:phase0/gas-particle-mass world)
                    factor   (double (:phase0/feeding-zone-factor world feeding-zone-factor))
-                   thresh   (condensation-thresholds world)
                    eids     (ecs/entities-with world c/matter-state c/mass c/radius)]
                {c/accretion-radius
                 (into {}
                       (keep (fn [eid]
-                              (let [region (assoc (entity->region world eid)
-                                                  :cond-threshold (get thresh eid))
+                              (let [region (entity->region world eid)
                                     r      (double (or (:radius region) 0.0))]
                                 (when (and (= :nebula (:matter-state region))
                                            (pos? r)
