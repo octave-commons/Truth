@@ -2,16 +2,15 @@
   (repo    octave-commons/Truth)
   (branch  main)
   (status  :verified)
-  (actor-session "4d50f9b9-06a5-4761-b6fb-c386619dbf71")
-  (timestamp "2026-06-27T06:10:01Z")
-  (previous-head "ea9128784955e4962a16e9454de440a406d17088")
-  (tag     "Π-2026.06.27.3")
+  (actor-session "97a2d6bf-fc20-4ae6-a916-1ed502e3fb79")
+  (timestamp "2026-06-27T06:35:07Z")
+  (previous-head "ba0372386f73c817bde1b14dbbc4293838978aac")
+  (tag     "Π-2026.06.27.4")
   (tests   "clojure -M:test => 189 tests, 3516 assertions, 0 failures, 0 errors")
   (owned-modified
     [".ημ/Π_LAST.md"
      ".ημ/Π_STATE.sexp"
-     "src/domain/stellar.clj"
-     "src/infra/render.clj"])
+     "src/domain/phase0.clj"])
   (owned-added [])
   (owned-deleted [])
   (manifest

@@ -45,7 +45,9 @@
             [(* r (Math/sin ph) (Math/cos th))
              (* r (Math/sin ph) (Math/sin th))
              (* r (Math/cos ph))]))
-        jit (fn [] (* turb v-vir 0.3 (.nextGaussian rng)))]
+        ;; `turb` is now a direct fraction of the gravitational (circular) speed,
+        ;; so turbulent support is comparable to gravity rather than a tenth of it.
+        jit (fn [] (* turb v-vir (.nextGaussian rng)))]
     {:position    (sp/vec3 px py pz)
      :velocity    (sp/vec3 (+ (* (- omega) py) (jit)) ; solid-body spin about z
                            (+ (* omega px) (jit))
@@ -71,11 +73,14 @@
          ;; Render/visual radius for diffuse gas puffs; collision radius is kept
          ;; small so the cloud is transparent and many particles fit in the volume.
          prad   (* extent 0.004)
-         ;; A more diffuse cloud: same mass spread over a larger effective volume
-         ;; by lowering the virial speed used to set rotation/turbulence.
-         extent-factor 2.0
-         v-vir  (Math/sqrt (/ (* law/G total-mass) (* extent extent-factor)))
-         omega  (/ (* spin v-vir) (* extent extent-factor))
+         ;; Circular speed at the cloud edge, v_circ = √(G·M/R): the velocity scale
+         ;; that BALANCES self-gravity. Rotation (`spin`) and turbulence (`turb`)
+         ;; are set as fractions of it, so the cloud starts marginally bound
+         ;; (2·KE/|PE| ≈ 0.5) and collapses over MANY free-fall times — slowly
+         ;; flattening into a rotating disk as turbulent support decays — instead
+         ;; of the cold, near-instant free-fall (2·KE/|PE| ≈ 0.02) it did before.
+         v-vir  (Math/sqrt (/ (* law/G total-mass) extent))
+         omega  (/ (* spin v-vir) extent)
          seeds  (vec (repeatedly n-seeds
                        (fn [] (sp/vec3 (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
                                        (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
@@ -216,7 +221,7 @@
       ;;    fragment into planets instead of all draining onto the core.
       :or   {G law/G theta 0.5 dt 1e12 softening 5.0e14
              nebula-mass 4e30 nebula-radius 1.5e16 collapse-fraction 0.5
-             contraction-time 9.5e14 gas-count 1000 spin 0.85 turb 0.06}}]
+             contraction-time 9.5e14 gas-count 1000 spin 0.6 turb 0.15}}]
    (let [neb     (pacing-for 0.0 0.0)
          pmass   (/ (double nebula-mass) gas-count)
          base    (-> (ecs/empty-world)
