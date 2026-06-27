@@ -248,6 +248,7 @@
   "Project an entity's components into the plain map the pure physics fns expect."
   [world eid]
   {:id          eid
+   :position    (ecs/get-component world eid c/position)
    :mass        (ecs/get-component world eid c/mass)
    :radius      (ecs/get-component world eid c/radius)
    :temperature (ecs/get-component world eid c/temperature)
@@ -607,6 +608,66 @@
                                     cur    (:matter-state region)
                                     nxt    (classify-next-state region gas-mass)]
                                 (when (not= cur nxt) [eid nxt]))))
+                      eids)}))})
+
+(def ^:const feeding-zone-factor
+  "How many gas smoothing-lengths wide a freshly-condensed body's gravitational
+   feeding zone is. The toy resolution cannot resolve real gas accretion onto a
+   core, so a condensing body latches a capture radius this many times its gas
+   smoothing length and sweeps up neighbours by literal overlap (the merge
+   handler keeps the larger zone). Captured from the diffuse GAS radius at the
+   instant of condensation — before Structure's KH contraction shrinks the
+   photosphere — so the zone stays wide enough for a core to assemble.
+
+   The zone must span ~twice the initial inter-parcel spacing (≈ extent/N^(1/3))
+   so the first overdense body reaches SEVERAL neighbours and runs away, rather
+   than just touching its nearest one. At the condensation smoothing length
+   (≈0.1·0.004·extent) that is a factor of a few hundred. This constant is the
+   floor — validated to ignite the default ~10³-parcel production cloud (a star
+   by ~t=180) where sequential forms nothing at all; `create-world` raises it for
+   coarser (fewer-parcel) clouds via `resolution-feeding-zone-factor`. Below it
+   the cloud condenses into a sub-stellar debris/protostar swarm that fragments
+   instead of assembling a core (design §7c)." 600.0)
+
+(defn resolution-feeding-zone-factor
+  "Feeding-zone factor scaled to the cloud's resolution: a core must bridge the
+   initial inter-parcel spacing (≈ extent/N^(1/3)) to capture neighbours, and the
+   spacing/smoothing-length ratio grows as the parcel count shrinks. Returns the
+   `feeding-zone-factor` floor for the default kilo-parcel cloud and larger for
+   coarser clouds, so condensed bodies assemble a core at any resolution."
+  [gas-count]
+  (let [n (double (max 1 (or gas-count 1000)))]
+    (max feeding-zone-factor (/ 2.5e3 (Math/pow n (/ 1.0 3.0))))))
+
+(defn accretion-zone-system
+  "Double-buffer write-set system: SOLE writer of accretion-radius (the
+   gravitational feeding zone of a star-forming body). It latches the zone at the
+   exact instant of condensation by reusing the classifier's own decision:
+   for every diffuse :nebula parcel that `classify-next-state` will promote out of
+   the gas THIS tick, it writes a feeding zone of `feeding-zone-factor` × the
+   parcel's current gas smoothing radius. Both systems read the same frozen
+   snapshot and the same predicate, so the feeding zone and the matter-state flip
+   land on the same tick — closing the race in which a parcel condensed (via the
+   density gate) one tick before the old jeans-collapse gate (Jeans length with γ)
+   would have fired, leaving it resolved but with no feeding zone, hence never
+   collidable and unable to assemble a core. Bodies already resolved keep their
+   zone (it is never removed and never shrinks)."
+  []
+  {:id     :jeans-collapse
+   :writes #{c/accretion-radius}
+   :run    (fn [world]
+             (let [gas-mass (:phase0/gas-particle-mass world)
+                   factor   (double (:phase0/feeding-zone-factor world feeding-zone-factor))
+                   eids     (ecs/entities-with world c/matter-state c/mass c/radius)]
+               {c/accretion-radius
+                (into {}
+                      (keep (fn [eid]
+                              (let [region (entity->region world eid)
+                                    r      (double (or (:radius region) 0.0))]
+                                (when (and (= :nebula (:matter-state region))
+                                           (pos? r)
+                                           (not= :nebula (classify-next-state region gas-mass)))
+                                  [eid (* factor r)]))))
                       eids)}))})
 
 ;; --- The Structure owner: shape + compactness (double-buffer step 7b) -------

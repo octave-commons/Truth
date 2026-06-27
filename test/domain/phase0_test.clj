@@ -197,8 +197,11 @@
     ;; quick contraction (τ small), so a star ignites within a bounded tick
     ;; budget. The production defaults deliberately stretch this to ~tens of Myr
     ;; (see `create-world`); this test pins the EMERGENCE, not the pace.
-    (let [w0 (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
-                                   :contraction-time 2e12 :spin 0.55})
+    (let [w0 (-> (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
+                                       :contraction-time 2e12 :spin 0.55})
+                 ;; pin the legacy sequential pipeline (parallel is now the
+                 ;; create-world default; test-full-simulation-parallel covers it)
+                 (assoc :phase0/parallel? false))
           ;; run until a star ignites from the gas or we exhaust the budget
           final (loop [w w0 i 0]
                   (if (or (> i 400) (:star? (phase0/system-summary w))
@@ -213,6 +216,59 @@
       (is (not= :initializing (:phase0/phase final)))
       (let [coh (:coherence (player/get-observer final))]
         (is (<= 0.0 coh 1.0))))))
+
+(deftest test-full-simulation-parallel
+  (testing "The authentic double-buffer path also forms a star by accretion"
+    ;; Go-live regression (design note §7c): on the parallel single-writer path,
+    ;; density-gated condensation flips parcels out of the gas, and the
+    ;; accretion-zone owner latches each condensing body a feeding zone on the
+    ;; SAME tick — so condensed bodies are collidable and a core can assemble.
+    ;; Before the feeding-zone fix the parcels condensed individually and stalled
+    ;; as a swarm of sub-stellar protostars (no body was ever collidable).
+    (let [w0    (-> (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
+                                          :contraction-time 2e12 :spin 0.55})
+                    (assoc :phase0/parallel? true))
+          final (loop [w w0 i 0]
+                  (if (or (> i 400) (:star? (phase0/system-summary w))
+                          (not (:phase0/active w)))
+                    w
+                    (recur (phase0/tick-world w) (inc i))))
+          summ  (phase0/system-summary final)]
+      (is (:star? summ) "a star should ignite on the parallel path too")
+      (is (> (:resolved-count summ) 1)
+          "bodies should condense and assemble rather than stall as gas")
+      ;; the fix's mechanism: condensed bodies carry a feeding zone
+      (is (seq (ecs/entities-with final c/accretion-radius))
+          "condensed bodies must latch a gravitational feeding zone"))))
+
+(deftest test-accretion-zone-tracks-condensation
+  (testing "The feeding zone is latched exactly when the classifier condenses"
+    ;; A dense, Jeans-unstable, star-forming parcel: the classifier promotes it
+    ;; out of :nebula, and accretion-zone-system must write its feeding zone on
+    ;; the same frozen snapshot — keyed off the same classify-next-state decision.
+    (let [gas-mass law/deuterium-burning-mass
+          ;; a fat, dense gas parcel above the deuterium limit, larger than its
+          ;; Jeans length so it is unstable and will condense to a protostar
+          region {:matter-state :nebula
+                  :mass    (* 4.0 law/deuterium-burning-mass)
+                  :radius  1.0e14
+                  :density (* 10.0 stellar/core-condensation-density)
+                  :temperature 12.0}]
+      (is (not= :nebula (stellar/classify-next-state region gas-mass))
+          "precondition: this parcel condenses")
+      (let [base (-> (phase0/create-world {:gas-count 4})
+                     (assoc :phase0/gas-particle-mass gas-mass
+                            :phase0/feeding-zone-factor stellar/feeding-zone-factor))
+            [w eid] (ecs/spawn base)
+            w  (ecs/put-components w eid
+                 {c/matter-state :nebula c/mass (:mass region)
+                  c/radius (:radius region) c/density (:density region)
+                  c/temperature (:temperature region) c/position [0.0 0.0 0.0]})
+            ws ((:run (stellar/accretion-zone-system)) w)
+            zone (get-in ws [c/accretion-radius eid])]
+        (is (some? zone) "a condensing parcel is given a feeding zone")
+        (is (= zone (* stellar/feeding-zone-factor (:radius region)))
+            "the zone is feeding-zone-factor × the GAS smoothing radius")))))
 
 ;; --- Endings ----------------------------------------------------------------
 

@@ -1,74 +1,57 @@
 # Π Handoff — octave-commons/Truth
 
-**Date:** 2026-06-26  
+**Date:** 2026-06-27T05:02:53Z  
 **Branch:** main  
-**Tag:** Π-2026.06.26.3  
-**Tests:** `clj -M:test` → 187 tests, 3510 assertions, 0 failures, 0 errors  
+**Tag:** Π-2026.06.27.1  
+**Tests:** `clojure -M:test` → 189 tests, 3516 assertions, 0 failures, 0 errors  
 **License:** GNU GPL v3 or later (standalone application, per ημΠ.dev.v1 §7)
 
 ## What this snapshot contains
 
-Deepens the **Phase 0 stellar nebula** with Jeans-driven gravitational formation, enhanced hydrodynamics, SPH density fields, ECS tick pipeline, parallel integration tests, and an expanded renderer with debug overlays. The single ECS substrate invariant remains enforced by `test/architecture_test.clj`.
-
-### Major additions
-
-- **Jeans-driven formation** (`docs/specs/phase0-jeans-driven-formation.md`) — Spec for gravitational instability criterion driving protostar/protoplanet formation from the nebula.
-- **ECS tick pipeline** (`src/domain/ecs/tick.clj`, `test/domain/ecs/tick_test.clj`) — Deterministic tick loop with double-buffer/single-writer guarantees.
-- **ECS registry** (`src/domain/ecs/registry.clj`) — Component registry for dynamic system composition.
-- **Parallel integration tests** (`test/domain/ecs/parallel_integration_test.clj`) — Validates concurrent ECS access safety.
-- **Classifier, EOS, field, force accumulator, structure tests** — Comprehensive test coverage for simulation subsystems.
-- **Orbital split tests** (`test/domain/orbital/split_test.clj`) — Validates orbital mechanics decomposition.
+Continued refinement of **Phase 0 stellar nebula** physics and rendering, with a focus on authentic formation physics, stellar behavior, and renderer robustness. The single ECS substrate invariant remains enforced by `test/architecture_test.clj`.
 
 ### Changed
 
 | File | Change |
 |------|--------|
-| `README.md` | Project overview updates. |
-| `docs/specs/phase0-jeans-driven-formation.md` | Refined Jeans instability spec with formation criteria. |
-| `docs/specs/phase0-sph-density-field.md` | SPH density field spec refinements. |
-| `src/domain/ecs/components.clj` | New ECS components for formation physics. |
-| `src/domain/em.clj` | Electrodynamics extended with field coupling. |
-| `src/domain/hydro.clj` | Hydrodynamics with enhanced SPH density/pressure. |
-| `src/domain/orbital/system.clj` | Orbital system integration refinements. |
-| `src/domain/phase0.clj` | Phase 0 tick pipeline integrates formation, hydro, stellar, EM. |
-| `src/domain/physics/collision.clj` | Collision response with formation-aware handling. |
-| `src/domain/stellar.clj` | Stellar evolution extended with formation triggers. |
-| `src/infra/render.clj` | Renderer extended with debug overlays and regime visualization. |
-| `src/law/stellar.clj` | Malli schemas for stellar/formation domains. |
-| `test/architecture_test.clj` | Architecture invariant enforcement updated. |
-| `test/domain/hydro_test.clj` | Extended hydro test suite. |
-| `test/domain/phase0_test.clj` | Phase 0 pipeline tests. |
-| `test/domain/physics/collision_test.clj` | Collision test coverage expanded. |
-| `test/domain/stellar_test.clj` | Stellar evolution test suite. |
-| `test/infra/render_test.clj` | Renderer test additions. |
-| `docs/notes/2026.06.26-ecs-double-buffer-single-writer-spec.md` | Design note for ECS tick guarantees. |
-| `docs/notes/2026.06.26-authentic-phase0-formation-physics.md` | Design note for formation physics. |
-| `.ημ/PRINCIPLE.edn` | Contract principle artifact added to repo. |
+| `docs/notes/2026.06.26-authentic-phase0-formation-physics.md` | Formation-physics design note expanded (67 lines changed). |
+| `src/domain/phase0.clj` | Phase 0 tick pipeline and formation coupling refined. |
+| `src/domain/stellar.clj` | Stellar evolution and formation triggers extended. |
+| `src/infra/render.clj` | Renderer expanded with debug overlays and regime visualization. |
+| `test/domain/phase0_test.clj` | Phase 0 pipeline contract tests expanded. |
 
-### New untracked files absorbed
+### Added
 
-- `src/domain/ecs/registry.clj` — Component registry.
-- `src/domain/ecs/tick.clj` — ECS tick pipeline.
-- `test/domain/ecs/tick_test.clj` — Tick pipeline tests.
-- `test/domain/ecs/parallel_integration_test.clj` — Parallel safety tests.
-- `test/domain/classifier_test.clj`, `eos_test.clj`, `field_test.clj`, `force_accumulator_test.clj`, `structure_test.clj` — Additional simulation tests.
-- `test/domain/orbital/split_test.clj` — Orbital split tests.
+None in this tax; only modifications to existing owned paths.
 
 ### Deleted
 
 None.
 
+### Concurrent / unowned dirt (left unstaged)
+
+- `.eta-mu` — actor-system symlink; runtime path.
+- `.ημ/actors/` — actor mailboxes/sessions/outboxes for other Truth actors (truth-code-reviewer, truth-contradiction-auditor, truth-notes-lore-archaeologist); not owned by this fork-tax session.
+
 ### Residual / ignored
 
 - `.agents/` — local agent session state.
 - `.opencode/` — local OpenCode tooling state.
-- `docs/notes/.#2026.06.26-ecs-double-buffer-single-writer-spec.md` — Emacs lockfile (transient).
+- `.claude/` — local Claude session state.
+- `.cpcache/`, `.clj-kondo/.cache/`, `.lsp/` — Clojure tooling caches.
+- `.nrepl-port`, `hs_err_pid*.log`, `receipts.log` — runtime/transient artifacts.
 
 ## Verification notes
 
-- `clj -M:test` passes: 187 tests, 3510 assertions, 0 failures, 0 errors.
-- All new test namespaces load and pass.
+- `clojure -M:test` passes: 189 tests, 3516 assertions, 0 failures, 0 errors.
+- No architecture invariant regressions.
 
 ## Blockers
 
 None.
+
+## Actor session
+
+- **Actor:** fork-tax-actor
+- **Session:** `f7bce7b8-e353-4f2a-8ea8-4f6a0eb202c3`
+- **Previous HEAD:** `dce60dc6c2b72aeccc5fe0399a8e209dad1754e1`

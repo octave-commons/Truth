@@ -11,7 +11,7 @@
     [shape.spatial :as sp])
   (:import
     (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback)
-    (org.lwjgl.opengl GL GL11 GL15 GL20 GL30)
+    (org.lwjgl.opengl GL GL11 GL12 GL13 GL15 GL20 GL30)
     (org.lwjgl.stb STBImageWrite STBEasyFont)
     (org.lwjgl.system MemoryUtil)
     (org.lwjgl BufferUtils)
@@ -1378,11 +1378,281 @@
            (reset! phase0-bodies-cache {ckey bodies})
            bodies)))))
 
+;; ---------------------------------------------------------------------------
+;; Volumetric fog — ray-marched participating medium (design: docs fog notes)
+;;
+;; The SPH particle field IS a continuous density field ρ(x)=Σ m_i W(|x−x_i|,h_i).
+;; Each frame we bake that field (plus a temperature-tinted emission colour) into
+;; a 3D froxel texture covering the gas, then ray-march it on a fullscreen quad:
+;; for every pixel we integrate the volume-rendering equation along the view ray
+;;   C = ∫ T(t)·σ·(L_emit + L_scatter) dt,  T(t)=exp(−∫σ ds)  (Beer–Lambert)
+;; front-to-back. Hot cores/stars are point lights whose in-scattered light is
+;; attenuated by a short shadow march through the same texture — so light from
+;; the stars and hot gas visibly fills and shafts through the cloud.
+;; ---------------------------------------------------------------------------
+
+(def ^:private volume-vertex-shader
+  "#version 330 core
+   layout(location=0) in vec2 aPos;
+   out vec2 vNdc;
+   void main(){ vNdc = aPos; gl_Position = vec4(aPos, 0.0, 1.0); }")
+
+(def ^:private volume-fragment-shader
+  "#version 330 core
+   in vec2 vNdc;
+   out vec4 FragColor;
+
+   uniform vec3  camPos, camRight, camUp, camFwd;
+   uniform float tanHalfFov, aspect;
+   uniform vec3  boxMin, boxMax;
+   uniform sampler3D volume;          // rgb = emission (density-weighted), a = density
+   uniform float kappa;               // extinction per density unit per render-unit
+   uniform float emissionScale;
+   uniform float scatterScale;
+   uniform float jitter;              // dither amount to hide step banding
+   uniform int   numLights;
+   uniform vec3  lightPos[8];
+   uniform vec3  lightColor[8];
+   uniform float lightIntensity[8];
+
+   float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)))*43758.5453); }
+
+   bool intersectBox(vec3 ro, vec3 rd, out float t0, out float t1){
+     vec3 inv = 1.0/rd;
+     vec3 a = (boxMin-ro)*inv, b = (boxMax-ro)*inv;
+     vec3 tmn = min(a,b), tmx = max(a,b);
+     t0 = max(max(tmn.x,tmn.y),tmn.z);
+     t1 = min(min(tmx.x,tmx.y),tmx.z);
+     return t1 > max(t0,0.0);
+   }
+   vec3 uvw(vec3 p){ return (p-boxMin)/(boxMax-boxMin); }
+
+   void main(){
+     vec3 ro = camPos;
+     vec3 rd = normalize(camFwd
+                 + vNdc.x*aspect*tanHalfFov*camRight
+                 + vNdc.y*tanHalfFov*camUp);
+     float t0,t1;
+     if(!intersectBox(ro,rd,t0,t1)){ discard; }
+     t0 = max(t0,0.0);
+     float span = t1 - t0;
+     int steps = clamp(int(span/(length(boxMax-boxMin)/96.0)), 16, 192);
+     float dt = span/float(steps);
+     float j = jitter*hash(gl_FragCoord.xy);
+
+     float T = 1.0;
+     vec3  C = vec3(0.0);
+     for(int i=0;i<steps;i++){
+       float t = t0 + (float(i)+j)*dt;
+       vec3 p = ro + rd*t;
+       vec4 s = texture(volume, uvw(p));
+       float dens = s.a;
+       if(dens > 0.0008){
+         float sigma = kappa*dens;
+         float a = 1.0 - exp(-sigma*dt);
+         vec3 scat = vec3(0.0);
+         for(int l=0;l<numLights;l++){
+           vec3 d = lightPos[l]-p;
+           float r2 = dot(d,d)+0.02;
+           // short shadow march toward the light: god-ray occlusion
+           float Ts = 1.0;
+           vec3 ld = d/sqrt(r2);
+           float sdt = length(boxMax-boxMin)/28.0;
+           for(int k=0;k<5;k++){
+             vec3 sp = p + ld*(float(k)+0.5)*sdt;
+             Ts *= exp(-kappa*texture(volume, uvw(sp)).a*sdt);
+           }
+           scat += lightColor[l]*(lightIntensity[l]/r2)*Ts;
+         }
+         vec3 L = emissionScale*s.rgb + scatterScale*dens*scat;
+         C += T * a * L;
+         T *= (1.0-a);
+         if(T < 0.01) break;
+       }
+     }
+     FragColor = vec4(C, 1.0-T);   // premultiplied-alpha over the scene
+   }")
+
+(defn create-volume-program []
+  (println "Compiling volume shaders...")
+  (link-program (compile-shader volume-vertex-shader GL20/GL_VERTEX_SHADER)
+                (compile-shader volume-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+
+(defn- fullscreen-quad-vao
+  "A unit fullscreen quad (two triangles) in NDC, attribute location 0."
+  []
+  (let [verts (float-array [-1.0 -1.0,  1.0 -1.0,  1.0  1.0,
+                            -1.0 -1.0,  1.0  1.0, -1.0  1.0])
+        vao (GL30/glGenVertexArrays)
+        vbo (GL15/glGenBuffers)
+        buf (doto (BufferUtils/createFloatBuffer (count verts)) (.put verts) (.flip))]
+    (GL30/glBindVertexArray vao)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+    (GL15/glBufferData GL15/GL_ARRAY_BUFFER buf GL15/GL_STATIC_DRAW)
+    (GL20/glEnableVertexAttribArray 0)
+    (GL20/glVertexAttribPointer 0 2 GL11/GL_FLOAT false (* 2 Float/BYTES) 0)
+    (GL30/glBindVertexArray 0)
+    {:vao vao :vbo vbo}))
+
+(defn- gas-points
+  "Volumetric gas samples in RENDER space: position, render-space smoothing
+   radius, density-driven opacity, and temperature-tinted emission colour.
+   Only diffuse/contracting matter (:nebula, :protostar) is part of the medium —
+   solid bodies and stars are drawn separately."
+  [world scale]
+  (->> (ecs/entities-with world c/position c/matter-state c/density c/radius)
+       (keep (fn [eid]
+               (let [st (ecs/get-component world eid c/matter-state)]
+                 (when (#{:nebula :protostar} st)
+                   (let [[x y z] (ecs/get-component world eid c/position)
+                         rho   (double (or (ecs/get-component world eid c/density) 1e-18))
+                         temp  (ecs/get-component world eid c/temperature)
+                         rphys (double (or (ecs/get-component world eid c/radius) render-radius-ref))]
+                     {:p   [(/ (double x) scale) (/ (double y) scale) (/ (double z) scale)]
+                      :h   (max 0.5 (* 2.2 (phys->render-radius rphys)))
+                      :col (temp-color temp)
+                      :dens (max 0.0 (nebula-density-norm rho))})))))
+       vec))
+
+(defn build-volume-texture
+  "Bake the gas field into an RxRxR RGBA16F 3D texture (rgb=emission, a=density)
+   covering the gas bounding box in render space. Returns {:tex :box-min :box-max}
+   or nil when there is no gas. Splats each SPH sample with a smooth radial kernel
+   — the same field the simulation integrates, sampled onto a grid the GPU can
+   trilinearly interpolate during the march."
+  [world scale res]
+  (let [pts (gas-points world scale)]
+    (when (seq pts)
+      (let [R    (int res)
+            ;; bounding box over p ± h, padded
+            ext  (reduce (fn [[mn mx] {:keys [p h]}]
+                           [(mapv #(min %1 (- %2 h)) mn p)
+                            (mapv #(max %1 (+ %2 h)) mx p)])
+                         [[1e30 1e30 1e30] [-1e30 -1e30 -1e30]] pts)
+            [bmn0 bmx0] ext
+            pad  (mapv #(max 0.5 (* 0.06 (- %1 %2))) bmx0 bmn0)
+            bmn  (mapv - bmn0 pad)
+            bmx  (mapv + bmx0 pad)
+            span (mapv - bmx bmn)
+            cs   (mapv #(/ (double %) R) span)
+            data (float-array (* 4 R R R))
+            idx  (fn [x y z] (* 4 (+ x (* R (+ y (* R z))))))]
+        (doseq [{:keys [p h col dens]} pts]
+          (when (pos? dens)
+            (let [[px py pz] p
+                  [csx csy csz] cs
+                  [r g b] col
+                  vidx (fn [coord mn cs] (int (Math/floor (/ (- coord mn) cs))))
+                  lox (max 0 (vidx (- px h) (bmn 0) csx))
+                  hix (min (dec R) (vidx (+ px h) (bmn 0) csx))
+                  loy (max 0 (vidx (- py h) (bmn 1) csy))
+                  hiy (min (dec R) (vidx (+ py h) (bmn 1) csy))
+                  loz (max 0 (vidx (- pz h) (bmn 2) csz))
+                  hiz (min (dec R) (vidx (+ pz h) (bmn 2) csz))
+                  ih2 (/ 1.0 (* h h))]
+              (loop [z loz]
+                (when (<= z hiz)
+                  (let [vcz (+ (nth bmn 2) (* (+ z 0.5) csz))
+                        dz (- vcz pz)]
+                    (loop [y loy]
+                      (when (<= y hiy)
+                        (let [vcy (+ (nth bmn 1) (* (+ y 0.5) csy))
+                              dy (- vcy py)]
+                          (loop [x lox]
+                            (when (<= x hix)
+                              (let [vcx (+ (nth bmn 0) (* (+ x 0.5) csx))
+                                    dx (- vcx px)
+                                    d2 (+ (* dx dx) (* dy dy) (* dz dz))
+                                    q  (* d2 ih2)]
+                                (when (< q 1.0)
+                                  (let [w  (let [u (- 1.0 q)] (* u u))
+                                        wd (* w dens)
+                                        i  (idx x y z)]
+                                    (aset data i        (float (+ (aget data i)        (* wd r))))
+                                    (aset data (+ i 1)  (float (+ (aget data (+ i 1))  (* wd g))))
+                                    (aset data (+ i 2)  (float (+ (aget data (+ i 2))  (* wd b))))
+                                    (aset data (+ i 3)  (float (+ (aget data (+ i 3))  wd)))))
+                                (recur (inc x)))))
+                          (recur (inc y)))))
+                    (recur (inc z))))))))
+        (let [tex (GL11/glGenTextures)
+              buf (doto (BufferUtils/createFloatBuffer (alength data)) (.put data) (.flip))]
+          (GL13/glActiveTexture GL13/GL_TEXTURE0)
+          (GL11/glBindTexture GL12/GL_TEXTURE_3D tex)
+          (GL12/glTexImage3D GL12/GL_TEXTURE_3D 0 GL30/GL_RGBA16F R R R 0
+                             GL11/GL_RGBA GL11/GL_FLOAT buf)
+          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_MIN_FILTER GL11/GL_LINEAR)
+          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_MAG_FILTER GL11/GL_LINEAR)
+          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_WRAP_S GL12/GL_CLAMP_TO_EDGE)
+          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL11/GL_TEXTURE_WRAP_T GL12/GL_CLAMP_TO_EDGE)
+          (GL11/glTexParameteri GL12/GL_TEXTURE_3D GL12/GL_TEXTURE_WRAP_R GL12/GL_CLAMP_TO_EDGE)
+          (GL11/glBindTexture GL12/GL_TEXTURE_3D 0)
+          {:tex tex :box-min bmn :box-max bmx})))))
+
+(defn volume-lights
+  "Up to 8 brightest hot bodies (stars + hot cores) as point lights in render
+   space — the sources whose light scatters through the medium."
+  [world scale]
+  (->> (ecs/entities-with world c/position c/matter-state c/temperature)
+       (keep (fn [eid]
+               (let [t (double (or (ecs/get-component world eid c/temperature) 0.0))]
+                 (when (> t 2500.0)
+                   (let [[x y z] (ecs/get-component world eid c/position)]
+                     {:pos [(/ (double x) scale) (/ (double y) scale) (/ (double z) scale)]
+                      :col (temp-color t)
+                      :temp t
+                      :intensity (min 60.0 (* 6.0 (max 0.0 (- (Math/log10 t) 3.0))))})))))
+       (sort-by :temp >)
+       (take 8)
+       vec))
+
+(defn render-volume
+  "Ray-march pass: composite the baked gas volume over the current scene with
+   premultiplied-alpha blending. `volume` is {:program :tex :box-min :box-max
+   :lights [...]}; camera basis is derived from the camera position/target."
+  [{:keys [program tex box-min box-max lights]} quad-vao camera width height]
+  (when (and program tex)
+    (let [fwd   (normalize (sp/v- (:target camera) (:position camera)))
+          right (normalize (cross fwd [0.0 1.0 0.0]))
+          up    (cross right fwd)
+          fov   60.0
+          thf   (Math/tan (deg->rad (/ fov 2.0)))
+          aspect (/ (double width) (double height))
+          loc   (fn [n] (GL20/glGetUniformLocation program n))
+          set3  (fn [n [a b c]] (GL20/glUniform3f (loc n) (float a) (float b) (float c)))]
+      (GL20/glUseProgram program)
+      (set3 "camPos" (:position camera))
+      (set3 "camRight" right) (set3 "camUp" up) (set3 "camFwd" fwd)
+      (GL20/glUniform1f (loc "tanHalfFov") (float thf))
+      (GL20/glUniform1f (loc "aspect") (float aspect))
+      (set3 "boxMin" box-min) (set3 "boxMax" box-max)
+      (GL20/glUniform1f (loc "kappa") (float 6.0))
+      (GL20/glUniform1f (loc "emissionScale") (float 0.9))
+      (GL20/glUniform1f (loc "scatterScale") (float 1.6))
+      (GL20/glUniform1f (loc "jitter") (float 1.0))
+      (GL20/glUniform1i (loc "numLights") (int (count lights)))
+      (dotimes [i (count lights)]
+        (let [{:keys [pos col intensity]} (nth lights i)]
+          (set3 (format "lightPos[%d]" i) pos)
+          (set3 (format "lightColor[%d]" i) col)
+          (GL20/glUniform1f (loc (format "lightIntensity[%d]" i)) (float intensity))))
+      (GL13/glActiveTexture GL13/GL_TEXTURE0)
+      (GL11/glBindTexture GL12/GL_TEXTURE_3D tex)
+      (GL20/glUniform1i (loc "volume") (int 0))
+      (GL11/glEnable GL11/GL_BLEND)
+      (GL11/glBlendFunc GL11/GL_ONE GL11/GL_ONE_MINUS_SRC_ALPHA) ; premultiplied
+      (GL11/glDepthMask false)
+      (GL30/glBindVertexArray quad-vao)
+      (GL11/glDrawArrays GL11/GL_TRIANGLES 0 6)
+      (GL30/glBindVertexArray 0)
+      (GL11/glDepthMask true)
+      (GL11/glBindTexture GL12/GL_TEXTURE_3D 0))))
+
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be `:particle`
    (soft fog puff) or `:body` (shaded sphere). Default is `:body`."
-  [{:keys [body-program particle-program line-program hud-program hud hud-text]} mesh-world camera width height bodies time]
+  [{:keys [body-program particle-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies time]
   ;; Match the GL viewport to the actual draw surface every frame. Without this
   ;; the viewport keeps its context-creation size, so a HiDPI/resized window
   ;; (framebuffer larger than the logical 1280×720) draws only into the
@@ -1393,7 +1663,8 @@
   (GL11/glClear (bit-or GL11/GL_COLOR_BUFFER_BIT GL11/GL_DEPTH_BUFFER_BIT))
   (let [proj (perspective 60.0 (/ width (float height)) 0.1 10000.0)
         view (look-at (:position camera) (:target camera) (sp/vec3 0.0 1.0 0.0))
-        particles (filterv #(= :particle (:render-mode %)) bodies)
+        ;; ray-marched volume replaces the sprite fog when supplied
+        particles (if volume [] (filterv #(= :particle (:render-mode %)) bodies))
         lines     (filterv #(= :line (:render-mode %)) bodies)
         bodies    (remove #(#{:particle :line} (:render-mode %)) bodies)]
     ;; ---- pass 1: volumetric fog particles (additive, soft depth) ----
@@ -1464,6 +1735,12 @@
             (GL20/glUniform1f (GL20/glGetUniformLocation body-program "glow") (float glow))
             (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (:count mesh-world))))
         (GL30/glBindVertexArray 0)))
+    ;; ---- pass 2b: ray-marched volumetric fog (over the scene) ----
+    (when volume
+      (let [{:keys [vao] :as quad} (fullscreen-quad-vao)]
+        (render-volume volume vao camera width height)
+        (GL15/glDeleteBuffers (:vbo quad))
+        (GL30/glDeleteVertexArrays vao)))
     ;; ---- pass 3: 2D HUD overlay (coherence, focus) + stats/clock text ----
     (render-hud hud-program hud)
     (render-text hud-program hud-text width height)
@@ -1529,7 +1806,7 @@
    Returns the path of the written image. Auto-detects Phase 0 worlds."
   ([world-atom path]
    (render-to-file world-atom path {}))
-  ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode]}]
+  ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode volumetric? volume-res]}]
    (println "Rendering offscreen frame to" path)
    (init-glfw)
    (let [width   1280
@@ -1539,6 +1816,7 @@
          particle-program (create-particle-program)
          line-program     (create-line-program)
          hud-program      (create-hud-program)
+         volume-program   (when volumetric? (create-volume-program))
          sphere  (make-sphere-mesh 3)
          mesh    (upload-mesh sphere)
          fbo     (create-fbo width height)]
@@ -1564,12 +1842,18 @@
                          (make-camera)))
            bodies (bodies-fn w)
            hud      (when phase0? (hud-rects-from-world w))
-           hud-text (when phase0? (hud-text-from-world w))]
+           hud-text (when phase0? (hud-text-from-world w))
+           volume   (when volume-program
+                      (when-let [vt (build-volume-texture w phase0-view-scale
+                                                          (int (or volume-res 96)))]
+                        (assoc vt :program volume-program
+                                  :lights (volume-lights w phase0-view-scale))))]
        (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
        (render-scene {:body-program body-program :particle-program particle-program
                       :line-program line-program :hud-program hud-program
-                      :hud hud :hud-text hud-text}
-                     mesh camera width height bodies 0.0))
+                      :hud hud :hud-text hud-text :volume volume}
+                     mesh camera width height bodies 0.0)
+       (when (:tex volume) (GL11/glDeleteTextures (int (:tex volume)))))
      (GL11/glFlush)
      (let [pixels  (read-pixels width height)
            flipped (flip-rgba-vertical pixels width height)]

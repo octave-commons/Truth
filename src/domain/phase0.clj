@@ -231,9 +231,18 @@
                             :phase0/complexity        0
                             :phase0/phase             :initializing
                             :phase0/active            true
+                            ;; The authentic double-buffer single-writer path is
+                            ;; the live default (design §7c): density-gated
+                            ;; condensation + classifier + feeding-zone assembly
+                            ;; form a star where the legacy mass-tier pipeline
+                            ;; forms nothing at production resolution. Set false
+                            ;; to run the legacy sequential Gauss–Seidel pipeline.
+                            :phase0/parallel?         true
                             :phase0/collapse-fraction collapse-fraction
                             :phase0/contraction-time  contraction-time
-                            :phase0/gas-particle-mass pmass))
+                            :phase0/gas-particle-mass pmass
+                            :phase0/feeding-zone-factor
+                            (stellar/resolution-feeding-zone-factor gas-count)))
          seeded (seed-nebula base nebula-mass nebula-radius
                              {:gas-count gas-count :spin spin :turb turb})
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
@@ -379,9 +388,9 @@
      (stellar/structure-system)
      (stellar/eos-system)
      (stellar/classifier-system)
+     (stellar/accretion-zone-system)
      (stellar/temperature-system dt)
      (em/field-system dt)
-     (legacy :jeans-collapse stellar/jeans-collapse-system)
      (legacy :fusion         stellar/fusion-system)
      (legacy :regime         regime/regime-system)
      ;; em's braking/spin (masked to angular-momentum/spin; its legacy hydro-accel
@@ -398,14 +407,13 @@
    world — collision/merge (discrete events that despawn) and the centre-of-mass
    recenter (a global reduction). System order is irrelevant by construction.
 
-   Default is the SEQUENTIAL Gauss–Seidel pipeline: the double-buffer substrate
-   is complete and single-writer-correct, but its authentic-physics content still
-   needs accretion tuning before it forms a star (parcels condense individually
-   faster than they merge — see the go-live notes). Set `:phase0/parallel? true`
-   to run the double-buffer path (gravity, structure, classifier, … all native
-   single-writer systems folded at one barrier, then serial collision + recenter)."
+   The double-buffer path is the live default (`create-world` sets
+   `:phase0/parallel? true`): density-gated condensation, the single-writer
+   classifier, and feeding-zone assembly form a star — the go-live gap (design
+   §7c) is closed. Set `:phase0/parallel? false` to run the legacy SEQUENTIAL
+   Gauss–Seidel pipeline (mass-tier promotion), kept for comparison and tests."
   [world]
-  (if (:phase0/parallel? world false)
+  (if (:phase0/parallel? world true)
     (-> (tick/run-parallel world (physics-systems-parallel world))
         (collision/collision-detection-system)
         (recenter-system))
