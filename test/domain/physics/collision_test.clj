@@ -11,13 +11,15 @@
   "Spawn two collidable bodies, optionally overlapping."
   [overlap?]
   (let [[w e1] (ecs/spawn (-> (ecs/empty-world)
-                               event/with-ledger
-                               event/with-handlers))
+                              event/with-ledger
+                              event/with-handlers))
         [w e2] (ecs/spawn w)
         w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
                                     c/velocity  [1.0 0.0 0.0]
                                     c/mass      1.0
                                     c/radius    1.0
+                                    c/accretion-radius 1.0
+                                    c/matter-state :debris
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position (if overlap?
                                                  [1.5 0.0 0.0]
@@ -25,8 +27,11 @@
                                     c/velocity  [-1.0 0.0 0.0]
                                     c/mass      1.0
                                     c/radius    1.0
+                                    c/accretion-radius 1.0
+                                    c/matter-state :debris
                                     c/body-kind :body/test})]
     [w e1 e2]))
+
 
 (deftest collision-detected-when-overlapping
   (let [[w _ _] (two-body-world true)
@@ -55,18 +60,22 @@
 
 (deftest inelastic-merge-despawns-smaller
   (let [[w e1] (ecs/spawn (-> (ecs/empty-world)
-                               event/with-ledger
-                               event/with-handlers))
+                              event/with-ledger
+                              event/with-handlers))
         [w e2] (ecs/spawn w)
         w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
                                     c/velocity  [0.0 0.0 0.0]
                                     c/mass      10.0
                                     c/radius    2.0
+                                    c/accretion-radius 2.0
+                                    c/matter-state :debris
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position [2.5 0.0 0.0]
                                     c/velocity  [0.0 0.0 0.0]
                                     c/mass      1.0
                                     c/radius    0.5
+                                    c/accretion-radius 0.5
+                                    c/matter-state :debris
                                     c/body-kind :body/test})
         w (event/register-handler w :event/collision
                                   response/inelastic-merge-handler)
@@ -75,6 +84,7 @@
         "Smaller body should be despawned")
     (is (= 11.0 (ecs/get-component w' e1 c/mass))
         "Larger body should absorb mass")))
+
 
 (deftest literal-overlap-ignores-non-touching-fast-bodies
   ;; Detection is literal overlap, NOT swept prediction: two fast bodies that are
@@ -88,16 +98,20 @@
                                event/with-handlers
                                (assoc :sim/dt 1.0)))
         [w e2] (ecs/spawn w)
-        w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
-                                    c/velocity  [3.0 0.0 0.0]
-                                    c/mass      1.0
-                                    c/radius    1.0
-                                    c/body-kind :body/test})
-        w (ecs/put-components w e2 {c/position [5.0 0.0 0.0]
-                                    c/velocity  [-3.0 0.0 0.0]
-                                    c/mass      1.0
-                                    c/radius    1.0
-                                    c/body-kind :body/test})
+         w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
+                                     c/velocity  [3.0 0.0 0.0]
+                                     c/mass      1.0
+                                     c/radius    1.0
+                                     c/accretion-radius 1.0
+                                     c/matter-state :debris
+                                     c/body-kind :body/test})
+         w (ecs/put-components w e2 {c/position [5.0 0.0 0.0]
+                                     c/velocity  [-3.0 0.0 0.0]
+                                     c/mass      1.0
+                                     c/radius    1.0
+                                     c/accretion-radius 1.0
+                                     c/matter-state :debris
+                                     c/body-kind :body/test})
         w' (col/collision-detection-system w)]
     (is (empty? (event/events-of-kind w' :event/collision))
         "bodies that are not overlapping right now do not merge across a gap")))
@@ -110,3 +124,45 @@
         w' (ecs/tick w systems)
         w' (ecs/tick w' systems)]
     (is (>= (count (get-in w' [:ledger :events])) 2))))
+
+(deftest gas-particles-do-not-collide
+  (testing ":nebula sample particles never produce collision events, even when overlapping"
+    (let [[w e1] (ecs/spawn (-> (ecs/empty-world)
+                                event/with-ledger
+                                event/with-handlers))
+          [w e2] (ecs/spawn w)
+          w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/matter-state :nebula})
+          w (ecs/put-components w e2 {c/position [1.0e12 0.0 0.0]
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/matter-state :nebula})
+          w' (col/collision-detection-system w)]
+      (is (empty? (event/events-of-kind w' :event/collision))
+          "overlapping gas particles must not collide"))))
+
+(deftest resolved-bodies-still-collide
+  (testing "resolved bodies (debris/planet/protostar/star) still produce collision events"
+    (let [[w e1] (ecs/spawn (-> (ecs/empty-world)
+                                event/with-ledger
+                                event/with-handlers))
+          [w e2] (ecs/spawn w)
+          w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/accretion-radius 1e12
+                                      c/matter-state :debris})
+          w (ecs/put-components w e2 {c/position [1.0e12 0.0 0.0]
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/accretion-radius 1e12
+                                      c/matter-state :debris})
+          w' (col/collision-detection-system w)]
+      (is (seq (event/events-of-kind w' :event/collision))
+          "overlapping resolved bodies must still collide"))))

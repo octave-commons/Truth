@@ -39,6 +39,11 @@
 ;; writes each tick (:gravity-hydro :mhd-dominated :gravitationally-unstable ...).
 (def b-field      :component/b-field)       ;; [bx by bz] tesla
 (def regime       :component/regime)        ;; keyword, see domain.regime/classify
+;; `frozen-flux` is the magnetic flux Φ = B·R² (tesla·m², vector) frozen into a
+;; condensed body. It is conserved as the body contracts — so B = Φ/R² amplifies
+;; as the radius shrinks (flux freezing) — and decays only by Ohmic resistivity.
+;; Owned by the Field system (domain.em); the reference that makes B a derivation.
+(def frozen-flux  :component/frozen-flux)   ;; [Φx Φy Φz] tesla·m²
 
 ;; --- Rotational / disc geometry ---------------------------------------------
 ;; `angular-momentum` is the total orbital+spin L of the clump (kg m²/s).
@@ -53,7 +58,21 @@
 ;; --- Hydrodynamics ----------------------------------------------------------
 ;; `hydro-accel` is the pressure-gradient acceleration a = -∇p/ρ (m/s²).
 ;; Computed by `domain.hydro` and consumed by `domain.orbital.system`.
+;; LEGACY accumulator: in the sequential pipeline hydro writes it, em adds the
+;; Lorentz force into it, and the orbital integrator reads it. The double-buffer
+;; model decomposes it into the single-writer `accel/*` contributions below
+;; (see the double-buffer spec §4); `hydro-accel` is retired once hydro and em
+;; emit their own contributions.
 (def hydro-accel :component/hydro-accel) ;; [ax ay az]
+
+;; --- Acceleration contributions (double-buffer accumulator inputs) ----------
+;; Each force-emitter owns ONE of these; the motion integrator reads them all
+;; and SUMS them into the net acceleration before advancing velocity/position.
+;; Summation is commutative, so the fan-out order is irrelevant. See the
+;; double-buffer spec §3–§4.
+(def accel-gravity  :component/accel.gravity)  ;; [ax ay az] Barnes–Hut self-gravity
+(def accel-pressure :component/accel.pressure) ;; [ax ay az] SPH pressure gradient (hydro)
+(def accel-lorentz  :component/accel.lorentz)  ;; [ax ay az] Lorentz / magnetic (em)
 
 ;; --- Observer (the player spark) --------------------------------------------
 ;; The quantum-oscillation player is a singleton entity carrying this component.

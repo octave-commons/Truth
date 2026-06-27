@@ -17,6 +17,8 @@
    [law.stellar             :as law]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
+   [domain.ecs.registry     :as reg]
+   [domain.ecs.tick         :as tick]
    [domain.ecs.components    :as c]
    [domain.orbital.system   :as orbital]
    [domain.physics.collision :as collision]
@@ -215,21 +217,23 @@
       :or   {G law/G theta 0.5 dt 1e12 softening 5.0e14
              nebula-mass 4e30 nebula-radius 1.5e16 collapse-fraction 0.5
              contraction-time 9.5e14 gas-count 1000 spin 0.85 turb 0.06}}]
-   (let [neb    (pacing-for 0.0 0.0)
-         base   (-> (ecs/empty-world)
-                    (event/with-ledger)
-                    (event/register-handler :event/collision
-                                            stellar/stellar-merge-handler)
-                    (assoc :sim/G G :sim/theta theta :sim/dt dt :sim/softening softening
-                           :phase0/sim-time          0.0
-                           :phase0/time-scale        (:rate neb)
-                           :phase0/rate-yr           (:rate-yr neb)
-                           :phase0/stats             nil
-                           :phase0/complexity        0
-                           :phase0/phase             :initializing
-                           :phase0/active            true
-                           :phase0/collapse-fraction collapse-fraction
-                           :phase0/contraction-time  contraction-time))
+   (let [neb     (pacing-for 0.0 0.0)
+         pmass   (/ (double nebula-mass) gas-count)
+         base    (-> (ecs/empty-world)
+                     (event/with-ledger)
+                     (event/register-handler :event/collision
+                                             stellar/stellar-merge-handler)
+                     (assoc :sim/G G :sim/theta theta :sim/dt dt :sim/softening softening
+                            :phase0/sim-time          0.0
+                            :phase0/time-scale        (:rate neb)
+                            :phase0/rate-yr           (:rate-yr neb)
+                            :phase0/stats             nil
+                            :phase0/complexity        0
+                            :phase0/phase             :initializing
+                            :phase0/active            true
+                            :phase0/collapse-fraction collapse-fraction
+                            :phase0/contraction-time  contraction-time
+                            :phase0/gas-particle-mass pmass))
          seeded (seed-nebula base nebula-mass nebula-radius
                              {:gas-count gas-count :spin spin :turb turb})
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
@@ -260,12 +264,15 @@
   "Detect the current phase of the forming system from its summary."
   [{:keys [star? planet-count body-count regions]} sim-time]
   (let [nebula?    (some #(= :nebula (:matter-state %)) regions)
-        protostar? (some #(= :protostar (:matter-state %)) regions)]
+        protostar? (some #(= :protostar (:matter-state %)) regions)
+        planet?    (some #(= :planet (:matter-state %)) regions)
+        debris?    (some #(= :debris (:matter-state %)) regions)]
     (cond
       (and star? (pos? planet-count)) :phase-0/planets-formed
       (and star? (>= body-count 3))   :phase-0/accretion
       star?                           :phase-0/ignition
       protostar?                      :phase-0/protostar
+      (or planet? debris?)            :phase-0/accretion
       (zero? body-count)              :phase-0/dispersed
       (and nebula? (< sim-time 1e18)) :phase-0/nebula-collapse
       :else                           :phase-0/dispersed)))
@@ -324,21 +331,85 @@
     ;;
     ;; Tick order: compute SPH density from current positions (so pressure can
     ;; vary with crowding) → compute hydrodynamic pressure-gradient accelerations
-    ;; → move under gravity+hydro → accrete (collisions merge overlapping clumps)
-    ;; → classify each clump by accreted mass → contract any star-forming core
-    ;; → ignite fusion → heat/cool by radiation → tag dominant-physics regime
-    ;; → evolve the magnetic field. Formation is emergent: nothing is pre-placed.
+    ;; → promote Jeans-unstable gas to resolved bodies → reclassify every clump by
+    ;; mass → move under gravity+hydro → merge overlapping resolved bodies →
+    ;; contract any star-forming core → ignite fusion → heat/cool by radiation →
+    ;; tag the dominant-physics regime → evolve the magnetic field. Formation is
+    ;; emergent.
     [(hydro/density-system effective-dt)
      (hydro/hydro-system effective-dt)
+     stellar/jeans-collapse-system
+     stellar/classify-system
      (orbital/orbital-system G theta effective-dt (or softening 1e14))
      collision/collision-detection-system
-     stellar/classify-system
      stellar/collapse-system
      stellar/fusion-system
      (stellar/thermal-system effective-dt)
      regime/regime-system
      (em/em-system effective-dt)
      recenter-system]))
+
+(defn physics-systems-parallel
+  "The transform systems as write-set systems for the double-buffer fan-out
+   (`domain.ecs.tick/run-parallel`). Each entry is its legacy `(fn [world] world')`
+   wrapped by the bridge and masked to its registry-declared `:writes`.
+
+   EXCLUDES the two systems that do not belong in the parallel region:
+     • `collision-detection` — a discrete-event system whose merge handler
+       despawns entities; it runs serially at the barrier (spec §6).
+     • `recenter` — a global centre-of-mass reduction; runs at the barrier or
+       becomes a frame-offset in the motion integrator (spec §5).
+
+   Gravity and motion are NATIVE write-set systems (the gravity tree-walk runs
+   on its own thread, the integrator sums all accel.* contributions). The rest
+   are still legacy `(fn [world] world')` systems run through the bridge and
+   masked to their registry-declared `:writes`. Transitional: the caller folds
+   with `:last-wins` until single-writer holds (spec §9). Legacy `:writes` is
+   sourced from `domain.ecs.registry` so the pairing and the invariant cannot
+   drift apart."
+  [{:keys [sim/G sim/theta sim/dt sim/softening]}]
+  (let [writes-for (fn [id] (some #(when (= id (:id %)) (:writes %)) reg/systems))
+        legacy     (fn [id f] (tick/legacy-system id (writes-for id) f))]
+    [;; native write-set systems (force emitters + integrator)
+     (orbital/gravity-acceleration G theta (or softening 1e14))
+     (hydro/pressure-acceleration)
+     (em/lorentz-acceleration-system)
+     (orbital/motion-integration dt)
+     ;; legacy-bridged transform systems
+     (stellar/structure-system)
+     (stellar/eos-system)
+     (stellar/classifier-system)
+     (stellar/temperature-system dt)
+     (em/field-system dt)
+     (legacy :jeans-collapse stellar/jeans-collapse-system)
+     (legacy :fusion         stellar/fusion-system)
+     (legacy :regime         regime/regime-system)
+     ;; em's braking/spin (masked to angular-momentum/spin; its legacy hydro-accel
+     ;; and b-field writes are dropped — Lorentz via em-lorentz, b-field via field)
+     (legacy :em             (em/em-system dt))]))
+
+(defn step-physics
+  "Run one tick of physics over `world` (already tick-advanced).
+
+   Default (double-buffer): every system in `physics-systems-parallel` runs
+   concurrently reading the FROZEN `world` and writing only the components it
+   owns; the disjoint write-sets fold at a single barrier (`:throw` enforces
+   single-writer at runtime). Then the SERIAL barrier systems run on the folded
+   world — collision/merge (discrete events that despawn) and the centre-of-mass
+   recenter (a global reduction). System order is irrelevant by construction.
+
+   Default is the SEQUENTIAL Gauss–Seidel pipeline: the double-buffer substrate
+   is complete and single-writer-correct, but its authentic-physics content still
+   needs accretion tuning before it forms a star (parcels condense individually
+   faster than they merge — see the go-live notes). Set `:phase0/parallel? true`
+   to run the double-buffer path (gravity, structure, classifier, … all native
+   single-writer systems folded at one barrier, then serial collision + recenter)."
+  [world]
+  (if (:phase0/parallel? world false)
+    (-> (tick/run-parallel world (physics-systems-parallel world))
+        (collision/collision-detection-system)
+        (recenter-system))
+    (ecs/run-systems world (physics-systems world))))
 
 (defn tick-world
   "Advance the world by one tick. Pure: world -> world'."
@@ -351,7 +422,7 @@
         prev-phase (:phase0/phase world)
         ;; advance logical tick first so every event this step shares its tick
         world1     (ecs/advance-tick world)
-        world2     (ecs/run-systems world1 (physics-systems world1))
+        world2     (step-physics world1)
         summ       (system-summary world2)
         complexity (stellar/complexity-score summ)
         phase      (detect-phase summ (:phase0/sim-time world2))

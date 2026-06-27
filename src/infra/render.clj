@@ -188,17 +188,17 @@
    void main() {
      vec2 coord = gl_PointCoord - vec2(0.5);
      float dist = length(coord);
-     // Gaussian falloff: no hard disc edge, so overlapping sprites blend
-     // into continuous volumetric fog. The sprite is mostly gone by r=0.5,
-     // but the tail is what makes the volume read as a cloud.
-     float sigma = 0.22;
+     float dens = clamp(vDensity, 0.0, 1.0);
+     // Tighter, brighter core where density is high; softer, fainter tail where
+     // the sample represents a larger low-density volume.
+     float sigma = mix(0.32, 0.12, dens);
      float alpha = exp(-(dist * dist) / (2.0 * sigma * sigma));
      float n = noise(coord * 8.0 + time * 0.3);
-     alpha *= (0.5 + 0.5 * n) * clamp(vDensity, 0.1, 2.0);
+     alpha *= (0.04 + 1.8 * pow(dens, 1.5)) * (0.35 + 0.65 * n);
      if (alpha < 0.003) discard;
-     // Brighter core where density is high, but keep the cloud visible.
-     float core = 1.0 - smoothstep(0.0, 0.18, dist);
-     vec3 color = vColor * (0.25 + 0.75 * core) * (1.0 + 0.3 * clamp(vDensity, 0.0, 1.0));
+     // Pull colour toward white as density rises so dense cores read hotter,
+     // while keeping the base fog desaturated to avoid additive clipping.
+     vec3 color = mix(vColor * 0.55, vec3(1.0), 0.28 * dens);
      FragColor = vec4(color * alpha, alpha);
    }")
 
@@ -977,13 +977,35 @@
 (defn- fog-sample-count [extent focus]
   (int (* 120 (+ 0.3 focus) (Math/log10 (+ 10.0 (double extent))))))
 
-(defn nebula-fog
-  "Soft fog puffs through a clump, DETERMINISTIC in `seed` so the cloud is stable
-   frame-to-frame (no per-frame RNG → no shimmer). center/extent in render units."
-  [{:keys [center extent color count seed density]}]
+(defn- nebula-density-norm
+  "Map a physical density (kg/m³) to a [0,1] visual factor with a wide log
+   dynamic range. The nebula spans roughly 1e-21 … 1e-12 kg/m³; this mapping
+   makes a factor-of-1000 density contrast readable instead of clamping
+   everything to the same narrow band."
+  [rho]
+  (let [log-rho (Math/log10 (max 1e-30 (double (or rho 1e-18))))
+        lo -21.0
+        hi -12.0]
+    (max 0.0 (min 1.0 (/ (- log-rho lo) (- hi lo))))))
+
+(defn- fog-particle-size
+  "Screen-space particle size for a fog sample. Lower-density samples represent
+   a larger sampled volume so they read bigger and fainter; higher-density cores
+   read smaller and brighter. `support` is the SPH smoothing/support radius in
+   render units."
+  [support density-norm rng]
+  (let [s (double (or support 1.0))
+        d (double (or density-norm 0.5))
+        base (* s (+ 6.0 (* 16.0 (- 1.0 d))))]
+    (max 2.0 (+ base (* 4.0 (.nextDouble rng))))))
+
+(defn- nebula-fog*
+  "Actual particle cloud generation; split out so `nebula-fog` can cache."
+  [{:keys [center extent color density support]} count seed]
   (let [[cx cy cz] center
         rng (java.util.Random. (long (or seed 1)))
-        dens (float (or density 1.0))]
+        dens (double (or density 0.5))
+        sup  (double (or support extent 1.0))]
     (mapv
      (fn [_]
        (let [theta (* 2 Math/PI (.nextDouble rng))
@@ -993,10 +1015,50 @@
                      (+ cy (* r (Math/sin phi) (Math/sin theta)))
                      (+ cz (* r (Math/cos phi)))]
           :color color
-          :size (+ 30.0 (* 40.0 (.nextDouble rng)))
-          :density dens
+          :size  (fog-particle-size sup dens rng)
+          :density (float dens)
           :render-mode :particle}))
      (range count))))
+
+(def ^:private particle-cache
+  "Cache keyed by [eid seed count] → immutable particle cloud. The cloud is
+   deterministic, so it can be reused every frame for the same entity unless
+   render-time inputs (extent/support/color/density) change. The cache entry
+   stores the inputs used to build it; a lookup validates them."
+  (atom {}))
+
+(defn- particle-cache-key
+  "Stable key for a nebula clump's cached particle cloud."
+  [eid seed count]
+  [eid seed count])
+
+(defn- cache-match? [cached params]
+  (= (select-keys cached [:center :extent :support :color :density])
+     (select-keys params [:center :extent :support :color :density])))
+
+(defn nebula-fog
+  "Soft fog puffs through a clump, DETERMINISTIC in `seed` so the cloud is stable
+   frame-to-frame (no per-frame RNG → no shimmer). center/extent in render units.
+   `support` is the SPH smoothing length / sampled area in render units; it
+   drives the particle size. `density` is a [0,1] normalized density factor that
+   drives opacity and brightness.
+
+   Generated clouds are cached per-entity; reusing them saves the mapv + RNG cost
+   when the same entity is projected again next frame with unchanged inputs."
+  [{:keys [center extent color count seed density support]}]
+  (let [eid   (long (or seed 1))
+        ckey  (particle-cache-key eid seed count)
+        params {:center center :extent extent :support support
+                :color color :density density}]
+    (if-let [cached (get @particle-cache ckey)]
+      (if (cache-match? cached params)
+        (:particles cached)
+        (let [fresh (nebula-fog* params count seed)]
+          (swap! particle-cache assoc ckey (assoc params :particles fresh))
+          fresh))
+      (let [fresh (nebula-fog* params count seed)]
+        (swap! particle-cache assoc ckey (assoc params :particles fresh))
+        fresh))))
 
 (defn field-line
   "Two endpoints for a clump's magnetic field line in render units. Brightness
@@ -1107,16 +1169,21 @@
             (case state
               :nebula
               ;; Diffuse gas is a volumetric cloud of additive samples, not a
-              ;; single point. Density and temperature are passed to the shader
-              ;; so the field varies visually as the physics varies.
-              (let [rho   (or (ecs/get-component world eid c/density) 1e-18)
-                    render-r (phys->render-radius r-phys)]
+              ;; single point. Each sample's size matches its SPH smoothing
+              ;; length (the area it represents), while its opacity and colour
+              ;; are driven by local density so overdense filaments read
+              ;; brighter and tighter than the diffuse background.
+              (let [rho      (or (ecs/get-component world eid c/density) 1e-18)
+                    render-r (phys->render-radius r-phys)
+                    extent   (* render-r (Math/pow (+ 1.0 (Math/log10 (max 1.0 (/ r-phys 3e13)))) 0.5))
+                    dens-norm (nebula-density-norm rho)]
                 (nebula-fog {:center   center
-                             :extent   (* render-r (Math/pow (+ 1.0 (Math/log10 (max 1.0 (/ r-phys 3e13)))) 0.5))
+                             :extent   extent
+                             :support  (* 2.0 render-r)
                              :color    (temp-color temp)
                              :count    (fog-sample-count render-r focus)
                              :seed     eid
-                             :density  (float (max 0.1 (min 2.0 (* 0.5 (Math/log10 (max 1.0 (/ rho 1e-18)))))))}))
+                             :density  dens-norm}))
 
               :star
               ;; The photosphere is sub-pixel at this scale; a star's apparent
@@ -1135,15 +1202,21 @@
                             :render-mode :body}]
                 (concat
                  [body]
-                 (nebula-fog {:center center :extent (* core-r 3.0)
-                              :color [0.85 0.80 0.55] :count 70 :seed eid})
+                 (nebula-fog {:center  center
+                              :extent  (* core-r 3.0)
+                              :support (* 2.0 core-r)
+                              :color   [0.85 0.80 0.55]
+                              :count   70
+                              :seed    eid
+                              :density 0.7})
                  (field-line center core-r (ecs/get-component world eid c/b-field))))
 
               :protostar
               ;; A contracting core: render radius follows the physical radius
               ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
               ;; by temperature, shrouded in fog + field lines.
-              (let [render-r (phys->render-radius r-phys)]
+              (let [render-r (phys->render-radius r-phys)
+                    rho      (or (ecs/get-component world eid c/density) 1e-15)]
                 (concat
                  [{:entity      eid
                    :position    center
@@ -1153,8 +1226,13 @@
                    :oblateness  ob
                    :rotation-axis axis
                    :render-mode :body}]
-                 (nebula-fog {:center center :extent (* render-r 2.0) :color color
-                              :count  (fog-sample-count render-r focus) :seed eid})
+                 (nebula-fog {:center  center
+                              :extent  (* render-r 2.0)
+                              :support (* 2.0 render-r)
+                              :color   color
+                              :count   (fog-sample-count render-r focus)
+                              :seed    eid
+                              :density (nebula-density-norm rho)})
                  (field-line center render-r (ecs/get-component world eid c/b-field))))
 
               ;; :planet :debris → shaded body sized by physical radius, coloured
@@ -1168,6 +1246,137 @@
                 :rotation-axis axis
                 :render-mode :body}])))
         (ecs/entities-with world c/position c/matter-state))))))
+
+(def ^:private phase0-bodies-cache
+  "Per-frame cache for `phase0-bodies-from-world`. Rendering is the expensive
+   part of the dev loop; this cache lets unchanged frames reuse the shape list.
+   The cache key includes the world identity so two different worlds at the same
+   tick do not collide."
+  (atom {}))
+
+(defn- phase0-render-cache-key
+  "Cache key: world identity + tick + view scale."
+  [world scale]
+  [(System/identityHashCode world) (:tick world) scale])
+
+(defn- phase0-bodies-from-world*
+  "Uncached render projection; see `phase0-bodies-from-world`."
+  [world scale]
+  (let [focus (player-focus-level world)]
+    (into
+     (player-overlay-shapes world scale)
+     (mapcat
+      (fn [eid]
+        (let [state   (ecs/get-component world eid c/matter-state)
+              [x y z] (ecs/get-component world eid c/position)
+              center  [(/ x scale) (/ y scale) (/ z scale)]
+              temp    (ecs/get-component world eid c/temperature)
+              comp    (ecs/get-component world eid c/composition)
+              r-phys  (ecs/get-component world eid c/radius)
+              color   (body-render-color temp comp)
+              ob      (or (ecs/get-component world eid c/oblateness) 1.0)
+              axis    (or (ecs/get-component world eid c/rotation-axis) [0.0 0.0 1.0])]
+          (case state
+            :nebula
+            ;; Diffuse gas is a volumetric cloud of additive samples, not a
+            ;; single point. Each sample's size matches its SPH smoothing
+            ;; length (the area it represents), while its opacity and colour
+            ;; are driven by local density so overdense filaments read
+            ;; brighter and tighter than the diffuse background.
+            (let [rho      (or (ecs/get-component world eid c/density) 1e-18)
+                  render-r (phys->render-radius r-phys)
+                  extent   (* render-r (Math/pow (+ 1.0 (Math/log10 (max 1.0 (/ r-phys 3e13)))) 0.5))
+                  dens-norm (nebula-density-norm rho)]
+              (nebula-fog {:center   center
+                           :extent   extent
+                           :support  (* 2.0 render-r)
+                           :color    (temp-color temp)
+                           :count    (fog-sample-count render-r focus)
+                           :seed     eid
+                           :density  dens-norm}))
+
+            :star
+            ;; The photosphere is sub-pixel at this scale; a star's apparent
+            ;; size IS its luminosity. Render a small bright core sized by
+            ;; log-luminosity, wrapped in a volumetric corona + field line.
+            (let [lum    (double (or (ecs/get-component world eid c/luminosity) 1.0e26))
+                  core-r (-> (+ 0.6 (* 0.28 (Math/log10 (/ (max 1.0 lum) 1.0e26))))
+                             (max 0.6) (min 3.0))
+                  body   {:entity      eid
+                          :position    center
+                          :radius      core-r
+                          :color       [1.0 0.93 0.82]
+                          :kind        state
+                          :oblateness  ob
+                          :rotation-axis axis
+                          :render-mode :body}]
+              (concat
+               [body]
+               (nebula-fog {:center  center
+                            :extent  (* core-r 3.0)
+                            :support (* 2.0 core-r)
+                            :color   [0.85 0.80 0.55]
+                            :count   70
+                            :seed    eid
+                            :density 0.7})
+               (field-line center core-r (ecs/get-component world eid c/b-field))))
+
+            :protostar
+            ;; A contracting core: render radius follows the physical radius
+            ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
+            ;; by temperature, shrouded in fog + field lines.
+            (let [render-r (phys->render-radius r-phys)
+                  rho      (or (ecs/get-component world eid c/density) 1e-15)]
+              (concat
+               [{:entity      eid
+                 :position    center
+                 :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
+                 :color       color
+                 :kind        state
+                 :oblateness  ob
+                 :rotation-axis axis
+                 :render-mode :body}]
+               (nebula-fog {:center  center
+                            :extent  (* render-r 2.0)
+                            :support (* 2.0 render-r)
+                            :color   color
+                            :count   (fog-sample-count render-r focus)
+                            :seed    eid
+                            :density (nebula-density-norm rho)})
+               (field-line center render-r (ecs/get-component world eid c/b-field))))
+
+            ;; :planet :debris → shaded body sized by physical radius, coloured
+            ;; by composition crossfading to thermal glow.
+            [{:entity      eid
+              :position    center
+              :radius      (phys->render-radius r-phys)
+              :color       color
+              :kind        state
+              :oblateness  ob
+              :rotation-axis axis
+              :render-mode :body}])))
+      (ecs/entities-with world c/position c/matter-state)))))
+
+(defn phase0-bodies-from-world
+  "Project Phase 0 ECS matter entities into stylized, view-scaled render shapes,
+   coloured by TEMPERATURE so the thermal field is visible:
+     :nebula    → one soft fog puff (the diffuse cloud)
+     :protostar → a compact bright cloud + a magnetic field line (contracting core)
+     :star/:planet/:debris → a shaded body
+   Per-entity jitter is deterministic, so nothing shimmers between frames.
+
+   This is the ONLY Phase 0 render projection — one ECS world behind it.
+
+   The projection is cached per [tick scale] so consecutive render frames that
+   see the same world do not rebuild hundreds of fog particles."
+  ([world] (phase0-bodies-from-world world phase0-view-scale))
+   ([world scale]
+     (let [ckey (phase0-render-cache-key world scale)]
+       (if-let [cached (get @phase0-bodies-cache ckey)]
+         cached
+         (let [bodies (phase0-bodies-from-world* world scale)]
+           (reset! phase0-bodies-cache {ckey bodies})
+           bodies)))))
 
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.

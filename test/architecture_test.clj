@@ -5,7 +5,8 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [clojure.java.io :as io]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [domain.ecs.registry :as reg]))
 
 (defn- clj-files [dir]
   (->> (io/file dir)
@@ -41,3 +42,26 @@
                          (mapv #(.getPath %)))]
       (is (empty? offenders)
           (str "domain namespaces importing infra: " offenders)))))
+
+;; --- ECS single-writer ownership (double-buffer spec, §2 Rule 2) ------------
+;; See docs/notes/2026.06.26-ecs-double-buffer-single-writer-spec.md.
+;; The invariant: every component type has exactly one fan-out writer, so the
+;; per-tick fan-out is conflict-free and lock-free. The migration is COMPLETE —
+;; every contended component now has a single owner:
+;;   position/velocity → motion; accel.* → gravity/hydro/em; pressure → eos;
+;;   matter-state → classifier; accretion-radius → jeans; spin → em;
+;;   radius/density/oblateness/rotation-axis → structure; temperature → thermal;
+;;   b-field/frozen-flux → field. collapse and density-system are retired from
+;;   the fan-out. The invariant is now ENFORCED (not a shrinking baseline).
+
+(deftest system-registry-well-formed
+  (testing "every registry entry has a unique :id and component-keyword reads/writes"
+    (is (empty? (reg/malformed-entries reg/systems))
+        (str "Malformed registry entries: " (reg/malformed-entries reg/systems)))))
+
+(deftest single-writer-ownership-holds
+  (testing "every component has exactly one fan-out writer — invariant enforced"
+    (is (empty? (reg/write-conflicts reg/systems))
+        (reg/format-conflicts (reg/write-conflicts reg/systems))))
+  (testing "assert-single-writer! passes (the boot-time guard)"
+    (is (= reg/systems (reg/assert-single-writer! reg/systems)))))

@@ -281,3 +281,57 @@
           expected (ls/ideal-gas-pressure rho 12.0)]
       (is (< (Math/abs (- press expected)) (* 1e-12 (max 1.0 (Math/abs expected))))
           "pressure is recomputed from the new density and temperature"))))
+
+(deftest test-density-system-updates-radius
+  (testing "density-system shrinks the radius of a crowded gas particle"
+    (let [base (ecs/empty-world)
+          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          seed-r (ecs/get-component w2 ea c/radius)
+          w3 ((hydro/density-system 1e10) w2)
+          new-r (ecs/get-component w3 ea c/radius)]
+      (is (< new-r seed-r) "crowded gas particle shrinks after density update"))))
+
+(deftest test-radius-density-consistent
+  (testing "adaptive radius keeps r³ × ρ proportional to fixed mass"
+    (let [base (ecs/empty-world)
+          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          [w3 ec] (stellar/spawn-clump w2   {:position [3e15 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          w4 ((hydro/density-system 1e10) w3)
+          r-crowded (ecs/get-component w4 ea c/radius)
+          rho-crowded (ecs/get-component w4 ea c/density)
+          r-isolated (ecs/get-component w4 ec c/radius)
+          rho-isolated (ecs/get-component w4 ec c/density)]
+            ;; same mass → r³ × ρ should be similar; dense particle has smaller r
+      (is (< r-crowded r-isolated) "crowded particle is smaller than isolated particle")
+      (is (< (Math/abs (- (* r-crowded r-crowded r-crowded rho-crowded)
+                          (* r-isolated r-isolated r-isolated rho-isolated)))
+             1e30)
+          "r³ × ρ is approximately conserved for equal-mass particles")))
+)

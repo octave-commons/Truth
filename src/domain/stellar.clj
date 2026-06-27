@@ -7,13 +7,15 @@
    operations carry forward into geology, climate, and chemistry later — only
    the magnitudes change. There is no separate stellar world model: a clump of
    nebular gas and a finished planet are both just entities."
-  (:require
-   [law.stellar           :as law]
-   [domain.em             :as em]
-   [domain.ecs.core       :as ecs]
-   [domain.ecs.parallel   :as par]
-   [domain.ecs.components  :as c]
-   [shape.spatial         :as sp]))
+   (:require
+    [law.stellar           :as law]
+    [law.field             :as lf]
+    [domain.em             :as em]
+    [domain.hydro          :as hydro]
+    [domain.ecs.core       :as ecs]
+    [domain.ecs.parallel   :as par]
+    [domain.ecs.components  :as c]
+    [shape.spatial         :as sp]))
 
 ;; --- Pure thermodynamics ----------------------------------------------------
 
@@ -257,6 +259,72 @@
 
 ;; --- ECS systems ------------------------------------------------------------
 
+(defn sound-speed
+  "Adiabatic sound speed c_s = √(γ k_B T / m_H) for an ideal gas. m/s."
+  [temperature]
+  (if (pos? (double temperature))
+    (Math/sqrt (/ (* lf/gamma law/k-B (double temperature)) law/m-H))
+    0.0))
+
+(defn jeans-length
+  "Jeans length λ_J = c_s √(π / (G ρ)) for a gas of sound speed c_s and density ρ.
+   Returns 0 for non-positive inputs."
+  [density temperature]
+  (let [rho (double (or density 0.0))
+        cs  (sound-speed temperature)]
+    (if (pos? rho)
+      (* cs (Math/sqrt (/ Math/PI (* law/G rho))))
+      0.0)))
+
+(defn jeans-collapse-system
+  "Promote Jeans-unstable `:nebula` gas particles to resolved bodies. A fixed-mass
+   gas sample becomes a physical object when self-gravity overcomes thermal
+   pressure. The new state is set from the particle's mass via `law/mass-class`,
+   its radius is shrunk to a resolved-body density, and it is removed from the
+   SPH gas pool so it can only grow further by collision merging with other
+   resolved bodies.
+
+   A freshly promoted body keeps the gas sample's original radius as its
+   `c/accretion-radius` for one tick. This gives bodies that formed side-by-side
+   in a dense filament a chance to merge gravitationally before orbital motion
+   spreads them apart; without it each promoted body is a pinpoint that rarely
+   touches another."
+  [world]
+  (let [eids (ecs/entities-with world c/matter-state c/position c/density
+                                c/radius c/temperature c/mass)
+        gas-mass (:phase0/gas-particle-mass world)]
+    (reduce (fn [w eid]
+              (if (not= :nebula (ecs/get-component w eid c/matter-state))
+                w
+                (let [mass  (double (ecs/get-component w eid c/mass))
+                      rho   (double (ecs/get-component w eid c/density))
+                      temp  (double (ecs/get-component w eid c/temperature))
+                      r     (double (ecs/get-component w eid c/radius))
+                      lam-j (jeans-length rho temp)
+                      state (law/mass-class mass gas-mass)]
+                  (if (and (> r lam-j) (not= state :nebula))
+                    (let [r'        (case state
+                                      :debris     (Math/pow (/ mass (* (/ 4.0 3.0) Math/PI 2.0e3)) (/ 1.0 3.0))
+                                      :planet     (Math/pow (/ mass (* (/ 4.0 3.0) Math/PI 1.0e3)) (/ 1.0 3.0))
+                                      :protostar  r)
+                          rho'      (/ mass (* (/ 4.0 3.0) Math/PI r' r' r'))
+                          press'    (law/ideal-gas-pressure rho' temp)
+                          ;; Keep the original gas smoothing length as the
+                          ;; collision/gravitational feeding radius for this
+                          ;; tick so nearby promoted bodies can merge before
+                          ;; orbital spreading separates them.
+                          accr      (* 50.0 r)]
+                      (cond-> w
+                        true  (ecs/put-component eid c/matter-state state)
+                        true  (ecs/put-component eid c/radius r')
+                        true  (ecs/put-component eid c/density rho')
+                        true  (ecs/put-component eid c/pressure press')
+                        true  (ecs/put-component eid c/accretion-radius accr)
+                        true  (ecs/remove-component eid c/hydro-accel)))
+                    w))))
+            world
+            eids)))
+
 (defn collapse-system
   "A protostar — a clump that has accreted past the star-forming mass — contracts
    each tick under self-gravity: radius shrinks, density rises, and compression
@@ -320,33 +388,45 @@
 
 (defn classify-system
   "Set each clump's matter-state from the mass it has accreted from the cloud
-   (law/mass-class): gas → debris → planet → protostar. Formation is emergent —
+   (law/mass-class): gas -> debris -> planet -> protostar. Formation is emergent —
    a clump becomes a planet or a star-forming core because it ATE enough gas, not
-   because it was seeded that way. Stars never declassify; ignition (protostar →
+   because it was seeded that way. Stars never declassify; ignition (protostar ->
    star) is left to the fusion system once contraction makes the core hot enough."
   [world]
-  (let [eids    (ecs/entities-with world c/matter-state c/mass)
-        updates (par/par-mapv
-                 (fn [eid]
-                   (let [state (ecs/get-component world eid c/matter-state)]
-                     [eid state
-                      (if (= :star state)
-                        state
-                        (law/mass-class (ecs/get-component world eid c/mass)))]))
-                 eids)]
+  (let [eids     (ecs/entities-with world c/matter-state c/mass)
+        gas-mass (:phase0/gas-particle-mass world)
+        updates  (mapv
+                  (fn [eid]
+                    (let [state (ecs/get-component world eid c/matter-state)]
+                      [eid state
+                       (if (= :star state)
+                         state
+                         (law/mass-class (ecs/get-component world eid c/mass) gas-mass))]))
+                  eids)]
     (reduce (fn [w [eid old new]]
               (if (= old new)
                 w
-                (let [w (ecs/put-component w eid c/matter-state new)]
-                  ;; When a clump first reaches star-forming mass, freeze its
-                  ;; current (pre-contraction) radius as the gravitational
-                  ;; feeding zone, so it keeps accreting even after the
-                  ;; photosphere collapses. See c/accretion-radius.
-                  (if (and (= new :protostar)
-                           (nil? (ecs/get-component w eid c/accretion-radius)))
+                (let [w (ecs/put-component w eid c/matter-state new)
+                      old-gas-radius (when (= old :nebula)
+                                       (double (or (ecs/get-component w eid c/radius) 0.0)))]
+                  ;; When a clump first promotes out of the gas pool, give it a
+                  ;; temporary gravitational feeding radius so it can merge with
+                  ;; nearby promoted bodies before orbital spreading separates
+                  ;; them. Protostars additionally freeze their pre-contraction
+                  ;; radius so they keep sweeping up mass after collapse.
+                  (cond
+                    (and (= new :protostar)
+                         (nil? (ecs/get-component w eid c/accretion-radius)))
                     (ecs/put-component w eid c/accretion-radius
-                                       (double (or (ecs/get-component w eid c/radius) 0.0)))
-                    w))))
+                                       (double (or old-gas-radius
+                                                   (ecs/get-component w eid c/radius) 0.0)))
+                    (and (= old :nebula)
+                         (not= new :nebula)
+                         (nil? (ecs/get-component w eid c/accretion-radius)))
+                    (ecs/put-component w eid c/accretion-radius
+                                       (* 100.0 (double (or old-gas-radius
+                                                           (ecs/get-component w eid c/radius) 0.0))))
+                    :else w))))
             world
             updates)))
 
@@ -441,6 +521,241 @@
                   w))
               world
               updates))))
+
+;; --- The classifier: authentic matter-state state machine -------------------
+;; See docs/notes/2026.06.26-authentic-phase0-formation-physics.md §3. The two
+;; physical axes are kept separate: Jeans instability gates whether diffuse gas
+;; CONDENSES; accreted mass gates WHAT a condensed core becomes; temperature +
+;; mass gate IGNITION. No axis stands in for another (the old bug, where mass
+;; alone turned diffuse gas straight into solid bodies).
+
+(def ^:const core-condensation-density
+  "Central density (kg/m³) at which collapsing gas becomes optically thick and a
+   self-gravitating hydrostatic core forms — the first-core threshold. Diffuse
+   cloud gas sits at ~1e-16; crossing this (while Jeans-unstable) is the authentic
+   nebula→resolved condensation trigger. It also caps the SPH density: once gas is
+   this dense it stops being a fluid sample and becomes a body."
+  1.0e-10)
+
+(defn contraction-stalled?
+  "True when a contracting core has reached its main-sequence/degenerate radius
+   floor while still below the hydrogen-ignition temperature — i.e. it will never
+   ignite hydrogen. This is the brown-dwarf outcome."
+  [radius mass temperature]
+  (and radius mass temperature
+       (<= (double radius) (* 1.05 (law/main-sequence-radius mass)))
+       (< (double temperature) law/fusion-temp-threshold)))
+
+(defn classify-next-state
+  "Pure transition function for one body's matter-state, given its physical
+   region and the cloud's fixed gas-particle mass. Authentic formation beats:
+
+     :nebula  --Jeans-unstable & accreted past one parcel-->  condensed core
+                  condensed & mass ≥ deuterium limit  -> :protostar
+                  condensed & sub-stellar             -> :debris (planetesimal)
+     :debris  --accreted to ≥ deuterium limit-->             :protostar
+     :protostar  --T≥1e7 & M≥0.08 M⊙ & H-->                  :star
+                 --contraction stalled & 0.013–0.08 M⊙-->    :brown-dwarf
+     :star / :brown-dwarf                                    terminal
+     :planet                                                 owned by the disk
+                                                             sub-grid (beat 6)"
+  [{:keys [matter-state mass radius density temperature] :as region} gas-particle-mass]
+  (let [m  (double (or mass 0.0))
+        pm (double (or gas-particle-mass 0.0))]
+    (case matter-state
+      :star        :star
+      :brown-dwarf :brown-dwarf
+      :planet      :planet
+      :protostar   (cond
+                     (and (>= m law/hydrogen-burning-mass)
+                          (law/fusion-possible? region))
+                     :star
+
+                     (and (>= m law/deuterium-burning-mass)
+                          (<  m law/hydrogen-burning-mass)
+                          (contraction-stalled? radius m temperature))
+                     :brown-dwarf
+
+                     :else :protostar)
+      :debris      (if (>= m law/deuterium-burning-mass) :protostar :debris)
+      ;; :nebula (and any nil): diffuse gas condenses when it is Jeans-unstable
+      ;; AND has either reached the hydrostatic-core density (gravity has
+      ;; compressed it past the first-core threshold) OR accreted past a single
+      ;; gas parcel. Density-gated condensation is the authentic trigger and it
+      ;; also caps the SPH gas density (a condensed body uses material density).
+      (if (and (jeans-unstable? region)
+               (or (>= (double (or density 0.0)) core-condensation-density)
+                   (> m pm)))
+        (if (>= m law/deuterium-burning-mass) :protostar :debris)
+        (or matter-state :nebula)))))
+
+(defn classifier-system
+  "Double-buffer write-set system: SOLE writer of matter-state. Reads each body's
+   physics from the frozen snapshot and applies `classify-next-state`. Replaces
+   the matter-state writes of jeans-collapse, classify, and fusion (which keep
+   their geometry / luminosity roles); emits only the cells that actually change."
+  []
+  {:id     :classifier
+   :writes #{c/matter-state}
+   :run    (fn [world]
+             (let [gas-mass (:phase0/gas-particle-mass world)
+                   eids     (ecs/entities-with world c/matter-state c/mass)]
+               {c/matter-state
+                (into {}
+                      (keep (fn [eid]
+                              (let [region (entity->region world eid)
+                                    cur    (:matter-state region)
+                                    nxt    (classify-next-state region gas-mass)]
+                                (when (not= cur nxt) [eid nxt]))))
+                      eids)}))})
+
+;; --- The Structure owner: shape + compactness (double-buffer step 7b) -------
+;; radius and density are ONE geometric fact (ρ = m / V, V = 4/3π r³), so a
+;; single owner computes the pair, with the primary↔derived direction flipping
+;; by regime. This is the future home of the voxel shape representation (note §7).
+
+(def ^:const debris-material-density 2.0e3) ;; kg/m³ — rocky planetesimal
+(def ^:const planet-material-density 1.0e3) ;; kg/m³ — mixed rock/ice/volatile
+
+(defn sphere-radius
+  "Radius of a uniform sphere of `mass` at material `density`: r = (3m/4πρ)^(1/3)."
+  [mass density]
+  (Math/pow (/ (* 3.0 (double mass)) (* 4.0 Math/PI (double density))) (/ 1.0 3.0)))
+
+(defn resolved-shape
+  "Shape + compactness for a RESOLVED body, by matter-state. Solids are
+   incompressible (fixed material density → radius follows mass); cores contract
+   on the Kelvin–Helmholtz timescale toward the main-sequence radius floor,
+   flattening under their own angular momentum. Returns a map of the components
+   to write (a subset of radius/density/oblateness/rotation-axis)."
+  [{:keys [matter-state mass radius oblateness angular-momentum]}
+   collapse-fraction contraction-time dt]
+  (let [m (double (or mass 0.0))]
+    (case matter-state
+      :debris (let [r (sphere-radius m debris-material-density)]
+                {:radius r :density debris-material-density})
+      :planet (let [r (sphere-radius m planet-material-density)]
+                {:radius r :density planet-material-density})
+      (:protostar :star)
+      (let [L     (or angular-momentum [0.0 0.0 0.0])
+            o     (double (or oblateness 1.0))
+            a     (double (or radius (sphere-radius m planet-material-density)))
+            frac  (min (double collapse-fraction)
+                       (- 1.0 (Math/exp (- (/ (double dt) (double contraction-time))))))
+            floor (law/main-sequence-radius m)
+            {:keys [equatorial-radius polar-radius] :as shape}
+            (oblate-collapse-shape m L a o frac floor)]
+        {:radius        equatorial-radius
+         :density       (oblate-density m equatorial-radius polar-radius)
+         :oblateness    (:oblateness shape)
+         :rotation-axis (:rotation-axis shape)})
+      nil)))
+
+(defn structure-system
+  "Double-buffer write-set system: SOLE writer of the body's shape and the
+   compactness it implies — radius, density, and (for cores) oblateness +
+   rotation-axis. Computed per matter-state (design note §7b):
+     :nebula           SPH density + adaptive smoothing radius (fluid sample)
+     :debris / :planet fixed material density → radius from mass (solid)
+     :protostar/:star  KH oblate contraction toward the main-sequence floor
+   Replaces the radius/density writes of density-system, jeans-collapse, and
+   collapse. The future home of the voxel shape representation."
+  []
+  {:id     :structure
+   :writes #{c/radius c/density c/oblateness c/rotation-axis}
+   :run    (fn [world]
+             (let [cf (:phase0/collapse-fraction world 0.5)
+                   ct (:phase0/contraction-time world 9.5e14)
+                   dt (:sim/dt world 1.0e12)
+                   ;; gas branch (SPH): density primary, radius derived
+                   gas-ws (reduce (fn [ws [eid rho r]]
+                                    (if (and (lf/finite-number? rho) (pos? rho)
+                                             (lf/finite-number? r) (pos? r))
+                                      (-> ws (assoc-in [c/density eid] rho)
+                                             (assoc-in [c/radius eid] r))
+                                      ws))
+                                  {} (hydro/gas-structure world))]
+               ;; resolved branch: radius primary (or material density), rest derived
+               (reduce
+                 (fn [ws eid]
+                   (let [region (entity->region world eid)]
+                     (if-let [s (and (#{:debris :planet :protostar :star}
+                                      (:matter-state region))
+                                     (resolved-shape region cf ct dt))]
+                       (cond-> ws
+                         (:radius s)        (assoc-in [c/radius eid] (:radius s))
+                         (:density s)       (assoc-in [c/density eid] (:density s))
+                         (:oblateness s)    (assoc-in [c/oblateness eid] (:oblateness s))
+                         (:rotation-axis s) (assoc-in [c/rotation-axis eid] (:rotation-axis s)))
+                       ws)))
+                 gas-ws
+                 (ecs/entities-with world c/matter-state c/mass c/radius))))})
+
+(defn temperature-system
+  "Double-buffer write-set system: SOLE writer of temperature.
+     :protostar / :star  T = virial temperature G M m_H / (k_B R) — compression
+                         (Kelvin–Helmholtz) heating that RISES as Structure
+                         contracts the radius, carrying the core to ignition. A
+                         pure derivation from mass + radius (no frozen reference).
+     :debris / :planet   radiative: cool toward the CMB, warmed by nearby stars.
+     :nebula             skipped — diffuse gas stays at its seeded background.
+   Replaces collapse's compression heating and the legacy thermal-system."
+  [dt]
+  {:id     :thermal
+   :writes #{c/temperature}
+   :run    (fn [world]
+             (let [stars     (ecs/entities-with world c/matter-state c/luminosity c/position)
+                   star-lums (mapv #(ecs/get-component world % c/luminosity) stars)
+                   star-poss (mapv #(ecs/get-component world % c/position) stars)
+                   eids      (ecs/entities-with world c/matter-state c/temperature
+                                                c/density c/radius c/mass c/position)
+                   cells (par/par-mapv
+                           (fn [eid]
+                             (let [region (entity->region world eid)
+                                   state  (:matter-state region)
+                                   m      (:mass region)
+                                   r      (:radius region)]
+                               (cond
+                                 (and (#{:protostar :star} state) m r)
+                                 [eid (virial-temperature m r)]
+
+                                 (#{:debris :planet} state)
+                                 (let [pos       (:position region)
+                                       star-heat (reduce
+                                                   (fn [acc [lum spos]]
+                                                     (if (pos? (double (or lum 0.0)))
+                                                       (+ acc (radiation-heating-delta
+                                                                region lum (sp/dist pos spos) dt))
+                                                       acc))
+                                                   0.0 (map vector star-lums star-poss))
+                                       t    (double (or (:temperature region) 3.0))
+                                       drop (radiative-cooling-delta region dt)]
+                                   [eid (max 3.0 (- (+ t star-heat) drop))])
+
+                                 :else nil)))
+                           eids)]
+               {c/temperature (into {} (keep identity) cells)}))})
+
+(defn eos-system
+  "Double-buffer write-set system: pressure as the pure equation of state
+   P = ρ k_B T / m_H (`law/ideal-gas-pressure`) for every body carrying density
+   and temperature. Sole writer of pressure — the single-writer replacement for
+   the four legacy systems (density / jeans-collapse / collapse / thermal) that
+   each recomputed this identical ideal-gas pressure. Reads ρ and T from the
+   frozen snapshot (one-tick latency, negligible for a derived quantity)."
+  []
+  {:id     :eos
+   :writes #{c/pressure}
+   :run    (fn [world]
+             (let [eids (ecs/entities-with world c/density c/temperature)]
+               {c/pressure
+                (into {}
+                      (keep (fn [eid]
+                              (let [rho (ecs/get-component world eid c/density)
+                                    t   (ecs/get-component world eid c/temperature)]
+                                (when (and rho t)
+                                  [eid (law/ideal-gas-pressure rho t)]))))
+                      eids)}))})
 
 ;; --- Accretion (collision response) -----------------------------------------
 
@@ -553,23 +868,25 @@
            body-kind :body/gas}}]
   (let [density (body-density mass radius)
         L (or angular-momentum (orbital-angular-momentum mass position velocity))
-        spin (spin-from-angular-momentum L mass radius)]
-    {c/position     position
-     c/velocity     velocity
-     c/mass         mass
-     c/radius       radius
-     c/body-kind    body-kind
-     c/temperature  temperature
-     c/density      density
-     c/pressure     (law/ideal-gas-pressure density temperature)
-     c/composition  composition
-     c/luminosity   0.0
-     c/b-field      (or b-field (em/seed-field))
-     c/matter-state matter-state
-     c/angular-momentum L
-     c/spin         spin
-     c/oblateness   1.0
-     c/rotation-axis (rotation-axis L)}))
+        spin (spin-from-angular-momentum L mass radius)
+        resolved? (not= matter-state :nebula)]
+    (cond-> {c/position     position
+             c/velocity     velocity
+             c/mass         mass
+             c/radius       radius
+             c/body-kind    body-kind
+             c/temperature  temperature
+             c/density      density
+             c/pressure     (law/ideal-gas-pressure density temperature)
+             c/composition  composition
+             c/luminosity   0.0
+             c/b-field      (or b-field (em/seed-field))
+             c/matter-state matter-state
+             c/angular-momentum L
+             c/spin         spin
+             c/oblateness   1.0
+             c/rotation-axis (rotation-axis L)}
+      resolved? (assoc c/accretion-radius radius))))
 
 (defn spawn-clump
   "Spawn one nebular clump entity from a seed spec. Returns [world eid]."

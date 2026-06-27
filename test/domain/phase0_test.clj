@@ -74,9 +74,9 @@
       (is (= (:rate neb) (:phase0/time-scale w))
           "time-scale is the clock rate in sim-seconds per real second")))
 
-  (testing "Physics pipeline has eleven ordered systems, density first"
+  (testing "Physics pipeline has twelve ordered systems, density first"
     (let [systems (phase0/physics-systems (phase0/create-world))]
-      (is (= 11 (count systems)))
+      (is (= 12 (count systems)))
       (is (fn? (first systems))))))
 
 (deftest test-stats
@@ -150,13 +150,15 @@
 ;; --- Accretion / merge handler ----------------------------------------------
 
 (deftest test-stellar-merge
-  (testing "Overlapping bodies merge, conserving mass into one entity"
+  (testing "Overlapping resolved bodies merge, conserving mass into one entity"
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
                                               stellar/stellar-merge-handler))
-          [w1 _]  (stellar/spawn-clump base {:position [0 0 0]   :mass 2e30 :radius 1.0})
-          [w2 _]  (stellar/spawn-clump w1   {:position [0.5 0 0] :mass 1e30 :radius 1.0})
+          [w1 _]  (stellar/spawn-clump base {:position [0 0 0]   :mass 2e30 :radius 1.0
+                                             :matter-state :protostar})
+          [w2 _]  (stellar/spawn-clump w1   {:position [0.5 0 0] :mass 1e30 :radius 1.0
+                                             :matter-state :planet})
           w3      (collision/collision-detection-system w2)
           remaining (ecs/entities-with w3 c/mass)]
       (is (= 1 (count remaining)))
@@ -195,7 +197,7 @@
     ;; quick contraction (τ small), so a star ignites within a bounded tick
     ;; budget. The production defaults deliberately stretch this to ~tens of Myr
     ;; (see `create-world`); this test pins the EMERGENCE, not the pace.
-    (let [w0 (phase0/create-world {:gas-count 400 :nebula-radius 1.2e16
+    (let [w0 (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
                                    :contraction-time 2e12 :spin 0.55})
           ;; run until a star ignites from the gas or we exhaust the budget
           final (loop [w w0 i 0]

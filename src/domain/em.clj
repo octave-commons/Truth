@@ -25,6 +25,7 @@
    [shape.spatial     :as sp]
    [domain.ecs.core   :as ecs]
    [domain.ecs.parallel :as par]
+   [domain.ecs.tick   :as tick]
    [domain.ecs.components :as c]))
 
 ;; --- Pure field physics -----------------------------------------------------
@@ -297,3 +298,77 @@
                   w))
               world1
               updates2))))
+
+(defn field-system
+  "Double-buffer write-set system: SOLE writer of b-field.
+
+   Magnetic flux Φ = B·R² is frozen into a body when it condenses and conserved
+   as it contracts, so B = Φ/R² amplifies as Structure shrinks the radius — ideal
+   flux freezing (B ∝ 1/R² ∝ ρ^{2/3}) — while Φ itself decays by Ohmic/ambipolar
+   resistivity (real only in dense cores). Diffuse :nebula gas keeps its seeded
+   field with the same light resistive decay. Replaces collapse's flux-freezing
+   and em-system's b-field decay; Φ (frozen-flux) is the reference that turns the
+   amplification into a derivation from the radius Structure owns."
+  [dt]
+  {:id     :field
+   :writes #{c/b-field c/frozen-flux}
+   :run    (fn [world]
+             (let [eids (ecs/entities-with world c/b-field c/radius)]
+               (reduce
+                 (fn [ws eid]
+                   (let [b (ecs/get-component world eid c/b-field)
+                         r (double (or (ecs/get-component world eid c/radius) 0.0))
+                         resolved? (contains? #{:debris :planet :protostar :star}
+                                              (ecs/get-component world eid c/matter-state))]
+                     (if (and (lf/finite-vec3? b) (pos? r))
+                       (if resolved?
+                         ;; flux frozen at condensation, conserved then decayed:
+                         ;; B = Φ/R² — amplifies as R contracts.
+                         (let [flux  (or (ecs/get-component world eid c/frozen-flux)
+                                         (sp/v* b (* r r)))
+                               flux' (resistive-decay flux r dt)
+                               b'    (sp/v* flux' (/ 1.0 (* r r)))]
+                           (if (lf/bounded-b-field? b')
+                             (-> ws (assoc-in [c/b-field eid] b')
+                                    (assoc-in [c/frozen-flux eid] flux'))
+                             ws))
+                         ;; diffuse gas: resistive decay only, no flux freezing
+                         (let [b' (resistive-decay b r dt)]
+                           (cond-> ws (lf/bounded-b-field? b') (assoc-in [c/b-field eid] b'))))
+                       ws)))
+                 {}
+                 eids)))})
+
+(defn lorentz-acceleration-system
+  "Double-buffer write-set system: Lorentz acceleration a = (∇×B)×B/(μ₀ρ) for
+   every EM-active clump → `accel.lorentz`. Reads the frozen snapshot, writes
+   ONLY accel.lorentz, and clears the contribution from bodies that are no longer
+   EM-active. Sole writer of accel.lorentz — the single-writer replacement for
+   the Lorentz half of `em-system` (which kept adding into `hydro-accel`).
+
+   The legacy `em-system` still handles magnetic braking (angular-momentum/spin)
+   and resistive flux decay (b-field); those accumulators are decomposed in a
+   later step. Until then em's own hydro-accel write is masked off by the bridge."
+  []
+  {:id     :em-lorentz
+   :writes #{c/accel-lorentz}
+   :run    (fn [world]
+             (let [eids     (ecs/entities-with world c/b-field c/radius c/position
+                                               c/density c/angular-momentum)
+                   all-data (mapv #(entity->em-data world %) eids)
+                   active   (filterv #(em-active? (:state %)) all-data)
+                   computed (par/par-mapv
+                              (fn [data]
+                                (let [h      (* 2.0 (double (or (:radius data) 1.0)))
+                                      nbrs   (neighbors-within (:position data) h active)
+                                      curl-b (curl-estimate (:b-field data) (:density data)
+                                                            (:position data) nbrs)]
+                                  [(:eid data)
+                                   (lorentz-acceleration (:b-field data) curl-b (:density data))]))
+                              active)
+                   cell     (reduce (fn [m [eid a]]
+                                      (if (lf/finite-vec3? a) (assoc m eid a) m))
+                                    {} computed)]
+               (tick/contribution-write-set
+                 c/accel-lorentz cell
+                 (keys (get-in world [:components c/accel-lorentz])))))})

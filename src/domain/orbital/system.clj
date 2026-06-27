@@ -46,7 +46,13 @@
    The Barnes–Hut tree is immutable once built, so per-body accelerations are
    computed in parallel (pmap) across cores — the single most expensive part of
    the tick — and the results applied sequentially. `softening` is the Plummer
-   length passed to the gravity kernel."
+   length passed to the gravity kernel.
+
+   LEGACY: this fuses gravity computation and Leapfrog integration into one
+   system, so the expensive tree-walk blocks the rest of the tick. The
+   double-buffer pipeline replaces it with `gravity-acceleration` (own thread)
+   + `motion-integration` (see below). Kept for the sequential path until the
+   parallel tick goes live."
   ([G theta dt] (orbital-system G theta dt bh/default-softening))
   ([G theta dt softening]
    (fn [world]
@@ -62,3 +68,62 @@
        (reduce (fn [w body] (apply-body-back w (:id body) body))
                world
                updated)))))
+
+;; --- Double-buffer split: gravity emitter + motion integrator ----------------
+
+(def ^:private zero3 [0.0 0.0 0.0])
+
+;; The single-owner acceleration contributions the motion integrator sums. Each
+;; is written by exactly one fan-out system (gravity / hydro / em). New force
+;; sources join this list; the integrator stays unchanged.
+(def ^:private accel-sources
+  [c/accel-gravity c/accel-pressure c/accel-lorentz])
+
+(defn gravity-acceleration
+  "Write-set system: per-body Barnes–Hut self-gravity → `accel.gravity`.
+
+   This is the expensive tree-walk, now isolated on its own thread. It reads the
+   frozen snapshot and writes ONLY accel.gravity, so it runs concurrently with
+   every other system. The integrator consumes the contribution next (one-tick
+   latency, accepted)."
+  [G theta softening]
+  {:id     :gravity
+   :writes #{c/accel-gravity}
+   :run    (fn [world]
+             (let [bodies (world->bodies world)
+                   tree   (bh/build-tree bodies)]
+               {c/accel-gravity
+                (into {}
+                      (par/par-mapv
+                        (fn [body]
+                          [(:id body) (bh/acceleration G theta softening tree body)])
+                        bodies))}))})
+
+(defn motion-integration
+  "Write-set system: sum all acceleration contributions and advance the body by
+   one symplectic step — `v' = v + a·dt`, `x' = x + v'·dt` (symplectic Euler).
+
+   Single-evaluation form: `a` is the acceleration at the snapshot position,
+   already computed by the contribution emitters, so the integrator never
+   evaluates the force field itself. Sole writer of position and velocity."
+  [dt]
+  {:id     :motion
+   :writes #{c/position c/velocity}
+   :run    (fn [world]
+             (let [eids (ecs/entities-with world c/position c/velocity
+                                           c/mass c/radius c/body-kind)]
+               (reduce
+                 (fn [ws eid]
+                   (let [a  (reduce (fn [acc src]
+                                      (sp/v+ acc (or (ecs/get-component world eid src)
+                                                     zero3)))
+                                    zero3 accel-sources)
+                         v  (ecs/get-component world eid c/velocity)
+                         x  (ecs/get-component world eid c/position)
+                         v' (sp/v+ v (sp/v* a dt))
+                         x' (sp/v+ x (sp/v* v' dt))]
+                     (-> ws
+                         (assoc-in [c/velocity eid] v')
+                         (assoc-in [c/position eid] x'))))
+                 {}
+                 eids)))})

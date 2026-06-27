@@ -26,18 +26,22 @@
 
 (defn- collidable-bodies
   "Project world into vec of [eid position radius velocity mass] for all entities
-   that have position, radius, mass, and velocity components.
+   that have position, radius, mass, velocity, and a resolved matter-state.
+   `:nebula` gas sample particles are NOT collidable — they become resolved bodies
+   through Jeans instability, not by touching. For a star-forming body the
+   effective collision radius is its gravitational feeding zone
+   (`c/accretion-radius`) rather than its contracted photosphere, so it keeps
+   sweeping up other resolved bodies instead of becoming a pinpoint sink."
+   [world]
+   (->> (ecs/all-of world c/position c/radius c/mass c/velocity c/matter-state
+                    c/accretion-radius)
+        (filter (fn [[_eid comps]] (not= :nebula (comps c/matter-state))))
+        (mapv (fn [[eid comps]]
+                [eid (comps c/position)
+                 (double (or (comps c/accretion-radius) (comps c/radius)))
+                 (comps c/velocity)
+                 (double (comps c/mass))]))))
 
-   For a star-forming body the effective collision radius is its gravitational
-   feeding zone (`c/accretion-radius`) rather than its contracted photosphere,
-   so it keeps sweeping up gas instead of becoming a pinpoint sink."
-  [world]
-  (->> (ecs/all-of world c/position c/radius c/mass c/velocity)
-       (mapv (fn [[eid comps]]
-               [eid (comps c/position)
-                (double (or (comps c/accretion-radius) (comps c/radius)))
-                (comps c/velocity)
-                (double (comps c/mass))]))))
 
 (defn- pair-map [[eid-a pos-a rad-a _vel-a] [eid-b pos-b rad-b _vel-b] d]
   {:eid-a  eid-a :eid-b  eid-b

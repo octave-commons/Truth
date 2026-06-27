@@ -2,15 +2,16 @@
   "Tests for the stellar nebula/star formation domain helpers and ECS systems.
    These are epistemic contracts: every physical invariant asserted here must
    hold before downstream systems (disc formation, EM, regime) can be trusted."
-  (:require
-   [clojure.test :refer [deftest testing is]]
-   [domain.stellar :as stellar]
-   [domain.em      :as em]
-   [domain.ecs.core :as ecs]
-   [domain.ecs.event :as event]
-   [domain.ecs.components :as c]
-   [domain.physics.collision :as collision]
-   [shape.spatial :as sp]))
+   (:require
+    [clojure.test :refer [deftest testing is]]
+    [domain.stellar :as stellar]
+    [domain.em      :as em]
+    [domain.ecs.core :as ecs]
+    [domain.ecs.event :as event]
+    [domain.ecs.components :as c]
+    [domain.physics.collision :as collision]
+    [law.stellar :as law]
+    [shape.spatial :as sp]))
 
 ;; --- Angular momentum helpers ------------------------------------------------
 
@@ -66,11 +67,13 @@
                                              :velocity [0.0 0.0 0.0]
                                              :mass 2e30
                                              :radius 1.0
+                                             :matter-state :protostar
                                              :angular-momentum [0.0 0.0 1e42]})
           [w2 eb] (stellar/spawn-clump w1   {:position [0.5 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e30
                                              :radius 1.0
+                                             :matter-state :planet
                                              :angular-momentum [0.0 0.0 5e41]})
           La      (ecs/get-component w2 ea c/angular-momentum)
           Lb      (ecs/get-component w2 eb c/angular-momentum)
@@ -283,7 +286,8 @@
 
 (deftest test-accretion-radius-set-on-protostar
   (testing "A clump reaching star-forming mass freezes its radius as a feeding zone"
-    (let [base    (ecs/empty-world)
+    (let [base    (-> (ecs/empty-world)
+                      (assoc :phase0/gas-particle-mass 1e27))
           [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1.1e30   ;; above star-mass-threshold
@@ -294,7 +298,7 @@
           "feeding zone is the pre-contraction radius"))))
 
 (deftest test-star-accretes-beyond-its-photosphere
-  (testing "A contracted star still captures gas inside its feeding zone"
+  (testing "A contracted star still captures debris inside its feeding zone"
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
@@ -307,14 +311,15 @@
                                              :matter-state :star})
           star    (first (ecs/entities-with w1 c/mass))
           w1      (ecs/put-component w1 star c/accretion-radius 1e14)
-          ;; gas clump well outside the photosphere but inside the feeding zone
+          ;; debris clump well outside the photosphere but inside the feeding zone
           [w2 _]  (stellar/spawn-clump w1 {:position [5e13 0.0 0.0]
                                            :velocity [0.0 0.0 0.0]
                                            :mass 5e27
-                                           :radius 6e13})
+                                           :radius 6e13
+                                           :matter-state :debris})
           w3      (collision/collision-detection-system w2)]
       (is (= 1 (count (ecs/entities-with w3 c/mass)))
-          "the gas was accreted even though it never touched the photosphere"))))
+          "the debris was accreted even though it never touched the photosphere"))))
 
 (deftest test-merge-preserves-accretion-radius
   (testing "Merging keeps the larger feeding zone (no runaway, no reset to photosphere)"
@@ -345,3 +350,71 @@
           w2   (stellar/collapse-system w)
           ob   (ecs/get-component w2 eid c/oblateness)]
       (is (< (Math/abs (- ob 1.0)) 1e-12)))))
+
+;; --- Jeans-driven formation -------------------------------------------------
+
+(deftest test-sound-speed
+  (testing "Sound speed increases with temperature"
+    (let [cs-cold (stellar/sound-speed 10.0)
+          cs-hot  (stellar/sound-speed 1000.0)]
+      (is (pos? cs-cold))
+      (is (> cs-hot cs-cold)))))
+
+(deftest test-jeans-length
+  (testing "Jeans length falls with density and rises with temperature"
+    (let [lj1 (stellar/jeans-length 1e-9 100.0)
+          lj2 (stellar/jeans-length 1e-6 100.0)
+          lj3 (stellar/jeans-length 1e-9 1000.0)]
+      (is (pos? lj1))
+      (is (< lj2 lj1) "higher density -> shorter Jeans length")
+      (is (> lj3 lj1) "higher temperature -> longer Jeans length"))))
+
+(deftest test-stable-gas-remains-nebula
+  (testing "A hot, tenuous gas particle with r << lambda_J stays diffuse"
+    (let [base (ecs/empty-world)
+          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 2e28
+                                             :radius 1e10
+                                             :temperature 1000.0})
+          ;; override density to a low value so lambda_J is huge
+          w2 (-> w
+                 (ecs/put-component eid c/density 1e-9)
+                 (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 1000.0)))
+          w3 (stellar/jeans-collapse-system w2)]
+      (is (= :nebula (ecs/get-component w3 eid c/matter-state)))
+      (is (= 1e10 (ecs/get-component w3 eid c/radius))))))
+
+(deftest test-jeans-unstable-gas-promotes
+  (testing "A cold, dense gas particle with r > lambda_J collapses to a resolved body"
+    (let [base (ecs/empty-world)
+          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 2e28
+                                             :radius 1e14
+                                             :temperature 100.0})
+          ;; override density so lambda_J is small
+          w2 (-> w
+                 (ecs/put-component eid c/density 1e-9)
+                 (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 100.0)))
+          w3 (stellar/jeans-collapse-system w2)]
+      (is (= :debris (ecs/get-component w3 eid c/matter-state)))
+      (is (< (ecs/get-component w3 eid c/radius) 1e14) "radius shrinks to resolved-body scale")
+      (is (pos? (ecs/get-component w3 eid c/density)))
+      (is (nil? (ecs/get-component w3 eid c/hydro-accel)) "gas acceleration removed"))))
+
+(deftest test-jeans-collapse-ignores-resolved-bodies
+  (testing "Already-resolved bodies are not affected by Jeans collapse"
+    (let [base (ecs/empty-world)
+          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 2e28
+                                             :radius 1e14
+                                             :temperature 100.0
+                                             :matter-state :planet})
+          w2 (-> w
+                 (ecs/put-component eid c/density 1e-9)
+                 (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 100.0)))
+          w3 (stellar/jeans-collapse-system w2)]
+      (is (= :planet (ecs/get-component w3 eid c/matter-state)))
+      (is (= 1e14 (ecs/get-component w3 eid c/radius))))))

@@ -16,6 +16,7 @@
    [law.stellar       :as ls]
    [domain.ecs.core   :as ecs]
    [domain.ecs.parallel :as par]
+   [domain.ecs.tick   :as tick]
    [domain.ecs.components :as c]
    [shape.spatial     :as sp]))
 
@@ -177,36 +178,107 @@
               cleared
               updates))))
 
+(defn pressure-acceleration
+  "Double-buffer write-set system: SPH pressure-gradient acceleration a = −∇p/ρ
+   for every hydro-active clump → `accel.pressure`. Reads the frozen snapshot,
+   writes ONLY accel.pressure, and clears the contribution from any body that is
+   no longer hydro-active. Sole writer of accel.pressure — the single-writer
+   replacement for the hydro half of the legacy `hydro-system`/`hydro-accel`."
+  []
+  {:id     :hydro
+   :writes #{c/accel-pressure}
+   :run    (fn [world]
+             (let [eids     (ecs/entities-with world c/matter-state c/position
+                                               c/density c/pressure c/mass c/radius)
+                   all-data (mapv #(entity->hydro-data world %) eids)
+                   active   (filterv #(hydro-active? (:state %)) all-data)
+                   computed (par/par-mapv
+                              (fn [data]
+                                (let [h    (* 2.0 (double (or (:radius data) 1.0)))
+                                      nbrs (neighbors-within world (:position data) h active)]
+                                  [(:eid data) (pressure-gradient-acceleration data nbrs)]))
+                              active)
+                   cell     (reduce (fn [m [eid a]]
+                                      (if (lf/finite-vec3? a) (assoc m eid a) m))
+                                    {} computed)]
+               (tick/contribution-write-set
+                 c/accel-pressure cell
+                 (keys (get-in world [:components c/accel-pressure])))))})
+
+(def ^:const sph-neighbor-eta
+  "Dimensionless SPH neighbor-count constant. A particle's smoothing length
+   h = eta * (m / rho)^(1/3). With eta ≈ 1.2, the support contains roughly
+   ~50 neighbors in a uniform 3D glass. We use h = 2*r, so the effective
+   particle radius is h/2 = (eta/2) * (m/rho)^(1/3)."
+  1.2)
+
+(defn- radius-from-density
+  "Adaptive particle radius for a fixed-mass gas sample: r = (eta/2) * (m/ρ)^(1/3).
+   Clamped so isolated particles do not inflate without bound and dense
+   particles do not vanish."
+  [mass density seed-radius]
+  (let [m (double (or mass 1.0))
+        rho (double (or density 1e-18))
+        r (* 0.5 sph-neighbor-eta (Math/pow (/ m rho) (/ 1.0 3.0)))
+        r0 (double (or seed-radius r))]
+    (-> r
+        (max (* r0 0.1))
+        (min (* r0 5.0)))))
+
 (defn density-system
   "SPH density pass: compute ρ_i = Σ_j m_j W for every `:nebula` particle from
-   the current positions, then recompute pressure from the ideal gas law. Runs
-   before `hydro-system` so the pressure-gradient force sees a real, varying
-   field rather than the fixed seed density. Resolved bodies (`:debris`,
-   `:planet`, `:protostar`, `:star`) keep their existing body-density; they are
-   not samples of the diffuse gas field."
+   the current positions, then recompute pressure and the particle's adaptive
+   radius from the ideal gas law. Runs before `hydro-system` so the
+   pressure-gradient force sees a real, varying field rather than the fixed seed
+   density. Resolved bodies (`:debris`, `:planet`, `:protostar`, `:star`) keep
+   their existing body-density; they are not samples of the diffuse gas field."
   [dt]
   (fn [world]
     (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                       c/pressure c/mass c/radius c/temperature)
           all-data (mapv #(entity->hydro-data world %) eids)
           gas      (filterv #(= :nebula (:state %)) all-data)
+          seed-r   (fn [data] (double (or (:radius data) 1.0)))
           updates  (par/par-mapv
                     (fn [data]
                       (let [h     (* 2.0 (double (or (:radius data) 1.0)))
                             nbrs  (neighbors-within world (:position data) h gas)
                             rho   (sph-density data nbrs)
-                            press (ls/ideal-gas-pressure rho (:temperature data))]
-                        [(:eid data) rho press]))
+                            press (ls/ideal-gas-pressure rho (:temperature data))
+                            r'    (radius-from-density (:mass data) rho (seed-r data))]
+                        [(:eid data) rho press r']))
                     gas)]
-      (reduce (fn [w [eid rho press]]
+      (reduce (fn [w [eid rho press r']]
                 (if (and (lf/finite-number? rho) (lf/finite-number? press)
-                         (pos? rho) (pos? press))
+                         (pos? rho) (pos? press) (lf/finite-number? r') (pos? r'))
                   (-> w
                       (ecs/put-component eid c/density rho)
-                      (ecs/put-component eid c/pressure press))
+                      (ecs/put-component eid c/pressure press)
+                      (ecs/put-component eid c/radius r'))
                   w))
               world
               updates))))
+
+(defn gas-structure
+  "The GAS branch of the Structure owner: for every diffuse `:nebula` parcel,
+   the SPH density ρ_i = Σ_j m_j W and the adaptive smoothing radius
+   r = (η/2)(m/ρ)^(1/3). Returns `[[eid density radius] ...]`. Pure; reuses the
+   same SPH machinery as the legacy `density-system` (which stays for the
+   sequential path). For gas, density is primary (estimated from neighbours) and
+   radius follows — the opposite of a resolved body, where radius is primary."
+  [world]
+  (let [eids     (ecs/entities-with world c/matter-state c/position c/density
+                                    c/pressure c/mass c/radius c/temperature)
+        all-data (mapv #(entity->hydro-data world %) eids)
+        gas      (filterv #(= :nebula (:state %)) all-data)]
+    (par/par-mapv
+      (fn [data]
+        (let [h    (* 2.0 (double (or (:radius data) 1.0)))
+              nbrs (neighbors-within world (:position data) h gas)
+              rho  (sph-density data nbrs)
+              r'   (radius-from-density (:mass data) rho (double (or (:radius data) 1.0)))]
+          [(:eid data) rho r']))
+      gas)))
 
 (defn sound-speed
   "Adiabatic sound speed c_s = √(γ P / ρ) for an ideal gas. m/s."

@@ -15,6 +15,17 @@
 (def ^:const solar-mass 1.989e30) ;; kg
 (def ^:const solar-radius 6.957e8) ;; m
 
+;; --- Real stellar/sub-stellar mass boundaries (authentic formation fate) -----
+;; The two physical thresholds that decide a contracting core's destiny. These
+;; are NOT toy tiers — they are the actual deuterium- and hydrogen-burning limits.
+(def ^:const deuterium-burning-mass (* 0.013 solar-mass))
+;; ~2.59e28 kg (~13 M_Jupiter). Below this, no fusion of any kind → planet/debris.
+;; Between this and the hydrogen limit → brown dwarf: burns deuterium, then
+;; contraction is halted by electron degeneracy before hydrogen can ignite.
+(def ^:const hydrogen-burning-mass  (* 0.08 solar-mass))
+;; ~1.59e29 kg (~80 M_Jupiter). At/above this a contracting core reaches the
+;; ~1e7 K needed for sustained hydrogen fusion → a true main-sequence star.
+
 (defn ideal-gas-pressure
   "Pressure of a gas region from the ideal gas law: P = ρ k_B T / m_H."
   [density temperature]
@@ -37,6 +48,10 @@
 ;; These are the toy-scale boundaries between diffuse gas, a planetesimal/debris
 ;; clump, a planet-scale body, and a star-forming core. They are RELATIVE tiers
 ;; for a few-solar-mass cloud, not literal Earth/Sun masses.
+;;
+;; `debris-mass-threshold` is a fallback default. In practice Phase 0 overrides
+;; it with the actual fixed gas-particle mass, because any clump larger than one
+;; gas sample is already a resolved body.
 (def ^:const debris-mass-threshold 1.2e28) ;; kg — gas → planetesimal/debris
 (def ^:const planet-mass-threshold 6e28)   ;; kg — debris → planet-scale
 (def ^:const star-mass-threshold   1.0e30) ;; kg — planet → star-forming core (dominant)
@@ -44,14 +59,20 @@
 (defn mass-class
   "Classify an accreted clump's matter-state purely from its mass. A clump that
    has reached star-forming mass becomes a :protostar — 'big and hot', contracting
-   — and only the fusion test promotes it to a true :star."
-  [mass]
-  (let [m (double (or mass 0.0))]
-    (cond
-      (>= m star-mass-threshold)   :protostar
-      (>= m planet-mass-threshold) :planet
-      (>= m debris-mass-threshold) :debris
-      :else                        :nebula)))
+   — and only the fusion test promotes it to a true :star.
+
+   `gas-particle-mass` is the fixed mass of one equal-mass nebula sample. Any
+   clump heavier than that is resolved debris (or larger), because it is no
+   longer a single gas sample. If omitted, `debris-mass-threshold` is used."
+  ([mass] (mass-class mass debris-mass-threshold))
+  ([mass gas-particle-mass]
+   (let [m  (double (or mass 0.0))
+         pm (double (or gas-particle-mass debris-mass-threshold))]
+     (cond
+       (>= m star-mass-threshold)   :protostar
+       (>= m planet-mass-threshold) :planet
+       (> m pm)                     :debris
+       :else                        :nebula))))
 
 ;; --- Material response (collision malleability) ---
 (def ^:const melt-temperature 1500.0)

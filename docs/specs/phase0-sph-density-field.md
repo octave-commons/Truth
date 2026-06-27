@@ -127,6 +127,45 @@ A correct SPH-as-fluid implementation must satisfy these invariants, each captur
 
 **Verification:** `clj -M:test` → 150 tests, 393 assertions, 0 failures, 0 errors.
 
+### Phase 5b — Density-coupled size and dynamic range
+
+**Status:** completed  
+**Goal:** Address feedback that fog particles were oversaturated, uniformly huge, and did not convey the sampled area or density contrast.
+
+**Changes (`src/infra/render.clj`):**
+
+- Added `nebula-density-norm` — a wide-range log mapping from physical density (kg/m³) to `[0,1]` so a factor-of-1000 density contrast is visible.
+- Added `fog-particle-size` — particle size is tied to the SPH support radius (`h = 2 × render-radius`) and inversely to normalized density: low-density samples read larger/fainter, high-density samples read smaller/brighter.
+- Updated `nebula-fog` to accept `:support` and `:density` (now normalized) and derive per-particle size from them.
+- Updated the fragment shader:
+  - `sigma` varies with density (soft tails for diffuse gas, tight cores for dense gas).
+  - alpha uses a non-linear density ramp `(0.04 + 1.8 * dens^1.5)` so sparse regions are nearly transparent and dense regions pop.
+  - base colour is desaturated (`vColor * 0.55`) and mixed toward white as density rises, reducing additive clipping.
+- Wired `:support` and normalized density into `:nebula`, `:protostar`, and `:star` corona fog generation.
+
+**Tests (`test/infra/render_test.clj`):**
+
+- Extended `test-nebula-density-visualization` to verify low-density fog puffs are larger than high-density puffs.
+
+**Verification:** `clj -M:test` → 150 tests, 394 assertions, 0 failures, 0 errors.
+
+### Phase 5c — Render projection cache
+
+**Status:** completed  
+**Goal:** Reduce per-frame render CPU cost after the density-coupled shader work made the dev loop laggier.
+
+**Changes (`src/infra/render.clj`):**
+
+- Cached `nebula-fog` particle clouds per `[eid seed count]`, with input validation so entity inputs (center/extent/support/color/density) changing invalidate the cache.
+- Cached the full `phase0-bodies-from-world` projection per `[world-identity tick scale]` so consecutive render frames that see the same world reuse the shape list instead of rebuilding every particle.
+- Cache key includes `System/identityHashCode world` so different test worlds at tick 0 do not collide.
+
+**Tests:**
+
+- Existing render tests continue to pass; cache isolation verified by running `test-nebula-density-visualization` + `test-oblate-body-projection` together (previously collided on tick-0 cache key).
+
+**Verification:** `clj -M:test` → 150 tests, 394 assertions, 0 failures, 0 errors.
+
 ---
 
 ## 4. Open questions / decisions
@@ -152,5 +191,6 @@ A correct SPH-as-fluid implementation must satisfy these invariants, each captur
 | Pair smoothing length | `test-pair-smoothing-length` | non-zero force at 1.5*r | pass | 2026-06-26 |
 | Hydro-accel lifecycle | `test-hydro-accel-cleared-for-resolved-bodies` | cleared on deactivation | pass | 2026-06-26 |
 | Star ignition | `test-collapse-heats-toward-fusion` | protostar reaches fusion thresholds | pass | 2026-06-26 |
-| Volumetric fog density | `test-nebula-density-visualization` | nebula fog particles carry `:density` | pass | 2026-06-26 |
-| Full suite | `clj -M:test` | all pass | 150 tests, 393 assertions, 0 failures | 2026-06-26 |
+| Volumetric fog density | `test-nebula-density-visualization` | nebula fog particles carry `:density`; low-density puffs larger than high-density puffs | pass | 2026-06-26 |
+| Render projection cache | `clj -M:test` | all pass with per-frame cache | 150 tests, 394 assertions, 0 failures | 2026-06-26 |
+| Full suite | `clj -M:test` | all pass | 150 tests, 394 assertions, 0 failures | 2026-06-26 |

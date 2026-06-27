@@ -37,11 +37,20 @@ src/
 ## Phase 0 physics
 
 Phase 0 couples gravity, thermodynamics, and an electromagnetic / MHD-lite layer
-on the single ECS world. The tick pipeline (`domain.phase0/physics-systems`):
+on the single ECS world. Each force/field is its own **system** owning the
+components it writes; the tick fans them out concurrently over a frozen snapshot
+and folds the disjoint writes at one barrier, so **system order does not matter**
+(see `docs/notes/2026.06.26-ecs-double-buffer-single-writer-spec.md`). Each
+component has exactly one writer — gravity→`accel.gravity`, motion→`position`/
+`velocity`, structure→`radius`/`density`, classifier→`matter-state`,
+thermal→`temperature`, field→`b-field`, … — enforced by `architecture_test`.
 
-```
-gravity → regime → EM → collapse(hydro) → fusion → thermal → classify → collision
-```
+The double-buffer path is `phase0/physics-systems-parallel` (set
+`:phase0/parallel? true`); the live default is still the sequential
+`physics-systems` pipeline until the parallel model is tuned to form a star
+(see the spec §10). The formation physics — Jeans collapse → protostar →
+ignition / brown-dwarf — is grounded in real solar-system formation
+(`docs/notes/2026.06.26-authentic-phase0-formation-physics.md`).
 
 - **`domain.regime`** — the dimensionless-number classifier (plasma β, Mach,
   Alfvén-Mach, Jeans ratio) that tags each clump's dominant physics. The keystone.

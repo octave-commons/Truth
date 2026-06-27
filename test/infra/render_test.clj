@@ -70,6 +70,14 @@
       (is (seq fog) "nebula produces fog particles")
       (is (every? #(number? (:density %)) fog)
           "every fog particle carries a density value for the shader")))
+  (testing "Higher-density samples read smaller (they sample a tighter area)"
+    (let [sparse (r/nebula-fog {:center [0.0 0.0 0.0] :extent 1.0 :support 1.0
+                                :color [1.0 1.0 1.0] :count 50 :seed 7 :density 0.1})
+          dense  (r/nebula-fog {:center [0.0 0.0 0.0] :extent 1.0 :support 1.0
+                                :color [1.0 1.0 1.0] :count 50 :seed 7 :density 0.9})
+          mean (fn [xs] (/ (reduce + xs) (count xs)))]
+      (is (> (mean (map :size sparse)) (mean (map :size dense)))
+          "low-density fog puffs are larger than high-density puffs")))
   (testing "Temperature colour varies with temperature"
     (let [cold (r/temp-color 10.0)
           hot  (r/temp-color 1e4)]
