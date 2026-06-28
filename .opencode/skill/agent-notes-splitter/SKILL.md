@@ -1,0 +1,1 @@
+/home/err/.agents/skills/agent-notes-splitter/SKILL.md

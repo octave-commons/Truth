@@ -1,0 +1,63 @@
+;; clj-kondo — static correctness + anti-pattern linting for Gates of Truth.
+;;
+;; Deterministic: same source in => same findings out. Read by both the
+;; `clj-kondo` CLI (see bin/analyze) and clojure-lsp (editor diagnostics), so
+;; this file is the single source of truth for lint rules.
+;;
+;; Philosophy: keep correctness linters at :error (they catch real bugs), and
+;; turn ON the smell/anti-pattern linters that ship OFF by default so they
+;; surface as :warning. Promote a :warning to :error once the codebase is clean
+;; for that rule. House rules live in AGENTS.md › Code Style.
+{:linters
+ {;; --- correctness (default-on; pinned explicit so intent is documented) ----
+  :unresolved-symbol      {:level :error}
+  :unused-binding         {:level :warning}
+  :unused-namespace       {:level :warning}
+  :type-mismatch          {:level :error}
+  :condition-always-true  {:level :warning}
+  :unexpected-recur       {:level :error}
+
+  ;; --- anti-patterns / smells: OFF by default upstream, enabled here --------
+  :redundant-call         {:level :warning} ; (-> x), single-arg comp/str, etc.
+  :redundant-fn-wrapper   {:level :warning} ; #(f %) => f
+  :reduce-without-init    {:level :warning} ; perf + empty-coll correctness smell
+  :single-key-in          {:level :warning} ; (get-in m [:k]) => (get m :k)
+  :unused-private-var     {:level :warning} ; dead code
+  :unused-referred-var    {:level :warning} ; dead :refer
+  :used-underscored-binding {:level :warning} ; using a binding you marked _unused
+  :equals-true            {:level :warning}
+  :shadowed-var           {:level :warning} ; shadowing core/other vars hurts clarity
+
+  ;; --- docstrings: AGENTS.md mandates one-line summary, blank line, detail ---
+  ;; clj-kondo can't require a docstring's *presence* (dev/smell_report.clj
+  ;; does that); it can enforce the *shape* when one exists.
+  ;; :docstring-no-summary is intentionally OFF: it demands a capitalized,
+  ;; punctuation-terminated first line (202 hits), which is stricter than the
+  ;; house rule (just "one-line summary"). dev/smell_report.clj enforces the
+  ;; rule we actually care about — *presence* of a docstring on public fns.
+  :docstring-no-summary   {:level :off}
+  :docstring-blank        {:level :warning}
+  :docstring-leading-trailing-whitespace {:level :warning}
+  :misplaced-docstring    {:level :warning}
+
+  ;; --- intentionally relaxed -------------------------------------------------
+  ;; `if` without else is idiomatic here (often paired with side effects); the
+  ;; house style prefers when/when-let, which this does not penalise.
+  :missing-else-branch    {:level :off}
+  ;; Required-namespace sort order is cosmetic; cljfmt + LSP handle ordering.
+  :unsorted-required-namespaces {:level :off}}
+
+ ;; Teach clj-kondo the domain.ecs.dsl macros so the vars they generate
+ ;; (->event ctors, name? preds, system/reaction bindings) resolve. Without
+ ;; these hooks the linter reports ~28 false-positive "unresolved symbol"
+ ;; errors. See .clj-kondo/hooks/ecs_dsl.clj.
+ :hooks {:analyze-call
+         {domain.ecs.dsl/defcomponent  hooks.ecs-dsl/defcomponent
+          domain.ecs.dsl/defevent      hooks.ecs-dsl/defevent
+          domain.ecs.dsl/defsystem     hooks.ecs-dsl/defsystem
+          domain.ecs.dsl/defreaction   hooks.ecs-dsl/defreaction
+          domain.ecs.dsl/defprojection hooks.ecs-dsl/defprojection
+          domain.ecs.dsl/defaggregate  hooks.ecs-dsl/defaggregate
+          domain.ecs.dsl/defrewind     hooks.ecs-dsl/defrewind}}
+
+ :output {:exclude-files ["dev/smell_report.clj"]}}

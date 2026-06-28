@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/kucherenko/jscpd/master/packages/jscpd/schema.json",
+  "format": ["clojure"],
+  "pattern": "**/*.clj",
+  "path": ["src", "test"],
+  "minTokens": 60,
+  "minLines": 8,
+  "reporters": ["console", "json"],
+  "output": "target/jscpd",
+  "absolute": false,
+  "gitignore": true
+}

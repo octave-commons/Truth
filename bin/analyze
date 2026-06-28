@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Deterministic static-analysis sweep for Gates of Truth.
+#
+# One command, six rule-based tools, reproducible output. No LLM, no network at
+# analysis time (deps are cached after first run). See docs/STATIC-ANALYSIS.md.
+#
+#   bin/analyze            # full report; exits non-zero only on hard failures
+#   bin/analyze --strict   # CI mode: also fail on structural HARD breaches
+#   bin/analyze --fix      # auto-fix what is safely auto-fixable (cljfmt)
+#
+# Exit-gating tiers:
+#   BLOCKING (always)  clj-kondo *errors*   — real bugs
+#   BLOCKING (--strict) smell HARD breaches  — god namespaces / mega-functions
+#   ADVISORY (printed) clj-kondo warnings, Splint, cljfmt, jscpd, dead-code
+# Advisory tools are intentionally non-gating while the tree converges; flip one
+# to blocking by adding its name to FAIL below.
+set -uo pipefail
+cd "$(dirname "$0")/.." || exit 2
+
+STRICT=0; FIX=0
+for arg in "$@"; do
+  case "$arg" in
+    --strict) STRICT=1 ;;
+    --fix)    FIX=1 ;;
+    *) echo "unknown arg: $arg"; exit 2 ;;
+  esac
+done
+
+FAIL=()      # collected blocking failures
+sec() { printf '\n\033[1;36m━━━ %s\033[0m\n' "$1"; }
+
+ANALYSIS_CFG='{:output {:analysis {:var-definitions {:meta true} :arglists true} :format :edn}}'
+
+# 1 ── clj-kondo: correctness + anti-patterns (config in .clj-kondo/config.edn).
+sec "clj-kondo  (bugs / anti-patterns)"
+clj-kondo --lint src test
+kondo=$?   # 0 none · 2 warnings · 3 errors
+[ "$kondo" -eq 3 ] && FAIL+=("clj-kondo: errors present")
+
+# 2 ── Structural smells: god namespaces, mega-functions, param bloat, fan-out.
+sec "structural smells  (dung heaps)"
+smell_args=(); [ "$STRICT" -eq 1 ] && smell_args+=(--strict)
+clj-kondo --lint src test --config "$ANALYSIS_CFG" 2>/dev/null \
+  | clojure -M dev/smell_report.clj "${smell_args[@]}"
+smell=$?
+[ "$STRICT" -eq 1 ] && [ "$smell" -ne 0 ] && FAIL+=("structural: HARD threshold breached")
+
+# 3 ── Splint: non-idiomatic forms (kibit successor). Advisory.
+sec "Splint  (idiom anti-patterns)"
+clojure -M:splint || true
+
+# 4 ── clojure-lsp: project-wide dead code (unused public vars). Advisory.
+sec "clojure-lsp  (dead code: unused public vars)"
+dead=$(clojure-lsp diagnostics 2>/dev/null | grep -i 'unused-public-var')
+if [ -n "$dead" ]; then echo "$dead"; else echo "  none"; fi
+
+# 5 ── jscpd: copy-paste duplication. Advisory.
+sec "jscpd  (copy-paste duplication)"
+npx --yes jscpd@4 2>/dev/null | grep -E 'Clone found|clones|Duplicated' \
+  || echo "  jscpd unavailable (needs node/npx)"
+
+# 6 ── cljfmt: formatting consistency. Advisory (use --fix to apply).
+sec "cljfmt  (formatting)"
+if [ "$FIX" -eq 1 ]; then
+  clojure -M:cljfmt fix src test && echo "  formatting applied."
+else
+  clojure -M:cljfmt check src test >/dev/null 2>&1 \
+    && echo "  all files formatted." \
+    || echo "  files need formatting — run: bin/analyze --fix"
+fi
+
+# ── verdict ────────────────────────────────────────────────────────────────
+sec "verdict"
+if [ "${#FAIL[@]}" -eq 0 ]; then
+  echo -e "\033[1;32m✔ no blocking findings\033[0m"
+  exit 0
+else
+  printf '\033[1;31m✘ blocking findings:\033[0m\n'
+  for f in "${FAIL[@]}"; do echo "  - $f"; done
+  exit 1
+fi

@@ -20,11 +20,18 @@
    :dev  {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
           :main-opts ["-m" "infra.dev.server"]}
    :run {:main-opts ["-m" "infra.main"]}
+   ;; --- Static analysis (see bin/analyze + docs/STATIC-ANALYSIS.md) ---------
+   ;; Splint: idiomatic-style / anti-pattern linter (maintained kibit successor).
+   :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.24.0"}}
+            :main-opts ["-m" "noahtheduke.splint" "src" "test"]}
+   ;; cljfmt: formatting consistency. `check` reports; `fix` rewrites.
+   :cljfmt {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.16.4"}}
+            :main-opts ["-m" "cljfmt.main"]}
    ;; Launch Jupyter Lab with the clojupyter kernel.
    ;; Installs the kernel on first run: clojupyter.kernel/install
    ;; Connects to the running nREPL on port 7888 so notebooks share live
    ;; world-state with the simulation process.
-   :notebook {:extra-deps {clojupyter/clojupyter {:mvn/version "0.3.8"}
+   :notebook {:extra-deps {clojupyter/clojupyter {:mvn/version "0.4.332"}
                             nrepl/nrepl {:mvn/version "1.0.0"}}
               :main-opts ["-m" "clojupyter.cmdline" "install"]
               ;; After kernel is installed, start JupyterLab:

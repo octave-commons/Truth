@@ -1,91 +1,61 @@
 # Π Handoff — octave-commons/Truth
 
-**Date:** 2026-06-28T17:30:34Z  
+**Date:** 2026-06-28T20:00:00Z  
 **Branch:** main  
-**Tag:** Π-2026.06.28.1  
+**Tag:** Π-2026.06.28.2  
 **Tests:** `clojure -M:test` → 198 tests, 3551 assertions, **0 failures**, 0 errors  
 **License:** GNU GPL v3 or later (standalone application, per ημΠ.dev.v1 §7)
 
 ## What this snapshot contains
 
-**Stellar winds and mass-loss physics, notes reorganization, and rendering/phase0 hardening.**
+**Deep research infrastructure, static analysis tooling, and new research notebooks.**
 
 ### Core changes
 
-- **`src/domain/stellar.clj`** (+150 lines): Added stellar wind and mass-loss systems. Stars now shed mass via radiation-driven winds proportional to luminosity, with mass-loss rates feeding back into the ECS mass component. Includes the `stellar-wind-system` and `mass-loss-system` in the Phase 0 tick pipeline.
+- **Deep research skill** (`.agents/skills/deep-research/SKILL.md`): Full academic research protocol for the simulation — arxiv investigation, LaTeX, Clojure pseudocode, charts, validation against benchmarks, and promotion paths to `domain/` code.
 
-- **`src/domain/phase0.clj`**: Integrated stellar winds into the collapse pipeline; improved collapse threshold logic.
+- **AGENTS.md**: Added deep-research skill entry and the full Deep Research Actors table (7 actors: cosmology, geology, biology, atmosphere, physics, culture, coordinator) with dispatch commands and research output documentation.
 
-- **`src/domain/em.clj`**: Enhanced electromagnetic coupling with stellar wind particle injection.
+- **Static analysis tooling**:
+  - `bin/analyze` — Runs Splint (idiomatic-style linter), cljfmt (formatting), and kibit in sequence.
+  - `deps.edn` — New `:splint` and `:cljfmt` aliases; bumped clojupyter from 0.3.8 → 0.4.332.
+  - `.clj-kondo/config.edn` + `.clj-kondo/hooks/ecs_dsl.clj` — Custom clj-kondo hook for the ECS DSL patterns.
+  - `.github/workflows/static-analysis.yml` — CI workflow running the analysis pipeline on push/PR.
+  - `.jscpd.json` — Copy-paste detector configuration.
+  - `docs/STATIC-ANALYSIS.md` — Documentation for the analysis toolchain.
 
-- **`src/domain/physics/collision.clj`** (+27 lines): Collision detection improvements for wind-particle interactions.
+- **`.gitignore` cleanup**: Removed stale `.agents/`, `.opencode/`, `.ημ/actors/` ignores (those are now tracked or documented as concurrent dirt); removed stale EOF/PY lines; added `target/`.
 
-- **`src/domain/ecs/components.clj`** (+5 lines): New components for wind velocity, mass-loss rate, and luminosity.
+### Research output
 
-- **`src/infra/render.clj`** (+110 lines): Renderer now draws stellar wind particle trails and mass-loss halos around active stars.
+| Notebook / Report | Domain | Content |
+|-------------------|--------|---------|
+| `docs/research/cosmology/primordial-nucleosynthesis-yields.md` | Cosmology | Big Bang nucleosynthesis yields, light element abundances |
+| `docs/research/cosmology/bbn_yields.ipynb` | Cosmology | Computable BBN yields notebook |
+| `docs/research/INDEX.md` | Cross-domain | Master index of all research notebooks |
 
-- **`src/infra/dev/server.clj`**, **`src/infra/dev/window.clj`**: Minor dev tooling updates.
-
-### Notes reorganization
-
-The 57 flat note files in `docs/notes/` have been split into three topical subdirectories:
-
-| Directory | Content | Count |
-|-----------|---------|-------|
-| `docs/notes/designs/` | Architecture explorations, Phase 0 design work | 11 files |
-| `docs/notes/research/` | Claude physics merge sessions, formation investigations, Phase 0 deep-dives | 26 files |
-| `docs/notes/specs/` | ECS specs, spatial primitives, event models, buffer protocols | 20 files |
-
-`docs/notes/index.md` updated to reflect the new structure.
-
-### Documentation
+### New notes
 
 | File | Content |
 |------|---------|
-| `docs/specs/phase0-stellar-winds-and-mass-loss.md` | Full spec for stellar wind and mass-loss physics |
+| `docs/notes/# Deep Research Brief_ Gates of Truth — Physics Si.md` | Physics simulation research brief (1.8 MB) |
+| `docs/notes/modeling stellar merges and feeding.md` | Stellar merger and accretion modeling (135 KB) |
 
-### Tests
-
-- **`test/domain/stellar_test.clj`** (+60 lines): Coverage for stellar wind rates, mass-loss feedback, luminosity-dependent wind scaling.
-- **`test/domain/phase0_test.clj`** (+57 lines): Updated for wind integration in collapse pipeline.
-
-### Changed
+### Other
 
 | File | Change |
 |------|--------|
-| `src/domain/stellar.clj` | Stellar wind + mass-loss systems |
-| `src/domain/phase0.clj` | Wind integration in collapse pipeline |
-| `src/domain/em.clj` | EM-wind coupling |
-| `src/domain/physics/collision.clj` | Wind-particle collision improvements |
-| `src/domain/ecs/components.clj` | New wind/mass-loss/luminosity components |
-| `src/infra/render.clj` | Wind trails and mass-loss halos |
-| `src/infra/dev/server.clj` | Minor dev updates |
-| `src/infra/dev/window.clj` | Minor dev updates |
-| `test/domain/stellar_test.clj` | Stellar wind tests |
-| `test/domain/phase0_test.clj` | Wind integration tests |
-| `docs/notes/index.md` | Updated for new directory structure |
-
-### Added
-
-- `docs/notes/designs/` — 11 architecture/design note files
-- `docs/notes/research/` — 26 research/session note files
-- `docs/notes/specs/` — 20 spec note files
-- `docs/specs/phase0-stellar-winds-and-mass-loss.md`
-
-### Deleted
-
-- 57 flat note files removed from `docs/notes/` (reorganized into subdirectories above)
+| `.agents/skills/clojupyter.md` | Deleted (replaced by deep-research skill and updated deps) |
+| `.opencode/skill/agent-notes-splitter/SKILL.md` | Now tracked (removed from .gitignore) |
+| `dev/smell_report.clj` | Code smell analysis report script |
 
 ### Concurrent / unowned dirt (left unstaged)
 
-- `.eta-mu` — actor-system symlink; runtime access path.
-- `.ημ/actors/` — actor mailboxes/sessions/outboxes for other Truth actors (truth-code-reviewer, truth-contradiction-auditor, truth-notes-lore-archaeologist); not owned by this fork-tax session.
+- `.ημ/actors/` — actor mailboxes/sessions/outboxes; not owned by this fork-tax session.
 
 ### Residual / ignored
 
 - `.agents/` — local agent session state.
-- `.opencode/` — local OpenCode tooling state.
-- `.claude/` — local Claude session state.
 - `.cpcache/`, `.clj-kondo/.cache/`, `.lsp/` — Clojure tooling caches.
 - `.nrepl-port`, `hs_err_pid*.log`, `receipts.log`, `receipts.edn` — runtime/transient artifacts.
 - `debugging-*.jsonl` — debug traces.
