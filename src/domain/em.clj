@@ -136,6 +136,77 @@
     (/ (sp/len b-field) (Math/sqrt (* lf/mu-0 (double density))))
     0.0))
 
+;; --- The field as a FIELD: dipole superposition -----------------------------
+;; Each body is a magnetic dipole source. The magnetic field at ANY point in
+;; space is the superposition of every body's dipole field — so it is defined
+;; everywhere, and star–star / planet–star interactions EMERGE from the sum
+;; rather than being asserted. This is the N-body analogue (like Barnes–Hut
+;; gravity) for magnetism: sources are bodies, the field is sampled wherever it
+;; is needed (on each body, and along traced field lines for rendering).
+
+(def ^:const mu0-over-4pi 1.0e-7) ;; μ₀/4π exactly (T·m/A)
+
+(defn dipole-moment
+  "Magnetic dipole moment m (A·m²) of a body whose surface field magnitude is
+   |b-field| at radius `radius`, aligned with `b-field`. From the on-axis dipole
+   relation B_pole = μ₀|m|/(2π R³) ⇒ m = (2π R³/μ₀)·B."
+  [b-field radius]
+  (let [r (double (or radius 0.0))]
+    (if (and (lf/finite-vec3? b-field) (pos? r))
+      (sp/v* b-field (/ (* 2.0 Math/PI r r r) lf/mu-0))
+      [0.0 0.0 0.0])))
+
+(defn dipole-field-at
+  "Field (T) produced at world point `p` by a dipole of moment `m` at `src`:
+   B = (μ₀/4π)[3(m·d̂)d̂ − m]/|d|³, d = p − src. [0 0 0] at the singularity."
+  [m src p]
+  (let [d (sp/v- p src)
+        r (sp/len d)]
+    (if (pos? r)
+      (let [rhat (sp/v* d (/ 1.0 r))
+            mdot (sp/dot m rhat)
+            term (sp/v- (sp/v* rhat (* 3.0 mdot)) m)]
+        (sp/v* term (/ mu0-over-4pi (* r r r))))
+      [0.0 0.0 0.0])))
+
+(defn net-field-at
+  "Superposed magnetic field at world point `p`: Σ over `sources` of each dipole's
+   field, plus a uniform `background`. `sources` is a seq of {:moment :position}.
+   THIS is the field bodies feel and that field-line tracing follows — the
+   interactions between bodies' fields are this sum, emergent, not hard-coded."
+  [p sources background]
+  (reduce (fn [acc {:keys [moment position]}]
+            (sp/v+ acc (dipole-field-at moment position p)))
+          (or background [0.0 0.0 0.0])
+          sources))
+
+(defn external-field-at
+  "Like `net-field-at` but EXCLUDING the source whose position equals `self-pos`
+   (a body does not torque on its own field) — the field a body sees from all the
+   OTHERS. Background is omitted (a uniform field exerts no net force, only torque
+   handled separately)."
+  [self-pos sources]
+  (reduce (fn [acc {:keys [moment position]}]
+            (if (identical? position self-pos)
+              acc
+              (sp/v+ acc (dipole-field-at moment position self-pos))))
+          [0.0 0.0 0.0]
+          sources))
+
+(defn field-sources
+  "Dipole sources from every resolved body (their fields are amplified enough to
+   matter). Each → {:moment :position :eid}. Diffuse :nebula gas is left out as a
+   source (its weak seeded field is the background), though it still carries B."
+  [world]
+  (->> (ecs/entities-with world c/b-field c/radius c/position c/matter-state)
+       (filter #(not= :nebula (ecs/get-component world % c/matter-state)))
+       (mapv (fn [eid]
+               {:eid      eid
+                :position (ecs/get-component world eid c/position)
+                :radius   (double (or (ecs/get-component world eid c/radius) 0.0))
+                :moment   (dipole-moment (ecs/get-component world eid c/b-field)
+                                         (ecs/get-component world eid c/radius))}))))
+
 (defn flux-freeze
   "Ideal induction under compression: as a clump's density rises from
    `old-density` to `new-density`, frozen-in flux amplifies the field.
@@ -185,18 +256,29 @@
        (>= (magnetic-pressure b-field)
            (self-gravity-pressure mass radius))))
 
+(def ^:const min-flux-retention
+  "Floor on the per-tick resistive-decay factor: a body keeps at least this much
+   of its flux each tick. The decay timescale r²/η can fall below the (Myr-scale)
+   `dt` for a compact core, which would annihilate the flux in a single step and
+   defeat flux freezing — the same large-dt coupling hazard as the stellar wind.
+   Capping the per-tick loss keeps the decay gentle and dt-robust, so flux
+   freezing can amplify a contracting core's field (the physically observed
+   outcome: protostars have strong, amplified fields)." 0.97)
+
 (defn resistive-decay
   "Non-ideal flux loss over dt: dB/dt = -ηB/L², with magnetic diffusivity η and
    length scale L≈radius. Reduced proxy for Ohmic dissipation / ambipolar
-   diffusion. Effect ~ r²/η; enormous (→ no decay) in diffuse gas, finite only
-   in dense compact cores. `eta` defaults to a small magnetic diffusivity."
-  ([b-field radius dt] (resistive-decay b-field radius dt 1.0e8))
+   diffusion. Effect ~ r²/η: ≈no decay in diffuse gas, gentle in dense cores. The
+   per-tick factor is floored at `min-flux-retention` so a large dt cannot wipe a
+   compact core's flux in one step. `eta` is a small magnetic diffusivity tuned so
+   flux freezing dominates during collapse (real cores retain & amplify field)."
+  ([b-field radius dt] (resistive-decay b-field radius dt 1.0e4))
   ([b-field radius dt eta]
    (if (and (lf/finite-vec3? b-field) (pos? (double radius)))
      (let [r      (double radius)
            rate   (/ (double eta) (* r r))           ;; 1/s
            factor (Math/exp (- (* rate (double dt)))) ;; ∈ (0,1]
-           factor (max 0.0 (min 1.0 factor))]
+           factor (max (double min-flux-retention) (min 1.0 factor))]
        (sp/v* b-field factor))
      b-field)))
 

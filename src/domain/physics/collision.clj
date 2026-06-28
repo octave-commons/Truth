@@ -25,20 +25,27 @@
     [shape.spatial             :as sp]))
 
 (defn- collidable-bodies
-  "Project world into vec of [eid position radius velocity mass] for all entities
-   that have position, radius, mass, velocity, and a resolved matter-state.
-   `:nebula` gas sample particles are NOT collidable — they become resolved bodies
-   through Jeans instability, not by touching. For a star-forming body the
-   effective collision radius is its gravitational feeding zone
-   (`c/accretion-radius`) rather than its contracted photosphere, so it keeps
-   sweeping up other resolved bodies instead of becoming a pinpoint sink."
+  "Project world into vec of [eid position radius velocity mass] for all RESOLVED
+   bodies (non-`:nebula` matter-state with position, radius, mass, velocity).
+
+   Collision here is a LITERAL physical collision: two resolved bodies merge only
+   when their actual photospheres/surfaces overlap, NOT when their gravitational
+   feeding zones touch. A collapsed body's size is its own structural radius
+   (`c/radius`), so two stars must really run into each other to merge — they no
+   longer 'poof' together across an inflated 50×-smoothing feeding zone while
+   still visibly far apart.
+
+   Gas accretion onto a sink is a SEPARATE channel: `:nebula` parcels are not
+   collidable (they resolve by Jeans condensation, or by falling into a sink's
+   accretion radius — see `stellar/sink-formation-system`). Keeping the two
+   channels distinct is the standard sink-particle split: gas accretes via the
+   gravitational capture radius; bound bodies merge only on contact."
    [world]
-   (->> (ecs/all-of world c/position c/radius c/mass c/velocity c/matter-state
-                    c/accretion-radius)
+   (->> (ecs/all-of world c/position c/radius c/mass c/velocity c/matter-state)
         (filter (fn [[_eid comps]] (not= :nebula (comps c/matter-state))))
         (mapv (fn [[eid comps]]
                 [eid (comps c/position)
-                 (double (or (comps c/accretion-radius) (comps c/radius)))
+                 (double (comps c/radius))
                  (comps c/velocity)
                  (double (comps c/mass))]))))
 

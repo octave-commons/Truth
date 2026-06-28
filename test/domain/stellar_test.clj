@@ -120,6 +120,66 @@
         (is (>= tv 1.0e7)
             "derived virial temperature stays in the stellar regime")))))
 
+(deftest test-mass-loss-demotes-never-dissolves
+  (testing "A star stripped of mass demotes down the BOUND ladder
+            (star→brown-dwarf→debris) and NEVER returns to :nebula — collapse is
+            irreversible; only the shed material becomes gas (winds spec §2)."
+    (let [base     {:matter-state :star :radius 3.0e8 :density 1.0e4
+                    :temperature 2.0e7 :pressure 1.0e13
+                    :composition {:H 0.7 :He 0.28 :metals 0.02}}
+          gas-mass 1.0e28
+          msun     1.989e30
+          state-at (fn [f] (stellar/classify-next-state (assoc base :mass (* f msun)) gas-mass))]
+      (is (= :star        (state-at 0.5)))    ;; above hydrogen-burning → stays a star
+      (is (= :brown-dwarf (state-at 0.05)))   ;; below H, above deuterium → brown dwarf
+      (is (= :debris      (state-at 0.005)))  ;; below deuterium → stripped core
+      (is (not-any? #{:nebula} (map state-at [0.5 0.05 0.005 0.0005]))
+          "a collapsed body never re-dissolves to gas"))))
+
+(deftest test-stellar-wind-conserves-mass-and-sheds
+  (testing "stellar-wind-system sheds a :nebula parcel and conserves total mass
+            (bodies + wind reservoir)."
+    (let [[w star] (stellar/spawn-clump (ecs/empty-world)
+                     {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                      :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
+                      :matter-state :star
+                      :composition {:H 0.7 :He 0.28 :metals 0.02}})
+          w     (-> w
+                    (ecs/put-component star c/pressure 1.0e13) ;; → fusion-possible → L>0
+                    (assoc :sim/dt 1.0e14 :phase0/wind-rate-scale 1.0e3
+                           :phase0/wind-parcel-mass 5.0e27
+                           :phase0/gas-smoothing-radius 6.0e13))
+          total (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
+                                          (ecs/entities-with w c/mass)))
+                           (reduce + (map #(double (or (ecs/get-component w % c/wind-reservoir) 0.0))
+                                          (ecs/entities-with w c/wind-reservoir)))))
+          m0    (total w)
+          w1    (stellar/stellar-wind-system w)]
+      (is (< (Math/abs (/ (- (total w1) m0) m0)) 1.0e-12) "total mass conserved")
+      (is (some #(= :nebula (ecs/get-component w1 % c/matter-state))
+                (ecs/entities-with w1 c/matter-state))
+          "a wind parcel was shed as gas"))))
+
+(deftest test-stellar-flare-conserves-and-ejects-hot
+  (testing "stellar-flare-system ejects a hot parcel, conserving mass (winds spec
+            phase B). flare-period 1 forces a flare on the tick."
+    (let [[w star] (stellar/spawn-clump (ecs/empty-world)
+                     {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                      :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
+                      :matter-state :star
+                      :composition {:H 0.7 :He 0.28 :metals 0.02}})
+          w     (assoc w :sim/dt 1.0e12 :phase0/flare-period 1
+                         :phase0/wind-parcel-mass 5.0e27 :phase0/gas-smoothing-radius 6.0e13)
+          tmass (fn [w] (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
+                                       (ecs/entities-with w c/mass))))
+          m0    (tmass w)
+          w1    (stellar/stellar-flare-system w)
+          hot   (filter #(and (= :nebula (ecs/get-component w1 % c/matter-state))
+                              (> (double (or (ecs/get-component w1 % c/temperature) 0.0)) 1.0e6))
+                        (ecs/entities-with w1 c/matter-state))]
+      (is (< (Math/abs (/ (- (tmass w1) m0) m0)) 1.0e-12) "mass conserved")
+      (is (seq hot) "a hot flare parcel was ejected"))))
+
 (deftest test-merge-conserves-orbital-angular-momentum
   (testing "Orbital L of two moving bodies is added to the merged body's spin"
     (let [base    (-> (ecs/empty-world)

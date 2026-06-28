@@ -69,9 +69,9 @@
                       :requested-subdivisions nil))))))
 
 (defn- handle-screenshot-request [world-atom config-atom]
-  (when-let [{:keys [path result]} (:screenshot-request @config-atom)]
+  (when-let [{:keys [path result opts]} (:screenshot-request @config-atom)]
     (try
-      (render/render-to-file world-atom path)
+      (render/render-to-file world-atom path (or opts {}))
       (deliver result {:ok true :path path})
       (catch Throwable t
         (deliver result {:error t}))
@@ -130,7 +130,7 @@
       ;; to the sprite fog. The texture is owned by this frame, so delete it after.
       (let [volume (when (:volumetric? cfg)
                      (render/frame-volume @world-atom (:volume-program cfg)
-                                          (:volume-res cfg 80)))]
+                                          (:volume-res cfg 128)))]
         (render/render-scene {:body-program (:body-program cfg)
                               :particle-program (:particle-program cfg)
                               :line-program (:line-program cfg)

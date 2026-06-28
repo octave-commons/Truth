@@ -43,7 +43,7 @@
   (let [world  (atom (phase0/create-world))
         _      (window/start! world
                  {:tick-fn            phase0/tick-world
-                  :bodies-fn          render/phase0-bodies-from-world
+                  :bodies-fn          render/phase0-bodies+fields
                   :camera             (render/make-camera 60.0)
                   :sim-frame-interval 4
                   :on-step            (fn [w]

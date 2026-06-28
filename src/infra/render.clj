@@ -85,15 +85,20 @@
                   n0 n1 n2 0.0
                   0.0 0.0 0.0 1.0])))
 
-(defn- mat4* [a b]
+(defn- mat4*
+  "Column-major 4x4 matrix product A·B. Both operands and the result are stored
+   column-major (arr[col*4+row]), matching how the matrices are built here and
+   handed to GL with transpose=false. (A·B)[r][c] = Σ_k A[r][k]·B[k][c], so
+   out[col*4+row] = Σ_k a[k*4+row]·b[col*4+k]."
+  [a b]
   (let [out (float-array 16)]
-    (doseq [i (range 4)
-            j (range 4)]
+    (doseq [i (range 4)      ;; i = column of the result
+            j (range 4)]     ;; j = row of the result
       (aset out (+ (* i 4) j)
-            (float (+ (* (aget a (+ (* i 4) 0)) (aget b (+ (* 0 4) j)))
-                      (* (aget a (+ (* i 4) 1)) (aget b (+ (* 1 4) j)))
-                      (* (aget a (+ (* i 4) 2)) (aget b (+ (* 2 4) j)))
-                      (* (aget a (+ (* i 4) 3)) (aget b (+ (* 3 4) j)))))))
+            (float (+ (* (aget a (+ 0  j)) (aget b (+ (* i 4) 0)))
+                      (* (aget a (+ 4  j)) (aget b (+ (* i 4) 1)))
+                      (* (aget a (+ 8  j)) (aget b (+ (* i 4) 2)))
+                      (* (aget a (+ 12 j)) (aget b (+ (* i 4) 3)))))))
     out))
 
 (defn- model-matrix
@@ -936,6 +941,20 @@
           (max 0.18) (min 6.0))
       0.18)))
 
+(defn body-draw-radius
+  "The render-unit radius a resolved body is DRAWN at — the SAME size its sphere
+   uses in `phase0-bodies-from-world`. Field-line loops size to this so the field
+   always hugs its body at any zoom, instead of floating at a fixed absolute size
+   that detaches from (and dwarfs) the body when the camera zooms in. Stars size
+   by log-luminosity (their apparent size IS their luminosity, matching the
+   `:star` body case); everything else by log-compressed physical radius."
+  [world eid]
+  (if (= :star (ecs/get-component world eid c/matter-state))
+    (let [lum (double (or (ecs/get-component world eid c/luminosity) 1.0e26))]
+      (-> (+ 0.6 (* 0.28 (Math/log10 (/ (max 1.0 lum) 1.0e26))))
+          (max 0.6) (min 3.0)))
+    (phys->render-radius (ecs/get-component world eid c/radius))))
+
 (defn composition->material-color
   "Base material colour from bulk composition (mass fractions): hydrogen/helium
    gas reads pale tan, metal/rock-rich matter warm grey-brown, and an icy/volatile
@@ -1080,6 +1099,75 @@
           color [(* 0.45 glow) (* 0.85 glow) (* 1.0 glow)]]
       [{:position (vec p0) :color color :size 1.0 :render-mode :line}
        {:position (vec p1) :color color :size 1.0 :render-mode :line}])))
+
+;; --- Field-line streamlines (the field as a field) ---------------------------
+;; The magnetic field is the superposition of every body's dipole (domain.em).
+;; We render it by TRACING streamlines through that net field, seeded around the
+;; strongest bodies. Because the trace follows the summed field, lines from
+;; nearby bodies bend toward and link each other — the interaction is shown, not
+;; asserted. A dipole reads as its arcing pole-to-pole loops.
+
+(defn- unit-vec [v]
+  (let [l (sp/len v)] (if (pos? l) (sp/v* v (/ 1.0 l)) [0.0 0.0 1.0])))
+
+(defn- any-perp [n]
+  (let [a (if (> (Math/abs (double (nth n 2))) 0.9) [1.0 0.0 0.0] [0.0 0.0 1.0])]
+    (unit-vec (sp/cross n a))))
+
+(defn- segments-of
+  "Adjacent points of a render-space polyline → :line shapes."
+  [pts color]
+  (vec (mapcat (fn [a b]
+                 [{:position (vec a) :color color :size 1.0 :render-mode :line}
+                  {:position (vec b) :color color :size 1.0 :render-mode :line}])
+               pts (rest pts))))
+
+(defn field-line-shapes
+  "Render the magnetic field as visible dipole loops, one set per body, oriented
+   on the body's magnetic moment (`domain.em/dipole-moment`) and sized to its
+   DRAWN radius (bodies are log-inflated vs their true size, so true-scale loops
+   would be sub-pixel). Several L-shells × azimuths read as a dipole field.
+
+   The underlying field is the full superposition (`em/net-field-at`); rendering
+   per body is honest because dipole coupling is 1/r³ — negligible at the
+   separations stars actually have here, significant only for very close pairs.
+   So distinct loop sets that visibly interleave ARE bodies close enough to
+   magnetically interact."
+  [world scale]
+  (let [sources (->> (em/field-sources world)
+                     (filter #(pos? (sp/len (:moment %))))
+                     (sort-by #(- (sp/len (:moment %))))
+                     (take 12))
+        nseg 22]
+    (vec (mapcat
+           (fn [{:keys [position moment eid]}]
+             (let [axis (unit-vec moment)
+                   e1   (any-perp axis)
+                   e2   (sp/cross axis e1)
+                   rpos (mapv #(/ (double %) scale) position)
+                   ;; Size loops to the body's DRAWN radius so the field hugs its
+                   ;; body and scales with it at every zoom — a fixed absolute
+                   ;; size detaches from (and dwarfs) the body when zoomed in.
+                   rr   (max 0.6 (body-draw-radius world eid))
+                   color [0.45 0.8 1.0]]
+               (vec (mapcat
+                      (fn [[shell az]]
+                        (let [ca (Math/cos (Math/toRadians az))
+                              sa (Math/sin (Math/toRadians az))
+                              rdir (sp/v+ (sp/v* e1 ca) (sp/v* e2 sa))
+                              pts (for [i (range (inc nseg))]
+                                    (let [th (+ 0.12 (* (- Math/PI 0.24) (/ (double i) nseg)))
+                                          r  (* shell rr (Math/sin th) (Math/sin th))]
+                                      (sp/v+ rpos
+                                             (sp/v+ (sp/v* rdir (* r (Math/sin th)))
+                                                    (sp/v* axis  (* r (Math/cos th)))))))]
+                          (segments-of pts color)))
+                      ;; Full azimuth circle so loops surround the body instead of
+                      ;; fanning to one side (which read as the field being offset
+                      ;; from its star).
+                      (for [shell [1.6 2.4 3.4]
+                            az [0.0 60.0 120.0 180.0 240.0 300.0]] [shell az])))))
+           sources))))
 
 ;; --- Player spark + focus reticle (the interactive overlay) ------------------
 
@@ -1476,6 +1564,14 @@
      }
      FragColor = vec4(C, 1.0-T);   // premultiplied-alpha over the scene
    }")
+
+(defn phase0-bodies+fields
+  "Phase 0 render bodies plus the magnetic field rendered as dipole field-line
+   loops (`field-line-shapes`). This is the dev service's bodies-fn so the field
+   is visible on protostars/stars as soon as flux-freezing amplifies it."
+  [world]
+  (into (vec (phase0-bodies-from-world world))
+        (field-line-shapes world phase0-view-scale)))
 
 (defn create-volume-program []
   (println "Compiling volume shaders...")

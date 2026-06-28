@@ -32,6 +32,11 @@
 (def composition  :component/composition)   ;; {:H 0.75 :He 0.24 ...} mass fractions
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
 (def matter-state :component/matter-state)  ;; :nebula :protostar :star :planet :debris
+;; `wind-reservoir` accumulates the mass a star has shed-but-not-yet-emitted as a
+;; discrete wind parcel (kg). When it reaches one wind-parcel mass, the
+;; stellar-wind system launches a :nebula parcel and drains the reservoir. Lets a
+;; star lose mass smoothly while emitting a bounded number of gas entities.
+(def wind-reservoir :component/wind-reservoir) ;; kg accumulated for the next wind parcel
 
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)

@@ -1,73 +1,80 @@
 # Π Handoff — octave-commons/Truth
 
-**Date:** 2026-06-27T22:30:00Z  
+**Date:** 2026-06-28T17:30:34Z  
 **Branch:** main  
-**Tag:** Π-2026.06.27.5  
-**Tests:** `clojure -M:test` → 196 tests, 3548 assertions, **0 failures**, 0 errors  
+**Tag:** Π-2026.06.28.1  
+**Tests:** `clojure -M:test` → 198 tests, 3551 assertions, **0 failures**, 0 errors  
 **License:** GNU GPL v3 or later (standalone application, per ημΠ.dev.v1 §7)
 
 ## What this snapshot contains
 
-Stellar physics maturation: **fusion promotion barriers, sink exclusion, pacing clock, and planet formation pipeline**.
+**Stellar winds and mass-loss physics, notes reorganization, and rendering/phase0 hardening.**
 
 ### Core changes
 
-- **`src/domain/stellar.clj`** (+304 lines): Added `fusion-promotion-system` — a post-fold barrier that promotes protostars to stars after the parallel double-buffer fold sees updated density/pressure (the frozen snapshot's pre-contraction values would otherwise gate fusion indefinitely). Added `sink-exclusion-zones` and `within-existing-sink?` for the isolation criterion during gravitational collapse. General star formation physics hardening.
+- **`src/domain/stellar.clj`** (+150 lines): Added stellar wind and mass-loss systems. Stars now shed mass via radiation-driven winds proportional to luminosity, with mass-loss rates feeding back into the ECS mass component. Includes the `stellar-wind-system` and `mass-loss-system` in the Phase 0 tick pipeline.
 
-- **`src/domain/pacing.clj`** (NEW): Simulation clock module. The tick rate is fixed (one per rendered frame); what dilates with complexity is `:sim/dt` — in-game seconds per tick, clamped to `cfl-factor · t_dyn` where `t_dyn = √(R³/G·M)` is the bulk cloud's dynamical time. As the cloud collapses, dt shrinks → the clock dilates, keeping all bodies on the same contracting scale.
+- **`src/domain/phase0.clj`**: Integrated stellar winds into the collapse pipeline; improved collapse threshold logic.
 
-- **`src/domain/phase0.clj`** (-83 net lines): Simplified collapse pipeline, cleaner integration with the new stellar systems.
+- **`src/domain/em.clj`**: Enhanced electromagnetic coupling with stellar wind particle injection.
 
-- **`src/domain/hydro.clj`** (+80 lines): Enhanced hydrodynamics for the nebula collapse.
+- **`src/domain/physics/collision.clj`** (+27 lines): Collision detection improvements for wind-particle interactions.
 
-- **`src/domain/em.clj`** (+35 lines): Electromagnetic field improvements.
+- **`src/domain/ecs/components.clj`** (+5 lines): New components for wind velocity, mass-loss rate, and luminosity.
 
-- **`src/domain/ecs/registry.clj`**, **`src/infra/dev/window.clj`**, **`src/infra/render.clj`**: Component registry, dev window, and renderer updates.
+- **`src/infra/render.clj`** (+110 lines): Renderer now draws stellar wind particle trails and mass-loss halos around active stars.
 
-### Tests
+- **`src/infra/dev/server.clj`**, **`src/infra/dev/window.clj`**: Minor dev tooling updates.
 
-- **`test/domain/stellar_test.clj`** (+205 lines): Coverage for fusion-promotion barrier, sink exclusion, star formation edge cases.
-- **`test/domain/phase0_test.clj`** (+92 net lines): Refactored for the simplified pipeline.
-- **`test/domain/classifier_test.clj`**, **`test/domain/em_lorentz_test.clj`**: Minor updates.
+### Notes reorganization
+
+The 57 flat note files in `docs/notes/` have been split into three topical subdirectories:
+
+| Directory | Content | Count |
+|-----------|---------|-------|
+| `docs/notes/designs/` | Architecture explorations, Phase 0 design work | 11 files |
+| `docs/notes/research/` | Claude physics merge sessions, formation investigations, Phase 0 deep-dives | 26 files |
+| `docs/notes/specs/` | ECS specs, spatial primitives, event models, buffer protocols | 20 files |
+
+`docs/notes/index.md` updated to reflect the new structure.
 
 ### Documentation
 
 | File | Content |
 |------|---------|
-| `docs/specs/phase0-planet-formation-complete-pipeline.md` | Full planet formation pipeline spec |
-| `docs/specs/stage2-sink-formation.md` | Stage 2 sink formation spec |
-| `docs/designs/simulation-methods-research.md` | Research on simulation methods |
-| `docs/notes/2026.06.27.17.56.01.md` | Session notes |
+| `docs/specs/phase0-stellar-winds-and-mass-loss.md` | Full spec for stellar wind and mass-loss physics |
+
+### Tests
+
+- **`test/domain/stellar_test.clj`** (+60 lines): Coverage for stellar wind rates, mass-loss feedback, luminosity-dependent wind scaling.
+- **`test/domain/phase0_test.clj`** (+57 lines): Updated for wind integration in collapse pipeline.
 
 ### Changed
 
 | File | Change |
 |------|--------|
-| `src/domain/stellar.clj` | Fusion-promotion barrier, sink exclusion zones, star formation hardening |
-| `src/domain/pacing.clj` | NEW: Simulation clock with CFL-based dt dilation |
-| `src/domain/phase0.clj` | Simplified collapse pipeline |
-| `src/domain/hydro.clj` | Enhanced hydrodynamics |
-| `src/domain/em.clj` | EM field improvements |
-| `src/domain/ecs/registry.clj` | Component registry updates |
-| `src/infra/dev/window.clj` | Dev window improvements |
-| `src/infra/render.clj` | Renderer updates |
-| `test/domain/stellar_test.clj` | Fusion promotion + sink exclusion tests |
-| `test/domain/phase0_test.clj` | Pipeline refactored tests |
-| `test/domain/classifier_test.clj` | Minor test updates |
-| `test/domain/em_lorentz_test.clj` | Minor test updates |
-| `.gitignore` | Added debug artifacts, actor dirs, receipts.edn |
+| `src/domain/stellar.clj` | Stellar wind + mass-loss systems |
+| `src/domain/phase0.clj` | Wind integration in collapse pipeline |
+| `src/domain/em.clj` | EM-wind coupling |
+| `src/domain/physics/collision.clj` | Wind-particle collision improvements |
+| `src/domain/ecs/components.clj` | New wind/mass-loss/luminosity components |
+| `src/infra/render.clj` | Wind trails and mass-loss halos |
+| `src/infra/dev/server.clj` | Minor dev updates |
+| `src/infra/dev/window.clj` | Minor dev updates |
+| `test/domain/stellar_test.clj` | Stellar wind tests |
+| `test/domain/phase0_test.clj` | Wind integration tests |
+| `docs/notes/index.md` | Updated for new directory structure |
 
 ### Added
 
-- `src/domain/pacing.clj`
-- `docs/specs/phase0-planet-formation-complete-pipeline.md`
-- `docs/specs/stage2-sink-formation.md`
-- `docs/designs/simulation-methods-research.md`
-- `docs/notes/2026.06.27.17.56.01.md`
+- `docs/notes/designs/` — 11 architecture/design note files
+- `docs/notes/research/` — 26 research/session note files
+- `docs/notes/specs/` — 20 spec note files
+- `docs/specs/phase0-stellar-winds-and-mass-loss.md`
 
 ### Deleted
 
-None.
+- 57 flat note files removed from `docs/notes/` (reorganized into subdirectories above)
 
 ### Concurrent / unowned dirt (left unstaged)
 
@@ -85,7 +92,7 @@ None.
 
 ## Verification notes
 
-- `clojure -M:test` completed with **0 failures, 0 errors** out of 196 tests / 3548 assertions.
+- `clojure -M:test` completed with **0 failures, 0 errors** out of 198 tests / 3551 assertions.
 - All architecture invariants enforced by `test/architecture_test.clj` remain satisfied.
 
 ## Blockers

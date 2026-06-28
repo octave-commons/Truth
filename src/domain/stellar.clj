@@ -17,6 +17,11 @@
     [domain.ecs.components  :as c]
     [shape.spatial         :as sp]))
 
+;; Forward declarations: the stellar-wind system (an accretion-region barrier
+;; system, grouped with sink-formation) spawns gas parcels via the nebula-seeding
+;; helpers, which are defined further down the file.
+(declare spawn-clump default-composition)
+
 ;; --- Pure thermodynamics ----------------------------------------------------
 
 (defn body-density
@@ -519,53 +524,6 @@
       (/ (* absorbed dt) (* body-mass specific-heat))
       0.0)))
 
-(defn thermal-system
-  "Radiative cooling + stellar irradiation heating. Diffuse :nebula gas stays at
-   its seeded background temperature (thermal equilibrium with the ISRF).
-   Resolved bodies cool toward the CMB floor, but are first heated by any nearby
-   stars so inner debris/planets stay hot. The large dynamical timestep makes
-   exponential cooling toward the floor necessary to avoid instant freezing."
-  [dt]
-  (fn [world]
-    (let [stars       (ecs/entities-with world c/matter-state c/luminosity c/position)
-          star-lums   (mapv #(ecs/get-component world % c/luminosity) stars)
-          star-poss   (mapv #(ecs/get-component world % c/position) stars)
-          eids        (ecs/entities-with world c/matter-state c/temperature c/density c/radius c/position)
-          updates     (par/par-mapv
-                       (fn [eid]
-                         (let [region (entity->region world eid)
-                               state  (:matter-state region)
-                               pos    (ecs/get-component world eid c/position)]
-                           (when-not (= :star state)
-                             (let [star-heat (reduce
-                                               (fn [acc [lum star-pos]]
-                                                 (if (pos? (double lum))
-                                                   (+ acc (radiation-heating-delta
-                                                            region lum (sp/dist pos star-pos) dt))
-                                                   acc))
-                                               0.0
-                                               (map vector star-lums star-poss))
-                                   temp (:temperature region)
-                                   new-temp
-                                   (if (= :nebula state)
-                                     temp
-                                     (let [drop   (radiative-cooling-delta region dt)
-                                           heated (+ temp star-heat)
-                                           target 3.0]
-                                       (max target (- heated drop))))
-                                   new-press (law/ideal-gas-pressure (:density region) new-temp)]
-                               [eid new-temp new-press]))))
-                       eids)]
-      (reduce (fn [w u]
-                (if u
-                  (let [[eid t p] u]
-                    (-> w
-                        (ecs/put-component eid c/temperature t)
-                        (ecs/put-component eid c/pressure p)))
-                  w))
-              world
-              updates))))
-
 ;; --- The classifier: authentic matter-state state machine -------------------
 ;; See docs/notes/2026.06.26-authentic-phase0-formation-physics.md §3. The two
 ;; physical axes are kept separate: Jeans instability gates whether diffuse gas
@@ -649,8 +607,15 @@
   (let [m  (double (or mass 0.0))
         pm (double (or gas-particle-mass 0.0))]
     (case matter-state
-      :star        :star
-      :brown-dwarf :brown-dwarf
+      ;; Mass-loss down-ladder (winds/stripping shed mass — see
+      ;; phase0-stellar-winds-and-mass-loss spec). A collapsed body that drops
+      ;; below a burning threshold degrades to the next bound state down; it
+      ;; NEVER returns to :nebula (collapse is irreversible — the shed material
+      ;; is what becomes gas, not the core). Above threshold these are terminal.
+      :star        (cond (>= m law/hydrogen-burning-mass)  :star
+                         (>= m law/deuterium-burning-mass) :brown-dwarf
+                         :else                             :debris)
+      :brown-dwarf (if  (>= m law/deuterium-burning-mass)  :brown-dwarf :debris)
       :planet      :planet
       :protostar   (cond
                      (and (>= m law/hydrogen-burning-mass)
@@ -661,6 +626,8 @@
                           (<  m law/hydrogen-burning-mass)
                           (contraction-stalled? radius m temperature))
                      :brown-dwarf
+
+                     (< m law/deuterium-burning-mass) :debris
 
                      :else :protostar)
       :debris      (if (>= m law/deuterium-burning-mass) :protostar :debris)
@@ -864,24 +831,27 @@
     (reduce (fn [w eid] (ecs/despawn w eid)) w parcels)))
 
 (defn sink-formation-system
-  "Serial barrier system: for newly-formed sinks (debris/protostar with accretion-radius),
-   absorb all :nebula parcels within their accretion radius. This is the convert-and-seed
-   mechanism from Bate et al. (1995) — newly formed sinks eat their neighbors on the
-   tick they condense, preventing the cloud from condensing wholesale.
+  "Serial barrier system: every sink (any resolved body carrying an accretion
+   radius) absorbs the :nebula gas parcels that fall within its gravitational
+   capture zone. This is the sink-particle accretion channel (Bate et al. 1995,
+   Federrath et al. 2010): a collapsed body grows by eating the diffuse cloud
+   that falls into it, NOT by merging with other resolved bodies (those merge
+   only on literal collision — see `domain.physics.collision`).
 
-   Stars and established sinks grow through the collision system (overlap merges),
-   NOT through this system. This prevents the central star from vacuuming up all
-   disk gas before planets can form.
+   ALL sinks accrete, stars included: a protostar/star grows by accreting its
+   gaseous envelope, which is the dominant mass channel — the cloud is mostly
+   gas. (Earlier this was restricted to newly-formed debris/protostars to reserve
+   disk gas for planets, but planets are sub-grid at this resolution, and barring
+   accretion just left bodies to grow by the unphysical feeding-zone merges that
+   made them 'poof' together.)
 
    Runs AFTER the parallel fan-out and collision detection, at the serial barrier.
    Mass + momentum are conserved (mass-weighted centroid for position)."
   [world]
-  (let [;; Only NEWLY-FORMED sinks: debris or protostar WITH accretion-radius.
-        ;; Stars grow through collisions, not through absorbing surrounding gas.
-        sinks       (->> (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
-                         (filterv (fn [eid]
-                                    (let [state (ecs/get-component world eid c/matter-state)]
-                                      (or (= :debris state) (= :protostar state))))))
+  (let [;; Every sink: any resolved body carrying an accretion radius. :nebula
+        ;; parcels have none, so they are excluded as accretors (they are the
+        ;; gas BEING accreted), while stars are now included as accretors.
+        sinks       (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
         ;; All nebula parcels that could be absorbed
         gas-parcels (ecs/entities-with world c/matter-state c/position c/mass c/velocity)]
     (if (empty? sinks)
@@ -906,6 +876,183 @@
                 w))))
         world
         sinks))))
+
+;; --- Stellar winds: mass loss as gas (phase A of the winds spec) -------------
+
+(def ^:const speed-of-light 2.99792458e8) ;; m/s
+
+(defn wind-direction
+  "A deterministic-but-varying outward unit vector for a wind ejection, seeded by
+   entity id + tick (no Math/random — banned, it would break resume). Uniform-ish
+   over the sphere so successive ejections fan out instead of streaming one way."
+  [eid tick]
+  (let [h     (Math/abs (long (hash [eid tick])))
+        theta (* 2.0 Math/PI (/ (double (mod h 1009)) 1009.0))
+        z     (- (* 2.0 (/ (double (mod (quot h 1009) 1013)) 1013.0)) 1.0)
+        r     (Math/sqrt (max 0.0 (- 1.0 (* z z))))]
+    [(* r (Math/cos theta)) (* r (Math/sin theta)) z]))
+
+(defn stellar-wind-system
+  "Serial barrier system: stars shed mass as gas (radiation/thermal wind).
+
+   Each star loses mass at Ṁ = k·L/(v_esc·c) (single-scattering radiation limit,
+   `k` = `:phase0/wind-rate-scale`), accumulating it in `c/wind-reservoir`. When
+   the reservoir reaches one wind-parcel mass, a :nebula parcel is launched
+   radially outward from the surface and the star recoils (momentum conserved).
+   Shed gas is reabsorbed by `sink-formation-system`, so the deepest nearby well
+   nets the most — competitive accretion as visible gas flow.
+
+   Mass is conserved (star → parcels + remnant). A star stripped below the
+   hydrogen-burning mass is demoted by the classifier next tick (to brown-dwarf,
+   then debris) — never back to gas (collapse is irreversible). Only :star sheds
+   in phase A, so winds alone cannot ablate a body to nothing: it demotes and
+   stops shedding well above the ablation floor.
+
+   Runs at the barrier AFTER sink-formation, so a freshly-shed parcel drifts a
+   tick before it can be reabsorbed (no emit→absorb flicker)."
+  [world]
+  (let [k        (double (:phase0/wind-rate-scale world 1.0))
+        dt       (double (or (:sim/dt world) 1.0e12))
+        tick     (or (:tick world) 0)
+        p-mass   (double (or (:phase0/wind-parcel-mass world)
+                             (some-> (:phase0/gas-particle-mass world) (* 0.25))
+                             1.0e27))
+        v-fac    (double (:phase0/wind-speed-factor world 0.15)) ;; drift per tick as a fraction of the feeding zone
+        max-frac (double (:phase0/wind-max-loss-frac world 0.01))
+        abl      (double (:phase0/ablation-floor world (* 1.0e-3 law/deuterium-burning-mass)))
+        ;; shed parcels are diffuse gas: spawn at the gas smoothing radius so SPH
+        ;; treats them like any other nebula sample (structure re-derives it next
+        ;; tick). Falls back to a large diffuse radius if the world didn't store it.
+        gas-r    (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
+        stars    (ecs/entities-with world c/matter-state c/mass c/radius
+                                    c/position c/velocity)]
+    (reduce
+      (fn [w eid]
+        (if-not (and (ecs/alive? w eid)
+                     (= :star (ecs/get-component w eid c/matter-state)))
+          w
+          (let [M (double (or (ecs/get-component w eid c/mass) 0.0))
+                R (double (or (ecs/get-component w eid c/radius) 0.0))]
+            (if-not (and (pos? M) (pos? R))
+              w
+              (let [region (entity->region w eid)
+                    L      (double (star-luminosity region))
+                    v-esc  (Math/sqrt (/ (* 2.0 law/G M) R))
+                    mdot   (if (pos? v-esc) (/ (* k L) (* v-esc speed-of-light)) 0.0)
+                    dm     (min (* mdot dt) (* M max-frac))
+                    resv   (+ (double (or (ecs/get-component w eid c/wind-reservoir) 0.0)) dm)
+                    M1     (- M dm)]
+                (cond
+                  ;; fully ablated (rare in phase A): mass has already left as wind
+                  (<= M1 abl) (ecs/despawn w eid)
+
+                  ;; not enough shed yet for a parcel — just bank it. dm moved
+                  ;; from mass into the reservoir: mass+reservoir is unchanged.
+                  (< resv p-mass)
+                  (-> w (ecs/put-component eid c/mass M1)
+                        (ecs/put-component eid c/wind-reservoir resv))
+
+                  ;; materialize one wind parcel FROM the reservoir (the mass was
+                  ;; already debited as dm over prior ticks). The star's mass is
+                  ;; NOT debited again here — that would double-count and leak
+                  ;; p-mass per emission. Recoil conserves momentum.
+                  :else
+                  (let [rhat (wind-direction eid tick)
+                        pos  (ecs/get-component w eid c/position)
+                        vel  (ecs/get-component w eid c/velocity)
+                        ;; CRITICAL: a real wind speed (~v_esc) over a Myr-scale dt
+                        ;; would fling the parcel many nebula-radii in one tick,
+                        ;; blowing the whole system apart. Cap the drift so the
+                        ;; parcel moves at most `v-fac` of the feeding zone per
+                        ;; tick — it lingers near the star as visible fog and stays
+                        ;; reabsorbable, instead of ballistically escaping. We
+                        ;; model the OBSERVABLE shed envelope, not the km/s wind.
+                        acc  (double (or (ecs/get-component w eid c/accretion-radius)
+                                         (* 100.0 R)))
+                        v-w  (min v-esc (/ (* v-fac acc) (max 1.0 dt)))
+                        ppos (sp/v+ pos (sp/v* rhat R))
+                        pvel (sp/v+ vel (sp/v* rhat v-w))
+                        vel' (sp/v- vel (sp/v* rhat (* (/ p-mass M1) v-w)))
+                        [w' _] (spawn-clump w
+                                 {:position ppos :velocity pvel :mass p-mass
+                                  :radius gas-r :matter-state :nebula
+                                  :composition (or (:composition region) default-composition)
+                                  ;; hot wind glows; :nebula T is not overwritten downstream
+                                  :temperature (max 3.0 (virial-temperature M1 R))})]
+                    (-> w'
+                        (ecs/put-component eid c/mass M1)
+                        (ecs/put-component eid c/velocity vel')
+                        (ecs/put-component eid c/wind-reservoir (- resv p-mass))))))))))
+      world
+      stars)))
+
+(defn stellar-flare-system
+  "Serial barrier system (winds spec phase B): episodic coronal mass ejections.
+   Occasionally a star flings a larger, hotter blob along its rotation axis — a
+   bright flare/CME riding on top of the steady wind. Mass is debited directly
+   from the star (parcel mass = debit, conserved), and the drift is velocity-
+   capped exactly like the wind (`v ≤ flare-speed-factor · feeding-zone / dt`), so
+   flares never blow the system apart. Bipolar: successive flares alternate poles.
+
+   Tunables: `:phase0/flare-period` (ticks between flares per star; 0 disables),
+   `:phase0/flare-mass-factor` (× wind-parcel mass), `:phase0/flare-speed-factor`
+   (drift per tick as a fraction of the feeding zone), `:phase0/flare-temp-factor`
+   (× virial temperature, for brightness). A flare never fires if it would pull
+   the star below half the hydrogen-burning mass — flares decorate, they don't
+   demote."
+  [world]
+  (let [period (long (:phase0/flare-period world 0))] ;; default OFF — opt in via :phase0/flare-period
+    (if-not (pos? period)
+      world
+      (let [dt     (double (or (:sim/dt world) 1.0e12))
+            tick   (or (:tick world) 0)
+            p-mass (double (or (:phase0/wind-parcel-mass world)
+                               (some-> (:phase0/gas-particle-mass world) (* 0.25))
+                               1.0e27))
+            m-fac  (double (:phase0/flare-mass-factor world 3.0))
+            v-fac  (double (:phase0/flare-speed-factor world 0.4))
+            t-fac  (double (:phase0/flare-temp-factor world 3.0))
+            gas-r  (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
+            floor  (* 0.5 law/hydrogen-burning-mass)
+            stars  (ecs/entities-with world c/matter-state c/mass c/radius
+                                      c/position c/velocity)]
+        (reduce
+          (fn [w eid]
+            (if-not (and (ecs/alive? w eid)
+                         (= :star (ecs/get-component w eid c/matter-state))
+                         (zero? (mod (Math/abs (long (hash [:flare eid tick]))) period)))
+              w
+              (let [M  (double (or (ecs/get-component w eid c/mass) 0.0))
+                    R  (double (or (ecs/get-component w eid c/radius) 0.0))
+                    fm (* m-fac p-mass)]
+                (if-not (and (pos? R) (> (- M fm) floor))
+                  w ;; never flare a star out of existence
+                  (let [region (entity->region w eid)
+                        v-esc  (Math/sqrt (/ (* 2.0 law/G M) R))
+                        acc    (double (or (ecs/get-component w eid c/accretion-radius)
+                                           (* 100.0 R)))
+                        v-fl   (min v-esc (/ (* v-fac acc) (max 1.0 dt)))
+                        ;; bipolar: eject along the spin axis, alternating poles
+                        axis   (let [a (ecs/get-component w eid c/rotation-axis)]
+                                 (if (and a (pos? (sp/len a))) a (wind-direction eid tick)))
+                        sign   (if (even? (mod (Math/abs (long (hash [eid tick]))) 2)) 1.0 -1.0)
+                        rhat   (sp/v* axis sign)
+                        pos    (ecs/get-component w eid c/position)
+                        vel    (ecs/get-component w eid c/velocity)
+                        ppos   (sp/v+ pos (sp/v* rhat R))
+                        pvel   (sp/v+ vel (sp/v* rhat v-fl))
+                        vel'   (sp/v- vel (sp/v* rhat (* (/ fm (- M fm)) v-fl)))
+                        [w' _] (spawn-clump w
+                                 {:position ppos :velocity pvel :mass fm :radius gas-r
+                                  :matter-state :nebula
+                                  :composition (or (:composition region) default-composition)
+                                  ;; flares run hot → bright in the volumetric fog
+                                  :temperature (max 3.0 (* t-fac (virial-temperature M R)))})]
+                    (-> w'
+                        (ecs/put-component eid c/mass (- M fm))
+                        (ecs/put-component eid c/velocity vel')))))))
+          world
+          stars)))))
 
 ;; --- The Structure owner: shape + compactness (double-buffer step 7b) -------
 ;; radius and density are ONE geometric fact (ρ = m / V, V = 4/3π r³), so a

@@ -145,7 +145,7 @@
   "Bootstrap a Phase 0 world ready to tick."
   ([] (create-world {}))
    ([{:keys [G theta dt softening nebula-mass nebula-radius collapse-fraction
-             contraction-time gas-count spin turb]
+             contraction-time gas-count spin turb wind-rate-scale]
       ;; `dt`/`softening` default to the cold-cloud pacing values (`pacing-for`
       ;; at complexity 0); pass them only to override. Softening is matched to the
       ;; timestep: the dynamical time at the Plummer length must exceed dt or
@@ -164,9 +164,14 @@
       ;;  • `spin` is the cloud's rotational support (fraction of virial). Higher
       ;;    spin flattens the collapse into a rotationally-supported disk that can
       ;;    fragment into planets instead of all draining onto the core.
+      ;;  • `wind-rate-scale` (k_wind) is the stellar-wind intensity dial (see
+      ;;    phase0-stellar-winds-and-mass-loss spec). Default is cinematic-lively:
+      ;;    stars visibly shed and reabsorb gas, and a dominant star emerges from
+      ;;    competitive reabsorption. Set ~1.0 for physically-subtle winds.
       :or   {G law/G theta 0.5
              nebula-mass 4e30 nebula-radius 1.5e16 collapse-fraction 0.5
-             contraction-time 9.5e14 gas-count 1000 spin 0.6 turb 0.15}}]
+             contraction-time 9.5e14 gas-count 1000 spin 0.6 turb 0.15
+             wind-rate-scale 1.5}}]
    (let [neb     (pacing/pacing-for (pacing/dynamical-time nebula-radius nebula-mass)
                                     nebula-radius)
          pmass   (/ (double nebula-mass) gas-count)
@@ -188,13 +193,7 @@
                             ;; false to hold :sim/dt constant — useful for fast,
                             ;; pace-independent tests and deterministic runs.
                             :phase0/adaptive-pacing?  true
-                            ;; The authentic double-buffer single-writer path is
-                            ;; the live default (design §7c): density-gated
-                            ;; condensation + classifier + feeding-zone assembly
-                            ;; form a star where the legacy mass-tier pipeline
-                            ;; forms nothing at production resolution. Set false
-                            ;; to run the legacy sequential Gauss–Seidel pipeline.
-                            :phase0/parallel?         true
+                            :phase0/wind-rate-scale   wind-rate-scale
                             :phase0/collapse-fraction collapse-fraction
                             :phase0/contraction-time  contraction-time
                             :phase0/gas-particle-mass pmass
@@ -282,42 +281,6 @@
           world))
       world)))
 
-(defn physics-systems
-  "The ordered physical systems run each tick (everything except the observer,
-    which must run after complexity and events are known).
-
-   The integrator advances by `:sim/dt` — the in-game seconds this tick covers,
-   set by `pacing-for` from the system's complexity. It is NOT scaled by the
-   display `time-scale`; the wall-clock rate emerges from the fixed 60 Hz tick
-   rate (`rate = dt * ticks-per-second`), so dilating dt dilates the clock."
-  [{:keys [sim/G sim/theta sim/dt sim/softening]}]
-  (let [effective-dt dt]
-    ;; `dt` (`:sim/dt`) is the real integration step in seconds — a fraction of
-    ;; the cloud's orbital/free-fall time so the N-body dynamics actually resolve
-    ;; (collapse, rotation, accretion). It is NOT multiplied by the display
-    ;; `time-scale` (that gave ~1e20 s steps, degenerate motion). `softening` is
-    ;; the gravitational softening that keeps the self-gravitating cloud stable.
-    ;;
-    ;; Tick order: compute SPH density from current positions (so pressure can
-    ;; vary with crowding) → compute hydrodynamic pressure-gradient accelerations
-    ;; → promote Jeans-unstable gas to resolved bodies → reclassify every clump by
-    ;; mass → move under gravity+hydro → merge overlapping resolved bodies →
-    ;; contract any star-forming core → ignite fusion → heat/cool by radiation →
-    ;; tag the dominant-physics regime → evolve the magnetic field. Formation is
-    ;; emergent.
-    [(hydro/density-system effective-dt)
-     (hydro/hydro-system effective-dt)
-     stellar/jeans-collapse-system
-     stellar/classify-system
-     (orbital/orbital-system G theta effective-dt (or softening 1e14))
-     collision/collision-detection-system
-     stellar/collapse-system
-     stellar/fusion-system
-     (stellar/thermal-system effective-dt)
-     regime/regime-system
-     (em/em-system effective-dt)
-     recenter-system]))
-
 (defn physics-systems-parallel
   "The transform systems as write-set systems for the double-buffer fan-out
    (`domain.ecs.tick/run-parallel`). Each entry is its legacy `(fn [world] world')`
@@ -359,26 +322,25 @@
 (defn step-physics
   "Run one tick of physics over `world` (already tick-advanced).
 
-   Default (double-buffer): every system in `physics-systems-parallel` runs
-   concurrently reading the FROZEN `world` and writing only the components it
-   owns; the disjoint write-sets fold at a single barrier (`:throw` enforces
-   single-writer at runtime). Then the SERIAL barrier systems run on the folded
-   world — collision/merge (discrete events that despawn) and the centre-of-mass
-   recenter (a global reduction). System order is irrelevant by construction.
+   Every system in `physics-systems-parallel` runs concurrently reading the
+   FROZEN `world` and writing only the components it owns; the disjoint write-sets
+   fold at a single barrier (`:throw` enforces single-writer at runtime). Then the
+   SERIAL barrier systems run on the folded world: collision (literal merges that
+   despawn), fusion promotion, gas accretion onto sinks (sink-formation), and the
+   centre-of-mass recenter (a global reduction). System order in the parallel
+   region is irrelevant by construction.
 
-   The double-buffer path is the live default (`create-world` sets
-   `:phase0/parallel? true`): density-gated condensation, the single-writer
-   classifier, and feeding-zone assembly form a star — the go-live gap (design
-   §7c) is closed. Set `:phase0/parallel? false` to run the legacy SEQUENTIAL
-   Gauss–Seidel pipeline (mass-tier promotion), kept for comparison and tests."
+   This double-buffer single-writer pipeline is the ONLY runtime (design §7c):
+   density-gated condensation, the single-writer classifier, and sink accretion
+   form a star. There is deliberately no second simulation path."
   [world]
-  (if (:phase0/parallel? world true)
-    (-> (tick/run-parallel world (physics-systems-parallel world))
-        (collision/collision-detection-system)
-        (stellar/fusion-promotion-system)
-        (stellar/sink-formation-system)
-        (recenter-system))
-    (ecs/run-systems world (physics-systems world))))
+  (-> (tick/run-parallel world (physics-systems-parallel world))
+      (collision/collision-detection-system)
+      (stellar/fusion-promotion-system)
+      (stellar/sink-formation-system)
+      (stellar/stellar-wind-system)
+      (stellar/stellar-flare-system)
+      (recenter-system)))
 
 (defn tick-world
   "Advance the world by one tick. Pure: world -> world'."

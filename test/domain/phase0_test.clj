@@ -85,10 +85,10 @@
       (is (== (:phase0/time-scale w) (* (:sim/dt w) pacing/ticks-per-second))
           "time-scale is the derived wall-clock rate: dt × ticks-per-second")))
 
-  (testing "Physics pipeline has twelve ordered systems, density first"
-    (let [systems (phase0/physics-systems (phase0/create-world))]
-      (is (= 12 (count systems)))
-      (is (fn? (first systems))))))
+  (testing "Parallel physics pipeline is a non-empty set of write-set systems"
+    (let [systems (phase0/physics-systems-parallel (phase0/create-world))]
+      (is (pos? (count systems)))
+      (is (every? :writes systems)))))
 
 (defn- world-of-bodies
   "Build a bare world with the given [position mass radius] bodies (resolved
@@ -245,49 +245,18 @@
 
 ;; --- Full arc ---------------------------------------------------------------
 
-(deftest test-full-simulation
-  (testing "A gas cloud collapses and a star + other bodies emerge by accretion"
-    ;; A compact, fast-forming cloud: dense (small radius → short free-fall) and
-    ;; quick contraction (τ small), so a star ignites within a bounded tick
-    ;; budget. The production defaults deliberately stretch this to ~tens of Myr
-    ;; (see `create-world`); this test pins the EMERGENCE, not the pace.
-    (let [w0 (-> (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
-                                       :contraction-time 2e12 :spin 0.55})
-                 ;; pin the legacy sequential pipeline (parallel is now the
-                 ;; create-world default; test-full-simulation-parallel covers it)
-                 ;; and a fixed coarse timestep so emergence is reached in a small
-                 ;; tick budget — pacing/dilation is covered by test-time-dilation.
-                 (assoc :phase0/parallel? false
-                        :phase0/adaptive-pacing? false :sim/dt 1.0e12))
-          ;; run until a star ignites from the gas or we exhaust the budget
-          final (loop [w w0 i 0]
-                  (if (or (> i 400) (:star? (phase0/system-summary w))
-                          (not (:phase0/active w)))
-                    w
-                    (recur (phase0/tick-world w) (inc i))))
-          summ (phase0/system-summary final)]
-      (is (:star? summ) "a star should ignite from the collapsing cloud")
-      (is (> (:resolved-count summ) 1)
-          "other bodies (planets/debris) should condense alongside the star")
-      (is (> (:phase0/sim-time final) 0.0))
-      (is (not= :initializing (:phase0/phase final)))
-      (let [coh (:coherence (player/get-observer final))]
-        (is (<= 0.0 coh 1.0))))))
-
 (deftest test-full-simulation-parallel
-  (testing "The authentic double-buffer path also forms a star by accretion"
-    ;; Go-live regression (design note §7c): on the parallel single-writer path,
-    ;; density-gated condensation flips parcels out of the gas, and the
-    ;; accretion-zone owner latches each condensing body a feeding zone on the
-    ;; SAME tick — so condensed bodies are collidable and a core can assemble.
-    ;; Before the feeding-zone fix the parcels condensed individually and stalled
-    ;; as a swarm of sub-stellar protostars (no body was ever collidable).
+  (testing "The double-buffer path forms a star by accretion"
+    ;; Go-live regression (design note §7c): density-gated condensation flips
+    ;; parcels out of the gas, the accretion-zone owner latches each condensing
+    ;; body a feeding zone on the SAME tick, and sink-formation grows the core by
+    ;; accreting the surrounding gas until it ignites. Resolved bodies merge only
+    ;; on literal collision; gas accretion is the dominant growth channel.
     (let [w0    (-> (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
                                           :contraction-time 2e12 :spin 0.55})
-                    ;; fixed coarse step (see test-full-simulation): keeps the
-                    ;; emergence regression fast and independent of the pacing curve.
-                    (assoc :phase0/parallel? true
-                           :phase0/adaptive-pacing? false :sim/dt 1.0e12))
+                    ;; fixed coarse step keeps the emergence regression fast and
+                    ;; independent of the pacing curve (pacing covered elsewhere).
+                    (assoc :phase0/adaptive-pacing? false :sim/dt 1.0e12))
           final (loop [w w0 i 0]
                   (if (or (> i 400) (:star? (phase0/system-summary w))
                           (not (:phase0/active w)))
