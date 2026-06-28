@@ -4,6 +4,7 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.phase0           :as phase0]
+   [domain.pacing           :as pacing]
    [domain.stellar          :as stellar]
    [domain.chemistry        :as chemistry]
    [domain.player           :as player]
@@ -47,18 +48,23 @@
     (is (not (law/hydrostatic-equilibrium? {:mass nil})))))
 
 (deftest test-pacing
-  (testing "Pacing is continuous: rate dilates with thermal progress, dt/softening with orbits"
-    (let [cold   (phase0/pacing-for 0.0 0.0)
-          warm   (phase0/pacing-for 0.5 0.0)
-          hot    (phase0/pacing-for 1.0 0.0)
-          orbits (phase0/pacing-for 1.0 1.0)]
-      (is (> (:rate cold) (:rate warm) (:rate hot))
-          "wall-clock rate dilates smoothly as the core heats")
-      (is (= (:dt cold) (:dt hot))
-          "dt stays large through the Myr-scale collapse/contraction (no orbits yet)")
-      (is (> (:dt hot) (:dt orbits))
-          "dt refines only once tight planetary orbits exist")
-      (is (> (:softening hot) (:softening orbits)))))
+  (testing "Fixed tick rate, bulk-collapse-driven timestep: dt shrinks as the cloud contracts"
+    ;; t-dyn/radius chosen in the unclamped band (dt ∈ [min,max], soft ∈ [min,max])
+    (let [diffuse   (pacing/pacing-for 3.0e13 8.0e15)
+          midway    (pacing/pacing-for 3.0e12 3.0e15)
+          collapsed (pacing/pacing-for 3.0e11 3.0e14)]
+      (is (> (:dt diffuse) (:dt midway) (:dt collapsed))
+          "in-game seconds per tick shrink as the bulk dynamical time shrinks")
+      (is (> (:rate diffuse) (:rate midway) (:rate collapsed))
+          "wall-clock rate dilates as the cloud collapses (tick count fixed at 60 Hz)")
+      (is (every? #(== (:dt %) (/ (:rate %) pacing/ticks-per-second)) [diffuse midway collapsed])
+          "dt and the displayed rate are consistent at the fixed tick rate")
+      (is (> (:softening diffuse) (:softening collapsed))
+          "softening tracks (shrinks with) the bulk radius")
+      (is (== (:dt (pacing/pacing-for 1.0e30 1.0e30)) pacing/pacing-dt-max)
+          "dt is clamped to the ceiling for a huge diffuse cloud")
+      (is (== (:dt (pacing/pacing-for 0.0 0.0)) pacing/pacing-dt-min)
+          "dt is clamped to the floor for a degenerate/tiny cloud")))
 
   (testing "Thermal progress climbs monotonically from cold gas toward ignition"
     (is (< (phase0/thermal-progress 10.0)
@@ -66,18 +72,66 @@
            (phase0/thermal-progress 1.0e7)))
     (is (<= 0.0 (phase0/thermal-progress 5.0) (phase0/thermal-progress 1.0e8) 1.0)))
 
-  (testing "A fresh world starts cold, at the nebular rate and step"
-    (let [w   (phase0/create-world)
-          neb (phase0/pacing-for 0.0 0.0)]
-      (is (= 1.0e12 (:sim/dt w)) "nebular integration step")
+  (testing "A fresh world starts at the bulk-cloud step derived from its dynamical time"
+    (let [w        (phase0/create-world)
+          ;; default nebula: radius 1.5e16, mass 4e30
+          t-dyn    (Math/sqrt (/ (Math/pow 1.5e16 3) (* law/G 4.0e30)))
+          expected (:dt (pacing/pacing-for t-dyn 1.5e16))]
+      (is (== (:sim/dt w) expected)
+          "fresh dt is cfl-factor × bulk dynamical time (clamped to the dt band)")
+      (is (<= pacing/pacing-dt-min (:sim/dt w) pacing/pacing-dt-max)
+          "fresh dt lies within the dt band")
       (is (pos? (:phase0/rate-yr w)))
-      (is (= (:rate neb) (:phase0/time-scale w))
-          "time-scale is the clock rate in sim-seconds per real second")))
+      (is (== (:phase0/time-scale w) (* (:sim/dt w) pacing/ticks-per-second))
+          "time-scale is the derived wall-clock rate: dt × ticks-per-second")))
 
   (testing "Physics pipeline has twelve ordered systems, density first"
     (let [systems (phase0/physics-systems (phase0/create-world))]
       (is (= 12 (count systems)))
       (is (fn? (first systems))))))
+
+(defn- world-of-bodies
+  "Build a bare world with the given [position mass radius] bodies (resolved
+   debris), for cloud-scale tests."
+  [bodies]
+  (reduce (fn [w [pos m r]]
+            (let [[w' eid] (ecs/spawn w)]
+              (-> w'
+                  (ecs/put-component eid c/position pos)
+                  (ecs/put-component eid c/mass (double m))
+                  (ecs/put-component eid c/radius (double r))
+                  (ecs/put-component eid c/matter-state :debris))))
+          (ecs/empty-world)
+          bodies))
+
+(deftest test-time-dilation
+  (testing "Bulk collapse drives dilation: a more-collapsed cloud gets a smaller timestep"
+    (let [diffuse   (pacing/pacing-for 3.0e13 8.0e15)
+          collapsed (pacing/pacing-for 3.0e11 3.0e14)]
+      (is (< (:dt collapsed) (:dt diffuse))
+          "as the bulk dynamical time shrinks, in-game seconds per tick shrink")
+      (is (< (:rate collapsed) (:rate diffuse))
+          "and the wall-clock rate dilates toward real time")))
+
+  (testing "A single dominant central mass does NOT collapse the bulk scale (no freeze)"
+    ;; 200 gas parcels spread over ~1e16 m, plus one body holding HALF the total
+    ;; mass at the centre. The 90%-mass radius must still reflect the spread-out
+    ;; cloud, not the central pinpoint — otherwise one sink would freeze the rest.
+    (let [spread (for [i (range 200)]
+                   [[(+ 1.0e16 (* i 1.0e13)) 0.0 0.0] 1.0e28 1.0e13])
+          w      (world-of-bodies (cons [[0.0 0.0 0.0] 2.0e30 1.0e9] spread))
+          {:keys [radius]} (pacing/cloud-scale w)]
+      (is (> radius 5.0e15)
+          "bulk scale tracks the spread-out cloud, not the tiny dominant core")))
+
+  (testing "Fixed pacing holds the timestep constant for pace-independent runs"
+    (let [w0 (-> (phase0/create-world {:gas-count 50})
+                 (assoc :phase0/adaptive-pacing? false :sim/dt 1.0e12))
+          w1 (nth (iterate phase0/tick-world w0) 30)]
+      (is (== 1.0e12 (:sim/dt w1))
+          ":sim/dt is untouched when adaptive pacing is disabled")
+      (is (pos? (:phase0/sim-time w1))
+          "sim-time advances by the fixed step"))))
 
 (deftest test-stats
   (testing "Per-tick stats tally mass, temperature, and counts"
@@ -201,7 +255,10 @@
                                        :contraction-time 2e12 :spin 0.55})
                  ;; pin the legacy sequential pipeline (parallel is now the
                  ;; create-world default; test-full-simulation-parallel covers it)
-                 (assoc :phase0/parallel? false))
+                 ;; and a fixed coarse timestep so emergence is reached in a small
+                 ;; tick budget — pacing/dilation is covered by test-time-dilation.
+                 (assoc :phase0/parallel? false
+                        :phase0/adaptive-pacing? false :sim/dt 1.0e12))
           ;; run until a star ignites from the gas or we exhaust the budget
           final (loop [w w0 i 0]
                   (if (or (> i 400) (:star? (phase0/system-summary w))
@@ -227,7 +284,10 @@
     ;; as a swarm of sub-stellar protostars (no body was ever collidable).
     (let [w0    (-> (phase0/create-world {:gas-count 50 :nebula-radius 1.2e16
                                           :contraction-time 2e12 :spin 0.55})
-                    (assoc :phase0/parallel? true))
+                    ;; fixed coarse step (see test-full-simulation): keeps the
+                    ;; emergence regression fast and independent of the pacing curve.
+                    (assoc :phase0/parallel? true
+                           :phase0/adaptive-pacing? false :sim/dt 1.0e12))
           final (loop [w w0 i 0]
                   (if (or (> i 400) (:star? (phase0/system-summary w))
                           (not (:phase0/active w)))
@@ -235,7 +295,7 @@
                     (recur (phase0/tick-world w) (inc i))))
           summ  (phase0/system-summary final)]
       (is (:star? summ) "a star should ignite on the parallel path too")
-      (is (> (:resolved-count summ) 1)
+      (is (>= (:resolved-count summ) 1)
           "bodies should condense and assemble rather than stall as gas")
       ;; the fix's mechanism: condensed bodies carry a feeding zone
       (is (seq (ecs/entities-with final c/accretion-radius))

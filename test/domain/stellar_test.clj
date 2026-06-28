@@ -85,6 +85,41 @@
       (is (every? (fn [[a b]] (< (Math/abs (- a b)) 1e30))
                   (map vector final-L total-L))))))
 
+(deftest test-merge-does-not-balloon-compact-star
+  (testing "A compact star accreting a diffuse body stays compact (density-
+            conserving accretion), instead of volume-summing to cloud size and
+            collapsing its derived virial temperature — the star-disappears bug."
+    (let [base    (-> (ecs/empty-world)
+                      (event/with-ledger)
+                      (event/register-handler :event/collision
+                                              stellar/stellar-merge-handler))
+          ;; compact star: ~main-sequence radius, high density
+          [w1 star] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                               :velocity [0.0 0.0 0.0]
+                                               :mass 2.0e30
+                                               :radius 3.0e8
+                                               :matter-state :star
+                                               :accretion-radius 1.0e12})
+          ;; diffuse, freshly-condensed body 1000× larger but lighter
+          [w2 _gas] (stellar/spawn-clump w1   {:position [1.0e11 0.0 0.0]
+                                               :velocity [0.0 0.0 0.0]
+                                               :mass 5.0e29
+                                               :radius 5.0e11
+                                               :matter-state :protostar
+                                               :accretion-radius 1.0e12})
+          w3       (collision/collision-detection-system w2)
+          survivor (first (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))
+          r'       (double (ecs/get-component w3 survivor c/radius))]
+      (is (= 1 (count (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))))
+      (is (< r' 1.0e9)
+          "merged star radius stays compact (~survivor radius), not ballooned")
+      ;; virial temperature at the merged radius must remain stellar (≥1e7 K),
+      ;; which is exactly what the bloated radius destroyed.
+      (let [m  (double (ecs/get-component w3 survivor c/mass))
+            tv (stellar/virial-temperature m r')]
+        (is (>= tv 1.0e7)
+            "derived virial temperature stays in the stellar regime")))))
+
 (deftest test-merge-conserves-orbital-angular-momentum
   (testing "Orbital L of two moving bodies is added to the merged body's spin"
     (let [base    (-> (ecs/empty-world)
@@ -418,3 +453,173 @@
           w3 (stellar/jeans-collapse-system w2)]
       (is (= :planet (ecs/get-component w3 eid c/matter-state)))
       (is (= 1e14 (ecs/get-component w3 eid c/radius))))))
+
+;; --- Stage 2: Sink formation (isolation criterion + convert-and-seed) --------
+
+(deftest test-within-existing-sink
+  (testing "A parcel inside a sink's accretion radius is detected"
+    (let [pos [1e10 0.0 0.0]
+          zones [{:position [0.0 0.0 0.0] :radius 2e10}]]
+      (is (stellar/within-existing-sink? pos zones))))
+  (testing "A parcel outside all sinks is not detected"
+    (let [pos [1e11 0.0 0.0]
+          zones [{:position [0.0 0.0 0.0] :radius 2e10}]]
+      (is (not (stellar/within-existing-sink? pos zones)))))
+  (testing "nil sink-zones returns nil (no sinks exist)"
+    (is (nil? (stellar/within-existing-sink? [1e10 0.0 0.0] nil))))
+  (testing "nil position returns nil"
+    (is (nil? (stellar/within-existing-sink? nil [{:position [0 0 0] :radius 1e10}])))))
+
+(deftest test-bondi-radius
+  (testing "Bondi radius grows with mass"
+    (let [r1 (stellar/bondi-radius 1e28 500.0)
+          r2 (stellar/bondi-radius 2e28 500.0)]
+      (is (pos? r1))
+      (is (= (* 2.0 r1) r2))))
+  (testing "Bondi radius shrinks with sound speed"
+    (let [r1 (stellar/bondi-radius 1e28 500.0)
+          r2 (stellar/bondi-radius 1e28 1000.0)]
+      (is (= (* 0.25 r1) r2))))
+  (testing "Zero mass returns zero"
+    (is (= 0.0 (stellar/bondi-radius 0.0 500.0))))
+  (testing "Zero sound speed returns zero"
+    (is (= 0.0 (stellar/bondi-radius 1e28 0.0)))))
+
+(deftest test-isolation-criterion-blocks-condensation
+  (testing "A Jeans-unstable parcel inside a sink's radius does NOT condense"
+    (let [;; Create a sink at origin with a large accretion radius
+          base (ecs/empty-world)
+          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                                    :velocity [0.0 0.0 0.0]
+                                                    :mass 2e28
+                                                    :radius 1e12
+                                                    :temperature 10.0
+                                                    :density 1e-6
+                                                    :matter-state :debris})
+          w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
+          ;; Create a Jeans-unstable parcel INSIDE the sink's radius
+          [w2 parcel-eid] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                                     :velocity [0.0 0.0 0.0]
+                                                     :mass 2e28
+                                                     :radius 1e14
+                                                     :temperature 10.0})
+          w2 (-> w2
+                 (ecs/put-component parcel-eid c/density 1e-6)
+                 (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
+          ;; Compute sink zones and classify with isolation check
+          zones (stellar/sink-exclusion-zones w2)
+          region (stellar/entity->region w2 parcel-eid)
+          next-state (stellar/classify-next-state region 1e25 zones)]
+      (is (= :nebula next-state) "Parcel inside sink radius stays :nebula")))
+  (testing "A Jeans-unstable parcel OUTSIDE sinks condenses normally"
+    (let [base (ecs/empty-world)
+          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                                    :velocity [0.0 0.0 0.0]
+                                                    :mass 2e28
+                                                    :radius 1e12
+                                                    :temperature 10.0
+                                                    :density 1e-6
+                                                    :matter-state :debris})
+          w1 (ecs/put-component w1 sink-eid c/accretion-radius 1e11)
+          ;; Create a Jeans-unstable parcel OUTSIDE the sink's radius
+          [w2 parcel-eid] (stellar/spawn-clump w1 {:position [1e13 0.0 0.0]
+                                                     :velocity [0.0 0.0 0.0]
+                                                     :mass 2e28
+                                                     :radius 1e14
+                                                     :temperature 10.0})
+          w2 (-> w2
+                 (ecs/put-component parcel-eid c/density 1e-6)
+                 (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
+          zones (stellar/sink-exclusion-zones w2)
+          region (stellar/entity->region w2 parcel-eid)
+          next-state (stellar/classify-next-state region 1e25 zones)]
+      (is (= :debris next-state) "Parcel outside sink radius condenses to :debris"))))
+
+(deftest test-sink-formation-absorbs-parcels
+  (testing "Newly formed sink absorbs nearby :nebula parcels within accretion radius"
+    (let [base (ecs/empty-world)
+          ;; Create a sink that just condensed (:debris with accretion-radius)
+          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                                    :velocity [0.0 0.0 0.0]
+                                                    :mass 2e28
+                                                    :radius 1e12
+                                                    :temperature 10.0
+                                                    :matter-state :debris})
+          w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
+          ;; Create gas parcels within accretion radius
+          [w2 p1] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                            :velocity [100.0 0.0 0.0]
+                                            :mass 1e27
+                                            :radius 1e10
+                                            :temperature 10.0
+                                            :matter-state :nebula})
+          [w3 p2] (stellar/spawn-clump w2 {:position [0.0 2e12 0.0]
+                                            :velocity [0.0 200.0 0.0]
+                                            :mass 1e27
+                                            :radius 1e10
+                                            :temperature 10.0
+                                            :matter-state :nebula})
+          ;; Create a gas parcel OUTSIDE accretion radius (should not be absorbed)
+          [w4 p3] (stellar/spawn-clump w3 {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e27
+                                            :radius 1e10
+                                            :temperature 10.0
+                                            :matter-state :nebula})
+          total-mass-before (+ 2e28 1e27 1e27 1e27)
+          ;; Run sink formation
+          w5 (stellar/sink-formation-system w4)
+          sink-mass (ecs/get-component w5 sink-eid c/mass)]
+      (is (not (ecs/alive? w5 p1)) "Parcel within radius is absorbed")
+      (is (not (ecs/alive? w5 p2)) "Parcel within radius is absorbed")
+      (is (ecs/alive? w5 p3) "Parcel outside radius survives")
+      (is (= (double sink-mass) (+ 2e28 1e27 1e27)) "Sink mass = original + absorbed")
+      (is (pos? (first (ecs/get-component w5 sink-eid c/velocity))) "Sink velocity updated"))))
+
+;; --- Fusion promotion barrier ------------------------------------------------
+
+(deftest test-fusion-promotion-sets-luminosity
+  (testing "A protostar at main-sequence radius with fusion-possible gets luminosity via barrier"
+    ;; Regression: the parallel double-buffer path had a one-tick lag where the
+    ;; classifier read stale density from the frozen snapshot, so fusion-possible?
+    ;; never returned true on the transition tick. The fusion-promotion barrier
+    ;; runs after the fold and sees the contracted density.
+    (let [mass   (* 1.5 law/solar-mass)
+          r-ms   (law/main-sequence-radius mass)
+          rho    (/ mass (* 4/3 Math/PI (Math/pow r-ms 3)))
+          t-vir  (stellar/virial-temperature mass r-ms)
+          press  (law/ideal-gas-pressure rho t-vir)
+          comp   {:H 0.74 :He 0.24 :metals 0.02}
+          [w eid] (stellar/spawn-clump (ecs/empty-world)
+                                       {:position [0 0 0] :velocity [0 0 0]
+                                        :mass mass :radius r-ms
+                                        :temperature t-vir :density rho
+                                        :pressure press :composition comp
+                                        :matter-state :protostar})
+          ;; Barrier should promote to star with non-zero luminosity
+          w'     (stellar/fusion-promotion-system w)
+          state' (ecs/get-component w' eid c/matter-state)
+          lum'   (double (or (ecs/get-component w' eid c/luminosity) 0.0))]
+      (is (= :star state') "Protostar promoted to star")
+      (is (pos? lum') "Luminosity is non-zero after promotion")
+      (is (>= lum' 1e26) "Luminosity is at least the star-luminosity floor")))
+
+  (testing "An existing star with zero luminosity gets luminosity refreshed"
+    (let [mass   (* 1.5 law/solar-mass)
+          r-ms   (law/main-sequence-radius mass)
+          rho    (/ mass (* 4/3 Math/PI (Math/pow r-ms 3)))
+          t-vir  (stellar/virial-temperature mass r-ms)
+          press  (law/ideal-gas-pressure rho t-vir)
+          comp   {:H 0.74 :He 0.24 :metals 0.02}
+          [w eid] (stellar/spawn-clump (ecs/empty-world)
+                                       {:position [0 0 0] :velocity [0 0 0]
+                                        :mass mass :radius r-ms
+                                        :temperature t-vir :density rho
+                                        :pressure press :composition comp
+                                        :matter-state :star})
+          ;; Star already has L=0 from seed-clump default
+          lum0   (double (or (ecs/get-component w eid c/luminosity) 0.0))
+          _      (is (zero? lum0) "Star starts with zero luminosity")
+          w'     (stellar/fusion-promotion-system w)
+          lum'   (double (or (ecs/get-component w' eid c/luminosity) 0.0))]
+      (is (pos? lum') "Luminosity refreshed for zero-luminosity star"))))

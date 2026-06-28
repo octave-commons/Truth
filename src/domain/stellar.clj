@@ -433,7 +433,12 @@
 
 (defn fusion-system
   "Any body whose temperature, pressure, and composition cross the ignition
-   thresholds becomes a star: it emits light and stops contracting."
+   thresholds becomes a star: it emits light and stops contracting.
+
+   NOTE: In the sequential pipeline this runs AFTER collapse-system so it sees
+   post-contraction density/pressure. In the parallel pipeline the legacy bridge
+   masks writes to #{c/luminosity} — the matter-state promotion is handled by
+   fusion-promotion-system (a barrier that runs after the fold)."
   [world]
   (reduce
    (fn [w eid]
@@ -447,6 +452,44 @@
          w)))
    world
    (ecs/entities-with world c/matter-state c/temperature c/pressure c/composition)))
+
+(defn fusion-promotion-system
+  "Post-fold barrier system: promotes protostars to stars once the contracted
+   density and virial temperature cross the fusion thresholds.
+
+   In the parallel double-buffer pipeline, the classifier (sole writer of
+   matter-state) reads from the FROZEN snapshot where density is still the
+   pre-contraction value — so the fusion gate never opens on the transition
+   tick. This barrier runs AFTER the fold, seeing the updated density from
+   structure-system and pressure from eos-system, and performs the promotion
+   that the classifier missed.
+
+   Also refreshes luminosity for any existing :star whose luminosity is zero
+   (fixes stars promoted before this system existed)."
+  [world]
+  (let [eids (ecs/entities-with world c/matter-state c/temperature c/pressure
+                                c/composition c/density c/radius c/mass)]
+    (reduce
+     (fn [w eid]
+       (let [state (ecs/get-component w eid c/matter-state)
+             region (entity->region w eid)]
+         (cond
+           ;; Protostar that now meets fusion conditions → promote to star
+           (and (= :protostar state) (law/fusion-possible? region))
+           (let [lum (star-luminosity region)]
+             (-> w
+                 (ecs/put-component eid c/luminosity   lum)
+                 (ecs/put-component eid c/matter-state :star)))
+
+           ;; Existing star with zero luminosity → recompute
+           (and (= :star state) (law/fusion-possible? region)
+                (let [lum (double (or (ecs/get-component w eid c/luminosity) 0.0))]
+                  (zero? lum)))
+           (ecs/put-component w eid c/luminosity (star-luminosity region))
+
+           :else w)))
+     world
+     eids)))
 
 ;; --- Radiation from stars ---------------------------------------------------
 
@@ -538,6 +581,40 @@
    this dense it stops being a fluid sample and becomes a body."
   1.0e-10)
 
+(defn sink-exclusion-zones
+  "Precompute the accretion radii and positions of all existing sinks (bodies
+   that have condensed out of the nebula). Returns a seq of {:position :radius}
+   maps for use in the isolation criterion. Pure — reads only from the frozen
+   snapshot."
+  [world]
+  (let [sinks (ecs/entities-with world c/matter-state c/accretion-radius c/position)]
+    (mapv (fn [eid]
+            {:position (ecs/get-component world eid c/position)
+             :radius   (double (or (ecs/get-component world eid c/accretion-radius) 0.0))})
+          sinks)))
+
+(defn within-existing-sink?
+  "True when a parcel's position falls inside any existing sink's accretion
+   radius. This is the isolation criterion from Federrath et al. (2010) — a
+   parcel can only condense if it is NOT within an existing sink's zone.
+   Prevents the cloud from condensing wholesale after the first sink forms."
+  [parcel-pos sink-zones]
+  (when (and parcel-pos (seq sink-zones))
+    (some (fn [{:keys [position radius]}]
+            (let [d (sp/dist parcel-pos position)]
+              (< d (double (or radius 0.0)))))
+          sink-zones)))
+
+(defn bondi-radius
+  "Bondi accretion radius: r = G·M / c_s². Grows with mass — a forming star's
+   capture zone expands as it accretes. Returns 0 for non-positive inputs."
+  [mass sound-speed]
+  (let [m (double (or mass 0.0))
+        cs (double (or sound-speed 0.0))]
+    (if (and (pos? m) (pos? cs))
+      (/ (* law/G m) (* cs cs))
+      0.0)))
+
 (defn contraction-stalled?
   "True when a contracting core has reached its main-sequence/degenerate radius
    floor while still below the hydrogen-ignition temperature — i.e. it will never
@@ -559,8 +636,16 @@
                  --contraction stalled & 0.013–0.08 M⊙-->    :brown-dwarf
      :star / :brown-dwarf                                    terminal
      :planet                                                 owned by the disk
-                                                             sub-grid (beat 6)"
-  [{:keys [matter-state mass radius density temperature] :as region} gas-particle-mass]
+                                                             sub-grid (beat 6)
+
+   `sink-zones` is an optional seq of {:position :radius} maps for existing
+   sinks (from `sink-exclusion-zones`). When provided, a :nebula parcel can
+   only condense if it is outside all existing sinks' accretion radii — the
+   isolation criterion (Federrath et al. 2010)."
+  ([region gas-particle-mass]
+   (classify-next-state region gas-particle-mass nil))
+  ([{:keys [matter-state mass radius density temperature position] :as region}
+    gas-particle-mass sink-zones]
   (let [m  (double (or mass 0.0))
         pm (double (or gas-particle-mass 0.0))]
     (case matter-state
@@ -586,29 +671,13 @@
       ;; also caps the SPH gas density (a condensed body uses material density).
       (if (and (jeans-unstable? region)
                (or (>= (double (or density 0.0)) core-condensation-density)
-                   (> m pm)))
+                   (> m pm))
+               ;; Isolation criterion: not within an existing sink's accretion
+               ;; radius. Prevents wholesale condensation after the first sink
+               ;; forms. (Federrath et al. 2010)
+               (not (within-existing-sink? position sink-zones)))
         (if (>= m law/deuterium-burning-mass) :protostar :debris)
-        (or matter-state :nebula)))))
-
-(defn classifier-system
-  "Double-buffer write-set system: SOLE writer of matter-state. Reads each body's
-   physics from the frozen snapshot and applies `classify-next-state`. Replaces
-   the matter-state writes of jeans-collapse, classify, and fusion (which keep
-   their geometry / luminosity roles); emits only the cells that actually change."
-  []
-  {:id     :classifier
-   :writes #{c/matter-state}
-   :run    (fn [world]
-             (let [gas-mass (:phase0/gas-particle-mass world)
-                   eids     (ecs/entities-with world c/matter-state c/mass)]
-               {c/matter-state
-                (into {}
-                      (keep (fn [eid]
-                              (let [region (entity->region world eid)
-                                    cur    (:matter-state region)
-                                    nxt    (classify-next-state region gas-mass)]
-                                (when (not= cur nxt) [eid nxt]))))
-                      eids)}))})
+        (or matter-state :nebula))))))
 
 (def ^:const feeding-zone-factor
   "How many gas smoothing-lengths wide a freshly-condensed body's gravitational
@@ -627,7 +696,86 @@
    by ~t=180) where sequential forms nothing at all; `create-world` raises it for
    coarser (fewer-parcel) clouds via `resolution-feeding-zone-factor`. Below it
    the cloud condenses into a sub-stellar debris/protostar swarm that fragments
-   instead of assembling a core (design §7c)." 600.0)
+   instead of assembling a core (design §7c)." 50.0)
+
+
+(def ^:const condense-interval
+  "Minimum sim-time (seconds) between successive nebula→body condensations. The
+   nebula→resolved transition is the only thing that turns smoothly-orbiting gas
+   into a collidable sink, so pacing it by PHYSICS (sim-time) rather than by tick
+   count is what keeps formation watchable at a fixed 60 Hz tick rate: between
+   condensations the cloud runs many ticks of pure self-gravity (visible infall
+   and rotation) instead of condensing wholesale in a handful of ticks the
+   instant the homologous collapse crosses the density threshold." 3.0e11)
+
+(defn condense-tick?
+  "True when a new condensation is permitted this tick: either the timestep
+   already spans a full `condense-interval`, or sim-time crosses an interval
+   boundary during this step. Stateless — derived from `:phase0/sim-time` and
+   `:sim/dt` on the frozen snapshot, so it holds across the parallel fan-out."
+  [world]
+  (let [t  (double (or (:phase0/sim-time world) 0.0))
+        dt (double (or (:sim/dt world) 0.0))]
+    (or (not (pos? condense-interval))
+        (>= dt condense-interval)
+        (not= (Math/floor (/ t condense-interval))
+              (Math/floor (/ (+ t dt) condense-interval))))))
+
+(defn classifier-system
+  "Double-buffer write-set system: SOLE writer of matter-state AND accretion-radius.
+   Reads each body's physics from the frozen snapshot and applies `classify-next-state`.
+   Throttled: at most ONE new condensation per tick (the densest Jeans-unstable parcel),
+   and only on a `condense-tick?` so the formation is paced by sim-time, not tick rate.
+   The accretion-radius is set on the throttled condensation candidate so that
+   `sink-formation-system` can absorb nearby parcels on the same tick."
+  []
+  {:id     :classifier
+   :writes #{c/matter-state c/accretion-radius}
+   :run
+   (fn [world]
+     (let [gas-mass (:phase0/gas-particle-mass world)
+           eids     (ecs/entities-with world c/matter-state c/mass)
+           zones    (sink-exclusion-zones world)
+           may-condense? (condense-tick? world)
+           transitions
+           (into {}
+                 (keep (fn [eid]
+                         (let [region (entity->region world eid)
+                               cur    (:matter-state region)
+                               nxt    (classify-next-state region gas-mass zones)]
+                           (when (not= cur nxt) [eid {:old cur :new nxt :region region}]))))
+                 eids)
+           condense-candidates
+           (if-not may-condense?
+             []
+             (filterv (fn [[_ {:keys [old new]}]]
+                        (and (= old :nebula) (or (= new :debris) (= new :protostar))))
+                      transitions))
+           best-condense
+           (when (seq condense-candidates)
+             (key (apply max-key
+                         (fn [[eid]]
+                           (double (or (:density (:region (get transitions eid))) 0.0)))
+                         condense-candidates)))
+           applied
+           (into {}
+                 (keep (fn [[eid {:keys [old new]}]]
+                         (let [is-condense? (and (= old :nebula)
+                                                  (or (= new :debris) (= new :protostar)))]
+                           (when (or (not is-condense?) (= eid best-condense))
+                             [eid new]))))
+                 transitions)
+           factor (double (:phase0/feeding-zone-factor world feeding-zone-factor))
+           gas-r  (double (or (:phase0/gas-smoothing-radius world) 0.0))
+           acc-radius
+           (when best-condense
+             ;; Use the GAS smoothing radius (stored at world creation), not the
+             ;; post-condensation body radius. The gas radius is the smoothing
+             ;; length BEFORE KH contraction shrinks the photosphere, so the
+             ;; feeding zone is wide enough for the core to sweep up neighbors.
+             (when (pos? gas-r) (* factor gas-r)))]
+       (cond-> {c/matter-state applied}
+         acc-radius (assoc c/accretion-radius {best-condense acc-radius}))))})
 
 (defn resolution-feeding-zone-factor
   "Feeding-zone factor scaled to the cloud's resolution: a core must bridge the
@@ -637,7 +785,7 @@
    coarser clouds, so condensed bodies assemble a core at any resolution."
   [gas-count]
   (let [n (double (max 1 (or gas-count 1000)))]
-    (max feeding-zone-factor (/ 2.5e3 (Math/pow n (/ 1.0 3.0))))))
+    (max feeding-zone-factor (/ 500.0 (Math/pow n (/ 1.0 3.0))))))
 
 (defn accretion-zone-system
   "Double-buffer write-set system: SOLE writer of accretion-radius (the
@@ -669,6 +817,95 @@
                                            (not= :nebula (classify-next-state region gas-mass)))
                                   [eid (* factor r)]))))
                       eids)}))})
+
+(defn- absorb-parcels
+  "Merge mass + momentum from `parcels` into `sink-eid`, despawn the parcels.
+   Mass-weighted centroid for position preserves COM."
+  [world sink-eid parcels]
+  (let [sink-mass (double (or (ecs/get-component world sink-eid c/mass) 0.0))
+        sink-v    (or (ecs/get-component world sink-eid c/velocity) [0 0 0])
+        sink-p    (or (ecs/get-component world sink-eid c/position) [0 0 0])
+        ;; Sum absorbed mass + momentum + mass-weighted position
+        absorbed  (reduce
+                    (fn [acc eid]
+                      (let [m (double (or (ecs/get-component world eid c/mass) 0.0))
+                            v (or (ecs/get-component world eid c/velocity) [0 0 0])
+                            p (or (ecs/get-component world eid c/position) [0 0 0])]
+                        {:total-mass (+ (:total-mass acc) m)
+                         :px (+ (:px acc) (* m (double (nth v 0))))
+                         :py (+ (:py acc) (* m (double (nth v 1))))
+                         :pz (+ (:pz acc) (* m (double (nth v 2))))
+                         :cx (+ (:cx acc) (* m (double (nth p 0))))
+                         :cy (+ (:cy acc) (* m (double (nth p 1))))
+                         :cz (+ (:cz acc) (* m (double (nth p 2))))}))
+                    {:total-mass 0.0 :px 0.0 :py 0.0 :pz 0.0 :cx 0.0 :cy 0.0 :cz 0.0}
+                    parcels)
+        new-mass (+ sink-mass (:total-mass absorbed))
+        ;; Momentum conservation: mass-weighted velocity
+        old-px (* sink-mass (double (nth sink-v 0)))
+        old-py (* sink-mass (double (nth sink-v 1)))
+        old-pz (* sink-mass (double (nth sink-v 2)))
+        new-v   [(/ (+ old-px (:px absorbed)) new-mass)
+                 (/ (+ old-py (:py absorbed)) new-mass)
+                 (/ (+ old-pz (:pz absorbed)) new-mass)]
+        ;; COM preservation: mass-weighted position
+        old-cx (* sink-mass (double (nth sink-p 0)))
+        old-cy (* sink-mass (double (nth sink-p 1)))
+        old-cz (* sink-mass (double (nth sink-p 2)))
+        new-pos [(/ (+ old-cx (:cx absorbed)) new-mass)
+                 (/ (+ old-cy (:cy absorbed)) new-mass)
+                 (/ (+ old-cz (:cz absorbed)) new-mass)]
+        ;; Update sink
+        w (-> world
+              (ecs/put-component sink-eid c/mass new-mass)
+              (ecs/put-component sink-eid c/velocity new-v)
+              (ecs/put-component sink-eid c/position new-pos))]
+    ;; Despawn absorbed parcels
+    (reduce (fn [w eid] (ecs/despawn w eid)) w parcels)))
+
+(defn sink-formation-system
+  "Serial barrier system: for newly-formed sinks (debris/protostar with accretion-radius),
+   absorb all :nebula parcels within their accretion radius. This is the convert-and-seed
+   mechanism from Bate et al. (1995) — newly formed sinks eat their neighbors on the
+   tick they condense, preventing the cloud from condensing wholesale.
+
+   Stars and established sinks grow through the collision system (overlap merges),
+   NOT through this system. This prevents the central star from vacuuming up all
+   disk gas before planets can form.
+
+   Runs AFTER the parallel fan-out and collision detection, at the serial barrier.
+   Mass + momentum are conserved (mass-weighted centroid for position)."
+  [world]
+  (let [;; Only NEWLY-FORMED sinks: debris or protostar WITH accretion-radius.
+        ;; Stars grow through collisions, not through absorbing surrounding gas.
+        sinks       (->> (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
+                         (filterv (fn [eid]
+                                    (let [state (ecs/get-component world eid c/matter-state)]
+                                      (or (= :debris state) (= :protostar state))))))
+        ;; All nebula parcels that could be absorbed
+        gas-parcels (ecs/entities-with world c/matter-state c/position c/mass c/velocity)]
+    (if (empty? sinks)
+      world
+      ;; For each new sink, absorb nearby gas parcels within its accretion radius
+      (reduce
+        (fn [w sink-eid]
+          (if-not (ecs/alive? w sink-eid)
+            w
+            (let [sink-pos (ecs/get-component w sink-eid c/position)
+                  sink-acc (double (or (ecs/get-component w sink-eid c/accretion-radius) 0.0))
+                  nearby   (filterv
+                             (fn [eid]
+                               (and (not= eid sink-eid)
+                                    (ecs/alive? w eid)
+                                    (= :nebula (ecs/get-component w eid c/matter-state))
+                                    (< (sp/dist sink-pos (ecs/get-component w eid c/position))
+                                       sink-acc)))
+                             gas-parcels)]
+              (if (seq nearby)
+                (absorb-parcels w sink-eid nearby)
+                w))))
+        world
+        sinks))))
 
 ;; --- The Structure owner: shape + compactness (double-buffer step 7b) -------
 ;; radius and density are ONE geometric fact (ρ = m / V, V = 4/3π r³), so a
@@ -841,7 +1078,18 @@
                      pz (+ (* (nth va 2) ml) (* (nth vs 2) ms))]
                  [(/ px total) (/ py total) (/ pz total)])
             rl (double (:radius mb*)) rs (double (:radius ms*))
-            r' (Math/cbrt (+ (* rl rl rl) (* rs rs rs)))
+            ;; Conserve the SURVIVOR's density: the accreted mass is added at the
+            ;; larger body's density (r' = rl·(total/ml)^⅓), NOT by volume-summing
+            ;; the two radii. Volume-summing treats a parcel's fluid *smoothing*
+            ;; radius as a material radius, so a compact star (R~1e8 m) absorbing a
+            ;; freshly-condensed, still-diffuse body (R~1e11–1e13 m) ballooned to
+            ;; cloud size. temperature-system then derives T = virial(M,R) ∝ 1/R
+            ;; every tick, collapsing the bloated star to ~1e3 K, and structure
+            ;; never re-contracts a :star — so the star turned into a cold diffuse
+            ;; blob and "vanished". Density-conserving accretion keeps it compact.
+            r' (if (and (pos? rl) (pos? ml))
+                 (* rl (Math/cbrt (/ total ml)))
+                 (Math/cbrt (+ (* rl rl rl) (* rs rs rs))))
             ;; Preserve the gravitational feeding zone: a star-forming body keeps
             ;; the larger accretion radius of the two (never below the merged
             ;; photosphere). nil if neither participant was star-forming.

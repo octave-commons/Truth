@@ -83,36 +83,28 @@
   (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
 
 (defn- advance-sim!
-  "Advance the simulation toward its target wall-clock rate over `wall-dt` real
-   seconds, mutating `world-atom`.
+  "Advance the simulation one fixed tick per rendered frame (~60 Hz), mutating
+   `world-atom`.
 
-   Phase 0 reports `:phase0/time-scale` (sim-seconds per real second) and an
-   adaptive `:sim/dt`; both shrink as the system gains complexity, so the clock
-   dilates and the steps refine together. We accumulate the sim-seconds owed and
-   run as many `dt`-sized ticks as fit, capped per frame (and the accumulator
-   clamped) so a stall or a tier change can never trigger a runaway burst.
+   The tick RATE is constant: the game always steps exactly once per frame. What
+   dilates with complexity is `:sim/dt` — the in-game time each tick advances
+   (see `phase0/pacing-for`) — so the clock slows while the frame rate holds
+   steady. There is no accumulator and no per-frame catch-up burst.
 
-   Worlds without a rate (e.g. the bare gravity demo) fall back to the original
+   Worlds without phase-0 pacing (e.g. the bare gravity demo) fall back to the
    fixed `:sim-frame-interval` frame-skip."
-  [world-atom config-atom frame-atom accum-atom wall-dt]
+  [world-atom config-atom frame-atom]
   (let [cfg     @config-atom
         tick-fn (:tick-fn cfg default-tick-fn)
         on-step (:on-step cfg identity)
         w       @world-atom]
-    (if-let [rate (:phase0/time-scale w)]
-      (let [dt  (double (or (:sim/dt w) 1.0e12))
-            cap (long (:max-steps-per-frame cfg 8))]
-        (swap! accum-atom #(min (* dt cap) (+ (double %) (* (double wall-dt) (double rate)))))
-        (loop [n 0]
-          (when (and (< n cap) (>= (double @accum-atom) dt))
-            (swap! accum-atom - dt)
-            (swap! world-atom (fn [w] (on-step (tick-fn w))))
-            (recur (inc n)))))
+    (if (:phase0/time-scale w)
+      (swap! world-atom (fn [w] (on-step (tick-fn w))))
       (let [interval (:sim-frame-interval cfg 1)]
         (when (zero? (mod @frame-atom interval))
           (swap! world-atom (fn [w] (on-step (tick-fn w)))))))))
 
-(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom accum-atom last-t-atom]
+(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom last-t-atom]
   (ensure-resources config-atom)
   (GLFW/glfwPollEvents)
   (let [cfg       @config-atom
@@ -121,7 +113,7 @@
         wall-dt   (let [lt @last-t-atom]
                     (reset! last-t-atom now)
                     (if lt (min 0.1 (- now lt)) 0.016))]
-    (advance-sim! world-atom config-atom frame-atom accum-atom wall-dt)
+    (advance-sim! world-atom config-atom frame-atom)
     (swap! frame-atom inc)
     (swap! time-atom + wall-dt)
     (let [bodies (bodies-fn @world-atom)
@@ -164,7 +156,6 @@
           window     (render/create-window width height "Gates of Truth — Dev Window")
           frame-atom (atom 0)
           time-atom  (atom 0.0)
-          accum-atom (atom 0.0)
           last-t-atom (atom nil)
           keys       (atom {})]
       (swap! service-state assoc :window window)
@@ -172,7 +163,7 @@
       (loop []
         (when (and (not @stop-atom)
                    (render-frame-once window world-atom camera-atom config-atom
-                                      frame-atom time-atom accum-atom last-t-atom))
+                                      frame-atom time-atom last-t-atom))
           (recur))))
     (catch Throwable t
       (swap! service-state assoc :error t)

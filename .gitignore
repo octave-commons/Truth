@@ -6,5 +6,9 @@ hs_err_pid*.log
 receipts.log
 .agents/
 .opencode/
+receipts.edn
+debugging-*.jsonl
+.eta-mu
+.ημ/actors/
 EOF
 PY

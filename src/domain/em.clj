@@ -74,6 +74,13 @@
   [position lorentz-force]
   (sp/cross position lorentz-force))
 
+(def ^:const braking-fraction-per-time
+  "Cap on magnetic-braking angular-momentum loss, as a fraction of L removed per
+   second of SIM-TIME (so the per-step cap is this × dt). ~1/τ_brake with a
+   braking timescale τ_brake ≈ 1e14 s (free-fall scale of a molecular cloud);
+   gentle enough that the cloud's spin survives the collapse rather than being
+   braked away in the first seconds of real time." 1.0e-14)
+
 (defn magnetic-braking-torque
   "Compute the magnetic braking torque on a rotating clump: τ along the rotation
    axis. The field is assumed to be primarily poloidal (threading the rotation
@@ -81,9 +88,13 @@
    brakes the spin. This is a phenomenological per-body reduction of the full
    MHD braking torque.
 
-   Returns a torque vector aligned with `rotation-axis`; magnitude is
-   proportional to B² ρ^(-1/2) r³ ω (the characteristic Alfvén-wave torque)."
-  [{:keys [mass radius density b-field angular-momentum rotation-axis]}]
+   Returns the angular momentum REMOVED this step (a vector aligned with
+   `rotation-axis`), proportional to B² ρ^(-1/2) r³ ω · dt — the characteristic
+   Alfvén-wave torque integrated over the timestep `dt`. Pacing by sim-time (× dt)
+   rather than a per-tick fraction is essential now the tick rate is a fixed
+   60 Hz: a per-tick cap would shed angular momentum ~38× faster than the old
+   variable cadence, braking the cloud's rotation away in seconds."
+  [{:keys [mass radius density b-field angular-momentum rotation-axis]} dt]
   (if (and (pos? (double mass))
            (pos? (double radius))
            (pos? (double density))
@@ -93,20 +104,22 @@
           omega (if (and rotation-axis (lf/finite-vec3? rotation-axis))
                   (sp/dot angular-momentum rotation-axis)
                   (sp/len angular-momentum))
-          ;; characteristic Alfvén torque: ~ B² r³ / (μ₀ ρ^(1/2)) · (ω / v_A)
-          ;; simplify to ~ B² r³ ω / √(ρ) / μ₀, clamped by dynamical time
+          ;; characteristic Alfvén torque RATE: ~ B² r³ / (μ₀ ρ^(1/2)) · (ω / v_A)
+          ;; simplify to ~ B² r³ ω / √(ρ) / μ₀ (angular momentum per unit sim-time)
           base (* B2 (Math/pow (double radius) 3) (Math/abs omega))
           denom (* lf/mu-0 (Math/sqrt (double density)))
-          ;; clamp torque so it cannot remove more than a small fraction of L per tick
           tau-raw  (if (pos? denom) (/ base denom) 0.0)
+          ;; angular momentum removed THIS step = rate · dt
+          dL-raw   (* tau-raw (double dt))
           L-mag    (sp/len angular-momentum)
-          ;; max torque removes at most 1% of L per tick, and never reverses sign
-          tau-max  (* 0.01 L-mag)
-          tau      (min tau-raw tau-max)
+          ;; cap the fractional loss to `braking-fraction-per-time · dt`, so the
+          ;; brake is sim-time-paced (tick-rate-independent) and never reverses sign
+          dL-max   (* braking-fraction-per-time L-mag (double dt))
+          dL       (min dL-raw dL-max)
           ;; direction opposes angular momentum
           axis (or rotation-axis [0.0 0.0 1.0])
           sign (- (if (pos? omega) 1.0 -1.0))]
-      (sp/v* axis (* sign (min tau (* 1e30 mass)))))
+      (sp/v* axis (* sign (min dL (* 1e30 mass)))))
     [0.0 0.0 0.0]))
 
 (defn magnetic-pressure
@@ -258,7 +271,7 @@
                              lorentz (lorentz-acceleration (:b-field data)
                                                            curl-b
                                                            (:density data))
-                             torque  (magnetic-braking-torque data)]
+                             torque  (magnetic-braking-torque data dt)]
                          [(:eid data) lorentz torque]))
                      active)
           world1   (reduce (fn [w [eid a torque]]

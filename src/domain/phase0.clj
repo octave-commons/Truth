@@ -14,6 +14,7 @@
    [domain.regime           :as regime]
    [domain.chemistry        :as chemistry]
    [domain.player           :as player]
+   [domain.pacing           :as pacing]
    [law.stellar             :as law]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
@@ -96,35 +97,9 @@
          specs  (mapv (fn [s] (update s :velocity sp/v- mean-v)) specs)]
      (reduce (fn [w s] (first (stellar/spawn-clump w s))) world specs))))
 
-;; --- Adaptive pacing: the game clock ----------------------------------------
-
-(def seconds-per-year
-  "Julian year in seconds — the unit the player's clock counts in."
-  3.156e7)
-
-;; Continuous pacing endpoints. The clock RATE and the integration STEP are
-;; interpolated geometrically between these by smooth, observable progress
-;; variables — there are no discrete phase tiers, so the dilation follows the
-;; formation continuously instead of jumping.
-(def pacing-rate-hi
-  "Clock rate (years per real second) for the cold, featureless nebula — fast,
-   so the long diffuse collapse does not drag." 5.0e4)
-(def pacing-rate-lo
-  "Clock rate once the system is fully formed — dilated toward real time so the
-   awe moments are explorable and hard to steer." 2.0e2)
-(def pacing-dt-hi
-  "Integration step while the dynamics are slow (Myr-scale collapse and
-   contraction): a large step keeps the tick budget sane." 1.0e12)
-(def pacing-dt-lo
-  "Integration step once tight planetary orbits exist and must be resolved
-   finely to stay smooth and bound." 1.0e9)
-(def pacing-soft-hi 5.0e14)
-(def pacing-soft-lo 1.0e12)
-
-(defn- geo-lerp
-  "Geometric interpolation from `a` to `b` by t∈[0,1] (linear in log space)."
-  [a b t]
-  (* (double a) (Math/pow (/ (double b) (double a)) (max 0.0 (min 1.0 (double t))))))
+;; --- Observable progress ----------------------------------------------------
+;; The game clock / timestep pacing lives in `domain.pacing` (a fixed 60 Hz tick
+;; rate with a `dt` that dilates with the bulk cloud's dynamical time).
 
 (defn thermal-progress
   "Smooth 0→1 measure of how far the system has climbed from cold nebular gas
@@ -132,37 +107,6 @@
   [peak-temp]
   (let [t (max 10.0 (double (or peak-temp 10.0)))]
     (max 0.0 (min 1.0 (/ (- (Math/log10 t) 1.0) 6.0)))))
-
-(defn formation-progress
-  "Continuous 0→1 measure of how far the system has formed, the driver of time
-   dilation. Two regimes blend smoothly so the clock follows complexity across
-   the WHOLE arc, not just after the core heats:
-     • accretion structure — the fraction of cloud mass that has condensed out
-       of diffuse gas into resolved bodies (rises through the long nebula phase);
-     • thermal climb — `thermal-progress` of the peak temperature (rises through
-       protostar contraction and ignition).
-   Accretion alone caps the dilation partway (a clumpy-but-cold cloud is only
-   mid-complexity); ignition heat carries it the rest of the way."
-  [stats]
-  (let [rf      (double (or (:resolved-fraction stats) 0.0))
-        thermal (thermal-progress (:peak-temp stats))]
-    (max 0.0 (min 1.0 (max (* 0.6 rf) thermal)))))
-
-(defn pacing-for
-  "Continuous simulation pacing from two observable progress variables:
-   `progress` (thermal, 0→1) dilates the wall-clock RATE; `orbit-progress`
-   (0→1, driven by how many planets/tight orbits exist) refines the integration
-   `dt` and `softening`. Returns `:rate` (sim-seconds per real second), the
-   display `:rate-yr`, and the `:dt`/`:softening` for the next tick. Both ramps
-   are geometric, so the clock and the step glide rather than step."
-  [progress orbit-progress]
-  (let [rate-yr (geo-lerp pacing-rate-hi pacing-rate-lo progress)
-        dt      (geo-lerp pacing-dt-hi  pacing-dt-lo  orbit-progress)
-        soft    (geo-lerp pacing-soft-hi pacing-soft-lo orbit-progress)]
-    {:rate      (* rate-yr seconds-per-year)
-     :rate-yr   rate-yr
-     :dt        dt
-     :softening soft}))
 
 (def ^:private solar-mass 1.989e30)
 
@@ -202,10 +146,11 @@
   ([] (create-world {}))
    ([{:keys [G theta dt softening nebula-mass nebula-radius collapse-fraction
              contraction-time gas-count spin turb]
-      ;; `softening` is matched to the timestep: with dt=1e12 s and a central
-      ;; core up to a few×1e30 kg, the dynamical time at the Plummer length must
-      ;; exceed dt or close passes inject energy and eject gas (the cloud
-      ;; "evaporates"). ε ≳ (G·M·dt²)^(1/3) ≈ 5e14 m keeps the system bound.
+      ;; `dt`/`softening` default to the cold-cloud pacing values (`pacing-for`
+      ;; at complexity 0); pass them only to override. Softening is matched to the
+      ;; timestep: the dynamical time at the Plummer length must exceed dt or
+      ;; close passes inject energy and eject gas (the cloud "evaporates").
+      ;; ε ≳ (G·M·dt²)^(1/3); the cold-cloud ε≈5e14 m keeps the system bound.
       ;;
       ;; Timescale tuning (sim-time, NOT wall-clock — see `pacing-for`):
       ;;  • `nebula-radius` sets the cloud's free-fall time t_ff ∝ R^1.5; the
@@ -219,16 +164,18 @@
       ;;  • `spin` is the cloud's rotational support (fraction of virial). Higher
       ;;    spin flattens the collapse into a rotationally-supported disk that can
       ;;    fragment into planets instead of all draining onto the core.
-      :or   {G law/G theta 0.5 dt 1e12 softening 5.0e14
+      :or   {G law/G theta 0.5
              nebula-mass 4e30 nebula-radius 1.5e16 collapse-fraction 0.5
              contraction-time 9.5e14 gas-count 1000 spin 0.6 turb 0.15}}]
-   (let [neb     (pacing-for 0.0 0.0)
+   (let [neb     (pacing/pacing-for (pacing/dynamical-time nebula-radius nebula-mass)
+                                    nebula-radius)
          pmass   (/ (double nebula-mass) gas-count)
          base    (-> (ecs/empty-world)
                      (event/with-ledger)
                      (event/register-handler :event/collision
                                              stellar/stellar-merge-handler)
-                     (assoc :sim/G G :sim/theta theta :sim/dt dt :sim/softening softening
+                     (assoc :sim/G G :sim/theta theta
+                            :sim/dt (or dt (:dt neb)) :sim/softening (or softening (:softening neb))
                             :phase0/sim-time          0.0
                             :phase0/time-scale        (:rate neb)
                             :phase0/rate-yr           (:rate-yr neb)
@@ -236,6 +183,11 @@
                             :phase0/complexity        0
                             :phase0/phase             :initializing
                             :phase0/active            true
+                            ;; Adaptive pacing dilates :sim/dt with complexity at
+                            ;; a fixed 60 Hz tick rate (see `pacing-for`). Set
+                            ;; false to hold :sim/dt constant — useful for fast,
+                            ;; pace-independent tests and deterministic runs.
+                            :phase0/adaptive-pacing?  true
                             ;; The authentic double-buffer single-writer path is
                             ;; the live default (design §7c): density-gated
                             ;; condensation + classifier + feeding-zone assembly
@@ -250,6 +202,9 @@
                             (stellar/resolution-feeding-zone-factor gas-count)))
          seeded (seed-nebula base nebula-mass nebula-radius
                              {:gas-count gas-count :spin spin :turb turb})
+         ;; Store the gas smoothing radius so the classifier can compute
+         ;; accretion radii from it (before KH contraction shrinks bodies).
+         seeded (assoc seeded :phase0/gas-smoothing-radius (* nebula-radius 0.004))
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
      w)))
 
@@ -331,10 +286,10 @@
   "The ordered physical systems run each tick (everything except the observer,
     which must run after complexity and events are known).
 
-   The base tick `dt` is multiplied by the world's current `phase0/time-scale`
-   so that the integrator advances in simulation seconds, not wall-clock
-   seconds.  Without this scaling, the orbital step is too small to see at
-   nebular scales while `sim-time` races ahead."
+   The integrator advances by `:sim/dt` — the in-game seconds this tick covers,
+   set by `pacing-for` from the system's complexity. It is NOT scaled by the
+   display `time-scale`; the wall-clock rate emerges from the fixed 60 Hz tick
+   rate (`rate = dt * ticks-per-second`), so dilating dt dilates the clock."
   [{:keys [sim/G sim/theta sim/dt sim/softening]}]
   (let [effective-dt dt]
     ;; `dt` (`:sim/dt`) is the real integration step in seconds — a fraction of
@@ -393,7 +348,6 @@
      (stellar/structure-system)
      (stellar/eos-system)
      (stellar/classifier-system)
-     (stellar/accretion-zone-system)
      (stellar/temperature-system dt)
      (em/field-system dt)
      (legacy :fusion         stellar/fusion-system)
@@ -421,6 +375,8 @@
   (if (:phase0/parallel? world true)
     (-> (tick/run-parallel world (physics-systems-parallel world))
         (collision/collision-detection-system)
+        (stellar/fusion-promotion-system)
+        (stellar/sink-formation-system)
         (recenter-system))
     (ecs/run-systems world (physics-systems world))))
 
@@ -440,16 +396,16 @@
         complexity (stellar/complexity-score summ)
         phase      (detect-phase summ (:phase0/sim-time world2))
         stats      (stats-of world2 summ)
-        ;; Continuous dilation: thermal climb dilates the clock; emerging
-        ;; planetary orbits refine the integration step. No phase-tier jumps.
-        progress       (thermal-progress (:peak-temp stats))
-        ;; Refine dt ONLY once a star anchors tight orbits. Planetesimals reach
-        ;; planet-mass early in the diffuse cloud; shrinking dt for them would
-        ;; freeze sim-time before the core can even collapse.
-        orbit-progress (if (:star? summ)
-                         (min 1.0 (/ (double (:planet-count summ)) 4.0))
-                         0.0)
-        pacing         (pacing-for progress orbit-progress)
+        ;; Fixed tick rate, dilating timestep: the per-tick step tracks the BULK
+        ;; cloud's dynamical time (see `pacing-for`). The tick count never changes
+        ;; — 60 Hz throughout — so as the cloud actually collapses, t_dyn shrinks,
+        ;; the clock dilates, and every body (all sharing the contracting scale)
+        ;; stays resolved. A single hot protostar does not change the bulk scale,
+        ;; so it can never freeze the outer cloud — the failure of the old
+        ;; temperature-driven dt.
+        ;; Disabled (`:phase0/adaptive-pacing? false`) → :sim/dt is held constant.
+        pacing         (when-not (false? (:phase0/adaptive-pacing? world))
+                         (pacing/pace world2))
         world3     (cond-> world2
                      (and (:star? summ) (not (:star? prev)))
                      (emit-threshold :event/stellar-ignition (first (:stars summ)))
@@ -460,18 +416,18 @@
                      (not= phase prev-phase)
                      (emit-threshold :event/phase-transition {:from prev-phase :to phase}))
         ;; `dt` here is the step this tick actually integrated (captured above);
-        ;; advance the clock by it, then arm the NEXT tick with the new tier's
-        ;; refined dt/softening and report the wall-clock rate for the player's
-        ;; clock and the window's pacing accumulator.
-        world4     (assoc world3
-                     :phase0/complexity complexity
-                     :phase0/time-scale (:rate pacing)
-                     :phase0/rate-yr    (:rate-yr pacing)
-                     :phase0/stats      stats
-                     :phase0/phase      phase
-                     :sim/dt            (:dt pacing)
-                     :sim/softening     (:softening pacing)
-                     :phase0/sim-time   (+ (:phase0/sim-time world3) dt))
+        ;; advance the clock by it. When adaptive, arm the NEXT tick with the
+        ;; complexity-refined dt/softening and report the derived wall-clock rate
+        ;; for the player's clock; otherwise leave the fixed step in place.
+        world4     (cond-> (assoc world3
+                             :phase0/complexity complexity
+                             :phase0/stats      stats
+                             :phase0/phase      phase
+                             :phase0/sim-time   (+ (:phase0/sim-time world3) dt))
+                     pacing (assoc :phase0/time-scale (:rate pacing)
+                                   :phase0/rate-yr    (:rate-yr pacing)
+                                   :sim/dt            (:dt pacing)
+                                   :sim/softening     (:softening pacing)))
         world5     ((player/observer-system effective-dt) world4)
         obs        (player/get-observer world5)]
     (assoc world5 :phase0/active

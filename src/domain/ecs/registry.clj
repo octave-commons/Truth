@@ -59,21 +59,17 @@
     :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius}
     :writes #{c/accel-pressure}}
 
-   ;; Jeans-collapse now contributes only the feeding/accretion radius; shape
-   ;; (radius/density) is the Structure owner's, matter-state the classifier's.
-   {:id     :jeans-collapse
-    :ns     'domain.stellar
-    :reads  #{c/matter-state c/position c/density c/radius c/temperature c/mass}
-    :writes #{c/accretion-radius}}
+   ;; Jeans-collapse was removed from the pipeline; accretion-radius is now
+   ;; written by the classifier (sole writer of both matter-state and accretion-radius).
 
-   ;; The classifier is the SOLE writer of matter-state: the authentic formation
-   ;; state machine (Jeans+mass+ignition). Subsumes the old classify system and
-   ;; the matter-state writes of jeans-collapse and fusion.
+   ;; The classifier is the SOLE writer of matter-state AND accretion-radius:
+   ;; the authentic formation state machine (Jeans+mass+ignition) with throttled
+   ;; condensation. Subsumes the old classify system, jeans-collapse, and fusion.
    {:id     :classifier
     :ns     'domain.stellar
     :reads  #{c/matter-state c/mass c/radius c/density c/temperature
               c/pressure c/composition}
-    :writes #{c/matter-state}}
+    :writes #{c/matter-state c/accretion-radius}}
 
    ;; Gravity is split out of the old orbital system: the Barnes–Hut tree-walk
    ;; emits the accel.gravity contribution on its own thread, and the thin motion

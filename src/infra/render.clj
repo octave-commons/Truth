@@ -6,6 +6,7 @@
     [domain.ecs.components :as c]
     [domain.orbital.system :as orbital]
     [domain.phase0 :as phase0]
+    [domain.pacing :as pacing]
     [domain.player :as player]
     [domain.em :as em]
     [shape.spatial :as sp])
@@ -386,7 +387,7 @@
 (defn- format-elapsed
   "Human astronomical duration from elapsed simulation seconds."
   [sim-seconds]
-  (let [yr (/ (double (or sim-seconds 0.0)) phase0/seconds-per-year)]
+  (let [yr (/ (double (or sim-seconds 0.0)) pacing/seconds-per-year)]
     (cond
       (< yr 1.0e3) (format "%.0f yr" yr)
       (< yr 1.0e6) (format "%.1f kyr" (/ yr 1.0e3))
@@ -417,8 +418,9 @@
 
 (defn hud-text-from-world
   "Top-left stats panel for a Phase 0 world: the adaptive clock (elapsed
-   sim-time, current rate, phase) plus total mass, temperature, and body counts.
-   Reads the per-tick `:phase0/stats` cache. Empty for non-phase0/bare worlds."
+   sim-time, current rate, phase) plus total mass, temperature, body counts,
+   and the simulation tick counter. Reads the per-tick `:phase0/stats` cache.
+   Empty for non-phase0/bare worlds."
   [world]
   (if-let [rate-yr (:phase0/rate-yr world)]
     (let [{:keys [total-mass-msun avg-temp peak-temp
@@ -426,7 +428,9 @@
            :or   {total-mass-msun 0.0 avg-temp 0.0 peak-temp 0.0
                   body-count 0 resolved-count 0 star-count 0 planet-count 0}}
           (:phase0/stats world)
-          lines [(format "%s   %s"
+          tick (int (or (:tick world) 0))
+          lines [(format "tick   %d" tick)
+                 (format "%s   %s"
                          (format-elapsed (:phase0/sim-time world))
                          (phase-label (:phase0/phase world)))
                  (format "clock  %s" (format-rate rate-yr))

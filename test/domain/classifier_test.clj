@@ -80,8 +80,8 @@
         w   (assoc w :phase0/gas-particle-mass pm)
         sys (stellar/classifier-system)
         ws  ((:run sys) w)]
-    (testing "sole writer of matter-state"
+    (testing "sole writer of matter-state and accretion-radius"
       (is (= :classifier (:id sys)))
-      (is (= #{c/matter-state} (:writes sys))))
+      (is (= #{c/matter-state c/accretion-radius} (:writes sys))))
     (testing "only the igniting body changes; the stable nebula parcel is omitted"
-      (is (= {c/matter-state {e0 :star}} ws)))))
+      (is (= :star (get-in ws [c/matter-state e0]))))))

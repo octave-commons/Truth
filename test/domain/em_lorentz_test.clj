@@ -42,7 +42,7 @@
                 :b-field [0.0 0.0 1.0e-5]
                 :angular-momentum [0.0 0.0 1e40]
                 :rotation-axis [0.0 0.0 1.0]}
-          tau (em/magnetic-braking-torque cell)]
+          tau (em/magnetic-braking-torque cell 1.0e10)]
       (is (neg? (nth tau 2)) "torque in -z opposes +z angular momentum")
       (is (zero? (first tau))
           "torque is aligned with rotation axis")

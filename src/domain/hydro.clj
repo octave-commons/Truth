@@ -205,25 +205,42 @@
                  c/accel-pressure cell
                  (keys (get-in world [:components c/accel-pressure])))))})
 
-(def ^:const sph-neighbor-eta
-  "Dimensionless SPH neighbor-count constant. A particle's smoothing length
-   h = eta * (m / rho)^(1/3). With eta ≈ 1.2, the support contains roughly
-   ~50 neighbors in a uniform 3D glass. We use h = 2*r, so the effective
-   particle radius is h/2 = (eta/2) * (m/rho)^(1/3)."
-  1.2)
+(def ^:const sph-h-factor
+  "SPH smoothing length as a multiple of a parcel's distance to its NEAREST
+   neighbour: h = sph-h-factor · d_nn. The smoothing length is GEOMETRIC (set by
+   neighbour spacing, not by density), so it is unconditionally stable — there is
+   no ρ→h→ρ feedback and hence no h→0 / ρ→∞ runaway (the bug a density-based
+   adaptive radius caused). It is also responsive: as the cloud collapses, d_nn
+   shrinks, h shrinks, and the SPH density rises ∝ 1/h³ — so a real collapse (not
+   an iteration artifact) carries dense regions across the condensation gate. The
+   small factor keeps a diffuse parcel's self-density a few× below the gate, so
+   condensation needs a genuine ~1.5–2× local compression." 0.013)
 
-(defn- radius-from-density
-  "Adaptive particle radius for a fixed-mass gas sample: r = (eta/2) * (m/ρ)^(1/3).
-   Clamped so isolated particles do not inflate without bound and dense
-   particles do not vanish."
-  [mass density seed-radius]
-  (let [m (double (or mass 1.0))
-        rho (double (or density 1e-18))
-        r (* 0.5 sph-neighbor-eta (Math/pow (/ m rho) (/ 1.0 3.0)))
-        r0 (double (or seed-radius r))]
-    (-> r
-        (max (* r0 0.1))
-        (min (* r0 5.0)))))
+(def ^:const sph-h-min
+  "Absolute floor on the smoothing length (m), a final guard so a coincident pair
+   cannot produce an infinite density." 1.0e9)
+
+(defn- nearest-neighbor-dist
+  "Distance from `pos` to the closest OTHER parcel in `gas` (each `{:eid :position}`).
+   ##Inf if there is no other parcel."
+  [pos eid gas]
+  (Math/sqrt
+    (double
+      (reduce (fn [m n]
+                (if (= (:eid n) eid)
+                  m
+                  (let [d2 (sp/len2 (sp/v- pos (:position n)))]
+                    (if (< d2 (double m)) d2 m))))
+              Double/POSITIVE_INFINITY gas))))
+
+(defn- smoothing-length
+  "Geometric SPH smoothing length for parcel `data` among `gas`: h = factor · d_nn,
+   floored at `sph-h-min`. Falls back to the parcel's own 2·radius if isolated."
+  [data gas]
+  (let [d (nearest-neighbor-dist (:position data) (:eid data) gas)]
+    (if (Double/isInfinite d)
+      (* 2.0 (double (or (:radius data) sph-h-min)))
+      (max sph-h-min (* sph-h-factor d)))))
 
 (defn density-system
   "SPH density pass: compute ρ_i = Σ_j m_j W for every `:nebula` particle from
@@ -238,15 +255,13 @@
                                       c/pressure c/mass c/radius c/temperature)
           all-data (mapv #(entity->hydro-data world %) eids)
           gas      (filterv #(= :nebula (:state %)) all-data)
-          seed-r   (fn [data] (double (or (:radius data) 1.0)))
           updates  (par/par-mapv
                     (fn [data]
-                      (let [h     (* 2.0 (double (or (:radius data) 1.0)))
+                      (let [h     (smoothing-length data gas)
                             nbrs  (neighbors-within world (:position data) h gas)
-                            rho   (sph-density data nbrs)
-                            press (ls/ideal-gas-pressure rho (:temperature data))
-                            r'    (radius-from-density (:mass data) rho (seed-r data))]
-                        [(:eid data) rho press r']))
+                            rho   (sph-density (assoc data :radius (* 0.5 h)) nbrs)
+                            press (ls/ideal-gas-pressure rho (:temperature data))]
+                        [(:eid data) rho press (* 0.5 h)]))
                     gas)]
       (reduce (fn [w [eid rho press r']]
                 (if (and (lf/finite-number? rho) (lf/finite-number? press)
@@ -261,11 +276,11 @@
 
 (defn gas-structure
   "The GAS branch of the Structure owner: for every diffuse `:nebula` parcel,
-   the SPH density ρ_i = Σ_j m_j W and the adaptive smoothing radius
-   r = (η/2)(m/ρ)^(1/3). Returns `[[eid density radius] ...]`. Pure; reuses the
-   same SPH machinery as the legacy `density-system` (which stays for the
-   sequential path). For gas, density is primary (estimated from neighbours) and
-   radius follows — the opposite of a resolved body, where radius is primary."
+   the SPH density ρ_i = Σ_j m_j W at a GEOMETRIC smoothing length h = factor·d_nn
+   (see `smoothing-length`). Returns `[[eid density radius] ...]` with radius = h/2.
+   Pure; reuses the same SPH machinery as the legacy `density-system` (which stays
+   for the sequential path). For gas, density is primary (estimated from
+   neighbours) and the radius is the smoothing length it implies."
   [world]
   (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                     c/pressure c/mass c/radius c/temperature)
@@ -273,11 +288,10 @@
         gas      (filterv #(= :nebula (:state %)) all-data)]
     (par/par-mapv
       (fn [data]
-        (let [h    (* 2.0 (double (or (:radius data) 1.0)))
+        (let [h    (smoothing-length data gas)
               nbrs (neighbors-within world (:position data) h gas)
-              rho  (sph-density data nbrs)
-              r'   (radius-from-density (:mass data) rho (double (or (:radius data) 1.0)))]
-          [(:eid data) rho r']))
+              rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
+          [(:eid data) rho (* 0.5 h)]))
       gas)))
 
 (defn sound-speed
