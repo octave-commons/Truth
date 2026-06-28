@@ -1,0 +1,55 @@
+name: Execute Research Notebooks
+
+on:
+  push:
+    paths:
+      - 'docs/research/**.ipynb'
+  workflow_dispatch:
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet \
+            numpy \
+            plotly \
+            kaleido \
+            nbconvert \
+            jupyter-core \
+            ipykernel
+          python -m ipykernel install --user --name python3
+
+      - name: Execute all research notebooks
+        run: |
+          for nb in docs/research/**/*.ipynb docs/research/*.ipynb; do
+            [ -f "$nb" ] || continue
+            echo "Executing $nb"
+            jupyter nbconvert \
+              --to notebook \
+              --execute \
+              --inplace \
+              --ExecutePreprocessor.timeout=120 \
+              "$nb"
+          done
+
+      - name: Commit executed notebooks
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/research/
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "ci: execute research notebooks [skip ci]"
+          git push
