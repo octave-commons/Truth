@@ -8,3 +8,8 @@ receipts.edn
 debugging-*.jsonl
 .eta-mu
 target/
+
+# Actor runtime data (sessions, inbox, outbox) — definitions tracked, runtime ephemeral
+.ημ/actors/*/sessions/
+.ημ/actors/*/inbox/
+.ημ/actors/*/outbox/
