@@ -19,4 +19,15 @@
           :main-opts ["-m" "nrepl.cmdline"]}
    :dev  {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
           :main-opts ["-m" "infra.dev.server"]}
-   :run {:main-opts ["-m" "infra.main"]}}}
+   :run {:main-opts ["-m" "infra.main"]}
+   ;; Launch Jupyter Lab with the clojupyter kernel.
+   ;; Installs the kernel on first run: clojupyter.kernel/install
+   ;; Connects to the running nREPL on port 7888 so notebooks share live
+   ;; world-state with the simulation process.
+   :notebook {:extra-deps {clojupyter/clojupyter {:mvn/version "0.3.8"}
+                            nrepl/nrepl {:mvn/version "1.0.0"}}
+              :main-opts ["-m" "clojupyter.cmdline" "install"]
+              ;; After kernel is installed, start JupyterLab:
+              ;; jupyter lab --port 8888 --no-browser
+              ;; PM2 handles that via the ecosystem script above.
+              }}}
