@@ -1,0 +1,15 @@
+{:actor/id "truth-research-atmosphere"
+ :actor/name "Atmosphere Research Actor"
+ :actor/purpose "Deep academic research into atmospheric physics, climate science, radiative transfer, cloud formation, Hadley circulation, greenhouse effects, atmospheric escape, and space weather. Produces citation-backed research notebooks for docs/research/atmosphere/."
+ :actor/created-at "2026-06-28T00:00:00Z"
+ :actor/runtime {:type :systemd-timer
+                 :runner ".eta-mu/actors/truth-research-atmosphere/runtime/runner.sh"
+                 :manual ".eta-mu/actors/truth-research-atmosphere/runtime/tmux-start.sh"
+                 :automated {:type :systemd-timer
+                             :timer "truth-research-atmosphere.timer"
+                             :service "truth-research-atmosphere.service"
+                             :interval "48h"
+                             :install "systemctl --user enable truth-research-atmosphere.timer && systemctl --user start truth-research-atmosphere.timer"}}
+ :actor/inbox-path ".eta-mu/actors/truth-research-atmosphere/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-atmosphere/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-atmosphere/sessions"}

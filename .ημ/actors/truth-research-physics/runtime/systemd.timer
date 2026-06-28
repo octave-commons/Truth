@@ -1,0 +1,10 @@
+[Unit]
+Description=Deep research for truth-research-physics (every 48h)
+
+[Timer]
+OnBootSec=30min
+OnUnitActiveSec=48h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

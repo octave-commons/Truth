@@ -1,0 +1,10 @@
+{:actor/id "truth-notes-lore-archaeologist"
+ :actor/name "truth-notes-lore-archaeologist"
+ :actor/purpose "Deep-read docs/notes/, recover claims, intent, and contradictions, and propose an organization/cleanup plan."
+ :actor/created-at "2026-06-27T03:03:05Z"
+ :actor/runtime {:type :tmux
+                 :session "truth-notes-lore-archaeologist"
+                 :command "~/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh truth-notes-lore-archaeologist"}
+ :actor/inbox-path ".eta-mu/actors/truth-notes-lore-archaeologist/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-notes-lore-archaeologist/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-notes-lore-archaeologist/sessions"}

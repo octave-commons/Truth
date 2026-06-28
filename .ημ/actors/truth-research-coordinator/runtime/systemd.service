@@ -1,0 +1,13 @@
+[Unit]
+Description=truth-research-coordinator research coordination (eta-mu)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor-eta-mu.sh truth-research-coordinator "Run a coordination pass. Check all research actor outboxes for completed work, update docs/research/INDEX.md, identify cross-domain gaps, and assign new topics to domain actors as needed."
+Environment="HOME=%h"
+Environment="USER=%u"
+Environment="PATH=%h/.local/share/pnpm:%h/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=default.target

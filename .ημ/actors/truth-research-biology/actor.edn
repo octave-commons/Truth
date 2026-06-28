@@ -1,0 +1,15 @@
+{:actor/id "truth-research-biology"
+ :actor/name "Biology Research Actor"
+ :actor/purpose "Deep academic research into ecology, evolution, astrobiology, biome modeling, Lotka-Volterra dynamics, nutrient cycles, speciation, abiogenesis, and biosignatures. Produces citation-backed research notebooks for docs/research/biology/."
+ :actor/created-at "2026-06-28T00:00:00Z"
+ :actor/runtime {:type :systemd-timer
+                 :runner ".eta-mu/actors/truth-research-biology/runtime/runner.sh"
+                 :manual ".eta-mu/actors/truth-research-biology/runtime/tmux-start.sh"
+                 :automated {:type :systemd-timer
+                             :timer "truth-research-biology.timer"
+                             :service "truth-research-biology.service"
+                             :interval "48h"
+                             :install "systemctl --user enable truth-research-biology.timer && systemctl --user start truth-research-biology.timer"}}
+ :actor/inbox-path ".eta-mu/actors/truth-research-biology/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-biology/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-biology/sessions"}

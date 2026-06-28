@@ -1,0 +1,15 @@
+{:actor/id "truth-research-geology"
+ :actor/name "Geology Research Actor"
+ :actor/purpose "Deep academic research into planetary geology, plate tectonics, mantle convection, volcanism, mineralogy, cratering, erosion, and planetary differentiation. Produces citation-backed research notebooks for docs/research/geology/."
+ :actor/created-at "2026-06-28T00:00:00Z"
+ :actor/runtime {:type :systemd-timer
+                 :runner ".eta-mu/actors/truth-research-geology/runtime/runner.sh"
+                 :manual ".eta-mu/actors/truth-research-geology/runtime/tmux-start.sh"
+                 :automated {:type :systemd-timer
+                             :timer "truth-research-geology.timer"
+                             :service "truth-research-geology.service"
+                             :interval "48h"
+                             :install "systemctl --user enable truth-research-geology.timer && systemctl --user start truth-research-geology.timer"}}
+ :actor/inbox-path ".eta-mu/actors/truth-research-geology/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-geology/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-geology/sessions"}

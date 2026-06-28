@@ -1,0 +1,3 @@
+# Tmux session template for truth-notes-lore-archaeologist
+# Start with: tmux new-session -d -s truth-notes-lore-archaeologist -n main ".eta-mu/actors/truth-notes-lore-archaeologist/runtime/runner.sh"
+# Attach with: tmux attach -t truth-notes-lore-archaeologist

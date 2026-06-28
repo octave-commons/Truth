@@ -1,0 +1,10 @@
+{:actor/id "truth-code-reviewer"
+ :actor/name "truth-code-reviewer"
+ :actor/purpose "Review the current Gates of Truth codebase (domain, infra, law, shape, tests), focusing on stellar-formation/Phase 0 implementation and architecture invariants."
+ :actor/created-at "2026-06-27T03:03:06Z"
+ :actor/runtime {:type :tmux
+                 :session "truth-code-reviewer"
+                 :command "~/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh truth-code-reviewer"}
+ :actor/inbox-path ".eta-mu/actors/truth-code-reviewer/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-code-reviewer/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-code-reviewer/sessions"}

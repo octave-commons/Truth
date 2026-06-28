@@ -1,0 +1,10 @@
+{:actor/id "truth-contradiction-auditor"
+ :actor/name "truth-contradiction-auditor"
+ :actor/purpose "Cross-validate docs/notes/ against the current codebase and architecture invariants; surface contradictions, stale claims, and actionable fixes."
+ :actor/created-at "2026-06-27T03:03:07Z"
+ :actor/runtime {:type :tmux
+                 :session "truth-contradiction-auditor"
+                 :command "~/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh truth-contradiction-auditor"}
+ :actor/inbox-path ".eta-mu/actors/truth-contradiction-auditor/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-contradiction-auditor/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-contradiction-auditor/sessions"}

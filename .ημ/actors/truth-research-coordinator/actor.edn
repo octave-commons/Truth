@@ -1,0 +1,15 @@
+{:actor/id "truth-research-coordinator"
+ :actor/name "Research Coordinator Actor"
+ :actor/purpose "Coordinate the deep research actor family. Assign research topics, track progress across domains, identify cross-domain gaps, maintain the master research index, and synthesize findings into actionable specs for the simulation."
+ :actor/created-at "2026-06-28T00:00:00Z"
+ :actor/runtime {:type :systemd-timer
+                 :runner ".eta-mu/actors/truth-research-coordinator/runtime/runner.sh"
+                 :manual ".eta-mu/actors/truth-research-coordinator/runtime/tmux-start.sh"
+                 :automated {:type :systemd-timer
+                             :timer "truth-research-coordinator.timer"
+                             :service "truth-research-coordinator.service"
+                             :interval "72h"
+                             :install "systemctl --user enable truth-research-coordinator.timer && systemctl --user start truth-research-coordinator.timer"}}
+ :actor/inbox-path ".eta-mu/actors/truth-research-coordinator/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-coordinator/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-coordinator/sessions"}

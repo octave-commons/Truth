@@ -1,0 +1,15 @@
+{:actor/id "truth-research-cosmology"
+ :actor/name "Cosmology Research Actor"
+ :actor/purpose "Deep academic research into cosmology, stellar physics, galaxy formation, primordial nucleosynthesis, CMB, dark matter/energy, and large-scale structure. Produces citation-backed research notebooks for docs/research/cosmology/."
+ :actor/created-at "2026-06-28T00:00:00Z"
+ :actor/runtime {:type :systemd-timer
+                 :runner ".eta-mu/actors/truth-research-cosmology/runtime/runner.sh"
+                 :manual ".eta-mu/actors/truth-research-cosmology/runtime/tmux-start.sh"
+                 :automated {:type :systemd-timer
+                             :timer "truth-research-cosmology.timer"
+                             :service "truth-research-cosmology.service"
+                             :interval "48h"
+                             :install "systemctl --user enable truth-research-cosmology.timer && systemctl --user start truth-research-cosmology.timer"}}
+ :actor/inbox-path ".eta-mu/actors/truth-research-cosmology/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-cosmology/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-cosmology/sessions"}

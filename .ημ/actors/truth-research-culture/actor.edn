@@ -1,0 +1,15 @@
+{:actor/id "truth-research-culture"
+ :actor/name "Culture Research Actor"
+ :actor/purpose "Deep academic research into sociology, anthropology, cultural evolution, archaeology, mythogenesis, settlement patterns, agent-based social models, and civilization dynamics. Produces citation-backed research notebooks for docs/research/culture/."
+ :actor/created-at "2026-06-28T00:00:00Z"
+ :actor/runtime {:type :systemd-timer
+                 :runner ".eta-mu/actors/truth-research-culture/runtime/runner.sh"
+                 :manual ".eta-mu/actors/truth-research-culture/runtime/tmux-start.sh"
+                 :automated {:type :systemd-timer
+                             :timer "truth-research-culture.timer"
+                             :service "truth-research-culture.service"
+                             :interval "48h"
+                             :install "systemctl --user enable truth-research-culture.timer && systemctl --user start truth-research-culture.timer"}}
+ :actor/inbox-path ".eta-mu/actors/truth-research-culture/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-culture/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-culture/sessions"}
