@@ -28,20 +28,16 @@ module.exports = {
     },
     {
       name: 'truth-notebook',
-      script: 'clj',
-      args: '-M:notebook',
+      script: 'jupyter',
+      args: 'lab --port 8888 --no-browser --ip 0.0.0.0',
       cwd: '/home/err/spaces/Truth',
       env: {
-        DISPLAY: ':0',
-        // Jupyter Lab port — does NOT conflict with nREPL (7888)
-        JUPYTER_PORT: '8888',
-        // Point clojupyter at the running nREPL so notebooks share live state
-        NREPL_PORT: '7888'
+        DISPLAY: ':0'
       },
       interpreter: 'none',
       autorestart: true,
-      max_restarts: 5,
-      min_uptime: '10s',
+      max_restarts: 3,
+      min_uptime: '5s',
       kill_timeout: 5000,
       wait_ready: false,
       listen_timeout: 30000,

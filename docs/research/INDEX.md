@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-06-28
+**Last updated:** 2026-06-28 (specs derived from research)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -11,17 +11,33 @@ charts, and a promotion path to domain code.
 
 - **Finding research:** Browse by domain or search for specific topics.
 - **Adding research:** Domain actors append new entries. The coordinator updates cross-references.
-- **Status:** `draft` → `validated` → `promoted`
+- **Status:** `draft` → `validated` → `spec-derivation` → `promoted`
   - **draft:** Initial research, may have gaps
   - **validated:** Reviewed by coordinator, cross-checked against literature
+  - **spec-derivation:** Malli schemas and ECS components derived in `src/law/`
   - **promoted:** Implementation code exists in `src/domain/`
+
+## Derived Specs
+
+Research notebooks have spawned the following spec files in `src/law/`:
+
+| Spec File | Source Notebook | Contents |
+|-----------|---------------|----------|
+| `law/composition.clj` | cosmology/primordial-nucleosynthesis-yields.md | BBN primordial composition, metallicity, composition schema |
+| `law/sed.clj` | phase1-radiation-plasma-truth.md §2-3 | SED bands, profiles, atmosphere shells, band helpers |
+| `law/plasma.clj` | phase1-radiation-plasma-truth.md §4-6 | Wind profiles, plasma wind parcels, atmospheric escape, space-weather events |
+
+New ECS component keywords added to `domain.ecs.components`:
+`sed-bands`, `atmosphere-shells`, `wind-profile`, `atmosphere-escape`, `event-source`, `lod-level`
 
 ## Cosmology
 
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
-| primordial-nucleosynthesis-yields.md | validated | 0 | Y_p=0.247, D/H=2.53e-5, Li7 problem (3× gap). Primordial comp: H=0.753 He=0.247 | PDG 2025, Yeh+2026 |
+| primordial-nucleosynthesis-yields.md | spec-derivation | 0 | Y_p=0.247, D/H=2.53e-5, Li7 problem (3× gap). Primordial comp: H=0.753 He=0.247 | PDG 2025, Yeh+2026 |
 | bbn_yields.ipynb | validated | 0 | Clojure BBN calculator with ASCII charts, 4/4 validation PASS | PDG 2025 |
+| stellar-sed-template-grid.md | validated | 1 | 12 minimum templates, key band ratios 10²–10⁴× variation | Pickles 1998, CK04, Husser+ 2013 |
+| stellar-sed-template-grid.md | draft | 0 | 12-template minimum SED grid for band-integrated luminosities (gamma→radio). 450-point full grid with interpolation. Clojure EDN format. | Pickles 1998, CK04, Husser 2013, Bohlin 2017 |
 
 **Actor:** truth-research-cosmology
 **Schedule:** Every 48h
@@ -51,7 +67,7 @@ charts, and a promotion path to domain code.
 
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
-| *(no entries yet)* | | | | |
+| xuv-escape-regime-transition.md | validated | 1 | R = t_rec/t_flow controls transition; F_crit ~ 10⁴ erg/cm²/s | Murray-Clay+2009, Owen & Alvarez 2016, Lampón+2021 |
 
 **Actor:** truth-research-atmosphere
 **Schedule:** Every 48h
@@ -61,7 +77,8 @@ charts, and a promotion path to domain code.
 
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
-| *(no entries yet)* | | | | |
+| phase1-radiation-plasma-truth.md | spec-derivation | 1 | Panchromatic SEDs, 4-layer atmospheres, Parker winds, XUV escape | PDG 2025, Parker 1958 |
+| stellar-sed-template-grid.md | validated | 1 | 12 minimum templates, key band ratios 10²–10⁴× variation | Pickles 1998, CK04, Husser+ 2013 |
 
 **Actor:** truth-research-physics
 **Schedule:** Every 48h
@@ -81,7 +98,7 @@ charts, and a promotion path to domain code.
 
 | Notebook | Status | Domains | Key Finding | Sources |
 |----------|--------|---------|-------------|---------|
-| *(no entries yet)* | | | | |
+| phase1-radiation-plasma-truth.md | spec-derivation | physics, atmosphere, cosmology | SED→winds→escape→LOD pipeline; replaces scalar luminosity with panchromatic bands | Parker 1958, PDG 2025 |
 
 **Actor:** truth-research-coordinator
 **Schedule:** Every 72h
@@ -92,8 +109,8 @@ charts, and a promotion path to domain code.
 
 | Phase | Description | Primary Domains | Coverage |
 |-------|-------------|-----------------|----------|
-| 0 | Stellar Nebula → Solar System | cosmology, physics | — |
-| 1 | Radiation & Plasma | atmosphere, physics | — |
+| 0 | Stellar Nebula → Solar System | cosmology, physics | BBN composition specs derived |
+| 1 | Radiation & Plasma | atmosphere, physics | SED/atmosphere/wind/escape specs derived |
 | 2 | Rocky Body Formation | geology, physics | — |
 | 3 | Tectonics & Atmosphere | geology, atmosphere | — |
 | 4 | Ocean & Climate | atmosphere, biology | — |

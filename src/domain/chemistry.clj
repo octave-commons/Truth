@@ -1,6 +1,10 @@
 (ns domain.chemistry
   "Chemistry and elemental composition for stellar and planetary formation.
-   Tracks elemental abundance, molecular formation, and phase transitions.")
+   Tracks elemental abundance, molecular formation, and phase transitions."
+  (:require
+   [domain.ecs.core        :as ecs]
+   [domain.ecs.components   :as c]
+   [law.stellar             :as law]))
 
 ;; --- Elements and Abundance ---
 
@@ -195,3 +199,61 @@
                 comp))
             composition
             (keys composition))))
+
+;; --- Live nucleosynthesis system --------------------------------------------
+;; Wires the H→He burn into the ECS tick so composition actually evolves.
+;; Grounded in docs/specs/phase0-chemistry-differentiation.md and the primordial
+;; composition from docs/research/cosmology/primordial-nucleosynthesis-yields.md.
+
+(def ^:private main-sequence-lifetime-sun
+  "The Sun's main-sequence H-burning lifetime ≈ 10 Gyr, in seconds."
+  3.156e17)
+
+(def ^:private max-burn-fraction-per-tick
+  "Hard ceiling on the fraction of a body's current H burned in one tick — the
+   dt-robust cap that stops a Myr-scale step from lurching the composition. This
+   is the same large-dt hazard that detonated EM flux-freezing and stellar winds
+   (see receipts.edn 2026-06-28); a rate-based process at this dt MUST be capped."
+  0.01)
+
+(defn burn-step
+  "Bounded, dt-correct H→He burn for one tick. Moves a small fraction of the
+   body's current hydrogen into helium, conserving the total mass fraction
+   exactly (ΔHe = −ΔH, so the fractions still sum to 1). The burned fraction is
+   dt/τ_MS capped at `max-burn-fraction-per-tick`, where the main-sequence
+   lifetime τ_MS ≈ 10 Gyr·(M/M⊙)^−2.5 — more massive stars burn faster. Pure."
+  [composition mass dt]
+  (let [h (double (get composition :H 0.0))]
+    (if (pos? h)
+      (let [tau-ms (* main-sequence-lifetime-sun
+                      (Math/pow (/ (double mass) law/solar-mass) -2.5))
+            f-burn (min max-burn-fraction-per-tick (/ (double dt) tau-ms))
+            dH     (* h f-burn)]
+        (-> composition
+            (assoc :H (max 0.0 (- h dH)))
+            (update :He (fnil + 0.0) dH)))
+      composition)))
+
+(defn nucleosynthesis-system
+  "SOLE fan-out writer of :component/composition. Burns H→He in stars and
+   ignited protostars (T ≥ fusion-temp-threshold); every other body is left
+   unchanged this tick. dt-correct and bounded (see `burn-step`) so the
+   Myr-scale timestep never lurches composition. Writes ONLY :component/composition.
+
+   Reads the FROZEN snapshot like every fan-out system, so fusion/thermal pick up
+   the burned composition one tick later — a negligible lag at Myr dt."
+  [dt]
+  (fn [world]
+    (reduce
+     (fn [w eid]
+       (let [state (ecs/get-component w eid c/matter-state)
+             comp  (ecs/get-component w eid c/composition)
+             mass  (ecs/get-component w eid c/mass)
+             temp  (double (or (ecs/get-component w eid c/temperature) 0.0))]
+         (if (and comp mass
+                  (contains? #{:star :protostar} state)
+                  (>= temp law/fusion-temp-threshold))
+           (ecs/put-component w eid c/composition (burn-step comp mass dt))
+           w)))
+     world
+     (ecs/entities-with world c/matter-state c/composition c/mass))))

@@ -925,7 +925,12 @@
         ;; tick). Falls back to a large diffuse radius if the world didn't store it.
         gas-r    (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
         stars    (ecs/entities-with world c/matter-state c/mass c/radius
-                                    c/position c/velocity)]
+                                    c/position c/velocity)
+        ;; Dipole sources for sampling the launch-point field (research:
+        ;; phase1-radiation-plasma-truth §5 — tag wind parcels with the star's
+        ;; field vector at launch via net-field-at). Computed once: stars don't
+        ;; move within the barrier and fresh :nebula parcels are not sources.
+        sources  (em/field-sources world)]
     (reduce
       (fn [w eid]
         (if-not (and (ecs/alive? w eid)
@@ -977,6 +982,10 @@
                                  {:position ppos :velocity pvel :mass p-mass
                                   :radius gas-r :matter-state :nebula
                                   :composition (or (:composition region) default-composition)
+                                  ;; carry the star's magnetic field at the launch
+                                  ;; point (research §5) — the Phase-1 magnetised-
+                                  ;; outflow / magnetosphere-coupling substrate.
+                                  :b-field (em/net-field-at ppos sources nil)
                                   ;; hot wind glows; :nebula T is not overwritten downstream
                                   :temperature (max 3.0 (virial-temperature M1 R))})]
                     (-> w'
@@ -1004,7 +1013,8 @@
   (let [period (long (:phase0/flare-period world 0))] ;; default OFF — opt in via :phase0/flare-period
     (if-not (pos? period)
       world
-      (let [dt     (double (or (:sim/dt world) 1.0e12))
+      (let [sources (em/field-sources world) ;; launch-point field sampler (research §5)
+            dt     (double (or (:sim/dt world) 1.0e12))
             tick   (or (:tick world) 0)
             p-mass (double (or (:phase0/wind-parcel-mass world)
                                (some-> (:phase0/gas-particle-mass world) (* 0.25))
@@ -1046,6 +1056,10 @@
                                  {:position ppos :velocity pvel :mass fm :radius gas-r
                                   :matter-state :nebula
                                   :composition (or (:composition region) default-composition)
+                                  ;; CME carries the launch-point field (research §6:
+                                  ;; CMEs are magnetised plasma clouds) — magnetosphere
+                                  ;; coupling substrate for Phase 1.
+                                  :b-field (em/net-field-at ppos sources nil)
                                   ;; flares run hot → bright in the volumetric fog
                                   :temperature (max 3.0 (* t-fac (virial-temperature M R)))})]
                     (-> w'
@@ -1204,6 +1218,41 @@
 
 ;; --- Accretion (collision response) -----------------------------------------
 
+(defn- shatter-bodies
+  "Brittle collision response: the smaller body breaks into two :debris fragments
+   (mass AND momentum conserved — each fragment is half the mass with symmetric
+   ± split velocities), the larger body survives. The split axis is deterministic
+   (perpendicular to the impact line), fragments are placed clear of the larger
+   body, and over the Myr-scale dt they immediately disperse — so this does not
+   cascade. Makes law.stellar/malleability load-bearing (cold brittle bodies
+   shatter; hot molten ones fall through to the merge path)."
+  [world big small ms*]
+  (let [ms      (double (:mass ms*))
+        rs      (double (:radius ms*))
+        pos     (ecs/get-component world small c/position)
+        vs      (ecs/get-component world small c/velocity)
+        big-pos (ecs/get-component world big c/position)
+        rl      (double (or (ecs/get-component world big c/radius) 0.0))
+        away    (let [d (sp/v- pos big-pos) l (sp/len d)]
+                  (if (pos? l) (sp/v* d (/ 1.0 l)) [1.0 0.0 0.0]))
+        perp    (let [ref (if (> (Math/abs (double (nth away 0))) 0.9)
+                            [0.0 1.0 0.0] [1.0 0.0 0.0])
+                      x   (sp/cross away ref) l (sp/len x)]
+                  (if (pos? l) (sp/v* x (/ 1.0 l)) [0.0 1.0 0.0]))
+        frag-m  (* 0.5 ms)
+        frag-r  (* rs (Math/cbrt 0.5))
+        center  (sp/v+ big-pos (sp/v* away (* 1.2 (+ rl frag-r)))) ;; clear of big
+        sep     (* 1.5 frag-r)
+        dvs     (min 50.0 (* 0.1 (sp/len vs)))   ;; tiny symmetric split (momentum-conserving)
+        spec    (fn [s] {:position     (sp/v+ center (sp/v* perp (* s sep)))
+                         :velocity     (sp/v+ vs (sp/v* perp (* s dvs)))
+                         :mass         frag-m :radius frag-r :matter-state :debris
+                         :composition  (:composition ms*)
+                         :temperature  (:temperature ms*)})
+        [w1 _]  (spawn-clump world (spec  1.0))
+        [w2 _]  (spawn-clump w1    (spec -1.0))]
+    (ecs/despawn w2 small)))
+
 (defn stellar-merge-handler
    "Collision handler that merges the smaller body into the larger AND blends
     their stellar state (mass-weighted composition, max temperature, conserved
@@ -1216,11 +1265,19 @@
             b (entity->region world eid-b)
             ma (double (:mass a)) mb (double (:mass b))
             [big small mb* ms*] (if (>= ma mb) [eid-a eid-b a b] [eid-b eid-a b a])
-            ml (double (:mass mb*)) ms (double (:mass ms*))
-            total (+ ml ms)
             va (ecs/get-component world big c/velocity)
             vs (ecs/get-component world small c/velocity)
-            v' (let [px (+ (* (nth va 0) ml) (* (nth vs 0) ms))
+            t-cold (min (double (or (:temperature mb*) 0.0))
+                        (double (or (:temperature ms*) 0.0)))]
+        (if (and (> (double (:mass ms*)) law/shatter-min-mass)
+                 (< (law/malleability t-cold) law/shatter-malleability-max)
+                 (> (sp/len (sp/v- va vs)) law/shatter-dv-threshold))
+          ;; brittle body + hard impact → the smaller shatters into debris
+          (shatter-bodies world big small ms*)
+          ;; molten or gentle impact → inelastic merge (absorb the smaller)
+          (let [ml (double (:mass mb*)) ms (double (:mass ms*))
+                total (+ ml ms)
+                v' (let [px (+ (* (nth va 0) ml) (* (nth vs 0) ms))
                      py (+ (* (nth va 1) ml) (* (nth vs 1) ms))
                      pz (+ (* (nth va 2) ml) (* (nth vs 2) ms))]
                  [(/ px total) (/ py total) (/ pz total)])
@@ -1302,7 +1359,7 @@
              true (ecs/put-component big c/oblateness  ob')
              true (ecs/put-component big c/rotation-axis axis')
              acc' (ecs/put-component big c/accretion-radius acc')
-             true (ecs/despawn small)))
+             true (ecs/despawn small)))))
        world)))
 
 ;; --- Nebula seeding ---------------------------------------------------------

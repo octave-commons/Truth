@@ -78,11 +78,22 @@
 (def accel-gravity  :component/accel.gravity)  ;; [ax ay az] Barnes–Hut self-gravity
 (def accel-pressure :component/accel.pressure) ;; [ax ay az] SPH pressure gradient (hydro)
 (def accel-lorentz  :component/accel.lorentz)  ;; [ax ay az] Lorentz / magnetic (em)
+(def accel-observer :component/accel.observer) ;; [ax ay az] observer pull-toward-focus (player)
 
 ;; --- Observer (the player spark) --------------------------------------------
 ;; The quantum-oscillation player is a singleton entity carrying this component.
 ;; Holds coherence, focus volume, and witnessed-event memory — see domain.player.
 (def observer     :component/observer)
+
+;; --- Stellar SED / atmosphere (Phase 1) -------------------------------------
+;; Panchromatic spectral energy distribution and layered stellar atmospheres.
+;; Derived from: docs/research/phase1-radiation-plasma-truth.md §2-3
+(def sed-bands          :component/sed-bands)          ;; {:gamma W :xray W :euv W ...} per-band luminosity
+(def atmosphere-shells  :component/atmosphere-shells)  ;; [{:layer/id :temperature :electron-density ...} ...]
+(def wind-profile       :component/wind-profile)       ;; {:base-speed :mass-loss-rate :alfven-radius}
+(def atmosphere-escape  :component/atmosphere-escape)   ;; {:regime :xuv-flux :mass-loss-rate}
+(def event-source       :component/event-source)       ;; {:kind :payload} — flare/CME event
+(def lod-level          :component/lod-level)           ;; :galaxy :system :local — observer-centric fidelity
 
 ;; --- Atmosphere -------------------------------------------------------------
 (def atmos-cell  :component/atmos-cell)

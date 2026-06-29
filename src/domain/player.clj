@@ -135,6 +135,49 @@
                      (:focus-radius observer))]
     (sp/v* desired-direction (if in-focus? (influence-strength observer) 0.0))))
 
+(def ^:private default-influence-speed
+  "Reference speed (m/s) for the observer's pull-toward-focus nudge. The per-tick
+   Δv it imparts is influence-strength × this, BOUNDED regardless of dt — the same
+   dt-robust cap the wind/flare/flux systems use, because a raw acceleration
+   integrated over a Myr-scale step would blow up (Δv ≫ c). Gentle next to escape
+   speeds (~1e5 m/s). Set :phase0/observer-influence-speed 0.0 to disable."
+  1.0e3)
+
+(defn observer-acceleration
+  "Acceleration to write on a body so the motion integrator applies a BOUNDED
+   per-tick velocity nudge toward the focus — 'reality condenses where you look.'
+   accel = pull·(ref-speed/dt) ⇒ v += pull·ref-speed, independent of dt. Returns
+   nil outside the probability-collapse radius. Composes the wired verbs
+   `influence-vector` (focus-gated strength) and `probability-collapse-radius`."
+  [observer body-pos dt ref-speed]
+  (let [d    (sp/v- (:focus-position observer) body-pos)
+        dist (sp/len d)]
+    (when (and (pos? dist) (pos? (double ref-speed))
+               (< dist (probability-collapse-radius observer)))
+      (let [dir  (sp/v* d (/ 1.0 dist))                   ;; unit pull toward focus
+            pull (influence-vector observer body-pos dir)] ;; dir × influence-strength
+        (when (pos? (sp/len pull))
+          (sp/v* pull (/ (double ref-speed) (max 1.0 (double dt)))))))))
+
+(defn apply-observer-influence
+  "Sole writer of :component/accel.observer. Writes the pull-toward-focus
+   acceleration onto bodies inside the collapse radius and clears it from those
+   that have left. Runs serially in tick-world (a barrier-stage write), so it is
+   exempt from the fan-out single-writer rule; `motion` sums accel.observer."
+  [world observer dt ref-speed]
+  (let [cleared (reduce (fn [w eid] (ecs/remove-component w eid c/accel-observer))
+                        world
+                        (ecs/entities-with world c/accel-observer))]
+    (reduce
+     (fn [w eid]
+       (if-let [a (observer-acceleration observer
+                                         (ecs/get-component w eid c/position)
+                                         dt ref-speed)]
+         (ecs/put-component w eid c/accel-observer a)
+         w))
+     cleared
+     (ecs/entities-with world c/position c/mass))))
+
 ;; --- Decoherence / endings --------------------------------------------------
 
 (defn decoherence-state
@@ -209,7 +252,10 @@
 (defn observer-system
   "ECS system: drains/restores the observer's coherence based on the events that
    landed in the ledger since it last looked, and the world's current observable
-   complexity (read from :phase0/complexity)."
+   complexity (read from :phase0/complexity). Then resolves the observation verbs
+   — caching observation-effect / collapse-radius / observation-note on the
+   observer for the renderer — and applies the pull-toward-focus influence to
+   nearby bodies (`apply-observer-influence`)."
   [dt]
   (fn [world]
     (if-let [obs (get-observer world)]
@@ -218,8 +264,16 @@
             new-events (->> (event/events-since world this-tick)
                             (filter #(= (:tick %) this-tick))
                             (keep #(event-kind->coherence (:kind %))))
-            obs' (-> (apply-coherence obs dt complexity new-events)
+            obs1 (-> (apply-coherence obs dt complexity new-events)
                      (assoc :last-tick this-tick)
-                     (update :time-witnessed + dt))]
-        (put-observer world obs'))
+                     (update :time-witnessed + dt))
+            ;; resolve + cache the observation verbs (renderer/HUD read these)
+            obs' (assoc obs1
+                        :observation-effect (observation-effect obs1)
+                        :collapse-radius    (probability-collapse-radius obs1)
+                        :observation-note   (observation-note obs1))
+            ref-speed (get world :phase0/observer-influence-speed default-influence-speed)]
+        (-> world
+            (put-observer obs')
+            (apply-observer-influence obs' dt ref-speed)))
       world)))

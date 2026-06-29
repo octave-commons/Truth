@@ -85,11 +85,20 @@
   [temperature]
   (max 0.0 (min 1.0 (/ (double (or temperature 0.0)) melt-temperature))))
 
+(def ^:const shatter-malleability-max 0.5)
+;; Below this the colder body is brittle: a hard enough impact shatters it
+;; instead of merging. At/above it the body is molten and absorbs the impact.
+(def ^:const shatter-dv-threshold 5.0e3)
+;; m/s — relative impact speed above which a brittle body shatters rather than
+;; merges. Gentle contacts always merge regardless of temperature.
+(def ^:const shatter-min-mass 1.0e24)
+;; kg — bodies below this always merge; fragmenting negligible masses isn't worth it.
+
 ;; --- Matter States ---
 
 (def matter-state-schema
   "Schema for matter in various states from nebula to planet"
-  {:id          uuid?
+  {:id          (some-fn uuid? integer?) ;; ECS entity ids are integers; UUIDs also ok
    :position    vector? ;; [x y z]
    :velocity    vector? ;; [vx vy vz]
    :mass        pos?

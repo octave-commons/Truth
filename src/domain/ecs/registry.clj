@@ -82,7 +82,7 @@
    {:id     :motion
     :ns     'domain.orbital.system
     :reads  #{c/position c/velocity c/mass c/radius c/body-kind
-              c/accel-gravity c/accel-pressure c/accel-lorentz}
+              c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer}
     :writes #{c/position c/velocity}}
 
    ;; Barrier systems: run SERIALLY after the fold, so they are exempt from the
@@ -108,6 +108,14 @@
     :ns     'domain.stellar
     :reads  #{c/matter-state c/temperature c/density c/radius c/mass c/position c/luminosity}
     :writes #{c/temperature}}
+
+   ;; Nucleosynthesis is the SOLE writer of composition: stars/ignited protostars
+   ;; burn H→He (dt-bounded). Composition was previously seeded + merge-blended
+   ;; only; now it evolves. No other fan-out system writes composition.
+   {:id     :nucleosynthesis
+    :ns     'domain.chemistry
+    :reads  #{c/matter-state c/composition c/temperature c/mass}
+    :writes #{c/composition}}
 
    {:id     :regime
     :ns     'domain.regime

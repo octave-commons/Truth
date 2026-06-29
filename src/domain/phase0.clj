@@ -16,6 +16,7 @@
    [domain.player           :as player]
    [domain.pacing           :as pacing]
    [law.stellar             :as law]
+   [law.registry            :as lreg]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
    [domain.ecs.registry     :as reg]
@@ -141,6 +142,39 @@
 
 ;; --- World construction -----------------------------------------------------
 
+(defn- entity->matter-state-resource
+  "Project an ECS body into the resource map law.stellar/matter-state-contract
+   governs — EXACTLY the schema keys (it's a :type contract, so no extras), with
+   :matter-state renamed to :state and :id the entity id (integer)."
+  [world eid]
+  {:id          eid
+   :position    (ecs/get-component world eid c/position)
+   :velocity    (ecs/get-component world eid c/velocity)
+   :mass        (ecs/get-component world eid c/mass)
+   :radius      (ecs/get-component world eid c/radius)
+   :temperature (ecs/get-component world eid c/temperature)
+   :density     (ecs/get-component world eid c/density)
+   :composition (ecs/get-component world eid c/composition)
+   :state       (ecs/get-component world eid c/matter-state)
+   :luminosity  (double (or (ecs/get-component world eid c/luminosity) 0.0))
+   :pressure    (double (or (ecs/get-component world eid c/pressure) 0.0))})
+
+(defn assert-seed-contracts!
+  "Boot-time structural guard (AGENTS.md: 'every cross-boundary call must name a
+   Malli validator'). Every seeded matter-state body is folded through a
+   law.registry governed by law.stellar/matter-state-contract — a malformed seed
+   throws HERE, before a long run, rather than corrupting physics mid-flight.
+   Runs once at world creation (no per-tick cost). Returns the world unchanged.
+   Disable with :phase0/validate-seed? false."
+  [world]
+  (when-not (false? (:phase0/validate-seed? world))
+    (reduce (fn [reg eid] (lreg/add reg (entity->matter-state-resource world eid)))
+            (lreg/->registry law/matter-state-contract)
+            (ecs/entities-with world c/matter-state c/mass c/radius
+                               c/position c/velocity c/density c/temperature
+                               c/composition c/pressure)))
+  world)
+
 (defn create-world
   "Bootstrap a Phase 0 world ready to tick."
   ([] (create-world {}))
@@ -205,7 +239,7 @@
          ;; accretion radii from it (before KH contraction shrinks bodies).
          seeded (assoc seeded :phase0/gas-smoothing-radius (* nebula-radius 0.004))
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
-     w)))
+     (assert-seed-contracts! w))))
 
 ;; --- Observable summary -----------------------------------------------------
 
@@ -314,6 +348,7 @@
      (stellar/temperature-system dt)
      (em/field-system dt)
      (legacy :fusion         stellar/fusion-system)
+     (legacy :nucleosynthesis (chemistry/nucleosynthesis-system dt))
      (legacy :regime         regime/regime-system)
      ;; em's braking/spin (masked to angular-momentum/spin; its legacy hydro-accel
      ;; and b-field writes are dropped — Lorentz via em-lorentz, b-field via field)

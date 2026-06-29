@@ -13,3 +13,8 @@ target/
 .ημ/actors/*/sessions/
 .ημ/actors/*/inbox/
 .ημ/actors/*/outbox/
+.ημ/.env
+
+# Lockfiles and checkpoints
+.#*
+.ipynb_checkpoints/
