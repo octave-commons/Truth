@@ -3,6 +3,8 @@ Description=truth-research-atmosphere deep research session (eta-mu)
 After=network-online.target
 
 [Service]
+WorkingDirectory=/home/err/spaces/Truth
+KillMode=process
 Type=oneshot
 ExecStart=/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor-eta-mu.sh truth-research-atmosphere "Start a deep research session. Pick the highest-priority topic from your goals, search arxiv, read papers, and produce a complete research notebook in your domain directory under docs/research/. Follow the deep-research skill format. Run for as long as needed."
 Environment="HOME=%h"
