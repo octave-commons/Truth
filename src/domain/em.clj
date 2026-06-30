@@ -26,6 +26,7 @@
    [domain.ecs.core   :as ecs]
    [domain.ecs.parallel :as par]
    [domain.ecs.tick   :as tick]
+   [domain.spatial.index :as idx]
    [domain.ecs.components :as c]))
 
 ;; --- Pure field physics -----------------------------------------------------
@@ -316,15 +317,6 @@
   [state]
   (contains? #{:nebula :protostar} state))
 
-(defn- neighbors-within
-  "All EM-active entities within cutoff distance of `center`."
-  [center cutoff all-data]
-  (let [cut2 (* cutoff cutoff)]
-    (filterv
-      (fn [n]
-        (let [r2 (sp/len2 (sp/v- center (:position n)))]
-          (<= r2 cut2)))
-      all-data)))
 
 (defn em-system
   "The EM tick step. Computes:
@@ -341,11 +333,12 @@
                                       c/density c/angular-momentum)
           all-data (mapv #(entity->em-data world %) eids)
           active   (filterv #(em-active? (:state %)) all-data)
+          tree     (idx/build active)
           ;; Lorentz + braking
           updates1 (par/par-mapv
                      (fn [data]
                        (let [h       (* 2.0 (double (or (:radius data) 1.0)))
-                             nbrs    (neighbors-within (:position data) h active)
+                             nbrs    (idx/within-radius tree (:position data) h)
                              curl-b  (curl-estimate (:b-field data)
                                                     (:density data)
                                                     (:position data)
@@ -393,6 +386,28 @@
                   w))
               world1
               updates2))))
+
+(defn em-torque-system
+  "Write-set emitter: sole writer of :component/torque.em — the magnetic-braking
+   angular-momentum change (a per-step ΔL aligned with −ω) for every EM-active
+   clump. The integrator owns angular-momentum/spin and adds this ΔL (spec §7.5);
+   this replaces the braking half of the legacy `em-system`. Reads the frozen
+   snapshot, auto-clears the contribution from bodies no longer EM-active."
+  [dt]
+  {:id     :em-torque
+   :writes #{c/torque-em}
+   :run    (fn [world]
+             (let [eids     (ecs/entities-with world c/b-field c/radius c/position
+                                               c/density c/angular-momentum)
+                   all-data (mapv #(entity->em-data world %) eids)
+                   active   (filterv #(em-active? (:state %)) all-data)
+                   cell     (reduce (fn [m data]
+                                      (let [tq (magnetic-braking-torque data dt)]
+                                        (if (lf/finite-vec3? tq) (assoc m (:eid data) tq) m)))
+                                    {} active)]
+               (tick/contribution-write-set
+                 c/torque-em cell
+                 (keys (get-in world [:components c/torque-em])))))})
 
 (defn field-system
   "Double-buffer write-set system: SOLE writer of b-field.
@@ -452,10 +467,11 @@
                                                c/density c/angular-momentum)
                    all-data (mapv #(entity->em-data world %) eids)
                    active   (filterv #(em-active? (:state %)) all-data)
+                   tree     (idx/build active)
                    computed (par/par-mapv
                               (fn [data]
                                 (let [h      (* 2.0 (double (or (:radius data) 1.0)))
-                                      nbrs   (neighbors-within (:position data) h active)
+                                      nbrs   (idx/within-radius tree (:position data) h)
                                       curl-b (curl-estimate (:b-field data) (:density data)
                                                             (:position data) nbrs)]
                                   [(:eid data)

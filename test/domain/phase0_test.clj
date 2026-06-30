@@ -74,9 +74,9 @@
 
   (testing "A fresh world starts at the bulk-cloud step derived from its dynamical time"
     (let [w        (phase0/create-world)
-          ;; default nebula: radius 1.5e16, mass 4e30
-          t-dyn    (Math/sqrt (/ (Math/pow 1.5e16 3) (* law/G 4.0e30)))
-          expected (:dt (pacing/pacing-for t-dyn 1.5e16))]
+          ;; default nebula: radius 2.0e16, mass 4e30
+          t-dyn    (Math/sqrt (/ (Math/pow 2.0e16 3) (* law/G 4.0e30)))
+          expected (:dt (pacing/pacing-for t-dyn 2.0e16))]
       (is (== (:sim/dt w) expected)
           "fresh dt is cfl-factor × bulk dynamical time (clamped to the dt band)")
       (is (<= pacing/pacing-dt-min (:sim/dt w) pacing/pacing-dt-max)
@@ -177,10 +177,25 @@
 ;; --- Player / observer ------------------------------------------------------
 
 (deftest test-player-coherence
-  (testing "Coherence drains faster in complex regions"
-    (let [obs (player/create-observer [0 0 0])]
-      (is (< (player/coherence-drain-rate obs 1.0)
-             (player/coherence-drain-rate obs 100.0)))))
+  (testing "Higher focus-intensity drains more coherence per frame"
+    (is (< (player/coherence-drain-from-focus 0.1)
+           (player/coherence-drain-from-focus 0.5)))
+    (is (< (player/coherence-drain-from-focus 0.5)
+           (player/coherence-drain-from-focus 1.0))))
+  (testing "Lower focus-intensity regenerates more coherence per frame"
+    (is (> (player/coherence-regen-rate 0.1)
+           (player/coherence-regen-rate 0.5)))
+    (is (> (player/coherence-regen-rate 0.5)
+           (player/coherence-regen-rate 0.9))))
+  (testing "At high focus, drain exceeds regen; at low focus, regen wins"
+    (is (> (player/coherence-drain-from-focus 0.8)
+           (player/coherence-regen-rate 0.8)))
+    (is (< (player/coherence-drain-from-focus 0.2)
+           (player/coherence-regen-rate 0.2)))
+    (testing "At default focus (0.5), drain and regen roughly balance"
+      (is (< (Math/abs (- (player/coherence-drain-from-focus 0.5)
+                          (player/coherence-regen-rate 0.5)))
+             0.001))))
   (testing "Witnessing events restores coherence with diminishing returns"
     (let [gain (player/coherence-gain-from-event :stellar-ignition 0.5)]
       (is (> gain 0))

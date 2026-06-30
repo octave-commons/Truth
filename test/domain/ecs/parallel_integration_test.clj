@@ -14,15 +14,16 @@
     [domain.phase0 :as phase0]))
 
 (defn- parallel-tick
-  "One double-buffer tick: advance the logical tick, fan the transform systems
-   out concurrently and fold them, then run the serial barrier — the discrete
-   collision/merge system and the global COM recenter."
+  "One double-buffer tick: advance the logical tick, arm the integrator with the
+   COM frame-offset (recenter is now a Galilean shift the integrator applies, not
+   a post-fold write — spec §6), fan the transform systems out concurrently and
+   fold them, then run the discrete collision/merge barrier."
   [world]
-  (let [world (ecs/advance-tick world)
+  (let [world   (-> (ecs/advance-tick world)
+                    (assoc :phase0/frame-offset (phase0/center-of-mass world)))
         systems (phase0/physics-systems-parallel world)]
     (-> (tick/run-parallel world systems) ;; :on-conflict :throw (default)
-        (collision/collision-detection-system) ;; barrier: discrete events
-        (phase0/recenter-system))))            ;; barrier: global reduction
+        (collision/collision-detection-system)))) ;; barrier: discrete events
 
 (defn- finite-vec3? [v]
   (and (vector? v) (= 3 (count v)) (every? #(and (number? %) (Double/isFinite (double %))) v)))

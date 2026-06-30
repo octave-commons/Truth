@@ -376,10 +376,11 @@ Failing test:
 ```clojure
 (deftest stellar-flare-boosts-xuv-band
   (let [world   (seed-flaring-star-with-sed)
+        eid     (first (ecs/entities-with world c/matter-state))
+        pre-xuv (sed/xuv-luminosity (:bands (ecs/get-component world eid c/sed-bands)))
         world'  (stellar-flare-system world)
-        eid     (first (ecs/entities-with world' c/matter-state))
         sed     (ecs/get-component world' eid c/sed-bands)]
-    (is (> (get (:bands sed) :xuv 0.0) (get (:bands sed) :xuv 0.0))
+    (is (> (sed/xuv-luminosity (:bands sed)) pre-xuv)
         "XUV band luminosity increases during flare")))
 ```
 

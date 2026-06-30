@@ -8,10 +8,13 @@
     [domain.phase0 :as phase0]
     [domain.pacing :as pacing]
     [domain.player :as player]
+    [domain.intervention :as intervention]
+    [domain.stellar :as stellar]
     [domain.em :as em]
+    [law.stellar :as law]
     [shape.spatial :as sp])
   (:import
-    (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback)
+    (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback GLFWMouseButtonCallback)
     (org.lwjgl.opengl GL GL11 GL12 GL13 GL15 GL20 GL30)
     (org.lwjgl.stb STBImageWrite STBEasyFont)
     (org.lwjgl.system MemoryUtil)
@@ -428,23 +431,40 @@
    Empty for non-phase0/bare worlds."
   [world]
   (if-let [rate-yr (:phase0/rate-yr world)]
-    (let [{:keys [total-mass-msun avg-temp peak-temp
-                  body-count resolved-count star-count planet-count]
-           :or   {total-mass-msun 0.0 avg-temp 0.0 peak-temp 0.0
-                  body-count 0 resolved-count 0 star-count 0 planet-count 0}}
-          (:phase0/stats world)
-          tick (int (or (:tick world) 0))
-          lines [(format "tick   %d" tick)
-                 (format "%s   %s"
-                         (format-elapsed (:phase0/sim-time world))
-                         (phase-label (:phase0/phase world)))
-                 (format "clock  %s" (format-rate rate-yr))
-                 (format "mass   %.3f Msun" (double total-mass-msun))
-                 (format "temp   %.0f K  (peak %.0f K)"
-                         (double avg-temp) (double peak-temp))
-                 (format "bodies %d  resolved %d  stars %d  planets %d"
-                         (int body-count) (int resolved-count)
-                         (int star-count) (int planet-count))]]
+     (let [{:keys [total-mass-msun avg-temp peak-temp
+                  body-count resolved-count star-count planet-count
+                  xuv-escape-count sed-band-count
+                  lod-local lod-system lod-galaxy
+                  imf-bins disk-count]
+            :or   {total-mass-msun 0.0 avg-temp 0.0 peak-temp 0.0
+                   body-count 0 resolved-count 0 star-count 0 planet-count 0
+                   xuv-escape-count 0 sed-band-count 0
+                   lod-local 0 lod-system 0 lod-galaxy 0
+                   imf-bins [0 0 0 0 0 0 0 0] disk-count 0}}
+           (:phase0/stats world)
+           tick (int (or (:tick world) 0))
+           lines [(format "tick   %d" tick)
+                  (format "%s   %s"
+                          (format-elapsed (:phase0/sim-time world))
+                          (phase-label (:phase0/phase world)))
+                  (format "clock  %s" (format-rate rate-yr))
+                  (format "mass   %.3f Msun" (double total-mass-msun))
+                  (format "temp   %.0f K  (peak %.0f K)"
+                          (double avg-temp) (double peak-temp))
+                  (format "bodies %d  resolved %d  stars %d  planets %d"
+                          (int body-count) (int resolved-count)
+                          (int star-count) (int planet-count))
+                  (format "SED    %d bands  XUV-esc %d"
+                          (int sed-band-count) (int xuv-escape-count))
+                  (format "LOD    local %d  system %d  galaxy %d"
+                          (int lod-local) (int lod-system) (int lod-galaxy))
+                  (format "disks  %d  planets %d"
+                          (int disk-count) (int planet-count))
+                  (format "IMF    <.1:%d  .1-.5:%d  .5-1:%d  1-2:%d  2-5:%d  5-10:%d  10-50:%d  >50:%d"
+                          (int (nth imf-bins 0)) (int (nth imf-bins 1))
+                          (int (nth imf-bins 2)) (int (nth imf-bins 3))
+                          (int (nth imf-bins 4)) (int (nth imf-bins 5))
+                          (int (nth imf-bins 6)) (int (nth imf-bins 7)))]]
       (map-indexed (fn [i s]
                      {:text s :x 16.0 :y (+ 24.0 (* i 22.0))
                       :scale 2.2 :color [0.86 0.94 1.0 0.95]})
@@ -706,7 +726,7 @@
   "Update `camera` based on the world and camera settings. Pure: returns a new
    Camera. In :manual mode the camera is unchanged except for position recalc."
   [camera world settings]
-  (case (:mode settings :track-largest-cluster)
+   (case (:mode settings :fit-all)
     :manual
     (-> camera
         (assoc :yaw (double (:manual-yaw settings -90.0))
@@ -773,6 +793,29 @@
     (phase0/handle-input world :move-focus (sp/v+ (:focus-position obs) dpos))
     world))
 
+;; --- Action palette (single source of truth) --------------------------------
+;; The player's paid actions, defined ONCE. `setup-input` dispatches key presses
+;; from this list and `action-hud` renders the on-screen legend from the SAME
+;; list — so a new action cannot be wired without it appearing on screen, and its
+;; key/label/cost can never drift between the binding and what the player is told.
+
+(def action-palette
+  [{:label "Well"     :keycap "G"   :glfw GLFW/GLFW_KEY_G :shift? false :kind :warp/well
+    :accent [0.45 0.85 1.0]  :hint "pull matter in"}
+   {:label "Repulsor" :keycap "G+s" :glfw GLFW/GLFW_KEY_G :shift? true  :kind :warp/repulsor
+    :accent [1.0 0.6 0.3]    :hint "push matter out (shift+G)"}
+   {:label "Heat"     :keycap "H"   :glfw GLFW/GLFW_KEY_H :shift? false :kind :heat/source
+    :accent [1.0 0.45 0.25]  :hint "warm gas — resist collapse"}
+   {:label "Cool"     :keycap "J"   :glfw GLFW/GLFW_KEY_J :shift? false :kind :heat/sink
+    :accent [0.6 0.85 1.0]   :hint "chill gas — trigger collapse"}])
+
+(defn action-for-key
+  "The palette entry a key/shift press triggers, or nil. Shift must match exactly
+   so G and shift+G map to different actions."
+  [glfw-key shift?]
+  (some (fn [a] (when (and (= glfw-key (:glfw a)) (= (boolean shift?) (:shift? a))) a))
+        action-palette))
+
 (defn- player-key
   "Map a key press to a focus / drift / release action on the world's observer.
    Arrows drift the focus volume, , / . narrow / widen it, Space releases the
@@ -819,15 +862,32 @@
            (reset! camera-atom (make-camera))
            (reset! config-atom (default-camera-settings))
            (println "Camera reset"))
+         ;; Paid actions — dispatched from `action-palette` (the same list the HUD
+         ;; legend renders). Records an :action-request the window thread resolves
+         ;; (cursor→world + spend agency); a no-op if the spark can't afford it.
+         (when (= action GLFW/GLFW_PRESS)
+           (when-let [a (action-for-key key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT)))]
+             (swap! config-atom assoc :action-request {:kind (:kind a)})))
          ;; Player focus / drift / release controls
          (when (and world-atom (= action GLFW/GLFW_PRESS))
            (player-key world-atom key)))))
+   ;; Cursor + click. A left-drag orbits the camera (manual modes); a left CLICK
+   ;; that did not drag records a :pick-request {:x :y} (window-pixel coords) into
+   ;; the config — the window thread resolves it to a selected entity next frame
+   ;; (see `infra.inspect/pick-entity`). `dragged?` separates the two gestures.
    (let [last-pos (atom [0.0 0.0])
-         first    (atom true)]
+         first    (atom true)
+         cursor   (atom [0.0 0.0])
+         dragged? (atom false)]
      (GLFW/glfwSetCursorPosCallback
        window
        (proxy [GLFWCursorPosCallback] []
          (invoke [window x y]
+           (reset! cursor [x y])
+           ;; Publish the live cursor so the window thread can let the spark's
+           ;; attention (focus) follow the mouse and highlight the hovered body —
+           ;; both passive, free observation.
+           (swap! config-atom assoc :cursor [x y])
            (if @first
              (do (reset! last-pos [x y]) (reset! first false))
              (let [[lx ly] @last-pos
@@ -835,12 +895,25 @@
                    dy (- y ly)]
                (reset! last-pos [x y])
                (when (= (GLFW/glfwGetMouseButton window GLFW/GLFW_MOUSE_BUTTON_LEFT) GLFW/GLFW_PRESS)
+                 (when (or (> (Math/abs (double dx)) 1.5) (> (Math/abs (double dy)) 1.5))
+                   (reset! dragged? true))
                  (swap! camera-atom
                         (fn [c]
                           (-> c
                               (update :yaw #(+ % (* dx 0.2)))
                               (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
-                              update-camera-position))))))))))
+                              update-camera-position)))))))))
+     (GLFW/glfwSetMouseButtonCallback
+       window
+       (proxy [GLFWMouseButtonCallback] []
+         (invoke [window button action mods]
+           (when (= button GLFW/GLFW_MOUSE_BUTTON_LEFT)
+             (cond
+               (= action GLFW/GLFW_PRESS)   (reset! dragged? false)
+               (= action GLFW/GLFW_RELEASE) (when-not @dragged?
+                                              (let [[cx cy] @cursor]
+                                                (swap! config-atom assoc
+                                                       :pick-request {:x cx :y cy})))))))))
    (GLFW/glfwSetScrollCallback
      window
      (proxy [GLFWScrollCallback] []
@@ -945,14 +1018,23 @@
   "The render-unit radius a resolved body is DRAWN at — the SAME size its sphere
    uses in `phase0-bodies-from-world`. Field-line loops size to this so the field
    always hugs its body at any zoom, instead of floating at a fixed absolute size
-   that detaches from (and dwarfs) the body when the camera zooms in. Stars size
-   by log-luminosity (their apparent size IS their luminosity, matching the
-   `:star` body case); everything else by log-compressed physical radius."
+   that detaches from (and dwarfs) the body when the camera zooms in.
+
+   Stars size by MASS (the physically meaningful axis): a 0.1 M☉ red dwarf is
+   visually tiny, a 1 M☉ solar-type star is medium, a 10 M☉ O-star is large.
+   Luminosity adds a modest glow factor so blue stragglers and subgiants read
+   slightly larger than their mass alone would suggest."
   [world eid]
   (if (= :star (ecs/get-component world eid c/matter-state))
-    (let [lum (double (or (ecs/get-component world eid c/luminosity) 1.0e26))]
-      (-> (+ 0.6 (* 0.28 (Math/log10 (/ (max 1.0 lum) 1.0e26))))
-          (max 0.6) (min 3.0)))
+    (let [mass (double (or (ecs/get-component world eid c/mass) law/solar-mass))
+          lum  (double (or (ecs/get-component world eid c/luminosity) 1.0e26))
+          m-ratio (/ mass law/solar-mass)
+          ;; Primary: mass-based sizing. log-compressed so 0.1–50 M☉ maps to 0.5–5.0
+          mass-r (-> (+ 1.5 (* 1.5 (Math/log10 (max 0.1 m-ratio))))
+                     (max 0.5) (min 5.0))
+          ;; Secondary: luminosity glow boost (+20% max for very luminous stars)
+          lum-boost (* 0.2 (min 1.0 (/ (Math/log10 (max 1.0 lum)) 30.0)))]
+      (+ mass-r lum-boost))
     (phys->render-radius (ecs/get-component world eid c/radius))))
 
 (defn composition->material-color
@@ -983,6 +1065,34 @@
         t   (double (or temp 10.0))
         f   (max 0.0 (min 1.0 (/ (- (Math/log10 (max 1.0 t)) 2.7) 2.3)))]
     (mapv (fn [m h] (+ (* (- 1.0 f) m) (* f h))) mat th)))
+
+(defn stellar-spectral-color
+  "RGB color for a star based on its effective temperature (K).
+   Maps T_eff to the visible spectral sequence: cool red M-dwarfs through
+   solar yellow to hot blue O-stars. Interpolated between anchor points."
+  [teff]
+  (let [t (double (or teff 5800.0))
+        ;; Anchor points: [T_eff R G B] — spectral-type colors
+        anchors [[2400.0 1.00 0.55 0.35]  ;; M5V — deep red
+                 [3700.0 1.00 0.70 0.45]  ;; K/M — orange
+                 [5200.0 1.00 0.87 0.65]  ;; K0V — yellow-orange
+                 [5800.0 1.00 0.95 0.82]  ;; G2V — yellow-white (solar)
+                 [6500.0 0.98 0.97 0.92]  ;; F0V — white
+                 [8500.0 0.90 0.92 1.00]  ;; A0V — blue-white
+                 [15000.0 0.80 0.85 1.00] ;; B0V — blue
+                 [42000.0 0.70 0.78 1.00]]] ;; O5V — deep blue
+    (cond
+      (<= t 2400.0) (subvec (first anchors) 1)
+      (>= t 42000.0) (subvec (last anchors) 1)
+      :else
+      (let [;; Find the two anchors to interpolate between
+            idx (reduce (fn [i a] (if (> t (first a)) (inc i) i)) 0 anchors)
+            [t0 r0 g0 b0] (nth anchors (dec idx))
+            [t1 r1 g1 b1] (nth anchors idx)
+            frac (/ (- t t0) (- t1 t0))]
+        [(+ r0 (* frac (- r1 r0)))
+         (+ g0 (* frac (- g1 g0)))
+         (+ b0 (* frac (- b1 b0)))]))))
 
 (defn- hash01
   "Deterministic [0,1) value from an integer key — for stable, non-shimmering
@@ -1169,6 +1279,123 @@
                             az [0.0 60.0 120.0 180.0 240.0 300.0]] [shell az])))))
            sources))))
 
+;; --- Protoplanetary disk (particles in the disk plane) -----------------------
+;; A flat torus of particles around a star or protostar that has accreted a disk.
+;; Oriented by the disk angular-momentum vector; sized by disk-radius; coloured
+;; by the host star's spectral type, warmed and dimmed. Particles are denser
+;; near the inner edge (where the surface density is highest) and sparser at the
+;; outer rim, so the disk reads as a bright core fading into a wispy edge.
+
+(def ^:private disk-cache
+  "Per-entity disk particle cache. Keyed by [eid :disk count]; validated against
+   the inputs that drive the particle cloud so it invalidates when the disk
+   accretes, shrinks, or changes orientation."
+  (atom {}))
+
+(defn- rotate-axis-angle
+  "Rodrigues' rotation: rotate 3-vector `v` by `angle` (radians) around unit
+   axis `k`. Pure, no side effects."
+  [v k angle]
+  (let [[vx vy vz] v
+        [kx ky kz] k
+        c  (Math/cos angle)
+        s  (Math/sin angle)
+        ;; k × v
+        cx (- (* ky vz) (* kz vy))
+        cy (- (* kz vx) (* kx vz))
+        cz (- (* kx vy) (* ky vx))
+        ;; k · v
+        kd (+ (* kx vx) (* ky vy) (* kz vz))
+        ;; v cosθ + (k×v) sinθ + k(k·v)(1-cosθ)
+        f  (- 1.0 c)]
+    [(+ (* vx c) (* cx s) (* kx kd f))
+     (+ (* vy c) (* cy s) (* ky kd f))
+     (+ (* vz c) (* cz s) (* kz kd f))]))
+
+(defn- disk-particles*
+  "Actual disk particle generation; split for caching."
+  [{:keys [center r-inner r-outer color thickness disk-mass]} count seed]
+  (let [[cx cy cz] center
+        rng  (java.util.Random. (long (or seed 1)))
+        n-rings  (int (max 3 (Math/sqrt (double count))))
+        n-per    (int (Math/ceil (/ (double count) (double n-rings))))
+        r-span   (max 1.0e-6 (- (double r-outer) (double r-inner)))
+        thick    (double (or thickness 0.05))
+        disk-m   (double (or disk-mass 1.0e25))]
+    (mapv
+      (fn [_]
+        (let [;; Radial position: bias toward inner edge (surface density ∝ 1/r)
+              ;; so the bright core reads denser than the diffuse outer rim.
+              r-frac  (Math/pow (.nextDouble rng) 0.6)
+              r       (+ (double r-inner) (* r-frac r-span))
+              theta   (* 2.0 Math/PI (.nextDouble rng))
+              ;; Vertical spread: thin Gaussian flaring outward
+              z-spread (* thick r-frac (.nextGaussian rng))
+              px (+ cx (* r (Math/cos theta)))
+              py (+ cy (* r (Math/sin theta)))
+              pz (+ cz z-spread)
+              ;; Surface density drives opacity: brighter at inner edge
+              sigma   (- 1.0 (* 0.6 r-frac))
+              ;; Particle size: small uniform grains for a tight, dense disk
+              sz      (+ 1.5 (* 1.5 sigma) (* 0.8 (.nextDouble rng)))
+              ;; Colour: base tinted by density — inner disk warmer, outer dimmer
+              col     (mapv (fn [c] (max 0.0 (min 1.0 (* c (+ 0.55 (* 0.45 sigma)))))) color)]
+          {:position [px py pz]
+           :color    col
+           :size     sz
+           :density  (float (* 0.55 sigma))
+           :render-mode :particle}))
+      (range count))))
+
+(defn- disk-particles
+  "Protoplanetary disk as a flat torus of particles, deterministic and cached.
+   `center` in render units; `r-inner`/`r-outer` in render units; `normal` is
+   the disk angular-momentum vector (particles are generated in the xy-plane
+   then rotated to match); `color` is the host's spectral colour, warmed.
+   The cache key includes the entity id and particle count; validation checks
+   the physics inputs so the cloud refreshes when the disk evolves."
+  [{:keys [center r-inner r-outer normal color disk-mass count seed]}]
+  (let [eid    (long (or seed 1))
+        ckey   [eid :disk count]
+        params {:center center :r-inner r-inner :r-outer r-outer
+                :color color :disk-mass disk-mass}]
+    (if-let [cached (get @disk-cache ckey)]
+      (if (= (dissoc cached :particles) params)
+        (:particles cached)
+        (let [thick  (max 0.02 (* 0.08 (- (double r-outer) (double r-inner))))
+              raw    (disk-particles* (assoc params :thickness thick) count seed)
+              ;; Rotate from xy-plane to the actual disk orientation
+              normal-u (unit-vec normal)
+              ez       [0.0 0.0 1.0]
+              dot      (sp/dot normal-u ez)
+              rotated  (if (> (Math/abs dot) 0.999)
+                         raw  ;; already (anti-)aligned, no rotation needed
+                         (let [axis  (unit-vec (sp/cross ez normal-u))
+                               angle (Math/acos (max -1.0 (min 1.0 dot)))]
+                           (mapv (fn [p]
+                                   (assoc p :position
+                                          (vec (rotate-axis-angle
+                                                 (:position p) axis angle))))
+                                 raw)))]
+          (swap! disk-cache assoc ckey (assoc params :particles rotated))
+          rotated))
+      (let [thick  (max 0.02 (* 0.08 (- (double r-outer) (double r-inner))))
+            raw    (disk-particles* (assoc params :thickness thick) count seed)
+            normal-u (unit-vec normal)
+            ez       [0.0 0.0 1.0]
+            dot      (sp/dot normal-u ez)
+            rotated  (if (> (Math/abs dot) 0.999)
+                       raw
+                       (let [axis  (unit-vec (sp/cross ez normal-u))
+                             angle (Math/acos (max -1.0 (min 1.0 dot)))]
+                         (mapv (fn [p]
+                                 (assoc p :position
+                                        (vec (rotate-axis-angle
+                                               (:position p) axis angle))))
+                               raw)))]
+        (swap! disk-cache assoc ckey (assoc params :particles rotated))
+        rotated))))
+
 ;; --- Player spark + focus reticle (the interactive overlay) ------------------
 
 (defn- ring-segments
@@ -1233,6 +1460,103 @@
         :color [0.70 0.86 1.0 0.85]}])
     []))
 
+(defn observer-hud-text
+  "Player HUD: quanta/state (bottom-left), observation note + quest (bottom-center),
+   event notifications (center), controls hint (bottom-right). `height` anchors
+   everything to the framebuffer size. Empty without an observer."
+  [world width height]
+  (if-let [obs (player/get-observer world)]
+    (let [agency   (long (Math/floor (double (or (:agency obs) 0.0))))
+          state    (player/decoherence-state obs)
+          scol     (conj (coherence-color state) 1.0)
+          note     (:observation-note obs)
+          quest    (:phase-quest obs)
+          notif    (:notification obs)
+          w        (double width)
+          h        (double height)
+          cx       (* w 0.5)  ;; horizontal center
+          ;; notification: show for ~200 ticks after the event
+          notif-age (when notif (- (long (or (:tick world) 0)) (long (:tick notif))))
+          notif-alpha (when notif (max 0.0 (- 1.0 (/ (double (or notif-age 0)) 200.0))))
+          notif-show? (and notif notif-alpha (> ^double notif-alpha 0.05))
+          notif-text (when notif-show? (:text notif))
+          ]
+      (cond->
+       ;; bottom-left: quanta + spark state + focus intensity
+       [{:text (format "%d quanta" agency)
+         :x 16.0 :y (- h 96.0) :scale 2.4 :color [0.78 0.92 1.0 0.98]}
+        {:text (format "spark: %s" (name state))
+         :x 16.0 :y (- h 70.0) :scale 1.7 :color scol}
+        {:text (format "focus: %.0f%%" (* 100.0 (double (or (:focus-intensity obs) 0.5))))
+         :x 16.0 :y (- h 48.0) :scale 1.5 :color [0.65 0.80 0.95 0.85]}]
+
+       ;; bottom-center: observation note
+       note
+       (conj {:text note
+              :x (- cx 220.0) :y (- h 40.0) :scale 1.6 :color [0.90 0.95 1.0 0.85]})
+
+       ;; bottom-center below note: quest
+       quest
+       (conj {:text quest
+              :x (- cx 200.0) :y (- h 18.0) :scale 1.4 :color [0.70 0.85 0.95 0.70]})
+
+       ;; center: event notification (fading)
+       notif-text
+       (conj {:text notif-text
+              :x (- cx 140.0) :y (- h 200.0) :scale 2.8
+              :color [1.0 0.92 0.60 ^double notif-alpha]})
+
+       ;; bottom-right: controls hint
+       true
+       (conj {:text "arrows: move focus   ,/.: narrow/widen   G: warp   space: drift"
+              :x (- w 440.0) :y (- h 18.0) :scale 1.2 :color [0.50 0.55 0.65 0.55]})))
+    []))
+
+(defn- afford-colors
+  "Text colours for an action row given the spark's quanta and the action's cost:
+   bright/green when affordable, dimmed/red when not."
+  [agency cost]
+  (if (>= (double agency) (double cost))
+    {:label [0.88 0.95 1.0 0.98] :cost [0.65 1.0 0.78 0.98]}
+    {:label [0.55 0.50 0.55 0.70] :cost [1.0 0.50 0.45 0.85]}))
+
+(defn controls-hud
+  "The teaching layer. Renders the paid-action palette (bottom-right) straight
+   from `action-palette` — key, label, and cost, the key tinted with the action's
+   ring colour and the row lit by whether the spark can afford it — plus a
+   one-line passive-controls legend. Returns {:rects :text}. This is why a hotkey
+   can't exist without being taught: both come from the one list."
+  [world width height]
+  (let [agency (double (or (:agency (player/get-observer world)) 0.0))
+        w (double width) h (double height)
+        scale 1.9 line-h 22.0 pad 12.0
+        rows (count action-palette)
+        panel-w 252.0
+        panel-h (+ (* 2.0 pad) (* (inc rows) line-h))
+        x0 (- w panel-w 16.0)
+        y0 (- h panel-h 34.0)
+        ndcx (fn [px] (- (/ (* 2.0 px) w) 1.0))
+        ndcy (fn [py] (- 1.0 (/ (* 2.0 py) h)))
+        rect {:x0 (ndcx x0) :y0 (ndcy (+ y0 panel-h))
+              :x1 (ndcx (+ x0 panel-w)) :y1 (ndcy y0)
+              :color [0.04 0.06 0.12 0.82]}
+        header {:text "ACTIONS  (spend quanta)" :x (+ x0 pad) :y (+ y0 pad)
+                :scale 1.6 :color [0.70 0.82 1.0 0.95]}
+        action-text
+        (mapcat
+          (fn [i {:keys [keycap label kind accent]}]
+            (let [cost (intervention/cost-of kind)
+                  y    (+ y0 pad (* (inc i) line-h))
+                  {lc :label cc :cost} (afford-colors agency cost)]
+              [{:text keycap :x (+ x0 pad)        :y y :scale scale :color (conj (vec accent) 1.0)}
+               {:text label  :x (+ x0 pad 52.0)   :y y :scale scale :color lc}
+               {:text (format "%.0fq" (double cost)) :x (+ x0 pad 176.0) :y y :scale scale :color cc}]))
+          (range) action-palette)
+        passive {:text "drag orbit   scroll zoom   C camera   click inspect   move = attention"
+                 :x 352.0 :y (- h 20.0) :scale 1.4 :color [0.55 0.68 0.85 0.8]}]
+    {:rects [rect]
+     :text  (into [header passive] action-text)}))
+
 (defn phase0-bodies-from-world
   "Project Phase 0 ECS matter entities into stylized, view-scaled render shapes,
    coloured by TEMPERATURE so the thermal field is visible:
@@ -1278,37 +1602,63 @@
                              :density  dens-norm}))
 
               :star
-              ;; The photosphere is sub-pixel at this scale; a star's apparent
-              ;; size IS its luminosity. Render a small bright core sized by
-              ;; log-luminosity, wrapped in a volumetric corona + field line.
-              (let [lum    (double (or (ecs/get-component world eid c/luminosity) 1.0e26))
-                    core-r (-> (+ 0.6 (* 0.28 (Math/log10 (/ (max 1.0 lum) 1.0e26))))
-                               (max 0.6) (min 3.0))
+              ;; Stars render with mass-based sizing and spectral-type colors.
+              ;; A red dwarf (0.1 M☉) is small and orange; a solar-type (1 M☉)
+              ;; is medium and yellow-white; an O-star (10+ M☉) is large and blue.
+              (let [core-r (body-draw-radius world eid)
+                    teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
+                    s-col  (stellar-spectral-color teff)
                     body   {:entity      eid
                             :position    center
                             :radius      core-r
-                            :color       [1.0 0.93 0.82]
+                            :color       s-col
                             :kind        state
                             :oblateness  ob
                             :rotation-axis axis
-                            :render-mode :body}]
+                            :render-mode :body}
+                    ;; Protoplanetary disk: warm golden tint of the star's colour
+                    disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                    disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
                 (concat
                  [body]
-                 (nebula-fog {:center  center
-                              :extent  (* core-r 3.0)
-                              :support (* 2.0 core-r)
-                              :color   [0.85 0.80 0.55]
-                              :count   70
-                              :seed    eid
-                              :density 0.7})
-                 (field-line center core-r (ecs/get-component world eid c/b-field))))
+                  (nebula-fog {:center  center
+                               :extent  (* core-r 3.0)
+                               :support (* 2.0 core-r)
+                               :color   (mapv #(min 1.0 (* % 0.85)) s-col)
+                               :count   70
+                               :seed    eid
+                               :density 0.7})
+                 (field-line center core-r (ecs/get-component world eid c/b-field))
+                 ;; Disk: flat particle torus, warm golden, oriented by angular momentum
+                 (when (pos? disk-m)
+                   (let [r-disk  (max (* 3.0 core-r)
+                                      (stellar/disk-radius
+                                        (/ (sp/len disk-L) (max 1.0 disk-m))
+                                        (double (or (ecs/get-component world eid c/mass) 1.0e30))))
+                         ;; Log-compress the disk radius so it stays visible
+                         ;; at the same scale as the body
+                         r-out   (min 12.0 (* core-r 4.0
+                                             (Math/log10 (max 10.0 (/ r-disk (* core-r phase0-view-scale))))))
+                         r-in    (* core-r 1.3)
+                         ;; Warm golden: star colour shifted toward warm amber
+                         d-col   (mapv (fn [c] (min 1.0 (* (+ 0.4 (* 0.6 c)) 0.90))) s-col)]
+                     (disk-particles {:center     center
+                                      :r-inner    r-in
+                                      :r-outer    r-out
+                                      :normal     disk-L
+                                      :color      d-col
+                                      :disk-mass  disk-m
+                                      :count      90
+                                      :seed       eid})))))
 
               :protostar
               ;; A contracting core: render radius follows the physical radius
               ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
               ;; by temperature, shrouded in fog + field lines.
               (let [render-r (phys->render-radius r-phys)
-                    rho      (or (ecs/get-component world eid c/density) 1e-15)]
+                    rho      (or (ecs/get-component world eid c/density) 1e-15)
+                    disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                    disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
                 (concat
                  [{:entity      eid
                    :position    center
@@ -1325,7 +1675,26 @@
                               :count   (fog-sample-count render-r focus)
                               :seed    eid
                               :density (nebula-density-norm rho)})
-                 (field-line center render-r (ecs/get-component world eid c/b-field))))
+                 (field-line center render-r (ecs/get-component world eid c/b-field))
+                 ;; Disk around contracting protostar — warm amber tint
+                 (when (pos? disk-m)
+                   (let [r-disk (max (* 3.0 render-r)
+                                     (stellar/disk-radius
+                                       (/ (sp/len disk-L) (max 1.0 disk-m))
+                                       (double (or (ecs/get-component world eid c/mass) 1.0e30))))
+                         r-out  (min 12.0 (* render-r 4.0
+                                            (Math/log10 (max 10.0 (/ r-disk (* render-r phase0-view-scale))))))
+                         r-in   (* render-r 1.3)
+                         ;; Warm amber for the contracting disk
+                         d-col  (mapv (fn [c] (min 1.0 (* (+ 0.35 (* 0.65 c)) 0.85))) color)]
+                     (disk-particles {:center    center
+                                      :r-inner   r-in
+                                      :r-outer   r-out
+                                      :normal    disk-L
+                                      :color     d-col
+                                      :disk-mass disk-m
+                                      :count     70
+                                      :seed      eid})))))
 
               ;; :planet :debris → shaded body sized by physical radius, coloured
               ;; by composition crossfading to thermal glow.
@@ -1388,37 +1757,56 @@
                            :density  dens-norm}))
 
             :star
-            ;; The photosphere is sub-pixel at this scale; a star's apparent
-            ;; size IS its luminosity. Render a small bright core sized by
-            ;; log-luminosity, wrapped in a volumetric corona + field line.
-            (let [lum    (double (or (ecs/get-component world eid c/luminosity) 1.0e26))
-                  core-r (-> (+ 0.6 (* 0.28 (Math/log10 (/ (max 1.0 lum) 1.0e26))))
-                             (max 0.6) (min 3.0))
+            ;; Stars render with mass-based sizing and spectral-type colors.
+            (let [core-r (body-draw-radius world eid)
+                  teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
+                  s-col  (stellar-spectral-color teff)
                   body   {:entity      eid
                           :position    center
                           :radius      core-r
-                          :color       [1.0 0.93 0.82]
+                          :color       s-col
                           :kind        state
                           :oblateness  ob
                           :rotation-axis axis
-                          :render-mode :body}]
+                          :render-mode :body}
+                  disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                  disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
               (concat
                [body]
                (nebula-fog {:center  center
                             :extent  (* core-r 3.0)
                             :support (* 2.0 core-r)
-                            :color   [0.85 0.80 0.55]
+                            :color   (mapv #(min 1.0 (* % 0.85)) s-col)
                             :count   70
                             :seed    eid
                             :density 0.7})
-               (field-line center core-r (ecs/get-component world eid c/b-field))))
+               (field-line center core-r (ecs/get-component world eid c/b-field))
+               (when (pos? disk-m)
+                 (let [r-disk  (max (* 3.0 core-r)
+                                    (stellar/disk-radius
+                                      (/ (sp/len disk-L) (max 1.0 disk-m))
+                                      (double (or (ecs/get-component world eid c/mass) 1.0e30))))
+                       r-out   (min 12.0 (* core-r 4.0
+                                           (Math/log10 (max 10.0 (/ r-disk (* core-r phase0-view-scale))))))
+                       r-in    (* core-r 1.3)
+                       d-col   (mapv (fn [c] (min 1.0 (* (+ 0.4 (* 0.6 c)) 0.90))) s-col)]
+                   (disk-particles {:center    center
+                                    :r-inner   r-in
+                                    :r-outer   r-out
+                                    :normal    disk-L
+                                    :color     d-col
+                                    :disk-mass disk-m
+                                    :count     90
+                                    :seed      eid})))))
 
             :protostar
             ;; A contracting core: render radius follows the physical radius
             ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
             ;; by temperature, shrouded in fog + field lines.
             (let [render-r (phys->render-radius r-phys)
-                  rho      (or (ecs/get-component world eid c/density) 1e-15)]
+                  rho      (or (ecs/get-component world eid c/density) 1e-15)
+                  disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                  disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
               (concat
                [{:entity      eid
                  :position    center
@@ -1435,7 +1823,24 @@
                             :count   (fog-sample-count render-r focus)
                             :seed    eid
                             :density (nebula-density-norm rho)})
-               (field-line center render-r (ecs/get-component world eid c/b-field))))
+               (field-line center render-r (ecs/get-component world eid c/b-field))
+               (when (pos? disk-m)
+                 (let [r-disk (max (* 3.0 render-r)
+                                   (stellar/disk-radius
+                                     (/ (sp/len disk-L) (max 1.0 disk-m))
+                                     (double (or (ecs/get-component world eid c/mass) 1.0e30))))
+                       r-out  (min 12.0 (* render-r 4.0
+                                          (Math/log10 (max 10.0 (/ r-disk (* render-r phase0-view-scale))))))
+                       r-in   (* render-r 1.3)
+                       d-col  (mapv (fn [c] (min 1.0 (* (+ 0.35 (* 0.65 c)) 0.85))) color)]
+                   (disk-particles {:center    center
+                                    :r-inner   r-in
+                                    :r-outer   r-out
+                                    :normal    disk-L
+                                    :color     d-col
+                                    :disk-mass disk-m
+                                    :count     70
+                                    :seed      eid})))))
 
             ;; :planet :debris → shaded body sized by physical radius, coloured
             ;; by composition crossfading to thermal glow.
@@ -1607,13 +2012,23 @@
                    (let [[x y z] (ecs/get-component world eid c/position)
                          rho   (double (or (ecs/get-component world eid c/density) 1e-18))
                          temp  (ecs/get-component world eid c/temperature)
-                         rphys (double (or (ecs/get-component world eid c/radius) render-radius-ref))]
+                         ion   (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))
+                         rphys (double (or (ecs/get-component world eid c/radius) render-radius-ref))
+                         ;; Base color from temperature
+                         t-col (temp-color temp)
+                         ;; Ionization tint: high ionization shifts toward blue-white (hot plasma)
+                         col   (if (pos? ion)
+                                 (let [f (min 1.0 (* ion 0.6))]
+                                   [(+ (* (- 1.0 f) (nth t-col 0)) (* f 0.7))
+                                    (+ (* (- 1.0 f) (nth t-col 1)) (* f 0.8))
+                                    (+ (* (- 1.0 f) (nth t-col 2)) (* f 1.0))])
+                                 t-col)]
                      {:p   [(/ (double x) scale) (/ (double y) scale) (/ (double z) scale)]
                       ;; VISUAL smoothing: deliberately wider than the physical SPH
                       ;; h so adjacent parcels' footprints overlap into a continuous
                       ;; medium (≳ inter-parcel spacing) instead of discrete blobs.
                       :h   (max 1.5 (* 4.0 (phys->render-radius rphys)))
-                      :col (temp-color temp)
+                      :col col
                       :dens (max 0.0 (nebula-density-norm rho))})))))
        vec))
 

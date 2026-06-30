@@ -235,25 +235,29 @@
       composition)))
 
 (defn nucleosynthesis-system
-  "SOLE fan-out writer of :component/composition. Burns H→He in stars and
-   ignited protostars (T ≥ fusion-temp-threshold); every other body is left
-   unchanged this tick. dt-correct and bounded (see `burn-step`) so the
-   Myr-scale timestep never lurches composition. Writes ONLY :component/composition.
+  "Write-set emitter: sole writer of :component/comp.burn — the burned (H→He)
+   composition for stars and ignited protostars (T ≥ fusion-temp-threshold). The
+   integrator owns :component/composition and applies this burn (then the
+   deuterium gate) next tick (spec §7.5). dt-correct and bounded (see
+   `burn-step`) so the Myr-scale timestep never lurches composition.
 
-   Reads the FROZEN snapshot like every fan-out system, so fusion/thermal pick up
-   the burned composition one tick later — a negligible lag at Myr dt."
+   Reads the FROZEN snapshot like every fan-out emitter; the burned composition
+   lands one tick later — a negligible lag at Myr dt."
   [dt]
-  (fn [world]
-    (reduce
-     (fn [w eid]
-       (let [state (ecs/get-component w eid c/matter-state)
-             comp  (ecs/get-component w eid c/composition)
-             mass  (ecs/get-component w eid c/mass)
-             temp  (double (or (ecs/get-component w eid c/temperature) 0.0))]
-         (if (and comp mass
-                  (contains? #{:star :protostar} state)
-                  (>= temp law/fusion-temp-threshold))
-           (ecs/put-component w eid c/composition (burn-step comp mass dt))
-           w)))
-     world
-     (ecs/entities-with world c/matter-state c/composition c/mass))))
+  {:id     :nucleosynthesis
+   :writes #{c/comp-burn}
+   :run
+   (fn [world]
+     (let [eids (ecs/entities-with world c/matter-state c/composition c/mass)
+           cell (into {}
+                      (keep (fn [eid]
+                              (let [state (ecs/get-component world eid c/matter-state)
+                                    comp  (ecs/get-component world eid c/composition)
+                                    mass  (ecs/get-component world eid c/mass)
+                                    temp  (double (or (ecs/get-component world eid c/temperature) 0.0))]
+                                (when (and comp mass
+                                           (contains? #{:star :protostar} state)
+                                           (>= temp law/fusion-temp-threshold))
+                                  [eid (burn-step comp mass dt)]))))
+                      eids)]
+       {c/comp-burn cell}))})

@@ -125,3 +125,37 @@
   [world]
   (let [{:keys [radius mass]} (cloud-scale world)]
     (pacing-for (dynamical-time radius mass) radius)))
+
+;; --- Time slip --------------------------------------------------------------
+
+(def time-slip-factor
+  "Multiplier on the per-tick step while time is SLIPPING — the observer's
+   attention has lapsed (low coherence) over a near-empty region, so the universe
+   fast-forwards rather than crawling. At 20× a dead, unwatched cloud blinks ahead
+   until something happens (or the player tightens focus) and coherence recovers."
+  20.0)
+
+(def pacing-dt-slip-max
+  "Ceiling on the per-tick step WHILE time is slipping — well above the normal
+   `pacing-dt-max` (so a stalled region can race ahead), but still bounded for
+   numerical sanity. A slipping region is low-complexity by definition (few
+   bodies), so the coarser step integrates safely." 4.0e12)
+
+(defn with-time-slip
+  "Rescale a pacing map for a time slip. When `slipping?`, the per-tick step `:dt`
+   is boosted by `time-slip-factor` (capped at `pacing-dt-slip-max`) and the
+   derived `:rate`/`:rate-yr` recomputed; `:softening` is unchanged (it tracks the
+   bulk radius, not the clock). When not slipping, the map passes through. Either
+   way `:time-slipping?` is flagged for the HUD. Pure — the slip DECISION
+   (`player/time-slip-threshold?`) is made by the caller and passed in, so pacing
+   stays free of any observer dependency."
+  [{:keys [dt] :as pacing} slipping?]
+  (if (and slipping? dt)
+    (let [dt'  (min pacing-dt-slip-max (* time-slip-factor (double dt)))
+          rate (* dt' ticks-per-second)]
+      (assoc pacing
+             :dt dt'
+             :rate rate
+             :rate-yr (/ rate seconds-per-year)
+             :time-slipping? true))
+    (assoc pacing :time-slipping? false)))

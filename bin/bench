@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Benchmark runner for Gates of Truth
+#
+# Usage:
+#   bin/bench              # Run all benchmarks (quick mode)
+#   bin/bench :ecs         # Run only ECS benchmarks
+#   bin/bench :gravity     # Run only gravity benchmarks
+#   bin/bench :phase0      # Run only Phase 0 tick benchmarks
+#   bin/bench :profile     # Profile mode (for async-profiler/JFR)
+#
+# Multiple groups:
+#   bin/bench :ecs :gravity :hydro
+#
+# Dependencies are resolved from deps.edn :bench alias.
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+echo "=== Gates of Truth Benchmark Suite ==="
+echo "Date: $(date)"
+echo "Host: $(hostname)"
+echo
+
+# Check for criterium
+if ! clojure -Spath -A:bench 2>/dev/null | grep -q criterium; then
+  echo "Installing criterium dependency..."
+  clojure -P -A:bench
+fi
+
+# Run benchmarks
+exec clojure -M:bench "$@"

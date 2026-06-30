@@ -24,6 +24,9 @@
      scroll         adjust distance"
   (:require
     [domain.orbital.system :as orbital]
+    [domain.player         :as player]
+    [domain.intervention   :as intervention]
+    [infra.inspect         :as inspect]
     [infra.render          :as render])
   (:import
     (org.lwjgl.glfw GLFW)
@@ -116,30 +119,84 @@
     (advance-sim! world-atom config-atom frame-atom)
     (swap! frame-atom inc)
     (swap! time-atom + wall-dt)
-    (let [bodies (bodies-fn @world-atom)
+    (let [w      @world-atom
+          bodies (bodies-fn w)
           ;; Use the live framebuffer size (not the logical window size) so the
           ;; scene fills a resized or HiDPI window instead of one corner.
           wbuf   (int-array 1)
           hbuf   (int-array 1)
           _      (GLFW/glfwGetFramebufferSize window wbuf hbuf)
           fb-w   (max 1 (aget wbuf 0))
-          fb-h   (max 1 (aget hbuf 0))]
-      (swap! camera-atom render/update-camera-for-world @world-atom (:camera-settings cfg (render/default-camera-settings)))
+          fb-h   (max 1 (aget hbuf 0))
+          _      (swap! camera-atom render/update-camera-for-world w (:camera-settings cfg (render/default-camera-settings)))
+          cam    @camera-atom
+          ;; Live cursor in framebuffer pixels (scale window→fb for HiDPI), shared
+          ;; by mouse-follow, hover, and click picking.
+          [cur-sx cur-sy] (when-let [cur (:cursor cfg)]
+                            (let [winw (int-array 1) winh (int-array 1)
+                                  _    (GLFW/glfwGetWindowSize window winw winh)]
+                              [(* (double (first cur)) (/ (double fb-w) (max 1 (aget winw 0))))
+                               (* (double (second cur)) (/ (double fb-h) (max 1 (aget winh 0))))]))
+          ;; PASSIVE, free: the spark's attention follows the mouse. Sets the
+          ;; observer focus to the cursor's world point (reticle lags one frame —
+          ;; imperceptible). Keeps the existing gentle pull-toward-focus as the
+          ;; free 'observation' nudge; strong warps will be a paid action.
+          _      (when cur-sx
+                   (let [wp (inspect/cursor->world cam cur-sx cur-sy fb-w fb-h render/phase0-view-scale)]
+                     (swap! world-atom player/update-observer
+                            (fn [o] (player/set-focus o wp (:focus-radius o) (:focus-intensity o))))))
+          ;; PAID: resolve a warp request (key G / Shift+G) at the cursor — spends
+          ;; agency, no-op if unaffordable. The warp then bends nearby bodies.
+          _      (when-let [ar (:action-request cfg)]
+                   (when cur-sx
+                     (let [wp (inspect/cursor->world cam cur-sx cur-sy fb-w fb-h render/phase0-view-scale)]
+                       (swap! world-atom intervention/place (:kind ar) wp)))
+                   (swap! config-atom dissoc :action-request))
+          ;; Resolve a pending click into a selected entity (picks against the same
+          ;; shapes drawn this frame). pr coords are window pixels → scale to fb.
+          _      (when-let [pr (:pick-request cfg)]
+                   (let [winw (int-array 1) winh (int-array 1)
+                         _    (GLFW/glfwGetWindowSize window winw winh)
+                         sx   (* (double (:x pr)) (/ (double fb-w) (max 1 (aget winw 0))))
+                         sy   (* (double (:y pr)) (/ (double fb-h) (max 1 (aget winh 0))))
+                         eid  (inspect/pick-entity bodies cam sx sy fb-w fb-h)]
+                     (swap! config-atom #(-> % (dissoc :pick-request) (assoc :selection eid)))))
+          ;; Selection survives only while its body still has a render shape;
+          ;; once it merges/dissolves the selection clears itself.
+          sel    (let [s (:selection @config-atom)]
+                   (when (and s (inspect/selected-shape bodies s)) s))
+          _      (when (and (:selection @config-atom) (nil? sel))
+                   (swap! config-atom dissoc :selection))
+          ;; Hover: faint halo on whatever the cursor is over (passive cue).
+          hover    (when cur-sx (inspect/pick-entity bodies cam cur-sx cur-sy fb-w fb-h))
+          overlay  (concat (when sel (inspect/selection-overlay-shapes w sel bodies cam))
+                           (inspect/hover-overlay-shapes bodies hover sel cam)
+                           (inspect/intervention-overlay-shapes w cam render/phase0-view-scale))
+          card     (when sel (inspect/inspector-card w sel bodies cam fb-w fb-h))
+          controls (render/controls-hud w fb-w fb-h)
+          bodies   (if (seq overlay) (into (vec bodies) overlay) bodies)
+          hud      (-> (vec (render/hud-rects-from-world w))
+                       (into (:rects controls))
+                       (into (:rects card)))
+          hud-text (concat (render/hud-text-from-world w)
+                           (render/observer-hud-text w fb-w fb-h)
+                           (:text controls)
+                           (:text card))]
       ;; Per-frame volumetric fog: bake the gas field into a 3D texture and ray-
       ;; march it (when enabled and there is gas). nil → render-scene falls back
       ;; to the sprite fog. The texture is owned by this frame, so delete it after.
       (let [volume (when (:volumetric? cfg)
-                     (render/frame-volume @world-atom (:volume-program cfg)
+                     (render/frame-volume w (:volume-program cfg)
                                           (:volume-res cfg 128)))]
         (render/render-scene {:body-program (:body-program cfg)
                               :particle-program (:particle-program cfg)
                               :line-program (:line-program cfg)
                               :hud-program (:hud-program cfg)
-                              :hud (render/hud-rects-from-world @world-atom)
-                              :hud-text (render/hud-text-from-world @world-atom)
+                              :hud hud
+                              :hud-text hud-text
                               :volume volume}
                              (:mesh cfg)
-                             @camera-atom
+                             cam
                              fb-w fb-h
                              bodies
                              @time-atom)

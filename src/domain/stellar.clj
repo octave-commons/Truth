@@ -10,10 +10,13 @@
    (:require
     [law.stellar           :as law]
     [law.field             :as lf]
+    [law.composition       :as lcomp]
+    [law.sed               :as lsed]
     [domain.em             :as em]
     [domain.hydro          :as hydro]
     [domain.ecs.core       :as ecs]
     [domain.ecs.parallel   :as par]
+    [domain.ecs.tick       :as tick]
     [domain.ecs.components  :as c]
     [shape.spatial         :as sp]))
 
@@ -166,6 +169,16 @@
    this rises — it is what carries a protostar toward ignition."
   [mass radius]
   (/ (* law/G mass law/m-H) (* law/k-B radius)))
+
+(defn effective-temperature
+  "Stellar effective temperature (K) from Stefan-Boltzmann: L = 4π R² σ T_eff⁴.
+   T_eff = (L / (4π R² σ))^(1/4). Returns 0 for non-positive inputs."
+  [luminosity radius]
+  (let [L (double (or luminosity 0.0))
+        R (double (or radius 0.0))]
+    (if (and (pos? L) (pos? R))
+      (Math/pow (/ L (* 4.0 Math/PI R R law/stefan-boltzmann)) 0.25)
+      0.0)))
 
 (defn self-gravity-pressure
   "Central pressure of a self-gravitating uniform sphere: P ≈ G M² / ((4/3π) R⁴).
@@ -524,6 +537,186 @@
       (/ (* absorbed dt) (* body-mass specific-heat))
       0.0)))
 
+(defn sed-heating-delta
+  "Temperature rise (K) over dt for a body heated by a star's SED bands.
+   Uses vis+NIR for surface heating (climate) and XUV for upper-atmosphere
+   heating. More physically accurate than bolometric heating for planets
+   with atmospheres. Falls back to bolometric if bands are nil."
+  [{:keys [mass radius density]} bands r dt]
+  (let [body-mass (or mass (* density (/ 4.0 3.0) Math/PI (Math/pow radius 3)))
+        specific-heat (* 2.5 law/k-B (/ 1.0 law/m-H))]
+    (if-not (pos? body-mass)
+      0.0
+      (if (seq bands)
+        ;; Band-specific: vis+NIR for surface, XUV for atmosphere
+        (let [L-climate (lsed/climate-luminosity bands)
+              L-xuv     (lsed/xuv-luminosity bands)
+              ;; Climate heating: 70% absorbed by surface
+              S-climate  (irradiance-at L-climate r)
+              absorbed   (* 0.7 S-climate Math/PI radius radius)
+              ;; XUV heating: 90% absorbed by upper atmosphere (if any)
+              S-xuv      (irradiance-at L-xuv r)
+              xuv-absorbed (* 0.9 S-xuv Math/PI radius radius)]
+          (/ (* (+ absorbed xuv-absorbed) dt) (* body-mass specific-heat)))
+        ;; Fallback: bolometric
+        (radiation-heating-delta {:mass mass :radius radius :density density}
+                                 (reduce + 0.0 (map (fn [[_ v]] (double v)) bands))
+                                 r dt)))))
+
+;; --- Panchromatic SED (Phase 1) ---------------------------------------------
+;; Stars emit radiation across the full EM spectrum. The SED shape is set by
+;; T_eff and log g. A scalar bolometric luminosity obscures band-dependent
+;; effects: XUV drives atmospheric escape, FUV/NUV affect photochemistry,
+;; IR regulates climate. This system computes per-band luminosities from
+;; pre-tabulated spectral templates (law.sed/spectral-templates).
+;; Source: docs/research/phase1-radiation-plasma-truth.md §2
+
+(defn stellar-sed-system
+  "Double-buffer write-set system: SOLE writer of c/sed-bands for :star entities.
+   Computes T_eff from L and R (Stefan-Boltzmann), selects the nearest spectral
+   template from law.sed, and scales band fractions by L_bol.
+
+   Precondition: entity is :star with positive luminosity and radius.
+   Postcondition: c/sed-bands is a map of band-keyword → Watts, summing to L_bol.
+   When c/flare-boost is active (tick < decay-tick), XUV bands are multiplied
+   by the boost factor. This models transient XUV enhancement from stellar flares."
+  []
+  {:id     :stellar-sed
+   :writes #{c/sed-bands}
+   :run    (fn [world]
+             (let [tick  (or (:tick world) 0)
+                   eids  (ecs/entities-with world c/matter-state c/luminosity c/radius)
+                   stars (filterv #(= :star (ecs/get-component world % c/matter-state)) eids)
+                   bands (into {}
+                               (keep (fn [eid]
+                                       (let [L    (double (or (ecs/get-component world eid c/luminosity) 0.0))
+                                             R    (double (or (ecs/get-component world eid c/radius) 0.0))
+                                             teff (effective-temperature L R)
+                                             logg (if (pos? R)
+                                                    (Math/log10 (/ (* law/G (double (ecs/get-component world eid c/mass)) 1000.0)
+                                                                   (* R R)))
+                                                    4.5)]
+                                         (when (pos? L)
+                                           (let [base-bands (lsed/select-sed-bands teff logg L)
+                                                 ;; Apply flare XUV boost if active
+                                                 boost (ecs/get-component world eid c/flare-boost)]
+                                             (if (and boost (< tick (long (:decay-tick boost 0))))
+                                               (let [f (double (:factor boost 1.0))]
+                                                 (-> base-bands
+                                                     (update :xray #(* (double %) f))
+                                                     (update :euv  #(* (double %) f))))
+                                               base-bands))))))
+                               stars)]
+               {c/sed-bands bands}))})
+
+;; --- Stellar atmosphere shells (Phase 1) ------------------------------------
+;; Real stars have stratified atmospheres: photosphere, chromosphere, transition
+;; region, corona. Each layer has distinct temperature, density, ionization, and
+;; magnetic field. The corona is the source of XUV radiation and stellar winds.
+;; This system derives a 4-layer profile from T_eff, log g, and B-field.
+;; Source: docs/research/phase1-radiation-plasma-truth.md §3
+
+(defn- atmosphere-from-teff
+  "Build a 4-layer atmosphere profile from stellar parameters.
+   Returns a vector of shell maps ordered photosphere → corona."
+  [teff logg b-field]
+  (let [;; Photosphere: T ≈ T_eff, dense, partially ionized
+        photosphere {:layer/id            :photosphere
+                     :temperature         teff
+                     :electron-density    (* 1.0e17 (Math/pow (/ teff 5800.0) 2.5))
+                     :ionization-fraction (min 1.0 (max 0.01 (/ teff 1.0e4)))
+                     :b-field             (or b-field [0.0 0.0 0.0])
+                     :height              0.0}
+        ;; Chromosphere: T ~ 10^4 K, rising temperature, strong emission lines
+        chromosphere {:layer/id            :chromosphere
+                      :temperature         (max teff 1.0e4)
+                      :electron-density    (* 1.0e16 (Math/pow (/ teff 5800.0) 1.5))
+                      :ionization-fraction (min 1.0 (max 0.1 (/ teff 6.0e3)))
+                      :b-field             (or b-field [0.0 0.0 0.0])
+                      :height             (* 5.0e5 (max 1.0 (/ 4.5 logg)))}
+        ;; Transition region: steep T gradient, high ionization
+        transition {:layer/id            :transition
+                    :temperature         (max (* 2.0 teff) 1.0e5)
+                    :electron-density    (* 1.0e14 (Math/pow (/ teff 5800.0) 0.5))
+                    :ionization-fraction 0.9
+                    :b-field             (or b-field [0.0 0.0 0.0])
+                    :height             (* 2.0e6 (max 1.0 (/ 4.5 logg)))}
+        ;; Corona: hot (1-3 × 10^6 K), low density, fully ionized, XUV source
+        ;; Corona temperature scales with stellar activity (hotter stars → hotter corona)
+        corona-t  (min 3.0e7 (max 1.0e6 (* 200.0 teff)))
+        corona    {:layer/id            :corona
+                   :temperature         corona-t
+                   :electron-density    (* 1.0e12 (Math/pow (/ teff 5800.0) 0.3))
+                   :ionization-fraction 1.0
+                   :b-field             (or b-field [0.0 0.0 0.0])
+                   :height             (* 1.0e8 (max 1.0 (/ 4.5 logg)))}]
+    [photosphere chromosphere transition corona]))
+
+(defn atmosphere-shells-system
+  "Double-buffer write-set system: SOLE writer of c/atmosphere-shells for :star
+   entities. Derives a four-layer atmosphere profile (photosphere, chromosphere,
+   transition, corona) from T_eff, log g, and magnetic field.
+
+   Precondition: entity is :star with positive luminosity and radius.
+   Postcondition: c/atmosphere-shells is a vector of 4 shell maps, each with
+   :layer/id, :temperature, :electron-density, :ionization-fraction, :b-field, :height."
+  []
+  {:id     :atmosphere-shells
+   :writes #{c/atmosphere-shells}
+   :run    (fn [world]
+             (let [eids (ecs/entities-with world c/matter-state c/luminosity c/radius c/mass)
+                   stars (filterv #(= :star (ecs/get-component world % c/matter-state)) eids)
+                   shells (into {}
+                                (keep (fn [eid]
+                                        (let [L     (double (or (ecs/get-component world eid c/luminosity) 0.0))
+                                              R     (double (or (ecs/get-component world eid c/radius) 0.0))
+                                              M     (double (or (ecs/get-component world eid c/mass) 0.0))
+                                              B     (ecs/get-component world eid c/b-field)
+                                              teff  (effective-temperature L R)
+                                              logg  (if (pos? R)
+                                                      (Math/log10 (/ (* law/G M 1000.0) (* R R)))
+                                                      4.5)]
+                                          (when (pos? teff)
+                                            [eid (atmosphere-from-teff teff logg B)]))))
+                                stars)]
+               {c/atmosphere-shells shells}))})
+
+;; --- Deuterium depletion (Phase 0) ------------------------------------------
+;; D is the most fragile isotope — destroyed at T > 10⁶ K, well below fusion
+;; temperatures. Every star that forms destroys its D. This is a ONE-WAY gate:
+;; D never re-appears once destroyed. Sub-stellar bodies retain primordial D.
+;; Source: docs/research/cosmology/primordial-nucleosynthesis-yields.md §8
+
+(def ^:const deuterium-destruction-temp
+  "Temperature (K) above which deuterium is destroyed. 10⁶ K — well below
+   fusion ignition (10⁷ K) but above any planetary/stellar photosphere."
+  1.0e6)
+
+(defn deuterium-depletion-system
+  "Write-set emitter: sole writer of :component/comp.depletion — the set of
+   composition keys to zero for any body whose temperature exceeds
+   deuterium-destruction-temp (just :D). One-way gate; the integrator owns
+   :component/composition and applies the burn (comp.burn) then this depletion
+   (spec §7.5). A pure snapshot-reading fan-out emitter (no longer a serial
+   barrier). Auto-clears the influence when a body cools back below the gate
+   (harmless: D is already gone)."
+  []
+  {:id     :deuterium-depletion
+   :writes #{c/comp-depletion}
+   :run    (fn [world]
+             (let [eids (ecs/entities-with world c/matter-state c/temperature c/composition)
+                   cell (into {}
+                              (keep (fn [eid]
+                                      (let [T    (double (or (ecs/get-component world eid c/temperature) 0.0))
+                                            comp (ecs/get-component world eid c/composition)]
+                                        (when (and (> T deuterium-destruction-temp)
+                                                   (pos? (double (:D comp 0.0))))
+                                          [eid #{:D}]))))
+                              eids)]
+               (tick/contribution-write-set
+                 c/comp-depletion cell
+                 (keys (get-in world [:components c/comp-depletion])))))})
+
 ;; --- The classifier: authentic matter-state state machine -------------------
 ;; See docs/notes/2026.06.26-authentic-phase0-formation-physics.md §3. The two
 ;; physical axes are kept separate: Jeans instability gates whether diffuse gas
@@ -787,89 +980,147 @@
 
 (defn- absorb-parcels
   "Merge mass + momentum from `parcels` into `sink-eid`, despawn the parcels.
-   Mass-weighted centroid for position preserves COM."
+   Mass-weighted centroid for position preserves COM. Tracks angular momentum
+   of accreted material relative to the sink for disk formation."
   [world sink-eid parcels]
   (let [sink-mass (double (or (ecs/get-component world sink-eid c/mass) 0.0))
         sink-v    (or (ecs/get-component world sink-eid c/velocity) [0 0 0])
         sink-p    (or (ecs/get-component world sink-eid c/position) [0 0 0])
-        ;; Sum absorbed mass + momentum + mass-weighted position
+        ;; Sum absorbed mass + momentum + mass-weighted position + disk L
         absorbed  (reduce
                     (fn [acc eid]
                       (let [m (double (or (ecs/get-component world eid c/mass) 0.0))
                             v (or (ecs/get-component world eid c/velocity) [0 0 0])
-                            p (or (ecs/get-component world eid c/position) [0 0 0])]
+                            p (or (ecs/get-component world eid c/position) [0 0 0])
+                            ;; Angular momentum of infalling parcel relative to sink
+                            r-rel (sp/v- p sink-p)
+                            v-rel (sp/v- v sink-v)
+                            L-parcel (orbital-angular-momentum m r-rel v-rel)]
                         {:total-mass (+ (:total-mass acc) m)
                          :px (+ (:px acc) (* m (double (nth v 0))))
                          :py (+ (:py acc) (* m (double (nth v 1))))
                          :pz (+ (:pz acc) (* m (double (nth v 2))))
                          :cx (+ (:cx acc) (* m (double (nth p 0))))
                          :cy (+ (:cy acc) (* m (double (nth p 1))))
-                         :cz (+ (:cz acc) (* m (double (nth p 2))))}))
-                    {:total-mass 0.0 :px 0.0 :py 0.0 :pz 0.0 :cx 0.0 :cy 0.0 :cz 0.0}
+                         :cz (+ (:cz acc) (* m (double (nth p 2))))
+                         :L-disk (sp/v+ (:L-disk acc) L-parcel)}))
+                    {:total-mass 0.0 :px 0.0 :py 0.0 :pz 0.0 :cx 0.0 :cy 0.0 :cz 0.0
+                     :L-disk [0.0 0.0 0.0]}
                     parcels)
-        new-mass (+ sink-mass (:total-mass absorbed))
-        ;; Momentum conservation: mass-weighted velocity
-        old-px (* sink-mass (double (nth sink-v 0)))
-        old-py (* sink-mass (double (nth sink-v 1)))
-        old-pz (* sink-mass (double (nth sink-v 2)))
-        new-v   [(/ (+ old-px (:px absorbed)) new-mass)
-                 (/ (+ old-py (:py absorbed)) new-mass)
-                 (/ (+ old-pz (:pz absorbed)) new-mass)]
-        ;; COM preservation: mass-weighted position
-        old-cx (* sink-mass (double (nth sink-p 0)))
-        old-cy (* sink-mass (double (nth sink-p 1)))
-        old-cz (* sink-mass (double (nth sink-p 2)))
-        new-pos [(/ (+ old-cx (:cx absorbed)) new-mass)
-                 (/ (+ old-cy (:cy absorbed)) new-mass)
-                 (/ (+ old-cz (:cz absorbed)) new-mass)]
-        ;; Update sink
-        w (-> world
-              (ecs/put-component sink-eid c/mass new-mass)
-              (ecs/put-component sink-eid c/velocity new-v)
-              (ecs/put-component sink-eid c/position new-pos))]
+         ;; Accreted mass goes to the DISK, not directly to the star.
+         ;; disk-evolution-system transfers disk→star via viscous accretion
+         ;; and spawns planets/binaries from the disk. Routing to both
+         ;; c/mass and c/disk-mass double-counted and violated conservation.
+         old-px (* sink-mass (double (nth sink-v 0)))
+         old-py (* sink-mass (double (nth sink-v 1)))
+         old-pz (* sink-mass (double (nth sink-v 2)))
+         ;; Momentum: the accreted parcels' momentum is added to the sink
+         ;; (star absorbs the impact), but mass stays in the disk until
+         ;; viscous accretion transfers it.
+         absorbed-mass (:total-mass absorbed)
+         new-v   (if (pos? (+ sink-mass absorbed-mass))
+                   [(/ (+ old-px (:px absorbed)) (+ sink-mass absorbed-mass))
+                    (/ (+ old-py (:py absorbed)) (+ sink-mass absorbed-mass))
+                    (/ (+ old-pz (:pz absorbed)) (+ sink-mass absorbed-mass))]
+                   sink-v)
+         ;; COM preservation: mass-weighted position (use sink mass + absorbed
+         ;; for the centroid, even though absorbed mass is in the disk)
+         old-cx (* sink-mass (double (nth sink-p 0)))
+         old-cy (* sink-mass (double (nth sink-p 1)))
+         old-cz (* sink-mass (double (nth sink-p 2)))
+         total-for-com (+ sink-mass absorbed-mass)
+         new-pos (if (pos? total-for-com)
+                   [(/ (+ old-cx (:cx absorbed)) total-for-com)
+                    (/ (+ old-cy (:cy absorbed)) total-for-com)
+                    (/ (+ old-cz (:cz absorbed)) total-for-com)]
+                   sink-p)
+         ;; Mass routing depends on the ABSORBER. A forming core (protostar/star)
+         ;; routes accreted material into its DISK — disk-evolution-system then
+         ;; transfers it to the star viscously and fragments it into planets.
+         ;; A solid planetesimal (:debris) has no disk: accreted bodies coalesce
+         ;; directly into its BULK mass (hierarchical planetesimal growth), so it
+         ;; can grow past the deuterium limit and promote to :protostar. Routing
+         ;; debris accretion into disk-mass instead would hand it to
+         ;; disk-evolution-system, which would spawn fresh embryos — re-inflating
+         ;; the very swarm this accretion is meant to drain.
+         sink-state (ecs/get-component world sink-eid c/matter-state)
+         disk-former? (contains? #{:protostar :star} sink-state)
+         w (if disk-former?
+             (let [old-L-disk (or (ecs/get-component world sink-eid c/disk-angular-mom) [0.0 0.0 0.0])
+                   new-L-disk (sp/v+ old-L-disk (:L-disk absorbed))
+                   old-disk-m (double (or (ecs/get-component world sink-eid c/disk-mass) 0.0))
+                   new-disk-m (+ old-disk-m absorbed-mass)]
+               ;; position and velocity reflect the merged momentum,
+               ;; but bulk mass stays at sink-mass (disk mass tracked separately).
+               (-> world
+                   (ecs/put-component sink-eid c/velocity new-v)
+                   (ecs/put-component sink-eid c/position new-pos)
+                   (ecs/put-component sink-eid c/disk-angular-mom new-L-disk)
+                   (ecs/put-component sink-eid c/disk-mass new-disk-m)))
+             ;; solid coalescence: accreted mass joins the bulk body
+             (-> world
+                 (ecs/put-component sink-eid c/velocity new-v)
+                 (ecs/put-component sink-eid c/position new-pos)
+                 (ecs/put-component sink-eid c/mass (+ sink-mass absorbed-mass))))]
     ;; Despawn absorbed parcels
     (reduce (fn [w eid] (ecs/despawn w eid)) w parcels)))
 
+(declare imf-accretion-bias stellar-feedback-temperature hash01 feedback-radius
+         sphere-radius planet-material-density)
+
 (defn sink-formation-system
-  "Serial barrier system: every sink (any resolved body carrying an accretion
-   radius) absorbs the :nebula gas parcels that fall within its gravitational
-   capture zone. This is the sink-particle accretion channel (Bate et al. 1995,
-   Federrath et al. 2010): a collapsed body grows by eating the diffuse cloud
-   that falls into it, NOT by merging with other resolved bodies (those merge
-   only on literal collision — see `domain.physics.collision`).
+  "Serial barrier system: every sink absorbs :nebula gas parcels within its
+   gravitational capture zone. Three Phase 1 additions:
 
-   ALL sinks accrete, stars included: a protostar/star grows by accreting its
-   gaseous envelope, which is the dominant mass channel — the cloud is mostly
-   gas. (Earlier this was restricted to newly-formed debris/protostars to reserve
-   disk gas for planets, but planets are sub-grid at this resolution, and barring
-   accretion just left bodies to grow by the unphysical feeding-zone merges that
-   made them 'poof' together.)
+   1. IMF bias: accretion probability is mass-dependent — high-mass sinks
+      accrete less efficiently, steering toward the Kroupa/Salpeter IMF.
+   2. Stellar feedback: UV radiation from nearby stars heats gas parcels,
+      suppressing Jeans collapse in their vicinity (feedback radius ~0.5 AU).
+   3. Disk formation: angular momentum of accreted material is tracked in
+      c/disk-angular-mom and c/disk-mass.
 
-   Runs AFTER the parallel fan-out and collision detection, at the serial barrier.
-   Mass + momentum are conserved (mass-weighted centroid for position)."
+   Runs AFTER collision detection and fusion promotion, at the serial barrier."
   [world]
-  (let [;; Every sink: any resolved body carrying an accretion radius. :nebula
-        ;; parcels have none, so they are excluded as accretors (they are the
-        ;; gas BEING accreted), while stars are now included as accretors.
-        sinks       (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
-        ;; All nebula parcels that could be absorbed
-        gas-parcels (ecs/entities-with world c/matter-state c/position c/mass c/velocity)]
+  (let [sinks       (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
+        gas-parcels (ecs/entities-with world c/matter-state c/position c/mass c/velocity)
+        ;; Precompute star positions + luminosities for feedback
+        star-data (mapv (fn [eid]
+                          {:pos (ecs/get-component world eid c/position)
+                           :lum (double (or (ecs/get-component world eid c/luminosity) 0.0))})
+                        (filterv #(= :star (ecs/get-component world % c/matter-state))
+                                 (ecs/entities-with world c/matter-state c/position c/luminosity)))]
     (if (empty? sinks)
       world
-      ;; For each new sink, absorb nearby gas parcels within its accretion radius
       (reduce
         (fn [w sink-eid]
           (if-not (ecs/alive? w sink-eid)
             w
             (let [sink-pos (ecs/get-component w sink-eid c/position)
                   sink-acc (double (or (ecs/get-component w sink-eid c/accretion-radius) 0.0))
+                  sink-m   (double (or (ecs/get-component w sink-eid c/mass) 0.0))
+                  bias     (imf-accretion-bias sink-m)
                   nearby   (filterv
                              (fn [eid]
                                (and (not= eid sink-eid)
                                     (ecs/alive? w eid)
-                                    (= :nebula (ecs/get-component w eid c/matter-state))
-                                    (< (sp/dist sink-pos (ecs/get-component w eid c/position))
-                                       sink-acc)))
+                                    (let [pstate (ecs/get-component w eid c/matter-state)]
+                                      (and
+                                        (or (= :nebula pstate) (= :debris pstate))
+                                        (let [pos  (ecs/get-component w eid c/position)
+                                              dist (sp/dist sink-pos pos)]
+                                          (and (< dist sink-acc)
+                                               ;; IMF bias: probabilistic accretion for high-mass sinks
+                                               (< (hash01 (hash [eid sink-eid (:tick world)])) bias)
+                                               (if (= :nebula pstate)
+                                                 ;; Stellar feedback: reject gas heated above Jeans temp
+                                                 (< (stellar-feedback-temperature pos star-data feedback-radius)
+                                                    1.0e4) ;; ~10⁴ K suppresses Jeans
+                                                 ;; Solid debris: hierarchical capture — a sink only
+                                                 ;; swallows a planetesimal LESS massive than itself,
+                                                 ;; so the larger body grows (and the swarm shrinks)
+                                                 ;; rather than two equals double-absorbing.
+                                                 (< (double (or (ecs/get-component w eid c/mass) 0.0))
+                                                    sink-m))))))))
                              gas-parcels)]
               (if (seq nearby)
                 (absorb-parcels w sink-eid nearby)
@@ -877,9 +1128,272 @@
         world
         sinks))))
 
+;; --- Stellar formation: IMF, disks, feedback (Phase 1) ----------------------
+;; Three improvements to the formation pipeline:
+;; 1. IMF bias: mass-dependent accretion efficiency steers toward Kroupa distribution
+;; 2. Disk formation: angular momentum of accreted material → protoplanetary disk
+;; 3. Stellar feedback: UV heating suppresses Jeans collapse near hot stars
+
+(defn- hash01
+  "Deterministic [0,1) value from an integer key — for stable, non-random
+   per-entity decisions. Used by IMF bias for accretion probability."
+  [n]
+  (/ (double (mod (* (+ 1 (long n)) 2654435761) 1000003)) 1000003.0))
+
+(def ^:const solar-mass-kg 1.989e30) ;; kg
+
+(defn imf-accretion-bias
+  "Mass-dependent accretion efficiency bias from the Kroupa IMF.
+   Returns a factor in (0, 1] that multiplies the accretion probability.
+   Low-mass sinks accrete efficiently (factor ~1); high-mass sinks are
+   suppressed (factor < 1) to steer toward the observed IMF slope.
+
+   Kroupa slopes: α₀ = -0.3 (m < 0.08 M☉), α₁ = -1.3 (0.08-0.5 M☉),
+   α₂ = -2.3 (m > 0.5 M☉, Salpeter). We use the INVERSE of the slope
+   as the bias: high-mass sinks have positive exponent → factor < 1."
+  [mass]
+  (let [m (double (or mass 0.0))
+        m-msun (/ m solar-mass-kg)]
+    (cond
+      (< m-msun 0.08) 1.0                    ;; brown dwarf regime: no suppression
+      (< m-msun 0.5)  (Math/pow (/ 0.5 m-msun) 0.15) ;; gentle suppression
+      (< m-msun 2.0)  (Math/pow (/ 1.0 m-msun) 0.25) ;; moderate suppression
+      :else            (Math/pow (/ 2.0 m-msun) 0.4))) ;; strong suppression for O-stars
+  )
+
+(defn stellar-feedback-temperature
+  "Temperature added to a gas parcel by UV radiation from nearby stars.
+   Uses the bolometric luminosity of all stars within a feedback radius.
+   Returns the additional temperature (K) from UV heating."
+  [gas-pos star-data feedback-radius]
+  (reduce (fn [acc {:keys [pos lum]}]
+            (let [d (sp/dist gas-pos pos)]
+              (if (< d feedback-radius)
+                ;; UV heating: F = L/(4πd²), ΔT = F·dt/(m·c_p) simplified
+                ;; Use a calibrated scaling: ΔT ∝ L/d²
+                (let [F (/ (double lum) (* 4.0 Math/PI d d))]
+                  (+ acc (* 0.01 F))) ;; calibrated to suppress Jeans collapse
+                acc)))
+          0.0 star-data))
+
+(def ^:const feedback-radius
+  "Distance (m) within which stellar UV feedback suppresses Jeans collapse.
+   ~0.5 AU — the photoevaporation radius of a typical HII region."
+  7.5e10)
+
+;; --- Disk formation: angular momentum tracking --------------------------------
+;; When gas accretes onto a sink, the infalling material carries angular momentum
+;; relative to the sink's center. If the specific angular momentum is high enough,
+;; the material forms a disk rather than falling directly onto the star.
+
+(def ^:const disk-formation-threshold
+  "Minimum specific angular momentum (m²/s) for disk formation.
+   Below this, material accretes directly. Above, a disk forms.
+   Typical value: ~10¹⁵ m²/s for a solar-mass star at 0.1 AU."
+  1.0e15)
+
 ;; --- Stellar winds: mass loss as gas (phase A of the winds spec) -------------
 
 (def ^:const speed-of-light 2.99792458e8) ;; m/s
+
+(defn disk-radius
+  "Outer radius (m) of a centrifugally-supported disk from specific angular
+   momentum: r_disk = j² / (G M). The disk forms where rotation balances gravity."
+  [specific-angular-momentum mass]
+  (let [j (double (or specific-angular-momentum 0.0))
+        M (double (or mass 0.0))]
+    (if (and (pos? j) (pos? M))
+      (/ (* j j) (* law/G M))
+      0.0)))
+
+(def ^:const disk-viscous-alpha
+  "Shakura-Sunyaev viscosity parameter. α ~ 0.01 for typical protoplanetary disks."
+  0.01)
+
+(def ^:const disk-sound-speed
+  "Characteristic sound speed in a protoplanetary disk (m/s). ~300 m/s at 1 AU."
+  300.0)
+
+(def ^:const disk-fragment-threshold
+  "Disk-to-star mass ratio above which the disk becomes gravitationally unstable
+   and fragments into planetary embryos. From Toomre instability: Q = c_s Ω / (π G Σ) < 1.
+   Empirically, M_disk/M_star > 0.1 triggers fragmentation."
+  0.1)
+
+(def ^:const binary-fragment-threshold
+  "Disk-to-star mass ratio above which the disk fragments into a stellar companion.
+   Much more massive disk needed for binary formation. ~0.5 M_star."
+  0.5)
+
+(defn disk-viscous-timescale
+  "Viscous timescale (s) for a protoplanetary disk: t_visc = R² / (α c_s H)
+   where H = c_s/Ω is the disk scale height. For a Keplerian disk at radius R:
+   t_visc ~ R² / (α c_s² / Ω_K) ~ R^(3/2) / (α c_s²) × √(G M)."
+  [disk-radius mass]
+  (let [R (double (or disk-radius 0.0))
+        M (double (or mass 0.0))]
+    (if (and (pos? R) (pos? M))
+      ;; t_visc = R^(3/2) / (α × c_s^2) × √(G M / R)  ≈  R² / (α × c_s × H)
+      ;; Simplified: t_visc ~ 1e6 yr × (R/AU)^1.5 × (M_sun/M)^0.5
+      (let [R-au (/ R 1.5e11)
+            M-msun (/ M solar-mass-kg)]
+        (* 1.0e6 3.15e7 ;; 1 Myr in seconds
+           (Math/pow (max 0.01 R-au) 1.5)
+           (Math/pow (max 0.01 M-msun) -0.5)
+           (/ 0.01 disk-viscous-alpha)))
+      1.0e13))) ;; fallback: ~300 kyr
+
+(def ^:const min-fragment-orbit-periods
+  "A fragment (planet embryo / binary companion) must be placed on an orbit whose
+   period spans at least this many integration steps. Below it the leapfrog step
+   (`x' = x + v·dt`) overshoots the whole orbit in one tick, so the integrator
+   flings the fragment off on a near-straight line at its Keplerian speed instead
+   of letting it orbit — the 'debris flung everywhere' ejection. 50 steps/orbit
+   keeps the orbit resolved and the fragment bound." 50.0)
+
+(defn resolvable-orbit-radius
+  "Smallest orbital radius around mass `M` whose period is ≥ `min-periods`·`dt`.
+   T = 2π√(r³/GM) ≥ min-periods·dt  ⇒  r ≥ ∛(GM·(min-periods·dt / 2π)²). A fragment
+   placed at this radius (on a circular orbit) is bound AND resolvable at the
+   current timestep, so it stays in the system rather than being ejected."
+  [M dt min-periods]
+  (let [M  (double (or M 0.0))
+        dt (double (or dt 0.0))
+        k  (double (or min-periods 1.0))]
+    (if (and (pos? M) (pos? dt))
+      (Math/cbrt (* law/G M (Math/pow (/ (* k dt) (* 2.0 Math/PI)) 2)))
+      0.0)))
+
+(defn disk-evolution-system
+  "Barrier system: evolves protoplanetary disks on the viscous timescale and
+   triggers planet/binary formation via gravitational instability.
+
+   1. Viscous accretion: transfers disk mass to the star at Ṁ = M_disk / t_visc.
+      Angular momentum is conserved — the star spins up, disk shrinks.
+   2. Planet formation: when M_disk/M_star > 0.1 (Toomre instability), the disk
+      fragments into planetary embryos. A new :debris entity is spawned.
+   3. Binary formation: when M_disk/M_star > 0.5, the disk fragments into a
+      stellar companion (:protostar).
+
+   Runs at the barrier after sink-formation."
+  [world]
+  (let [dt (double (or (:sim/dt world) 1.0e12))]
+    (reduce
+      (fn [w eid]
+        (if-not (ecs/alive? w eid)
+          w
+          (let [M       (double (or (ecs/get-component w eid c/mass) 0.0))
+                disk-m  (double (or (ecs/get-component w eid c/disk-mass) 0.0))
+                disk-L  (or (ecs/get-component w eid c/disk-angular-mom) [0.0 0.0 0.0])
+                disk-j  (sp/len disk-L)]
+            (if-not (and (pos? M) (pos? disk-m))
+              w
+              (let [ratio    (/ disk-m M)
+                    ;; Disk outer radius from angular momentum
+                    r-disk   (disk-radius (/ disk-j (max 1.0 disk-m)) M)
+                    t-visc   (disk-viscous-timescale r-disk M)
+                    ;; Viscous accretion rate: Ṁ = M_disk / t_visc × dt
+                    mdot-visc (* disk-m (/ dt t-visc))
+                    dm        (min mdot-visc (* 0.05 disk-m)) ;; cap at 5% per tick
+                    disk-m'   (- disk-m dm)
+                    M'        (+ M dm)
+                    ;; Angular momentum transfer: star spins up, disk shrinks
+                    ;; L_disk scales with disk mass (assuming same specific L)
+                    L-transfer (if (pos? disk-m)
+                                 (sp/v* disk-L (/ dm disk-m))
+                                 [0.0 0.0 0.0])
+                    L-star    (or (ecs/get-component w eid c/angular-momentum) [0.0 0.0 0.0])
+                    L-star'   (sp/v+ L-star L-transfer)
+                    disk-L'   (sp/v- disk-L L-transfer)
+                    ;; Update star
+                    w' (-> w
+                           (ecs/put-component eid c/mass M')
+                           (ecs/put-component eid c/disk-mass disk-m')
+                           (ecs/put-component eid c/disk-angular-mom disk-L')
+                           (ecs/put-component eid c/angular-momentum L-star')
+                           (ecs/put-component eid c/spin
+                                              (spin-from-angular-momentum-oblate L-star' M'
+                                                (double (or (ecs/get-component w eid c/radius) 1.0e9)))))]
+                ;; Check for gravitational instability
+                (cond
+                  ;; Binary formation: massive disk fragments into companion
+                  (> ratio binary-fragment-threshold)
+                  (let [companion-m (* 0.3 disk-m') ;; companion gets 30% of disk
+                        r-disk-now  (disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
+                        ;; Place companion at half the disk radius, but never inside
+                        ;; the dt-resolvable radius (else the integrator flings it).
+                        r-orbit     (max (* 0.5 (max 1.0e10 r-disk-now))
+                                         (resolvable-orbit-radius M' dt min-fragment-orbit-periods))
+                        ;; Circular orbit speed
+                        v-orbit     (Math/sqrt (/ (* law/G M') r-orbit))
+                        ;; Random orbital phase
+                        angle       (* 2.0 Math/PI (hash01 (hash [eid (:tick world) :binary])))
+                        pos         (ecs/get-component w' eid c/position)
+                        offset      [(* r-orbit (Math/cos angle))
+                                     (* r-orbit (Math/sin angle))
+                                     0.0]
+                        comp-pos    (sp/v+ pos offset)
+                        comp-vel    (sp/v+ (ecs/get-component w' eid c/velocity)
+                                           [(* (- v-orbit) (Math/sin angle))
+                                            (* v-orbit (Math/cos angle))
+                                            0.0])
+                        ;; Spawn companion as protostar
+                        [w'' _]     (spawn-clump w'
+                                      {:position comp-pos :velocity comp-vel
+                                       :mass companion-m
+                                       :radius (sphere-radius companion-m 1.0e3)
+                                       :matter-state :protostar
+                                       :composition (or (ecs/get-component w' eid c/composition)
+                                                        default-composition)
+                                       :temperature 1000.0})
+                        ;; Update disk after fragmentation
+                        w''' (-> w''
+                                 (ecs/put-component eid c/disk-mass (- disk-m' companion-m))
+                                 (ecs/put-component eid c/disk-angular-mom
+                                                    (sp/v* disk-L' (/ (- disk-m' companion-m)
+                                                                      (max 1.0 disk-m')))))]
+                    w''')
+
+                  ;; Planet formation: disk fragments into planetary embryo
+                  (> ratio disk-fragment-threshold)
+                  (let [embryo-m (* 0.1 disk-m') ;; embryo gets 10% of disk
+                        r-disk-now (disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
+                        ;; never inside the dt-resolvable radius (else it is flung)
+                        r-orbit   (max (* 0.3 (max 1.0e10 r-disk-now))
+                                       (resolvable-orbit-radius M' dt min-fragment-orbit-periods))
+                        v-orbit   (Math/sqrt (/ (* law/G M') r-orbit))
+                        angle     (* 2.0 Math/PI (hash01 (hash [eid (:tick world) :planet])))
+                        pos       (ecs/get-component w' eid c/position)
+                        offset    [(* r-orbit (Math/cos angle))
+                                   (* r-orbit (Math/sin angle))
+                                   0.0]
+                        epos      (sp/v+ pos offset)
+                        evel      (sp/v+ (ecs/get-component w' eid c/velocity)
+                                         [(* (- v-orbit) (Math/sin angle))
+                                          (* v-orbit (Math/cos angle))
+                                          0.0])
+                        [w'' _]   (spawn-clump w'
+                                    {:position epos :velocity evel
+                                     :mass embryo-m
+                                     :radius (sphere-radius embryo-m planet-material-density)
+                                     :matter-state :debris
+                                     :composition (or (ecs/get-component w' eid c/composition)
+                                                      default-composition)
+                                     :temperature 300.0})
+                        w''' (-> w''
+                                 (ecs/put-component eid c/disk-mass (- disk-m' embryo-m))
+                                 (ecs/put-component eid c/disk-angular-mom
+                                                    (sp/v* disk-L' (/ (- disk-m' embryo-m)
+                                                                      (max 1.0 disk-m')))))]
+                    w''')
+
+                  ;; Just viscous evolution, no fragmentation
+                  :else w'))))))
+      world
+      (filterv (fn [eid]
+                 (let [dm (double (or (ecs/get-component world eid c/disk-mass) 0.0))]
+                   (pos? dm)))
+               (ecs/entities-with world c/matter-state c/mass c/disk-mass)))))
 
 (defn wind-direction
   "A deterministic-but-varying outward unit vector for a wind ejection, seeded by
@@ -893,107 +1407,106 @@
     [(* r (Math/cos theta)) (* r (Math/sin theta)) z]))
 
 (defn stellar-wind-system
-  "Serial barrier system: stars shed mass as gas (radiation/thermal wind).
+  "Write-set emitter: stars shed mass as ionized plasma (Parker wind).
 
-   Each star loses mass at Ṁ = k·L/(v_esc·c) (single-scattering radiation limit,
-   `k` = `:phase0/wind-rate-scale`), accumulating it in `c/wind-reservoir`. When
-   the reservoir reaches one wind-parcel mass, a :nebula parcel is launched
-   radially outward from the surface and the star recoils (momentum conserved).
-   Shed gas is reabsorbed by `sink-formation-system`, so the deepest nearby well
-   nets the most — competitive accretion as visible gas flow.
+   Phase 0 behavior (no atmosphere shells): Ṁ = k·L/(v_esc·c) — single-scattering
+   radiation limit, neutral gas parcels.
 
-   Mass is conserved (star → parcels + remnant). A star stripped below the
-   hydrogen-burning mass is demoted by the classifier next tick (to brown-dwarf,
-   then debris) — never back to gas (collapse is irreversible). Only :star sheds
-   in phase A, so winds alone cannot ablate a body to nothing: it demotes and
-   stops shedding well above the ablation floor.
+   Phase 1 behavior (atmosphere shells available): uses coronal temperature T_c
+   from c/atmosphere-shells to compute Parker wind speed v_∞ = v_esc·√(T_c/T_esc)
+   and XUV luminosity from c/sed-bands to drive mass loss Ṁ ∝ L_XUV/(v_esc·c).
 
-   Runs at the barrier AFTER sink-formation, so a freshly-shed parcel drifts a
-   tick before it can be reabsorbed (no emit→absorb flicker)."
-  [world]
-  (let [k        (double (:phase0/wind-rate-scale world 1.0))
+   Sole writer of c/wind-reservoir (its own accumulator) plus the influences the
+   integrator/world-construction consume: mass-flux.wind (the loss, negative),
+   dv.wind (the ejection recoil), spawn-request.wind (the parcel, tagged with
+   ionization/ram via :extra-components), and consumed.wind (a star ablated below
+   the floor). A pure snapshot-reading fan-out emitter (was a serial barrier);
+   mass and momentum are conserved across the launch (one-tick lag, accepted)."
+  []
+  {:id     :stellar-wind
+   :writes #{c/wind-reservoir c/mass-flux-wind c/dv-wind
+             c/spawn-request-wind c/consumed-wind}
+   :run
+   (fn [world]
+    (let [k        (double (:phase0/wind-rate-scale world 1.0))
         dt       (double (or (:sim/dt world) 1.0e12))
         tick     (or (:tick world) 0)
         p-mass   (double (or (:phase0/wind-parcel-mass world)
                              (some-> (:phase0/gas-particle-mass world) (* 0.25))
                              1.0e27))
-        v-fac    (double (:phase0/wind-speed-factor world 0.15)) ;; drift per tick as a fraction of the feeding zone
+        v-fac    (double (:phase0/wind-speed-factor world 0.15))
         max-frac (double (:phase0/wind-max-loss-frac world 0.01))
         abl      (double (:phase0/ablation-floor world (* 1.0e-3 law/deuterium-burning-mass)))
-        ;; shed parcels are diffuse gas: spawn at the gas smoothing radius so SPH
-        ;; treats them like any other nebula sample (structure re-derives it next
-        ;; tick). Falls back to a large diffuse radius if the world didn't store it.
         gas-r    (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
         stars    (ecs/entities-with world c/matter-state c/mass c/radius
                                     c/position c/velocity)
-        ;; Dipole sources for sampling the launch-point field (research:
-        ;; phase1-radiation-plasma-truth §5 — tag wind parcels with the star's
-        ;; field vector at launch via net-field-at). Computed once: stars don't
-        ;; move within the barrier and fresh :nebula parcels are not sources.
-        sources  (em/field-sources world)]
+        sources  (em/field-sources world)
+        wind-step
+        (fn [eid]
+          (when (= :star (ecs/get-component world eid c/matter-state))
+            (let [M (double (or (ecs/get-component world eid c/mass) 0.0))
+                  R (double (or (ecs/get-component world eid c/radius) 0.0))]
+              (when (and (pos? M) (pos? R))
+                (let [region  (entity->region world eid)
+                      L       (double (star-luminosity region))
+                      v-esc   (Math/sqrt (/ (* 2.0 law/G M) R))
+                      shells  (ecs/get-component world eid c/atmosphere-shells)
+                      sed     (ecs/get-component world eid c/sed-bands)
+                      corona-t (when shells
+                                 (some #(when (= :corona (:layer/id %)) (:temperature %)) shells))
+                      L-xuv   (when sed (lsed/xuv-luminosity (:bands sed)))
+                      T-escape (/ (* law/m-H v-esc v-esc) (* 2.0 law/k-B))
+                      v-wind   (if (and corona-t (pos? T-escape))
+                                 (* v-esc (Math/sqrt (/ (double corona-t) T-escape)))
+                                 v-esc)
+                      L-drive  (double (or L-xuv L))
+                      mdot     (if (pos? v-esc) (/ (* k L-drive) (* v-esc speed-of-light)) 0.0)
+                      dm       (min (* mdot dt) (* M max-frac))
+                      resv     (+ (double (or (ecs/get-component world eid c/wind-reservoir) 0.0)) dm)
+                      M1       (- M dm)]
+                  (cond
+                    (<= M1 abl) {:eid eid :consumed true}
+
+                    (< resv p-mass)
+                    {:eid eid :mass-flux (- dm) :reservoir resv}
+
+                    :else
+                    (let [rhat (wind-direction eid tick)
+                          pos  (ecs/get-component world eid c/position)
+                          acc  (double (or (ecs/get-component world eid c/accretion-radius)
+                                           (* 100.0 R)))
+                          v-w  (min v-wind (/ (* v-fac acc) (max 1.0 dt)))
+                          ppos (sp/v+ pos (sp/v* rhat R))
+                          pvel (sp/v+ (ecs/get-component world eid c/velocity) (sp/v* rhat v-w))
+                          dv   (sp/v* rhat (- (* (/ p-mass M1) v-w)))
+                          ram  (if (pos? R) (/ (* mdot v-w) (* 4.0 Math/PI R R)) 0.0)
+                          ion  (if corona-t (min 1.0 (max 0.5 (/ (double corona-t) 1.0e6))) 0.3)
+                          extra (cond-> {}
+                                  (pos? ion) (assoc c/ionization-fraction ion)
+                                  (pos? ram) (assoc c/ram-pressure ram))]
+                      {:eid eid :mass-flux (- dm) :reservoir (- resv p-mass) :dv dv
+                       :spawn {:position ppos :velocity pvel :mass p-mass
+                               :radius gas-r :matter-state :nebula
+                               :composition (or (:composition region) default-composition)
+                               :b-field (em/net-field-at ppos sources nil)
+                               :temperature (max 3.0 (virial-temperature M1 R))
+                               :extra-components extra}}))))))
+        results (keep wind-step stars)
+        ;; clear stale wind mass-flux / recoil from stars that stopped shedding
+        cleared (reduce (fn [ws eid]
+                          (-> ws (assoc-in [c/mass-flux-wind eid] tick/removed)
+                                 (assoc-in [c/dv-wind eid] tick/removed)))
+                        {} (keys (get-in world [:components c/mass-flux-wind])))]
     (reduce
-      (fn [w eid]
-        (if-not (and (ecs/alive? w eid)
-                     (= :star (ecs/get-component w eid c/matter-state)))
-          w
-          (let [M (double (or (ecs/get-component w eid c/mass) 0.0))
-                R (double (or (ecs/get-component w eid c/radius) 0.0))]
-            (if-not (and (pos? M) (pos? R))
-              w
-              (let [region (entity->region w eid)
-                    L      (double (star-luminosity region))
-                    v-esc  (Math/sqrt (/ (* 2.0 law/G M) R))
-                    mdot   (if (pos? v-esc) (/ (* k L) (* v-esc speed-of-light)) 0.0)
-                    dm     (min (* mdot dt) (* M max-frac))
-                    resv   (+ (double (or (ecs/get-component w eid c/wind-reservoir) 0.0)) dm)
-                    M1     (- M dm)]
-                (cond
-                  ;; fully ablated (rare in phase A): mass has already left as wind
-                  (<= M1 abl) (ecs/despawn w eid)
-
-                  ;; not enough shed yet for a parcel — just bank it. dm moved
-                  ;; from mass into the reservoir: mass+reservoir is unchanged.
-                  (< resv p-mass)
-                  (-> w (ecs/put-component eid c/mass M1)
-                        (ecs/put-component eid c/wind-reservoir resv))
-
-                  ;; materialize one wind parcel FROM the reservoir (the mass was
-                  ;; already debited as dm over prior ticks). The star's mass is
-                  ;; NOT debited again here — that would double-count and leak
-                  ;; p-mass per emission. Recoil conserves momentum.
-                  :else
-                  (let [rhat (wind-direction eid tick)
-                        pos  (ecs/get-component w eid c/position)
-                        vel  (ecs/get-component w eid c/velocity)
-                        ;; CRITICAL: a real wind speed (~v_esc) over a Myr-scale dt
-                        ;; would fling the parcel many nebula-radii in one tick,
-                        ;; blowing the whole system apart. Cap the drift so the
-                        ;; parcel moves at most `v-fac` of the feeding zone per
-                        ;; tick — it lingers near the star as visible fog and stays
-                        ;; reabsorbable, instead of ballistically escaping. We
-                        ;; model the OBSERVABLE shed envelope, not the km/s wind.
-                        acc  (double (or (ecs/get-component w eid c/accretion-radius)
-                                         (* 100.0 R)))
-                        v-w  (min v-esc (/ (* v-fac acc) (max 1.0 dt)))
-                        ppos (sp/v+ pos (sp/v* rhat R))
-                        pvel (sp/v+ vel (sp/v* rhat v-w))
-                        vel' (sp/v- vel (sp/v* rhat (* (/ p-mass M1) v-w)))
-                        [w' _] (spawn-clump w
-                                 {:position ppos :velocity pvel :mass p-mass
-                                  :radius gas-r :matter-state :nebula
-                                  :composition (or (:composition region) default-composition)
-                                  ;; carry the star's magnetic field at the launch
-                                  ;; point (research §5) — the Phase-1 magnetised-
-                                  ;; outflow / magnetosphere-coupling substrate.
-                                  :b-field (em/net-field-at ppos sources nil)
-                                  ;; hot wind glows; :nebula T is not overwritten downstream
-                                  :temperature (max 3.0 (virial-temperature M1 R))})]
-                    (-> w'
-                        (ecs/put-component eid c/mass M1)
-                        (ecs/put-component eid c/velocity vel')
-                        (ecs/put-component eid c/wind-reservoir (- resv p-mass))))))))))
-      world
-      stars)))
+      (fn [ws {:keys [eid mass-flux reservoir dv spawn consumed]}]
+        (cond-> ws
+          consumed     (assoc-in [c/consumed-wind eid] true)
+          mass-flux    (assoc-in [c/mass-flux-wind eid] mass-flux)
+          reservoir    (assoc-in [c/wind-reservoir eid] reservoir)
+          dv           (assoc-in [c/dv-wind eid] dv)
+          spawn        (assoc-in [c/spawn-request-wind eid] [spawn])))
+      cleared
+      results)))})
 
 (defn stellar-flare-system
   "Serial barrier system (winds spec phase B): episodic coronal mass ejections.
@@ -1009,64 +1522,71 @@
    (× virial temperature, for brightness). A flare never fires if it would pull
    the star below half the hydrogen-burning mass — flares decorate, they don't
    demote."
-  [world]
-  (let [period (long (:phase0/flare-period world 0))] ;; default OFF — opt in via :phase0/flare-period
-    (if-not (pos? period)
-      world
-      (let [sources (em/field-sources world) ;; launch-point field sampler (research §5)
-            dt     (double (or (:sim/dt world) 1.0e12))
-            tick   (or (:tick world) 0)
-            p-mass (double (or (:phase0/wind-parcel-mass world)
-                               (some-> (:phase0/gas-particle-mass world) (* 0.25))
-                               1.0e27))
-            m-fac  (double (:phase0/flare-mass-factor world 3.0))
-            v-fac  (double (:phase0/flare-speed-factor world 0.4))
-            t-fac  (double (:phase0/flare-temp-factor world 3.0))
-            gas-r  (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
-            floor  (* 0.5 law/hydrogen-burning-mass)
-            stars  (ecs/entities-with world c/matter-state c/mass c/radius
-                                      c/position c/velocity)]
-        (reduce
-          (fn [w eid]
-            (if-not (and (ecs/alive? w eid)
-                         (= :star (ecs/get-component w eid c/matter-state))
-                         (zero? (mod (Math/abs (long (hash [:flare eid tick]))) period)))
-              w
-              (let [M  (double (or (ecs/get-component w eid c/mass) 0.0))
-                    R  (double (or (ecs/get-component w eid c/radius) 0.0))
-                    fm (* m-fac p-mass)]
-                (if-not (and (pos? R) (> (- M fm) floor))
-                  w ;; never flare a star out of existence
-                  (let [region (entity->region w eid)
-                        v-esc  (Math/sqrt (/ (* 2.0 law/G M) R))
-                        acc    (double (or (ecs/get-component w eid c/accretion-radius)
-                                           (* 100.0 R)))
-                        v-fl   (min v-esc (/ (* v-fac acc) (max 1.0 dt)))
-                        ;; bipolar: eject along the spin axis, alternating poles
-                        axis   (let [a (ecs/get-component w eid c/rotation-axis)]
-                                 (if (and a (pos? (sp/len a))) a (wind-direction eid tick)))
-                        sign   (if (even? (mod (Math/abs (long (hash [eid tick]))) 2)) 1.0 -1.0)
-                        rhat   (sp/v* axis sign)
-                        pos    (ecs/get-component w eid c/position)
-                        vel    (ecs/get-component w eid c/velocity)
-                        ppos   (sp/v+ pos (sp/v* rhat R))
-                        pvel   (sp/v+ vel (sp/v* rhat v-fl))
-                        vel'   (sp/v- vel (sp/v* rhat (* (/ fm (- M fm)) v-fl)))
-                        [w' _] (spawn-clump w
-                                 {:position ppos :velocity pvel :mass fm :radius gas-r
-                                  :matter-state :nebula
-                                  :composition (or (:composition region) default-composition)
-                                  ;; CME carries the launch-point field (research §6:
-                                  ;; CMEs are magnetised plasma clouds) — magnetosphere
-                                  ;; coupling substrate for Phase 1.
-                                  :b-field (em/net-field-at ppos sources nil)
-                                  ;; flares run hot → bright in the volumetric fog
-                                  :temperature (max 3.0 (* t-fac (virial-temperature M R)))})]
-                    (-> w'
-                        (ecs/put-component eid c/mass (- M fm))
-                        (ecs/put-component eid c/velocity vel')))))))
-          world
-          stars)))))
+  []
+  {:id     :stellar-flare
+   :writes #{c/mass-flux-flare c/dv-flare c/spawn-request-flare c/flare-boost}
+   :run
+   (fn [world]
+    (let [period (long (:phase0/flare-period world 0))] ;; default OFF — opt in via :phase0/flare-period
+      (if-not (pos? period)
+        {}
+        (let [sources (em/field-sources world) ;; launch-point field sampler (research §5)
+              dt     (double (or (:sim/dt world) 1.0e12))
+              tick   (or (:tick world) 0)
+              p-mass (double (or (:phase0/wind-parcel-mass world)
+                                 (some-> (:phase0/gas-particle-mass world) (* 0.25))
+                                 1.0e27))
+              m-fac  (double (:phase0/flare-mass-factor world 3.0))
+              v-fac  (double (:phase0/flare-speed-factor world 0.4))
+              t-fac  (double (:phase0/flare-temp-factor world 3.0))
+              gas-r  (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
+              floor  (* 0.5 law/hydrogen-burning-mass)
+              stars  (ecs/entities-with world c/matter-state c/mass c/radius
+                                        c/position c/velocity)
+              fires  (keep
+                       (fn [eid]
+                         (when (and (= :star (ecs/get-component world eid c/matter-state))
+                                    (zero? (mod (Math/abs (long (hash [:flare eid tick]))) period)))
+                           (let [M  (double (or (ecs/get-component world eid c/mass) 0.0))
+                                 R  (double (or (ecs/get-component world eid c/radius) 0.0))
+                                 fm (* m-fac p-mass)]
+                             (when (and (pos? R) (> (- M fm) floor))
+                               (let [region (entity->region world eid)
+                                     v-esc  (Math/sqrt (/ (* 2.0 law/G M) R))
+                                     acc    (double (or (ecs/get-component world eid c/accretion-radius)
+                                                        (* 100.0 R)))
+                                     v-fl   (min v-esc (/ (* v-fac acc) (max 1.0 dt)))
+                                     axis   (let [a (ecs/get-component world eid c/rotation-axis)]
+                                              (if (and a (pos? (sp/len a))) a (wind-direction eid tick)))
+                                     sign   (if (even? (mod (Math/abs (long (hash [eid tick]))) 2)) 1.0 -1.0)
+                                     rhat   (sp/v* axis sign)
+                                     pos    (ecs/get-component world eid c/position)
+                                     vel    (ecs/get-component world eid c/velocity)
+                                     ppos   (sp/v+ pos (sp/v* rhat R))
+                                     pvel   (sp/v+ vel (sp/v* rhat v-fl))
+                                     dv     (sp/v* rhat (- (* (/ fm (- M fm)) v-fl)))]
+                                 {:eid eid :mass-flux (- fm) :dv dv
+                                  :boost {:factor    (* t-fac 10.0)
+                                          :decay-tick (+ tick (long (max 1.0 (/ 3.6e3 (max 1.0 dt)))))}
+                                  :spawn {:position ppos :velocity pvel :mass fm :radius gas-r
+                                          :matter-state :nebula
+                                          :composition (or (:composition region) default-composition)
+                                          :b-field (em/net-field-at ppos sources nil)
+                                          :temperature (max 3.0 (* t-fac (virial-temperature M R)))}})))))
+                       stars)]
+          (reduce
+            (fn [ws {:keys [eid mass-flux dv boost spawn]}]
+              (-> ws
+                  (assoc-in [c/mass-flux-flare eid] mass-flux)
+                  (assoc-in [c/dv-flare eid] dv)
+                  (assoc-in [c/flare-boost eid] boost)
+                  (assoc-in [c/spawn-request-flare eid] [spawn])))
+            ;; clear stale flare mass-flux / recoil from stars that did not fire
+            (let [prior (keys (get-in world [:components c/mass-flux-flare]))]
+              (reduce (fn [ws eid] (-> ws (assoc-in [c/mass-flux-flare eid] tick/removed)
+                                          (assoc-in [c/dv-flare eid] tick/removed)))
+                      {} prior))
+            fires)))))})
 
 ;; --- The Structure owner: shape + compactness (double-buffer step 7b) -------
 ;; radius and density are ONE geometric fact (ρ = m / V, V = 4/3π r³), so a
@@ -1159,41 +1679,47 @@
      :debris / :planet   radiative: cool toward the CMB, warmed by nearby stars.
      :nebula             skipped — diffuse gas stays at its seeded background.
    Replaces collapse's compression heating and the legacy thermal-system."
-  [dt]
-  {:id     :thermal
-   :writes #{c/temperature}
-   :run    (fn [world]
-             (let [stars     (ecs/entities-with world c/matter-state c/luminosity c/position)
-                   star-lums (mapv #(ecs/get-component world % c/luminosity) stars)
-                   star-poss (mapv #(ecs/get-component world % c/position) stars)
-                   eids      (ecs/entities-with world c/matter-state c/temperature
-                                                c/density c/radius c/mass c/position)
-                   cells (par/par-mapv
-                           (fn [eid]
-                             (let [region (entity->region world eid)
-                                   state  (:matter-state region)
-                                   m      (:mass region)
-                                   r      (:radius region)]
-                               (cond
-                                 (and (#{:protostar :star} state) m r)
-                                 [eid (virial-temperature m r)]
+   [dt]
+   {:id     :thermal
+    :writes #{c/temperature}
+    :run    (fn [world]
+              (let [stars     (ecs/entities-with world c/matter-state c/luminosity c/position)
+                    star-lums (mapv #(ecs/get-component world % c/luminosity) stars)
+                    star-poss (mapv #(ecs/get-component world % c/position) stars)
+                    ;; SED bands for band-aware heating (nil for stars without SED)
+                    star-bands (mapv #(some-> (ecs/get-component world % c/sed-bands)
+                                              :bands)
+                                     stars)
+                    eids      (ecs/entities-with world c/matter-state c/temperature
+                                                 c/density c/radius c/mass c/position)
+                    cells (par/par-mapv
+                            (fn [eid]
+                              (let [region (entity->region world eid)
+                                    state  (:matter-state region)
+                                    m      (:mass region)
+                                    r      (:radius region)]
+                                (cond
+                                  (and (#{:protostar :star} state) m r)
+                                  [eid (virial-temperature m r)]
 
-                                 (#{:debris :planet} state)
-                                 (let [pos       (:position region)
-                                       star-heat (reduce
-                                                   (fn [acc [lum spos]]
-                                                     (if (pos? (double (or lum 0.0)))
-                                                       (+ acc (radiation-heating-delta
-                                                                region lum (sp/dist pos spos) dt))
-                                                       acc))
-                                                   0.0 (map vector star-lums star-poss))
-                                       t    (double (or (:temperature region) 3.0))
-                                       drop (radiative-cooling-delta region dt)]
-                                   [eid (max 3.0 (- (+ t star-heat) drop))])
+                                  (#{:debris :planet} state)
+                                  (let [pos       (:position region)
+                                        star-heat (reduce
+                                                    (fn [acc [lum spos bands]]
+                                                      (if (pos? (double (or lum 0.0)))
+                                                        (let [dist (sp/dist pos spos)]
+                                                          (+ acc (if bands
+                                                                   (sed-heating-delta region bands dist dt)
+                                                                   (radiation-heating-delta region lum dist dt))))
+                                                        acc))
+                                                    0.0 (map vector star-lums star-poss star-bands))
+                                        t    (double (or (:temperature region) 3.0))
+                                        drop (radiative-cooling-delta region dt)]
+                                    [eid (max 3.0 (- (+ t star-heat) drop))])
 
-                                 :else nil)))
-                           eids)]
-               {c/temperature (into {} (keep identity) cells)}))})
+                                  :else nil)))
+                            eids)]
+                {c/temperature (into {} (keep identity) cells)}))})
 
 (defn eos-system
   "Double-buffer write-set system: pressure as the pure equation of state
@@ -1268,10 +1794,21 @@
             va (ecs/get-component world big c/velocity)
             vs (ecs/get-component world small c/velocity)
             t-cold (min (double (or (:temperature mb*) 0.0))
-                        (double (or (:temperature ms*) 0.0)))]
+                        (double (or (:temperature ms*) 0.0)))
+            ;; Population guard: shatter is the only collision outcome that ADDS a
+            ;; body (small → 2 fragments, net +1). Left unbounded it inflates the
+            ;; debris swarm faster than accretion can drain it, and the resolved
+            ;; N-body cost (gravity + broad-phase) climbs with it. Once the swarm
+            ;; is already large, fall through to the inelastic merge (which removes
+            ;; a body) instead of shattering. Uses the prior tick's resolved count
+            ;; (O(1), carried on the snapshot) — exact count is unnecessary for a
+            ;; soft cap. Disable with :phase0/max-resolved-bodies 0.
+            budget (long (:phase0/max-resolved-bodies world 400))
+            resolved (long (or (get-in world [:phase0/stats :resolved-count]) 0))]
         (if (and (> (double (:mass ms*)) law/shatter-min-mass)
                  (< (law/malleability t-cold) law/shatter-malleability-max)
-                 (> (sp/len (sp/v- va vs)) law/shatter-dv-threshold))
+                 (> (sp/len (sp/v- va vs)) law/shatter-dv-threshold)
+                 (or (<= budget 0) (< resolved budget)))
           ;; brittle body + hard impact → the smaller shatters into debris
           (shatter-bodies world big small ms*)
           ;; molten or gentle impact → inelastic merge (absorb the smaller)
@@ -1365,8 +1902,11 @@
 ;; --- Nebula seeding ---------------------------------------------------------
 
 (def default-composition
-  "Primordial nebular composition by mass fraction (H/He dominated)."
-  {:H 0.75 :He 0.24 :metals 0.01})
+  "Primordial BBN composition by mass fraction. Matches law.composition/primordial-composition
+   but kept as a plain map (no trace isotopes) for backward compatibility with systems
+   that only check :H :He :metals. Trace isotopes (D, He3, Li7) are added by the
+   primordial-composition-system when it runs at world initialization."
+  {:H lcomp/primordial-H :He lcomp/primordial-He :metals lcomp/primordial-metals})
 
 (defn seed-clump
   "Return the component map for one nebular clump entity. Carries a magnetic

@@ -9,6 +9,7 @@
    [domain.ecs.core      :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.registry   :as reg]
+   [domain.ecs.tick       :as tick]
    [domain.player         :as player]
    [shape.spatial         :as sp]))
 
@@ -24,15 +25,19 @@
         w     (ecs/put-components w b {c/position body-pos c/mass 1.0e28})]
     [(assoc w :sim/dt 1.0e12 :tick 1 :phase0/complexity 10) b]))
 
-(defn- run [w] ((player/observer-system 1.0e12) w))
+(defn- run
+  "Run the fan-out accel.observer emitter and fold its write-set — the emitter is
+   now the sole writer of accel.observer (observer-system only updates the map)."
+  [w]
+  (tick/apply-write-set w ((:run (player/observer-acceleration-system)) w)))
 
 ;; --- single-writer ----------------------------------------------------------
 
 (deftest accel-observer-not-a-fan-out-conflict
   (testing "observer influence is barrier-staged; it introduces no fan-out conflict"
     (is (empty? (reg/write-conflicts reg/systems))))
-  (testing "motion reads accel.observer so the nudge is integrated"
-    (is (contains? (->> reg/systems (filter #(= :motion (:id %))) first :reads)
+  (testing "the integrator reads accel.observer so the nudge is integrated"
+    (is (contains? (->> reg/systems (filter #(= :integrator (:id %))) first :reads)
                    c/accel-observer))))
 
 ;; --- pulling behaviour ------------------------------------------------------

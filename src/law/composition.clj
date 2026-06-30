@@ -40,8 +40,11 @@
    BBN predicts ~5.0e-10 — the factor-of-3 'lithium problem'.
    We use the OBSERVED value: the simulation matches reality, not the
    theoretical prediction. The deviation is an open question in physics,
-   not something we need to resolve here."
-  1.1e-10)  ;; observed mass fraction (1.58e-10 by number × m_Li7/m_H)
+   not something we need to resolve here.
+
+   Conversion: Y_Li7 = (n_Li7/n_H) × (m_Li7/m_H) × X_H
+             = 1.58e-10 × 7 × 0.754 ≈ 8.3e-10"
+  8.3e-10)
 
 (def ^:const primordial-metals
   "Primordial metal mass fraction. BBN produces no metals (Z > 2).

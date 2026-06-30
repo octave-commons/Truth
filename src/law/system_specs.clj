@@ -115,6 +115,14 @@
      - T_eff derived from L and R via Stefan-Boltzmann
      - SED shape matches T_eff (hot stars peak in UV, cool in IR)
 
+   Integration notes:
+     - REPLACES star-luminosity as the source of c/luminosity for :star entities.
+       star-luminosity is still used by stellar-wind-system for mass-loss
+       (Ṁ ∝ L/(v_esc·c)) — SED system writes c/luminosity BEFORE wind reads it.
+     - radiation-heating-delta stays bolometric for Phase 1. Band-specific
+       heating is a LATER extension.
+     - radiation-equilibrium-temperature stays bolometric. Same rationale.
+
    Test (kaocha):
      (deftest stellar-sed-system-computes-bands
        (let [world  (seed-test-star {:mass solar-mass :radius solar-radius})
@@ -175,13 +183,15 @@
 
    READS:  c/matter-state, c/mass, c/radius, c/position, c/velocity,
            c/atmosphere-shells, c/sed-bands, c/b-field, c/wind-reservoir
-   WRITES: c/mass, c/velocity, c/wind-reservoir (on star)
-           c/position, c/velocity, c/mass, c/density, c/temperature,
-           c/ionization-fraction, c/b-field, c/ram-pressure (on wind parcels)
+    WRITES: c/mass, c/velocity, c/wind-reservoir (on star)
+            c/position, c/velocity, c/mass, c/density, c/temperature,
+            c/ionization-fraction, c/b-field, c/ram-pressure (on wind parcels)
 
-   Precondition:
-     - Entity is :star with valid atmosphere-shells (corona layer exists)
-     - SED bands computed (for XUV/EUV contribution to wind driving)
+    Precondition:
+      - Entity is :star with valid atmosphere-shells (corona layer exists)
+      - SED bands computed (for XUV/EUV contribution to wind driving)
+      - Note: c/ionization-fraction and c/ram-pressure are Phase 1 component
+        keywords added to domain.ecs.components
 
    Postcondition:
      - Wind parcels are spawned as :nebula with ionization-fraction > 0.5

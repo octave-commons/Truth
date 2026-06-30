@@ -264,24 +264,30 @@
    planet properties. Returns :energy-limited, :recombination-limited,
    or :blow-off.
 
-   The transition is at R = t_rec / t_flow ~ 1:
+   The transition is controlled by R = t_rec / t_flow:
    - R >> 1: recombination is slow, all absorbed XUV → escape (energy-limited)
    - R << 1: recombination radiates away energy (recombination-limited)
    - F_xuv very high: photon-limited (every ionizing photon strips an atom)
 
-   For simplicity, we use the critical XUV flux as the primary gate:
-   - F < F_crit → energy-limited (Ṁ ∝ F^0.9)
-   - F > F_crit → recombination-limited (Ṁ ∝ F^0.6)
-   - F >> F_crit → blow-off (Ṁ ∝ F^1.0)"
-  [xuv-flux planet-radius]
-  (let [F   (double (or xuv-flux 0.0))
-        Rp  (double (or planet-radius 0.0))
-        ;; Compute R from planet parameters when available
-        t-r (recombination-timescale 1e14)  ;; typical n_e at sonic point
-        t-f (flow-timescale Rp)
-        R   (if (pos? t-f) (/ t-r t-f) 0.0)]
-    (cond
-      (< F (* 0.01 critical-xuv-flux-si)) :energy-limited       ;; very low flux
-      (< F critical-xuv-flux-si)          :energy-limited
-      (< F (* 10.0 critical-xuv-flux-si)) :recombination-limited
-      :else                                :blow-off)))
+   When electron density is known, uses the physical R criterion.
+   Otherwise falls back to the critical XUV flux threshold."
+  ([xuv-flux planet-radius]
+   (escape-regime xuv-flux planet-radius nil))
+  ([xuv-flux planet-radius n-electron]
+   (let [F   (double (or xuv-flux 0.0))
+         Rp  (double (or planet-radius 0.0))]
+     (if (and n-electron (pos? Rp))
+       ;; Physical criterion: R = t_rec / t_flow
+       (let [t-r (recombination-timescale n-electron)
+             t-f (flow-timescale Rp)
+             R   (if (pos? t-f) (/ t-r t-f) 0.0)]
+         (cond
+           (>= R 10.0)  :energy-limited      ;; recombination ≪ advection
+           (>= R 1.0)   :energy-limited      ;; marginally energy-limited
+           (>= R 0.1)   :recombination-limited
+           :else         :blow-off))          ;; R ≪ 1, photon-limited
+       ;; Fallback: flux threshold (Murray-Clay+2009)
+       (cond
+         (< F critical-xuv-flux-si)           :energy-limited
+         (< F (* 10.0 critical-xuv-flux-si))  :recombination-limited
+         :else                                 :blow-off)))))

@@ -8,7 +8,9 @@
    [domain.ecs.core         :as ecs]
    [domain.ecs.components    :as c]
    [domain.ecs.registry      :as reg]
+   [domain.ecs.tick          :as tick]
    [domain.chemistry         :as chem]
+   [domain.integrator        :as integ]
    [law.stellar              :as law]))
 
 (def ^:private solar law/solar-mass)
@@ -26,13 +28,26 @@
 (defn- comp-of [world eid] (ecs/get-component world eid c/composition))
 (defn- sum [comp] (reduce + (vals comp)))
 
+(defn- burn-tick
+  "One composition tick through the unified pipeline: the nucleosynthesis emitter
+   writes comp.burn, then the integrator (sole owner of composition) folds the
+   burn (and deuterium gate) into composition — exactly as the fan-out + fold
+   does at runtime."
+  [dt world]
+  (let [w1 (tick/apply-write-set world ((:run (chem/nucleosynthesis-system dt)) world))]
+    (tick/apply-write-set w1 (integ/composition-ws w1))))
+
 ;; --- single-writer guard ----------------------------------------------------
 
 (deftest composition-has-exactly-one-fan-out-writer
-  (testing "nucleosynthesis is the sole declared writer of :component/composition"
-    (is (= [:nucleosynthesis]
+  (testing "the integrator is the sole declared writer of :component/composition"
+    (is (= [:integrator]
            (get (reg/writers-by-component (reg/fan-out-systems reg/systems))
                 c/composition))))
+  (testing "nucleosynthesis is the sole writer of the comp.burn influence"
+    (is (= [:nucleosynthesis]
+           (get (reg/writers-by-component (reg/fan-out-systems reg/systems))
+                c/comp-burn))))
   (testing "adding it introduced no single-writer conflict"
     (is (empty? (reg/write-conflicts reg/systems)))))
 
@@ -40,8 +55,7 @@
 
 (deftest burning-star-h-monotonically-decreases
   (let [[w eid] (spawn-body (ecs/empty-world) {})
-        sys     (chem/nucleosynthesis-system 1.0e14)
-        hs      (reductions (fn [world _] (sys world)) w (range 5))
+        hs      (reductions (fn [world _] (burn-tick 1.0e14 world)) w (range 5))
         h-vals  (map #(:H (comp-of % eid)) hs)]
     (testing "hydrogen strictly decreases each tick"
       (is (apply > h-vals)))
@@ -50,7 +64,7 @@
 
 (deftest he-gains-exactly-what-h-loses
   (let [[w eid] (spawn-body (ecs/empty-world) {})
-        w'      ((chem/nucleosynthesis-system 1.0e14) w)
+        w'      (burn-tick 1.0e14 w)
         before  (comp-of w eid)
         after   (comp-of w' eid)]
     (is (< (Math/abs (+ (- (:He after) (:He before))
@@ -59,26 +73,25 @@
         "ΔHe == −ΔH")))
 
 (deftest composition-stays-normalized
-  (let [[w eid] (spawn-body (ecs/empty-world) {})
-        sys     (chem/nucleosynthesis-system 1.0e14)]
-    (doseq [world (take 10 (iterate sys w))]
+  (let [[w eid] (spawn-body (ecs/empty-world) {})]
+    (doseq [world (take 10 (iterate #(burn-tick 1.0e14 %) w))]
       (is (< (Math/abs (- 1.0 (sum (comp-of world eid)))) 1.0e-9)))))
 
 (deftest metals-unchanged-by-fusion
   (let [[w eid] (spawn-body (ecs/empty-world) {})
-        after   (comp-of ((chem/nucleosynthesis-system 1.0e14) w) eid)]
+        after   (comp-of (burn-tick 1.0e14 w) eid)]
     (is (= 0.0 (:metals after)) "H→He burn leaves metals alone")))
 
 ;; --- who burns and who does not ---------------------------------------------
 
 (deftest nebula-composition-unchanged
   (let [[w eid] (spawn-body (ecs/empty-world) {:state :nebula :temp 15.0})
-        after   (comp-of ((chem/nucleosynthesis-system 1.0e14) w) eid)]
+        after   (comp-of (burn-tick 1.0e14 w) eid)]
     (is (= primordial after) "cold nebula gas does not fuse")))
 
 (deftest cold-protostar-below-ignition-does-not-burn
   (let [[w eid] (spawn-body (ecs/empty-world) {:state :protostar :temp 5.0e6})
-        after   (comp-of ((chem/nucleosynthesis-system 1.0e14) w) eid)]
+        after   (comp-of (burn-tick 1.0e14 w) eid)]
     (is (= primordial after) "a protostar below fusion-temp-threshold is inert")))
 
 ;; --- the large-dt hazard ----------------------------------------------------
@@ -93,8 +106,7 @@
 
 (deftest h-floored-at-zero-over-many-ticks
   (let [[w eid] (spawn-body (ecs/empty-world) {:mass (* 30 solar)}) ;; fast burner
-        sys     (chem/nucleosynthesis-system 1.0e16)
-        final   (nth (iterate sys w) 500)]
+        final   (nth (iterate #(burn-tick 1.0e16 %) w) 500)]
     (is (>= (:H (comp-of final eid)) 0.0) "H stays non-negative across 500 ticks")
     (is (< (Math/abs (- 1.0 (sum (comp-of final eid)))) 1.0e-9)
         "composition still normalized after heavy burning")))

@@ -633,8 +633,40 @@
       (is (not (ecs/alive? w5 p1)) "Parcel within radius is absorbed")
       (is (not (ecs/alive? w5 p2)) "Parcel within radius is absorbed")
       (is (ecs/alive? w5 p3) "Parcel outside radius survives")
-      (is (= (double sink-mass) (+ 2e28 1e27 1e27)) "Sink mass = original + absorbed")
+      ;; A :debris planetesimal has no protoplanetary disk: swept-up material
+      ;; coalesces into its BULK mass (solid accretion), so it can grow past the
+      ;; deuterium limit and promote to :protostar. (Protostar/star sinks instead
+      ;; route accreted mass into a disk — see absorb-parcels.)
+      (is (= (double sink-mass) (+ 2e28 1e27 1e27)) "Debris sink grows in bulk mass")
+      (is (zero? (double (or (ecs/get-component w5 sink-eid c/disk-mass) 0.0)))
+          "Debris sink forms no disk")
       (is (pos? (first (ecs/get-component w5 sink-eid c/velocity))) "Sink velocity updated"))))
+
+(deftest test-sink-formation-absorbs-debris-onto-protostar
+  (testing "A protostar sink drains nearby small :debris (planetesimals fall in)"
+    (let [base (ecs/empty-world)
+          ;; A forming core (protostar) with a wide feeding zone
+          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                                    :velocity [0.0 0.0 0.0]
+                                                    :mass 5e28
+                                                    :radius 1e12
+                                                    :temperature 1000.0
+                                                    :matter-state :protostar})
+          w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
+          ;; A small planetesimal inside the feeding zone
+          [w2 deb] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e27
+                                            :radius 1e10
+                                            :temperature 50.0
+                                            :matter-state :debris})
+          w3 (stellar/sink-formation-system w2)]
+      (is (not (ecs/alive? w3 deb)) "Debris within the feeding zone is absorbed (swarm drained)")
+      ;; protostar routes accreted material into its disk, not bulk
+      (is (= (double (ecs/get-component w3 sink-eid c/mass)) 5e28)
+          "Protostar bulk mass unchanged (accreted mass goes to disk)")
+      (is (= (double (or (ecs/get-component w3 sink-eid c/disk-mass) 0.0)) 1e27)
+          "Absorbed debris mass joins the protostar's disk"))))
 
 ;; --- Fusion promotion barrier ------------------------------------------------
 

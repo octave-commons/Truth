@@ -79,11 +79,44 @@
     :reads  #{c/position c/velocity c/mass c/radius c/body-kind}
     :writes #{c/accel-gravity}}
 
-   {:id     :motion
-    :ns     'domain.orbital.system
+   ;; Player paid warp-space force (gravity well / repulsor): a placed, decaying
+   ;; transient that writes its own accel channel, summed by motion.
+   {:id     :warp
+    :ns     'domain.intervention
+    :reads  #{c/position c/mass}
+    :writes #{c/accel-warp}}
+
+   ;; The single integrator (domain.integrator): sole writer of position +
+   ;; velocity (and, as the unified-physical-state migration lands,
+   ;; mass/angular-momentum/spin/temperature/composition). Sums every accel.*
+   ;; contribution and advances the body; applies the COM frame-offset. See
+   ;; docs/notes/specs/2026.06.29-unified-physical-state-integrator-spec.md.
+   {:id     :integrator
+    :ns     'domain.integrator
     :reads  #{c/position c/velocity c/mass c/radius c/body-kind
-              c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer}
-    :writes #{c/position c/velocity}}
+              c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer
+              c/accel-warp c/frame-offset
+              c/matter-state c/density c/luminosity c/sed-bands c/composition
+              c/heat-intervention c/comp-burn c/comp-depletion
+              c/angular-momentum c/spin c/torque-em c/torque-disk
+              c/mass-flux-wind c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
+              c/dv-wind c/dv-flare c/absorb-merge c/absorb-accrete}
+    :writes #{c/position c/velocity c/temperature c/composition
+              c/angular-momentum c/spin c/mass}}
+
+   ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
+   ;; tick-world). Sole writer of accel.observer; the integrator sums it.
+   {:id     :observer-accel
+    :ns     'domain.player
+    :reads  #{c/position c/mass c/observer}
+    :writes #{c/accel-observer}}
+
+   ;; Player heat source/sink: emits the per-body temperature ease the integrator
+   ;; applies (was the serial apply-thermal-interventions). Sole writer.
+   {:id     :thermal-intervention
+    :ns     'domain.intervention
+    :reads  #{c/position c/matter-state c/temperature}
+    :writes #{c/heat-intervention}}
 
    ;; Barrier systems: run SERIALLY after the fold, so they are exempt from the
    ;; single-writer invariant (like event handlers — spec §6). collision emits
@@ -104,18 +137,91 @@
     :reads  #{c/matter-state c/temperature c/pressure c/composition}
     :writes #{c/luminosity}}
 
-   {:id     :thermal
+   ;; Panchromatic SED: computes per-band luminosities from T_eff and log g.
+   ;; Reads luminosity (from fusion) and radius (from structure). Must run AFTER
+   ;; fusion so luminosity is settled.
+   {:id     :stellar-sed
     :ns     'domain.stellar
-    :reads  #{c/matter-state c/temperature c/density c/radius c/mass c/position c/luminosity}
-    :writes #{c/temperature}}
+    :reads  #{c/matter-state c/luminosity c/radius c/mass}
+    :writes #{c/sed-bands}}
 
-   ;; Nucleosynthesis is the SOLE writer of composition: stars/ignited protostars
-   ;; burn H→He (dt-bounded). Composition was previously seeded + merge-blended
-   ;; only; now it evolves. No other fan-out system writes composition.
+   ;; Stellar atmosphere shells: 4-layer profile (photosphere → corona).
+   ;; Reads luminosity, radius, mass, b-field. Must run AFTER fusion and field.
+   {:id     :atmosphere-shells
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/luminosity c/radius c/mass c/b-field}
+    :writes #{c/atmosphere-shells}}
+
+   ;; Deuterium depletion: emits comp.depletion (the keys to zero, just :D) for
+   ;; hot bodies (T > 1e6 K). One-way gate. A plain fan-out emitter now; the
+   ;; integrator owns composition and applies the gate (spec §7.5).
+   {:id     :deuterium-depletion
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/temperature c/composition}
+    :writes #{c/comp-depletion}}
+
+   ;; XUV atmospheric escape: planetary mass loss from stellar XUV. A fan-out
+   ;; emitter — mass loss → mass-flux.xuv (integrator owns mass), plus the
+   ;; diagnostic atmosphere-escape (its own column).
+   {:id     :xuv-atmospheric-escape
+    :ns     'domain.phase0
+    :reads  #{c/matter-state c/mass c/radius c/position c/sed-bands c/luminosity}
+    :writes #{c/mass-flux-xuv c/atmosphere-escape}}
+
+   ;; Stellar wind: stars shed mass as plasma. Owns its reservoir; emits the loss
+   ;; (mass-flux.wind), recoil (dv.wind), the parcel (spawn-request.wind) and the
+   ;; ablation reap (consumed.wind). A fan-out emitter (was a serial barrier).
+   {:id     :stellar-wind
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/mass c/radius c/position c/velocity c/wind-reservoir
+              c/atmosphere-shells c/sed-bands c/accretion-radius c/composition c/b-field}
+    :writes #{c/wind-reservoir c/mass-flux-wind c/dv-wind
+              c/spawn-request-wind c/consumed-wind}}
+
+   ;; Stellar flares: episodic CMEs. Emits the loss (mass-flux.flare), recoil
+   ;; (dv.flare), the CME parcel (spawn-request.flare) and the XUV boost
+   ;; (flare-boost). A fan-out emitter (was a serial barrier).
+   {:id     :stellar-flare
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/mass c/radius c/position c/velocity
+              c/rotation-axis c/accretion-radius c/composition c/b-field}
+    :writes #{c/mass-flux-flare c/dv-flare c/spawn-request-flare c/flare-boost}}
+
+   ;; Disk evolution: viscous accretion + gravitational instability → planets/binaries.
+   ;; Barrier-staged: reads disk-mass, writes disk-mass, disk-angular-mom, mass, spin.
+   {:id     :disk-evolution
+    :ns     'domain.stellar
+    :stage  :barrier
+    :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom c/radius c/position c/velocity}
+    :writes #{c/disk-mass c/disk-angular-mom c/mass c/spin c/angular-momentum}}
+
+   ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
+   ;; Barrier-staged: reads observer position, writes c/lod-level.
+   {:id     :lod-scheduler
+    :ns     'domain.phase0
+    :stage  :barrier
+    :reads  #{c/matter-state c/position c/observer}
+    :writes #{c/lod-level}}
+
+   ;; Magnetosphere coupling: computes magnetopause standoff from wind ram pressure.
+   ;; Barrier-staged: reads wind parcel data, writes to planet entities.
+   {:id     :magnetosphere-coupling
+    :ns     'domain.phase0
+    :stage  :barrier
+    :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
+    :writes #{c/magnetosphere}}
+
+   ;; :thermal retired — temperature is now owned by the integrator, which reuses
+   ;; stellar/temperature-system's virial/radiative derivation and layers the
+   ;; heat.intervention ease on top (spec §7.4-7.5).
+
+   ;; Nucleosynthesis emits comp.burn: the burned (H→He) composition for stars and
+   ;; ignited protostars (dt-bounded). The integrator owns composition and applies
+   ;; the burn then the deuterium gate (spec §7.5).
    {:id     :nucleosynthesis
     :ns     'domain.chemistry
     :reads  #{c/matter-state c/composition c/temperature c/mass}
-    :writes #{c/composition}}
+    :writes #{c/comp-burn}}
 
    {:id     :regime
     :ns     'domain.regime
@@ -130,12 +236,12 @@
     :reads  #{c/b-field c/radius c/position c/density c/matter-state}
     :writes #{c/accel-lorentz}}
 
-   ;; :em owns spin as the derived ω = L/I (it already computes it after applying
-   ;; magnetic-braking torque). Transitional home for the rotation owner.
-   {:id     :em
+   ;; EM magnetic braking emits torque.em (a per-step ΔL); the integrator owns
+   ;; angular-momentum/spin and adds it (spec §7.5).
+   {:id     :em-torque
     :ns     'domain.em
-    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/mass}
-    :writes #{c/angular-momentum c/spin}}
+    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
+    :writes #{c/torque-em}}
 
    ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
    ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
@@ -145,11 +251,10 @@
     :reads  #{c/b-field c/radius c/matter-state c/frozen-flux}
     :writes #{c/b-field c/frozen-flux}}
 
-   {:id     :recenter
-    :ns     'domain.phase0
-    :stage  :barrier
-    :reads  #{c/position c/mass}
-    :writes #{c/position}}])
+   ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
+   ;; COM frame-offset (a world scalar set in tick-world) from every new position
+   ;; — a pure Galilean shift, not a post-fold position write (spec §6).
+   ])
 
 (defn fan-out-systems
   "Systems that run in the parallel fan-out (everything not marked :barrier).

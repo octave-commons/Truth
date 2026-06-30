@@ -73,23 +73,28 @@
 
 (defn- collect-overlaps
   "Walk the Barnes–Hut octree, collecting every body whose sphere literally
-   overlaps query body `q` (excluding itself). `reach` = q-radius + the largest
-   body radius, so a node can be pruned the moment its AABB is farther than
-   `reach` from q — no body inside it could reach q's sphere."
-  [node q reach acc]
-  (cond
-    (nil? node) acc
-    (> (point-aabb-dist2 (:aabb node) (:position q)) (* reach reach)) acc
-    (bh/leaf-node? node)
-    (reduce (fn [a b]
-              (if (and (not= (:id b) (:id q))
-                       (<= (sp/dist (:position q) (:position b))
-                           (+ (double (:radius q)) (double (:radius b)))))
-                (conj a b)
-                a))
-            acc (:bodies node))
-    :else
-    (reduce (fn [a child] (collect-overlaps child q reach a)) acc (:children node))))
+   overlaps query body `q` (excluding itself). A node is pruned the moment its
+   AABB is farther than `q-radius + node-max-radius` from q — no body inside it
+   could reach q's sphere. The reach is computed PER NODE from that subtree's
+   largest body radius (`:max-radius`), not from a single global maximum: a lone
+   oversized body (a bloated protostar) then inflates the reach only for the one
+   node that actually contains it, instead of defeating the AABB pruning for
+   every query (which collapses the broad phase back to O(N²))."
+  [node q q-radius acc]
+  (if (nil? node)
+    acc
+    (let [reach (+ (double q-radius) (double (or (:max-radius node) 0.0)))]
+      (if (> (point-aabb-dist2 (:aabb node) (:position q)) (* reach reach))
+        acc
+        (if (bh/leaf-node? node)
+          (reduce (fn [a b]
+                    (if (and (not= (:id b) (:id q))
+                             (<= (sp/dist (:position q) (:position b))
+                                 (+ (double (:radius q)) (double (:radius b)))))
+                      (conj a b)
+                      a))
+                  acc (:bodies node))
+          (reduce (fn [a child] (collect-overlaps child q q-radius a)) acc (:children node)))))))
 
 (defn- detect-pairs
   "Return a seq of collision maps for every literally-overlapping pair, found by
@@ -101,10 +106,9 @@
     (let [recs  (mapv (fn [[eid pos r v m]]
                         {:id eid :position pos :radius (double r) :velocity v :mass (double m)})
                       bodies)
-          max-r (reduce max 0.0 (map :radius recs))
           tree  (bh/build-tree recs)]
       (for [q recs
-            o (collect-overlaps tree q (+ (double (:radius q)) max-r) [])
+            o (collect-overlaps tree q (:radius q) [])
             :when (< (long (:id q)) (long (:id o)))]
         (pair-map [(:id q) (:position q) (:radius q) (:velocity q)]
                   [(:id o) (:position o) (:radius o) (:velocity o)]

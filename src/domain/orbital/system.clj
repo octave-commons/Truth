@@ -77,7 +77,7 @@
 ;; is written by exactly one fan-out system (gravity / hydro / em). New force
 ;; sources join this list; the integrator stays unchanged.
 (def ^:private accel-sources
-  [c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer])
+  [c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer c/accel-warp])
 
 (defn gravity-acceleration
   "Write-set system: per-body Barnes–Hut self-gravity → `accel.gravity`.

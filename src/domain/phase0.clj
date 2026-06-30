@@ -14,8 +14,12 @@
    [domain.regime           :as regime]
    [domain.chemistry        :as chemistry]
    [domain.player           :as player]
+   [domain.intervention     :as intervention]
    [domain.pacing           :as pacing]
    [law.stellar             :as law]
+   [law.composition         :as lcomp]
+   [law.sed                 :as lsed]
+   [law.plasma              :as lplasma]
    [law.registry            :as lreg]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
@@ -23,6 +27,7 @@
    [domain.ecs.tick         :as tick]
    [domain.ecs.components    :as c]
    [domain.orbital.system   :as orbital]
+   [domain.integrator       :as integ]
    [domain.physics.collision :as collision]
    [shape.spatial           :as sp]))
 
@@ -35,13 +40,13 @@
    `seeds` (overdensity centres) give the cloud the structure it needs to
    fragment and accrete into clumps, planets, and a star-forming core."
   [^java.util.Random rng extent pmass prad v-vir omega seeds n-seeds seed-r turb]
-  (let [to-seed? (and (seq seeds) (< (.nextDouble rng) 0.55))
+  (let [to-seed? (and (seq seeds) (< (.nextDouble rng) 0.40))
         [px py pz]
         (if to-seed?
           (let [[cx cy cz] (nth seeds (.nextInt rng n-seeds))
                 g (fn [s] (* s extent seed-r (.nextGaussian rng)))]
             [(+ cx (g 1.0)) (+ cy (g 1.0)) (+ cz (g 0.6))])
-          (let [r  (* extent (Math/pow (.nextDouble rng) 0.6)) ; centrally concentrated
+           (let [r  (* extent (Math/pow (.nextDouble rng) 0.5)) ; centrally concentrated but diffuse
                 th (* 2.0 Math/PI (.nextDouble rng))
                 ph (Math/acos (- (* 2.0 (.nextDouble rng)) 1.0))]
             [(* r (Math/sin ph) (Math/cos th))
@@ -56,9 +61,9 @@
                            (jit))
      :mass        pmass
      :radius      prad
-     :temperature 12.0
-     :body-kind   :body/gas
-     :composition {:H 0.74 :He 0.24 :metals 0.02}}))
+      :temperature 12.0
+      :body-kind   :body/gas
+      :composition lcomp/primordial-composition}))
 
 (defn seed-nebula
   "Seed a cold, rotating, turbulent, self-gravitating gas cloud on the single ECS
@@ -68,13 +73,19 @@
    Deterministic (seeded RNG) so runs and tests reproduce."
   ([world total-mass extent] (seed-nebula world total-mass extent {}))
   (   [world total-mass extent {:keys [gas-count n-seeds seed-r spin turb seed]
-                             :or   {gas-count 1000 n-seeds 5 seed-r 0.12
+                             ;; `seed-r` widened (0.12→0.18 of extent) so the
+                             ;; overdensity clumps are diffuse, not pinpoints: at
+                             ;; 0.12 each seed's local free-fall time was far
+                             ;; shorter than the timestep, so it imploded in a
+                             ;; couple of ticks ("collapses awfully fast"). Wider,
+                             ;; sparser seeds resolve the collapse over many ticks.
+                             :or   {gas-count 1000 n-seeds 5 seed-r 0.18
                                     spin 0.55 turb 0.08 seed 42}}]
    (let [rng    (java.util.Random. (long seed))
          pmass  (/ (double total-mass) gas-count)
          ;; Render/visual radius for diffuse gas puffs; collision radius is kept
          ;; small so the cloud is transparent and many particles fit in the volume.
-         prad   (* extent 0.004)
+          prad   (* extent 0.003)
          ;; Circular speed at the cloud edge, v_circ = √(G·M/R): the velocity scale
          ;; that BALANCES self-gravity. Rotation (`spin`) and turbulence (`turb`)
          ;; are set as fractions of it, so the cloud starts marginally bound
@@ -125,20 +136,65 @@
                         t    (double (or (ecs/get-component world eid c/temperature) 0.0))]
                     [(+ m mass) (+ mt (* mass t)) (max peak t)]))
                 [0.0 0.0 0.0] eids)
+        ;; Mass held OFF the bulk c/mass ledger but still part of the system:
+        ;; a protostar/star routes accreted material into c/disk-mass (returned to
+        ;; bulk later by disk-evolution-system's viscous accretion), and a star
+        ;; debits shed-but-not-yet-ejected wind mass into c/wind-reservoir. Both
+        ;; are real mass; excluding them made the headline total visibly "bounce"
+        ;; (and under-count) as accretion shuttled mass through the disk. The total
+        ;; is conserved only when all three buckets are summed.
+        disk-mass (reduce (fn [acc eid]
+                            (+ acc (double (or (ecs/get-component world eid c/disk-mass) 0.0))))
+                          0.0 (ecs/entities-with world c/disk-mass))
+        resv-mass (reduce (fn [acc eid]
+                            (+ acc (double (or (ecs/get-component world eid c/wind-reservoir) 0.0))))
+                          0.0 (ecs/entities-with world c/wind-reservoir))
+        total     (+ m disk-mass resv-mass)
         resolved-mass (reduce (fn [acc r]
                                 (if (= :nebula (:matter-state r))
                                   acc
                                   (+ acc (double (or (:mass r) 0.0)))))
                               0.0 (:regions summ))]
-    {:total-mass-kg     m
-     :total-mass-msun   (/ m solar-mass)
+    {:total-mass-kg     total
+     :total-mass-msun   (/ total solar-mass)
+     :bulk-mass-kg      m
+     :disk-mass-kg      disk-mass
      :resolved-fraction (if (pos? m) (/ resolved-mass m) 0.0)
      :avg-temp          (if (pos? m) (/ mt m) 0.0)
      :peak-temp         peak
      :body-count        (:body-count summ)
      :resolved-count    (:resolved-count summ)
      :star-count        (count (:stars summ))
-     :planet-count      (:planet-count summ)}))
+     :planet-count      (:planet-count summ)
+     ;; Phase 1 stats
+     :xuv-escape-count  (count (ecs/entities-with world c/atmosphere-escape))
+     :sed-band-count    (count (ecs/entities-with world c/sed-bands))
+     :lod-local         (count (filterv #(= :local (ecs/get-component world % c/lod-level))
+                                        (ecs/entities-with world c/lod-level)))
+     :lod-system        (count (filterv #(= :system (ecs/get-component world % c/lod-level))
+                                        (ecs/entities-with world c/lod-level)))
+     :lod-galaxy        (count (filterv #(= :galaxy (ecs/get-component world % c/lod-level))
+                                        (ecs/entities-with world c/lod-level)))
+     ;; IMF mass histogram: star counts in mass bins (solar masses)
+     ;; Bins: <0.1, 0.1-0.5, 0.5-1, 1-2, 2-5, 5-10, 10-50, >50
+     :imf-bins          (let [stars (filterv #(= :star (ecs/get-component world % c/matter-state))
+                                             (ecs/entities-with world c/matter-state c/mass))
+                              bins (vec (repeat 8 0))]
+                          (reduce (fn [b eid]
+                                    (let [m-msun (/ (double (or (ecs/get-component world eid c/mass) 0.0))
+                                                    1.989e30)]
+                                      (cond
+                                        (< m-msun 0.1)  (update b 0 inc)
+                                        (< m-msun 0.5)  (update b 1 inc)
+                                        (< m-msun 1.0)  (update b 2 inc)
+                                        (< m-msun 2.0)  (update b 3 inc)
+                                        (< m-msun 5.0)  (update b 4 inc)
+                                        (< m-msun 10.0) (update b 5 inc)
+                                        (< m-msun 50.0) (update b 6 inc)
+                                        :else           (update b 7 inc))))
+                                  bins stars))
+     :disk-count        (count (filterv #(pos? (double (or (ecs/get-component world % c/disk-mass) 0.0)))
+                                        (ecs/entities-with world c/disk-mass)))}))
 
 ;; --- World construction -----------------------------------------------------
 
@@ -203,7 +259,7 @@
       ;;    stars visibly shed and reabsorb gas, and a dominant star emerges from
       ;;    competitive reabsorption. Set ~1.0 for physically-subtle winds.
       :or   {G law/G theta 0.5
-             nebula-mass 4e30 nebula-radius 1.5e16 collapse-fraction 0.5
+             nebula-mass 4e30 nebula-radius 2.0e16 collapse-fraction 0.5
              contraction-time 9.5e14 gas-count 1000 spin 0.6 turb 0.15
              wind-rate-scale 1.5}}]
    (let [neb     (pacing/pacing-for (pacing/dynamical-time nebula-radius nebula-mass)
@@ -237,7 +293,7 @@
                              {:gas-count gas-count :spin spin :turb turb})
          ;; Store the gas smoothing radius so the classifier can compute
          ;; accretion radii from it (before KH contraction shrinks bodies).
-         seeded (assoc seeded :phase0/gas-smoothing-radius (* nebula-radius 0.004))
+          seeded (assoc seeded :phase0/gas-smoothing-radius (* nebula-radius 0.003))
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
      (assert-seed-contracts! w))))
 
@@ -290,11 +346,9 @@
                     :entities #{}
                     :payload  {:data data}})))
 
-(defn recenter-system
-  "Shift every body so the system's centre of mass sits at the origin — i.e. view
-   the formation in its COM frame. Asymmetric ejections give the bound remnant a
-   recoil velocity; without this the whole system slowly drifts out of frame. Pure
-   Galilean shift, so dynamics are unchanged."
+(defn center-of-mass
+  "Mass-weighted centre of mass of every positioned body, or [0 0 0] when empty.
+   A global reduction over the snapshot — the recenter frame-offset (spec §6, §8)."
   [world]
   (let [eids (ecs/entities-with world c/position c/mass)]
     (if (seq eids)
@@ -305,15 +359,149 @@
                         [(+ ax (* (double x) mm)) (+ ay (* (double y) mm))
                          (+ az (* (double z) mm)) (+ am mm)]))
                     [0.0 0.0 0.0 0.0] eids)]
-        (if (pos? m)
-          (let [cx (/ sx m) cy (/ sy m) cz (/ sz m)]
-            (reduce (fn [w eid]
-                      (let [[x y z] (ecs/get-component world eid c/position)]
-                        (ecs/put-component w eid c/position
-                                           [(- (double x) cx) (- (double y) cy) (- (double z) cz)])))
-                    world eids))
-          world))
-      world)))
+        (if (pos? m) [(/ sx m) (/ sy m) (/ sz m)] [0.0 0.0 0.0]))
+      [0.0 0.0 0.0])))
+
+(defn xuv-atmospheric-escape-system
+  "Write-set emitter: planetary atmospheric escape under stellar XUV. For each
+   :planet, find the nearest star's SED bands, compute the XUV flux at the
+   planet's distance, the escape regime, and the mass-loss rate; emit the mass
+   loss as :component/mass-flux.xuv (negative, the integrator owns mass) and the
+   diagnostic :component/atmosphere-escape (its own column). A pure snapshot-
+   reading fan-out emitter (was a serial barrier writing mass directly). Mass
+   loss is clamped to ≤1% of M per tick and never below a 1e20 kg rocky core."
+  []
+  {:id     :xuv-atmospheric-escape
+   :writes #{c/mass-flux-xuv c/atmosphere-escape}
+   :run
+   (fn [world]
+     (let [dt     (double (or (:sim/dt world) 1.0e12))
+           stars  (ecs/entities-with world c/matter-state c/luminosity c/position c/sed-bands)
+           star-data (mapv (fn [eid]
+                             {:eid eid
+                              :pos (ecs/get-component world eid c/position)
+                              :sed (ecs/get-component world eid c/sed-bands)})
+                           stars)
+           planets (filterv #(= :planet (ecs/get-component world % c/matter-state))
+                            (ecs/entities-with world c/matter-state c/mass c/radius c/position))
+           results
+           (keep (fn [eid]
+                   (let [pos   (ecs/get-component world eid c/position)
+                         R     (double (or (ecs/get-component world eid c/radius) 0.0))
+                         M     (double (or (ecs/get-component world eid c/mass) 0.0))
+                         nearest (when (seq star-data)
+                                   (apply min-key #(sp/dist pos (:pos %)) star-data))
+                         dist    (when nearest (sp/dist pos (:pos nearest)))
+                         bands   (when nearest (get-in nearest [:sed :bands]))]
+                     (when (and bands dist (pos? dist) (pos? R) (pos? M))
+                       (let [L-xuv (lsed/xuv-luminosity bands)
+                             F-xuv (lplasma/xuv-flux-at L-xuv dist)
+                             regime (lplasma/escape-regime F-xuv R)
+                             mdot   (case regime
+                                      :energy-limited
+                                      (lplasma/energy-limited-escape F-xuv R M 0.15)
+                                      :recombination-limited
+                                      (* (lplasma/energy-limited-escape F-xuv R M 0.15) 0.6)
+                                      :blow-off
+                                      (* (lplasma/energy-limited-escape F-xuv R M 0.15) 2.0)
+                                      0.0)
+                             ;; dm = Ṁ·dt, ≤1% of M/tick, never below a 1e20 kg core
+                             dm     (min (* mdot dt) (* 0.01 M) (max 0.0 (- M 1.0e20)))]
+                         [eid dm {:regime regime :xuv-flux F-xuv :mass-loss-rate mdot}]))))
+                 planets)]
+       {c/mass-flux-xuv (into {} (keep (fn [[eid dm _]] (when (pos? dm) [eid (- dm)]))) results)
+        c/atmosphere-escape (into {} (map (fn [[eid _ esc]] [eid esc])) results)}))})
+
+;; --- LOD Scheduler (Phase 1) ------------------------------------------------
+;; Observer-centric level-of-detail: assigns c/lod-level to stars and planets
+;; based on distance from the player's focus. Controls which Phase 1 systems
+;; are relevant at each fidelity level.
+;; :local  — within 0.5 AU: full detail (atmosphere shells, XUV escape, CME)
+;; :system — within 5 AU: band luminosities and steady winds
+;; :galaxy — beyond 5 AU: coarse SED only
+
+(def ^:const lod-local-radius
+  "Distance (m) within which entities are at :local LOD. ~0.5 AU."
+  7.5e10)
+
+(def ^:const lod-system-radius
+  "Distance (m) within which entities are at :system LOD. ~5 AU."
+  7.5e11)
+
+(defn lod-scheduler
+  "Assign c/lod-level (:local, :system, :galaxy) to every star and planet
+   based on distance from the player observer's focus position."
+  [world]
+  (if-let [obs (player/get-observer world)]
+    (let [focus (:focus-position obs [0.0 0.0 0.0])
+          eids (filterv (fn [eid]
+                          (let [st (ecs/get-component world eid c/matter-state)]
+                            (or (= :star st) (= :planet st))))
+                        (ecs/entities-with world c/matter-state c/position))]
+      (reduce (fn [w eid]
+                (let [pos  (ecs/get-component w eid c/position)
+                      dist (sp/dist focus pos)
+                      level (cond
+                              (< dist lod-local-radius)  :local
+                              (< dist lod-system-radius) :system
+                              :else                       :galaxy)]
+                  (ecs/put-component w eid c/lod-level level)))
+              world
+              eids))
+    world))
+
+;; --- Magnetosphere coupling (Phase 1) ----------------------------------------
+;; Stellar wind and CME parcels carry ram pressure and B-field. When they reach
+;; a planet, they compress its magnetosphere. The standoff distance r_mp is where
+;; the planet's magnetic pressure equals the wind ram pressure: B²/(2μ₀) = P_ram.
+
+(def ^:const mu-0 1.25663706212e-6) ;; vacuum permeability (T·m/A)
+
+(defn- magnetopause-distance
+  "Standoff distance (m) where planetary magnetic pressure balances wind ram
+   pressure: r_mp = R_p × (B_p² / (2μ₀ P_ram))^(1/6). Returns R_p when no wind."
+  [planet-radius planet-b-field ram-pressure]
+  (let [Rp  (double (or planet-radius 0.0))
+        Bp  (double (or planet-b-field 0.0))
+        Pram (double (or ram-pressure 0.0))]
+    (if (and (pos? Rp) (pos? Bp) (pos? Pram))
+      (* Rp (Math/pow (/ (* Bp Bp) (* 2.0 mu-0 Pram)) (/ 1.0 6.0)))
+      Rp)))
+
+(defn magnetosphere-coupling-system
+  "For each :planet, find nearby ionized wind/CME parcels and compute magnetosphere
+   compression. Writes c/magnetosphere with standoff distance and compression factor.
+   A compressed magnetosphere (small standoff) means more atmospheric exposure.
+   Runs at the barrier after XUV escape."
+  [world]
+  (let [wind-parcels (filterv (fn [eid]
+                                (let [st (ecs/get-component world eid c/matter-state)]
+                                  (and (= :nebula st)
+                                       (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
+                              (ecs/entities-with world c/matter-state c/position c/mass c/radius))
+        wind-data (mapv (fn [eid]
+                          {:pos (ecs/get-component world eid c/position)
+                           :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
+                        wind-parcels)
+        planets (filterv #(= :planet (ecs/get-component world % c/matter-state))
+                         (ecs/entities-with world c/matter-state c/position c/radius))]
+    (reduce (fn [w eid]
+              (let [pos    (ecs/get-component w eid c/position)
+                    Rp     (double (or (ecs/get-component w eid c/radius) 0.0))
+                    Bp     (double (or (some-> (ecs/get-component w eid c/b-field) sp/len) 0.0))
+                    cutoff (* 10.0 Rp)
+                    nearby-ram (reduce (fn [acc wd]
+                                         (if (< (sp/dist pos (:pos wd)) cutoff)
+                                           (+ acc (:ram wd))
+                                           acc))
+                                       0.0 wind-data)
+                    r-mp       (magnetopause-distance Rp Bp nearby-ram)
+                    compression (if (pos? Rp) (min 10.0 (/ Rp (max 1.0e3 r-mp))) 1.0)]
+                (ecs/put-component w eid c/magnetosphere
+                                  {:standoff-distance r-mp
+                                   :compression compression})))
+            world
+            planets)))
 
 (defn physics-systems-parallel
   "The transform systems as write-set systems for the double-buffer fan-out
@@ -340,19 +528,68 @@
      (orbital/gravity-acceleration G theta (or softening 1e14))
      (hydro/pressure-acceleration)
      (em/lorentz-acceleration-system)
-     (orbital/motion-integration dt)
+     (intervention/warp-acceleration-system)
+     (player/observer-acceleration-system)
+     (intervention/thermal-intervention-system)
+     (integ/integrator-system dt)
      ;; legacy-bridged transform systems
      (stellar/structure-system)
      (stellar/eos-system)
      (stellar/classifier-system)
-     (stellar/temperature-system dt)
-     (em/field-system dt)
-     (legacy :fusion         stellar/fusion-system)
-     (legacy :nucleosynthesis (chemistry/nucleosynthesis-system dt))
+      (em/field-system dt)
+      (legacy :fusion         stellar/fusion-system)
+      (stellar/stellar-sed-system)
+      (stellar/atmosphere-shells-system)
+      (chemistry/nucleosynthesis-system dt)
+      (stellar/deuterium-depletion-system)
+      (stellar/stellar-wind-system)
+      (stellar/stellar-flare-system)
+      (xuv-atmospheric-escape-system)
      (legacy :regime         regime/regime-system)
-     ;; em's braking/spin (masked to angular-momentum/spin; its legacy hydro-accel
-     ;; and b-field writes are dropped — Lorentz via em-lorentz, b-field via field)
-     (legacy :em             (em/em-system dt))]))
+     ;; em's magnetic braking → torque.em (the integrator owns angular-momentum/
+     ;; spin); Lorentz via em-lorentz, b-field via field.
+     (em/em-torque-system dt)]))
+
+(def ^:private consumed-markers
+  "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
+  [c/consumed-merge c/consumed-accrete c/consumed-wind])
+
+(def ^:private spawn-request-components
+  "Lifecycle spawn requests; each is {eid [seed-spec ...]} materialized into new
+   entities at world-construction."
+  [c/spawn-request-wind c/spawn-request-flare
+   c/spawn-request-accretion c/spawn-request-shatter])
+
+(defn materialize-lifecycle
+  "World-construction step (spec §5): spawn the entities requested by the fan-out
+   lifecycle emitters (spawn-request.*), then reap every entity marked consumed.*.
+   This is NOT a contended-state write — continuous state (mass/momentum/blend)
+   flows through the integrator as influences; only entity creation/removal
+   happens here, which is automatically Jacobi-consistent (a body created this
+   tick was invisible to every this-tick reader; a body removed was fully present
+   in the snapshot). Pure: world → world'."
+  [world]
+  (let [;; spawn requested entities, clearing each request as it is consumed
+        spawned
+        (reduce
+         (fn [w req-ct]
+           (reduce-kv
+            (fn [w eid specs]
+              (let [w (ecs/remove-component w eid req-ct)]
+                (reduce (fn [w spec]
+                          (let [extra (:extra-components spec)
+                                [w2 neweid] (stellar/spawn-clump w (dissoc spec :extra-components))]
+                            (reduce-kv (fn [w k v] (ecs/put-component w neweid k v))
+                                       w2 (or extra {}))))
+                        w specs)))
+            w
+            (get-in w [:components req-ct] {})))
+         world
+         spawn-request-components)
+        ;; reap every consumed entity (despawn removes all its components)
+        consumed (into #{} (mapcat #(keys (get-in spawned [:components %] {})))
+                       consumed-markers)]
+    (reduce ecs/despawn spawned consumed)))
 
 (defn step-physics
   "Run one tick of physics over `world` (already tick-advanced).
@@ -373,9 +610,13 @@
       (collision/collision-detection-system)
       (stellar/fusion-promotion-system)
       (stellar/sink-formation-system)
-      (stellar/stellar-wind-system)
-      (stellar/stellar-flare-system)
-      (recenter-system)))
+      (stellar/disk-evolution-system)
+      (intervention/expire-interventions)
+      (lod-scheduler)
+      (magnetosphere-coupling-system)
+      ;; world-construction: materialize spawn requests (wind/flare parcels) and
+      ;; reap consumed entities (ablated stars) emitted by the fan-out (spec §5).
+      (materialize-lifecycle)))
 
 (defn tick-world
   "Advance the world by one tick. Pure: world -> world'."
@@ -386,8 +627,13 @@
         effective-dt dt
         prev       (system-summary world)
         prev-phase (:phase0/phase world)
-        ;; advance logical tick first so every event this step shares its tick
-        world1     (ecs/advance-tick world)
+        ;; advance logical tick first so every event this step shares its tick;
+        ;; arm the integrator with the recenter frame-offset — the COM of THIS
+        ;; snapshot, subtracted from every new position so the formation stays in
+        ;; its COM frame (spec §6: a one-tick-stale, pure-Galilean shift, replacing
+        ;; the old post-fold recenter-system). A world scalar, single-owner.
+        world1     (-> (ecs/advance-tick world)
+                       (assoc :phase0/frame-offset (center-of-mass world)))
         world2     (step-physics world1)
         summ       (system-summary world2)
         complexity (stellar/complexity-score summ)
@@ -401,8 +647,20 @@
         ;; so it can never freeze the outer cloud — the failure of the old
         ;; temperature-driven dt.
         ;; Disabled (`:phase0/adaptive-pacing? false`) → :sim/dt is held constant.
+        ;; Time slip: when the observer's attention has lapsed (low coherence) over
+        ;; a low-complexity region, the clock SLIPS — the per-tick step inflates and
+        ;; the unwatched universe fast-forwards until something draws the eye back.
+        ;; Reads the observer's coherence from the input SNAPSHOT (observer-system is
+        ;; its sole writer and hasn't run; the value is identical in world/1/2), so
+        ;; the new dt and the new coherence both land NEXT tick — the same Jacobi lag
+        ;; pacing already carries, not a Gauss–Seidel ordering dependence. Like
+        ;; pacing it's an adaptive-clock scalar, so it only applies when adaptive
+        ;; pacing is on.
+        slipping?      (when-let [obs (player/get-observer world2)]
+                         (player/time-slip-threshold? obs complexity))
         pacing         (when-not (false? (:phase0/adaptive-pacing? world))
-                         (pacing/pace world2))
+                         (-> (pacing/pace world2)
+                             (pacing/with-time-slip (boolean slipping?))))
         world3     (cond-> world2
                      (and (:star? summ) (not (:star? prev)))
                      (emit-threshold :event/stellar-ignition (first (:stars summ)))
@@ -421,10 +679,11 @@
                              :phase0/stats      stats
                              :phase0/phase      phase
                              :phase0/sim-time   (+ (:phase0/sim-time world3) dt))
-                     pacing (assoc :phase0/time-scale (:rate pacing)
-                                   :phase0/rate-yr    (:rate-yr pacing)
-                                   :sim/dt            (:dt pacing)
-                                   :sim/softening     (:softening pacing)))
+                     pacing (assoc :phase0/time-scale    (:rate pacing)
+                                   :phase0/rate-yr       (:rate-yr pacing)
+                                   :phase0/time-slipping? (boolean (:time-slipping? pacing))
+                                   :sim/dt               (:dt pacing)
+                                   :sim/softening        (:softening pacing)))
         world5     ((player/observer-system effective-dt) world4)
         obs        (player/get-observer world5)]
     (assoc world5 :phase0/active

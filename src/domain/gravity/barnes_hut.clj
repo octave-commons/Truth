@@ -19,6 +19,10 @@
      :aabb   bb
      :bodies bodies
      :mass   total
+     ;; Largest body radius in this node, for fixed-radius neighbour/overlap
+     ;; queries (e.g. collision broad-phase). 0.0 when bodies carry no :radius
+     ;; (gravity, which ignores this field).
+     :max-radius (double (reduce max 0.0 (map #(double (or (:radius %) 0.0)) bodies)))
      :com    (if (pos? total)
                (sp/v* (reduce (fn [acc b]
                                  (sp/v+ acc (sp/v* (:position b) (:mass b))))
@@ -33,6 +37,8 @@
    :children children
    :mass     mass
    :com      com})
+
+(defn- node-max-radius [node] (if node (double (or (:max-radius node) 0.0)) 0.0))
 
 (defn internal-node? [node] (= (:type node) :internal))
 (defn leaf-node?     [node] (= (:type node) :leaf))
@@ -56,6 +62,7 @@
    :aabb     bb
    :children (vec (repeat 8 nil))
    :mass     0.0
+   :max-radius 0.0
    :com      (sp/vec3 0.0 0.0 0.0)})
 
 (defn- insert-body-into-node
@@ -112,6 +119,7 @@
     (internal-node? node)
     (let [children'  (mapv propagate-mass (:children node))
           total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
+          max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children')
           com        (if (zero? total-mass)
                        (sp/center (:aabb node))
                        (->> children'
@@ -123,6 +131,7 @@
       (assoc node
              :children children'
              :mass     total-mass
+             :max-radius max-radius
              :com      com))
 
     :else

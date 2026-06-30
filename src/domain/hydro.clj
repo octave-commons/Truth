@@ -18,6 +18,7 @@
    [domain.ecs.parallel :as par]
    [domain.ecs.tick   :as tick]
    [domain.ecs.components :as c]
+   [domain.spatial.index :as idx]
    [shape.spatial     :as sp]))
 
 (defn cubic-spline-dw-dq
@@ -132,16 +133,6 @@
   [state]
   (contains? #{:nebula :protostar} state))
 
-(defn- neighbors-within
-  "All hydro-active entities within cutoff distance of `center`."
-  [world center cutoff eids]
-  (let [cut2 (* cutoff cutoff)]
-    (filterv
-     (fn [n]
-       (let [r2 (sp/len2 (sp/v- center (:position n)))]
-         (<= r2 cut2)))
-     eids)))
-
 (defn hydro-system
   "Compute the pressure-gradient acceleration a = −∇p/ρ for every hydro-active
    clump and store it on `c/hydro-accel`. This acceleration is consumed by
@@ -164,10 +155,11 @@
                                (ecs/remove-component w eid c/hydro-accel)))
                            world
                            stale)
+          tree     (idx/build active)
           updates  (par/par-mapv
                     (fn [data]
                       (let [h        (* 2.0 (double (or (:radius data) 1.0)))
-                            nbrs     (neighbors-within cleared (:position data) h active)]
+                            nbrs     (idx/within-radius tree (:position data) h)]
                         [(:eid data)
                          (pressure-gradient-acceleration data nbrs)]))
                     active)]
@@ -192,10 +184,11 @@
                                                c/density c/pressure c/mass c/radius)
                    all-data (mapv #(entity->hydro-data world %) eids)
                    active   (filterv #(hydro-active? (:state %)) all-data)
+                   tree     (idx/build active)
                    computed (par/par-mapv
                               (fn [data]
                                 (let [h    (* 2.0 (double (or (:radius data) 1.0)))
-                                      nbrs (neighbors-within world (:position data) h active)]
+                                      nbrs (idx/within-radius tree (:position data) h)]
                                   [(:eid data) (pressure-gradient-acceleration data nbrs)]))
                               active)
                    cell     (reduce (fn [m [eid a]]
@@ -220,24 +213,14 @@
   "Absolute floor on the smoothing length (m), a final guard so a coincident pair
    cannot produce an infinite density." 1.0e9)
 
-(defn- nearest-neighbor-dist
-  "Distance from `pos` to the closest OTHER parcel in `gas` (each `{:eid :position}`).
-   ##Inf if there is no other parcel."
-  [pos eid gas]
-  (Math/sqrt
-    (double
-      (reduce (fn [m n]
-                (if (= (:eid n) eid)
-                  m
-                  (let [d2 (sp/len2 (sp/v- pos (:position n)))]
-                    (if (< d2 (double m)) d2 m))))
-              Double/POSITIVE_INFINITY gas))))
-
 (defn- smoothing-length
   "Geometric SPH smoothing length for parcel `data` among `gas`: h = factor · d_nn,
-   floored at `sph-h-min`. Falls back to the parcel's own 2·radius if isolated."
-  [data gas]
-  (let [d (nearest-neighbor-dist (:position data) (:eid data) gas)]
+   floored at `sph-h-min`. Falls back to the parcel's own 2·radius if isolated.
+   `tree` is the neighbour index over `gas` (see `domain.spatial.index`); the
+   nearest-neighbour distance comes from an octree branch-and-bound rather than a
+   linear scan over `gas`."
+  [data tree]
+  (let [d (idx/nearest-dist tree (:position data) (:eid data))]
     (if (Double/isInfinite d)
       (* 2.0 (double (or (:radius data) sph-h-min)))
       (max sph-h-min (* sph-h-factor d)))))
@@ -255,10 +238,11 @@
                                       c/pressure c/mass c/radius c/temperature)
           all-data (mapv #(entity->hydro-data world %) eids)
           gas      (filterv #(= :nebula (:state %)) all-data)
+          tree     (idx/build gas)
           updates  (par/par-mapv
                     (fn [data]
-                      (let [h     (smoothing-length data gas)
-                            nbrs  (neighbors-within world (:position data) h gas)
+                      (let [h     (smoothing-length data tree)
+                            nbrs  (idx/within-radius tree (:position data) h)
                             rho   (sph-density (assoc data :radius (* 0.5 h)) nbrs)
                             press (ls/ideal-gas-pressure rho (:temperature data))]
                         [(:eid data) rho press (* 0.5 h)]))
@@ -285,11 +269,12 @@
   (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                     c/pressure c/mass c/radius c/temperature)
         all-data (mapv #(entity->hydro-data world %) eids)
-        gas      (filterv #(= :nebula (:state %)) all-data)]
+        gas      (filterv #(= :nebula (:state %)) all-data)
+        tree     (idx/build gas)]
     (par/par-mapv
       (fn [data]
-        (let [h    (smoothing-length data gas)
-              nbrs (neighbors-within world (:position data) h gas)
+        (let [h    (smoothing-length data tree)
+              nbrs (idx/within-radius tree (:position data) h)
               rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
           [(:eid data) rho (* 0.5 h)]))
       gas)))

@@ -1,45 +1,54 @@
-# Π Fork Tax — 2026-06-28
+# Π Fork Tax — 2026-06-30
 
 ## Signal
 
-Full handoff snapshot of the Phase 0 stellar simulation after a burst of domain work on nucleosynthesis, seed validation, magnetized outflows, collision response, and observer influence.
+Major Phase 0 evolution: unified integrator, spatial indexing, pacing system, intervention API, massive stellar module overhaul, rendering enhancements, benchmark suite, and speculative physics (time-slip test infrastructure).
 
-## Changes (389 insertions, 139 deletions across 13 files)
+## Changes (2274 insertions, 568 deletions across 25 modified files + 8 new files)
 
-### Domain Systems
-- **`chemistry.clj`** — `nucleosynthesis-system`: live H→He burn wired into the ECS tick pipeline. Uses `burn-step` with dt-correct rate `f = min(cap, dt/τ_MS)` where `τ_MS ∝ M^(-2.5)`. Caps at 1% per tick to prevent Myr-scale lurch. Sole writer of `:component/composition`.
-- **`phase0.clj`** — `assert-seed-contracts!`: boot-time guard that folds every seeded matter-state body through `law.registry` governed by `law.stellar/matter-state-contract`. Malformed seeds fail at boot, not mid-flight.
-- **`stellar.clj`** — Wind and flare parcels now carry `:b-field` (the star's field at launch via `em/net-field-at`), seeding the Phase 1 magnetised-outflow substrate. New `shatter-bodies` collision response: cold brittle bodies split into two debris fragments (mass + momentum conserved), hot molten bodies merge.
-- **`player.clj`** — `observer-acceleration`: bounded per-tick velocity nudge toward focus (`accel = pull × ref-speed / dt`, so `Δv = pull × ref-speed` regardless of dt). `apply-observer-influence`: sole writer of `:component/accel.observer`.
+### Domain Systems — Major Rewrites
+- **`stellar.clj`** — +1016/-245 lines: complete SED pipeline integration, wind/flare physics with magnetic tagging, collision response (shatter vs merge by temperature), nucleosynthesis integration, PMS evolution
+- **`phase0.clj`** — +347 lines: regime classifier, integrator wiring, pacing integration, enhanced seed assertions, tick pipeline reordering
+- **`player.clj`** — +232/-128 lines: observer influence system with bounded acceleration pull-toward-focus
+- **`render.clj`** — +533/-95 lines: major rendering overhaul for new entity types, field visualization, Lanterna raycast enhancements
+- **`hydro.clj`** — +51 lines: SPH refinements, equation of state plumbing
+- **`em.clj`** — +38 lines: electromagnetic field substrate, net-field-at queries
+- **`physics/collision.clj`** — +42 lines: temperature/malleability-based collision regimes
+- **`pacing.clj`** — +34 lines: new pacing module for time-step management
 
-### New ECS Components
-- `accel-observer` in `ecs/components.clj` — observer influence acceleration vector
+### New Source Modules
+- **`domain/integrator.clj`** — Unified physical state integrator (leapfrog, configurable order)
+- **`domain/intervention.clj`** — Programmatic world modification API
+- **`domain/spatial/index.clj`** — Spatial hash / grid for neighbor queries
+- **`infra/inspect.clj`** — Runtime inspection tooling for live ECS world state
 
-### New Law Schemas
-- `law/composition.clj` — composition contracts
-- `law/plasma.clj` — plasma state schemas
-- `law/sed.clj` — spectral energy distribution schemas
-- `law/system_specs.clj` — system-level spec contracts
+### ECS Evolution
+- **`ecs/components.clj`** — 62 new lines: integrator, pacing, observer influence components
+- **`ecs/registry.clj`** — 147 lines: all new components and systems registered
 
-### New Tests
-- `test/domain/chemistry_system_test.clj`
-- `test/domain/collision_malleability_test.clj`
-- `test/domain/em_field_substrate_test.clj`
-- `test/domain/observer_influence_test.clj`
-- `test/law/seed_contract_test.clj`
+### Law Schemas
+- `law/composition.clj`, `law/plasma.clj`, `law/sed.clj`, `law/system_specs.clj` — refinements and expansions
 
-### Research Notebooks
-- Expanded `docs/research/` with atmosphere, biology, geology, physics domains
-- Cosmology: BBN yields notebook, Lane-Emden solver, stellar SED template grid
+### Tests
+- `test/domain/chemistry_system_test.clj` — nucleosynthesis validation
+- `test/domain/ecs/parallel_integration_test.clj` — parallel ECS integration testing
+- `test/domain/observer_influence_test.clj` — observer influence mechanics
+- `test/domain/phase0_test.clj` — Phase 0 bootstrap and tick pipeline
+- `test/domain/stellar_test.clj` — stellar evolution and SED
+- `test/domain/time_slip_test.clj` — speculative physics (time-slip) test infrastructure
+
+### Benchmarks
+- `bench/` — New criterium benchmark suite for performance-critical paths
+- `bin/bench` — Benchmark runner script
+
+### Notes
+- `docs/notes/2026.06.29.15.00.29.md`
+- `docs/notes/2026.06.29.19.13.02.md`
+- `docs/notes/specs/2026.06.29-unified-physical-state-integrator-spec.md`
 
 ## Verification
 - Architecture test: ✅ 5 tests, 7 assertions, 0 failures
 - No secrets detected in tracked files
-- `.gitignore` updated for research checkpoints
-
-## Concurrent Dirt (intentionally untouched)
-- `src/law/.#system_specs.clj` — Emacs lockfile, not ours
-- `docs/research/.ipynb_checkpoints/` — Jupyter runtime artifacts
 
 ## Next
-Continue Phase 0 integration — the nucleosynthesis system and observer influence are live but need a full simulation run to validate behavior at Myr timescales.
+Continue Phase 0 stabilization — benchmark-driven optimization, time-slip mechanics exploration, full Myr-scale simulation validation.

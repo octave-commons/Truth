@@ -147,20 +147,20 @@
    :logg        valid-logg?
    :metallicity comp/mass-fraction?    ;; Z mass fraction
    :luminosity  positive-watts?        ;; L_bol in Watts
-   :bands       map?})                 ;; band-keyword → Watts
+   :bands       sed-bands-map-schema}) ;; band-keyword → Watts, all bands validated
 
 ;; --- Stellar atmosphere layer schemas ---
 ;; Derived from: docs/research/phase1-radiation-plasma-truth.md §3
 
 (def atmosphere-layer-ids
-  "The four canonical stellar atmosphere layers."
-  [:photosphere :chromosphere :transition :corona])
+  "The four canonical stellar atmosphere layers. A set for use as a predicate."
+  #{:photosphere :chromosphere :transition :corona})
 
 (def atmosphere-shell-schema
   "A single atmospheric shell/layer of a star.
    Temperature, electron density, ionization fraction, and magnetic field
    characterize each layer. Height is above the photosphere."
-  {:layer/id              atmosphere-layer-ids
+  {:layer/id              atmosphere-layer-ids   ;; set works as a predicate
    :temperature           positive-watts?         ;; K (> 0)
    :electron-density      non-negative-watts?     ;; m^-3
    :ionization-fraction   #(and (number? %)       ;; 0..1
