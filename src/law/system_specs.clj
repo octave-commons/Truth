@@ -13,10 +13,7 @@
 
    See: docs/research/cosmology/primordial-nucleosynthesis-yields.md §7
    See: docs/research/phase1-radiation-plasma-truth.md §5-7"
-  (:require
-   [law.composition :as comp]
-   [law.sed :as sed]
-   [law.plasma :as plasma]))
+  )
 
 ;; ============================================================================
 ;; Phase 0: BBN Initial Composition
@@ -46,7 +43,7 @@
      (deftest primordial-composition-sums-to-unity
        (let [comp (law.composition/primordial-composition)]
          (is (≈ 1.0 (+ (:H comp) (:He comp)) 1e-3))
-         (is (< (:metals comp) 1e-6)))))
+          (is (< (:metals comp) 1e-6))))")
 
 ;; ---------------------------------------------------------------------------
 ;; Phase 0: Deuterium Depletion (separate system — user decision)
@@ -89,8 +86,8 @@
                                    :composition {:H 0.75 :He 0.24 :D 5e-6}})
              world' (deuterium-depletion-system world)
              eid    (first (ecs/entities-with world' c/matter-state))]
-         (is (= 5e-6 (:D (ecs/get-component world' eid c/composition))))))
-
+          (is (= 5e-6 (:D (ecs/get-component world' eid c/composition))))))")
+ 
 ;; ============================================================================
 ;; Phase 1: Stellar SED
 ;; Source: phase1-radiation-plasma-truth.md §2

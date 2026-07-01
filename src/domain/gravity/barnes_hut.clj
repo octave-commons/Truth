@@ -31,7 +31,7 @@
                       (/ 1.0 total))
                (sp/center bb))}))
 
-(defn- internal-node [bb children mass com]
+(defn- _internal-node [bb children mass com]
   {:type     :internal
    :aabb     bb
    :children children
@@ -93,8 +93,8 @@
             child'   (if (nil? child)
                        (let [pad      [min-aabb-size min-aabb-size min-aabb-size]
                              child-bb (if (< (sp/max-side child-bb) min-aabb-size)
-                                        (sp/aabb (sp/v- (:min child-bb) pad)
-                                                 (sp/v+ (:max child-bb) pad))
+                                         (sp/aabb (sp/v- (:aabb-min child-bb) pad)
+                                                  (sp/v+ (:aabb-max child-bb) pad))
                                         child-bb)]
                          (leaf-node child-bb body))
                        (insert-body-into-node child body))]
@@ -151,8 +151,8 @@
                  b))
     :else
     (let [bb   (-> (bounding-aabb-for-bodies bodies)
-                   (update :min #(sp/v+ % [-1e-6 -1e-6 -1e-6]))
-                   (update :max #(sp/v+ % [1e-6 1e-6 1e-6])))
+                   (update :aabb-min #(sp/v+ % [-1e-6 -1e-6 -1e-6]))
+                   (update :aabb-max #(sp/v+ % [1e-6 1e-6 1e-6])))
           tree (reduce insert-body-into-node (empty-internal bb) bodies)]
       (propagate-mass tree))))
 

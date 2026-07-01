@@ -26,13 +26,14 @@
    isolated keeps each field's logic small and avoids touching tuned formulas
    (§9 non-goal). This namespace owns only the fields that were contended or
    accumulated across multiple writers."
-  (:require
-   [domain.ecs.core       :as ecs]
-   [domain.ecs.components  :as c]
-   [domain.stellar        :as stellar]
-   [domain.intervention   :as intervention]
-   [law.stellar           :as law]
-   [shape.spatial         :as sp]))
+   (:require
+    [domain.ecs.core       :as ecs]
+    [domain.ecs.components  :as c]
+    [domain.ecs.tick        :as tick]  ;; removed sentinel
+    [domain.stellar        :as stellar]
+    [domain.intervention   :as intervention]
+    [law.stellar           :as law]
+    [shape.spatial         :as sp]))
 
 (def ^:private zero3 [0.0 0.0 0.0])
 
@@ -88,47 +89,206 @@
 (def ^:private mass-flux-sources
   (get-in influence-registry [:mass :accumulate]))
 
+;; --- Absorb-accrete processing (sink-formation / collision emissions) -------
+;; c/absorb-accrete is {eid [{:mass :velocity :position :angular-momentum ...}]}
+;; — the absorbed parcels' state. The integrator blends it into the survivor's
+;; fields (spec §5). c/absorb-merge is the same shape for collision merges.
+;; Each per-field updater below reads the same data and applies its field.
+
+(defn- absorb-mass-delta
+  "Sum of absorbed bulk mass for `eid` from absorb-accrete and absorb-merge
+   packets. Skips disk-route packets (disk-evolution handles those)."
+  [world eid]
+  (let [acc (fn [acc eid' packets]
+              (if (= eid' eid)
+                (reduce + acc (map :mass (remove :disk-route packets)))
+                acc))]
+    (+ (reduce-kv acc 0.0 (get-in world [:components c/absorb-accrete] {}))
+       (reduce-kv acc 0.0 (get-in world [:components c/absorb-merge] {})))))
+
+(defn- absorb-vec-composite
+  "Mass-weighted composite of velocity (or position) for `eid` from absorb
+   packets. Returns `[composite-vec total-mass]` for the absorbed material,
+   or [zero3 0] if no packets target this entity."
+  [world eid key]
+  (reduce-kv
+   (fn [[v-sum m-sum] eid' packets]
+     (if (= eid' eid)
+       (reduce (fn [[v-sum m-sum] p]
+                 (let [m (double (:mass p 0.0))
+                       v (get p key [0 0 0])]
+                   [(sp/v+ v-sum (sp/v* v m)) (+ m-sum m)]))
+               [v-sum m-sum] packets)
+       [v-sum m-sum]))
+   [zero3 0.0]
+   (merge (get-in world [:components c/absorb-accrete] {})
+          (get-in world [:components c/absorb-merge] {}))))
+
+(defn- absorb-angmom-sum
+  "Sum of absorbed angular momentum for `eid` from absorb packets."
+  [world eid]
+  (let [acc (fn [acc eid' packets]
+              (if (= eid' eid)
+                (reduce sp/v+ acc (map :angular-momentum packets))
+                acc))]
+    (reduce-kv acc zero3
+               (merge (get-in world [:components c/absorb-accrete] {})
+                      (get-in world [:components c/absorb-merge] {})))))
+
+(defn- absorb-packets-for
+  "All absorb-accrete and absorb-merge packets targeting `eid`."
+  [world eid]
+  (let [matches (fn [m] (get m eid))]
+    (into (or (matches (get-in world [:components c/absorb-accrete] {})) [])
+          (or (matches (get-in world [:components c/absorb-merge] {})) []))))
+
+(defn- absorb-temp-delta
+  "Temperature change for `eid` from absorb-merge packets: mass-weighted
+   temperature blend plus impact heating (kinetic energy → thermal). Returns the
+   final blended temperature, or nil if no merge packets target this entity.
+   The impact heating formula is ΔT = E_lost · m_H / (M_total · 2.5 · k_B),
+   matching the serial merge handler (stellar.clj:1837)."
+  [world eid]
+  (let [pkts (filter :temperature (absorb-packets-for world eid))]
+    (when (seq pkts)
+      (let [m0  (double (or (ecs/get-component world eid c/mass) 0.0))
+            t0  (double (or (ecs/get-component world eid c/temperature) 0.0))
+            v0  (or (ecs/get-component world eid c/velocity) zero3)
+            ;; mass-weighted temperature blend
+            {:keys [t-blend total-m]}
+            (reduce (fn [acc p]
+                      (let [m (double (:mass p 0.0))
+                            t (double (:temperature p 0.0))]
+                        (-> acc
+                            (update :t-blend + (* t m))
+                            (update :total-m + m))))
+                    {:t-blend (* t0 m0) :total-m m0}
+                    pkts)
+            base-t (if (pos? total-m) (/ t-blend total-m) t0)
+            ;; impact heating: kinetic energy lost in inelastic collision
+            dv-sum (reduce (fn [dv p]
+                             (let [vs (or (:velocity p) zero3)]
+                               (sp/v+ dv (sp/v- v0 vs))))
+                           zero3 pkts)
+            ms-sum (reduce + (map :mass pkts))
+            e-lost (* 0.5 (/ (* m0 ms-sum) (+ m0 ms-sum))
+                      (sp/dot dv-sum dv-sum))
+            impact-dt (/ (* e-lost law/m-H) (* (+ m0 ms-sum) 2.5 law/k-B))]
+        (+ base-t impact-dt)))))
+
+(defn- absorb-comp-blend
+  "Mass-weighted composition blend for `eid` from absorb-merge packets.
+   Returns the blended composition map, or nil if no merge packets target this
+   entity."
+  [world eid]
+  (let [pkts (filter :composition (absorb-packets-for world eid))]
+    (when (seq pkts)
+      (let [m0  (double (or (ecs/get-component world eid c/mass) 0.0))
+            c0  (or (ecs/get-component world eid c/composition) {})
+            {:keys [comp-acc total-m]}
+            (reduce (fn [acc p]
+                      (let [m (double (:mass p 0.0))
+                            c (or (:composition p) {})]
+                        (-> acc
+                            (update :total-m + m)
+                            (update :comp-acc
+                                    (fn [ca]
+                                      (reduce-kv
+                                       (fn [result k v]
+                                         (assoc result k (+ (get result k 0.0) (* v m))))
+                                       (or ca {})
+                                       c))))))
+                    {:comp-acc (reduce-kv (fn [m k v] (assoc m k (* v m0))) {} c0)
+                     :total-m m0}
+                    pkts)]
+        (when (pos? total-m)
+          (let [inv (/ 1.0 total-m)]
+            (reduce-kv (fn [m k v] (assoc m k (* v inv))) {} comp-acc)))))))
+
 ;; --- Per-field updaters (each returns a write-set fragment) ------------------
 
+(defn- com-blend
+  "Mass-weighted centroid of survivor `[v0 x0]` with mass `m0` and absorbed
+   packets `pkts`. Returns `[v-blend x-blend total-mass]`."
+  [v0 x0 m0 pkts]
+  (let [v0m (sp/v* v0 m0)
+        x0m (sp/v* x0 m0)
+        {:keys [vn xn total-m]}
+        (reduce (fn [acc p]
+                  (let [m (double (:mass p 0.0))
+                        v (or (:velocity p) zero3)
+                        x (or (:position p) zero3)]
+                    (-> acc
+                        (update :vn sp/v+ (sp/v* v m))
+                        (update :xn sp/v+ (sp/v* x m))
+                        (update :total-m + m))))
+                {:vn v0m :xn x0m :total-m m0}
+                pkts)]
+    (if (pos? total-m)
+      (let [inv (/ 1.0 total-m)]
+        [(sp/v* vn inv) (sp/v* xn inv) total-m])
+      [v0 x0 m0])))
+
 (defn kinematics-ws
-  "Position + velocity. v' = v + (Σ accel.*)·dt + Σ dv.* ; x' = x + v'·dt
+  "Position + velocity. v' = v + (Σ accel.*)·dt + Σ dv.*; x' = x + v'·dt
    (symplectic Euler), then the one-tick-stale COM frame-offset is subtracted from
-   position (a pure Galilean shift, §6). Force contributions come from the
-   emitters (gravity/hydro/em/observer/warp); the Δv contributions are ejection
-   recoils (wind/flare). The integrator never evaluates the force field itself."
+   position (a pure Galilean shift, §6). Absorb-accrete/merge packets are blended
+   for COM preservation — the absorbed mass's momentum shifts the survivor."
   [world dt]
   (let [foff (or (:phase0/frame-offset world) zero3)
         eids (ecs/entities-with world c/position c/velocity
-                                c/mass c/radius c/body-kind)]
+                                c/mass c/radius c/body-kind)
+        absorbs (merge (get-in world [:components c/absorb-accrete] {})
+                       (get-in world [:components c/absorb-merge] {}))]
     (reduce
      (fn [ws eid]
        (let [a   (sum-vec-influences world eid accel-sources)
              dv  (sum-vec-influences world eid dv-sources)
              v   (ecs/get-component world eid c/velocity)
              x   (ecs/get-component world eid c/position)
-             v'  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
-             x'  (sp/v- (sp/v+ x (sp/v* v' dt)) foff)]
-         (-> ws
-             (assoc-in [c/velocity eid] v')
-             (assoc-in [c/position eid] x'))))
+             m0  (double (or (ecs/get-component world eid c/mass) 0.0))
+             v1  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
+             x1  (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
+         (if-let [pkts (get absorbs eid)]
+           (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
+             (-> ws
+                 (assoc-in [c/velocity eid] v-blend)
+                 (assoc-in [c/position eid] x-blend)))
+           (-> ws
+               (assoc-in [c/velocity eid] v1)
+               (assoc-in [c/position eid] x1)))))
      {}
      eids)))
 
 (defn mass-ws
-  "Mass. m' = max(0, m + Σ mass-flux.*) — the per-source mass fluxes (stellar
-   wind/flare loss, XUV escape, disk→star viscous transfer) summed and applied.
-   Only bodies with a flux this tick are rewritten; every other body's mass is
-   untouched. The integrator owns mass (spec §5: mass becomes an accumulated
-   field like velocity); accretion/merge mass is folded in by the absorb blend."
+  "Mass. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass) — the per-source mass
+   fluxes (stellar wind/flare loss, XUV escape, disk→star viscous transfer) and
+   the accretion/merge mass from absorb-accrete/merge packets are summed and
+   applied. Only bodies with a flux or absorb packet this tick are rewritten."
   [world]
-  (let [eids (ecs/entities-with world c/mass)
-        cell (into {}
-                   (keep (fn [eid]
-                           (let [dm (sum-scalar-influences world eid mass-flux-sources)]
-                             (when-not (zero? dm)
-                               [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm))]))))
-                   eids)]
-    (if (empty? cell) {} {c/mass cell})))
+  (let [eids     (ecs/entities-with world c/mass)
+        absorbs  (merge (get-in world [:components c/absorb-accrete] {})
+                        (get-in world [:components c/absorb-merge] {}))
+        cell     (into {}
+                       (keep (fn [eid]
+                               (let [dm   (sum-scalar-influences world eid mass-flux-sources)
+                                     dm-a (absorb-mass-delta world eid)
+                                     dm-t (+ dm dm-a)]
+                                 (when-not (zero? dm-t)
+                                   [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))]))))
+                       eids)
+        ;; Absorb packets may target entities that lacked mass-flux but still
+        ;; gained mass from accretion. Ensure they are included even if not in
+        ;; the entities-with-mass loop above (though they will be, since
+        ;; the survivor always carries c/mass).
+        extra (into {}
+                    (keep (fn [eid]
+                            (when-not (contains? (into #{} (keys cell)) eid)
+                              (let [dm-a (absorb-mass-delta world eid)]
+                                (when-not (zero? dm-a)
+                                  [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-a))])))))
+                    (keys absorbs))]
+    (if (empty? (merge cell extra)) {} {c/mass (merge cell extra)})))
 
 (defn temperature-ws
   "Temperature. The base value is the virial/radiative derivation owned by
@@ -137,16 +297,43 @@
    the integrator then applies the player's heat.intervention ease on top — so
    a heat source/sink eases the freshly-derived temperature (as the old serial
    `apply-thermal-interventions` eased the post-fold value). Reusing the tested
-   derivation keeps the formula unchanged (§9 non-goal)."
+   derivation keeps the formula unchanged (§9 non-goal).
+
+   Absorb-merge packets from collision merges are blended AFTER the virial
+   derivation: the mass-weighted temperature blend plus impact heating. This is
+   a one-tick Jacobi delay — the merged body's radius (used by virial) won't
+   update until structure re-derives it next tick."
   [world dt]
   (let [base ((:run (stellar/temperature-system dt)) world)
         base-cell (get base c/temperature {})
-        heats     (get-in world [:components c/heat-intervention] {})]
-    (if (empty? heats)
-      base
-      (let [;; bodies the base derivation skips (e.g. :nebula) but which still
-            ;; receive a heat ease keep their snapshot temperature as the base.
-            with-eased
+        heats     (get-in world [:components c/heat-intervention] {})
+        ;; absorb-merge packets: blend temperature from collision merges
+        merge-eids (set (keys (get-in world [:components c/absorb-merge] {})))
+        merged-temps (when (seq merge-eids)
+                       (persistent!
+                        (reduce (fn [acc eid]
+                                  (if-let [t (absorb-temp-delta world eid)]
+                                    (assoc! acc eid t)
+                                    acc))
+                                (transient {}) merge-eids)))]
+    (cond
+      ;; both heat interventions and merge blends
+      (and (not (empty? heats)) (seq merged-temps))
+      (let [with-eased
+            (reduce-kv
+             (fn [cell eid cs]
+               (let [t0 (double (or (get merged-temps eid)
+                                    (get base-cell eid)
+                                    (ecs/get-component world eid c/temperature)
+                                    intervention/min-temp))]
+                 (assoc cell eid (intervention/apply-thermal-contributions t0 cs))))
+             (merge base-cell merged-temps)
+             heats)]
+        {c/temperature with-eased})
+
+      ;; only heat interventions
+      (not (empty? heats))
+      (let [with-eased
             (reduce-kv
              (fn [cell eid cs]
                (let [t0 (double (or (get base-cell eid)
@@ -155,49 +342,71 @@
                  (assoc cell eid (intervention/apply-thermal-contributions t0 cs))))
              base-cell
              heats)]
-        {c/temperature with-eased}))))
+        {c/temperature with-eased})
+
+      ;; only merge blends
+      (seq merged-temps)
+      {c/temperature (merge base-cell merged-temps)}
+
+      :else base)))
 
 (defn composition-ws
   "Composition. The integrator owns the blend: start from the snapshot
    composition, apply the H→He burn (comp.burn replaces it for burning cores),
    then the deuterium gate (comp.depletion zeroes :D for hot bodies). Only bodies
    carrying an influence this tick are rewritten — every other body's composition
-   is untouched (spec §7.5; burn + depletion no longer co-write composition)."
+   is untouched (spec §7.5; burn + depletion no longer co-write composition).
+
+   Absorb-merge packets from collision merges are blended BEFORE burn/depletion:
+   the mass-weighted composition of the survivor and the absorbed body."
   [world]
   (let [burns (get-in world [:components c/comp-burn] {})
         deps  (get-in world [:components c/comp-depletion] {})
-        eids  (into (set (keys burns)) (keys deps))]
-    (if (empty? eids)
+        merge-eids (set (keys (get-in world [:components c/absorb-merge] {})))
+        ;; blend compositions from merge packets first
+        merged-comps (when (seq merge-eids)
+                       (persistent!
+                        (reduce (fn [acc eid]
+                                  (if-let [cmp (absorb-comp-blend world eid)]
+                                    (assoc! acc eid cmp)
+                                    acc))
+                                (transient {}) merge-eids)))
+        ;; then apply burn/depletion on top
+        all-eids (into (into (set (keys burns)) (keys deps)) merge-eids)]
+    (if (empty? all-eids)
       {}
       {c/composition
        (into {}
              (keep (fn [eid]
-                     (let [base (or (get burns eid)
+                     (let [base (or (get merged-comps eid)
+                                    (get burns eid)
                                     (ecs/get-component world eid c/composition))]
                        (when base
                          [eid (reduce (fn [c k] (assoc c k 0.0))
                                       base
                                       (get deps eid #{}))]))))
-             eids)})))
+             all-eids)})))
 
 (def ^:private torque-sources
   (get-in influence-registry [:angular-momentum :accumulate]))
 
 (defn rotation-ws
-  "Angular momentum + spin. L' = L + Σ torque.* (the torque influences are
-   per-step ΔL — magnetic braking, disk spin-up — so they are summed raw, not
-   scaled by dt). Spin is the derivation ω = L'/I (uniform sphere at the
-   equatorial radius, identical to the oblate form since radius == a). The
-   integrator owns both, ending the em/disk co-write of angular-momentum (§7.5)."
+  "Angular momentum + spin. L' = L + Σ torque.* + Σ absorb-L (the torque
+   influences are per-step ΔL — magnetic braking, disk spin-up; the absorb
+   packets carry the absorbed parcels' angular momentum). Spin is derived
+   ω = L'/I."
   [world]
-  (let [eids (ecs/entities-with world c/angular-momentum c/mass c/radius)]
+  (let [eids    (ecs/entities-with world c/angular-momentum c/mass c/radius)
+        absorbs (merge (get-in world [:components c/absorb-accrete] {})
+                       (get-in world [:components c/absorb-merge] {}))]
     (reduce
      (fn [ws eid]
-       (let [L  (or (ecs/get-component world eid c/angular-momentum) zero3)
-             dL (sum-vec-influences world eid torque-sources)
-             L' (sp/v+ L dL)
-             m  (ecs/get-component world eid c/mass)
-             r  (ecs/get-component world eid c/radius)
+       (let [L   (or (ecs/get-component world eid c/angular-momentum) zero3)
+             dL  (sum-vec-influences world eid torque-sources)
+             dLa (absorb-angmom-sum world eid)
+             L'  (sp/v+ (sp/v+ L dL) dLa)
+             m   (ecs/get-component world eid c/mass)
+             r   (ecs/get-component world eid c/radius)
              spin' (stellar/spin-from-angular-momentum L' m r)]
          (-> ws
              (assoc-in [c/angular-momentum eid] L')

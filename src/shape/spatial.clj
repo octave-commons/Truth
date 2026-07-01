@@ -61,12 +61,12 @@
 
 ;; --- AABB -------------------------------------------------------------------
 
-(defrecord AABB [min max])
+(defrecord AABB [aabb-min aabb-max])
 
 (defn aabb
   "Construct an AABB from min and max vec3s."
-  [min max]
-  (->AABB min max))
+  [aabb-min-v aabb-max-v]
+  (->AABB aabb-min-v aabb-max-v))
 
 (defn aabb-from-points
   "Smallest AABB containing all given points (vec3s)."
@@ -93,8 +93,8 @@
 (defn aabb-include
   "Extend AABB to include point p."
   [^AABB bb [x y z]]
-  (let [[min-x min-y min-z] (:min bb)
-        [max-x max-y max-z] (:max bb)]
+  (let [[min-x min-y min-z] (:aabb-min bb)
+        [max-x max-y max-z] (:aabb-max bb)]
     (->AABB [(min min-x (double x))
              (min min-y (double y))
              (min min-z (double z))]
@@ -105,8 +105,8 @@
 (defn contains?
   "Does the AABB contain point p (inclusive)?"
   [^AABB bb [x y z]]
-  (let [[min-x min-y min-z] (:min bb)
-        [max-x max-y max-z] (:max bb)
+  (let [[min-x min-y min-z] (:aabb-min bb)
+        [max-x max-y max-z] (:aabb-max bb)
         x (double x) y (double y) z (double z)]
     (and (<= min-x x max-x)
          (<= min-y y max-y)
@@ -115,8 +115,8 @@
 (defn center
   "Center of the AABB."
   [^AABB bb]
-  (let [[min-x min-y min-z] (:min bb)
-        [max-x max-y max-z] (:max bb)]
+  (let [[min-x min-y min-z] (:aabb-min bb)
+        [max-x max-y max-z] (:aabb-max bb)]
     [(/ (+ min-x max-x) 2.0)
      (/ (+ min-y max-y) 2.0)
      (/ (+ min-z max-z) 2.0)]))
@@ -124,7 +124,7 @@
 (defn extent
   "Size of the AABB along each axis (max - min)."
   [^AABB bb]
-  (v- (:max bb) (:min bb)))
+  (v- (:aabb-max bb) (:aabb-min bb)))
 
 (defn max-side
   "Largest side length of the AABB, used as size s in Barnes–Hut criterion."
@@ -158,8 +158,8 @@
 (defn child-aabb
   "Given parent AABB and an octant keyword, return the child's AABB."
   [^AABB bb oct]
-  (let [[min-x min-y min-z] (:min bb)
-        [max-x max-y max-z] (:max bb)
+  (let [[min-x min-y min-z] (:aabb-min bb)
+        [max-x max-y max-z] (:aabb-max bb)
         [cx cy cz]          (center bb)]
     (case oct
       :octant/ppp (->AABB [cx cy cz] [max-x max-y max-z])

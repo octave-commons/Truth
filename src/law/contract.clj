@@ -3,11 +3,11 @@
    They do not perform side-effects; they return facts about validity
    that other layers can record in the ledger."
   (:require
-    [shape.core :as shape]
+    ^:clj-kondo/ignore [shape.core :as shape]
     [clojure.set :as set]))
 
 (defrecord Contract
-  [id shape-id kind schema name description on-true on-false on-any])
+  [id shape-id kind schema nm description on-true on-false on-any])
 
 (defn ->contract
   "Construct a Contract. Required keys:
@@ -16,11 +16,11 @@
    - :kind       (e.g. :type or :quality)
    - :schema     (validation description)
    Optional: :name, :description, :on-true, :on-false, :on-any"
-  [{:keys [id shape-id kind schema name description on-true on-false on-any] :as m}]
+  [{:keys [id shape-id kind schema description on-true on-false on-any] nm :name :as m}]
   (when-not (and id shape-id kind schema)
     (throw (ex-info "Contract requires :id, :shape-id, :kind, and :schema"
                     {:kind ::invalid-contract :contract m})))
-  (->Contract id shape-id kind schema name description on-true on-false on-any))
+  (->Contract id shape-id kind schema nm description on-true on-false on-any))
 
 ;; --- Validation -------------------------------------------------------------
 

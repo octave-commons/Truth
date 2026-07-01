@@ -26,10 +26,11 @@
    [domain.ecs.registry     :as reg]
    [domain.ecs.tick         :as tick]
    [domain.ecs.components    :as c]
-   [domain.orbital.system   :as orbital]
-   [domain.integrator       :as integ]
-   [domain.physics.collision :as collision]
-   [shape.spatial           :as sp]))
+    [domain.orbital.system   :as orbital]
+    [domain.integrator       :as integ]
+    [domain.physics.collision :as collision]
+    [domain.spatial.index    :as spatial]
+    [shape.spatial           :as sp]))
 
 ;; --- Nebula seeding ---------------------------------------------------------
 
@@ -472,7 +473,7 @@
   "For each :planet, find nearby ionized wind/CME parcels and compute magnetosphere
    compression. Writes c/magnetosphere with standoff distance and compression factor.
    A compressed magnetosphere (small standoff) means more atmospheric exposure.
-   Runs at the barrier after XUV escape."
+   Runs in the parallel fan-out (was a cargo-cult barrier)."
   [world]
   (let [wind-parcels (filterv (fn [eid]
                                 (let [st (ecs/get-component world eid c/matter-state)]
@@ -508,11 +509,11 @@
    (`domain.ecs.tick/run-parallel`). Each entry is its legacy `(fn [world] world')`
    wrapped by the bridge and masked to its registry-declared `:writes`.
 
-   EXCLUDES the two systems that do not belong in the parallel region:
-     • `collision-detection` — a discrete-event system whose merge handler
-       despawns entities; it runs serially at the barrier (spec §6).
+   EXCLUDES barrier systems that do not belong in the parallel region:
      • `recenter` — a global centre-of-mass reduction; runs at the barrier or
        becomes a frame-offset in the motion integrator (spec §5).
+     • `disk-evolution`, `fusion-promotion`, `sink-formation` — post-fold barriers
+       that read folded state (Part C will convert these).
 
    Gravity and motion are NATIVE write-set systems (the gravity tree-walk runs
    on its own thread, the integrator sums all accel.* contributions). The rest
@@ -548,7 +549,24 @@
      (legacy :regime         regime/regime-system)
      ;; em's magnetic braking → torque.em (the integrator owns angular-momentum/
      ;; spin); Lorentz via em-lorentz, b-field via field.
-     (em/em-torque-system dt)]))
+     (em/em-torque-system dt)
+      ;; Collision detection: now a fan-out emitter (B3). Its handler emits
+      ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
+      ;; single-writer. Runs in parallel, not serially at the barrier.
+      (legacy :collision-detection collision/collision-detection-system)
+      ;; Former serial barriers — now fan-out emitters (Part C):
+      ;; Fusion promotion: emits c/promotion-signal (single-writer).
+      (legacy :fusion-promotion stellar/fusion-promotion-system)
+      ;; Sink formation: emits c/absorb-accrete, c/consumed-accrete (single-writer).
+      (legacy :sink-formation stellar/sink-formation-system)
+      ;; Disk evolution: emits c/disk-mass, c/disk-angular-mom, c/mass-flux-disk,
+      ;; c/torque-disk, c/spawn-request-disk (all single-writer).
+      (legacy :disk-evolution stellar/disk-evolution-system)
+      ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
+      (legacy :lod-scheduler lod-scheduler)
+      ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
+      ;; cargo-cult barrier).
+      (legacy :magnetosphere-coupling magnetosphere-coupling-system)]))
 
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
@@ -558,7 +576,8 @@
   "Lifecycle spawn requests; each is {eid [seed-spec ...]} materialized into new
    entities at world-construction."
   [c/spawn-request-wind c/spawn-request-flare
-   c/spawn-request-accretion c/spawn-request-shatter])
+   c/spawn-request-accretion c/spawn-request-shatter
+   c/spawn-request-disk])
 
 (defn materialize-lifecycle
   "World-construction step (spec §5): spawn the entities requested by the fan-out
@@ -594,29 +613,17 @@
 (defn step-physics
   "Run one tick of physics over `world` (already tick-advanced).
 
-   Every system in `physics-systems-parallel` runs concurrently reading the
-   FROZEN `world` and writing only the components it owns; the disjoint write-sets
-   fold at a single barrier (`:throw` enforces single-writer at runtime). Then the
-   SERIAL barrier systems run on the folded world: collision (literal merges that
-   despawn), fusion promotion, gas accretion onto sinks (sink-formation), and the
-   centre-of-mass recenter (a global reduction). System order in the parallel
-   region is irrelevant by construction.
+   Every system runs concurrently reading the FROZEN `world` and writing only
+   the components it owns; the disjoint write-sets fold at a single barrier
+   (`:throw` enforces single-writer at runtime). No serial barrier systems remain
+   — all are fan-out emitters (Part C). System order in the parallel region is
+   irrelevant by construction.
 
    This double-buffer single-writer pipeline is the ONLY runtime (design §7c):
    density-gated condensation, the single-writer classifier, and sink accretion
    form a star. There is deliberately no second simulation path."
   [world]
-  (-> (tick/run-parallel world (physics-systems-parallel world))
-      (collision/collision-detection-system)
-      (stellar/fusion-promotion-system)
-      (stellar/sink-formation-system)
-      (stellar/disk-evolution-system)
-      (intervention/expire-interventions)
-      (lod-scheduler)
-      (magnetosphere-coupling-system)
-      ;; world-construction: materialize spawn requests (wind/flare parcels) and
-      ;; reap consumed entities (ablated stars) emitted by the fan-out (spec §5).
-      (materialize-lifecycle)))
+  (tick/run-parallel world (physics-systems-parallel world)))
 
 (defn tick-world
   "Advance the world by one tick. Pure: world -> world'."
@@ -633,8 +640,11 @@
         ;; its COM frame (spec §6: a one-tick-stale, pure-Galilean shift, replacing
         ;; the old post-fold recenter-system). A world scalar, single-owner.
         world1     (-> (ecs/advance-tick world)
-                       (assoc :phase0/frame-offset (center-of-mass world)))
-        world2     (step-physics world1)
+                       (assoc :phase0/frame-offset (center-of-mass world))
+                       spatial/spatial-index)
+        world2     (-> (step-physics world1)
+                       (intervention/expire-interventions)
+                       materialize-lifecycle)
         summ       (system-summary world2)
         complexity (stellar/complexity-score summ)
         phase      (detect-phase summ (:phase0/sim-time world2))

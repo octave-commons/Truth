@@ -82,16 +82,17 @@
 (defn gravity-acceleration
   "Write-set system: per-body Barnes–Hut self-gravity → `accel.gravity`.
 
-   This is the expensive tree-walk, now isolated on its own thread. It reads the
-   frozen snapshot and writes ONLY accel.gravity, so it runs concurrently with
-   every other system. The integrator consumes the contribution next (one-tick
-   latency, accepted)."
+   Reads the shared spatial tree from :phase0/spatial-tree (built once per tick
+   by domain.spatial.index/spatial-index) instead of constructing its own.
+   The tree contains ALL entities; gravity computes acceleration for every body
+   in the tree — self-gravity is zero by construction (body at its own position),
+   so no self-exclusion filter is needed."
   [G theta softening]
   {:id     :gravity
    :writes #{c/accel-gravity}
    :run    (fn [world]
              (let [bodies (world->bodies world)
-                   tree   (bh/build-tree bodies)]
+                   tree   (:phase0/spatial-tree world)]
                {c/accel-gravity
                 (into {}
                       (par/par-mapv

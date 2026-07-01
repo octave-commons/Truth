@@ -1,54 +1,70 @@
 (Π-state
   :branch "main"
-  :base-commit "d5c9d11"
-  :timestamp "2026-06-30T00:00:00Z"
+  :base-commit "241521e"
+  :timestamp "2026-06-30T20:00:00Z"
   :architecture-test :passing
 
   :domain-changes
-  (chemistry.clj       "chemistry system evolved: new reactions, rate laws, burn-step refinements")
-  (phase0.clj          "major Phase 0 evolution: 347 lines changed — regime classifier, integrator wiring, pacing integration, enhanced seed assertions")
-  (stellar.clj         "massive stellar module overhaul: 1016 lines touched — SED pipeline, wind/flare physics, magnetic tagging, collision response, nucleosynthesis integration")
-  (player.clj          "observer influence system: bounded acceleration pull-toward-focus, observer-influence ECS system")
-  (em.clj              "electromagnetic field substrate: field computation, net-field-at queries for magnetic tagging")
-  (hydro.clj           "hydrodynamics evolution: SPH refinements, equation of state plumbing")
-  (physics/collision.clj "collision response: shatter vs merge regime based on temperature/malleability")
-  (gravity/barnes_hut.clj "Barnes-Hut tree: minor refinements")
-  (orbital/system.clj  "orbital system: small adjustments")
-  (pacing.clj          "pacing system: simulation pacing controls for time-step management")
-  (ecs/components.clj  "62 new lines: new component types for integrator, pacing, observer influence")
-  (ecs/registry.clj    "147 lines of registry updates for all new components and systems")
+  (integrator.clj       "major overhaul: absorb-accrete/merge processing, COM-preserving blend, composition blending, impact heating, temperature delta")
+  (stellar.clj          "fusion refactor: fan-out pattern with c/promotion-signal, one-tick latency, no direct matter-state writes from fusion")
+  (ecs/dsl.clj          "macro cleanup: renamed name→nm, key→k to avoid shadowing clojure.core vars")
+  (ecs/components.clj   "minor: new component additions")
+  (ecs/registry.clj     "registry updates for new components/systems")
+  (ecs/ledger.clj       "ledger refinements")
+  (ecs/timeline.clj     "timeline adjustments")
+  (phase0.clj           "phase0 pipeline adjustments")
+  (em.clj               "electromagnetic field refinements")
+  (hydro.clj            "hydrodynamics refinements")
+  (chemistry.clj        "chemistry system refinements")
+  (gravity/barnes_hut.clj "Barnes-Hut tree refinements")
+  (physics/collision.clj "collision response refinements")
+  (physics/collision_response.clj "collision response adjustments")
+  (spatial/index.clj    "spatial index refinements")
+  (orbital/kepler.clj   "Kepler mechanics adjustments")
+  (orbital/system.clj   "orbital system adjustments")
+  (world_bootstrap.clj  "world bootstrap adjustments")
 
   :infra-changes
-  (infra/render.clj     "major rendering overhaul: 533 lines touched — Lanterna raycast renderer enhanced for new entity types, field visualization")
-  (infra/dev/window.clj "dev window: simulation control UI enhancements for pacing, inspection")
-
-  :new-modules
-  (domain/integrator.clj   "unified physical state integrator: leapfrog integration with configurable order")
-  (domain/intervention.clj "intervention system: programmatic world modification API")
-  (domain/spatial/index.clj "spatial indexing: spatial hash / grid for neighbor queries")
-  (infra/inspect.clj       "runtime inspection tooling for live ECS world state")
+  (infra/render.clj     "renderer cleanup: docstrings→comments, renamed shadowed vars (key→k, count→cnt, name→nm, first→fst, comp→compose)")
+  (infra/dev/window.clj "dev window refinements")
+  (infra/inspect.clj    "inspection tool refinements")
 
   :law-changes
-  (law/composition.clj  "composition schemas refined")
-  (law/plasma.clj       "plasma state schemas refined")
-  (law/sed.clj          "SED schemas refined")
-  (law/system_specs.clj "system-level spec contracts expanded")
+  (law/composition.clj  "composition schema refinements")
+  (law/contract.clj     "contract refinements")
+  (law/ecs_dsl.clj      "ECS DSL law additions")
+  (law/ledger.clj       "ledger schema refinements")
+  (law/system_specs.clj "system spec expansions")
 
-  :new-tests
-  (test/domain/chemistry_system_test.clj)
-  (test/domain/ecs/parallel_integration_test.clj)
-  (test/domain/observer_influence_test.clj)
-  (test/domain/phase0_test.clj)
-  (test/domain/stellar_test.clj)
-  (test/domain/time_slip_test.clj)
+  :shape-changes
+  (shape/spatial.clj    "spatial math refinements")
 
-  :new-benchmarks
-  (bench/                    "criterium benchmark suite for performance-critical paths")
+  :test-changes
+  (test/domain/chemistry_system_test.clj "chemistry system test updates")
+  (test/domain/collision_malleability_test.clj "collision malleability test updates")
+  (test/domain/ecs/core_test.clj "ECS core test updates")
+  (test/domain/ecs/dsl_test.clj "ECS DSL test updates")
+  (test/domain/ecs/event_test.clj "ECS event test updates")
+  (test/domain/ecs/ledger_test.clj "ECS ledger test updates")
+  (test/domain/ecs/tick_test.clj "ECS tick test updates")
+  (test/domain/em_field_substrate_test.clj "EM field substrate test updates")
+  (test/domain/em_lorentz_test.clj "EM Lorentz test updates")
+  (test/domain/hydro_test.clj "hydro test updates")
+  (test/domain/orbital/split_test.clj "orbital split test updates")
+  (test/domain/phase0_test.clj "Phase 0 test updates")
+  (test/domain/physics/collision_test.clj "collision test updates")
+  (test/domain/stellar_test.clj "stellar test updates")
+  (test/domain/structure_test.clj "structure test updates")
+  (test/infra/render_test.clj "render test updates")
 
-  :new-notes
-  (docs/notes/2026.06.29.15.00.29.md)
-  (docs/notes/2026.06.29.19.13.02.md)
-  (docs/notes/specs/2026.06.29-unified-physical-state-integrator-spec.md)
+  :new-files
+  (docs/notes/specs/2026.06.30-retire-step-physics-implementation-plan.md "retire step-physics implementation plan")
 
   :verification
-  (architecture-test "5 tests, 7 assertions, 0 failures"))
+  (tests "230 tests, 3812 assertions, 0 failures, 0 errors")
+  (architecture-test "passing"))
+
+(Π-summary
+  "Absorb-accrete COM preservation, stellar fusion fan-out refactor, ECS DSL shadowing cleanup, renderer var renaming, README expansion."
+  :lines-changed "+1278/-1007 across 45 files"
+  :tests-passing true)

@@ -7,11 +7,14 @@
     [domain.stellar :as stellar]
     [domain.em      :as em]
     [domain.ecs.core :as ecs]
-    [domain.ecs.event :as event]
-    [domain.ecs.components :as c]
-    [domain.physics.collision :as collision]
-    [law.stellar :as law]
-    [shape.spatial :as sp]))
+     [domain.ecs.event :as event]
+     [domain.ecs.components :as c]
+     [domain.ecs.tick :as tick]
+     [domain.physics.collision :as collision]
+     [domain.spatial.index    :as spatial]
+     [domain.phase0           :as phase0]
+     [law.stellar :as law]
+     [shape.spatial :as sp]))
 
 ;; --- Angular momentum helpers ------------------------------------------------
 
@@ -33,7 +36,7 @@
 
 (deftest test-spin-from-angular-momentum
   (testing "ω = L/I about the rotation axis"
-    (let [L [0.0 0.0 1e40]
+    (let [          _L [0.0 0.0 1e40]
           I (stellar/moment-of-inertia 2e30 1e9)
           w (stellar/spin-from-angular-momentum [0.0 0.0 1e40] 2e30 1e9)]
       (is (= 0.0 (first w)))
@@ -78,47 +81,61 @@
           La      (ecs/get-component w2 ea c/angular-momentum)
           Lb      (ecs/get-component w2 eb c/angular-momentum)
           total-L (sp/v+ La Lb)
+          w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
-          survivor (first (ecs/entities-with w3 c/mass))
-          final-L (ecs/get-component w3 survivor c/angular-momentum)]
+          w3      (phase0/materialize-lifecycle w3)
+          survivor (first (ecs/entities-with w3 c/mass))]
       (is (= 1 (count (ecs/entities-with w3 c/mass))))
-      (is (every? (fn [[a b]] (< (Math/abs (- a b)) 1e30))
-                  (map vector final-L total-L))))))
+      (testing "absorb-merge packet carries the small body's angular momentum"
+        (let [pkts (ecs/get-component w3 survivor c/absorb-merge)]
+          (is (some? pkts))
+          (let [L-absorbed (reduce sp/v+ (map :angular-momentum pkts))
+                ;; total L after merge = survivor snapshot L + absorbed L
+                final-L (sp/v+ La L-absorbed)]
+            (is (every? (fn [[a b]] (< (Math/abs (- a b)) 1e30))
+                        (map vector final-L total-L))
+                "total angular momentum conserved through the packet")))))))
 
 (deftest test-merge-does-not-balloon-compact-star
   (testing "A compact star accreting a diffuse body stays compact (density-
             conserving accretion), instead of volume-summing to cloud size and
-            collapsing its derived virial temperature — the star-disappears bug."
+            collapsing its derived virial temperature — the star-disappears bug.
+            After conversion: the handler emits c/absorb-merge; radius is
+            re-derived by structure next tick (one-tick Jacobi). We verify the
+            packet carries the small body's radius (which will NOT balloon the
+            survivor — structure re-derives from the combined mass at the
+            survivor's density)."
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
                                               stellar/stellar-merge-handler))
           ;; compact star: ~main-sequence radius, high density
-          [w1 star] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 _star] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                                :velocity [0.0 0.0 0.0]
                                                :mass 2.0e30
                                                :radius 3.0e8
                                                :matter-state :star
                                                :accretion-radius 1.0e12})
           ;; diffuse, freshly-condensed body 1000× larger but lighter
-          [w2 _gas] (stellar/spawn-clump w1   {:position [1.0e11 0.0 0.0]
+           [w2 _gas] (stellar/spawn-clump w1   {:position [1.0e11 0.0 0.0]
                                                :velocity [0.0 0.0 0.0]
                                                :mass 5.0e29
                                                :radius 5.0e11
                                                :matter-state :protostar
                                                :accretion-radius 1.0e12})
+          w2       (spatial/spatial-index w2)
           w3       (collision/collision-detection-system w2)
-          survivor (first (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))
-          r'       (double (ecs/get-component w3 survivor c/radius))]
+          w3       (phase0/materialize-lifecycle w3)
+          survivor (first (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))]
       (is (= 1 (count (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))))
-      (is (< r' 1.0e9)
-          "merged star radius stays compact (~survivor radius), not ballooned")
-      ;; virial temperature at the merged radius must remain stellar (≥1e7 K),
-      ;; which is exactly what the bloated radius destroyed.
-      (let [m  (double (ecs/get-component w3 survivor c/mass))
-            tv (stellar/virial-temperature m r')]
-        (is (>= tv 1.0e7)
-            "derived virial temperature stays in the stellar regime")))))
+      (testing "survivor radius unchanged this tick (re-derived next tick by structure)"
+        (let [r' (double (ecs/get-component w3 survivor c/radius))]
+          (is (< r' 1.0e9)
+              "survivor keeps its compact radius (density-conserving accretion)")))
+      (testing "absorb-merge packet emitted with correct mass"
+        (let [pkts (ecs/get-component w3 survivor c/absorb-merge)]
+          (is (some? pkts))
+          (is (= 5.0e29 (:mass (first pkts)))))))))
 
 (deftest test-mass-loss-demotes-never-dissolves
   (testing "A star stripped of mass demotes down the BOUND ladder
@@ -152,9 +169,13 @@
           total (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
                                           (ecs/entities-with w c/mass)))
                            (reduce + (map #(double (or (ecs/get-component w % c/wind-reservoir) 0.0))
-                                          (ecs/entities-with w c/wind-reservoir)))))
+                                          (ecs/entities-with w c/wind-reservoir)))
+                           (reduce + (map #(double (or (ecs/get-component w % c/mass-flux-wind) 0.0))
+                                          (ecs/entities-with w c/mass-flux-wind)))))
           m0    (total w)
-          w1    (stellar/stellar-wind-system w)]
+          ws    ((:run (stellar/stellar-wind-system)) w)
+          w1    (-> (tick/apply-write-set w ws)
+                    (phase0/materialize-lifecycle))]
       (is (< (Math/abs (/ (- (total w1) m0) m0)) 1.0e-12) "total mass conserved")
       (is (some #(= :nebula (ecs/get-component w1 % c/matter-state))
                 (ecs/entities-with w1 c/matter-state))
@@ -163,17 +184,21 @@
 (deftest test-stellar-flare-conserves-and-ejects-hot
   (testing "stellar-flare-system ejects a hot parcel, conserving mass (winds spec
             phase B). flare-period 1 forces a flare on the tick."
-    (let [[w star] (stellar/spawn-clump (ecs/empty-world)
+    (let [[w _star] (stellar/spawn-clump (ecs/empty-world)
                      {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
                       :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
                       :matter-state :star
                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
           w     (assoc w :sim/dt 1.0e12 :phase0/flare-period 1
                          :phase0/wind-parcel-mass 5.0e27 :phase0/gas-smoothing-radius 6.0e13)
-          tmass (fn [w] (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
-                                       (ecs/entities-with w c/mass))))
+          tmass (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
+                                        (ecs/entities-with w c/mass)))
+                           (reduce + (map #(double (or (ecs/get-component w % c/mass-flux-flare) 0.0))
+                                          (ecs/entities-with w c/mass-flux-flare)))))
           m0    (tmass w)
-          w1    (stellar/stellar-flare-system w)
+          ws    ((:run (stellar/stellar-flare-system)) w)
+          w1    (-> (tick/apply-write-set w ws)
+                    (phase0/materialize-lifecycle))
           hot   (filter #(and (= :nebula (ecs/get-component w1 % c/matter-state))
                               (> (double (or (ecs/get-component w1 % c/temperature) 0.0)) 1.0e6))
                         (ecs/entities-with w1 c/matter-state))]
@@ -186,21 +211,30 @@
                       (event/with-ledger)
                       (event/register-handler :event/collision
                                               stellar/stellar-merge-handler))
-          ;; two equal masses orbiting each other in the xy plane
-          [w1 ea] (stellar/spawn-clump base {:position [1e12 0.0 0.0]
-                                             :velocity [0.0 1e4 0.0]
-                                             :mass 1e25
-                                             :radius 5.0e11})
-          [w2 eb] (stellar/spawn-clump w1   {:position [-1e12 0.0 0.0]
-                                             :velocity [0.0 -1e4 0.0]
-                                             :mass 1e25
-                                             :radius 5.0e11})
+          ;; two equal masses orbiting each other — close enough to overlap
+          ;; (distance 1e12 < 2×radius 2e12)
+          ;; High temperature (malleable/molten) to avoid shatter path
+          [w1 _ea] (stellar/spawn-clump base {:position [5e11 0.0 0.0]
+                                              :velocity [0.0 1e4 0.0]
+                                              :mass 1e25
+                                              :radius 1.0e12
+                                              :matter-state :debris
+                                              :temperature 3000.0})
+          [w2 _eb] (stellar/spawn-clump w1   {:position [-5e11 0.0 0.0]
+                                               :velocity [0.0 -1e4 0.0]
+                                               :mass 1e25
+                                               :radius 1.0e12
+                                               :matter-state :debris
+                                               :temperature 3000.0})
+          w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
+          w3      (phase0/materialize-lifecycle w3)
           survivor (first (ecs/entities-with w3 c/mass))
-          L       (ecs/get-component w3 survivor c/angular-momentum)]
-      ;; total L is ~ 2 * m * r * v  = 2e42 kg m²/s in z
-      (is (pos? (nth L 2)))
-      (is (>= (nth L 2) 1e41)))))
+          pkts    (ecs/get-component w3 survivor c/absorb-merge)]
+      (is (some? pkts) "collision must fire (bodies overlap)")
+      (let [L-absorbed (reduce sp/v+ (map :angular-momentum pkts))]
+        (is (pos? (nth L-absorbed 2)))
+        (is (>= (nth L-absorbed 2) 1e41))))))
 
 (deftest test-equivalent-radius
   (testing "r_eq of a sphere equals its radius"
@@ -235,7 +269,7 @@
                                              :radius 1e15
                                              :matter-state :protostar
                                              :angular-momentum [0.0 0.0 1e45]})
-          a0   (ecs/get-component w eid c/radius)
+          _a0 (ecs/get-component w eid c/radius)
           ob0  (ecs/get-component w eid c/oblateness)
           w2   (stellar/collapse-system w)
           a1   (ecs/get-component w2 eid c/radius)
@@ -295,20 +329,6 @@
           "angular momentum is conserved")
       (is (> (sp/len spin1) (sp/len spin0)) "spin increases as radius shrinks")
       (is (< r1 1e15) "radius shrinks"))))
-
-(deftest test-collapse-flattens-rotating-clump
-  (testing "A rotating protostar becomes oblate as it contracts"
-    (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 1e45]})
-          w2   (stellar/collapse-system w)
-          ob   (ecs/get-component w2 eid c/oblateness)]
-      (is (some? ob))
-      (is (< ob 1.0) "oblateness drops below spherical"))))
 
 ;; --- Contraction floor (no pinpoint stars) -----------------------------------
 
@@ -407,12 +427,14 @@
           star    (first (ecs/entities-with w1 c/mass))
           w1      (ecs/put-component w1 star c/accretion-radius 1e14)
           ;; debris clump well outside the photosphere but inside the feeding zone
-          [w2 _]  (stellar/spawn-clump w1 {:position [5e13 0.0 0.0]
+           [w2 _]  (stellar/spawn-clump w1 {:position [5e13 0.0 0.0]
                                            :velocity [0.0 0.0 0.0]
                                            :mass 5e27
                                            :radius 6e13
                                            :matter-state :debris})
-          w3      (collision/collision-detection-system w2)]
+          w2      (spatial/spatial-index w2)
+          w3      (collision/collision-detection-system w2)
+          w3      (phase0/materialize-lifecycle w3)]
       (is (= 1 (count (ecs/entities-with w3 c/mass)))
           "the debris was accreted even though it never touched the photosphere"))))
 
@@ -428,8 +450,12 @@
           w1      (ecs/put-component w1 star c/accretion-radius 1e14)
           [w2 _]  (stellar/spawn-clump w1 {:position [5e13 0.0 0.0] :velocity [0.0 0.0 0.0]
                                            :mass 5e27 :radius 6e13})
+          w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
+          w3      (phase0/materialize-lifecycle w3)
           surv    (first (ecs/entities-with w3 c/mass))]
+      ;; Accretion radius is NOT written by the merge handler anymore — it stays
+      ;; on the survivor unchanged, re-derived by classifier next tick.
       (is (>= (ecs/get-component w3 surv c/accretion-radius) 1e14)
           "feeding zone is retained through the merge"))))
 
@@ -626,24 +652,30 @@
                                             :radius 1e10
                                             :temperature 10.0
                                             :matter-state :nebula})
-          total-mass-before (+ 2e28 1e27 1e27 1e27)
           ;; Run sink formation
           w5 (stellar/sink-formation-system w4)
-          sink-mass (ecs/get-component w5 sink-eid c/mass)]
-      (is (not (ecs/alive? w5 p1)) "Parcel within radius is absorbed")
-      (is (not (ecs/alive? w5 p2)) "Parcel within radius is absorbed")
+          sink-mass (ecs/get-component w5 sink-eid c/mass)
+          absorbs (ecs/get-component w5 sink-eid c/absorb-accrete)]
+      ;; Parcels within radius are marked consumed (reaped by materialize-lifecycle)
+      (is (some? (ecs/get-component w5 p1 c/consumed-accrete)) "Parcel within radius is consumed")
+      (is (some? (ecs/get-component w5 p2 c/consumed-accrete)) "Parcel within radius is consumed")
+      ;; Parcel outside radius is untouched
       (is (ecs/alive? w5 p3) "Parcel outside radius survives")
-      ;; A :debris planetesimal has no protoplanetary disk: swept-up material
-      ;; coalesces into its BULK mass (solid accretion), so it can grow past the
-      ;; deuterium limit and promote to :protostar. (Protostar/star sinks instead
-      ;; route accreted mass into a disk — see absorb-parcels.)
-      (is (= (double sink-mass) (+ 2e28 1e27 1e27)) "Debris sink grows in bulk mass")
+      (is (nil? (ecs/get-component w5 p3 c/consumed-accrete)) "Parcel outside radius not consumed")
+      ;; Absorb-accrete influence emitted (integrator applies mass/velocity next tick)
+      (is (some? absorbs) "Absorb-accrete influence emitted on sink")
+      (is (= 2 (count absorbs)) "Two parcels absorbed")
+      (is (= (+ 1e27 1e27) (reduce + 0.0 (map :mass absorbs)))
+          "Total absorbed mass matches parcels")
+      (is (false? (:disk-route (first absorbs))) "Debris sink → no disk-route")
+      (is (= (double sink-mass) 2e28) "Sink bulk mass unchanged (integrator applies next tick)")
       (is (zero? (double (or (ecs/get-component w5 sink-eid c/disk-mass) 0.0)))
           "Debris sink forms no disk")
-      (is (pos? (first (ecs/get-component w5 sink-eid c/velocity))) "Sink velocity updated"))))
+      (is (zero? (first (ecs/get-component w5 sink-eid c/velocity)))
+          "Sink velocity unchanged (COM blend applied by integrator next tick)"))))
 
 (deftest test-sink-formation-absorbs-debris-onto-protostar
-  (testing "A protostar sink drains nearby small :debris (planetesimals fall in)"
+  (testing "A protostar sink drains nearby small :debris via absorb-accrete"
     (let [base (ecs/empty-world)
           ;; A forming core (protostar) with a wide feeding zone
           [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
@@ -660,58 +692,74 @@
                                             :radius 1e10
                                             :temperature 50.0
                                             :matter-state :debris})
-          w3 (stellar/sink-formation-system w2)]
-      (is (not (ecs/alive? w3 deb)) "Debris within the feeding zone is absorbed (swarm drained)")
-      ;; protostar routes accreted material into its disk, not bulk
+          w3 (stellar/sink-formation-system w2)
+          absorbs (ecs/get-component w3 sink-eid c/absorb-accrete)]
+      (is (some? (ecs/get-component w3 deb c/consumed-accrete))
+          "Debris within the feeding zone is consumed (swarm drained)")
+      ;; Absorb-accrete influence emitted with :disk-route true (protostar = disk-former)
+      (is (some? absorbs)
+          "Absorb-accrete influence emitted on protostar sink")
+      (is (= 1 (count absorbs))
+          "One debris parcel absorbed")
+      (is (= 1e27 (:mass (first absorbs)))
+          "Absorb packet carries the parcel mass")
+      (is (true? (:disk-route (first absorbs)))
+          "Disk-route set for protostar sink (mass goes to disk)")
+      ;; Bulk mass unchanged (disk-route → disk-evolution handles it next tick)
       (is (= (double (ecs/get-component w3 sink-eid c/mass)) 5e28)
-          "Protostar bulk mass unchanged (accreted mass goes to disk)")
-      (is (= (double (or (ecs/get-component w3 sink-eid c/disk-mass) 0.0)) 1e27)
-          "Absorbed debris mass joins the protostar's disk"))))
+          "Protostar bulk mass unchanged")
+      ;; Disk-mass is NOT updated here (disk-evolution reads absorb-accrete
+      ;; and adds to disk-mass; it runs after sink-formation in the barrier chain)
+      (is (zero? (double (or (ecs/get-component w3 sink-eid c/disk-mass) 0.0)))
+          "Disk-mass unchanged (disk-evolution applies absorb-accrete next barrier)"))))
 
 ;; --- Fusion promotion barrier ------------------------------------------------
 
 (deftest test-fusion-promotion-sets-luminosity
-  (testing "A protostar at main-sequence radius with fusion-possible gets luminosity via barrier"
+  (testing "A protostar at main-sequence radius with fusion-possible gets promotion-signal"
     ;; Regression: the parallel double-buffer path had a one-tick lag where the
     ;; classifier read stale density from the frozen snapshot, so fusion-possible?
     ;; never returned true on the transition tick. The fusion-promotion barrier
-    ;; runs after the fold and sees the contracted density.
+    ;; runs after the fold and sees the contracted density, then emits a signal
+    ;; that the classifier and fusion-system pick up on the NEXT tick (spec §7).
     (let [mass   (* 1.5 law/solar-mass)
           r-ms   (law/main-sequence-radius mass)
           rho    (/ mass (* 4/3 Math/PI (Math/pow r-ms 3)))
           t-vir  (stellar/virial-temperature mass r-ms)
           press  (law/ideal-gas-pressure rho t-vir)
-          comp   {:H 0.74 :He 0.24 :metals 0.02}
+          c   {:H 0.74 :He 0.24 :metals 0.02}
           [w eid] (stellar/spawn-clump (ecs/empty-world)
                                        {:position [0 0 0] :velocity [0 0 0]
                                         :mass mass :radius r-ms
                                         :temperature t-vir :density rho
-                                        :pressure press :composition comp
+                                        :pressure press :composition c
                                         :matter-state :protostar})
-          ;; Barrier should promote to star with non-zero luminosity
+          ;; Barrier emits promotion-signal; classifier/fusion apply it next tick
           w'     (stellar/fusion-promotion-system w)
+          sig    (ecs/get-component w' eid c/promotion-signal)
           state' (ecs/get-component w' eid c/matter-state)
           lum'   (double (or (ecs/get-component w' eid c/luminosity) 0.0))]
-      (is (= :star state') "Protostar promoted to star")
-      (is (pos? lum') "Luminosity is non-zero after promotion")
-      (is (>= lum' 1e26) "Luminosity is at least the star-luminosity floor")))
+      (is (some? sig) "Promotion signal emitted")
+      (is (= :star (:promotion sig)) "Signal targets :star promotion")
+      (is (pos? (:luminosity sig 0.0)) "Signal carries non-zero luminosity")
+      (is (= :protostar state') "Matter-state unchanged (applied by classifier next tick)")
+      (is (zero? lum') "Luminosity unchanged (applied by fusion-system next tick)")))
 
-  (testing "An existing star with zero luminosity gets luminosity refreshed"
+  (testing "An existing star with zero luminosity gets promotion-signal"
     (let [mass   (* 1.5 law/solar-mass)
           r-ms   (law/main-sequence-radius mass)
           rho    (/ mass (* 4/3 Math/PI (Math/pow r-ms 3)))
           t-vir  (stellar/virial-temperature mass r-ms)
           press  (law/ideal-gas-pressure rho t-vir)
-          comp   {:H 0.74 :He 0.24 :metals 0.02}
+          c   {:H 0.74 :He 0.24 :metals 0.02}
           [w eid] (stellar/spawn-clump (ecs/empty-world)
                                        {:position [0 0 0] :velocity [0 0 0]
                                         :mass mass :radius r-ms
                                         :temperature t-vir :density rho
-                                        :pressure press :composition comp
+                                        :pressure press :composition c
                                         :matter-state :star})
-          ;; Star already has L=0 from seed-clump default
-          lum0   (double (or (ecs/get-component w eid c/luminosity) 0.0))
-          _      (is (zero? lum0) "Star starts with zero luminosity")
           w'     (stellar/fusion-promotion-system w)
-          lum'   (double (or (ecs/get-component w' eid c/luminosity) 0.0))]
-      (is (pos? lum') "Luminosity refreshed for zero-luminosity star"))))
+          sig    (ecs/get-component w' eid c/promotion-signal)]
+      (is (some? sig) "Promotion signal emitted for zero-luminosity star")
+      (is (= :star (:promotion sig)) "Signal confirms :star")
+      (is (pos? (:luminosity sig 0.0)) "Signal carries non-zero luminosity"))))

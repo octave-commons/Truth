@@ -68,7 +68,7 @@
    {:id     :classifier
     :ns     'domain.stellar
     :reads  #{c/matter-state c/mass c/radius c/density c/temperature
-              c/pressure c/composition}
+              c/pressure c/composition c/promotion-signal}
     :writes #{c/matter-state c/accretion-radius}}
 
    ;; Gravity is split out of the old orbital system: the Barnes–Hut tree-walk
@@ -122,19 +122,45 @@
    ;; single-writer invariant (like event handlers — spec §6). collision emits
    ;; discrete events whose merge handler despawns; recenter is a global COM
    ;; reduction over the whole folded world.
+   ;; Collision detection is now a fan-out emitter (B3): its handler emits
+   ;; c/absorb-merge, c/consumed-merge, and c/spawn-request-shatter — all
+   ;; single-writer. Runs in the parallel fan-out, not as a serial barrier.
    {:id            :collision-detection
-    :ns            'domain.physics.collision
-    :stage         :barrier
-    :reads         #{c/position c/radius c/matter-state c/accretion-radius}
-    :writes        #{}
-    :emits-events? true}
+     :ns            'domain.physics.collision
+     :reads         #{c/position c/radius c/matter-state c/accretion-radius
+                      c/velocity c/mass c/angular-momentum
+                      c/temperature c/composition c/body-kind}
+     :writes        #{c/absorb-merge c/consumed-merge c/spawn-request-shatter}
+     :emits-events? true}
+
+   ;; Fusion promotion: emits c/promotion-signal for protostars that now meet
+   ;; fusion conditions. Runs in the parallel fan-out (was a post-fold barrier).
+   ;; One-tick Jacobi delay — classifier + fusion read the signal next tick.
+   {:id            :fusion-promotion
+     :ns            'domain.stellar
+     :reads         #{c/matter-state c/temperature c/pressure c/composition
+                       c/density c/radius c/mass c/luminosity}
+     :writes        #{c/promotion-signal}}
+
+   ;; Sink formation: absorbs nearby gas parcels into sinks. Emits
+   ;; absorb.accrete + consumed.accrete; the integrator reads absorb-accrete and
+   ;; applies mass/velocity/position/angmom changes; disk-evolution reads it to
+   ;; grow disk-mass (one-tick Jacobi delay, spec §5). Runs in the parallel
+   ;; fan-out (was a post-fold barrier).
+   {:id            :sink-formation
+    :ns            'domain.stellar
+    :reads         #{c/matter-state c/accretion-radius c/position c/mass
+                      c/velocity c/disk-mass c/disk-angular-mom c/luminosity
+                      c/consumed-accrete}
+    :writes        #{c/absorb-accrete c/consumed-accrete}}
 
    ;; :collapse is fully retired: its writes were dissolved into Structure (shape),
    ;; :thermal (virial temperature), :em (spin), and :field (b-field).
 
    {:id     :fusion
     :ns     'domain.stellar
-    :reads  #{c/matter-state c/temperature c/pressure c/composition}
+    :reads  #{c/matter-state c/temperature c/pressure c/composition
+              c/promotion-signal}
     :writes #{c/luminosity}}
 
    ;; Panchromatic SED: computes per-band luminosities from T_eff and log g.
@@ -187,29 +213,32 @@
               c/rotation-axis c/accretion-radius c/composition c/b-field}
     :writes #{c/mass-flux-flare c/dv-flare c/spawn-request-flare c/flare-boost}}
 
-   ;; Disk evolution: viscous accretion + gravitational instability → planets/binaries.
-   ;; Barrier-staged: reads disk-mass, writes disk-mass, disk-angular-mom, mass, spin.
+   ;; Disk evolution: viscous accretion + gravitational instability →
+   ;; planets/binaries. Emits mass-flux.disk + torque.disk influences; the
+   ;; integrator owns mass/angmom/spin. Fragment spawns emit
+   ;; c/spawn-request-disk (materialized next tick by materialize-lifecycle).
+   ;; Reads c/absorb-accrete from sink-formation (one-tick Jacobi delay).
+   ;; Runs in the parallel fan-out (was a post-fold barrier).
    {:id     :disk-evolution
     :ns     'domain.stellar
-    :stage  :barrier
-    :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom c/radius c/position c/velocity}
-    :writes #{c/disk-mass c/disk-angular-mom c/mass c/spin c/angular-momentum}}
+    :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
+              c/radius c/position c/velocity c/absorb-accrete}
+    :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
+              c/spawn-request-disk}}
 
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
-   ;; Barrier-staged: reads observer position, writes c/lod-level.
-   {:id     :lod-scheduler
-    :ns     'domain.phase0
-    :stage  :barrier
-    :reads  #{c/matter-state c/position c/observer}
-    :writes #{c/lod-level}}
+    ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
+    {:id     :lod-scheduler
+     :ns     'domain.phase0
+     :reads  #{c/matter-state c/position c/observer}
+     :writes #{c/lod-level}}
 
    ;; Magnetosphere coupling: computes magnetopause standoff from wind ram pressure.
-   ;; Barrier-staged: reads wind parcel data, writes to planet entities.
-   {:id     :magnetosphere-coupling
-    :ns     'domain.phase0
-    :stage  :barrier
-    :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
-    :writes #{c/magnetosphere}}
+    ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
+    {:id     :magnetosphere-coupling
+     :ns     'domain.phase0
+     :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
+     :writes #{c/magnetosphere}}
 
    ;; :thermal retired — temperature is now owned by the integrator, which reuses
    ;; stellar/temperature-system's virial/radiative derivation and layers the
@@ -258,10 +287,16 @@
 
 (defn fan-out-systems
   "Systems that run in the parallel fan-out (everything not marked :barrier).
-   The single-writer invariant applies only to these — barrier systems run
-   serially after the fold and may write freely (spec §6)."
-  [systems]
-  (filterv #(not= :barrier (:stage %)) systems))
+   With all former barriers converted to fan-out emitters (Part C), this returns
+   ALL systems."
+  [sys]
+  (filterv #(not= :barrier (:stage %)) sys))
+
+(defn all-systems
+  "All systems, including barrier systems. Used by write-conflicts to enforce
+   the invariant over EVERY system — no exemptions (spec §1)."
+  [sys]
+  sys)
 
 ;; ---------------------------------------------------------------------------
 ;; Validation
@@ -270,33 +305,33 @@
 (defn writers-by-component
   "Return {component-type [system-id ...]} across the registry — every system
    that writes each component, in registry order."
-  [systems]
+  [sys]
   (reduce (fn [m {:keys [id writes]}]
             (reduce (fn [m ct] (update m ct (fnil conj []) id))
                     m
                     writes))
           {}
-          systems))
+          sys))
 
 (defn write-conflicts
   "Return {component-type [system-id ...]} for every component written by MORE
-   THAN ONE FAN-OUT system — i.e. the single-writer violations. Barrier systems
-   are exempt (they run serially after the fold). `{}` means the invariant holds.
-   This is the migration to-do list while non-empty."
-  [systems]
+   THAN ONE system — across ALL systems, including barriers. There are no
+   exemptions (spec §1, unified-physical-state-integrator-spec.md). `{}` means
+   the invariant holds."
+  [sys]
   (into (sorted-map)
         (filter (fn [[_ ids]] (> (count ids) 1)))
-        (writers-by-component (fan-out-systems systems))))
+        (writers-by-component (all-systems sys))))
 
 (defn malformed-entries
   "Return [{:id .. :problems [..]}] for registry entries that are structurally
    invalid: missing/duplicate :id, missing :reads/:writes, or non-`:component/*`
    keywords in either set."
-  [systems]
-  (let [ids   (map :id systems)
+  [sys]
+  (let [ids   (map :id sys)
         dupes (set (for [[id n] (frequencies ids) :when (> n 1)] id))
         component-kw? (fn [k] (and (keyword? k) (= "component" (namespace k))))]
-    (->> systems
+    (->> sys
          (keep (fn [{:keys [id reads writes] :as entry}]
                  (let [problems
                        (cond-> []
@@ -326,15 +361,15 @@
                      ct (count ids) (str/join ", " ids)))))))
 
 (defn assert-single-writer!
-  "Throw if the registry violates single-writer. NOT yet wired into startup —
-   the current pipeline fails this by design. Call it once migration (spec §9)
-   has reduced `write-conflicts` to `{}`; from then on it guards every boot."
+  "Throw if the registry violates single-writer across ALL systems (no barrier
+   exemptions). Already wired into `architecture-test` and every boot; the
+   migration (spec §7) reduces `write-conflicts` to `{}` incrementally."
   ([] (assert-single-writer! systems))
-  ([systems]
-   (let [bad (malformed-entries systems)]
+  ([sys]
+   (let [bad (malformed-entries sys)]
      (when (seq bad)
        (throw (ex-info "Malformed system registry entries" {:malformed bad}))))
-   (let [conflicts (write-conflicts systems)]
+   (let [conflicts (write-conflicts sys)]
      (when (seq conflicts)
        (throw (ex-info (format-conflicts conflicts) {:conflicts conflicts})))
-     systems)))
+     sys)))

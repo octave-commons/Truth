@@ -18,15 +18,15 @@
 
 (defn- spawn-body
   "Spawn one body with the given matter-state/temperature/mass/composition."
-  [world {:keys [state temp mass comp]
-          :or   {state :star temp 1.5e7 mass solar comp primordial}}]
+  [world {:keys [state temp mass composition]
+          :or   {state :star temp 1.5e7 mass solar composition primordial}}]
   (let [[w eid] (ecs/spawn world)]
     [(ecs/put-components w eid
-       {c/matter-state state c/temperature temp c/mass mass c/composition comp})
+       {c/matter-state state c/temperature temp c/mass mass c/composition composition})
      eid]))
 
 (defn- comp-of [world eid] (ecs/get-component world eid c/composition))
-(defn- sum [comp] (reduce + (vals comp)))
+(defn- sum [composition] (reduce + (vals composition)))
 
 (defn- burn-tick
   "One composition tick through the unified pipeline: the nucleosynthesis emitter
@@ -98,9 +98,9 @@
 
 (deftest burn-bounded-under-huge-dt
   (testing "even with dt ≫ τ_MS, at most max-burn-fraction of current H burns"
-    (let [comp  primordial
-          after (chem/burn-step comp solar 1.0e30)] ;; dt vastly exceeds any τ_MS
-      (is (>= (:H after) (* (:H comp) (- 1.0 0.0100001)))
+    (let [composition  primordial
+          after (chem/burn-step composition solar 1.0e30)] ;; dt vastly exceeds any τ_MS
+      (is (>= (:H after) (* (:H composition) (- 1.0 0.0100001)))
           "H drops by at most ~1% of current value in one step")
       (is (pos? (:H after)) "H never lurches negative"))))
 

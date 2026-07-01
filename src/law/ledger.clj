@@ -12,8 +12,6 @@
 
    Snapshots store a materialized world state at a given tick,
    keyed by tick number, for O(1) seek anchoring."
-  (:require
-    [domain.ecs.event :as event])
   (:import
     (java.security MessageDigest)
     (java.nio.charset StandardCharsets)))
@@ -29,8 +27,8 @@
   "SHA-256 of a string. Returns lowercase hex string."
   [^String s]
   (let [md     (MessageDigest/getInstance "SHA-256")
-        bytes  (.digest md (.getBytes s StandardCharsets/UTF_8))]
-    (apply str (map #(format "%02x" (bit-and % 0xff)) bytes))))
+        b  (.digest md (.getBytes s StandardCharsets/UTF_8))]
+    (apply str (map #(format "%02x" (bit-and % 0xff)) b))))
 
 (defn- canonical
   "Deterministic string representation of an event for hashing.
@@ -151,5 +149,5 @@
         (= 1 (count hs)) (first hs)
         :else
         (let [pairs (partition-all 2 hs)
-              next  (mapv (fn [[a b]] (sha256 (str a (or b a)))) pairs)]
-          (recur next))))))
+              nxt  (mapv (fn [[a b]] (sha256 (str a (or b a)))) pairs)]
+          (recur nxt))))))

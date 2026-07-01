@@ -2,11 +2,12 @@
   "Step 7b: the Structure owner. radius and density are one geometric fact,
    owned by a single system that branches on matter-state — gas SPH, solid
    material density, or KH oblate contraction."
-  (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.stellar :as stellar]))
+   (:require
+     [clojure.test :refer [deftest is testing]]
+     [domain.ecs.core :as ecs]
+     [domain.ecs.components :as c]
+     [domain.spatial.index :as spatial]
+     [domain.stellar :as stellar]))
 
 (defn- finite? [x] (and (number? x) (Double/isFinite (double x))))
 
@@ -43,6 +44,7 @@
               (ecs/put-components deb {c/matter-state :debris c/position [1.0e15 0.0 0.0]
                                        c/density 1.0e3 c/pressure 0.0
                                        c/mass 1.0e23 c/radius 1.0e6 c/temperature 100.0}))
+        w (spatial/spatial-index w)
         sys (stellar/structure-system)
         ws  ((:run sys) w)]
     (testing "sole writer of shape components"

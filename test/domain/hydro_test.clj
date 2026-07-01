@@ -7,9 +7,10 @@
    [domain.hydro :as hydro]
    [domain.stellar :as stellar]
    [law.stellar :as ls]
-   [domain.ecs.core :as ecs]
-   [domain.ecs.components :as c]
-   [shape.spatial :as sp]))
+    [law.field :as lfield]
+    [domain.ecs.core :as ecs]
+    [domain.ecs.components :as c]
+    [domain.spatial.index :as spatial]))
 
 (deftest test-cubic-spline-gradient
   (testing "Kernel gradient points toward the neighbor (direction of increasing W)"
@@ -21,8 +22,8 @@
   (testing "Kernel gradient vanishes beyond cutoff and at r=0"
     (let [far (hydro/kernel-gradient [3.0 0.0 0.0] 1.0)
           zero (hydro/kernel-gradient [0.0 0.0 0.0] 1.0)]
-      (is (every? #(zero? %) far))
-      (is (every? #(zero? %) zero)))))
+      (is (every? zero? far))
+      (is (every? zero? zero)))))
 
 (deftest test-pressure-term
   (testing "Symmetric pressure term is positive for positive pressures"
@@ -87,7 +88,7 @@
 (deftest test-sound-speed
   (testing "Sound speed c_s = √(γ P / ρ)"
     (let [cs (hydro/sound-speed 1.0 1.0)]
-      (is (< (Math/abs (- cs (Math/sqrt law.field/gamma))) 1e-12))
+      (is (< (Math/abs (- cs (Math/sqrt lfield/gamma))) 1e-12))
       (is (zero? (hydro/sound-speed 0.0 1.0)))
       (is (zero? (hydro/sound-speed 1.0 0.0))))))
 
@@ -101,13 +102,14 @@
                                              :matter-state :nebula
                                              :density 1e-18
                                              :pressure 1e-13})
-          [w2 eb] (stellar/spawn-clump w1   {:position [2e14 0.0 0.0]
+           [w2 eb] (stellar/spawn-clump w1   {:position [2e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :density 1e-18
                                              :pressure 1e-13})
+          w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
           a-b (ecs/get-component w3 eb c/hydro-accel)]
@@ -127,13 +129,14 @@
                                              :matter-state :nebula
                                              :density 1.0
                                              :pressure 100.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+           [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 2e14
                                              :matter-state :nebula
                                              :density 1.0
                                              :pressure 1.0})
+          w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
           a-b (ecs/get-component w3 eb c/hydro-accel)]
@@ -165,13 +168,14 @@
                                              :matter-state :nebula
                                              :density 1.0
                                              :pressure 100.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0})
+          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                               :velocity [0.0 0.0 0.0]
+                                               :mass 1e28
+                                               :radius 2e14
+                                               :matter-state :nebula
+                                               :density 1.0
+                                               :pressure 1.0})
+          w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           _   (is (some? (ecs/get-component w3 ea c/hydro-accel))
                   "nebula particle has hydro-accel while active")
@@ -216,7 +220,7 @@
           isolated (assoc base :position [0.0 0.0 0.0])
           crowded  (assoc base :position [0.0 0.0 0.0])
           neighbor-left  {:position [(- h 0.1) 0.0 0.0] :mass m :radius r}
-          neighbor-right {:position [(+ h 0.1) 0.0 0.0] :mass m :radius r}
+          _neighbor-right {:position [(+ h 0.1) 0.0 0.0] :mass m :radius r}
           ;; right neighbor is just outside support
           rho-isolated (hydro/sph-density isolated [isolated])
           rho-crowded  (hydro/sph-density crowded  [crowded neighbor-left])]
@@ -232,12 +236,13 @@
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+           [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
+          w2 (spatial/spatial-index w2)
           seed-rho (ecs/get-component w2 ea c/density)
           w3 ((hydro/density-system 1e10) w2)
           new-rho (ecs/get-component w3 ea c/density)]
@@ -256,7 +261,8 @@
                                              :matter-state :planet
                                              :temperature 200.0})
           seed-rho (ecs/get-component w1 ea c/density)
-          w2 ((hydro/density-system 1e10) w1)]
+           w1 (spatial/spatial-index w1)
+           w2 ((hydro/density-system 1e10) w1)]
       (is (= seed-rho (ecs/get-component w2 ea c/density))
           "resolved body keeps its seed body-density"))))
 
@@ -269,12 +275,13 @@
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+           [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
+          w2 (spatial/spatial-index w2)
           w3 ((hydro/density-system 1e10) w2)
           rho (ecs/get-component w3 ea c/density)
           press (ecs/get-component w3 ea c/pressure)
@@ -291,12 +298,13 @@
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+           [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
+          w2 (spatial/spatial-index w2)
           seed-r (ecs/get-component w2 ea c/radius)
           w3 ((hydro/density-system 1e10) w2)
           new-r (ecs/get-component w3 ea c/radius)]
@@ -311,18 +319,19 @@
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w3 ec] (stellar/spawn-clump w2   {:position [3e15 0.0 0.0]
+           [w3 ec] (stellar/spawn-clump w2   {:position [3e15 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
+          w3 (spatial/spatial-index w3)
           w4 ((hydro/density-system 1e10) w3)
           r-crowded (ecs/get-component w4 ea c/radius)
           rho-crowded (ecs/get-component w4 ea c/density)

@@ -13,6 +13,7 @@
    [domain.ecs.event        :as event]
    [domain.ecs.components    :as c]
    [domain.physics.collision :as collision]
+   [domain.spatial.index     :as spatial]
    [shape.spatial           :as sp]))
 
 ;; --- Pure physics -----------------------------------------------------------
@@ -228,18 +229,21 @@
                                              :matter-state :protostar})
           [w2 _]  (stellar/spawn-clump w1   {:position [0.5 0 0] :mass 1e30 :radius 1.0
                                              :matter-state :planet})
+          w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
+          w3      (phase0/materialize-lifecycle w3)
           remaining (ecs/entities-with w3 c/mass)]
       (is (= 1 (count remaining)))
-      (is (< (Math/abs (- 3e30 (ecs/get-component w3 (first remaining) c/mass)))
-             1e25))
-      ;; The merged body sits at the MASS-WEIGHTED CENTROID, conserving the
-      ;; system centre of mass. If it snapped to the larger body instead, the
-      ;; COM would jump and recenter-system would teleport the whole cloud.
-      (let [[x] (ecs/get-component w3 (first remaining) c/position)
-            expected (/ (* 1e30 0.5) 3e30)] ; (2e30·0 + 1e30·0.5)/3e30
-        (is (< (Math/abs (- (double x) expected)) 1e-9)
-            "merged position is the mass-weighted centroid, not the larger body")))))
+      (testing "absorb-merge packet carries the absorbed mass"
+        (let [pkts (ecs/get-component w3 (first remaining) c/absorb-merge)]
+          (is (some? pkts))
+          (is (< (Math/abs (- 1e30 (reduce + (map :mass pkts)))) 1e25)
+              "packet carries the smaller body's mass")))
+      ;; The merged body sits at the survivor's position. The integrator will
+      ;; blend to the mass-weighted centroid next tick.
+      (let [[x] (ecs/get-component w3 (first remaining) c/position)]
+        (is (= 0.0 (double x))
+            "survivor stays at its position (centroid blended by integrator)")))))
 
 ;; --- Phase detection --------------------------------------------------------
 

@@ -118,8 +118,8 @@
 (defn composition-sums-to-unity?
   "True if the composition's mass fractions sum to approximately 1.0.
    Allows 1% tolerance for floating-point accumulation."
-  [comp]
-  (let [sum (+ (double (:H comp 0.0))
+  [c]
+  (let [sum (+ (double (:H c 0.0))
                (double (:He comp 0.0))
                (double (:metals comp 0.0))
                (double (:D comp 0.0))
@@ -130,10 +130,10 @@
 (defn primordial-composition?
   "True if comp matches primordial BBN values within 10% tolerance.
    Useful for detecting whether a parcel has been stellar-processed."
-  [comp]
-  (and (< (Math/abs (- (double (:H comp 0.0)) primordial-H)) (* 0.1 primordial-H))
-       (< (Math/abs (- (double (:He comp 0.0)) primordial-He)) (* 0.1 primordial-He))
-       (< (double (:metals comp 0.0)) 1e-4)))
+  [c]
+  (and (< (Math/abs (- (double (:H c 0.0)) primordial-H)) (* 0.1 primordial-H))
+       (< (Math/abs (- (double (:He c 0.0)) primordial-He)) (* 0.1 primordial-He))
+       (< (double (:metals c 0.0)) 1e-4)))
 
 (defn metallicity
   "Compute Z (total metal mass fraction) from a composition map.

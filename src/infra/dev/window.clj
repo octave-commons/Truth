@@ -154,11 +154,11 @@
                    (swap! config-atom dissoc :action-request))
           ;; Resolve a pending click into a selected entity (picks against the same
           ;; shapes drawn this frame). pr coords are window pixels → scale to fb.
-          _      (when-let [pr (:pick-request cfg)]
+          _      (when-let [prn-val (:pick-request cfg)]
                    (let [winw (int-array 1) winh (int-array 1)
                          _    (GLFW/glfwGetWindowSize window winw winh)
-                         sx   (* (double (:x pr)) (/ (double fb-w) (max 1 (aget winw 0))))
-                         sy   (* (double (:y pr)) (/ (double fb-h) (max 1 (aget winh 0))))
+                         sx   (* (double (:x prn-val)) (/ (double fb-w) (max 1 (aget winw 0))))
+                         sy   (* (double (:y prn-val)) (/ (double fb-h) (max 1 (aget winh 0))))
                          eid  (inspect/pick-entity bodies cam sx sy fb-w fb-h)]
                      (swap! config-atom #(-> % (dissoc :pick-request) (assoc :selection eid)))))
           ;; Selection survives only while its body still has a render shape;
@@ -181,26 +181,23 @@
           hud-text (concat (render/hud-text-from-world w)
                            (render/observer-hud-text w fb-w fb-h)
                            (:text controls)
-                           (:text card))]
-      ;; Per-frame volumetric fog: bake the gas field into a 3D texture and ray-
-      ;; march it (when enabled and there is gas). nil → render-scene falls back
-      ;; to the sprite fog. The texture is owned by this frame, so delete it after.
-      (let [volume (when (:volumetric? cfg)
-                     (render/frame-volume w (:volume-program cfg)
-                                          (:volume-res cfg 128)))]
-        (render/render-scene {:body-program (:body-program cfg)
-                              :particle-program (:particle-program cfg)
-                              :line-program (:line-program cfg)
-                              :hud-program (:hud-program cfg)
-                              :hud hud
-                              :hud-text hud-text
-                              :volume volume}
-                             (:mesh cfg)
-                             cam
-                             fb-w fb-h
-                             bodies
-                             @time-atom)
-        (render/delete-volume volume))))
+                            (:text card))
+      volume   (when (:volumetric? cfg)
+                 (render/frame-volume w (:volume-program cfg)
+                                      (:volume-res cfg 128)))]
+      (render/render-scene {:body-program (:body-program cfg)
+                            :particle-program (:particle-program cfg)
+                            :line-program (:line-program cfg)
+                            :hud-program (:hud-program cfg)
+                            :hud hud
+                            :hud-text hud-text
+                            :volume volume}
+                           (:mesh cfg)
+                           cam
+                           fb-w fb-h
+                           bodies
+                           @time-atom)
+      (render/delete-volume volume)))
   (handle-screenshot-request world-atom config-atom)
   (GLFW/glfwSwapBuffers window)
   (Thread/sleep 16)
@@ -214,9 +211,9 @@
           frame-atom (atom 0)
           time-atom  (atom 0.0)
           last-t-atom (atom nil)
-          keys       (atom {})]
+          ks       (atom {})]
       (swap! service-state assoc :window window)
-      (render/setup-input window camera-atom keys config-atom world-atom)
+      (render/setup-input window camera-atom ks config-atom world-atom)
       (loop []
         (when (and (not @stop-atom)
                    (render-frame-once window world-atom camera-atom config-atom

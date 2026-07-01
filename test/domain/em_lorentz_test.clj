@@ -5,16 +5,16 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.em     :as em]
-   [domain.hydro  :as hydro]
    [domain.stellar :as stellar]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.spatial.index :as spatial]
    [shape.spatial :as sp]))
 
 (deftest test-curl-estimate-zero-for-uniform-field
   (testing "A uniform B-field has zero curl"
     (let [b [0.0 0.0 1.0e-9]
-          data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
+          _data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
           data-b {:position [0.5 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
           curl (em/curl-estimate b 1.0 [0.0 0.0 0.0] [data-b])]
       (is (every? #(< (Math/abs %) 1e-20) curl)))))
@@ -70,7 +70,8 @@
                                              :pressure 1.0
                                              :b-field [0.0 0.0 0.5]
                                              :angular-momentum [0.0 0.0 0.0]})
-          w3 ((em/em-system 1e10) w2)
+           w2 (spatial/spatial-index w2)
+           w3 ((em/em-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
           a-b (ecs/get-component w3 eb c/hydro-accel)]
       (is (some? a-a))
@@ -93,6 +94,7 @@
                                              :angular-momentum [0.0 0.0 1e45]})
           L0   (ecs/get-component w eid c/angular-momentum)
           spin0 (ecs/get-component w eid c/spin)
+          w    (spatial/spatial-index w)
           w2   ((em/em-system 1e10) w)
           L1   (ecs/get-component w2 eid c/angular-momentum)
           spin1 (ecs/get-component w2 eid c/spin)]
@@ -112,7 +114,8 @@
                                              :density 1e-18
                                              :pressure 1e-13
                                              :b-field [0.0 0.0 1.0e-9]
-                                             :angular-momentum [0.0 0.0 0.0]})
+                                              :angular-momentum [0.0 0.0 0.0]})
+          w    (spatial/spatial-index w)
           w2   ((em/em-system 1e10) w)
           b    (ecs/get-component w2 eid c/b-field)]
       (is (some? b))

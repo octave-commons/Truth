@@ -68,14 +68,14 @@
                 0.0 0.0 0.0 1.0]))
 
 (defn- oblate-scale-matrix [a c]
-  "Scale matrix for an oblate spheroid with equatorial radius a and polar radius c."
+  ;; Scale matrix for an oblate spheroid with equatorial radius a and polar radius c.
   (float-array [(double a) 0.0      0.0      0.0
                 0.0      (double a) 0.0      0.0
                 0.0      0.0      (double c) 0.0
                 0.0      0.0      0.0        1.0]))
 
 (defn- rotation-align-z [axis]
-  "Rotation matrix (column-major) that aligns the mesh z-axis with `axis`."
+  ;; Rotation matrix (column-major) that aligns the mesh z-axis with `axis`.
   (let [n (normalize axis)
         helper (if (< (Math/abs (nth n 2)) 0.9) [0.0 0.0 1.0] [1.0 0.0 0.0])
         x (normalize (cross helper n))
@@ -211,8 +211,8 @@
      FragColor = vec4(color * alpha, alpha);
    }")
 
-(defn compile-shader [source type]
-  (let [id (GL20/glCreateShader type)]
+(defn compile-shader [source typ]
+  (let [id (GL20/glCreateShader typ)]
     (GL20/glShaderSource id source)
     (GL20/glCompileShader id)
     (when (zero? (GL20/glGetShaderi id GL20/GL_COMPILE_STATUS))
@@ -496,11 +496,11 @@
       (let [verts-atom (atom verts)
             mid-cache (atom {})
             get-mid (fn [i j]
-                      (let [key (sort [i j])]
-                        (or (@mid-cache key)
+                      (let [k (sort [i j])]
+                        (or (@mid-cache k)
                             (let [idx (count @verts-atom)
                                   m   (midpoint (nth verts i) (nth verts j))]
-                              (swap! mid-cache assoc key idx)
+                              (swap! mid-cache assoc k idx)
                               (swap! verts-atom conj m)
                               idx))))
             new-faces (vec (mapcat (fn [[i j k]]
@@ -534,9 +534,9 @@
     {:vao vao :vbo vbo :count vertex-count}))
 
 (defn- particle->floats [{:keys [position color size density]}]
-  "Pack a particle into interleaved floats: position 3, color 3, size 1,
-   density 1. Density defaults to 1.0 and is used by the nebula shader to
-   modulate alpha and emission."
+  ;; Pack a particle into interleaved floats: position 3, color 3, size 1,
+  ;; density 1. Density defaults to 1.0 and is used by the nebula shader to
+  ;; modulate alpha and emission.
   (let [[x y z] position
         [r g b] color]
     [(float x) (float y) (float z)
@@ -820,9 +820,9 @@
   "Map a key press to a focus / drift / release action on the world's observer.
    Arrows drift the focus volume, , / . narrow / widen it, Space releases the
    spark to drift toward the system. This is the player's interaction language."
-  [world-atom key]
+   [world-atom k]
   (let [step 3.0e15]
-    (condp = key
+    (condp = k
       GLFW/GLFW_KEY_LEFT   (swap! world-atom move-focus-by [(- step) 0.0 0.0])
       GLFW/GLFW_KEY_RIGHT  (swap! world-atom move-focus-by [step 0.0 0.0])
       GLFW/GLFW_KEY_UP     (swap! world-atom move-focus-by [0.0 0.0 (- step)])
@@ -876,7 +876,7 @@
    ;; the config — the window thread resolves it to a selected entity next frame
    ;; (see `infra.inspect/pick-entity`). `dragged?` separates the two gestures.
    (let [last-pos (atom [0.0 0.0])
-         first    (atom true)
+         fst      (atom true)
          cursor   (atom [0.0 0.0])
          dragged? (atom false)]
      (GLFW/glfwSetCursorPosCallback
@@ -884,12 +884,9 @@
        (proxy [GLFWCursorPosCallback] []
          (invoke [window x y]
            (reset! cursor [x y])
-           ;; Publish the live cursor so the window thread can let the spark's
-           ;; attention (focus) follow the mouse and highlight the hovered body —
-           ;; both passive, free observation.
            (swap! config-atom assoc :cursor [x y])
-           (if @first
-             (do (reset! last-pos [x y]) (reset! first false))
+           (if @fst
+             (do (reset! last-pos [x y]) (reset! fst false))
              (let [[lx ly] @last-pos
                    dx (- x lx)
                    dy (- y ly)]
@@ -1042,8 +1039,8 @@
    gas reads pale tan, metal/rock-rich matter warm grey-brown, and an icy/volatile
    fraction cold blue-white. Primordial gas is mostly tan; differentiated rocky or
    icy worlds shift toward rock/ice as their composition diverges."
-  [comp]
-  (let [c      (or comp {})
+   [compose]
+  (let [c      (or compose {})
         metals (double (get c :metals 0.0))
         ice    (double (+ (double (get c :ice 0.0))
                           (double (get c :H2O 0.0))
@@ -1059,8 +1056,8 @@
   "Surface colour of a resolved body: its composition (material) colour when
    cold, crossfading to its thermal blackbody colour as it heats past ~1000 K.
    A cold rocky world shows rock; an incandescent one glows by temperature."
-  [temp comp]
-  (let [mat (composition->material-color comp)
+   [temp compose]
+  (let [mat (composition->material-color compose)
         th  (temp-color temp)
         t   (double (or temp 10.0))
         f   (max 0.0 (min 1.0 (/ (- (Math/log10 (max 1.0 t)) 2.7) 2.3)))]
@@ -1094,7 +1091,7 @@
          (+ g0 (* frac (- g1 g0)))
          (+ b0 (* frac (- b1 b0)))]))))
 
-(defn- hash01
+(defn- _hash01
   "Deterministic [0,1) value from an integer key — for stable, non-shimmering
    per-entity jitter (same entity → same value every frame)."
   [n]
@@ -1162,8 +1159,8 @@
 
 (defn- particle-cache-key
   "Stable key for a nebula clump's cached particle cloud."
-  [eid seed count]
-  [eid seed count])
+  [eid seed cnt]
+  [eid seed cnt])
 
 (defn- cache-match? [cached params]
   (= (select-keys cached [:center :extent :support :color :density])
@@ -1314,14 +1311,14 @@
 
 (defn- disk-particles*
   "Actual disk particle generation; split for caching."
-  [{:keys [center r-inner r-outer color thickness disk-mass]} count seed]
+  [{:keys [center r-inner r-outer color thickness disk-mass]} cnt seed]
   (let [[cx cy cz] center
         rng  (java.util.Random. (long (or seed 1)))
-        n-rings  (int (max 3 (Math/sqrt (double count))))
-        n-per    (int (Math/ceil (/ (double count) (double n-rings))))
+        n-rings  (int (max 3 (Math/sqrt (double cnt))))
+        _n-per   (int (Math/ceil (/ (double cnt) (double n-rings))))
         r-span   (max 1.0e-6 (- (double r-outer) (double r-inner)))
         thick    (double (or thickness 0.05))
-        disk-m   (double (or disk-mass 1.0e25))]
+        _disk-m  (double (or disk-mass 1.0e25))]
     (mapv
       (fn [_]
         (let [;; Radial position: bias toward inner edge (surface density ∝ 1/r)
@@ -1345,7 +1342,7 @@
            :size     sz
            :density  (float (* 0.55 sigma))
            :render-mode :particle}))
-      (range count))))
+      (range cnt))))
 
 (defn- disk-particles
   "Protoplanetary disk as a flat torus of particles, deterministic and cached.
@@ -1354,16 +1351,16 @@
    then rotated to match); `color` is the host's spectral colour, warmed.
    The cache key includes the entity id and particle count; validation checks
    the physics inputs so the cloud refreshes when the disk evolves."
-  [{:keys [center r-inner r-outer normal color disk-mass count seed]}]
+  [{:keys [center r-inner r-outer normal color disk-mass cnt seed]}]
   (let [eid    (long (or seed 1))
-        ckey   [eid :disk count]
+        ckey   [eid :disk cnt]
         params {:center center :r-inner r-inner :r-outer r-outer
                 :color color :disk-mass disk-mass}]
     (if-let [cached (get @disk-cache ckey)]
       (if (= (dissoc cached :particles) params)
         (:particles cached)
         (let [thick  (max 0.02 (* 0.08 (- (double r-outer) (double r-inner))))
-              raw    (disk-particles* (assoc params :thickness thick) count seed)
+              raw    (disk-particles* (assoc params :thickness thick) cnt seed)
               ;; Rotate from xy-plane to the actual disk orientation
               normal-u (unit-vec normal)
               ez       [0.0 0.0 1.0]
@@ -1380,7 +1377,7 @@
           (swap! disk-cache assoc ckey (assoc params :particles rotated))
           rotated))
       (let [thick  (max 0.02 (* 0.08 (- (double r-outer) (double r-inner))))
-            raw    (disk-particles* (assoc params :thickness thick) count seed)
+            raw    (disk-particles* (assoc params :thickness thick) cnt seed)
             normal-u (unit-vec normal)
             ez       [0.0 0.0 1.0]
             dot      (sp/dot normal-u ez)
@@ -1557,156 +1554,11 @@
     {:rects [rect]
      :text  (into [header passive] action-text)}))
 
-(defn phase0-bodies-from-world
-  "Project Phase 0 ECS matter entities into stylized, view-scaled render shapes,
-   coloured by TEMPERATURE so the thermal field is visible:
-     :nebula    → one soft fog puff (the diffuse cloud)
-     :protostar → a compact bright cloud + a magnetic field line (contracting core)
-     :star/:planet/:debris → a shaded body
-   Per-entity jitter is deterministic, so nothing shimmers between frames.
-
-   This is the ONLY Phase 0 render projection — one ECS world behind it."
-  ([world] (phase0-bodies-from-world world phase0-view-scale))
-  ([world scale]
-   (let [focus (player-focus-level world)]
-     (into
-      (player-overlay-shapes world scale)
-      (mapcat
-       (fn [eid]
-         (let [state   (ecs/get-component world eid c/matter-state)
-               [x y z] (ecs/get-component world eid c/position)
-               center  [(/ x scale) (/ y scale) (/ z scale)]
-               temp    (ecs/get-component world eid c/temperature)
-               comp    (ecs/get-component world eid c/composition)
-               r-phys  (ecs/get-component world eid c/radius)
-               color   (body-render-color temp comp)
-               ob      (or (ecs/get-component world eid c/oblateness) 1.0)
-               axis    (or (ecs/get-component world eid c/rotation-axis) [0.0 0.0 1.0])]
-            (case state
-              :nebula
-              ;; Diffuse gas is a volumetric cloud of additive samples, not a
-              ;; single point. Each sample's size matches its SPH smoothing
-              ;; length (the area it represents), while its opacity and colour
-              ;; are driven by local density so overdense filaments read
-              ;; brighter and tighter than the diffuse background.
-              (let [rho      (or (ecs/get-component world eid c/density) 1e-18)
-                    render-r (phys->render-radius r-phys)
-                    extent   (* render-r (Math/pow (+ 1.0 (Math/log10 (max 1.0 (/ r-phys 3e13)))) 0.5))
-                    dens-norm (nebula-density-norm rho)]
-                (nebula-fog {:center   center
-                             :extent   extent
-                             :support  (* 2.0 render-r)
-                             :color    (temp-color temp)
-                             :count    (fog-sample-count render-r focus)
-                             :seed     eid
-                             :density  dens-norm}))
-
-              :star
-              ;; Stars render with mass-based sizing and spectral-type colors.
-              ;; A red dwarf (0.1 M☉) is small and orange; a solar-type (1 M☉)
-              ;; is medium and yellow-white; an O-star (10+ M☉) is large and blue.
-              (let [core-r (body-draw-radius world eid)
-                    teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
-                    s-col  (stellar-spectral-color teff)
-                    body   {:entity      eid
-                            :position    center
-                            :radius      core-r
-                            :color       s-col
-                            :kind        state
-                            :oblateness  ob
-                            :rotation-axis axis
-                            :render-mode :body}
-                    ;; Protoplanetary disk: warm golden tint of the star's colour
-                    disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                    disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
-                (concat
-                 [body]
-                  (nebula-fog {:center  center
-                               :extent  (* core-r 3.0)
-                               :support (* 2.0 core-r)
-                               :color   (mapv #(min 1.0 (* % 0.85)) s-col)
-                               :count   70
-                               :seed    eid
-                               :density 0.7})
-                 (field-line center core-r (ecs/get-component world eid c/b-field))
-                 ;; Disk: flat particle torus, warm golden, oriented by angular momentum
-                 (when (pos? disk-m)
-                   (let [r-disk  (max (* 3.0 core-r)
-                                      (stellar/disk-radius
-                                        (/ (sp/len disk-L) (max 1.0 disk-m))
-                                        (double (or (ecs/get-component world eid c/mass) 1.0e30))))
-                         ;; Log-compress the disk radius so it stays visible
-                         ;; at the same scale as the body
-                         r-out   (min 12.0 (* core-r 4.0
-                                             (Math/log10 (max 10.0 (/ r-disk (* core-r phase0-view-scale))))))
-                         r-in    (* core-r 1.3)
-                         ;; Warm golden: star colour shifted toward warm amber
-                         d-col   (mapv (fn [c] (min 1.0 (* (+ 0.4 (* 0.6 c)) 0.90))) s-col)]
-                     (disk-particles {:center     center
-                                      :r-inner    r-in
-                                      :r-outer    r-out
-                                      :normal     disk-L
-                                      :color      d-col
-                                      :disk-mass  disk-m
-                                      :count      90
-                                      :seed       eid})))))
-
-              :protostar
-              ;; A contracting core: render radius follows the physical radius
-              ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
-              ;; by temperature, shrouded in fog + field lines.
-              (let [render-r (phys->render-radius r-phys)
-                    rho      (or (ecs/get-component world eid c/density) 1e-15)
-                    disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                    disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
-                (concat
-                 [{:entity      eid
-                   :position    center
-                   :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
-                   :color       color
-                   :kind        state
-                   :oblateness  ob
-                   :rotation-axis axis
-                   :render-mode :body}]
-                 (nebula-fog {:center  center
-                              :extent  (* render-r 2.0)
-                              :support (* 2.0 render-r)
-                              :color   color
-                              :count   (fog-sample-count render-r focus)
-                              :seed    eid
-                              :density (nebula-density-norm rho)})
-                 (field-line center render-r (ecs/get-component world eid c/b-field))
-                 ;; Disk around contracting protostar — warm amber tint
-                 (when (pos? disk-m)
-                   (let [r-disk (max (* 3.0 render-r)
-                                     (stellar/disk-radius
-                                       (/ (sp/len disk-L) (max 1.0 disk-m))
-                                       (double (or (ecs/get-component world eid c/mass) 1.0e30))))
-                         r-out  (min 12.0 (* render-r 4.0
-                                            (Math/log10 (max 10.0 (/ r-disk (* render-r phase0-view-scale))))))
-                         r-in   (* render-r 1.3)
-                         ;; Warm amber for the contracting disk
-                         d-col  (mapv (fn [c] (min 1.0 (* (+ 0.35 (* 0.65 c)) 0.85))) color)]
-                     (disk-particles {:center    center
-                                      :r-inner   r-in
-                                      :r-outer   r-out
-                                      :normal    disk-L
-                                      :color     d-col
-                                      :disk-mass disk-m
-                                      :count     70
-                                      :seed      eid})))))
-
-              ;; :planet :debris → shaded body sized by physical radius, coloured
-              ;; by composition crossfading to thermal glow.
-              [{:entity      eid
-                :position    center
-                :radius      (phys->render-radius r-phys)
-                :color       color
-                :kind        state
-                :oblateness  ob
-                :rotation-axis axis
-                :render-mode :body}])))
-        (ecs/entities-with world c/position c/matter-state))))))
+(comment
+  ;; First definition of phase0-bodies-from-world removed to fix
+  ;; redefined-var warning. Cached version delegates to
+  ;; phase0-bodies-from-world* below.
+  )
 
 (def ^:private phase0-bodies-cache
   "Per-frame cache for `phase0-bodies-from-world`. Rendering is the expensive
@@ -1732,9 +1584,9 @@
               [x y z] (ecs/get-component world eid c/position)
               center  [(/ x scale) (/ y scale) (/ z scale)]
               temp    (ecs/get-component world eid c/temperature)
-              comp    (ecs/get-component world eid c/composition)
+              compose (ecs/get-component world eid c/composition)
               r-phys  (ecs/get-component world eid c/radius)
-              color   (body-render-color temp comp)
+              color   (body-render-color temp compose)
               ob      (or (ecs/get-component world eid c/oblateness) 1.0)
               axis    (or (ecs/get-component world eid c/rotation-axis) [0.0 0.0 1.0])]
           (case state
@@ -1796,7 +1648,7 @@
                                     :normal    disk-L
                                     :color     d-col
                                     :disk-mass disk-m
-                                    :count     90
+                                     :cnt      90
                                     :seed      eid})))))
 
             :protostar
@@ -1839,7 +1691,7 @@
                                     :normal    disk-L
                                     :color     d-col
                                     :disk-mass disk-m
-                                    :count     70
+                                     :cnt      70
                                     :seed      eid})))))
 
             ;; :planet :debris → shaded body sized by physical radius, coloured
@@ -2211,7 +2063,7 @@
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be `:particle`
    (soft fog puff) or `:body` (shaded sphere). Default is `:body`."
-  [{:keys [body-program particle-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies time]
+   [{:keys [body-program particle-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies t]
   ;; Match the GL viewport to the actual draw surface every frame. Without this
   ;; the viewport keeps its context-creation size, so a HiDPI/resized window
   ;; (framebuffer larger than the logical 1280×720) draws only into the
@@ -2235,7 +2087,7 @@
             [cx cy cz] cam-pos]
         (GL20/glUniform3f (GL20/glGetUniformLocation particle-program "cameraPos")
                           (float cx) (float cy) (float cz))
-        (GL20/glUniform1f (GL20/glGetUniformLocation particle-program "time") (float time)))
+        (GL20/glUniform1f (GL20/glGetUniformLocation particle-program "time") (float t)))
       (GL11/glEnable GL11/GL_BLEND)
       (GL11/glBlendFunc GL11/GL_ONE GL11/GL_ONE)
       (GL11/glEnable 0x8642) ; GL_PROGRAM_POINT_SIZE
@@ -2426,14 +2278,14 @@
         height         720
         window         (create-window width height "Gates of Truth — 3D View")
         camera         (atom (make-camera))
-        keys           (atom {})
+        ks             (atom {})
         body-program   (create-program)
         particle-program (create-particle-program)
         sphere         (make-sphere-mesh 2)
         mesh           (upload-mesh sphere)
         config-atom    (atom (default-camera-settings))]
     (println "Window created, entering render loop...")
-    (setup-input window camera keys config-atom)
+    (setup-input window camera ks config-atom)
     (loop []
       (when (not (GLFW/glfwWindowShouldClose window))
         (GLFW/glfwPollEvents)

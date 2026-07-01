@@ -5,7 +5,7 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
-   [domain.ecs.components :as c]
+
    [domain.stellar :as stellar]
    [domain.phase0 :as phase0]
    [domain.player :as player]
@@ -235,7 +235,7 @@
 
 (deftest test-oblate-body-projection
   (testing "Rotating protostars are projected with oblateness and rotation axis"
-    (let [[w eid] (stellar/spawn-clump (ecs/empty-world)
+    (let [[w _eid] (stellar/spawn-clump (ecs/empty-world)
                      {:position [0.0 0.0 0.0]
                       :velocity [0.0 0.0 0.0]
                       :mass 2e30

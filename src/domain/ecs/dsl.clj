@@ -4,7 +4,6 @@
    projections, aggregates, and rewind handlers.
    Runtime stays plain ECS maps and pure functions."
   (:require
-    [clojure.string :as str]
     [malli.core :as m]
     [law.ecs-dsl :as law]
     [domain.ecs.core :as ecs]
@@ -39,21 +38,21 @@
   (keyword "event" (name sym)))
 
 (defmacro defcomponent
-  [name doc schema]
-  (let [k             (component-key name)
-        schema-sym    (symbol (str name "-schema"))
-        validator-sym (symbol (str name "-validator"))
-        pred-sym      (symbol (str name "?"))]
+  [nm doc schema]
+  (let [k             (component-key nm)
+        schema-sym    (symbol (str nm "-schema"))
+        validator-sym (symbol (str nm "-validator"))
+        pred-sym      (symbol (str nm "?"))]
     (law/assert-component-def!
-      {:name name
+      {:name nm
        :doc doc
        :schema schema
        :key k})
     `(do
        (def ~schema-sym ~schema)
        (def ~validator-sym (m/validator ~schema-sym))
-       (def ~name ~k)
-       (alter-meta! (var ~name) assoc
+       (def ~nm ~k)
+       (alter-meta! (var ~nm) assoc
                     :doc ~doc
                     :ecs/kind :component
                     :ecs/key ~k
@@ -64,16 +63,16 @@
          (~validator-sym value#)))))
 
 (defmacro defevent
-  [name doc payload-schema options]
-  (let [k             (event-key name)
-        schema-sym    (symbol (str name "-payload-schema"))
-        validator-sym (symbol (str name "-payload-validator"))
-        ctor-sym      (symbol (str "->" name))
-        emit-sym      (symbol (str "emit-" name))
+  [nm doc payload-schema options]
+  (let [k             (event-key nm)
+        schema-sym    (symbol (str nm "-payload-schema"))
+        validator-sym (symbol (str nm "-payload-validator"))
+        ctor-sym      (symbol (str "->" nm))
+        emit-sym      (symbol (str "emit-" nm))
         entity-count  (:entity-count options)
-        reversible?   (:reversible? options false)]
+        rev?          (:reversible? options false)]
     (law/assert-event-def!
-      {:name name
+      {:name nm
        :doc doc
        :payload-schema payload-schema
        :key k
@@ -81,14 +80,14 @@
     `(do
        (def ~schema-sym ~payload-schema)
        (def ~validator-sym (m/validator ~schema-sym))
-       (def ~name ~k)
-       (alter-meta! (var ~name) assoc
+       (def ~nm ~k)
+       (alter-meta! (var ~nm) assoc
                     :doc ~doc
                     :ecs/kind :event
                     :event/key ~k
                     :event/payload-schema '~schema-sym
                     :event/entity-count ~entity-count
-                    :event/reversible? ~reversible?)
+                     :event/reversible? ~rev?)
        (defn ~ctor-sym
          {:doc ~doc
           :ecs/kind :event-constructor}
@@ -126,12 +125,12 @@
                                    cause#)))))))
 
 (defmacro defsystem
-  [name doc {:keys [query] :as opts} [world-sym rows-sym] & body]
+  [nm doc {:keys [query]} [world-sym rows-sym] & body]
   (law/assert-system-def!
-    {:name name
+    {:name nm
      :doc doc
      :query query})
-  `(defn ~name
+  `(defn ~nm
      {:doc ~doc
       :ecs/kind :system
       :ecs/query '~query}
@@ -140,8 +139,8 @@
        ~@body)))
 
 (defmacro defreaction
-  [name doc event-kind [world-sym event-sym] & body]
-  `(defn ~name
+  [nm doc event-kind [world-sym event-sym] & body]
+  `(defn ~nm
      {:doc ~doc
       :ecs/kind :reaction
       :event/kind ~event-kind}
@@ -149,10 +148,10 @@
      ~@body))
 
 (defmacro defprojection
-  [name doc event-kind {:keys [init]} [acc-sym event-sym] & body]
+  [nm doc event-kind {:keys [init]} [acc-sym event-sym] & body]
   (let [event-k (when (resolve event-kind)
                   (-> event-kind resolve deref))]
-    `(defn ~name
+    `(defn ~nm
        {:doc ~doc
         :ecs/kind :projection
         :projection/event-kind ~(or event-k event-kind)
@@ -161,11 +160,11 @@
        ~@body)))
 
 (defmacro defaggregate
-  [name doc {:keys [tracked init]} [acc-sym event-sym] & body]
+  [nm doc {:keys [tracked init]} [acc-sym event-sym] & body]
   (let [tracked-ks (mapv #(when (resolve %)
                             (-> % resolve deref))
                          tracked)]
-    `(defn ~name
+    `(defn ~nm
        {:doc ~doc
         :ecs/kind :aggregate
         :aggregate/tracked ~tracked-ks
@@ -174,8 +173,8 @@
        ~@body)))
 
 (defmacro defrewind
-  [name doc event-kind [world-sym event-sym] & body]
-  `(defn ~name
+  [nm doc event-kind [world-sym event-sym] & body]
+  `(defn ~nm
      {:doc ~doc
       :ecs/kind :rewind
       :event/kind ~event-kind}

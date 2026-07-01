@@ -24,8 +24,8 @@
    ledger         ;; law.ledger/Ledger
    systems-fwd    ;; [system-fn] for forward tick
    systems-bwd    ;; [system-fn] for backward tick
-   snapshot-every ;; long
-   ])
+    snap-every ;; long
+    ])
 
 (defn- take-snapshot
   "Store current world as snapshot in ledger at current tick."
@@ -36,7 +36,7 @@
 (defn- maybe-snapshot
   "Snapshot if we've hit the interval."
   [^Timeline tl]
-  (if (zero? (mod (get-in tl [:world :tick]) (:snapshot-every tl)))
+  (if (zero? (mod (get-in tl [:world :tick]) (:snap-every tl)))
     (take-snapshot tl)
     tl))
 
@@ -127,5 +127,5 @@
                   (ledger/empty-ledger)
                   systems-fwd
                   systems-bwd
-                  snapshot-every)
+                   snapshot-every)
       take-snapshot))

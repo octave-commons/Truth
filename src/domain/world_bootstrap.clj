@@ -27,7 +27,7 @@
 (defn make-systems
   "Return the ordered system pipeline for one tick.
    Order matters: orbital physics first, then collision detection."
-  [{:keys [sim/G sim/theta sim/dt] :as world}]
+  [{:keys [sim/G sim/theta sim/dt] :as _world}]
   [(orbital/orbital-system G theta dt)
    collision/collision-detection-system])
 

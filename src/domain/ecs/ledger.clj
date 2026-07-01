@@ -1,8 +1,6 @@
 (ns domain.ecs.ledger
   "Append-only event ledger with named projection and aggregate support.
-   All operations are pure — no atoms, no side effects."
-  (:require
-    [domain.ecs.event :as evt]))
+   All operations are pure — no atoms, no side effects.")
 
 ;; ---- Data shapes -----------------------------------------------------------
 

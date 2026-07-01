@@ -300,14 +300,14 @@
         temp  (g c/temperature)
         lum   (g c/luminosity)
         regime (g c/regime)
-        comp  (fmt-comp (g c/composition))]
+        c  (fmt-comp (g c/composition))]
     (cond-> [["mass"  (fmt-mass (g c/mass) stellar?)]
              ["radius" (fmt-radius (g c/radius) stellar?)]]
       temp        (conj ["temp"  (format "%.0f K" (double temp))])
       speed       (conj ["speed" (format "%.2f km/s" (double speed))])
       (and lum (pos? (double lum)))
       (conj ["lum"   (format "%.3g Lsun" (/ (double lum) solar-lum))])
-      comp        (conj ["comp"  comp])
+       c        (conj ["comp"  c])
       regime      (conj ["regime" (name regime)])
       true        (conj ["eid"   (str eid)]))))
 

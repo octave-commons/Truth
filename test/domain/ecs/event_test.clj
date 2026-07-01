@@ -18,12 +18,12 @@
                                   evt/with-ledger
                                   evt/with-handlers))
           w       (evt/register-handler w :event/boom
-                                        (fn [w event]
-                                          (ecs/put-component w eid :boomed true)))
+                                         (fn [w _event]
+                                           (ecs/put-component w eid :boomed true)))
           w'      (evt/dispatch w (evt/->event {:tick 0
                                                  :kind :event/boom
                                                  :entities #{eid}}))]
-      (is (= true (ecs/get-component w' eid :boomed)))
+      (is (true? (ecs/get-component w' eid :boomed)))
       (is (= 1 (count (get-in w' [:ledger :events])))))))
 
 (deftest events-of-kind-filter

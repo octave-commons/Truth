@@ -39,7 +39,7 @@
 ;; --- order independence (the whole point) -----------------------------------
 
 (defn- sys [id ctype f]
-  "A write-set system that maps f over every cell of `ctype` in the frozen world."
+  ;; A write-set system that maps f over every cell of `ctype` in the frozen world.
   {:id id :writes #{ctype}
    :run (fn [w] {ctype (reduce-kv (fn [m eid v] (assoc m eid (f v)))
                                   {} (get-in w [:components ctype]))})})
@@ -98,7 +98,7 @@
 ;; --- legacy bridge ----------------------------------------------------------
 
 (deftest legacy-system-extracts-masked-write-set
-  (let [[w e0 e1] (world-2)
+  (let [[w e0 _e1] (world-2)
         ;; A legacy system that legitimately writes `a`, but ALSO scribbles on
         ;; `b` which it does not own. Only the `a` change must survive.
         legacy (fn [world]

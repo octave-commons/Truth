@@ -326,19 +326,23 @@
      3. Resistive flux decay applied to c/b-field.
 
    Diffuse clumps keep their field essentially unchanged; dense cores slowly
-   shed flux — the design's non-ideal hook."
+   shed flux — the design's non-ideal hook.
+
+   Reads the shared spatial tree from :phase0/spatial-tree and filters query
+   results to EM-active entities."
   [dt]
   (fn [world]
     (let [eids     (ecs/entities-with world c/b-field c/radius c/position
                                       c/density c/angular-momentum)
           all-data (mapv #(entity->em-data world %) eids)
           active   (filterv #(em-active? (:state %)) all-data)
-          tree     (idx/build active)
+          tree     (:phase0/spatial-tree world)
           ;; Lorentz + braking
           updates1 (par/par-mapv
                      (fn [data]
                        (let [h       (* 2.0 (double (or (:radius data) 1.0)))
-                             nbrs    (idx/within-radius tree (:position data) h)
+                             nbrs    (->> (idx/within-radius tree (:position data) h)
+                                          (filter #(em-active? (:matter-state %))))
                              curl-b  (curl-estimate (:b-field data)
                                                     (:density data)
                                                     (:position data)
@@ -451,14 +455,9 @@
 
 (defn lorentz-acceleration-system
   "Double-buffer write-set system: Lorentz acceleration a = (∇×B)×B/(μ₀ρ) for
-   every EM-active clump → `accel.lorentz`. Reads the frozen snapshot, writes
-   ONLY accel.lorentz, and clears the contribution from bodies that are no longer
-   EM-active. Sole writer of accel.lorentz — the single-writer replacement for
-   the Lorentz half of `em-system` (which kept adding into `hydro-accel`).
-
-   The legacy `em-system` still handles magnetic braking (angular-momentum/spin)
-   and resistive flux decay (b-field); those accumulators are decomposed in a
-   later step. Until then em's own hydro-accel write is masked off by the bridge."
+   every EM-active clump → `accel.lorentz`. Reads the shared spatial tree from
+   :phase0/spatial-tree (built once per tick by domain.spatial.index), filters
+   query results to EM-active entities. Writes ONLY accel.lorentz."
   []
   {:id     :em-lorentz
    :writes #{c/accel-lorentz}
@@ -467,11 +466,12 @@
                                                c/density c/angular-momentum)
                    all-data (mapv #(entity->em-data world %) eids)
                    active   (filterv #(em-active? (:state %)) all-data)
-                   tree     (idx/build active)
+                   tree     (:phase0/spatial-tree world)
                    computed (par/par-mapv
                               (fn [data]
                                 (let [h      (* 2.0 (double (or (:radius data) 1.0)))
-                                      nbrs   (idx/within-radius tree (:position data) h)
+                                      nbrs   (->> (idx/within-radius tree (:position data) h)
+                                                  (filter #(em-active? (:matter-state %))))
                                       curl-b (curl-estimate (:b-field data) (:density data)
                                                             (:position data) nbrs)]
                                   [(:eid data)

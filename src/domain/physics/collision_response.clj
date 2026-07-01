@@ -8,7 +8,6 @@
   (:require
     [domain.ecs.core       :as ecs]
     [domain.ecs.components :as c]
-    [domain.ecs.event      :as event]
     [shape.spatial         :as sp]))
 
 (defn- get-body
@@ -18,7 +17,7 @@
    :velocity (ecs/get-component world eid c/velocity)
    :mass     (double (ecs/get-component world eid c/mass))})
 
-(defn- put-body
+(defn- _put-body
   "Write position and velocity for eid back into world."
   [world eid {:keys [position velocity]}]
   (-> world

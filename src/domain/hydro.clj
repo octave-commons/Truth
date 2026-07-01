@@ -142,7 +142,8 @@
    hydro-active (e.g. a merged clump that became :debris or :planet) has its
    acceleration removed, so stale pressure forces do not leak into resolved
    bodies."
-  [dt]
+  [_dt]
+
   (fn [world]
     (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                       c/pressure c/mass c/radius)
@@ -172,10 +173,9 @@
 
 (defn pressure-acceleration
   "Double-buffer write-set system: SPH pressure-gradient acceleration a = −∇p/ρ
-   for every hydro-active clump → `accel.pressure`. Reads the frozen snapshot,
-   writes ONLY accel.pressure, and clears the contribution from any body that is
-   no longer hydro-active. Sole writer of accel.pressure — the single-writer
-   replacement for the hydro half of the legacy `hydro-system`/`hydro-accel`."
+   for every hydro-active clump → `accel.pressure`. Reads the shared spatial tree
+   from :phase0/spatial-tree (built once per tick by domain.spatial.index),
+   filters query results to :nebula particles only. Writes ONLY accel.pressure."
   []
   {:id     :hydro
    :writes #{c/accel-pressure}
@@ -184,11 +184,12 @@
                                                c/density c/pressure c/mass c/radius)
                    all-data (mapv #(entity->hydro-data world %) eids)
                    active   (filterv #(hydro-active? (:state %)) all-data)
-                   tree     (idx/build active)
+                   tree     (:phase0/spatial-tree world)
                    computed (par/par-mapv
                               (fn [data]
                                 (let [h    (* 2.0 (double (or (:radius data) 1.0)))
-                                      nbrs (idx/within-radius tree (:position data) h)]
+                                      nbrs (->> (idx/within-radius tree (:position data) h)
+                                                (filter #(= :nebula (:matter-state %))))]
                                   [(:eid data) (pressure-gradient-acceleration data nbrs)]))
                               active)
                    cell     (reduce (fn [m [eid a]]
@@ -220,9 +221,10 @@
    nearest-neighbour distance comes from an octree branch-and-bound rather than a
    linear scan over `gas`."
   [data tree]
-  (let [d (idx/nearest-dist tree (:position data) (:eid data))]
+  (let [d     (idx/nearest-dist tree (:position data) (:eid data))
+        r-own (* 2.0 (double (or (:radius data) sph-h-min)))]
     (if (Double/isInfinite d)
-      (* 2.0 (double (or (:radius data) sph-h-min)))
+      r-own
       (max sph-h-min (* sph-h-factor d)))))
 
 (defn density-system
@@ -231,18 +233,22 @@
    radius from the ideal gas law. Runs before `hydro-system` so the
    pressure-gradient force sees a real, varying field rather than the fixed seed
    density. Resolved bodies (`:debris`, `:planet`, `:protostar`, `:star`) keep
-   their existing body-density; they are not samples of the diffuse gas field."
-  [dt]
+   their existing body-density; they are not samples of the diffuse gas field.
+
+   Reads the shared spatial tree from :phase0/spatial-tree and filters query
+   results to :nebula particles only."
+  [_dt]
   (fn [world]
     (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                       c/pressure c/mass c/radius c/temperature)
           all-data (mapv #(entity->hydro-data world %) eids)
           gas      (filterv #(= :nebula (:state %)) all-data)
-          tree     (idx/build gas)
+          tree     (:phase0/spatial-tree world)
           updates  (par/par-mapv
                     (fn [data]
                       (let [h     (smoothing-length data tree)
-                            nbrs  (idx/within-radius tree (:position data) h)
+                            nbrs  (->> (idx/within-radius tree (:position data) h)
+                                       (filter #(= :nebula (:matter-state %))))
                             rho   (sph-density (assoc data :radius (* 0.5 h)) nbrs)
                             press (ls/ideal-gas-pressure rho (:temperature data))]
                         [(:eid data) rho press (* 0.5 h)]))
@@ -264,17 +270,21 @@
    (see `smoothing-length`). Returns `[[eid density radius] ...]` with radius = h/2.
    Pure; reuses the same SPH machinery as the legacy `density-system` (which stays
    for the sequential path). For gas, density is primary (estimated from
-   neighbours) and the radius is the smoothing length it implies."
+   neighbours) and the radius is the smoothing length it implies.
+
+   Reads the shared spatial tree from :phase0/spatial-tree and filters query
+   results to :nebula particles only."
   [world]
   (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                     c/pressure c/mass c/radius c/temperature)
         all-data (mapv #(entity->hydro-data world %) eids)
         gas      (filterv #(= :nebula (:state %)) all-data)
-        tree     (idx/build gas)]
+        tree     (:phase0/spatial-tree world)]
     (par/par-mapv
       (fn [data]
         (let [h    (smoothing-length data tree)
-              nbrs (idx/within-radius tree (:position data) h)
+              nbrs (->> (idx/within-radius tree (:position data) h)
+                        (filter #(= :nebula (:matter-state %))))
               rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
           [(:eid data) rho (* 0.5 h)]))
       gas)))

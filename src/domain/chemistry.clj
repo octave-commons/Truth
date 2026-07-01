@@ -43,13 +43,13 @@
 
 (defn can-form-molecules?
   "Check if temperature allows molecular formation"
-  [temperature element1 element2]
+  [temperature _element1 _element2]
   (let [bond-energy-scale 5000] ;; Rough scale for molecular bonds in K
     (< temperature bond-energy-scale)))
 
 (defn molecular-composition
   "Calculate molecular composition based on temperature and elements"
-  [elemental-comp temperature pressure]
+  [elemental-comp temperature _pressure]
   (cond
     ;; Very hot - everything is atomic/ionized
     (> temperature 3000)
@@ -147,7 +147,7 @@
 
 (defn differentiate-composition
   "Model gravitational differentiation of a molten/hot body"
-  [composition temperature radius]
+  [composition temperature _radius]
   (if (> temperature 1500) ;; Hot enough for differentiation
     {:core (select-keys composition [:Fe :Ni])
      :mantle (select-keys composition [:Si :Mg :O :Al])
@@ -159,7 +159,7 @@
 
 (defn habitability-score
   "Calculate rough habitability potential"
-  [{:keys [temperature pressure composition atmosphere]}]
+  [{:keys [temperature pressure composition]}]
   (let [has-water (> (get composition :H2O 0) 0.001)
         temp-ok (and (> temperature 273) (< temperature 373))
         has-carbon (> (+ (get composition :C 0)
@@ -193,10 +193,10 @@
   [composition stellar-mass]
   ;; More massive stars produce more metals
   (let [metal-factor (Math/log10 (/ stellar-mass 1.989e30))]
-    (reduce (fn [comp element]
-              (if (not (#{:H :He} element))
-                (update comp element #(* % (+ 1 metal-factor)))
-                comp))
+    (reduce (fn [c el]
+              (if (not (#{:H :He} el))
+                (update c el #(* % (+ 1 metal-factor)))
+                c))
             composition
             (keys composition))))
 
@@ -252,12 +252,12 @@
            cell (into {}
                       (keep (fn [eid]
                               (let [state (ecs/get-component world eid c/matter-state)
-                                    comp  (ecs/get-component world eid c/composition)
+                                    c  (ecs/get-component world eid c/composition)
                                     mass  (ecs/get-component world eid c/mass)
                                     temp  (double (or (ecs/get-component world eid c/temperature) 0.0))]
-                                (when (and comp mass
+                                (when (and c mass
                                            (contains? #{:star :protostar} state)
                                            (>= temp law/fusion-temp-threshold))
-                                  [eid (burn-step comp mass dt)]))))
+                                  [eid (burn-step c mass dt)]))))
                       eids)]
        {c/comp-burn cell}))})

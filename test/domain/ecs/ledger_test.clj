@@ -3,7 +3,7 @@
     [clojure.test :refer [deftest is testing]]
     [domain.ecs.core :as ecs]
     [domain.ecs.event :as evt]
-    [domain.ecs.dsl :refer [defcomponent defevent defreaction
+    [domain.ecs.dsl :refer [defcomponent defevent
                              defprojection defaggregate]]
     [domain.ecs.ledger :as ledger]))
 

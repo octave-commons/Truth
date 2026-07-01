@@ -7,7 +7,7 @@
   (testing "each spawn call produces a distinct entity id"
     (let [[w e1] (ecs/spawn (ecs/empty-world))
           [w e2] (ecs/spawn w)
-          [w e3] (ecs/spawn w)]
+          [_w e3] (ecs/spawn w)]
       (is (distinct? e1 e2 e3)))))
 
 (deftest despawn-removes-all-components

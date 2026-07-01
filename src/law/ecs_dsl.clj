@@ -1,6 +1,7 @@
 (ns law.ecs-dsl
   "Malli contracts for the ECS + event ledger DSL."
   (:require
+    [clojure.string :as str]
     [malli.core :as m]))
 
 (def SimpleName

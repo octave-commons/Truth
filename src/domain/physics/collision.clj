@@ -64,8 +64,8 @@
 (defn- point-aabb-dist2
   "Squared distance from point `p` to axis-aligned box `bb` (0 if inside)."
   [bb [px py pz]]
-  (let [[ax ay az] (:min bb)
-        [bx by bz] (:max bb)
+  (let [[ax ay az] (:aabb-min bb)
+        [bx by bz] (:aabb-max bb)
         dx (cond (< px ax) (- ax px) (> px bx) (- px bx) :else 0.0)
         dy (cond (< py ay) (- ay py) (> py by) (- py by) :else 0.0)
         dz (cond (< pz az) (- az pz) (> pz bz) (- pz bz) :else 0.0)]
@@ -99,28 +99,36 @@
 (defn- detect-pairs
   "Return a seq of collision maps for every literally-overlapping pair, found by
    querying the Barnes–Hut octree. Each unordered pair is emitted once (guarded
-   by eid-a < eid-b)."
-  [bodies]
+   by eid-a < eid-b).
+
+   Reads the shared spatial tree (built once per tick by domain.spatial.index)
+   and filters overlaps to collidable (non-:nebula) bodies only."
+  [bodies tree]
   (if (empty? bodies)
     []
-    (let [recs  (mapv (fn [[eid pos r v m]]
-                        {:id eid :position pos :radius (double r) :velocity v :mass (double m)})
-                      bodies)
-          tree  (bh/build-tree recs)]
+    (let [recs          (mapv (fn [[eid pos r v m]]
+                                {:id eid :position pos :radius (double r) :velocity v :mass (double m)})
+                              bodies)
+          collidable-ids (set (map :id recs))]
       (for [q recs
             o (collect-overlaps tree q (:radius q) [])
-            :when (< (long (:id q)) (long (:id o)))]
+            :when (and (< (long (:id q)) (long (:id o)))
+                       (contains? collidable-ids (:id o)))]
         (pair-map [(:id q) (:position q) (:radius q) (:velocity q)]
                   [(:id o) (:position o) (:radius o) (:velocity o)]
                   (sp/dist (:position q) (:position o)))))))
 
 (defn collision-detection-system
   "ECS system: detects literal sphere overlaps, emits :event/collision for each
-   pair. No state mutation — all response is via handlers."
+   pair. No state mutation — all response is via handlers.
+
+   Reads the shared spatial tree from :phase0/spatial-tree (built once per tick
+   by domain.spatial.index) instead of building its own."
   [world]
   (let [bodies (collidable-bodies world)
+        tree   (:phase0/spatial-tree world)
         tick   (:tick world)
-        pairs  (detect-pairs bodies)]
+        pairs  (detect-pairs bodies tree)]
     (reduce (fn [w {:keys [eid-a eid-b pos-a pos-b
                             rad-a rad-b depth normal]}]
               (event/dispatch w

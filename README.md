@@ -59,7 +59,110 @@ ignition / brown-dwarf — is grounded in real solar-system formation
 - **`law.field`** — SI constants and field invariants (the codebase is SI; the
   research notes are Gaussian — see the design docs).
 
-Design docs live in `docs/designs/`, research notes in `docs/notes/`.
+## Research program
+
+A family of periodic deep-research actors investigates every domain the
+simulation touches: cosmology, physics, geology, atmosphere, biology, and
+culture. Each produces notebooks with governing equations in LaTeX, Clojure
+pseudocode mapped to ECS patterns, charts, and a promotion path to domain code.
+
+**Research index:** [`docs/research/INDEX.md`](docs/research/INDEX.md) — browse
+all notebooks by domain, status, and phase coverage.
+
+### Domains
+
+| Domain | Notebook(s) | Status |
+|--------|-------------|--------|
+| **Cosmology** | [Primordial nucleosynthesis yields](docs/research/cosmology/primordial-nucleosynthesis-yields.md) — `Y_p=0.247`, `D/H=2.53e-5`, Li7 gap | `spec-derivation` |
+| | [BBN calculator (Jupyter)](docs/research/cosmology/bbn_yields.ipynb) — Clojure BBN with ASCII charts, 4/4 validation | `validated` |
+| | [Stellar SED template grid](docs/research/cosmology/stellar-sed-template-grid.md) — 12-template minimum grid, band ratios 10²–10⁴× | `validated` |
+| **Physics** | [Phase 1 radiation & plasma](docs/research/phase1-radiation-plasma-truth.md) — panchromatic SEDs, 4-layer atmospheres, Parker winds, XUV escape | `spec-derivation` |
+| **Atmosphere** | [XUV escape regime transition](docs/research/atmosphere/xuv-escape-regime-transition.md) — `R = t_rec/t_flow` controls escape regime, `F_crit ~ 10⁴ erg/cm²/s` | `validated` |
+
+Research has already produced three spec files in `src/law/`:
+
+| Spec File | Source | Contents |
+|-----------|--------|----------|
+| [`law/composition.clj`](src/law/composition.clj) | Cosmology BBN yields | Primordial H/He/D/Li composition, metallicity, composition schema |
+| [`law/sed.clj`](src/law/sed.clj) | Phase 1 radiation §2–3 | SED bands, profiles, atmosphere shells, band helpers |
+| [`law/plasma.clj`](src/law/plasma.clj) | Phase 1 radiation §4–6 | Wind profiles, plasma wind parcels, atmospheric escape, space-weather events |
+
+New ECS component keywords added: `sed-bands`, `atmosphere-shells`,
+`wind-profile`, `atmosphere-escape`, `event-source`, `lod-level`.
+
+### Actors
+
+Research is produced by seven periodic ημ actors (see
+[`.eta-mu/actors/`](.eta-mu/actors/)):
+
+- `truth-research-cosmology` (48h) — stellar physics, nucleosynthesis, CMB
+- `truth-research-physics` (48h) — SPH, N-body, MHD, orbital mechanics
+- `truth-research-geology` (48h) — tectonics, mantle convection, cratering
+- `truth-research-biology` (48h) — ecology, evolution, abiogenesis
+- `truth-research-atmosphere` (48h) — radiative transfer, climate, escape
+- `truth-research-culture` (48h) — agent-based social models, mythogenesis
+- `truth-research-coordinator` (72h) — cross-domain index, gap analysis
+
+## Design docs and specs
+
+Design documents capture architectural decisions and simulation design:
+
+- [World generation phases](docs/designs/gates-of-truth-world-gen-phases.md)
+- [Phase 0 stellar nebula design](docs/designs/truth-phase-0-stellar-nebula-design.md)
+- [Phase 0 coupled physics & regime classifier](docs/designs/phase0-coupled-physics-and-regime-classifier.md)
+- [Phase 0 volumetric renderer](docs/designs/phase0-volumetric-renderer.md)
+- [Sink particle formation](docs/designs/phase0-sink-particle-formation.md)
+- [Simulation methods research](docs/designs/simulation-methods-research.md)
+
+Implementation specs (driven by the Kanban process):
+
+- [Jeans-driven formation](docs/specs/phase0-jeans-driven-formation.md)
+- [SPH density field](docs/specs/phase0-sph-density-field.md)
+- [Protoplanetary disk](docs/specs/phase0-protoplanetary-disk-implementation.md)
+- [Planet formation pipeline](docs/specs/phase0-planet-formation-complete-pipeline.md)
+- [Chemistry & differentiation](docs/specs/phase0-chemistry-differentiation.md)
+- [Stellar winds & mass loss](docs/specs/phase0-stellar-winds-and-mass-loss.md)
+- [Sink formation](docs/specs/stage2-sink-formation.md)
+- [Habitability handoff](docs/specs/phase0-habitability-handoff.md)
+- [Player focus & dual representation](docs/specs/phase0-player-focus-and-dual-representation.md)
+- [Narrator presence](docs/specs/phase0-narrator-presence.md)
+
+## Current codebase
+
+| Module | Contents |
+|--------|----------|
+| [`domain.ecs`](src/domain/ecs/) | ECS core — world, entities, components, systems, DSL |
+| [`domain.phase0`](src/domain/phase0.clj) | Phase 0 physics pipeline — gravity, hydro, MHD-lite |
+| [`domain.gravity`](src/domain/gravity/) | Gravitational solver (Barnes-Hut tree) |
+| [`domain.em`](src/domain/em.clj) | Magnetic field — flux-freezing, magnetic pressure, resistive decay |
+| [`domain.regime`](src/domain/regime.clj) | Dimensionless-number regime classifier (β, Mach, Jeans) |
+| [`domain.hydro`](src/domain/hydro.clj) | Hydrodynamics — SPH density, pressure forces |
+| [`domain.stellar`](src/domain/stellar.clj) | Stellar structure — polytropes, fusion ignition, mass-radius |
+| [`domain.chemistry`](src/domain/chemistry.clj) | Chemical network — ionisation, molecules, dust |
+| [`domain.orbital`](src/domain/orbital/) | Orbital mechanics — N-body integration, Kepler |
+| [`domain.spatial`](src/domain/spatial/) | Spatial partitioning — kd-tree, neighbor search |
+| [`domain.integrator`](src/domain/integrator.clj) | Time integration — Leapfrog, adaptive timestep |
+| [`domain.pacing`](src/domain/pacing.clj) | Simulation pacing — wall-clock mapping, LOD zones |
+| [`domain.intervention`](src/domain/intervention.clj) | Player interventions — narrative injection |
+| [`domain.player`](src/domain/player.clj) | Player state — focus, perception, camera |
+| [`domain.world_bootstrap`](src/domain/world_bootstrap.clj) | World initialization — initial conditions |
+| [`infra.render`](src/infra/render.clj) | LWJGL/OpenGL renderer — shaders, camera, pipeline |
+| [`infra.dev`](src/infra/dev/) | Dev tools — window, nREPL, debugging |
+| [`law.*`](src/law/) | Malli schemas — composition, SED, plasma, field, contracts |
+| [`shape.*`](src/shape/) | Geometry — coordinate transforms, sphere math |
+
+## Static analysis
+
+Six deterministic code-quality tools gate the build:
+
+```bash
+bin/analyze            # full report (clj-kondo, smells, splint, lsp, jscpd, cljfmt)
+bin/analyze --strict   # CI mode — fails on HARD structural breaches
+bin/analyze --fix      # auto-format with cljfmt
+```
+
+See [`docs/STATIC-ANALYSIS.md`](docs/STATIC-ANALYSIS.md) for thresholds and
+individual tool commands.
 
 ## Running
 
@@ -72,7 +175,8 @@ clojure -M:run demo             # render one Sun/Earth/Moon frame to /tmp/truth-
 clojure -M:dev                  # live GLFW dev window + nREPL on 127.0.0.1:7888
 ```
 
-With the dev service running, connect a REPL and drive the live window:
+With the dev service running (managed by pm2 as `gates-of-truth-dev`), connect a
+REPL and drive the live window:
 
 ```clojure
 (require '[infra.dev.window :as w])

@@ -8,8 +8,10 @@
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core     :as ecs]
    [domain.ecs.components :as c]
+   [domain.ecs.tick     :as tick]
    [domain.em           :as em]
    [domain.stellar      :as stellar]
+   [domain.phase0       :as phase0]
    [shape.spatial       :as sp]
    [law.stellar         :as law]))
 
@@ -46,7 +48,9 @@
 (deftest wind-parcel-carries-launch-point-field
   (let [[w star] (star-world)
         sources  (em/field-sources w)              ;; pre-launch sources (the star)
-        w'       (stellar/stellar-wind-system w)
+        ws       ((:run (stellar/stellar-wind-system)) w)
+        w'       (-> (tick/apply-write-set w ws)
+                     (phase0/materialize-lifecycle))
         parcel   (launched-parcel w' star)]
     (is (some? parcel) "a wind parcel was launched")
     (let [b   (ecs/get-component w' parcel c/b-field)
@@ -61,7 +65,9 @@
   (let [[w star] (star-world)
         w        (assoc w :phase0/flare-period 1 :phase0/flare-mass-factor 1.0)
         sources  (em/field-sources w)
-        w'       (stellar/stellar-flare-system w)
+        ws       ((:run (stellar/stellar-flare-system)) w)
+        w'       (-> (tick/apply-write-set w ws)
+                     (phase0/materialize-lifecycle))
         parcel   (launched-parcel w' star)]
     (is (some? parcel) "a flare/CME parcel was launched")
     (let [b   (ecs/get-component w' parcel c/b-field)

@@ -7,6 +7,7 @@
     [domain.ecs.core :as ecs]
     [domain.ecs.components :as c]
     [domain.orbital.system :as orbital]
+    [domain.spatial.index  :as spatial]
     [law.stellar :as law]))
 
 (defn- body [w eid pos vel]
@@ -41,6 +42,7 @@
         [w e1] (ecs/spawn w)
         w  (-> (body w e0 [-1.0e12 0.0 0.0] [0.0 0.0 0.0])
                (body e1 [ 1.0e12 0.0 0.0] [0.0 0.0 0.0]))
+        w  (spatial/spatial-index w)
         sys (orbital/gravity-acceleration law/G 0.5 5.0e14)
         ws  ((:run sys) w)
         ag  (get ws c/accel-gravity)]

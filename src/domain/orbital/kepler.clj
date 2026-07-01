@@ -1,6 +1,5 @@
 (ns domain.orbital.kepler
-  "Two-body Kepler orbit utilities."
-  (:require [shape.spatial :as sp]))
+  "Two-body Kepler orbit utilities.")
 
 (def ^:const two-pi (* 2.0 Math/PI))
 

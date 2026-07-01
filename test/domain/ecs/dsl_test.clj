@@ -4,7 +4,7 @@
     [domain.ecs.core :as ecs]
     [domain.ecs.event :as evt]
     [domain.ecs.dsl :refer [defcomponent defevent defsystem defreaction
-                            install-reaction query-rows]]))
+                             install-reaction]]))
 
 (defcomponent position
   "Cartesian position."
@@ -75,6 +75,6 @@
                                    (->collision 0 #{e1 e2}
                                                 {:normal [1.0 0.0 0.0]
                                                  :depth 0.5}))]
-      (is (= true (ecs/get-component world' e1 :component/collided?)))
-      (is (= true (ecs/get-component world' e2 :component/collided?)))
+      (is (true? (ecs/get-component world' e1 :component/collided?)))
+      (is (true? (ecs/get-component world' e2 :component/collided?)))
       (is (= 1 (count (get-in world' [:ledger :events])))))))

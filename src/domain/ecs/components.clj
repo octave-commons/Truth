@@ -129,12 +129,17 @@
 (def spawn-request-flare     :component/spawn-request.flare)
 (def spawn-request-accretion :component/spawn-request.accretion)
 (def spawn-request-shatter   :component/spawn-request.shatter)
+(def spawn-request-disk      :component/spawn-request.disk)   ;; disk fragment spawns (binary/planet)
 ;; Lifecycle markers, reaped/materialized at world-construction (spec §5). Each
 ;; consumed marker has a single owner so single-writer holds; the reaper removes
 ;; any entity carrying ANY consumed.* marker.
 (def consumed-merge :component/consumed.merge)  ;; absorbed body, reaped (collision)
 (def consumed-accrete :component/consumed.accrete) ;; absorbed gas parcel, reaped (sink)
 (def consumed-wind  :component/consumed.wind)   ;; star ablated below floor, reaped (wind)
+
+;; Fusion promotion signal: post-fold barrier emits this; classifier and
+;; fusion-system read it on the next tick's snapshot (spec §7). Single writer.
+(def promotion-signal :component/promotion.signal)
 
 ;; --- Observer (the player spark) --------------------------------------------
 ;; The quantum-oscillation player is a singleton entity carrying this component.
