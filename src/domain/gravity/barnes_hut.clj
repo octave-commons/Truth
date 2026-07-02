@@ -3,7 +3,7 @@
    - build-tree: bodies -> tree
    - acceleration: G θ tree body -> vec3 acceleration on body."
   (:require
-    [shape.spatial :as sp]))
+   [shape.spatial :as sp]))
 
 ;; --- Node representation ----------------------------------------------------
 
@@ -17,6 +17,7 @@
         total  (double (reduce + (map :mass bodies)))]
     {:type   :leaf
      :aabb   bb
+     :aabb-side (sp/max-side bb)
      :bodies bodies
      :mass   total
      ;; Largest body radius in this node, for fixed-radius neighbour/overlap
@@ -25,15 +26,16 @@
      :max-radius (double (reduce max 0.0 (map #(double (or (:radius %) 0.0)) bodies)))
      :com    (if (pos? total)
                (sp/v* (reduce (fn [acc b]
-                                 (sp/v+ acc (sp/v* (:position b) (:mass b))))
-                               (sp/vec3 0.0 0.0 0.0)
-                               bodies)
+                                (sp/v+ acc (sp/v* (:position b) (:mass b))))
+                              (sp/vec3 0.0 0.0 0.0)
+                              bodies)
                       (/ 1.0 total))
                (sp/center bb))}))
 
 (defn- _internal-node [bb children mass com]
   {:type     :internal
    :aabb     bb
+   :aabb-side (sp/max-side bb)
    :children children
    :mass     mass
    :com      com})
@@ -60,6 +62,7 @@
   [bb]
   {:type     :internal
    :aabb     bb
+   :aabb-side (sp/max-side bb)
    :children (vec (repeat 8 nil))
    :mass     0.0
    :max-radius 0.0
@@ -93,8 +96,8 @@
             child'   (if (nil? child)
                        (let [pad      [min-aabb-size min-aabb-size min-aabb-size]
                              child-bb (if (< (sp/max-side child-bb) min-aabb-size)
-                                         (sp/aabb (sp/v- (:aabb-min child-bb) pad)
-                                                  (sp/v+ (:aabb-max child-bb) pad))
+                                        (sp/aabb (sp/v- (:aabb-min child-bb) pad)
+                                                 (sp/v+ (:aabb-max child-bb) pad))
                                         child-bb)]
                          (leaf-node child-bb body))
                        (insert-body-into-node child body))]
@@ -131,6 +134,7 @@
       (assoc node
              :children children'
              :mass     total-mass
+             :aabb-side (sp/max-side (:aabb node))
              :max-radius max-radius
              :com      com))
 
@@ -165,39 +169,120 @@
 ;; inter-particle spacing, or close encounters fling particles to infinity
 ;; (the "jitter"/ejection you see). Callers pass it via `acceleration`.
 
-(defn- accel-from-mass
-  "Gravitational acceleration on a test body at position `pos`
-   due to aggregate mass `mass` at center-of-mass `com`, Plummer-softened."
-  [G soft2 pos mass com]
-  (let [r   (sp/v- com pos)
-        r2  (+ (sp/len2 r) (double soft2))
-        r3  (* r2 (Math/sqrt r2))
-        scale (/ (* (double G) (double mass)) r3)]
-    (sp/v* r scale)))
+(defn- traverse-fast
+  "Scalar-accumulating Barnes–Hut traversal.
 
-(defn- traverse
-  "Recursive Barnes–Hut traversal."
-  [G theta soft2 pos acc node]
-  (cond
-    (nil? node) acc
+   Avoids per-node vector allocation and sqrt by keeping acceleration as three
+   local doubles and comparing s² < θ²·d² at internal nodes."
+  [G soft2 theta2 px py pz self-id accx accy accz node]
+  (if (nil? node)
+    [accx accy accz]
+    (if (leaf-node? node)
+      (let [[ax ay az]
+            (reduce (fn [[ax ay az] body]
+                      (if (= (:id body) self-id)
+                        [ax ay az]
+                        (let [bpos (:position body)
+                              dx (- (double (nth bpos 0)) px)
+                              dy (- (double (nth bpos 1)) py)
+                              dz (- (double (nth bpos 2)) pz)
+                              d2 (+ (* dx dx) (* dy dy) (* dz dz) soft2)
+                              inv-r (* d2 (Math/sqrt d2))
+                              scale (if (pos? inv-r)
+                                      (/ (* (double G) (double (:mass body))) inv-r)
+                                      0.0)]
+                          [(+ ax (* dx scale))
+                           (+ ay (* dy scale))
+                           (+ az (* dz scale))])))
+                    [accx accy accz]
+                    (:bodies node))]
+        [ax ay az])
+      (let [com (:com node)
+            [cx cy cz] com
+            dx (- (double cx) px)
+            dy (- (double cy) py)
+            dz (- (double cz) pz)
+            d2  (+ (* dx dx) (* dy dy) (* dz dz))
+            s   (double (:aabb-side node))
+            s2  (* s s)]
+        (if (or (zero? d2) (< s2 (* theta2 d2)))
+          (let [inv-r (* (+ d2 soft2) (Math/sqrt (+ d2 soft2)))
+                scale (if (pos? inv-r)
+                        (/ (* (double G) (double (:mass node))) inv-r)
+                        0.0)]
+            [(+ accx (* dx scale))
+             (+ accy (* dy scale))
+             (+ accz (* dz scale))])
+          (loop [children (:children node)
+                 ax accx ay accy az accz]
+            (if (seq children)
+              (let [[nx ny nz] (traverse-fast G soft2 theta2 px py pz self-id ax ay az (first children))]
+                (recur (rest children) nx ny nz))
+              [ax ay az])))))))
 
-    (leaf-node? node)
-    (let [self-id  (:id (meta pos))]
-      (reduce (fn [acc' body]
-                (if (= (:id body) self-id)
-                  acc'
-                  (sp/v+ acc' (accel-from-mass G soft2 pos (:mass body) (:position body)))))
-              acc
-              (:bodies node)))
+(defn- traverse-stack
+  "Explicit-stack Barnes–Hut traversal with primitive scalar accumulators.
 
-    (internal-node? node)
-    (let [s (sp/max-side (:aabb node))
-          d (sp/dist pos (:com node))]
-      (if (or (zero? d) (< (/ s d) theta))
-        (sp/v+ acc (accel-from-mass G soft2 pos (:mass node) (:com node)))
-        (reduce (fn [a child] (traverse G theta soft2 pos a child))
-                acc
-                (:children node))))))
+   Avoids the per-node vector allocation and recursive function-call overhead of
+   `traverse-fast` by keeping a mutable `java.util.ArrayDeque` of pending nodes
+   and three `double` accumulators in a small array. The tree is read-only; only
+   local state is mutated."
+  [G soft2 theta2 px py pz self-id tree]
+  (if (nil? tree)
+    [0.0 0.0 0.0]
+    (let [G      (double G)
+          soft2  (double soft2)
+          theta2 (double theta2)
+          px     (double px)
+          py     (double py)
+          pz     (double pz)
+          acc    (double-array 3)
+          stack  (java.util.ArrayDeque.)]
+      (.push stack tree)
+      (while (not (.isEmpty stack))
+        (let [node (.pop stack)]
+          (when node
+            (if (leaf-node? node)
+              (doseq [body (:bodies node)]
+                (when (not= (:id body) self-id)
+                  (let [bpos (:position body)
+                        bx   (double (nth bpos 0))
+                        by   (double (nth bpos 1))
+                        bz   (double (nth bpos 2))
+                        dx   (- bx px)
+                        dy   (- by py)
+                        dz   (- bz pz)
+                        d2   (+ (* dx dx) (* dy dy) (* dz dz) soft2)
+                        inv-r (* d2 (Math/sqrt d2))
+                        scale (if (pos? inv-r)
+                                (/ (* G (double (:mass body))) inv-r)
+                                0.0)]
+                    (aset acc 0 (+ (aget acc 0) (* dx scale)))
+                    (aset acc 1 (+ (aget acc 1) (* dy scale)))
+                    (aset acc 2 (+ (aget acc 2) (* dz scale))))))
+              (let [com (:com node)
+                    cx  (double (nth com 0))
+                    cy  (double (nth com 1))
+                    cz  (double (nth com 2))
+                    dx  (- cx px)
+                    dy  (- cy py)
+                    dz  (- cz pz)
+                    d2  (+ (* dx dx) (* dy dy) (* dz dz))
+                    s   (double (:aabb-side node))
+                    s2  (* s s)]
+                (if (or (zero? d2) (< s2 (* theta2 d2)))
+                  (let [d2s   (+ d2 soft2)
+                        inv-r (* d2s (Math/sqrt d2s))
+                        scale (if (pos? inv-r)
+                                (/ (* G (double (:mass node))) inv-r)
+                                0.0)]
+                    (aset acc 0 (+ (aget acc 0) (* dx scale)))
+                    (aset acc 1 (+ (aget acc 1) (* dy scale)))
+                    (aset acc 2 (+ (aget acc 2) (* dz scale))))
+                  (doseq [child (:children node)
+                          :when child]
+                    (.push stack child))))))))
+      [(aget acc 0) (aget acc 1) (aget acc 2)])))
 
 (defn acceleration
   "Compute gravitational acceleration on `body` from all bodies in `tree`.
@@ -209,6 +294,9 @@
   ([G theta tree body]
    (acceleration G theta default-softening tree body))
   ([G theta softening tree body]
-   (let [pos   (with-meta (:position body) {:id (:id body)})
-         soft2 (* (double softening) (double softening))]
-     (traverse G theta soft2 pos (sp/vec3 0.0 0.0 0.0) tree))))
+   (let [pos   (:position body)
+         [px py pz] pos
+         soft2 (* (double softening) (double softening))
+         theta2 (* (double theta) (double theta))
+         [ax ay az] (traverse-fast G soft2 theta2 px py pz (:id body) 0.0 0.0 0.0 tree)]
+     [ax ay az])))

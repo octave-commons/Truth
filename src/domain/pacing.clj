@@ -74,13 +74,15 @@
       {:radius 0.0 :mass 0.0}
       (let [com    (sp/v* (reduce (fn [a [p m]] (sp/v+ a (sp/v* p m))) [0.0 0.0 0.0] items)
                           (/ 1.0 mtot))
-            sorted (sort-by (fn [[p _]] (sp/dist com p)) items)
             target (* cloud-mass-fraction mtot)]
-        (loop [acc 0.0 [[p m] & more] sorted]
-          (let [acc' (+ acc (double m))]
+        (loop [acc 0.0 [[p m] & more] (sort-by (fn [[p _]] (sp/dist com p)) items)
+               rmax 0.0]
+          (let [acc' (+ acc (double m))
+                d    (sp/dist com p)
+                rmax' (if (> d rmax) d rmax)]
             (if (or (>= acc' target) (nil? more))
-              {:radius (sp/dist com p) :mass mtot}
-              (recur acc' more))))))))
+              {:radius rmax' :mass mtot}
+               (recur acc' more rmax'))))))))
 
 (defn dynamical-time
   "Free-fall/orbital timescale t_dyn = √(R³ / G·M). 0 for a degenerate scale."
@@ -100,17 +102,17 @@
 (defn pacing-for
   "Pacing from the cloud's bulk dynamical time `t-dyn` and bulk `radius`. The tick
    RATE is fixed (`ticks-per-second`); the per-tick step tracks the WHOLE cloud's
-   collapse: `dt = clamp(cfl-factor · t-dyn, min, max)`. As the cloud contracts
-   t-dyn shrinks, so the clock dilates and EVERY body — all sharing the
+   collapse: `dt = clamp(cfl-factor · t_dyn, min, max)`. As the cloud contracts
+   t_dyn shrinks, so the clock dilates and EVERY body — all sharing the
    contracting scale — stays resolved; a single hot protostar, which does not
    change the bulk scale, can never freeze the integration. Softening tracks the
    bulk radius. The displayed wall-clock rate is DERIVED as `rate = dt · tps`.
    Returns `{:rate :rate-yr :dt :softening}`."
   [t-dyn radius]
   (let [dt      (-> (* cfl-factor (double t-dyn))
-                    (max pacing-dt-min) (min pacing-dt-max))
+                   (max pacing-dt-min) (min pacing-dt-max))
         soft    (-> (* soft-factor (double radius))
-                    (max pacing-soft-min) (min pacing-soft-max))
+                   (max pacing-soft-min) (min pacing-soft-max))
         rate    (* dt ticks-per-second)
         rate-yr (/ rate seconds-per-year)]
     {:rate      rate

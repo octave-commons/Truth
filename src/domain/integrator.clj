@@ -26,14 +26,15 @@
    isolated keeps each field's logic small and avoids touching tuned formulas
    (§9 non-goal). This namespace owns only the fields that were contended or
    accumulated across multiple writers."
-   (:require
-    [domain.ecs.core       :as ecs]
-    [domain.ecs.components  :as c]
-    [domain.ecs.tick        :as tick]  ;; removed sentinel
-    [domain.stellar        :as stellar]
-    [domain.intervention   :as intervention]
-    [law.stellar           :as law]
-    [shape.spatial         :as sp]))
+  (:require
+   [domain.ecs.core       :as ecs]
+   [domain.ecs.components  :as c]
+   [domain.ecs.parallel    :as par]
+   [domain.ecs.tick        :as tick]  ;; removed sentinel
+   [domain.stellar        :as stellar]
+   [domain.intervention   :as intervention]
+   [law.stellar           :as law]
+   [shape.spatial         :as sp]))
 
 (def ^:private zero3 [0.0 0.0 0.0])
 
@@ -239,26 +240,83 @@
         eids (ecs/entities-with world c/position c/velocity
                                 c/mass c/radius c/body-kind)
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
-                       (get-in world [:components c/absorb-merge] {}))]
-    (reduce
-     (fn [ws eid]
-       (let [a   (sum-vec-influences world eid accel-sources)
-             dv  (sum-vec-influences world eid dv-sources)
-             v   (ecs/get-component world eid c/velocity)
-             x   (ecs/get-component world eid c/position)
-             m0  (double (or (ecs/get-component world eid c/mass) 0.0))
-             v1  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
-             x1  (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
-         (if-let [pkts (get absorbs eid)]
-           (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
-             (-> ws
-                 (assoc-in [c/velocity eid] v-blend)
-                 (assoc-in [c/position eid] x-blend)))
-           (-> ws
-               (assoc-in [c/velocity eid] v1)
-               (assoc-in [c/position eid] x1)))))
-     {}
-     eids)))
+                       (get-in world [:components c/absorb-merge] {}))
+        pairs (par/par-mapv
+               (fn [eid]
+                 (let [a   (sum-vec-influences world eid accel-sources)
+                       dv  (sum-vec-influences world eid dv-sources)
+                       v   (ecs/get-component world eid c/velocity)
+                       x   (ecs/get-component world eid c/position)
+                       m0  (double (or (ecs/get-component world eid c/mass) 0.0))
+                       v1  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
+                       x1  (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
+                   (if-let [pkts (get absorbs eid)]
+                     (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
+                       [eid v-blend x-blend])
+                     [eid v1 x1])))
+               eids)]
+    (reduce (fn [ws [eid v x]]
+              (-> ws
+                  (assoc-in [c/velocity eid] v)
+                  (assoc-in [c/position eid] x)))
+            {}
+            pairs)))
+
+(defn- kinematics-ws-soa
+  "SoA-aware position + velocity updater. Reads positions/velocities/masses from
+   the `:phase0/physics-soa` primitive arrays, sums acceleration contributions
+   directly from their component cell maps, and produces the standard write-set
+   for position and velocity. Falls back to the ECS path when the cache is absent."
+  [world dt soa]
+  (let [foff        (or (:phase0/frame-offset world) zero3)
+        [fox foy foz] foff
+        {:keys [eids n mass px py pz vx vy vz]} soa
+        absorbs     (merge (get-in world [:components c/absorb-accrete] {})
+                           (get-in world [:components c/absorb-merge] {}))
+        dt          (double dt)
+        fox         (double fox)
+        foy         (double foy)
+        foz         (double foz)
+        accel-cells (mapv #(get-in world [:components %]) accel-sources)
+        dv-cells    (mapv #(get-in world [:components %]) dv-sources)
+        sum-vec     (fn [cells eid]
+                      (reduce (fn [[ax ay az] cell]
+                                (if-let [v (get cell eid)]
+                                  [(+ ax (double (nth v 0)))
+                                   (+ ay (double (nth v 1)))
+                                   (+ az (double (nth v 2)))]
+                                  [ax ay az]))
+                              [0.0 0.0 0.0]
+                              cells))
+        pairs       (par/par-mapv
+                     (fn [idx]
+                       (let [eid        (nth eids idx)
+                             [ax ay az] (sum-vec accel-cells eid)
+                             [dvx dvy dvz] (sum-vec dv-cells eid)
+                             vx0        (aget ^doubles vx idx)
+                             vy0        (aget ^doubles vy idx)
+                             vz0        (aget ^doubles vz idx)
+                             px0        (aget ^doubles px idx)
+                             py0        (aget ^doubles py idx)
+                             pz0        (aget ^doubles pz idx)
+                             m0         (aget ^doubles mass idx)
+                             vx1        (+ vx0 (* ax dt) dvx)
+                             vy1        (+ vy0 (* ay dt) dvy)
+                             vz1        (+ vz0 (* az dt) dvz)
+                             px1        (- (+ px0 (* vx1 dt)) fox)
+                             py1        (- (+ py0 (* vy1 dt)) foy)
+                             pz1        (- (+ pz0 (* vz1 dt)) foz)]
+                         (if-let [pkts (get absorbs eid)]
+                           (let [[v-blend x-blend _] (com-blend [vx1 vy1 vz1] [px1 py1 pz1] m0 pkts)]
+                             [eid v-blend x-blend])
+                           [eid [vx1 vy1 vz1] [px1 py1 pz1]])))
+                     (range n))]
+    (reduce (fn [ws [eid v x]]
+              (-> ws
+                  (assoc-in [c/velocity eid] v)
+                  (assoc-in [c/position eid] x)))
+            {}
+            pairs)))
 
 (defn mass-ws
   "Mass. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass) — the per-source mass
@@ -398,35 +456,41 @@
   [world]
   (let [eids    (ecs/entities-with world c/angular-momentum c/mass c/radius)
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
-                       (get-in world [:components c/absorb-merge] {}))]
-    (reduce
-     (fn [ws eid]
-       (let [L   (or (ecs/get-component world eid c/angular-momentum) zero3)
-             dL  (sum-vec-influences world eid torque-sources)
-             dLa (absorb-angmom-sum world eid)
-             L'  (sp/v+ (sp/v+ L dL) dLa)
-             m   (ecs/get-component world eid c/mass)
-             r   (ecs/get-component world eid c/radius)
-             spin' (stellar/spin-from-angular-momentum L' m r)]
-         (-> ws
-             (assoc-in [c/angular-momentum eid] L')
-             (assoc-in [c/spin eid] spin'))))
-     {}
-     eids)))
+                       (get-in world [:components c/absorb-merge] {}))
+        pairs   (par/par-mapv
+                 (fn [eid]
+                   (let [L   (or (ecs/get-component world eid c/angular-momentum) zero3)
+                         dL  (sum-vec-influences world eid torque-sources)
+                         dLa (absorb-angmom-sum world eid)
+                         L'  (sp/v+ (sp/v+ L dL) dLa)
+                         m   (ecs/get-component world eid c/mass)
+                         r   (ecs/get-component world eid c/radius)
+                         spin' (stellar/spin-from-angular-momentum L' m r)]
+                     [eid L' spin']))
+                 eids)]
+    (reduce (fn [ws [eid L' spin']]
+              (-> ws
+                  (assoc-in [c/angular-momentum eid] L')
+                  (assoc-in [c/spin eid] spin')))
+            {}
+            pairs)))
 
 (defn integrator-system
   "Write-set system: the single owner of the dynamical/contended physical fields.
    Composes the per-field updaters (each writes a disjoint set of components, so
    the fragments merge cleanly). Sole writer of position, velocity, temperature,
    composition, angular-momentum, spin (and, as the lifecycle milestone lands,
-   mass)."
+   mass). Uses the `:phase0/physics-soa` cache for kinematics when present."
   [dt]
   {:id     :integrator
    :writes #{c/position c/velocity c/mass c/temperature c/composition
              c/angular-momentum c/spin}
    :run    (fn [world]
-             (merge (kinematics-ws world dt)
-                    (mass-ws world)
-                    (temperature-ws world dt)
-                    (composition-ws world)
-                    (rotation-ws world)))})
+             (let [kin (if-let [soa (:phase0/physics-soa world)]
+                         (kinematics-ws-soa world dt soa)
+                         (kinematics-ws world dt))]
+               (merge kin
+                      (mass-ws world)
+                      (temperature-ws world dt)
+                      (composition-ws world)
+                      (rotation-ws world))))})

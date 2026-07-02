@@ -52,16 +52,18 @@
       (let [out (tick/run-parallel w [(hydro/pressure-acceleration)])]
         (is (nil? (ecs/get-component out e1 c/accel-pressure)))))))
 
-(deftest lorentz-system-emits-only-accel-lorentz
+(deftest lorentz-system-emits-accel-lorentz-and-torque-em
   (let [[w e0] (ecs/spawn (ecs/empty-world))
         [w e1] (ecs/spawn w)
         w   (-> (gas w e0 [0.0 0.0 0.0]) (gas e1 [1.0e13 0.0 0.0]))
-        sys (em/lorentz-acceleration-system)
+        sys (em/lorentz-acceleration-system 1.0e12)
         ws  ((:run sys) w)]
     (testing "system contract"
       (is (= :em-lorentz (:id sys)))
-      (is (= #{c/accel-lorentz} (:writes sys))))
-    (testing "writes only accel.lorentz, finite per active body"
-      (is (= #{c/accel-lorentz} (set (keys ws))))
+      (is (= #{c/accel-lorentz c/torque-em} (:writes sys))))
+    (testing "writes both accel.lorentz and torque.em, finite per active body"
+      (is (= #{c/accel-lorentz c/torque-em} (set (keys ws))))
       (is (every? (fn [v] (every? #(Double/isFinite (double %)) v))
-                  (vals (get ws c/accel-lorentz)))))))
+                  (vals (get ws c/accel-lorentz))))
+      (is (every? (fn [v] (every? #(Double/isFinite (double %)) v))
+                  (vals (get ws c/torque-em)))))))

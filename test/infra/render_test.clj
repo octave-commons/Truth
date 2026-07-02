@@ -43,7 +43,7 @@
       (is (every? #(<= (Math/sqrt (apply + (map * (:position %) (:position %)))) 5.0001) fog)))))
 
 (deftest test-phase0-projection
-  (testing "Gas → fog, protostar → fog + field line, star → shaded body"
+  (testing "Gas contributes to froxel volume, protostar → body + field line, star → shaded body"
     (let [[w1 _] (stellar/spawn-clump (ecs/empty-world)
                    {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e13
                     :matter-state :nebula})
@@ -55,21 +55,19 @@
                     :matter-state :star})
           shapes (r/phase0-bodies-from-world w3)
           modes  (frequencies (map :render-mode shapes))]
-      (is (pos? (get modes :particle 0)) "gas/protostar produce volumetric fog")
-      (is (pos? (get modes :line 0))     "the protostar produces magnetic field lines")
-      (is (pos? (get modes :body 0))     "the star produces a shaded body"))))
+      (is (pos? (get modes :body 0))     "protostar + star produce shaded bodies")
+      (is (pos? (get modes :line 0))     "the protostar produces magnetic field lines"))))
 
 (deftest test-nebula-density-visualization
-  (testing "Fog particles carry density for the shader"
+  (testing "Froxel gas samples carry density in volume builder"
     (let [base (ecs/empty-world)
           [w1 _] (stellar/spawn-clump base
                    {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
                     :matter-state :nebula :density 1e-18 :temperature 12.0})
-          shapes (r/phase0-bodies-from-world w1)
-          fog  (filter #(= :particle (:render-mode %)) shapes)]
-      (is (seq fog) "nebula produces fog particles")
-      (is (every? #(number? (:density %)) fog)
-          "every fog particle carries a density value for the shader")))
+          pts  (#'r/gas-points w1 r/phase0-view-scale)]
+      (is (seq pts) "nebula produces gas samples for the froxel texture")
+      (is (every? #(number? (:dens %)) pts)
+          "every gas sample carries a density value")))
   (testing "Higher-density samples read smaller (they sample a tighter area)"
     (let [sparse (r/nebula-fog {:center [0.0 0.0 0.0] :extent 1.0 :support 1.0
                                 :color [1.0 1.0 1.0] :count 50 :seed 7 :density 0.1})
@@ -93,12 +91,12 @@
           planet (r/phys->render-radius 3e14)
           giant  (r/phys->render-radius 3e15)]
       (is (< gas planet giant) "bigger physical body → bigger on screen")
-      (is (>= gas 0.18) "tiny bodies clamp to a visible minimum")
-      (is (<= giant 6.0) "huge bodies clamp to a maximum")
-      (is (< giant 2.0) "even a giant stays small relative to the cloud (view spans ~15 units)")))
+      (is (>= gas 0.001) "tiny bodies clamp to a visible minimum")
+      (is (<= giant 60.0) "huge bodies are log-compressed rather than linear")
+      (is (< giant 100.0) "even a giant stays modest on screen")))
   (testing "Non-positive radius is the visible minimum, never zero/NaN"
-    (is (= 0.18 (r/phys->render-radius 0.0)))
-    (is (= 0.18 (r/phys->render-radius nil)))))
+    (is (= 0.001 (r/phys->render-radius 0.0)))
+    (is (= 0.001 (r/phys->render-radius nil)))))
 
 (deftest test-composition->material-color
   (testing "Composition drives material colour"
