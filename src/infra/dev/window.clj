@@ -47,15 +47,12 @@
 
 (defn- ensure-resources [config-atom]
   (swap! config-atom
-         (fn [{:keys [body-program particle-program line-program hud-program mesh subdivisions requested-subdivisions] :as cfg}]
+         (fn [{:keys [body-program line-program hud-program mesh subdivisions requested-subdivisions] :as cfg}]
            (let [subdivisions (or requested-subdivisions subdivisions 2)
                  cfg          (assoc cfg :subdivisions subdivisions)]
              (cond-> cfg
                (nil? body-program)
                (assoc :body-program (render/create-program))
-
-               (nil? particle-program)
-               (assoc :particle-program (render/create-particle-program))
 
                (nil? line-program)
                (assoc :line-program (render/create-line-program))
@@ -63,7 +60,7 @@
                (nil? hud-program)
                (assoc :hud-program (render/create-hud-program))
 
-               (and (:volumetric? cfg) (nil? (:volume-program cfg)))
+               (and (:volumetric? cfg true) (nil? (:volume-program cfg)))
                (assoc :volume-program (render/create-volume-program))
 
                (or (nil? mesh)
@@ -181,12 +178,11 @@
           hud-text (concat (render/hud-text-from-world w)
                            (render/observer-hud-text w fb-w fb-h)
                            (:text controls)
-                            (:text card))
-      volume   (when (:volumetric? cfg)
-                 (render/frame-volume w (:volume-program cfg)
-                                      (:volume-res cfg 128)))]
+                           (:text card))
+          volume   (when (:volumetric? cfg true)
+                     (render/frame-volume w (:volume-program cfg)
+                                          (:volume-res cfg :medium)))]
       (render/render-scene {:body-program (:body-program cfg)
-                            :particle-program (:particle-program cfg)
                             :line-program (:line-program cfg)
                             :hud-program (:hud-program cfg)
                             :hud hud
@@ -232,24 +228,24 @@
    (when @service-state
      (throw (IllegalStateException. "Dev window already running. Call stop! first.")))
    (let [width          (get opts :width 1280)
-          height         (get opts :height 720)
-          camera-atom    (atom (get opts :camera (render/make-camera)))
-          config-atom    (atom (merge (render/default-camera-settings)
-                                      {:width width :height height
-                                       :body-program nil
-                                       :particle-program nil
-                                       :line-program nil
-                                       :volume-program nil
-                                       ;; volumetric ray-marched fog is the default
-                                       ;; look; set :volumetric? false for sprites
-                                       :volumetric? true
-                                       :mesh nil
-                                       :subdivisions 3}
-                                      (select-keys opts [:width :height :subdivisions
-                                                         :tick-fn :bodies-fn :volumetric? :volume-res
-                                                         :sim-frame-interval :on-step])))
-          stop-atom      (atom false)
-          thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
+         height         (get opts :height 720)
+         camera-atom    (atom (get opts :camera (render/make-camera)))
+         config-atom    (atom (merge (render/default-camera-settings)
+                                     {:width width :height height
+                                      :body-program nil
+                                      :line-program nil
+                                      :hud-program nil
+                                      :volume-program nil
+                                      ;; volumetric ray-marched fog is the default look
+                                      :volumetric? true
+                                      :volume-res :medium
+                                      :mesh nil
+                                      :subdivisions 3}
+                                     (select-keys opts [:width :height :subdivisions
+                                                        :tick-fn :bodies-fn :volumetric? :volume-res
+                                                        :sim-frame-interval :on-step])))
+         stop-atom      (atom false)
+         thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
      (.setDaemon thread true)
      (.setName thread "gates-of-truth-dev-window")
      (reset! service-state
@@ -281,9 +277,9 @@
   (when-let [config-atom (:config @service-state)]
     (swap! config-atom
            (fn [cfg]
-             (doseq [p [:body-program :particle-program :line-program :hud-program :volume-program]]
+             (doseq [p [:body-program :line-program :hud-program :volume-program]]
                (delete-program (get cfg p)))
-             (assoc cfg :body-program nil :particle-program nil :line-program nil
+             (assoc cfg :body-program nil :line-program nil
                         :hud-program nil :volume-program nil)))))
 
 (defn reload-mesh!

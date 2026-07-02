@@ -107,18 +107,19 @@
 
 (def benchmark-groups
   "Map of group keyword → {:label fn :bench-fn var}."
-  {:ecs       {:label "ECS Core Operations"      :ns 'gates-of-truth.bench.ecs}
-   :gravity   {:label "Barnes-Hut Gravity"        :ns 'gates-of-truth.bench.gravity}
-   :collision {:label "Collision Detection"       :ns 'gates-of-truth.bench.collision}
-   :hydro     {:label "SPH Hydrodynamics"         :ns 'gates-of-truth.bench.hydro}
-   :em        {:label "Electromagnetic Fields"    :ns 'gates-of-truth.bench.em}
-   :tick      {:label "Double-Buffer Tick"        :ns 'gates-of-truth.bench.tick}
-   :spatial   {:label "Spatial Index Queries"     :ns 'gates-of-truth.bench.spatial}
-   :phase0    {:label "Full Phase 0 Tick"         :ns 'gates-of-truth.bench.phase0}})
+   {:ecs       {:label "ECS Core Operations"      :ns 'gates-of-truth.bench.ecs}
+    :gravity   {:label "Barnes-Hut Gravity"        :ns 'gates-of-truth.bench.gravity}
+    :collision {:label "Collision Detection"       :ns 'gates-of-truth.bench.collision}
+    :hydro     {:label "SPH Hydrodynamics"         :ns 'gates-of-truth.bench.hydro}
+    :em        {:label "Electromagnetic Fields"    :ns 'gates-of-truth.bench.em}
+    :tick      {:label "Double-Buffer Tick"        :ns 'gates-of-truth.bench.tick}
+    :spatial   {:label "Spatial Index Queries"     :ns 'gates-of-truth.bench.spatial}
+    :render    {:label "Renderer / Graphics"       :ns 'gates-of-truth.bench.render}
+    :phase0    {:label "Full Phase 0 Tick"         :ns 'gates-of-truth.bench.phase0}})
 
 (def group-order
   "Execution order: ECS first (foundational), then physics, then integration."
-  [:ecs :spatial :gravity :collision :hydro :em :tick :phase0])
+  [:ecs :spatial :gravity :collision :hydro :em :tick :phase0 :render])
 
 ;; ---------------------------------------------------------------------------
 ;; Profile mode: flame-graph-friendly sampling

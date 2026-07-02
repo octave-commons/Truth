@@ -257,22 +257,15 @@
     :reads  #{c/matter-state c/density c/temperature c/b-field}
     :writes #{c/regime}}
 
-   ;; EM is split: the Lorentz force is its own contribution emitter; braking
-   ;; (angular-momentum/spin) and resistive flux decay (b-field) stay on the
-   ;; legacy em system until the rotation/field integrators are introduced.
-   {:id     :em-lorentz
-    :ns     'domain.em
-    :reads  #{c/b-field c/radius c/position c/density c/matter-state}
-    :writes #{c/accel-lorentz}}
+    ;; EM is split: the Lorentz force and magnetic braking are computed together
+    ;; in one pass over EM-active entities; the integrator owns angular-momentum/
+    ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
+    {:id     :em-lorentz
+     :ns     'domain.em
+     :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
+     :writes #{c/accel-lorentz c/torque-em}}
 
-   ;; EM magnetic braking emits torque.em (a per-step ΔL); the integrator owns
-   ;; angular-momentum/spin and adds it (spec §7.5).
-   {:id     :em-torque
-    :ns     'domain.em
-    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
-    :writes #{c/torque-em}}
-
-   ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
+    ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
    ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
    ;; flux-freezing and em's b-field decay.
    {:id     :field

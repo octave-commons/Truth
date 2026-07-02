@@ -17,13 +17,14 @@
 
 (defn par-mapv
   "Like `mapv` but evaluates `f` in parallel chunks. `f` must be pure (no shared
-   mutable state). Order is preserved."
+   mutable state). Order is preserved. Chunk size targets enough tasks to saturate
+   the available cores for typical ECS workloads."
   [f coll]
   (let [items (vec coll)
         n     (count items)]
     (if (< n parallel-threshold)
       (mapv f items)
-      (let [chunks (max 1 (min n-cores (quot n 128)))
+      (let [chunks (max 1 (min n-cores (quot n 32)))
             size   (long (Math/ceil (/ (double n) chunks)))
             futs   (mapv (fn [part] (future (mapv f part)))
                          (partition-all size items))]

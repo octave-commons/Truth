@@ -12,61 +12,92 @@
    angular momentum exactly because the pairwise force is antisymmetric.
    Pure data transformation; no IO."
   (:require
+   [clojure.math      :as math]
    [law.field         :as lf]
    [law.stellar       :as ls]
    [domain.ecs.core   :as ecs]
    [domain.ecs.parallel :as par]
    [domain.ecs.tick   :as tick]
    [domain.ecs.components :as c]
-   [domain.spatial.index :as idx]
-   [shape.spatial     :as sp]))
+   [domain.spatial.index :as idx]))
 
 (defn cubic-spline-dw-dq
   "Derivative dW/dq of the cubic spline (M4) kernel in 3D, dimensionless."
   [q]
-  (cond
-    (< (double q) 0.0)     0.0
-    (<= (double q) 0.5)    (+ (* -12.0 (double q)) (* 18.0 (double q) (double q)))
-    (<= (double q) 1.0)    (* -6.0 (Math/pow (- 1.0 (double q)) 2))
-    :else                   0.0))
+  (let [q (double q)]
+    (cond
+      (< q 0.0)     0.0
+      (<= q 0.5)    (+ (* -12.0 q) (* 18.0 q q))
+      (<= q 1.0)    (let [omq (- 1.0 q)]
+                      (* -6.0 omq omq))
+      :else          0.0)))
 
 (defn cubic-spline-w
   "Dimensionless cubic spline (M4) kernel W(q). The 3D normalization factor
    8/(π h³) is applied separately in `kernel`."
   [q]
-  (cond
-    (< (double q) 0.0)  0.0
-    (<= (double q) 0.5) (+ 1.0 (* -6.0 (double q) (double q)) (* 6.0 (double q) (double q) (double q)))
-    (<= (double q) 1.0) (* 2.0 (Math/pow (- 1.0 (double q)) 3))
-    :else               0.0))
+  (let [q (double q)]
+    (cond
+      (< q 0.0)  0.0
+      (<= q 0.5) (let [q2 (* q q)]
+                   (+ 1.0 (* -6.0 q2) (* 6.0 q q2)))
+      (<= q 1.0) (let [omq (- 1.0 q)]
+                   (* 2.0 omq omq omq))
+      :else      0.0)))
+
+(defn kernel-r2
+  "Cubic-spline SPH kernel W(r²,h) in 3D. `r2` is the squared distance.
+   Units 1/volume; zero outside r > h and at h = 0. Integrates to 1 over a
+   sphere of radius h."
+  [r2 h]
+  (let [r2 (double r2)
+        hh (double h)
+        hh2 (* hh hh)]
+    (if (or (zero? hh) (>= r2 hh2))
+      0.0
+      (let [inv-h  (/ 1.0 hh)
+            inv-h3 (* inv-h inv-h inv-h)
+            q      (math/sqrt (/ r2 hh2))]
+        (* (/ 8.0 Math/PI) inv-h3 (cubic-spline-w q))))))
 
 (defn kernel
-  "Cubic-spline SPH kernel W(r,h) in 3D. Units 1/volume; zero outside r > h
-   and at h = 0. Integrates to 1 over a sphere of radius h."
+  "Cubic-spline SPH kernel W(r,h) in 3D. `r` is the distance.
+   Units 1/volume; zero outside r > h and at h = 0. Integrates to 1 over a
+   sphere of radius h. Thin wrapper over `kernel-r2`."
   [r h]
-  (let [r  (double r)
-        hh (double h)]
-    (if (or (zero? hh) (> r hh))
-      0.0
-      (* (/ 8.0 (* Math/PI (Math/pow hh 3)))
-         (cubic-spline-w (/ r hh))))))
+  (kernel-r2 (* (double r) (double r)) h))
 
 (defn kernel-gradient
-  "Gradient ∇_i W(r_ij, h) of the cubic spline kernel. `r-ij` is the vector from
-   particle j to particle i. The result points from j toward i and has units
-   of 1/length⁴. Returns zero for r = 0 or r > h."
-  [r-ij h]
-  (let [r (sp/len r-ij)
-        hh (double h)]
-    (if (or (zero? r) (zero? hh))
-      [0.0 0.0 0.0]
-      (let [q (/ r hh)]
-        (if (> q 1.0)
-          [0.0 0.0 0.0]
-          (let [dw-dq (cubic-spline-dw-dq q)
-                ;; ∇W = (8/(π h⁴)) (dW/dq) (r_ij / r)
-                factor (/ (* 8.0 dw-dq) (* Math/PI (Math/pow hh 4) r))]
-            (sp/v* r-ij factor)))))))
+  "Gradient ∇_i W(r_ij, h) of the cubic spline kernel. Two arities:
+
+   - (kernel-gradient r-ij h): `r-ij` is the vector from particle j to particle
+     i; computes squared distance internally.
+   - (kernel-gradient r-ij r2 h): uses the pre-computed squared distance `r2`.
+
+   The result points from j toward i and has units of 1/length⁴. Returns zero
+   for r = 0 or r >= h."
+  ([r-ij h]
+   (let [rx (double (nth r-ij 0))
+         ry (double (nth r-ij 1))
+         rz (double (nth r-ij 2))
+         r2 (+ (* rx rx) (* ry ry) (* rz rz))]
+     (kernel-gradient r-ij r2 h)))
+  ([r-ij r2 h]
+   (let [rx (double (nth r-ij 0))
+         ry (double (nth r-ij 1))
+         rz (double (nth r-ij 2))
+         r2 (double r2)
+         hh (double h)
+         hh2 (* hh hh)]
+     (if (or (zero? r2) (zero? hh) (>= r2 hh2))
+       [0.0 0.0 0.0]
+       (let [r   (Math/sqrt r2)
+             q   (/ r hh)
+             dw-dq  (cubic-spline-dw-dq q)
+             inv-h  (/ 1.0 hh)
+             inv-h4 (* inv-h inv-h inv-h inv-h)
+             factor (* (/ 8.0 Math/PI) inv-h4 (/ dw-dq r))]
+         [(* rx factor) (* ry factor) (* rz factor)])))))
 
 (defn pressure-term
   "Symmetric SPH pressure term P_i/ρ_i² + P_j/ρ_j²."
@@ -82,21 +113,48 @@
    be included; its contribution is zero because the kernel gradient vanishes
    at r = 0.
 
-   Pair smoothing length h_ij = (h_i + h_j)/2 = r_i + r_j, consistent with the
-   per-particle smoothing length h_i = 2 r_i used in the density pass."
-  [data neighbors]
-  (let [{:keys [position density pressure]} data]
-    (reduce
-     (fn [acc n]
-       (let [r-ij   (sp/v- position (:position n))
-             h      (+ (or (:radius data) 1.0) (or (:radius n) 1.0))
-             grad   (kernel-gradient r-ij h)
-             term   (pressure-term density pressure
-                                   (:density n) (:pressure n))
-             contrib (sp/v* grad (* (double (:mass n)) term -1.0))]
-         (sp/v+ acc contrib)))
-     [0.0 0.0 0.0]
-     neighbors)))
+   The density pass uses a geometric smoothing length h = sph-h-factor · d_nn
+   (see `smoothing-length` and `sph-h-factor`). The pressure-gradient pass uses
+   the pair smoothing length h_ij = r_i + r_j, the sum of the two particle radii.
+
+   If `gradients` is supplied it must be the same length as `neighbors` and
+   contain the pre-computed ∇_i W(r_ij, h_ij) vectors; otherwise the gradient is
+   recomputed for each neighbor."
+  ([data neighbors]
+   (pressure-gradient-acceleration data neighbors nil))
+  ([data neighbors gradients]
+   (let [[px py pz] (:position data)
+         px (double px)
+         py (double py)
+         pz (double pz)
+         density (double (:density data))
+         pressure (double (:pressure data))
+         r-self (double (or (:radius data) 1.0))]
+     (reduce-kv
+      (fn [[ax ay az] idx n]
+        (let [np (:position n)
+              nx (double (nth np 0))
+              ny (double (nth np 1))
+              nz (double (nth np 2))
+              rx (- px nx)
+              ry (- py ny)
+              rz (- pz nz)
+              h (+ r-self (double (or (:radius n) 1.0)))
+              h2 (* h h)
+              r2 (+ (* rx rx) (* ry ry) (* rz rz))
+              [gx gy gz] (if gradients
+                           (nth gradients idx)
+                           (if (>= r2 h2)
+                             [0.0 0.0 0.0]
+                             (kernel-gradient [rx ry rz] r2 h)))
+              term (pressure-term density pressure
+                                  (double (:density n)) (double (:pressure n)))
+              scale (* (double (:mass n)) term -1.0)]
+          [(+ ax (* gx scale))
+           (+ ay (* gy scale))
+           (+ az (* gz scale))]))
+      [0.0 0.0 0.0]
+      (vec neighbors)))))
 
 (defn sph-density
   "SPH density estimate ρ_i = Σ_j m_j W(r_ij, h). `data` is the central particle
@@ -104,15 +162,42 @@
    :mass and :position. The self-particle may be included; it contributes
    m_i W(0,h). Smoothing length h = 2 × particle radius."
   [data neighbors]
-  (let [{:keys [position radius]} data
-        h (* 2.0 (double (or radius 1.0)))]
+  (let [[px py pz] (:position data)
+        px (double px)
+        py (double py)
+        pz (double pz)
+        h (* 2.0 (double (or (:radius data) 1.0)))
+        h2 (* h h)]
     (reduce
      (fn [rho n]
-       (let [r (sp/len (sp/v- position (:position n)))
-             w (kernel r h)]
-         (+ rho (* (double (:mass n)) w))))
+       (let [np (:position n)
+             dx (- px (double (nth np 0)))
+             dy (- py (double (nth np 1)))
+             dz (- pz (double (nth np 2)))
+             r2 (+ (* dx dx) (* dy dy) (* dz dz))]
+         (if (>= r2 h2)
+           rho
+           (+ rho (* (double (:mass n)) (kernel-r2 r2 h))))))
      0.0
      neighbors)))
+
+(defn- cache-neighbors-and-gradients
+  "Return [neighbors gradients] for `data` using the transient neighbor cache
+   when present, otherwise query the spatial index. `radius-fn` produces the
+   query radius from the particle data; `state-pred` filters neighbors by matter
+   state. The returned `gradients` is nil when the cache is not used."
+  [world data radius-fn state-pred gradient-key]
+  (let [h (double (radius-fn data))]
+    (if-let [entry (get-in world [:phase0/neighbor-cache (:eid data)])]
+      (let [pos (:position data)
+            hh2 (* h h)
+            nbrs (filterv #(and (state-pred (:matter-state %))
+                                (<= (double (:r2 %)) hh2))
+                          (:neighbors entry))
+            grads (mapv gradient-key nbrs)]
+        [nbrs grads])
+      [(idx/within-radius (:phase0/spatial-tree world) (:position data) h
+                          #(state-pred (:matter-state %))) nil])))
 
 (defn- entity->hydro-data
   "Project an ECS entity into the map the SPH functions expect."
@@ -131,7 +216,7 @@
   "Pressure-gradient dynamics matter for diffuse and contracting gas, not for
    solid debris or fusion-supported stars."
   [state]
-  (contains? #{:nebula :protostar} state))
+  (lf/hydro-em-active? state))
 
 (defn hydro-system
   "Compute the pressure-gradient acceleration a = −∇p/ρ for every hydro-active
@@ -156,13 +241,14 @@
                                (ecs/remove-component w eid c/hydro-accel)))
                            world
                            stale)
-          tree     (idx/build active)
           updates  (par/par-mapv
                     (fn [data]
-                      (let [h        (* 2.0 (double (or (:radius data) 1.0)))
-                            nbrs     (idx/within-radius tree (:position data) h)]
+                      (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
+                            [nbrs grads] (cache-neighbors-and-gradients
+                                          world data radius-fn hydro-active?
+                                          :gradient-pressure)]
                         [(:eid data)
-                         (pressure-gradient-acceleration data nbrs)]))
+                         (pressure-gradient-acceleration data nbrs grads)]))
                     active)]
       (reduce (fn [w [eid a]]
                 (if (lf/finite-vec3? a)
@@ -175,7 +261,8 @@
   "Double-buffer write-set system: SPH pressure-gradient acceleration a = −∇p/ρ
    for every hydro-active clump → `accel.pressure`. Reads the shared spatial tree
    from :phase0/spatial-tree (built once per tick by domain.spatial.index),
-   filters query results to :nebula particles only. Writes ONLY accel.pressure."
+   filters query results to hydro-active neighbors (`:nebula` and `:protostar`).
+   Writes ONLY accel.pressure."
   []
   {:id     :hydro
    :writes #{c/accel-pressure}
@@ -184,20 +271,20 @@
                                                c/density c/pressure c/mass c/radius)
                    all-data (mapv #(entity->hydro-data world %) eids)
                    active   (filterv #(hydro-active? (:state %)) all-data)
-                   tree     (:phase0/spatial-tree world)
                    computed (par/par-mapv
-                              (fn [data]
-                                (let [h    (* 2.0 (double (or (:radius data) 1.0)))
-                                      nbrs (->> (idx/within-radius tree (:position data) h)
-                                                (filter #(= :nebula (:matter-state %))))]
-                                  [(:eid data) (pressure-gradient-acceleration data nbrs)]))
-                              active)
+                             (fn [data]
+                               (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
+                                     [nbrs grads] (cache-neighbors-and-gradients
+                                                   world data radius-fn hydro-active?
+                                                   :gradient-pressure)]
+                                 [(:eid data) (pressure-gradient-acceleration data nbrs grads)]))
+                             active)
                    cell     (reduce (fn [m [eid a]]
                                       (if (lf/finite-vec3? a) (assoc m eid a) m))
                                     {} computed)]
                (tick/contribution-write-set
-                 c/accel-pressure cell
-                 (keys (get-in world [:components c/accel-pressure])))))})
+                c/accel-pressure cell
+                (keys (get-in world [:components c/accel-pressure])))))})
 
 (def ^:const sph-h-factor
   "SPH smoothing length as a multiple of a parcel's distance to its NEAREST
@@ -214,14 +301,12 @@
   "Absolute floor on the smoothing length (m), a final guard so a coincident pair
    cannot produce an infinite density." 1.0e9)
 
-(defn- smoothing-length
-  "Geometric SPH smoothing length for parcel `data` among `gas`: h = factor · d_nn,
+(defn smoothing-length
+  "Geometric SPH smoothing length for parcel `data`: h = factor · d_nn,
    floored at `sph-h-min`. Falls back to the parcel's own 2·radius if isolated.
-   `tree` is the neighbour index over `gas` (see `domain.spatial.index`); the
-   nearest-neighbour distance comes from an octree branch-and-bound rather than a
-   linear scan over `gas`."
-  [data tree]
-  (let [d     (idx/nearest-dist tree (:position data) (:eid data))
+   Uses the world's Barnes–Hut tree for the nearest-neighbour distance."
+  [data world]
+  (let [d     (idx/query-nearest-dist world (:position data) (:eid data))
         r-own (* 2.0 (double (or (:radius data) sph-h-min)))]
     (if (Double/isInfinite d)
       r-own
@@ -232,23 +317,31 @@
    the current positions, then recompute pressure and the particle's adaptive
    radius from the ideal gas law. Runs before `hydro-system` so the
    pressure-gradient force sees a real, varying field rather than the fixed seed
-   density. Resolved bodies (`:debris`, `:planet`, `:protostar`, `:star`) keep
-   their existing body-density; they are not samples of the diffuse gas field.
+   density. Resolved bodies (`:debris`, `:planet`, `:star`) keep their existing
+   body-density; contracting `:protostar` neighbors still contribute mass to the
+   SPH sums of nearby gas parcels.
 
    Reads the shared spatial tree from :phase0/spatial-tree and filters query
-   results to :nebula particles only."
+   results to hydro-active neighbors (`:nebula` and `:protostar`)."
   [_dt]
   (fn [world]
     (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                       c/pressure c/mass c/radius c/temperature)
           all-data (mapv #(entity->hydro-data world %) eids)
           gas      (filterv #(= :nebula (:state %)) all-data)
-          tree     (:phase0/spatial-tree world)
           updates  (par/par-mapv
                     (fn [data]
-                      (let [h     (smoothing-length data tree)
-                            nbrs  (->> (idx/within-radius tree (:position data) h)
-                                       (filter #(= :nebula (:matter-state %))))
+                      (let [entry (get-in world [:phase0/neighbor-cache (:eid data)])
+                            h     (if entry
+                                    (:h entry)
+                                    (smoothing-length data world))
+                            hh2   (* h h)
+                            nbrs  (if entry
+                                    (filterv #(and (hydro-active? (:matter-state %))
+                                                   (<= (double (:r2 %)) hh2))
+                                             (:neighbors entry))
+                                    (idx/within-radius (:phase0/spatial-tree world) (:position data) h
+                                                       #(hydro-active? (:matter-state %))))
                             rho   (sph-density (assoc data :radius (* 0.5 h)) nbrs)
                             press (ls/ideal-gas-pressure rho (:temperature data))]
                         [(:eid data) rho press (* 0.5 h)]))
@@ -273,21 +366,28 @@
    neighbours) and the radius is the smoothing length it implies.
 
    Reads the shared spatial tree from :phase0/spatial-tree and filters query
-   results to :nebula particles only."
+   results to hydro-active neighbors (`:nebula` and `:protostar`)."
   [world]
   (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                     c/pressure c/mass c/radius c/temperature)
         all-data (mapv #(entity->hydro-data world %) eids)
-        gas      (filterv #(= :nebula (:state %)) all-data)
-        tree     (:phase0/spatial-tree world)]
+        gas      (filterv #(= :nebula (:state %)) all-data)]
     (par/par-mapv
-      (fn [data]
-        (let [h    (smoothing-length data tree)
-              nbrs (->> (idx/within-radius tree (:position data) h)
-                        (filter #(= :nebula (:matter-state %))))
-              rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
-          [(:eid data) rho (* 0.5 h)]))
-      gas)))
+     (fn [data]
+       (let [entry (get-in world [:phase0/neighbor-cache (:eid data)])
+             h     (if entry
+                     (:h entry)
+                     (smoothing-length data world))
+             hh2   (* h h)
+             nbrs  (if entry
+                     (filterv #(and (hydro-active? (:matter-state %))
+                                    (<= (double (:r2 %)) hh2))
+                              (:neighbors entry))
+                     (idx/within-radius (:phase0/spatial-tree world) (:position data) h
+                                        #(hydro-active? (:matter-state %))))
+             rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
+         [(:eid data) rho (* 0.5 h)]))
+     gas)))
 
 (defn sound-speed
   "Adiabatic sound speed c_s = √(γ P / ρ) for an ideal gas. m/s."

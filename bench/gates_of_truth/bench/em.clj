@@ -29,19 +29,19 @@
                     th (* 2.0 Math/PI (.nextDouble rng))
                     ph (Math/acos (- (* 2.0 (.nextDouble rng)) 1.0))]
                 (ecs/put-components w' eid
-                  {c/position          (sp/vec3 (* r (Math/sin ph) (Math/cos th))
-                                               (* r (Math/sin ph) (Math/sin th))
-                                               (* r (Math/cos ph)))
-                   c/velocity          [0.0 0.0 0.0]
-                   c/mass              (/ 4.0e30 n)
-                   c/radius            (* extent 0.003)
-                   c/temperature       12.0
-                   c/density           1.0e-18
-                   c/pressure          1.0e-3
-                   c/matter-state      :nebula
-                   c/b-field           [0.0 0.0 (* 1.0e-9 (+ 0.5 (.nextDouble rng)))]
-                   c/angular-momentum  [0.0 0.0 (* 1.0e40 (.nextDouble rng))]
-                   c/rotation-axis     [0.0 0.0 1.0]})))
+                                    {c/position          (sp/vec3 (* r (Math/sin ph) (Math/cos th))
+                                                                  (* r (Math/sin ph) (Math/sin th))
+                                                                  (* r (Math/cos ph)))
+                                     c/velocity          [0.0 0.0 0.0]
+                                     c/mass              (/ 4.0e30 n)
+                                     c/radius            (* extent 0.003)
+                                     c/temperature       12.0
+                                     c/density           1.0e-18
+                                     c/pressure          1.0e-3
+                                     c/matter-state      :nebula
+                                     c/b-field           [0.0 0.0 (* 1.0e-9 (+ 0.5 (.nextDouble rng)))]
+                                     c/angular-momentum  [0.0 0.0 (* 1.0e40 (.nextDouble rng))]
+                                     c/rotation-axis     [0.0 0.0 1.0]})))
             world
             (range n))))
 
@@ -68,20 +68,20 @@
 
     ;; --- Pure field calculations ---
     (quick-bench "magnetic-pressure (1 call)"
-      (fn [] (em/magnetic-pressure [0.0 0.0 1.0e-6])))
+                 (fn [] (em/magnetic-pressure [0.0 0.0 1.0e-6])))
 
     (quick-bench "alfven-speed (1 call)"
-      (fn [] (em/alfven-speed [0.0 0.0 1.0e-6] 1.0e-18)))
+                 (fn [] (em/alfven-speed [0.0 0.0 1.0e-6] 1.0e-18)))
 
     (quick-bench "flux-freeze (1 call, 2x density increase)"
-      (fn [] (em/flux-freeze [0.0 0.0 1.0e-9] 1.0e-18 2.0e-18 0.0)))
+                 (fn [] (em/flux-freeze [0.0 0.0 1.0e-9] 1.0e-18 2.0e-18 0.0)))
 
     (quick-bench "resistive-decay (1 call)"
-      (fn [] (em/resistive-decay [0.0 0.0 1.0e-6] 6.957e8 1.0e12)))
+                 (fn [] (em/resistive-decay [0.0 0.0 1.0e-6] 6.957e8 1.0e12)))
 
     ;; --- Dipole field (for rendering) ---
     (quick-bench "dipole-field-at (1 call)"
-      (fn [] (em/dipole-field-at [1.0e20 0.0 0.0] [0.0 0.0 0.0] [1.0e10 0.0 0.0])))
+                 (fn [] (em/dipole-field-at [1.0e20 0.0 0.0] [0.0 0.0 0.0] [1.0e10 0.0 0.0])))
 
     ;; --- Curl and Lorentz ---
     (let [data-100  (mapv #(entity->em-data w100 %) (ecs/entities-with w100 c/b-field))
@@ -93,37 +93,37 @@
           nbrs      (idx/within-radius tree-100 (:position q) h)]
 
       (quick-bench "curl-estimate (1 particle, ~20 neighbors)"
-        (fn [] (em/curl-estimate (:b-field q) (:density q) (:position q) nbrs)))
+                   (fn [] (em/curl-estimate (:b-field q) (:density q) (:position q) nbrs)))
 
       (quick-bench "lorentz-acceleration (1 particle)"
-        (fn []
-          (let [curl-b (em/curl-estimate (:b-field q) (:density q) (:position q) nbrs)]
-            (em/lorentz-acceleration (:b-field q) curl-b (:density q)))))
+                   (fn []
+                     (let [curl-b (em/curl-estimate (:b-field q) (:density q) (:position q) nbrs)]
+                       (em/lorentz-acceleration (:b-field q) curl-b (:density q)))))
 
       (quick-bench "magnetic-braking-torque (1 particle)"
-        (fn [] (em/magnetic-braking-torque q 1.0e12))))
+                   (fn [] (em/magnetic-braking-torque q 1.0e12))))
 
     ;; --- Full EM systems ---
     (quick-bench "field-system (100 particles)"
-      (fn [] ((em/field-system 1.0e12) w100)))
+                 (fn [] ((em/field-system 1.0e12) w100)))
 
     (quick-bench "field-system (500 particles)"
-      (fn [] ((em/field-system 1.0e12) w500)))
+                 (fn [] ((em/field-system 1.0e12) w500)))
 
     (quick-bench "field-system (1000 particles)"
-      (fn [] ((em/field-system 1.0e12) w1000)))
+                 (fn [] ((em/field-system 1.0e12) w1000)))
 
     (quick-bench "lorentz-acceleration-system (100 particles)"
-      (fn [] ((:run (em/lorentz-acceleration-system)) w100)))
+                 (fn [] ((:run (em/lorentz-acceleration-system 1.0e12)) w100)))
 
     (quick-bench "lorentz-acceleration-system (1000 particles)"
-      (fn [] ((:run (em/lorentz-acceleration-system)) w1000)))
+                 (fn [] ((:run (em/lorentz-acceleration-system 1.0e12)) w1000)))
 
     (quick-bench "em-system (100 particles)"
-      (fn [] ((em/em-system 1.0e12) w100)))
+                 (fn [] ((em/em-system 1.0e12) w100)))
 
     (quick-bench "em-system (1000 particles)"
-      (fn [] ((em/em-system 1.0e12) w1000)))
+                 (fn [] ((em/em-system 1.0e12) w1000)))
 
     ;; --- Scaling ---
     (println "\n  EM Scaling:")

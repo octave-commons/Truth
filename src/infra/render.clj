@@ -544,7 +544,7 @@
      (float size)
      (float (or density 1.0))]))
 
-(defn make-particle-mesh
+(defn- make-particle-mesh
   "Create a GPU buffer from a seq of particle maps. Each particle must have
    :position [x y z], :color [r g b], and :size."
   [particles]
@@ -555,7 +555,7 @@
     {:buffer fb
      :count  (count particles)}))
 
-(defn upload-particle-mesh
+(defn- upload-particle-mesh
   "Upload an interleaved particle buffer (position 3, color 3, size 1, density 1)."
   [{:keys [buffer count]}]
   (let [vao (GL30/glGenVertexArrays)
@@ -995,21 +995,23 @@
 ;; differentiates worlds their appearance diverges with no special-casing.
 
 (def ^:const render-radius-ref
-  "Physical radius (m) that maps to the minimum visible render size. A small gas
-   clump sits here; planets and stars rise above it by log-compression."
+  "Physical radius (m) that maps to render-unit radius 1.0. Bodies scale
+   linearly from this reference so a protostar's drawn size faithfully
+   represents its actual physical radius relative to the nebula."
   3.0e13)
 
 (defn phys->render-radius
-  "Map a physical radius (m) to a render-unit radius, log-compressed and clamped
-   so a ~5-order span (gas clump → giant planet) stays legible while preserving
-   order: bigger physical body → bigger on screen. Bodies stay small relative to
-   the cloud on purpose — that is the real size relationship."
+  "Map a physical radius (m) to a render-unit radius. Log-compressed so the
+   ~5-order span (gas clump → giant planet) stays legible, with a floor that
+   scales with the physical radius — small bodies stay small on screen,
+   faithfully representing their actual size relative to the nebula."
   [r-phys]
   (let [r (double (or r-phys 0.0))]
     (if (pos? r)
-      (-> (+ 0.18 (* 0.42 (Math/log10 (/ r render-radius-ref))))
-          (max 0.18) (min 6.0))
-      0.18)))
+      (let [linear (/ r render-radius-ref)
+            log-r  (* 0.42 (Math/log10 (max 1e-6 linear)))]
+        (max (* 0.5 linear) (+ 0.01 log-r) 0.001))
+      0.001)))
 
 (defn body-draw-radius
   "The render-unit radius a resolved body is DRAWN at — the SAME size its sphere
@@ -1572,6 +1574,12 @@
   [world scale]
   [(System/identityHashCode world) (:tick world) scale])
 
+(defn clear-phase0-render-cache!
+  "Reset the per-frame Phase 0 render projection cache. Useful before
+   benchmarks or when the same world identity is reused with new state."
+  []
+  (reset! phase0-bodies-cache {}))
+
 (defn- phase0-bodies-from-world*
   "Uncached render projection; see `phase0-bodies-from-world`."
   [world scale]
@@ -1591,49 +1599,32 @@
               axis    (or (ecs/get-component world eid c/rotation-axis) [0.0 0.0 1.0])]
           (case state
             :nebula
-            ;; Diffuse gas is a volumetric cloud of additive samples, not a
-            ;; single point. Each sample's size matches its SPH smoothing
-            ;; length (the area it represents), while its opacity and colour
-            ;; are driven by local density so overdense filaments read
-            ;; brighter and tighter than the diffuse background.
-            (let [rho      (or (ecs/get-component world eid c/density) 1e-18)
-                  render-r (phys->render-radius r-phys)
-                  extent   (* render-r (Math/pow (+ 1.0 (Math/log10 (max 1.0 (/ r-phys 3e13)))) 0.5))
-                  dens-norm (nebula-density-norm rho)]
-              (nebula-fog {:center   center
-                           :extent   extent
-                           :support  (* 2.0 render-r)
-                           :color    (temp-color temp)
-                           :count    (fog-sample-count render-r focus)
-                           :seed     eid
-                           :density  dens-norm}))
+            ;; Diffuse gas is represented only by the ray-marched froxel volume.
+            ;; No sprite particles: every sample is baked into the 3D texture so
+            ;; the same continuous medium is rendered in one fullscreen pass.
+            []
 
-            :star
-            ;; Stars render with mass-based sizing and spectral-type colors.
-            (let [core-r (body-draw-radius world eid)
-                  teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
-                  s-col  (stellar-spectral-color teff)
-                  body   {:entity      eid
-                          :position    center
-                          :radius      core-r
-                          :color       s-col
-                          :kind        state
-                          :oblateness  ob
-                          :rotation-axis axis
-                          :render-mode :body}
-                  disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                  disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
-              (concat
-               [body]
-               (nebula-fog {:center  center
-                            :extent  (* core-r 3.0)
-                            :support (* 2.0 core-r)
-                            :color   (mapv #(min 1.0 (* % 0.85)) s-col)
-                            :count   70
-                            :seed    eid
-                            :density 0.7})
-               (field-line center core-r (ecs/get-component world eid c/b-field))
-               (when (pos? disk-m)
+             :star
+             ;; Stars render with mass-based sizing and spectral-type colors.
+             (let [core-r (body-draw-radius world eid)
+                   teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
+                   s-col  (stellar-spectral-color teff)
+                   body   {:entity      eid
+                           :position    center
+                           :radius      core-r
+                           :color       s-col
+                           :kind        state
+                           :oblateness  ob
+                           :rotation-axis axis
+                           :render-mode :body}
+                   disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                   disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
+               (concat
+                [body]
+                ;; Stellar corona / disk glow is also part of the froxel volume
+                ;; when present; we only draw the body and field lines here.
+                (field-line center core-r (ecs/get-component world eid c/b-field))
+                (when (pos? disk-m)
                  (let [r-disk  (max (* 3.0 core-r)
                                     (stellar/disk-radius
                                       (/ (sp/len disk-L) (max 1.0 disk-m))
@@ -1651,32 +1642,25 @@
                                      :cnt      90
                                     :seed      eid})))))
 
-            :protostar
-            ;; A contracting core: render radius follows the physical radius
-            ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
-            ;; by temperature, shrouded in fog + field lines.
-            (let [render-r (phys->render-radius r-phys)
-                  rho      (or (ecs/get-component world eid c/density) 1e-15)
-                  disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                  disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
-              (concat
-               [{:entity      eid
-                 :position    center
-                 :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
-                 :color       color
-                 :kind        state
-                 :oblateness  ob
-                 :rotation-axis axis
-                 :render-mode :body}]
-               (nebula-fog {:center  center
-                            :extent  (* render-r 2.0)
-                            :support (* 2.0 render-r)
-                            :color   color
-                            :count   (fog-sample-count render-r focus)
-                            :seed    eid
-                            :density (nebula-density-norm rho)})
-               (field-line center render-r (ecs/get-component world eid c/b-field))
-               (when (pos? disk-m)
+             :protostar
+             ;; A contracting core: render radius follows the physical radius
+             ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
+             ;; by temperature. The diffuse envelope is baked into the froxel
+             ;; volume; only the body, field line, and disk are drawn here.
+             (let [render-r (phys->render-radius r-phys)
+                   disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                   disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
+               (concat
+                [{:entity      eid
+                  :position    center
+                  :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
+                  :color       color
+                  :kind        state
+                  :oblateness  ob
+                  :rotation-axis axis
+                  :render-mode :body}]
+                (field-line center render-r (ecs/get-component world eid c/b-field))
+                (when (pos? disk-m)
                  (let [r-disk (max (* 3.0 render-r)
                                    (stellar/disk-radius
                                      (/ (sp/len disk-L) (max 1.0 disk-m))
@@ -1824,8 +1808,9 @@
 
 (defn phase0-bodies+fields
   "Phase 0 render bodies plus the magnetic field rendered as dipole field-line
-   loops (`field-line-shapes`). This is the dev service's bodies-fn so the field
-   is visible on protostars/stars as soon as flux-freezing amplifies it."
+   loops (`field-line-shapes`). Kept for compatibility with callers that expect
+   explicit field-line shapes; field lines are also included by
+   `phase0-bodies-from-world` for protostars and stars."
   [world]
   (into (vec (phase0-bodies-from-world world))
         (field-line-shapes world phase0-view-scale)))
@@ -2044,15 +2029,45 @@
       (GL11/glDepthMask true)
       (GL11/glBindTexture GL12/GL_TEXTURE_3D 0))))
 
+(defn- gas-points-count
+  "Number of :nebula / :protostar gas samples that will be splatted into the
+   froxel texture. Used by the LOD selector to scale resolution with scene
+   complexity."
+  [world]
+  (count (filter #(#{:nebula :protostar} (ecs/get-component world % c/matter-state))
+                 (ecs/entities-with world c/matter-state))))
+
+(defn froxel-resolution-for
+  "Choose an adaptive froxel grid resolution based on scene complexity and a
+   user quality target. Higher gas particle counts need a coarser grid to stay
+   inside the frame budget; low-count scenes can afford a sharper grid. The
+   returned resolution is one of the canonical cube sizes supported by the
+   volume pipeline."
+  [world quality]
+  (let [n (max 1 (gas-points-count world))
+        q (condp = quality :low 0.5 :high 1.5 :ultra 2.0 1.0)
+        base (cond
+               (<= n 100)  64
+               (<= n 300)  48
+               (<= n 600)  32
+               :else       24)]
+    (int (max 16 (min 128 (* base q))))))
+
 (defn frame-volume
   "Build the per-frame volume map (3D texture + lights) for the ray-march pass
-   from the live world, or nil when there is no gas (callers then fall back to the
-   sprite fog). The caller MUST `delete-volume` the result after rendering, since
-   it owns a GPU texture allocated this frame."
+   from the live world, or nil when there is no gas. The caller MUST
+   `delete-volume` the result after rendering, since it owns a GPU texture
+   allocated this frame.
+
+   `res` may be an integer for a fixed resolution or one of {:low :medium :high
+   :ultra} to use the LOD-aware selector (default :medium)."
   [world program res]
   (when program
-    (when-let [vt (build-volume-texture world phase0-view-scale (int (or res 96)))]
-      (assoc vt :program program :lights (volume-lights world phase0-view-scale)))))
+    (let [R (if (keyword? res)
+              (froxel-resolution-for world res)
+              (int (or res 32)))]
+      (when-let [vt (build-volume-texture world phase0-view-scale R)]
+        (assoc vt :program program :lights (volume-lights world phase0-view-scale))))))
 
 (defn delete-volume [_volume]
   ;; The froxel texture is persistent (reused across frames via volume-cache);
@@ -2063,7 +2078,7 @@
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be `:particle`
    (soft fog puff) or `:body` (shaded sphere). Default is `:body`."
-   [{:keys [body-program particle-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies t]
+   [{:keys [body-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies t]
   ;; Match the GL viewport to the actual draw surface every frame. Without this
   ;; the viewport keeps its context-creation size, so a HiDPI/resized window
   ;; (framebuffer larger than the logical 1280×720) draws only into the
@@ -2074,32 +2089,14 @@
   (GL11/glClear (bit-or GL11/GL_COLOR_BUFFER_BIT GL11/GL_DEPTH_BUFFER_BIT))
   (let [proj (perspective 60.0 (/ width (float height)) 0.1 10000.0)
         view (look-at (:position camera) (:target camera) (sp/vec3 0.0 1.0 0.0))
-        ;; ray-marched volume replaces the sprite fog when supplied
-        particles (if volume [] (filterv #(= :particle (:render-mode %)) bodies))
         lines     (filterv #(= :line (:render-mode %)) bodies)
         bodies    (remove #(#{:particle :line} (:render-mode %)) bodies)]
-    ;; ---- pass 1: volumetric fog particles (additive, soft depth) ----
-    (when (seq particles)
-      (GL20/glUseProgram particle-program)
-      (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation particle-program "projection") false proj)
-      (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation particle-program "view") false view)
-      (let [cam-pos (:position camera)
-            [cx cy cz] cam-pos]
-        (GL20/glUniform3f (GL20/glGetUniformLocation particle-program "cameraPos")
-                          (float cx) (float cy) (float cz))
-        (GL20/glUniform1f (GL20/glGetUniformLocation particle-program "time") (float t)))
-      (GL11/glEnable GL11/GL_BLEND)
-      (GL11/glBlendFunc GL11/GL_ONE GL11/GL_ONE)
-      (GL11/glEnable 0x8642) ; GL_PROGRAM_POINT_SIZE
-      (GL11/glDepthMask false)
-      (let [pm (upload-particle-mesh (make-particle-mesh particles))]
-        (GL30/glBindVertexArray (:vao pm))
-        (GL11/glDrawArrays GL11/GL_POINTS 0 (:count pm))
-        (GL30/glBindVertexArray 0)
-        (GL15/glDeleteBuffers (:vbo pm))
-        (GL30/glDeleteVertexArrays (:vao pm)))
-      (GL11/glDepthMask true)
-      (GL11/glDisable 0x8642)) ; GL_PROGRAM_POINT_SIZE
+    ;; ---- pass 1: volumetric fog (always ray-marched; no sprite fallback) ----
+    (when volume
+      (let [{:keys [vao] :as quad} (fullscreen-quad-vao)]
+        (render-volume volume vao camera width height)
+        (GL15/glDeleteBuffers (:vbo quad))
+        (GL30/glDeleteVertexArrays vao)))
     ;; ---- pass 1b: magnetic field lines (alpha, over the fog) ----
     (when (and line-program (pos? (int line-program)) (seq lines))
       (GL20/glUseProgram line-program)
@@ -2146,12 +2143,6 @@
             (GL20/glUniform1f (GL20/glGetUniformLocation body-program "glow") (float glow))
             (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (:count mesh-world))))
         (GL30/glBindVertexArray 0)))
-    ;; ---- pass 2b: ray-marched volumetric fog (over the scene) ----
-    (when volume
-      (let [{:keys [vao] :as quad} (fullscreen-quad-vao)]
-        (render-volume volume vao camera width height)
-        (GL15/glDeleteBuffers (:vbo quad))
-        (GL30/glDeleteVertexArrays vao)))
     ;; ---- pass 3: 2D HUD overlay (coherence, focus) + stats/clock text ----
     (render-hud hud-program hud)
     (render-text hud-program hud-text width height)
@@ -2159,10 +2150,9 @@
     (GL11/glDisable GL11/GL_BLEND)))
 
 (defn render-bodies
-  "Backward-compatible single-pass renderer for solid-color spheres.
-   Prefer `render-scene` for particle fog + volume bodies."
+  "Backward-compatible single-pass renderer for solid-color spheres."
   [program mesh-world camera width height bodies]
-  (render-scene {:body-program program :particle-program 0}
+  (render-scene {:body-program program}
                 mesh-world camera width height
                 (remove #(= :particle (:render-mode %)) bodies)
                 0.0))
@@ -2227,40 +2217,40 @@
          particle-program (create-particle-program)
          line-program     (create-line-program)
          hud-program      (create-hud-program)
-         volume-program   (when volumetric? (create-volume-program))
-         sphere  (make-sphere-mesh 3)
-         mesh    (upload-mesh sphere)
-         fbo     (create-fbo width height)]
-     (let [w @world-atom
-           phase0?   (contains? w :phase0/phase)
-           tick-fn   (or tick-fn
-                         (if phase0?
-                           phase0/tick-world
-                           (orbital/orbital-system 6.674e-11 0.5 0.5)))
-           bodies-fn (or bodies-fn
-                         (if phase0?
-                           phase0-bodies-from-world
-                           bodies-from-world))
-           w (swap! world-atom tick-fn)
-           ;; Frame the whole system: snap an auto-fit camera to the world unless
-           ;; the caller supplied one explicitly.
-           camera  (or camera
-                       (if phase0?
-                         (update-camera-for-world
-                           (make-camera 60.0) w
-                           (assoc (default-camera-settings)
-                                  :mode (or camera-mode :fit-all) :smoothing 1.0))
-                         (make-camera)))
-           bodies (bodies-fn w)
-           hud      (when phase0? (hud-rects-from-world w))
-           hud-text (when phase0? (hud-text-from-world w))
-           volume   (frame-volume w volume-program (or volume-res 96))]
-       (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
-       (render-scene {:body-program body-program :particle-program particle-program
-                      :line-program line-program :hud-program hud-program
-                      :hud hud :hud-text hud-text :volume volume}
-                     mesh camera width height bodies 0.0)
-       (delete-volume volume))
+          volume-program   (create-volume-program)
+          sphere  (make-sphere-mesh 3)
+          mesh    (upload-mesh sphere)
+          fbo     (create-fbo width height)]
+      (let [w @world-atom
+            phase0?   (contains? w :phase0/phase)
+            tick-fn   (or tick-fn
+                          (if phase0?
+                            phase0/tick-world
+                            (orbital/orbital-system 6.674e-11 0.5 0.5)))
+            bodies-fn (or bodies-fn
+                          (if phase0?
+                            phase0-bodies-from-world
+                            bodies-from-world))
+            w (swap! world-atom tick-fn)
+            ;; Frame the whole system: snap an auto-fit camera to the world unless
+            ;; the caller supplied one explicitly.
+            camera  (or camera
+                        (if phase0?
+                          (update-camera-for-world
+                            (make-camera 60.0) w
+                            (assoc (default-camera-settings)
+                                   :mode (or camera-mode :fit-all) :smoothing 1.0))
+                          (make-camera)))
+            bodies (bodies-fn w)
+            hud      (when phase0? (hud-rects-from-world w))
+            hud-text (when phase0? (hud-text-from-world w))
+            volume   (frame-volume w volume-program (or volume-res :medium))]
+        (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
+        (render-scene {:body-program body-program
+                       :line-program line-program :hud-program hud-program
+                       :hud hud :hud-text hud-text :volume volume}
+                      mesh camera width height bodies 0.0)
+        (delete-volume volume))
      (GL11/glFlush)
      (let [pixels  (read-pixels width height)
            flipped (flip-rgba-vertical pixels width height)]
@@ -2280,7 +2270,7 @@
         camera         (atom (make-camera))
         ks             (atom {})
         body-program   (create-program)
-        particle-program (create-particle-program)
+        line-program   (create-line-program)
         sphere         (make-sphere-mesh 2)
         mesh           (upload-mesh sphere)
         config-atom    (atom (default-camera-settings))]
@@ -2293,7 +2283,7 @@
         (swap! world-atom (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
         (swap! camera update-camera-for-world @world-atom @config-atom)
         (let [bodies (bodies-from-world @world-atom)]
-          (render-scene {:body-program body-program :particle-program particle-program}
+          (render-scene {:body-program body-program :line-program line-program}
                         mesh @camera width height bodies 0.0))
         (GLFW/glfwSwapBuffers window)
         (Thread/sleep 16)

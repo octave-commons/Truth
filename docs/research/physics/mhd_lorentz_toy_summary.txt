@@ -1,0 +1,5 @@
+| model | time (ms) | median |a| (m/s²) | mean rel. error |
+|---|---|---|---|
+| full curl Lorentz | 307.312 | 1.243e-14 | — |
+| pressure-only | 108.800 | 2.228e-12 | 263.702 |
+| speedup | 2.82x | | |

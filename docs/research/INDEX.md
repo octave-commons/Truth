@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-06-28 (specs derived from research)
+**Last updated:** 2026-07-01 (Barnes–Hut gravity optimisation notebook added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -77,8 +77,12 @@ New ECS component keywords added to `domain.ecs.components`:
 
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
+| mhd-em-lorentz-optimization.md | draft | 0 | Threshold-gated MHD-lite: reuse hydro neighbor/gradient cache, full curl only where β or M_A demands it; pressure-only is not a generic proxy. | Price & Monaghan 2004a,b, 2005; Price 2012; Tricco 2012, 2016, 2023; Wurster et al. 2014, 2021; Mellon & Li 2008, 2009 |
+| phase0-tick-loop-optimization.md | draft | 0 | 60 Hz budget feasible for N=500 with Barnes–Hut + SoA cache; avoid per-system futures | Springel 2005, Quinn+1997, Bagwell 2001 |
 | phase1-radiation-plasma-truth.md | spec-derivation | 1 | Panchromatic SEDs, 4-layer atmospheres, Parker winds, XUV escape | PDG 2025, Parker 1958 |
 | stellar-sed-template-grid.md | validated | 1 | 12 minimum templates, key band ratios 10²–10⁴× variation | Pickles 1998, CK04, Husser+ 2013 |
+| barnes-hut-gravity-optimization.md | validated | 0 | 500-particle BH target ~5 ms achievable; θ=0.5 gives ~1% RMS error; promotion path to `domain.gravity`/`domain.orbital` | Barnes & Hut 1986, Salmon & Warren 1994, Dehnen 2002, Springel 2005, OpenJDK JEP 448 |
+| sph-neighbor-kernel-optimization.md | validated | 0 | Uniform grid for radius queries + octree for nearest neighbor; cubic-spline kernel; r²-first cutoff; Verlet layer optional | Price 2010, Springel 2010/2005, Yao 2004 |
 
 **Actor:** truth-research-physics
 **Schedule:** Every 48h

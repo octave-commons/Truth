@@ -109,7 +109,7 @@
         (fn [] (bh/build-tree recs)))
 
       (quick-bench "detect-pairs (1000 bodies)"
-        (fn [] (#'collision/detect-pairs bodies)))
+        (fn [] (#'collision/detect-pairs bodies (bh/build-tree recs))))
 
       ;; Overlap query per body
       (let [tree (bh/build-tree recs)
