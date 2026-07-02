@@ -1,6 +1,7 @@
 (ns infra.render
   "Minimal LWJGL + OpenGL renderer for Gates of Truth.
-   Renders ECS bodies as wireframe spheres with a controllable camera."
+   Renders ECS bodies as shaded spheres, point-sprite LOD proxies, volumetric
+   fog and HUD overlays. Camera logic lives in `infra.camera`."
   (:require
     [domain.ecs.core :as ecs]
     [domain.ecs.components :as c]
@@ -12,48 +13,22 @@
     [domain.stellar :as stellar]
     [domain.em :as em]
     [law.stellar :as law]
-    [shape.spatial :as sp])
+    [shape.spatial :as sp]
+    [infra.camera :as cam]
+    [infra.render.shader :as sh]
+    [infra.render.units :as units])
   (:import
     (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback GLFWMouseButtonCallback)
     (org.lwjgl.opengl GL GL11 GL12 GL13 GL15 GL20 GL30)
     (org.lwjgl.stb STBImageWrite STBEasyFont)
     (org.lwjgl.system MemoryUtil)
     (org.lwjgl BufferUtils)
-    (java.nio ByteBuffer)))
+    (java.nio ByteBuffer))
+  (:refer-clojure :exclude [compile]))
 
 ;; ---------------------------------------------------------------------------
-;; Math helpers
+;; Rendering-specific matrix helpers
 ;; ---------------------------------------------------------------------------
-
-(defn- deg->rad [d] (* d (/ Math/PI 180.0)))
-
-(defn- normalize [[x y z]]
-  (let [len (Math/sqrt (+ (* x x) (* y y) (* z z)))]
-    (if (zero? len)
-      [0.0 0.0 1.0]
-      [(/ x len) (/ y len) (/ z len)])))
-
-(defn- cross [[ax ay az] [bx by bz]]
-  [(- (* ay bz) (* az by))
-   (- (* az bx) (* ax bz))
-   (- (* ax by) (* ay bx))])
-
-(defn- perspective [fov-deg aspect near far]
-  (let [f (/ 1.0 (Math/tan (/ (deg->rad fov-deg) 2.0)))
-        nf (/ 1.0 (- near far))]
-    (float-array [(/ f aspect) 0.0 0.0 0.0
-                  0.0 f 0.0 0.0
-                  0.0 0.0 (* (+ far near) nf) -1.0
-                  0.0 0.0 (* 2.0 far near nf) 0.0])))
-
-(defn- look-at [eye center up]
-  (let [f (normalize (mapv - center eye))
-        s (normalize (cross f up))
-        u (cross s f)]
-    (float-array [(nth s 0) (nth u 0) (- (nth f 0)) 0.0
-                  (nth s 1) (nth u 1) (- (nth f 1)) 0.0
-                  (nth s 2) (nth u 2) (- (nth f 2)) 0.0
-                  (- (sp/dot s eye)) (- (sp/dot u eye)) (sp/dot f eye) 1.0])))
 
 (defn- translation-matrix [[x y z]]
   (float-array [1.0 0.0 0.0 0.0
@@ -76,10 +51,10 @@
 
 (defn- rotation-align-z [axis]
   ;; Rotation matrix (column-major) that aligns the mesh z-axis with `axis`.
-  (let [n (normalize axis)
+  (let [n (cam/normalize axis)
         helper (if (< (Math/abs (nth n 2)) 0.9) [0.0 0.0 1.0] [1.0 0.0 0.0])
-        x (normalize (cross helper n))
-        y (cross n x)
+        x (cam/normalize (cam/cross helper n))
+        y (cam/cross n x)
         [x0 x1 x2] x
         [y0 y1 y2] y
         [n0 n1 n2] n]
@@ -122,170 +97,31 @@
 ;; ---------------------------------------------------------------------------
 ;; Shader
 ;; ---------------------------------------------------------------------------
-
-(def ^:private body-vertex-shader
-  "#version 330 core
-   layout(location = 0) in vec3 aPos;
-   out vec3 vNormal;
-   out vec3 vWorldPos;
-   uniform mat4 model;
-   uniform mat4 view;
-   uniform mat4 projection;
-   void main() {
-     vNormal = mat3(transpose(inverse(model))) * aPos;
-     vec4 worldPos = model * vec4(aPos, 1.0);
-     vWorldPos = worldPos.xyz;
-     gl_Position = projection * view * worldPos;
-   }")
-
-(def ^:private body-fragment-shader
-  "#version 330 core
-   in vec3 vNormal;
-   in vec3 vWorldPos;
-   out vec4 FragColor;
-   uniform vec3 color;
-   uniform vec3 cameraPos;
-   uniform float glow;
-   void main() {
-     vec3 N = normalize(vNormal);
-     vec3 V = normalize(cameraPos - vWorldPos);
-     float diff = max(dot(N, V), 0.0);
-     float fresnel = pow(1.0 - abs(dot(N, V)), 2.0);
-     vec3 surface = color * (0.15 + 0.35 * diff);
-     vec3 glowColor = color * glow * (0.8 + 0.6 * fresnel);
-     FragColor = vec4(surface + glowColor, 1.0);
-   }")
-
-(def ^:private particle-vertex-shader
-  "#version 330 core
-   layout(location = 0) in vec3 aPos;
-   layout(location = 1) in vec3 aColor;
-   layout(location = 2) in float aSize;
-   layout(location = 3) in float aDensity;
-   out vec3 vColor;
-   out float vDensity;
-   uniform mat4 view;
-   uniform mat4 projection;
-   uniform vec3 cameraPos;
-   void main() {
-     vColor = aColor;
-     vDensity = aDensity;
-     gl_Position = projection * view * vec4(aPos, 1.0);
-     float dist = length(cameraPos - aPos);
-     gl_PointSize = clamp(aSize / (1.0 + dist * 0.005), 2.0, 200.0);
-   }")
-
-(def ^:private particle-fragment-shader
-  "#version 330 core
-   in vec3 vColor;
-   in float vDensity;
-   out vec4 FragColor;
-   uniform float time;
-   float hash(vec2 p) {
-     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-   }
-   float noise(vec2 p) {
-     vec2 i = floor(p);
-     vec2 f = fract(p);
-     f = f * f * (3.0 - 2.0 * f);
-     float a = hash(i);
-     float b = hash(i + vec2(1.0, 0.0));
-     float c = hash(i + vec2(0.0, 1.0));
-     float d = hash(i + vec2(1.0, 1.0));
-     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-   }
-   void main() {
-     vec2 coord = gl_PointCoord - vec2(0.5);
-     float dist = length(coord);
-     float dens = clamp(vDensity, 0.0, 1.0);
-     // Tighter, brighter core where density is high; softer, fainter tail where
-     // the sample represents a larger low-density volume.
-     float sigma = mix(0.32, 0.12, dens);
-     float alpha = exp(-(dist * dist) / (2.0 * sigma * sigma));
-     float n = noise(coord * 8.0 + time * 0.3);
-     alpha *= (0.04 + 1.8 * pow(dens, 1.5)) * (0.35 + 0.65 * n);
-     if (alpha < 0.003) discard;
-     // Pull colour toward white as density rises so dense cores read hotter,
-     // while keeping the base fog desaturated to avoid additive clipping.
-     vec3 color = mix(vColor * 0.55, vec3(1.0), 0.28 * dens);
-     FragColor = vec4(color * alpha, alpha);
-   }")
-
-(defn compile-shader [source typ]
-  (let [id (GL20/glCreateShader typ)]
-    (GL20/glShaderSource id source)
-    (GL20/glCompileShader id)
-    (when (zero? (GL20/glGetShaderi id GL20/GL_COMPILE_STATUS))
-      (throw (ex-info "Shader compile failed"
-                      {:log (GL20/glGetShaderInfoLog id)})))
-    id))
-
-(defn- link-program [vs fs]
-  (let [program (GL20/glCreateProgram)]
-    (GL20/glAttachShader program vs)
-    (GL20/glAttachShader program fs)
-    (GL20/glLinkProgram program)
-    (when (zero? (GL20/glGetProgrami program GL20/GL_LINK_STATUS))
-      (throw (ex-info "Program link failed"
-                      {:log (GL20/glGetProgramInfoLog program)})))
-    (GL20/glDeleteShader vs)
-    (GL20/glDeleteShader fs)
-    program))
+;; Shader program definitions, compilation and caching live in `infra.render.shader`.
 
 (defn create-program []
-  (println "Compiling body shaders...")
-  (link-program (compile-shader body-vertex-shader GL20/GL_VERTEX_SHADER)
-                (compile-shader body-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+  "Backward-compatible body program constructor."
+  (sh/program-id :body))
 
 (defn create-particle-program []
-  (println "Compiling particle shaders...")
-  (link-program (compile-shader particle-vertex-shader GL20/GL_VERTEX_SHADER)
-                (compile-shader particle-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+  "Backward-compatible particle program constructor."
+  (sh/program-id :particle))
 
-(def ^:private line-vertex-shader
-  "Pass-through line shader for magnetic field lines. No point-sprite logic, so
-   it is safe for GL_LINES (gl_PointCoord is undefined for lines)."
-  "#version 330 core
-   layout(location = 0) in vec3 aPos;
-   layout(location = 1) in vec3 aColor;
-   out vec3 vColor;
-   uniform mat4 view;
-   uniform mat4 projection;
-   void main() {
-     vColor = aColor;
-     gl_Position = projection * view * vec4(aPos, 1.0);
-   }")
-
-(def ^:private line-fragment-shader
-  "#version 330 core
-   in vec3 vColor;
-   out vec4 FragColor;
-   void main() { FragColor = vec4(vColor, 0.85); }")
+(defn create-sprite-program []
+  "Backward-compatible sprite LOD program constructor."
+  (sh/program-id :sprite))
 
 (defn create-line-program []
-  (println "Compiling line shaders...")
-  (link-program (compile-shader line-vertex-shader GL20/GL_VERTEX_SHADER)
-                (compile-shader line-fragment-shader GL20/GL_FRAGMENT_SHADER)))
-
-;; --- HUD overlay (2D, screen-space) -----------------------------------------
-;; Filled rectangles given directly in normalized device coordinates [-1,1], so
-;; the coherence bar and focus indicator sit fixed on screen regardless of camera.
-
-(def ^:private hud-vertex-shader
-  "#version 330 core
-   layout(location = 0) in vec2 aPos;
-   void main() { gl_Position = vec4(aPos, 0.0, 1.0); }")
-
-(def ^:private hud-fragment-shader
-  "#version 330 core
-   out vec4 FragColor;
-   uniform vec4 hudColor;
-   void main() { FragColor = hudColor; }")
+  "Backward-compatible line program constructor."
+  (sh/program-id :line))
 
 (defn create-hud-program []
-  (println "Compiling HUD shaders...")
-  (link-program (compile-shader hud-vertex-shader GL20/GL_VERTEX_SHADER)
-                (compile-shader hud-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+  "Backward-compatible HUD program constructor."
+  (sh/program-id :hud))
+
+(defn create-volume-program []
+  "Backward-compatible volume ray-march program constructor."
+  (sh/program-id :volume))
 
 (defn- hud-quad-floats [x0 y0 x1 y1]
   (float-array [x0 y0  x1 y0  x1 y1   x0 y0  x1 y1  x0 y1]))
@@ -484,10 +320,10 @@
                [1 5 9] [5 11 4] [11 10 2] [10 7 6] [7 1 8]
                [3 9 4] [3 4 2] [3 2 6] [3 6 8] [3 8 9]
                [4 9 5] [2 4 11] [6 2 10] [8 6 7] [9 8 1]]]
-    {:verts (mapv normalize verts) :faces faces}))
+    {:verts (mapv cam/normalize verts) :faces faces}))
 
 (defn- midpoint [a b]
-  (normalize (mapv + a b)))
+  (cam/normalize (mapv + a b)))
 
 (defn- refine-icosahedron [{:keys [verts faces]} times]
   (loop [verts verts faces faces n 0]
@@ -580,192 +416,103 @@
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo :count count}))
 
+(defn- sprite->floats [{:keys [position color size]}]
+  ;; Pack a sprite proxy into interleaved floats: position 3, color 3, size 1.
+  (let [[x y z] position
+        [r g b] color]
+    [(float x) (float y) (float z)
+     (float r) (float g) (float b)
+     (float size)]))
+
+(defn- make-sprite-mesh
+  "Create a GPU buffer from a seq of sprite maps. Each sprite must have
+   :position [x y z], :color [r g b], and :size (pixels)."
+  [sprites]
+  (let [data (float-array (mapcat sprite->floats sprites))
+        fb   (BufferUtils/createFloatBuffer (count data))]
+    (doseq [f data] (.put fb f))
+    (.flip fb)
+    {:buffer fb
+     :count  (count sprites)}))
+
+(defn- upload-sprite-mesh
+  "Upload an interleaved sprite buffer (position 3, color 3, size 1)."
+  [{:keys [buffer count]}]
+  (let [vao (GL30/glGenVertexArrays)
+        vbo (GL15/glGenBuffers)
+        stride (* 7 4)]
+    (GL30/glBindVertexArray vao)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER vbo)
+    (GL15/glBufferData GL15/GL_ARRAY_BUFFER buffer GL15/GL_STATIC_DRAW)
+    ;; position
+    (GL20/glVertexAttribPointer 0 3 GL11/GL_FLOAT false stride 0)
+    (GL20/glEnableVertexAttribArray 0)
+    ;; color
+    (GL20/glVertexAttribPointer 1 3 GL11/GL_FLOAT false stride (* 3 4))
+    (GL20/glEnableVertexAttribArray 1)
+    ;; size
+    (GL20/glVertexAttribPointer 2 1 GL11/GL_FLOAT false stride (* 6 4))
+    (GL20/glEnableVertexAttribArray 2)
+    (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
+    (GL30/glBindVertexArray 0)
+    {:vao vao :vbo vbo :count count}))
 ;; ---------------------------------------------------------------------------
-;; Renderer state
+;; Level-of-detail: distant bodies fall back to screen-space sprites
 ;; ---------------------------------------------------------------------------
 
-(defrecord Camera
-  [position yaw pitch distance target]
-  )
+(def ^:const default-sprite-lod-threshold-pixels
+  "Screen-space diameter below which a body is drawn as a point sprite."
+  4.0)
 
-(defn make-camera
-  ([] (make-camera 50.0))
-  ([distance]
-   (->Camera (sp/vec3 0.0 (* distance 0.33) distance) -90.0 -20.0 distance (sp/vec3 0.0 0.0 0.0))))
+(def ^:const sprite-min-pixels
+  "Minimum sprite diameter in pixels so distant bodies remain visible."
+  2.5)
 
-(defn camera-forward [camera]
-  (let [pitch-rad (deg->rad (:pitch camera))]
-    [(Math/cos pitch-rad) (Math/sin pitch-rad) (Math/sin pitch-rad)]))
+(def ^:const sprite-max-pixels
+  "Maximum sprite diameter in pixels so nearby proxies don't dominate."
+  24.0)
 
-(defn update-camera-position [camera]
-  (let [yaw-rad   (deg->rad (:yaw camera))
-        pitch-rad (deg->rad (:pitch camera))
-        d         (:distance camera)
-        [tx ty tz] (:target camera)
-        x (+ tx (* d (Math/cos pitch-rad) (Math/cos yaw-rad)))
-        y (+ ty (* d (Math/sin pitch-rad)))
-        z (+ tz (* d (Math/cos pitch-rad) (Math/sin yaw-rad)))]
-    (assoc camera :position (sp/vec3 x y z))))
+(defn- pixels-per-radian
+  "Framebuffer height in pixels per radian of vertical view angle."
+  [height fov-deg]
+  (/ (double height) 2.0 (Math/tan (/ (cam/deg->rad fov-deg) 2.0))))
+
+(defn- body-screen-diameter
+  "Approximate on-screen diameter in pixels for a render-space body."
+  [body camera height fov-deg]
+  (let [dist (sp/dist (:position camera) (:position body))
+        angular-diam (* 2.0 (/ (double (:radius body)) (max dist 0.001)))]
+    (* angular-diam (pixels-per-radian height fov-deg))))
+
+(defn classify-body-lod
+  "Split render shapes into solid bodies and sprite proxies.
+
+   Any shape with :render-mode :body whose screen-space diameter falls below
+   `threshold-pixels` is converted to a :sprite shape with a clamped pixel size.
+   Other shapes are passed through unchanged. Returns [solid-bodies sprites]."
+  [shapes camera width height threshold-pixels]
+  (let [threshold (double (or threshold-pixels default-sprite-lod-threshold-pixels))
+        ppr (pixels-per-radian height 60.0)]
+    (reduce (fn [[solids sprites] shape]
+              (if (= :body (:render-mode shape))
+                (let [dist (sp/dist (:position camera) (:position shape))
+                      angular-diam (* 2.0 (/ (double (:radius shape)) (max dist 0.001)))
+                      pixel-diam (* angular-diam ppr)]
+                  (if (< pixel-diam threshold)
+                    [solids (conj sprites (assoc shape
+                                                 :render-mode :sprite
+                                                 :size (max sprite-min-pixels
+                                                            (min sprite-max-pixels pixel-diam))))]
+                    [(conj solids shape) sprites]))
+                [(conj solids shape) sprites]))
+            [[] []]
+            shapes)))
 
 ;; ---------------------------------------------------------------------------
-;; Camera behaviour
-;; ---------------------------------------------------------------------------
 
-(def ^:const phase0-view-scale
-  "World metres per render unit for the Phase 0 view."
-  1.0e15)
+;; Camera types and behaviour live in `infra.camera`; render consumes a Camera
+;; record as pure data.
 
-(def ^:private camera-modes [:manual :track-largest-cluster :fit-all])
-
-(defn default-camera-settings
-  "Default in-game camera configuration. Mutate the window config's
-   :camera-settings entry from the REPL, or use the key bindings in the dev
-   window."
-  []
-  {:mode :track-largest-cluster
-   :fit-margin 1.6
-   :smoothing 0.06
-   :fit-percentile 0.90
-   :manual-yaw -90.0
-   :manual-pitch -20.0})
-
-(defn cycle-camera-mode
-  "Advance to the next camera mode."
-  [settings]
-  (let [i (.indexOf camera-modes (:mode settings))
-        n (count camera-modes)
-        next-i (mod (inc i) n)]
-    (assoc settings :mode (nth camera-modes next-i))))
-
-(defn adjust-fit-margin
-  "Scale the fit margin by `factor`, clamped to a sensible range."
-  [settings factor]
-  (update settings :fit-margin #(max 1.0 (min 4.0 (* % factor)))))
-
-(defn- lerp "Linear interpolation between scalars a and b by t." [a b t]
-  (+ a (* (- b a) t)))
-
-(defn- vlerp "Component-wise lerp between 3-vectors a and b by t." [a b t]
-  (mapv #(lerp %1 %2 t) a b))
-
-(defn- vdist "Euclidean distance between two 3-vectors." [a b]
-  (Math/sqrt (apply + (map #(* (- %1 %2) (- %1 %2)) a b))))
-
-(defn- weighted-centroid
-  "Mass-weighted centroid of [[position mass] ...] in render units."
-  [bodies]
-  (let [[sx sy sz m]
-        (reduce (fn [[ax ay az am] [[x y z] m]]
-                  [(+ ax (* x m)) (+ ay (* y m)) (+ az (* z m)) (+ am m)])
-                [0.0 0.0 0.0 0.0] bodies)]
-    (if (pos? m)
-      [(/ sx m) (/ sy m) (/ sz m)]
-      [0.0 0.0 0.0])))
-
-(defn- bounding-radius
-  "Radius of a sphere centered at `center` that contains all bodies."
-  [center bodies]
-  (if (seq bodies)
-    (reduce max 0.0 (map #(vdist center (first %)) bodies))
-    0.0))
-
-(defn- bodies->render
-  "Project ECS bodies into [[render-position mass] ...]."
-  [world scale]
-  (->> (ecs/all-of world c/position c/mass)
-       (mapv (fn [[_ comps]]
-               [(mapv #(/ (double %) scale) (comps c/position))
-                (double (comps c/mass))]))))
-
-(defn largest-mass-cluster
-  "Find the densest mass cluster using a uniform grid. Returns
-   {:center [x y z] :radius r :mass m} in render units.
-
-   `cell-size` controls the clustering scale; pass a value comparable to the
-   desired cluster radius (e.g. a few times the typical body separation)."
-  [bodies cell-size]
-  (if (empty? bodies)
-    {:center [0.0 0.0 0.0] :radius 0.0 :mass 0.0}
-    (let [cell (fn [[x y z]]
-                 [(long (Math/floor (/ (double x) cell-size)))
-                  (long (Math/floor (/ (double y) cell-size)))
-                  (long (Math/floor (/ (double z) cell-size)))])
-          grid (group-by (fn [[pos _]] (cell pos)) bodies)
-          ;; include a body in the winning cell and its 26 neighbours so the
-          ;; cluster does not get sliced at grid boundaries
-          [win-cell _] (apply max-key #(reduce + 0.0 (map second (val %))) grid)
-          [wx wy wz] win-cell
-          neighbours (for [dx [-1 0 1] dy [-1 0 1] dz [-1 0 1]]
-                       [(+ wx dx) (+ wy dy) (+ wz dz)])
-          cluster-bodies (mapcat #(get grid %) neighbours)
-          center (weighted-centroid cluster-bodies)
-          radius (bounding-radius center cluster-bodies)
-          total-mass (reduce + 0.0 (map second cluster-bodies))]
-      {:center center :radius radius :mass total-mass})))
-
-(defn fit-all-bounds
-  "Bounding sphere containing `percentile` of bodies by distance from the
-   overall centroid. Returns {:center [x y z] :radius r} in render units."
-  [bodies percentile]
-  (if (empty? bodies)
-    {:center [0.0 0.0 0.0] :radius 0.0}
-    (let [center (weighted-centroid bodies)
-          rs     (sort (map #(vdist center (first %)) bodies))
-          idx    (int (* (count rs) percentile))
-          radius (nth rs (min idx (dec (count rs))))]
-      {:center center :radius radius})))
-
-(defn distance-for-radius
-  "Orbit distance (render units) needed to fit a sphere of `radius` with the
-   given field-of-view and margin."
-  [radius fov-deg margin]
-  (let [fov (deg->rad fov-deg)]
-    (* radius margin (/ 1.0 (Math/tan (/ fov 2.0))))))
-
-(defn update-camera-for-world
-  "Update `camera` based on the world and camera settings. Pure: returns a new
-   Camera. In :manual mode the camera is unchanged except for position recalc."
-  [camera world settings]
-   (case (:mode settings :fit-all)
-    :manual
-    (-> camera
-        (assoc :yaw (double (:manual-yaw settings -90.0))
-               :pitch (double (:manual-pitch settings -20.0)))
-        update-camera-position)
-
-    :track-largest-cluster
-    (let [bodies (bodies->render world phase0-view-scale)
-          ;; cell size ~ a few render units; with view-scale 1e15 this frames
-          ;; the local star-forming region rather than the whole cloud.
-          cluster (largest-mass-cluster bodies 8.0)
-          target  (:center cluster [0.0 0.0 0.0])
-          radius  (max 5.0 (:radius cluster))
-          desired-dist (distance-for-radius radius 60.0 (:fit-margin settings 1.6))
-          t       (double (:smoothing settings 0.06))
-          target' (vlerp (:target camera [0.0 0.0 0.0]) target t)
-          dist'   (lerp (:distance camera) desired-dist t)]
-      (-> camera
-          (assoc :target target'
-                 :distance dist'
-                 :yaw (double (:manual-yaw settings -90.0))
-                 :pitch (double (:manual-pitch settings -20.0)))
-          update-camera-position))
-
-    :fit-all
-    (let [bodies (bodies->render world phase0-view-scale)
-          bounds (fit-all-bounds bodies (:fit-percentile settings 0.90))
-          target (:center bounds [0.0 0.0 0.0])
-          radius (max 10.0 (:radius bounds))
-          desired-dist (distance-for-radius radius 60.0 (:fit-margin settings 1.6))
-          t      (double (:smoothing settings 0.06))
-          target' (vlerp (:target camera [0.0 0.0 0.0]) target t)
-          dist'   (lerp (:distance camera) desired-dist t)]
-      (-> camera
-          (assoc :target target'
-                 :distance dist'
-                 :yaw (double (:manual-yaw settings -90.0))
-                 :pitch (double (:manual-pitch settings -20.0)))
-          update-camera-position))))
 
 (defn init-glfw []
   (GLFW/glfwSetErrorCallback (GLFWErrorCallback/createPrint System/err))
@@ -850,17 +597,17 @@
            (GLFW/glfwSetWindowShouldClose window true))
          ;; Camera mode controls
          (when (and (= key GLFW/GLFW_KEY_C) (= action GLFW/GLFW_PRESS))
-           (swap! config-atom cycle-camera-mode)
+           (swap! config-atom cam/cycle-camera-mode)
            (println "Camera mode:" (:mode @config-atom)))
          (when (and (= key GLFW/GLFW_KEY_LEFT_BRACKET) (= action GLFW/GLFW_PRESS))
-           (swap! config-atom adjust-fit-margin 0.9)
+           (swap! config-atom cam/adjust-fit-margin 0.9)
            (println "Fit margin:" (:fit-margin @config-atom)))
          (when (and (= key GLFW/GLFW_KEY_RIGHT_BRACKET) (= action GLFW/GLFW_PRESS))
-           (swap! config-atom adjust-fit-margin 1.1)
+           (swap! config-atom cam/adjust-fit-margin 1.1)
            (println "Fit margin:" (:fit-margin @config-atom)))
          (when (and (= key GLFW/GLFW_KEY_R) (= action GLFW/GLFW_PRESS))
-           (reset! camera-atom (make-camera))
-           (reset! config-atom (default-camera-settings))
+           (reset! camera-atom (cam/make-camera))
+           (reset! config-atom (cam/default-camera-settings))
            (println "Camera reset"))
          ;; Paid actions — dispatched from `action-palette` (the same list the HUD
          ;; legend renders). Records an :action-request the window thread resolves
@@ -899,7 +646,7 @@
                           (-> c
                               (update :yaw #(+ % (* dx 0.2)))
                               (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
-                              update-camera-position)))))))))
+                              cam/update-camera-position)))))))))
      (GLFW/glfwSetMouseButtonCallback
        window
        (proxy [GLFWMouseButtonCallback] []
@@ -919,7 +666,8 @@
                 (fn [c]
                   (-> c
                       (update :distance #(max 10.0 (min 2000.0 (- % (* yoffset 10.0)))))
-                      update-camera-position))))))))
+                      cam/update-camera-position))))))))
+
 
 (defn bodies-from-world [world]
   (map (fn [[eid comps]]
@@ -994,25 +742,6 @@
 ;; its composition (until it is hot enough to glow), so as later chemistry
 ;; differentiates worlds their appearance diverges with no special-casing.
 
-(def ^:const render-radius-ref
-  "Physical radius (m) that maps to render-unit radius 1.0. Bodies scale
-   linearly from this reference so a protostar's drawn size faithfully
-   represents its actual physical radius relative to the nebula."
-  3.0e13)
-
-(defn phys->render-radius
-  "Map a physical radius (m) to a render-unit radius. Log-compressed so the
-   ~5-order span (gas clump → giant planet) stays legible, with a floor that
-   scales with the physical radius — small bodies stay small on screen,
-   faithfully representing their actual size relative to the nebula."
-  [r-phys]
-  (let [r (double (or r-phys 0.0))]
-    (if (pos? r)
-      (let [linear (/ r render-radius-ref)
-            log-r  (* 0.42 (Math/log10 (max 1e-6 linear)))]
-        (max (* 0.5 linear) (+ 0.01 log-r) 0.001))
-      0.001)))
-
 (defn body-draw-radius
   "The render-unit radius a resolved body is DRAWN at — the SAME size its sphere
    uses in `phase0-bodies-from-world`. Field-line loops size to this so the field
@@ -1023,7 +752,7 @@
    visually tiny, a 1 M☉ solar-type star is medium, a 10 M☉ O-star is large.
    Luminosity adds a modest glow factor so blue stragglers and subgiants read
    slightly larger than their mass alone would suggest."
-  [world eid]
+  [ctx world eid]
   (if (= :star (ecs/get-component world eid c/matter-state))
     (let [mass (double (or (ecs/get-component world eid c/mass) law/solar-mass))
           lum  (double (or (ecs/get-component world eid c/luminosity) 1.0e26))
@@ -1034,7 +763,7 @@
           ;; Secondary: luminosity glow boost (+20% max for very luminous stars)
           lum-boost (* 0.2 (min 1.0 (/ (Math/log10 (max 1.0 lum)) 30.0)))]
       (+ mass-r lum-boost))
-    (phys->render-radius (ecs/get-component world eid c/radius))))
+    (units/phys->render-radius ctx (ecs/get-component world eid c/radius))))
 
 (defn composition->material-color
   "Base material colour from bulk composition (mass fractions): hydrogen/helium
@@ -1242,7 +971,7 @@
    separations stars actually have here, significant only for very close pairs.
    So distinct loop sets that visibly interleave ARE bodies close enough to
    magnetically interact."
-  [world scale]
+  [ctx world]
   (let [sources (->> (em/field-sources world)
                      (filter #(pos? (sp/len (:moment %))))
                      (sort-by #(- (sp/len (:moment %))))
@@ -1253,11 +982,11 @@
              (let [axis (unit-vec moment)
                    e1   (any-perp axis)
                    e2   (sp/cross axis e1)
-                   rpos (mapv #(/ (double %) scale) position)
+                   rpos (units/world->render ctx position)
                    ;; Size loops to the body's DRAWN radius so the field hugs its
                    ;; body and scales with it at every zoom — a fixed absolute
                    ;; size detaches from (and dwarfs) the body when zoomed in.
-                   rr   (max 0.6 (body-draw-radius world eid))
+                   rr   (max 0.6 (body-draw-radius ctx world eid))
                    color [0.45 0.8 1.0]]
                (vec (mapcat
                       (fn [[shell az]]
@@ -1428,17 +1157,16 @@
   "Render shapes for the player's spark and focus volume: a bright point at the
    observer position and a reticle ring at the focus, tinted by coherence. Empty
    when the world has no observer (e.g. bare test worlds)."
-  [world scale]
+  [ctx world]
   (if-let [obs (player/get-observer world)]
-    (let [scl   (fn [p] (mapv #(/ (double %) scale) p))
-          fpos  (scl (:focus-position obs))
-          fr    (/ (double (:focus-radius obs)) scale)
-          spark (scl (:position obs))
+    (let [fpos  (units/world->render ctx (:focus-position obs))
+          fr    (units/world->render ctx [(:focus-radius obs) 0.0 0.0])
+          spark (units/world->render ctx (:position obs))
           col   (coherence-color (player/decoherence-state obs))]
       (into [{:position spark :color [0.85 0.96 1.0]
               :size (+ 28.0 (* 44.0 (double (:focus-intensity obs 0.5))))
               :render-mode :particle}]
-            (ring-segments fpos (max 0.5 fr) col 48)))
+            (ring-segments fpos (max 0.5 (first fr)) col 48)))
     []))
 
 (defn hud-rects-from-world
@@ -1582,15 +1310,15 @@
 
 (defn- phase0-bodies-from-world*
   "Uncached render projection; see `phase0-bodies-from-world`."
-  [world scale]
+  [ctx world]
   (let [focus (player-focus-level world)]
     (into
-     (player-overlay-shapes world scale)
+     (player-overlay-shapes ctx world)
      (mapcat
       (fn [eid]
         (let [state   (ecs/get-component world eid c/matter-state)
               [x y z] (ecs/get-component world eid c/position)
-              center  [(/ x scale) (/ y scale) (/ z scale)]
+              center  (units/world->render ctx [x y z])
               temp    (ecs/get-component world eid c/temperature)
               compose (ecs/get-component world eid c/composition)
               r-phys  (ecs/get-component world eid c/radius)
@@ -1606,7 +1334,7 @@
 
              :star
              ;; Stars render with mass-based sizing and spectral-type colors.
-             (let [core-r (body-draw-radius world eid)
+             (let [core-r (body-draw-radius ctx world eid)
                    teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
                    s-col  (stellar-spectral-color teff)
                    body   {:entity      eid
@@ -1630,7 +1358,7 @@
                                       (/ (sp/len disk-L) (max 1.0 disk-m))
                                       (double (or (ecs/get-component world eid c/mass) 1.0e30))))
                        r-out   (min 12.0 (* core-r 4.0
-                                           (Math/log10 (max 10.0 (/ r-disk (* core-r phase0-view-scale))))))
+                                           (Math/log10 (max 10.0 (/ r-disk (* core-r (:scale ctx)))))))
                        r-in    (* core-r 1.3)
                        d-col   (mapv (fn [c] (min 1.0 (* (+ 0.4 (* 0.6 c)) 0.90))) s-col)]
                    (disk-particles {:center    center
@@ -1647,7 +1375,7 @@
              ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
              ;; by temperature. The diffuse envelope is baked into the froxel
              ;; volume; only the body, field line, and disk are drawn here.
-             (let [render-r (phys->render-radius r-phys)
+             (let [render-r (units/phys->render-radius ctx r-phys)
                    disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
                    disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
                (concat
@@ -1666,7 +1394,7 @@
                                      (/ (sp/len disk-L) (max 1.0 disk-m))
                                      (double (or (ecs/get-component world eid c/mass) 1.0e30))))
                        r-out  (min 12.0 (* render-r 4.0
-                                          (Math/log10 (max 10.0 (/ r-disk (* render-r phase0-view-scale))))))
+                                          (Math/log10 (max 10.0 (/ r-disk (* render-r (:scale ctx)))))))
                        r-in   (* render-r 1.3)
                        d-col  (mapv (fn [c] (min 1.0 (* (+ 0.35 (* 0.65 c)) 0.85))) color)]
                    (disk-particles {:center    center
@@ -1682,7 +1410,7 @@
             ;; by composition crossfading to thermal glow.
             [{:entity      eid
               :position    center
-              :radius      (phys->render-radius r-phys)
+              :radius      (units/phys->render-radius ctx r-phys)
               :color       color
               :kind        state
               :oblateness  ob
@@ -1702,14 +1430,15 @@
 
    The projection is cached per [tick scale] so consecutive render frames that
    see the same world do not rebuild hundreds of fog particles."
-  ([world] (phase0-bodies-from-world world phase0-view-scale))
-   ([world scale]
-     (let [ckey (phase0-render-cache-key world scale)]
-       (if-let [cached (get @phase0-bodies-cache ckey)]
-         cached
-         (let [bodies (phase0-bodies-from-world* world scale)]
-           (reset! phase0-bodies-cache {ckey bodies})
-           bodies)))))
+  ([world] (phase0-bodies-from-world world cam/phase0-view-scale))
+  ([world scale]
+   (let [ckey (phase0-render-cache-key world scale)]
+     (if-let [cached (get @phase0-bodies-cache ckey)]
+       cached
+       (let [ctx (units/make-context scale (cam/make-camera) {:width 1 :height 1})
+             bodies (phase0-bodies-from-world* ctx world)]
+         (reset! phase0-bodies-cache {ckey bodies})
+         bodies)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Volumetric fog — ray-marched participating medium (design: docs fog notes)
@@ -1811,14 +1540,16 @@
    loops (`field-line-shapes`). Kept for compatibility with callers that expect
    explicit field-line shapes; field lines are also included by
    `phase0-bodies-from-world` for protostars and stars."
-  [world]
-  (into (vec (phase0-bodies-from-world world))
-        (field-line-shapes world phase0-view-scale)))
+  ([world]
+   (phase0-bodies+fields world cam/phase0-view-scale))
+  ([world scale]
+   (let [ctx (units/make-context scale (cam/make-camera) {:width 1 :height 1})]
+     (into (vec (phase0-bodies-from-world world scale))
+           (field-line-shapes ctx world)))))
 
 (defn create-volume-program []
-  (println "Compiling volume shaders...")
-  (link-program (compile-shader volume-vertex-shader GL20/GL_VERTEX_SHADER)
-                (compile-shader volume-fragment-shader GL20/GL_FRAGMENT_SHADER)))
+  "Backward-compatible volume ray-march program constructor."
+  (sh/program-id :volume))
 
 (defn- fullscreen-quad-vao
   "A unit fullscreen quad (two triangles) in NDC, attribute location 0."
@@ -1841,7 +1572,7 @@
    radius, density-driven opacity, and temperature-tinted emission colour.
    Only diffuse/contracting matter (:nebula, :protostar) is part of the medium —
    solid bodies and stars are drawn separately."
-  [world scale]
+  [ctx world]
   (->> (ecs/entities-with world c/position c/matter-state c/density c/radius)
        (keep (fn [eid]
                (let [st (ecs/get-component world eid c/matter-state)]
@@ -1850,7 +1581,7 @@
                          rho   (double (or (ecs/get-component world eid c/density) 1e-18))
                          temp  (ecs/get-component world eid c/temperature)
                          ion   (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))
-                         rphys (double (or (ecs/get-component world eid c/radius) render-radius-ref))
+                         rphys (double (or (ecs/get-component world eid c/radius) 3.0e13))
                          ;; Base color from temperature
                          t-col (temp-color temp)
                          ;; Ionization tint: high ionization shifts toward blue-white (hot plasma)
@@ -1860,11 +1591,11 @@
                                     (+ (* (- 1.0 f) (nth t-col 1)) (* f 0.8))
                                     (+ (* (- 1.0 f) (nth t-col 2)) (* f 1.0))])
                                  t-col)]
-                     {:p   [(/ (double x) scale) (/ (double y) scale) (/ (double z) scale)]
+                     {:p   (units/world->render ctx [x y z])
                       ;; VISUAL smoothing: deliberately wider than the physical SPH
                       ;; h so adjacent parcels' footprints overlap into a continuous
                       ;; medium (≳ inter-parcel spacing) instead of discrete blobs.
-                      :h   (max 1.5 (* 4.0 (phys->render-radius rphys)))
+                      :h   (max 1.5 (* 4.0 (units/phys->render-radius ctx rphys)))
                       :col col
                       :dens (max 0.0 (nebula-density-norm rho))})))))
        vec))
@@ -1904,8 +1635,8 @@
    with a smooth radial kernel — the same field the simulation integrates, sampled
    onto a grid the GPU trilinearly interpolates during the march. Updates the
    texture in place (glTexSubImage3D) — no per-frame allocation."
-  [world scale res]
-  (let [pts (gas-points world scale)]
+  [ctx world res]
+  (let [pts (gas-points ctx world)]
     (when (seq pts)
       (let [R    (int res)
             store (volume-storage! R)
@@ -1973,13 +1704,13 @@
 (defn volume-lights
   "Up to 8 brightest hot bodies (stars + hot cores) as point lights in render
    space — the sources whose light scatters through the medium."
-  [world scale]
+  [ctx world]
   (->> (ecs/entities-with world c/position c/matter-state c/temperature)
        (keep (fn [eid]
                (let [t (double (or (ecs/get-component world eid c/temperature) 0.0))]
                  (when (> t 2500.0)
                    (let [[x y z] (ecs/get-component world eid c/position)]
-                     {:pos [(/ (double x) scale) (/ (double y) scale) (/ (double z) scale)]
+                     {:pos (units/world->render ctx [x y z])
                       :col (temp-color t)
                       :temp t
                       :intensity (min 60.0 (* 6.0 (max 0.0 (- (Math/log10 t) 3.0))))})))))
@@ -1993,11 +1724,11 @@
    :lights [...]}; camera basis is derived from the camera position/target."
   [{:keys [program tex box-min box-max lights]} quad-vao camera width height]
   (when (and program tex)
-    (let [fwd   (normalize (sp/v- (:target camera) (:position camera)))
-          right (normalize (cross fwd [0.0 1.0 0.0]))
-          up    (cross right fwd)
+    (let [fwd   (cam/normalize (sp/v- (:target camera) (:position camera)))
+          right (cam/normalize (cam/cross fwd [0.0 1.0 0.0]))
+          up    (cam/cross right fwd)
           fov   60.0
-          thf   (Math/tan (deg->rad (/ fov 2.0)))
+          thf   (Math/tan (cam/deg->rad (/ fov 2.0)))
           aspect (/ (double width) (double height))
           loc   (fn [n] (GL20/glGetUniformLocation program n))
           set3  (fn [n [a b c]] (GL20/glUniform3f (loc n) (float a) (float b) (float c)))]
@@ -2061,13 +1792,13 @@
 
    `res` may be an integer for a fixed resolution or one of {:low :medium :high
    :ultra} to use the LOD-aware selector (default :medium)."
-  [world program res]
+  [ctx world program res]
   (when program
     (let [R (if (keyword? res)
               (froxel-resolution-for world res)
               (int (or res 32)))]
-      (when-let [vt (build-volume-texture world phase0-view-scale R)]
-        (assoc vt :program program :lights (volume-lights world phase0-view-scale))))))
+      (when-let [vt (build-volume-texture ctx world R)]
+        (assoc vt :program program :lights (volume-lights ctx world))))))
 
 (defn delete-volume [_volume]
   ;; The froxel texture is persistent (reused across frames via volume-cache);
@@ -2087,8 +1818,8 @@
   (GL11/glEnable GL11/GL_DEPTH_TEST)
   (GL11/glClearColor 0.02 0.02 0.05 1.0)
   (GL11/glClear (bit-or GL11/GL_COLOR_BUFFER_BIT GL11/GL_DEPTH_BUFFER_BIT))
-  (let [proj (perspective 60.0 (/ width (float height)) 0.1 10000.0)
-        view (look-at (:position camera) (:target camera) (sp/vec3 0.0 1.0 0.0))
+  (let [proj (cam/perspective 60.0 (/ width (float height)) 0.1 10000.0)
+        view (cam/look-at (:position camera) (:target camera) (sp/vec3 0.0 1.0 0.0))
         lines     (filterv #(= :line (:render-mode %)) bodies)
         bodies    (remove #(#{:particle :line} (:render-mode %)) bodies)]
     ;; ---- pass 1: volumetric fog (always ray-marched; no sprite fallback) ----
@@ -2207,7 +1938,8 @@
    Returns the path of the written image. Auto-detects Phase 0 worlds."
   ([world-atom path]
    (render-to-file world-atom path {}))
-  ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode volumetric? volume-res]}]
+  ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode volumetric? volume-res
+                             sprite-lod-threshold]}]
    (println "Rendering offscreen frame to" path)
    (init-glfw)
    (let [width   1280
@@ -2236,15 +1968,16 @@
             ;; the caller supplied one explicitly.
             camera  (or camera
                         (if phase0?
-                          (update-camera-for-world
-                            (make-camera 60.0) w
-                            (assoc (default-camera-settings)
+                          (cam/update-camera-for-world
+                            (cam/make-camera 60.0) w
+                            (assoc (cam/default-camera-settings)
                                    :mode (or camera-mode :fit-all) :smoothing 1.0))
-                          (make-camera)))
+                          (cam/make-camera)))
+            ctx    (units/make-context camera {:width width :height height})
             bodies (bodies-fn w)
             hud      (when phase0? (hud-rects-from-world w))
             hud-text (when phase0? (hud-text-from-world w))
-            volume   (frame-volume w volume-program (or volume-res :medium))]
+            volume   (frame-volume ctx w volume-program (or volume-res :medium))]
         (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
         (render-scene {:body-program body-program
                        :line-program line-program :hud-program hud-program
@@ -2267,13 +2000,14 @@
   (let [width          1280
         height         720
         window         (create-window width height "Gates of Truth — 3D View")
-        camera         (atom (make-camera))
+         camera         (atom (cam/make-camera))
         ks             (atom {})
-        body-program   (create-program)
-        line-program   (create-line-program)
-        sphere         (make-sphere-mesh 2)
+         body-program   (create-program)
+         line-program   (create-line-program)
+         sprite-program (create-sprite-program)
+         sphere         (make-sphere-mesh 2)
         mesh           (upload-mesh sphere)
-        config-atom    (atom (default-camera-settings))]
+         config-atom    (atom (cam/default-camera-settings))]
     (println "Window created, entering render loop...")
     (setup-input window camera ks config-atom)
     (loop []
@@ -2281,9 +2015,11 @@
         (GLFW/glfwPollEvents)
         ;; Simulate one tick per frame
         (swap! world-atom (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
-        (swap! camera update-camera-for-world @world-atom @config-atom)
+        (swap! camera cam/update-camera-for-world @world-atom @config-atom)
         (let [bodies (bodies-from-world @world-atom)]
-          (render-scene {:body-program body-program :line-program line-program}
+          (render-scene {:body-program body-program
+                         :line-program line-program
+                         :sprite-program sprite-program}
                         mesh @camera width height bodies 0.0))
         (GLFW/glfwSwapBuffers window)
         (Thread/sleep 16)

@@ -7,24 +7,14 @@
    renderer draws a camera-facing halo + a velocity arrow around it and a HUD card
    reading its live ECS state.
 
-   Everything here is pure render-space math. It reconstructs the SAME ray/basis
-   the renderer and the volume shader use (`infra.render/render-scene`,
-   `perspective 60°`, `look-at … up=[0 1 0]`) so a click lands where the body is
-   drawn, and the halo/arrow ride on the body's already-projected render shape
-   (never a recomputed position — see the 'two coordinate paths' hazard)."
+   Everything here uses `infra.render.units` for coordinate transforms so that
+   picking, projection, and rendering share one transform chain and cannot drift."
   (:require
     [clojure.string :as str]
     [domain.ecs.core :as ecs]
     [domain.ecs.components :as c]
-    [shape.spatial :as sp]))
-
-(def ^:const fov-deg 60.0)
-(def ^:const near 0.1)
-
-(defn- normalize
-  "Unit vector along v; +z for the zero vector (shape.spatial has no normalize)."
-  [v]
-  (let [l (sp/len v)] (if (pos? l) (sp/v* v (/ 1.0 l)) [0.0 0.0 1.0])))
+    [shape.spatial :as sp]
+    [infra.render.units :as units]))
 
 ;; Physical reference scales for human-readable readouts.
 (def ^:const solar-mass   1.989e30)  ;; kg
@@ -35,56 +25,19 @@
 (def ^:const au           1.496e11)  ;; m
 
 ;; ---------------------------------------------------------------------------
-;; Camera basis — the orthonormal frame the renderer draws through.
-;; ---------------------------------------------------------------------------
-
-(defn camera-basis
-  "Orthonormal view frame {:pos :fwd :right :up :tan-half} for `camera`, matching
-   `look-at`/the volume shader exactly: fwd = target−pos, right = fwd×[0 1 0],
-   up = right×fwd."
-  [camera]
-  (let [pos   (vec (:position camera))
-        fwd   (normalize (sp/v- (:target camera) pos))
-        right (normalize (sp/cross fwd [0.0 1.0 0.0]))
-        up    (sp/cross right fwd)]
-    {:pos pos :fwd fwd :right right :up up
-     :tan-half (Math/tan (Math/toRadians (/ fov-deg 2.0)))}))
-
-;; ---------------------------------------------------------------------------
-;; Screen → ray and world → screen (mutual inverses through the same basis).
+;; Screen → ray and render → screen (mutual inverses through units).
 ;; ---------------------------------------------------------------------------
 
 (defn screen->ray
-  "World-space pick ray {:ro :rd} through pixel (px,py) on a w×h surface.
-   (px,py) and (w,h) must be in the SAME pixel space (top-left origin)."
-  [camera px py w h]
-  (let [{:keys [pos fwd right up tan-half]} (camera-basis camera)
-        aspect (/ (double w) (double h))
-        ndcx (- (/ (* 2.0 px) w) 1.0)
-        ndcy (- 1.0 (/ (* 2.0 py) h))
-        rd   (normalize
-               (sp/v+ fwd
-                      (sp/v+ (sp/v* right (* ndcx aspect tan-half))
-                             (sp/v* up    (* ndcy tan-half)))))]
-    {:ro pos :rd rd}))
+  "Render-space pick ray {:ro :rd} through pixel (px,py)."
+  [ctx px py]
+  (units/screen->render-ray ctx px py))
 
 (defn project-point
-  "Project render-space point `p` to pixel coords on a w×h surface.
-   Returns [sx sy depth] (depth = metres along view fwd) or nil when behind the
-   camera. Inverse of `screen->ray`, so the card anchors where the body draws."
-  [camera p w h]
-  (let [{:keys [pos fwd right up tan-half]} (camera-basis camera)
-        rel (sp/v- (vec p) pos)
-        zc  (sp/dot rel fwd)]
-    (when (> zc near)
-      (let [aspect (/ (double w) (double h))
-            xc (sp/dot rel right)
-            yc (sp/dot rel up)
-            ndcx (/ xc (* zc aspect tan-half))
-            ndcy (/ yc (* zc tan-half))
-            sx (* (+ (* ndcx 0.5) 0.5) w)
-            sy (* (- 1.0 (+ (* ndcy 0.5) 0.5)) h)]
-        [sx sy zc]))))
+  "Project render-space point `p` to framebuffer pixels [sx sy depth], or nil
+   when behind the camera. Delegates to `infra.render.units/render->screen`."
+  [ctx p]
+  (units/render->screen ctx p))
 
 ;; ---------------------------------------------------------------------------
 ;; Picking — forgiving ray-vs-body test.
@@ -107,9 +60,9 @@
    inflated) render radius OR within a constant screen-space tolerance, so tiny
    distant bodies stay clickable without precise aim. Picks against the SAME
    shapes the renderer drew this frame, so it can't drift from the visuals."
-  [bodies camera px py w h]
-  (let [{:keys [ro rd tan-half]} (assoc (screen->ray camera px py w h)
-                                        :tan-half (:tan-half (camera-basis camera)))]
+  [ctx bodies px py]
+  (let [{:keys [ro rd] tan-half :tan-half} (assoc (units/screen->render-ray ctx px py)
+                                                  :tan-half (:tan-half (units/camera-basis ctx)))]
     (->> (body-shapes bodies)
          (keep (fn [{:keys [entity position radius]}]
                  (let [center (vec position)
@@ -128,13 +81,12 @@
 
 (defn cursor->world
   "World-metre point under pixel (px,py), placed on the depth plane through the
-   camera target (so the spark's attention rides the cluster the camera frames).
-   `scale` converts render units → metres (render/phase0-view-scale)."
-  [camera px py w h scale]
-  (let [{:keys [ro rd]} (screen->ray camera px py w h)
-        t  (max 0.0 (sp/dot (sp/v- (vec (:target camera)) ro) rd))
+   camera target (so the spark's attention rides the cluster the camera frames)."
+  [ctx px py]
+  (let [{:keys [ro rd]} (units/screen->render-ray ctx px py)
+        t  (max 0.0 (sp/dot (sp/v- (vec (:target (:camera ctx))) ro) rd))
         pt (sp/v+ ro (sp/v* rd t))]
-    (sp/v* pt (double scale))))
+    (units/render->world ctx pt)))
 
 ;; ---------------------------------------------------------------------------
 ;; Selection overlay — camera-facing halo + velocity arrow (as :line shapes).
@@ -144,12 +96,15 @@
   [{:position (vec a) :color color :size 1.0 :render-mode :line}
    {:position (vec b) :color color :size 1.0 :render-mode :line}])
 
+(defn- normalize [v]
+  (let [l (sp/len v)] (if (pos? l) (sp/v* v (/ 1.0 l)) [0.0 0.0 1.0])))
+
 (defn halo-shapes
   "A camera-facing ring of render radius `r` around `center`, as :line segments —
    the selection marker. Lives in the camera's right/up plane so it reads as a
    ring from any angle."
-  [center r camera color n]
-  (let [{:keys [right up]} (camera-basis camera)
+  [center r ctx color n]
+  (let [{:keys [right up]} (units/camera-basis ctx)
         pt (fn [a]
              (sp/v+ (vec center)
                     (sp/v+ (sp/v* right (* r (Math/cos a)))
@@ -172,7 +127,7 @@
    reuse the world velocity vector directly. Length is log-scaled by speed and
    floored to the body radius so even a slow body shows a stub; colour ramps with
    speed. nil for a motionless body."
-  [center vel-world body-r camera]
+  [center vel-world body-r ctx]
   (when (and vel-world (pos? (sp/len vel-world)))
     (let [speed-ms (sp/len vel-world)
           kms      (/ speed-ms 1000.0)
@@ -181,7 +136,7 @@
                       (max 0.6 (min 6.0 (* 1.1 (Math/log10 (+ 1.0 kms))))))
           tip      (sp/v+ (vec center) (sp/v* dir len))
           col      (speed-color kms)
-          {:keys [fwd]} (camera-basis camera)
+          {:keys [fwd]} (units/camera-basis ctx)
           ;; arrowhead in the plane facing the camera
           perp     (let [p (sp/cross dir fwd)]
                      (if (pos? (sp/len p)) (normalize p)
@@ -197,26 +152,25 @@
   "A faint, thin halo around the body the cursor is over — the passive 'this is
    resolvable' cue, shown before a click commits to selection. Empty when nothing
    is hovered or the hovered body is already the selection."
-  [bodies hover-eid sel-eid camera]
+  [ctx bodies hover-eid sel-eid]
   (if (and hover-eid (not= hover-eid sel-eid))
     (if-let [shape (selected-shape bodies hover-eid)]
       (halo-shapes (:position shape) (* (double (or (:radius shape) 0.6)) 1.3)
-                   camera [0.35 0.55 0.7] 40)
+                   ctx [0.35 0.55 0.7] 40)
       [])
     []))
 
 (defn intervention-overlay-shapes
   "Camera-facing rings for the player's active warps (`:phase0/interventions`):
    a well reads cyan, a repulsor warm-orange; the ring sized to the warp's reach
-   and dimmed as it decays, so a placed warp is visible and you watch it fade.
-   `scale` converts world metres → render units."
-  [world camera scale]
+   and dimmed as it decays, so a placed warp is visible and you watch it fade."
+  [ctx world]
   (let [tick (long (or (:tick world) 0))]
     (vec
       (mapcat
         (fn [{:keys [kind position radius born-tick ttl]}]
-          (let [center (mapv #(/ (double %) (double scale)) position)
-                r      (/ (double radius) (double scale))
+          (let [center (units/world->render ctx position)
+                r      (units/world->render ctx [radius 0.0 0.0])
                 age    (- tick (long (or born-tick 0)))
                 fade   (max 0.15 (- 1.0 (/ (double age) (double (or ttl 1)))))
                 col    (case kind
@@ -225,21 +179,21 @@
                          :heat/source   [(* 1.0 fade) (* 0.35 fade) (* 0.12 fade)] ;; hot red
                          :heat/sink     [(* 0.55 fade) (* 0.85 fade) (* 1.0 fade)] ;; cold blue-white
                          [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)])]
-            (into (halo-shapes center r camera col 64)
-                  (halo-shapes center (* r 0.62) camera col 48))))
+            (into (halo-shapes center (first r) ctx col 64)
+                  (halo-shapes center (* (first r) 0.62) ctx col 48))))
         (:phase0/interventions world)))))
 
 (defn selection-overlay-shapes
   "Halo + velocity arrow for the selected entity, riding on its already-projected
    render shape so they align with the drawn body. Empty when the entity has no
    shape this frame (merged/destroyed → caller should clear the selection)."
-  [world eid bodies camera]
+  [ctx world eid bodies]
   (if-let [shape (selected-shape bodies eid)]
     (let [center (:position shape)
           r      (double (or (:radius shape) 0.6))
           vel    (ecs/get-component world eid c/velocity)]
-      (into (halo-shapes center (* r 1.45) camera [0.55 0.95 1.0] 56)
-            (or (velocity-arrow-shapes center vel r camera) [])))
+      (into (halo-shapes center (* r 1.45) ctx [0.55 0.95 1.0] 56)
+            (or (velocity-arrow-shapes center vel r ctx) [])))
     []))
 
 ;; ---------------------------------------------------------------------------
@@ -316,7 +270,7 @@
    the body's screen position (clamped on-screen). Returns
    {:rects [...] :text [...]} ready for `render/render-hud` and `render/render-text`,
    or nil when the entity has no render shape this frame."
-  [world eid bodies camera w h]
+  [ctx world eid bodies]
   (when-let [shape (selected-shape bodies eid)]
     (let [state   (ecs/get-component world eid c/matter-state)
           title   (or (state-label state) "Body")
@@ -329,7 +283,9 @@
           char-w  (* scale 6.2)
           card-w  (+ (* 2 pad) (* char-w (double (apply max (map count lines)))))
           card-h  (+ (* 2 pad) (* line-h (count lines)))
-          anchor  (project-point camera (:position shape) w h)
+          w       (:width (:viewport ctx))
+          h       (:height (:viewport ctx))
+          anchor  (units/render->screen ctx (:position shape))
           [bx by] (if anchor anchor [(* 0.5 w) (* 0.5 h)])
           ;; place beside the body, clamped on-screen and BELOW the top-left
           ;; stats panel (its IMF line spans nearly the full width) so the card

@@ -28,6 +28,7 @@
     [nrepl.server     :as nrepl]
     [infra.dev.window :as window]
     [infra.render     :as render]
+    [infra.camera     :as cam]
     [domain.phase0    :as phase0]))
 
 (defn -main
@@ -44,7 +45,7 @@
         _      (window/start! world
                  {:tick-fn            phase0/tick-world
                   :bodies-fn          render/phase0-bodies+fields
-                  :camera             (render/make-camera 60.0)
+                   :camera             (cam/make-camera 60.0)
                   :sim-frame-interval 4
                   :on-step            (fn [w]
                                         (when (zero? (mod (:tick w) 40))

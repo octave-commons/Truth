@@ -18,7 +18,8 @@
    [shape.spatial         :as sp]
    [domain.ecs.core       :as ecs]
    [domain.ecs.parallel   :as par]
-   [domain.ecs.components  :as c]))
+   [domain.ecs.components  :as c]
+   [domain.profile        :as profile]))
 
 ;; --- Dimensionless numbers --------------------------------------------------
 
@@ -126,12 +127,19 @@
    hydro so collapse/render can read the tag. Stores :component/regime.
 
    Per-entity classification is pure, so it is computed in parallel and the tags
-   folded back sequentially."
+   folded back sequentially. Each phase is profiled separately when
+   `:phase0/profile-subsystems?` is enabled."
   [world]
-  (let [eids (ecs/entities-with world c/matter-state c/density c/temperature)
-        tags (par/par-mapv
-              (fn [eid] [eid (:regime (classify (entity->cell world eid)))])
-              eids)]
-    (reduce (fn [w [eid tag]] (ecs/put-component w eid c/regime tag))
-            world
-            tags)))
+  (profile/profile-sections
+   world
+   [[:regime/classify
+     (fn [w]
+       (assoc w :regime/tags
+              (par/par-mapv
+               (fn [eid] [eid (:regime (classify (entity->cell w eid)))])
+               (ecs/entities-with w c/matter-state c/density c/temperature))))]
+    [:regime/apply
+     (fn [w]
+       (reduce (fn [w' [eid tag]] (ecs/put-component w' eid c/regime tag))
+               w
+               (:regime/tags w)))]]))

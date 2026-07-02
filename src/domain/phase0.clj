@@ -16,6 +16,7 @@
    [domain.player           :as player]
    [domain.intervention     :as intervention]
    [domain.pacing           :as pacing]
+   [domain.profile          :as profile]
    [law.stellar             :as law]
    [law.composition         :as lcomp]
    [law.sed                 :as lsed]
@@ -489,34 +490,57 @@
    A compressed magnetosphere (small standoff) means more atmospheric exposure.
    Runs in the parallel fan-out (was a cargo-cult barrier)."
   [world]
-  (let [wind-parcels (filterv (fn [eid]
-                                (let [st (ecs/get-component world eid c/matter-state)]
-                                  (and (= :nebula st)
-                                       (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
-                              (ecs/entities-with world c/matter-state c/position c/mass c/radius))
-        wind-data (mapv (fn [eid]
-                          {:pos (ecs/get-component world eid c/position)
-                           :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
-                        wind-parcels)
-        planets (filterv #(= :planet (ecs/get-component world % c/matter-state))
-                         (ecs/entities-with world c/matter-state c/position c/radius))]
-    (reduce (fn [w eid]
-              (let [pos    (ecs/get-component w eid c/position)
-                    Rp     (double (or (ecs/get-component w eid c/radius) 0.0))
-                    Bp     (double (or (some-> (ecs/get-component w eid c/b-field) sp/len) 0.0))
-                    cutoff (* 10.0 Rp)
-                    nearby-ram (reduce (fn [acc wd]
-                                         (if (< (sp/dist pos (:pos wd)) cutoff)
-                                           (+ acc (:ram wd))
-                                           acc))
-                                       0.0 wind-data)
-                    r-mp       (magnetopause-distance Rp Bp nearby-ram)
-                    compression (if (pos? Rp) (min 10.0 (/ Rp (max 1.0e3 r-mp))) 1.0)]
-                (ecs/put-component w eid c/magnetosphere
-                                   {:standoff-distance r-mp
-                                    :compression compression})))
-            world
-            planets)))
+  (let [profile? (:phase0/profile-subsystems? world)
+        [wind-parcels dt-winds]
+        (if profile?
+          (profile/timing
+           #(filterv (fn [eid]
+                       (let [st (ecs/get-component world eid c/matter-state)]
+                         (and (= :nebula st)
+                              (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
+                     (ecs/entities-with world c/matter-state c/position c/mass c/radius)))
+          [(filterv (fn [eid]
+                      (let [st (ecs/get-component world eid c/matter-state)]
+                        (and (= :nebula st)
+                             (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
+                    (ecs/entities-with world c/matter-state c/position c/mass c/radius))
+           0])
+        world (profile/with-profile world {:magnetosphere/filter-winds (double dt-winds)})
+        [wind-data dt-build]
+        (if profile?
+          (profile/timing
+           #(mapv (fn [eid]
+                    {:pos (ecs/get-component world eid c/position)
+                     :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
+                  wind-parcels))
+          [(mapv (fn [eid]
+                   {:pos (ecs/get-component world eid c/position)
+                    :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
+                 wind-parcels)
+           0])
+        world (profile/with-profile world {:magnetosphere/build-wind-data (double dt-build)})]
+    (profile/profile-section
+     world :magnetosphere/compute
+     (fn [w]
+       (let [planets (filterv #(= :planet (ecs/get-component w % c/matter-state))
+                              (ecs/entities-with w c/matter-state c/position c/radius))]
+         (reduce (fn [w eid]
+                   (let [pos    (ecs/get-component w eid c/position)
+                         Rp     (double (or (ecs/get-component w eid c/radius) 0.0))
+                         Bp     (double (or (some-> (ecs/get-component w eid c/b-field) sp/len) 0.0))
+                         cutoff (* 10.0 Rp)
+                         nearby-ram (reduce (fn [acc wd]
+                                              (if (< (sp/dist pos (:pos wd)) cutoff)
+                                                (+ acc (:ram wd))
+                                                acc))
+                                            0.0 wind-data)
+                         r-mp       (magnetopause-distance Rp Bp nearby-ram)
+                         compression (if (pos? Rp) (min 10.0 (/ Rp (max 1.0e3 r-mp))) 1.0)]
+                     (ecs/put-component w eid c/magnetosphere
+                                        {:standoff-distance r-mp
+                                         :compression compression})))
+                 w
+                 planets))))))
 
 (defn physics-systems-parallel
   "The transform systems as write-set systems for the double-buffer fan-out

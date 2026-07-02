@@ -19,6 +19,7 @@
    [domain.ecs.parallel :as par]
    [domain.ecs.tick   :as tick]
    [domain.ecs.components :as c]
+   [domain.profile    :as profile]
    [domain.spatial.index :as idx]))
 
 (defn cubic-spline-dw-dq
@@ -271,14 +272,17 @@
                                                c/density c/pressure c/mass c/radius)
                    all-data (mapv #(entity->hydro-data world %) eids)
                    active   (filterv #(hydro-active? (:state %)) all-data)
-                   computed (par/par-mapv
-                             (fn [data]
-                               (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
-                                     [nbrs grads] (cache-neighbors-and-gradients
-                                                   world data radius-fn hydro-active?
-                                                   :gradient-pressure)]
-                                 [(:eid data) (pressure-gradient-acceleration data nbrs grads)]))
-                             active)
+                   computed (profile/profile-section
+                             world :hydro/compute
+                             (fn [_world]
+                               (par/par-mapv
+                                (fn [data]
+                                  (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
+                                        [nbrs grads] (cache-neighbors-and-gradients
+                                                      world data radius-fn hydro-active?
+                                                      :gradient-pressure)]
+                                    [(:eid data) (pressure-gradient-acceleration data nbrs grads)]))
+                                active)))
                    cell     (reduce (fn [m [eid a]]
                                       (if (lf/finite-vec3? a) (assoc m eid a) m))
                                     {} computed)]

@@ -26,6 +26,7 @@
    [domain.ecs.core   :as ecs]
    [domain.ecs.parallel :as par]
    [domain.ecs.tick   :as tick]
+   [domain.profile    :as profile]
    [domain.spatial.index :as idx]
    [domain.ecs.components :as c]))
 
@@ -461,42 +462,48 @@
 (defn field-system
   "Double-buffer write-set system: SOLE writer of b-field.
 
-   Magnetic flux Φ = B·R² is frozen into a body when it condenses and conserved
-   as it contracts, so B = Φ/R² amplifies as Structure shrinks the radius — ideal
-   flux freezing (B ∝ 1/R² ∝ ρ^{2/3}) — while Φ itself decays by Ohmic/ambipolar
-   resistivity (real only in dense cores). Diffuse :nebula gas keeps its seeded
-   field with the same light resistive decay. Replaces collapse's flux-freezing
-   and em-system's b-field decay; Φ (frozen-flux) is the reference that turns the
-   amplification into a derivation from the radius Structure owns."
+    Magnetic flux Φ = B·R² is frozen into a body when it condenses and conserved
+    as it contracts, so B = Φ/R² amplifies as Structure shrinks the radius — ideal
+    flux freezing (B ∝ 1/R² ∝ ρ^{2/3}) — while Φ itself decays by Ohmic/ambipolar
+    resistivity (real only in dense cores). Diffuse :nebula gas keeps its seeded
+    field with the same light resistive decay. Replaces collapse's flux-freezing
+    and em-system's b-field decay; Φ (frozen-flux) is the reference that turns the
+    amplification into a derivation from the radius Structure owns."
   [dt]
   {:id     :field
    :writes #{c/b-field c/frozen-flux}
    :run    (fn [world]
-             (let [eids (ecs/entities-with world c/b-field c/radius)]
-               (reduce
-                (fn [ws eid]
-                  (let [b (ecs/get-component world eid c/b-field)
-                        r (double (or (ecs/get-component world eid c/radius) 0.0))
-                        resolved? (contains? #{:debris :planet :protostar :star}
-                                             (ecs/get-component world eid c/matter-state))]
-                    (if (and (lf/finite-vec3? b) (pos? r))
-                      (if resolved?
-                         ;; flux frozen at condensation, conserved then decayed:
-                         ;; B = Φ/R² — amplifies as R contracts.
-                        (let [flux  (or (ecs/get-component world eid c/frozen-flux)
-                                        (sp/v* b (* r r)))
-                              flux' (resistive-decay flux r dt)
-                              b'    (sp/v* flux' (/ 1.0 (* r r)))]
-                          (if (lf/bounded-b-field? b')
-                            (-> ws (assoc-in [c/b-field eid] b')
-                                (assoc-in [c/frozen-flux eid] flux'))
-                            ws))
-                         ;; diffuse gas: resistive decay only, no flux freezing
-                        (let [b' (resistive-decay b r dt)]
-                          (cond-> ws (lf/bounded-b-field? b') (assoc-in [c/b-field eid] b'))))
-                      ws)))
-                {}
-                eids)))})
+             (profile/profile-sections
+              world
+              [[:field/scan
+                (fn [w]
+                  {:eids (ecs/entities-with w c/b-field c/radius)})]
+               [:field/compute
+                (fn [{:keys [eids]}]
+                  (reduce
+                   (fn [ws eid]
+                     (let [b (ecs/get-component world eid c/b-field)
+                           r (double (or (ecs/get-component world eid c/radius) 0.0))
+                           resolved? (contains? #{:debris :planet :protostar :star}
+                                                (ecs/get-component world eid c/matter-state))]
+                       (if (and (lf/finite-vec3? b) (pos? r))
+                         (if resolved?
+                            ;; flux frozen at condensation, conserved then decayed:
+                            ;; B = Φ/R² — amplifies as R contracts.
+                           (let [flux  (or (ecs/get-component world eid c/frozen-flux)
+                                           (sp/v* b (* r r)))
+                                 flux' (resistive-decay flux r dt)
+                                 b'    (sp/v* flux' (/ 1.0 (* r r)))]
+                             (if (lf/bounded-b-field? b')
+                               (-> ws (assoc-in [c/b-field eid] b')
+                                   (assoc-in [c/frozen-flux eid] flux'))
+                               ws))
+                            ;; diffuse gas: resistive decay only, no flux freezing
+                           (let [b' (resistive-decay b r dt)]
+                             (cond-> ws (lf/bounded-b-field? b') (assoc-in [c/b-field eid] b'))))
+                         ws)))
+                   {}
+                   eids))]]))})
 
 (defn lorentz-acceleration-system
   "Double-buffer write-set system: Lorentz acceleration a = (∇×B)×B/(μ₀ρ) and
@@ -512,26 +519,31 @@
                                                c/density c/angular-momentum)
                    all-data (mapv #(entity->em-data world %) eids)
                    active   (filterv #(em-active? (:state %)) all-data)
-                   computed (par/par-mapv
-                             (fn [data]
-                               (let [h       (* 2.0 (double (or (:radius data) 1.0)))
-                                     [nbrs grads] (em-neighbors-and-curl-gradients world data h)
-                                     curl-b  (curl-estimate (:b-field data) (:density data)
-                                                            (:position data) nbrs grads)
-                                     accel   (capped-lorentz-acceleration data curl-b)
-                                     torque  (magnetic-braking-torque data dt)]
-                                 [(:eid data) accel torque]))
-                             active)
+                   [computed dt-compute] (profile/timing
+                                          #(par/par-mapv
+                                            (fn [data]
+                                              (let [h       (* 2.0 (double (or (:radius data) 1.0)))
+                                                    [nbrs grads] (em-neighbors-and-curl-gradients world data h)
+                                                    curl-b  (curl-estimate (:b-field data) (:density data)
+                                                                           (:position data) nbrs grads)
+                                                    accel   (capped-lorentz-acceleration data curl-b)
+                                                    torque  (magnetic-braking-torque data dt)]
+                                                [(:eid data) accel torque]))
+                                            active))
                    accel-cell (reduce (fn [m [eid a _]]
                                         (if (lf/finite-vec3? a) (assoc m eid a) m))
                                       {} computed)
                    torque-cell (reduce (fn [m [eid _ t]]
                                          (if (lf/finite-vec3? t) (assoc m eid t) m))
-                                       {} computed)]
-               (merge
-                (tick/contribution-write-set
-                 c/accel-lorentz accel-cell
-                 (keys (get-in world [:components c/accel-lorentz])))
-                (tick/contribution-write-set
-                 c/torque-em torque-cell
-                 (keys (get-in world [:components c/torque-em]))))))})
+                                       {} computed)
+                   ws (merge (tick/contribution-write-set
+                              c/accel-lorentz accel-cell
+                              (keys (get-in world [:components c/accel-lorentz])))
+                             (tick/contribution-write-set
+                              c/torque-em torque-cell
+                              (keys (get-in world [:components c/torque-em]))))]
+               (if (:phase0/profile-subsystems? world)
+                 (assoc ws :phase0/_profile (merge-with +
+                                                        (or (:phase0/_profile ws) {})
+                                                        {:em-lorentz/compute (double dt-compute)}))
+                 ws)))})

@@ -30,7 +30,7 @@
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.parallel    :as par]
-   [domain.ecs.tick        :as tick]  ;; removed sentinel
+   [domain.profile         :as profile]
    [domain.stellar        :as stellar]
    [domain.intervention   :as intervention]
    [law.stellar           :as law]
@@ -241,26 +241,43 @@
                                 c/mass c/radius c/body-kind)
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
-        pairs (par/par-mapv
-               (fn [eid]
-                 (let [a   (sum-vec-influences world eid accel-sources)
-                       dv  (sum-vec-influences world eid dv-sources)
-                       v   (ecs/get-component world eid c/velocity)
-                       x   (ecs/get-component world eid c/position)
-                       m0  (double (or (ecs/get-component world eid c/mass) 0.0))
-                       v1  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
-                       x1  (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
-                   (if-let [pkts (get absorbs eid)]
-                     (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
-                       [eid v-blend x-blend])
-                     [eid v1 x1])))
-               eids)]
-    (reduce (fn [ws [eid v x]]
-              (-> ws
-                  (assoc-in [c/velocity eid] v)
-                  (assoc-in [c/position eid] x)))
-            {}
-            pairs)))
+        profiling? (:phase0/profile-subsystems? world)
+        ;; Phase 1: accumulate accelerations from all influence cells.
+        force-fn #(into {} (par/par-mapv
+                            (fn [eid] [eid (sum-vec-influences world eid accel-sources)])
+                            eids))
+        [forces dt-force] (if profiling?
+                            (profile/timing force-fn)
+                            [(force-fn) nil])
+        ;; Phase 2: symplectic leapfrog + COM blend from absorbed packets.
+        leapfrog-fn #(reduce (fn [ws [eid v x]]
+                               (-> ws
+                                   (assoc-in [c/velocity eid] v)
+                                   (assoc-in [c/position eid] x)))
+                             {}
+                             (par/par-mapv
+                              (fn [eid]
+                                (let [a   (get forces eid zero3)
+                                      dv  (sum-vec-influences world eid dv-sources)
+                                      v   (ecs/get-component world eid c/velocity)
+                                      x   (ecs/get-component world eid c/position)
+                                      m0  (double (or (ecs/get-component world eid c/mass) 0.0))
+                                      v1  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
+                                      x1  (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
+                                  (if-let [pkts (get absorbs eid)]
+                                    (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
+                                      [eid v-blend x-blend])
+                                    [eid v1 x1])))
+                              eids))
+        [ws dt-leap] (if profiling?
+                       (profile/timing leapfrog-fn)
+                       [(leapfrog-fn) nil])]
+    (if profiling?
+      (assoc ws :phase0/_profile
+             (merge-with + (or (:phase0/_profile ws) {})
+                         {:integrator/force-accum (double dt-force)
+                          :integrator/leapfrog (double dt-leap)}))
+      ws)))
 
 (defn- kinematics-ws-soa
   "SoA-aware position + velocity updater. Reads positions/velocities/masses from
@@ -288,35 +305,54 @@
                                   [ax ay az]))
                               [0.0 0.0 0.0]
                               cells))
-        pairs       (par/par-mapv
-                     (fn [idx]
-                       (let [eid        (nth eids idx)
-                             [ax ay az] (sum-vec accel-cells eid)
-                             [dvx dvy dvz] (sum-vec dv-cells eid)
-                             vx0        (aget ^doubles vx idx)
-                             vy0        (aget ^doubles vy idx)
-                             vz0        (aget ^doubles vz idx)
-                             px0        (aget ^doubles px idx)
-                             py0        (aget ^doubles py idx)
-                             pz0        (aget ^doubles pz idx)
-                             m0         (aget ^doubles mass idx)
-                             vx1        (+ vx0 (* ax dt) dvx)
-                             vy1        (+ vy0 (* ay dt) dvy)
-                             vz1        (+ vz0 (* az dt) dvz)
-                             px1        (- (+ px0 (* vx1 dt)) fox)
-                             py1        (- (+ py0 (* vy1 dt)) foy)
-                             pz1        (- (+ pz0 (* vz1 dt)) foz)]
-                         (if-let [pkts (get absorbs eid)]
-                           (let [[v-blend x-blend _] (com-blend [vx1 vy1 vz1] [px1 py1 pz1] m0 pkts)]
-                             [eid v-blend x-blend])
-                           [eid [vx1 vy1 vz1] [px1 py1 pz1]])))
-                     (range n))]
-    (reduce (fn [ws [eid v x]]
-              (-> ws
-                  (assoc-in [c/velocity eid] v)
-                  (assoc-in [c/position eid] x)))
-            {}
-            pairs)))
+        profiling?  (:phase0/profile-subsystems? world)
+        ;; Phase 1: accumulate accelerations from all influence cells.
+        force-fn    #(into {} (par/par-mapv
+                               (fn [idx]
+                                 (let [eid (nth eids idx)]
+                                   [eid (sum-vec accel-cells eid)]))
+                               (range n)))
+        [forces dt-force] (if profiling?
+                            (profile/timing force-fn)
+                            [(force-fn) nil])
+        ;; Phase 2: symplectic leapfrog + COM blend from absorbed packets.
+        leapfrog-fn #(reduce (fn [ws [eid v x]]
+                               (-> ws
+                                   (assoc-in [c/velocity eid] v)
+                                   (assoc-in [c/position eid] x)))
+                             {}
+                             (par/par-mapv
+                              (fn [idx]
+                                (let [eid        (nth eids idx)
+                                      [ax ay az] (get forces eid [0.0 0.0 0.0])
+                                      [dvx dvy dvz] (sum-vec dv-cells eid)
+                                      vx0        (aget ^doubles vx idx)
+                                      vy0        (aget ^doubles vy idx)
+                                      vz0        (aget ^doubles vz idx)
+                                      px0        (aget ^doubles px idx)
+                                      py0        (aget ^doubles py idx)
+                                      pz0        (aget ^doubles pz idx)
+                                      m0         (aget ^doubles mass idx)
+                                      vx1        (+ vx0 (* ax dt) dvx)
+                                      vy1        (+ vy0 (* ay dt) dvy)
+                                      vz1        (+ vz0 (* az dt) dvz)
+                                      px1        (- (+ px0 (* vx1 dt)) fox)
+                                      py1        (- (+ py0 (* vy1 dt)) foy)
+                                      pz1        (- (+ pz0 (* vz1 dt)) foz)]
+                                  (if-let [pkts (get absorbs eid)]
+                                    (let [[v-blend x-blend _] (com-blend [vx1 vy1 vz1] [px1 py1 pz1] m0 pkts)]
+                                      [eid v-blend x-blend])
+                                    [eid [vx1 vy1 vz1] [px1 py1 pz1]])))
+                              (range n)))
+        [ws dt-leap] (if profiling?
+                       (profile/timing leapfrog-fn)
+                       [(leapfrog-fn) nil])]
+    (if profiling?
+      (assoc ws :phase0/_profile
+             (merge-with + (or (:phase0/_profile ws) {})
+                         {:integrator/force-accum (double dt-force)
+                          :integrator/leapfrog (double dt-leap)}))
+      ws)))
 
 (defn mass-ws
   "Mass. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass) — the per-source mass
@@ -480,17 +516,32 @@
    Composes the per-field updaters (each writes a disjoint set of components, so
    the fragments merge cleanly). Sole writer of position, velocity, temperature,
    composition, angular-momentum, spin (and, as the lifecycle milestone lands,
-   mass). Uses the `:phase0/physics-soa` cache for kinematics when present."
+   mass). Uses the `:phase0/physics-soa` cache for kinematics when present.
+
+   Each major phase is wrapped with `profile/profile-section`; their
+   `:phase0/_profile` maps are merged into the returned write-set so the
+   benchmark harness can report subsystem timings."
   [dt]
   {:id     :integrator
    :writes #{c/position c/velocity c/mass c/temperature c/composition
              c/angular-momentum c/spin}
    :run    (fn [world]
-             (let [kin (if-let [soa (:phase0/physics-soa world)]
-                         (kinematics-ws-soa world dt soa)
-                         (kinematics-ws world dt))]
-               (merge kin
-                      (mass-ws world)
-                      (temperature-ws world dt)
-                      (composition-ws world)
-                      (rotation-ws world))))})
+             (let [kin  (if-let [soa (:phase0/physics-soa world)]
+                          (kinematics-ws-soa world dt soa)
+                          (kinematics-ws world dt))
+                   mass (profile/profile-section
+                         world :integrator/mass
+                         (fn [_world] (mass-ws world)))
+                   temp (profile/profile-section
+                         world :integrator/temperature
+                         (fn [_world] (temperature-ws world dt)))
+                   comp (profile/profile-section
+                         world :integrator/composition
+                         (fn [_world] (composition-ws world)))
+                   rot  (profile/profile-section
+                         world :integrator/rotation
+                         (fn [_world] (rotation-ws world)))
+                   profile (apply merge-with +
+                                  (map #(or (:phase0/_profile %) {}) [kin mass temp comp rot]))]
+               (cond-> (merge kin mass temp comp rot)
+                 (seq profile) (assoc :phase0/_profile profile))))})

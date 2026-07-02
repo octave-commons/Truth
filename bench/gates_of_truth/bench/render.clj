@@ -11,6 +11,8 @@
   (:require
    [domain.phase0         :as phase0]
    [infra.render          :as render]
+   [infra.render.units    :as units]
+   [infra.camera          :as cam]
    [shape.spatial         :as sp])
   (:import
    (org.lwjgl.glfw GLFW)
@@ -68,22 +70,23 @@
   [width height]
   (render/init-glfw)
   (let [window (create-offscreen-window width height)]
-    {:window        window
-     :width         width
-     :height        height
-     :body-program  (render/create-program)
-     :line-program  (render/create-line-program)
-     :hud-program   (render/create-hud-program)
-     :volume-program (render/create-volume-program)
-     :mesh          (render/upload-mesh (render/make-sphere-mesh 2))
-     :fbo           (create-fbo width height)}))
+     {:window        window
+      :width         width
+      :height        height
+      :body-program  (render/create-program)
+      :line-program  (render/create-line-program)
+      :sprite-program (render/create-sprite-program)
+      :hud-program   (render/create-hud-program)
+      :volume-program (render/create-volume-program)
+      :mesh          (render/upload-mesh (render/make-sphere-mesh 2))
+      :fbo           (create-fbo width height)}))
 
-(defn- destroy-render-state [{:keys [window body-program line-program
+(defn- destroy-render-state [{:keys [window body-program line-program sprite-program
                                      hud-program volume-program mesh fbo]}]
   (render/delete-volume nil)
   (delete-mesh mesh)
   (delete-fbo fbo)
-  (doseq [p [body-program line-program hud-program volume-program]]
+  (doseq [p [body-program line-program sprite-program hud-program volume-program]]
     (when (and p (pos? (int p)))
       (GL20/glDeleteProgram p)))
   (GLFW/glfwDestroyWindow window)
@@ -95,10 +98,10 @@
 ;; ---------------------------------------------------------------------------
 
 (defn- camera-for-world [world]
-  (render/update-camera-for-world
-   (render/make-camera 60.0)
+  (cam/update-camera-for-world
+   (cam/make-camera 60.0)
    world
-   (assoc (render/default-camera-settings)
+   (assoc (cam/default-camera-settings)
           :mode :fit-all :smoothing 1.0)))
 
 (defn- render-frame
@@ -106,12 +109,14 @@
    `volume?` true uses adaptive LOD froxels (the new default)."
   [rs world volume?]
   (let [camera (camera-for-world world)
+        ctx    (units/make-context camera {:width (:width rs) :height (:height rs)})
         bodies (render/phase0-bodies-from-world world)
         volume (when volume?
-                 (render/frame-volume world (:volume-program rs) :medium))]
+                 (render/frame-volume ctx world (:volume-program rs) :medium))]
     (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo (:fbo rs)))
     (render/render-scene {:body-program (:body-program rs)
                           :line-program (:line-program rs)
+                          :sprite-program (:sprite-program rs)
                           :hud-program (:hud-program rs)
                           :hud (render/hud-rects-from-world world)
                           :hud-text (concat (render/hud-text-from-world world)
@@ -172,21 +177,23 @@
     (println "\n  Froxel resolution scaling (500 particles):")
     (doseq [res [32 64 96 128]]
       (quick-bench (format "render-frame (500 particles, froxel res=%d)" res)
-        (fn [] (let [camera (camera-for-world w500)
-                     bodies (render/phase0-bodies-from-world w500)
-                     volume (render/frame-volume w500 (:volume-program rs) res)]
+                 (fn [] (let [camera (camera-for-world w500)
+                              ctx    (units/make-context camera {:width (:width rs) :height (:height rs)})
+                              bodies (render/phase0-bodies-from-world w500)
+                              volume (render/frame-volume ctx w500 (:volume-program rs) res)]
                  (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo (:fbo rs)))
                  (render/render-scene {:body-program (:body-program rs)
-                                       :line-program (:line-program rs)
-                                       :hud-program (:hud-program rs)
-                                       :hud []
-                                       :hud-text []
-                                       :volume volume}
-                                      (:mesh rs)
-                                      camera
-                                      (:width rs) (:height rs)
-                                      bodies
-                                      0.0)
+                                        :line-program (:line-program rs)
+                                        :sprite-program (:sprite-program rs)
+                                        :hud-program (:hud-program rs)
+                                        :hud []
+                                        :hud-text []
+                                        :volume volume}
+                                       (:mesh rs)
+                                       camera
+                                       (:width rs) (:height rs)
+                                       bodies
+                                       0.0)
                  (render/delete-volume volume)
                  (GL11/glFlush)
                  (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)

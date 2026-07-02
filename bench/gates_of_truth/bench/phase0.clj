@@ -135,7 +135,8 @@
 (defn- profile-subs
   "Return a sorted seq of [subsystem ms] from :phase0/_profile on `world`."
   [world]
-  (sort-by val > (get world :phase0/_profile {})))
+  (sort-by val > (into {} (map (fn [[k v]] [k (/ (double v) 1e6)]))
+                       (get world :phase0/_profile {}))))
 
 (defn profile-step-physics-systems-on
   "Run each system in physics-systems-parallel on the given world and report
@@ -143,13 +144,14 @@
    :phase0/profile-subsystems? is true."
   [w label]
   (println (format "\n  Per-system step-physics profile (%s):" label))
-  (let [systems (phase0/physics-systems-parallel w)]
+  (let [w       (assoc w :phase0/profile-subsystems? true)
+        systems (phase0/physics-systems-parallel w)]
     (doseq [{:keys [id run]} systems]
       (let [t0 (System/nanoTime)
             w' (run w)
             t1 (System/nanoTime)]
         (println (format "  %-40s %.3f ms" (str id) (nanos->ms (- t1 t0))))
-        (when (and (:phase0/profile-subsystems? w) (map? w') (seq (:phase0/_profile w')))
+        (when (and (map? w') (seq (:phase0/_profile w')))
           (doseq [[sub ms] (profile-subs w')]
             (println (format "    %-38s %.3f ms" (str sub) ms))))))))
 

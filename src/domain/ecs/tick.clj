@@ -25,7 +25,7 @@
    the frozen snapshot and masking to its owned component types — the migration
    bridge until each system is rewritten to emit a write-set directly."
   (:require
-    [domain.ecs.core :as ecs]))
+   [domain.ecs.core :as ecs]))
 
 ;; Sentinel: an owner declares this entity no longer has the component.
 ;; A distinct object so it can never collide with a legitimate component value.
@@ -38,30 +38,34 @@
 ;; ---------------------------------------------------------------------------
 
 (defn apply-write-set
-  "Fold one write-set `{ctype {eid value-or-removed}}` onto `world`. Pure."
+  "Fold one write-set `{ctype {eid value-or-removed}}` onto `world`. Pure.
+   A top-level `:phase0/_profile` entry, if present, is merged into the
+   world's profile map rather than treated as a component."
   [world ws]
-  (reduce-kv
-    (fn [w ctype eid->v]
-      (reduce-kv
+  (let [world (if-let [prof (:phase0/_profile ws)]
+                (update world :phase0/_profile (fnil merge-with + {}) prof)
+                world)]
+    (reduce-kv
+     (fn [w ctype eid->v]
+       (reduce-kv
         (fn [w eid v]
           (if (removed? v)
             (ecs/remove-component w eid ctype)
             (ecs/put-component w eid ctype v)))
-        w
-        eid->v))
-    world
-    ws))
+        w eid->v))
+     world
+     (dissoc ws :phase0/_profile))))
 
 (defn colliding-ctypes
   "Given `[[system-id write-set] ...]`, return `{ctype [system-id ...]}` for any
-   component type written by more than one system — the runtime single-writer
-   violations. Empty map ⇒ write-sets are disjoint."
+   component type written by more than one system. The transient
+   `:phase0/_profile` key is excluded from conflict detection."
   [labeled-wsets]
   (->> labeled-wsets
        (reduce (fn [m [id ws]]
                  (reduce (fn [m ctype] (update m ctype (fnil conj []) id))
                          m
-                         (keys ws)))
+                         (disj (set (keys ws)) :phase0/_profile)))
                {})
        (into (sorted-map)
              (filter (fn [[_ ids]] (> (count ids) 1))))))
@@ -116,20 +120,20 @@
    `before` but gone in `after` → `removed`."
   [before after owned]
   (reduce
-    (fn [ws ctype]
-      (let [b (get-in before [:components ctype] {})
-            a (get-in after  [:components ctype] {})]
-        (if (identical? a b)
-          ws
-          (let [changed (reduce-kv (fn [m eid v]
-                                     (if (= v (get b eid)) m (assoc m eid v)))
-                                   {} a)
-                gone    (reduce-kv (fn [m eid _]
-                                     (if (contains? a eid) m (assoc m eid removed)))
-                                   changed b)]
-            (cond-> ws (seq gone) (assoc ctype gone))))))
-    {}
-    owned))
+   (fn [ws ctype]
+     (let [b (get-in before [:components ctype] {})
+           a (get-in after  [:components ctype] {})]
+       (if (identical? a b)
+         ws
+         (let [changed (reduce-kv (fn [m eid v]
+                                    (if (= v (get b eid)) m (assoc m eid v)))
+                                  {} a)
+               gone    (reduce-kv (fn [m eid _]
+                                    (if (contains? a eid) m (assoc m eid removed)))
+                                  changed b)]
+           (cond-> ws (seq gone) (assoc ctype gone))))))
+   {}
+   owned))
 
 (defn contribution-write-set
   "Build a single-component write-set for an accumulator contribution.
@@ -150,8 +154,17 @@
    reads the frozen snapshot and emits only changes to `owned` component types.
    Any change the legacy fn made OUTSIDE `owned` is silently dropped — ownership
    is enforced at the boundary, so a mis-declared system can't corrupt another's
-   columns through the fan-out."
+   columns through the fan-out.
+
+   When the input world has `:phase0/profile-subsystems?` true, any
+   `:phase0/_profile` accumulated by the legacy fn is carried onto the returned
+   write-set so the benchmark harness can report subsystem timings."
   [id owned sysfn]
   {:id     id
    :writes owned
-   :run    (fn [world] (diff-write-set world (sysfn world) owned))})
+   :run    (fn [world]
+             (let [after (sysfn world)
+                   ws    (diff-write-set world after owned)]
+               (if (:phase0/profile-subsystems? world)
+                 (assoc ws :phase0/_profile (or (:phase0/_profile after) {}))
+                 ws)))})

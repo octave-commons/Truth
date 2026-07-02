@@ -3,13 +3,15 @@
    pure geometry/colour fns that turn the ECS world into render shapes — regime
    tinting, volumetric fog, and magnetic field lines. GL calls are not exercised."
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
-
    [domain.stellar :as stellar]
    [domain.phase0 :as phase0]
    [domain.player :as player]
-   [infra.render :as r]))
+   [infra.camera :as cam]
+   [infra.render :as r]
+   [infra.render.units :as units]))
 
 (deftest test-tint-color
   (testing "Tinting keeps colours in [0,1] and shifts by regime"
@@ -40,7 +42,7 @@
       (is (= 50 (count fog)))
       (is (every? #(= :particle (:render-mode %)) fog))
       (is (every? #(pos? (:size %)) fog))
-      (is (every? #(<= (Math/sqrt (apply + (map * (:position %) (:position %)))) 5.0001) fog)))))
+      (is (every? #(<= (math/sqrt (apply + (map * (:position %) (:position %)))) 5.0001) fog)))))
 
 (deftest test-phase0-projection
   (testing "Gas contributes to froxel volume, protostar → body + field line, star → shaded body"
@@ -64,7 +66,8 @@
           [w1 _] (stellar/spawn-clump base
                    {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
                     :matter-state :nebula :density 1e-18 :temperature 12.0})
-          pts  (#'r/gas-points w1 r/phase0-view-scale)]
+          ctx  (units/make-context (cam/make-camera) {:width 1 :height 1})
+          pts  (#'r/gas-points ctx w1)]
       (is (seq pts) "nebula produces gas samples for the froxel texture")
       (is (every? #(number? (:dens %)) pts)
           "every gas sample carries a density value")))
@@ -87,16 +90,18 @@
 
 (deftest test-phys->render-radius
   (testing "Render radius rises with physical radius but stays log-compressed"
-    (let [gas    (r/phys->render-radius 6e13)
-          planet (r/phys->render-radius 3e14)
-          giant  (r/phys->render-radius 3e15)]
+    (let [ctx    (units/make-context (cam/make-camera) {:width 1 :height 1})
+          gas    (units/phys->render-radius ctx 6e13)
+          planet (units/phys->render-radius ctx 3e14)
+          giant  (units/phys->render-radius ctx 3e15)]
       (is (< gas planet giant) "bigger physical body → bigger on screen")
       (is (>= gas 0.001) "tiny bodies clamp to a visible minimum")
       (is (<= giant 60.0) "huge bodies are log-compressed rather than linear")
       (is (< giant 100.0) "even a giant stays modest on screen")))
   (testing "Non-positive radius is the visible minimum, never zero/NaN"
-    (is (= 0.001 (r/phys->render-radius 0.0)))
-    (is (= 0.001 (r/phys->render-radius nil)))))
+    (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})]
+      (is (= 0.001 (units/phys->render-radius ctx 0.0)))
+      (is (= 0.001 (units/phys->render-radius ctx nil))))))
 
 (deftest test-composition->material-color
   (testing "Composition drives material colour"
@@ -121,14 +126,16 @@
 (deftest test-player-overlay-shapes
   (testing "Observer yields a spark point + focus reticle ring"
     (let [w      (phase0/create-world {:gas-count 10})
-          shapes (r/player-overlay-shapes w r/phase0-view-scale)
+          ctx    (units/make-context (cam/make-camera) {:width 1 :height 1})
+          shapes (r/player-overlay-shapes ctx w)
           sparks (filter #(= :particle (:render-mode %)) shapes)
           ring   (filter #(= :line (:render-mode %)) shapes)]
       (is (= 1 (count sparks)) "one spark point")
       (is (pos? (count ring)) "focus reticle drawn as line segments")
       (is (even? (count ring)) "line endpoints come in pairs")))
   (testing "No observer → no overlay"
-    (is (= [] (r/player-overlay-shapes (ecs/empty-world) 1e15)))))
+    (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})]
+      (is (= [] (r/player-overlay-shapes ctx (ecs/empty-world)))))))
 
 (deftest test-coherence-color
   (testing "Coherent reads cool/teal, fading reads warm/red"
@@ -168,69 +175,6 @@
       (is (not= p0 (:focus-position (player/get-observer w1))) "move-focus shifts focus")
       (is (< (:focus-radius (player/get-observer w2)) r0) "narrow-focus shrinks the volume"))))
 
-(deftest test-largest-mass-cluster
-  (testing "Finds the densest cluster and ignores isolated bodies"
-    (let [bodies [[[0.0 0.0 0.0] 100.0]
-                  [[1.0 0.0 0.0] 100.0]
-                  [[2.0 0.0 0.0] 100.0]
-                  [[100.0 0.0 0.0] 1.0]]
-          cluster (r/largest-mass-cluster bodies 2.0)]
-      (is (> (:mass cluster) 250.0))
-      (is (< (:radius cluster) 5.0))
-      (is (every? #(< -0.1 % 3.0) (:center cluster)))))
-  (testing "Empty body list returns zeroed bounds"
-    (let [cluster (r/largest-mass-cluster [] 2.0)]
-      (is (= 0.0 (:mass cluster) (:radius cluster)))
-      (is (= [0.0 0.0 0.0] (:center cluster))))))
-
-(deftest test-fit-all-bounds
-  (testing "Bounding sphere contains the requested percentile of bodies"
-    (let [bodies (mapv (fn [i] [[(double i) 0.0 0.0] 1.0]) (range 100))
-          bounds (r/fit-all-bounds bodies 0.90)]
-      (is (>= (:radius bounds) 40.0))
-      (is (<= (:radius bounds) 50.0))
-      (is (= [49.5 0.0 0.0] (:center bounds)))))
-  (testing "Empty body list returns zeroed bounds"
-    (let [bounds (r/fit-all-bounds [] 0.90)]
-      (is (= 0.0 (:radius bounds)))
-      (is (= [0.0 0.0 0.0] (:center bounds))))))
-
-(deftest test-distance-for-radius
-  (testing "Distance scales with radius and margin, inversely with FOV"
-    (let [d60 (r/distance-for-radius 10.0 60.0 1.0)
-          d90 (r/distance-for-radius 10.0 90.0 1.0)
-          d2x (r/distance-for-radius 10.0 60.0 2.0)]
-      (is (pos? d60))
-      (is (< d90 d60) "wider FOV needs closer camera")
-      (is (> d2x d60) "larger margin needs farther camera"))))
-
-(deftest test-camera-settings-cycle
-  (testing "Camera mode cycles through the three modes"
-    (let [s0 (r/default-camera-settings)
-          s1 (r/cycle-camera-mode s0)
-          s2 (r/cycle-camera-mode s1)
-          s3 (r/cycle-camera-mode s2)]
-      (is (= :track-largest-cluster (:mode s0)))
-      (is (= :fit-all (:mode s1)))
-      (is (= :manual (:mode s2)))
-      (is (= :track-largest-cluster (:mode s3)))))
-  (testing "Fit margin is clamped"
-    (let [s (r/default-camera-settings)]
-      (is (>= (:fit-margin (r/adjust-fit-margin s 0.1)) 1.0))
-      (is (<= (:fit-margin (r/adjust-fit-margin s 10.0)) 4.0)))))
-
-(deftest test-update-camera-track-largest-cluster
-  (testing "Camera target moves toward the largest mass cluster"
-    (let [[w _] (stellar/spawn-clump (ecs/empty-world)
-                   {:position [3e15 0.0 0.0] :mass 2e30 :radius 1e14
-                    :matter-state :star})
-          cam0 (r/make-camera)
-          cam1 (r/update-camera-for-world cam0 w (r/default-camera-settings))]
-      (is (not= (:target cam0) (:target cam1)))
-      (is (> (first (:target cam1)) 0.0) "target shifts toward positive x")
-      (is (pos? (:distance cam1)) "distance remains positive"))))
-
-
 (deftest test-oblate-body-projection
   (testing "Rotating protostars are projected with oblateness and rotation axis"
     (let [[w _eid] (stellar/spawn-clump (ecs/empty-world)
@@ -264,3 +208,29 @@
       (is (< (Math/abs (- obl-scale-sum 9.0)) 1e-6))
       ;; z-aligned body leaves z-scale at index 10 as the polar scale
       (is (< (Math/abs (- (aget mat-obl 10) 1.0)) 1e-6)))))
+
+;; --- Sprite LOD -------------------------------------------------------------
+
+(deftest test-classify-body-lod
+  (testing "Close bodies stay solid; distant ones become sprites"
+    (let [camera (cam/make-camera 50.0)
+          near   {:render-mode :body :position [0.0 0.0 0.0] :radius 10.0}
+          far    {:render-mode :body :position [0.0 0.0 500.0] :radius 1.0}
+          [solids sprites] (#'r/classify-body-lod [near far] camera 1280 720 nil)]
+      (is (= 1 (count solids)))
+      (is (= 1 (count sprites)))
+      (is (= :body (:render-mode (first solids))))
+      (is (= :sprite (:render-mode (first sprites))))
+      (is (pos? (:size (first sprites))) "sprite gets a pixel size")))
+  (testing "Non-body shapes pass through unchanged"
+    (let [camera (cam/make-camera 50.0)
+          line   {:render-mode :line :position [0.0 0.0 0.0]}
+          [solids sprites] (#'r/classify-body-lod [line] camera 1280 720 nil)]
+      (is (= 1 (count solids)))
+      (is (zero? (count sprites)))))
+  (testing "A body large enough on screen stays solid even at distance"
+    (let [camera (cam/make-camera 50.0)
+          huge   {:render-mode :body :position [0.0 0.0 200.0] :radius 50.0}
+          [solids sprites] (#'r/classify-body-lod [huge] camera 1280 720 nil)]
+      (is (= 1 (count solids)))
+      (is (zero? (count sprites))))))

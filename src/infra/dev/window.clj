@@ -27,17 +27,16 @@
     [domain.player         :as player]
     [domain.intervention   :as intervention]
     [infra.inspect         :as inspect]
-    [infra.render          :as render])
+    [infra.render          :as render]
+    [infra.render.shader   :as sh]
+    [infra.render.units    :as units]
+    [infra.camera          :as cam])
   (:import
     (org.lwjgl.glfw GLFW)
-    (org.lwjgl.opengl GL15 GL20 GL30)))
+    (org.lwjgl.opengl GL15 GL30)))
 
 (defonce service-state
   (atom nil))
-
-(defn- delete-program [program]
-  (when (and program (pos? program))
-    (GL20/glDeleteProgram program)))
 
 (defn- delete-mesh [{:keys [vao vbo]}]
   (when (and vao (pos? vao))
@@ -47,22 +46,16 @@
 
 (defn- ensure-resources [config-atom]
   (swap! config-atom
-         (fn [{:keys [body-program line-program hud-program mesh subdivisions requested-subdivisions] :as cfg}]
+         (fn [{:keys [body-program line-program sprite-program hud-program mesh subdivisions requested-subdivisions] :as cfg}]
            (let [subdivisions (or requested-subdivisions subdivisions 2)
-                 cfg          (assoc cfg :subdivisions subdivisions)]
+                 cfg          (assoc cfg :subdivisions subdivisions)
+                 programs     (sh/ensure-builtins!)]
              (cond-> cfg
-               (nil? body-program)
-               (assoc :body-program (render/create-program))
-
-               (nil? line-program)
-               (assoc :line-program (render/create-line-program))
-
-               (nil? hud-program)
-               (assoc :hud-program (render/create-hud-program))
-
-               (and (:volumetric? cfg true) (nil? (:volume-program cfg)))
-               (assoc :volume-program (render/create-volume-program))
-
+               true (assoc :body-program (:body programs)
+                           :line-program (:line programs)
+                           :sprite-program (:sprite programs)
+                           :hud-program (:hud programs)
+                           :volume-program (:volume programs))
                (or (nil? mesh)
                    (not= subdivisions requested-subdivisions))
                (assoc :mesh (render/upload-mesh (render/make-sphere-mesh subdivisions))
@@ -125,8 +118,9 @@
           _      (GLFW/glfwGetFramebufferSize window wbuf hbuf)
           fb-w   (max 1 (aget wbuf 0))
           fb-h   (max 1 (aget hbuf 0))
-          _      (swap! camera-atom render/update-camera-for-world w (:camera-settings cfg (render/default-camera-settings)))
+          _      (swap! camera-atom cam/update-camera-for-world w (:camera-settings cfg (cam/default-camera-settings)))
           cam    @camera-atom
+          ctx    (units/make-context cam {:width fb-w :height fb-h})
           ;; Live cursor in framebuffer pixels (scale window→fb for HiDPI), shared
           ;; by mouse-follow, hover, and click picking.
           [cur-sx cur-sy] (when-let [cur (:cursor cfg)]
@@ -139,14 +133,14 @@
           ;; imperceptible). Keeps the existing gentle pull-toward-focus as the
           ;; free 'observation' nudge; strong warps will be a paid action.
           _      (when cur-sx
-                   (let [wp (inspect/cursor->world cam cur-sx cur-sy fb-w fb-h render/phase0-view-scale)]
+                      (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
                      (swap! world-atom player/update-observer
                             (fn [o] (player/set-focus o wp (:focus-radius o) (:focus-intensity o))))))
           ;; PAID: resolve a warp request (key G / Shift+G) at the cursor — spends
           ;; agency, no-op if unaffordable. The warp then bends nearby bodies.
           _      (when-let [ar (:action-request cfg)]
                    (when cur-sx
-                     (let [wp (inspect/cursor->world cam cur-sx cur-sy fb-w fb-h render/phase0-view-scale)]
+                        (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
                        (swap! world-atom intervention/place (:kind ar) wp)))
                    (swap! config-atom dissoc :action-request))
           ;; Resolve a pending click into a selected entity (picks against the same
@@ -156,7 +150,7 @@
                          _    (GLFW/glfwGetWindowSize window winw winh)
                          sx   (* (double (:x prn-val)) (/ (double fb-w) (max 1 (aget winw 0))))
                          sy   (* (double (:y prn-val)) (/ (double fb-h) (max 1 (aget winh 0))))
-                         eid  (inspect/pick-entity bodies cam sx sy fb-w fb-h)]
+                         eid  (inspect/pick-entity ctx bodies sx sy)]
                      (swap! config-atom #(-> % (dissoc :pick-request) (assoc :selection eid)))))
           ;; Selection survives only while its body still has a render shape;
           ;; once it merges/dissolves the selection clears itself.
@@ -165,11 +159,11 @@
           _      (when (and (:selection @config-atom) (nil? sel))
                    (swap! config-atom dissoc :selection))
           ;; Hover: faint halo on whatever the cursor is over (passive cue).
-          hover    (when cur-sx (inspect/pick-entity bodies cam cur-sx cur-sy fb-w fb-h))
-          overlay  (concat (when sel (inspect/selection-overlay-shapes w sel bodies cam))
-                           (inspect/hover-overlay-shapes bodies hover sel cam)
-                           (inspect/intervention-overlay-shapes w cam render/phase0-view-scale))
-          card     (when sel (inspect/inspector-card w sel bodies cam fb-w fb-h))
+          hover    (when cur-sx (inspect/pick-entity ctx bodies cur-sx cur-sy))
+          overlay  (concat (when sel (inspect/selection-overlay-shapes ctx w sel bodies))
+                           (inspect/hover-overlay-shapes ctx bodies hover sel)
+                            (inspect/intervention-overlay-shapes ctx w))
+          card     (when sel (inspect/inspector-card ctx w sel bodies))
           controls (render/controls-hud w fb-w fb-h)
           bodies   (if (seq overlay) (into (vec bodies) overlay) bodies)
           hud      (-> (vec (render/hud-rects-from-world w))
@@ -180,10 +174,11 @@
                            (:text controls)
                            (:text card))
           volume   (when (:volumetric? cfg true)
-                     (render/frame-volume w (:volume-program cfg)
+                     (render/frame-volume ctx w (:volume-program cfg)
                                           (:volume-res cfg :medium)))]
       (render/render-scene {:body-program (:body-program cfg)
                             :line-program (:line-program cfg)
+                            :sprite-program (:sprite-program cfg)
                             :hud-program (:hud-program cfg)
                             :hud hud
                             :hud-text hud-text
@@ -229,12 +224,13 @@
      (throw (IllegalStateException. "Dev window already running. Call stop! first.")))
    (let [width          (get opts :width 1280)
          height         (get opts :height 720)
-         camera-atom    (atom (get opts :camera (render/make-camera)))
-         config-atom    (atom (merge (render/default-camera-settings)
+          camera-atom    (atom (get opts :camera (cam/make-camera)))
+          config-atom    (atom (merge (cam/default-camera-settings)
                                      {:width width :height height
-                                      :body-program nil
-                                      :line-program nil
-                                      :hud-program nil
+                                       :body-program nil
+                                       :line-program nil
+                                       :sprite-program nil
+                                       :hud-program nil
                                       :volume-program nil
                                       ;; volumetric ray-marched fog is the default look
                                       :volumetric? true
@@ -271,15 +267,14 @@
   (println "Dev window stopped."))
 
 (defn reload-shaders!
-  "Force the window thread to recompile both shader programs on the next frame.
-   Call this after editing `infra.render` shader vars from the REPL."
+  "Force the window thread to recompile shader programs on the next frame.
+   Call this after editing `infra.render.shader` program vars from the REPL."
   []
+  (sh/invalidate-all!)
   (when-let [config-atom (:config @service-state)]
     (swap! config-atom
            (fn [cfg]
-             (doseq [p [:body-program :line-program :hud-program :volume-program]]
-               (delete-program (get cfg p)))
-             (assoc cfg :body-program nil :line-program nil
+             (assoc cfg :body-program nil :line-program nil :sprite-program nil
                         :hud-program nil :volume-program nil)))))
 
 (defn reload-mesh!
@@ -296,9 +291,9 @@
   "Reset the camera and its settings to the default orbit position."
   []
   (when-let [camera-atom (:camera @service-state)]
-    (reset! camera-atom (render/make-camera)))
+    (reset! camera-atom (cam/make-camera)))
   (when-let [config-atom (:config @service-state)]
-    (swap! config-atom merge (render/default-camera-settings))))
+    (swap! config-atom merge (cam/default-camera-settings))))
 
 (defn take-screenshot!
   "Request a screenshot and block until it has been written to `path`.
