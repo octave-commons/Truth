@@ -22,24 +22,6 @@
           :velocity (comps c/velocity)})
        (ecs/all-of world c/position c/velocity c/mass c/radius c/body-kind)))
 
-(defn- soa->bodies
-  "Build body maps directly from the `:phase0/physics-soa` cache, avoiding
-   per-body ECS component lookups for the Barnes-Hut gravity walk."
-  [soa]
-  (let [{:keys [eids n mass radius px py pz vx vy vz]} soa]
-    (mapv (fn [idx eid]
-            {:id       eid
-             :mass     (aget ^doubles mass idx)
-             :radius   (aget ^doubles radius idx)
-             :position [(aget ^doubles px idx)
-                        (aget ^doubles py idx)
-                        (aget ^doubles pz idx)]
-             :velocity [(aget ^doubles vx idx)
-                        (aget ^doubles vy idx)
-                        (aget ^doubles vz idx)]})
-          (range n)
-          eids)))
-
 (defn- apply-body-back
   "Write updated position and velocity for eid back into world."
   [world eid body]
@@ -106,23 +88,23 @@
    in the tree. Self-gravity is skipped by the Barnes–Hut walker at leaf nodes
    via the body's `:id`.
 
-   When `:phase0/physics-soa` is present, body maps are projected directly from
-   the primitive arrays to avoid per-body ECS lookups; otherwise the already
-   projected `:phase0/spatial-items` are used as a fallback."
+   When `:phase0/physics-soa` is present, the Barnes-Hut tree is walked directly
+   against the primitive arrays via `bh/acceleration-for-soa`; otherwise the
+   already projected `:phase0/spatial-items` are used as a fallback."
   [G theta softening]
   {:id     :gravity
    :writes #{c/accel-gravity}
    :run    (fn [world]
-             (let [tree (:phase0/spatial-tree world)
-                   bodies (if-let [soa (:phase0/physics-soa world)]
-                            (soa->bodies soa)
-                            (:phase0/spatial-items world (world->bodies world)))]
-               {c/accel-gravity
-                (into {}
-                      (par/par-mapv
-                       (fn [body]
-                         [(:id body) (bh/acceleration G theta softening tree body)])
-                       bodies))}))})
+             (let [tree (:phase0/spatial-tree world)]
+               (if-let [soa (:phase0/physics-soa world)]
+                 {c/accel-gravity (bh/acceleration-for-soa G theta softening tree soa nil)}
+                 (let [bodies (:phase0/spatial-items world (world->bodies world))]
+                   {c/accel-gravity
+                    (into {}
+                          (par/par-mapv
+                           (fn [body]
+                             [(:id body) (bh/acceleration G theta softening tree body)])
+                           bodies))}))))})
 
 (defn motion-integration
   "Write-set system: sum all acceleration contributions and advance the body by

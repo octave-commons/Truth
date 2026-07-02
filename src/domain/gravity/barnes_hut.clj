@@ -284,6 +284,108 @@
                     (.push stack child))))))))
       [(aget acc 0) (aget acc 1) (aget acc 2)])))
 
+;; --- SoA-aware traversal ----------------------------------------------------
+
+(defn- traverse-soa
+  "Explicit-stack scalar Barnes–Hut traversal reading source bodies from SoA.
+
+   Returns [ax ay az] for target coordinates (px,py,pz). `self-eid` is skipped
+   at leaf nodes, as is any leaf body whose :id is not present in `id->idx`.
+   Internal nodes use the node's aggregate :mass and :com. The tree itself is
+   unchanged; only local stack and accumulator state is mutated."
+  [G soft2 theta2 px py pz self-eid ^java.util.HashMap id->idx soa node]
+  (if (nil? node)
+    [0.0 0.0 0.0]
+    (let [G      (double G)
+          soft2  (double soft2)
+          theta2 (double theta2)
+          px     (double px)
+          py     (double py)
+          pz     (double pz)
+          ^objects eids   (:eids soa)
+          ^doubles mass   (:mass soa)
+          ^doubles px-arr (:px soa)
+          ^doubles py-arr (:py soa)
+          ^doubles pz-arr (:pz soa)
+          acc    (double-array 3)
+          stack  (java.util.ArrayDeque.)]
+      (.push stack node)
+      (while (not (.isEmpty stack))
+        (when-let [n (.pop stack)]
+          (if (leaf-node? n)
+            (doseq [body (:bodies n)]
+              (let [bid (:id body)]
+                (when (and (not= bid self-eid)
+                           (.containsKey id->idx bid))
+                  (let [idx   (int (.get id->idx bid))
+                        bx    (aget px-arr idx)
+                        by    (aget py-arr idx)
+                        bz    (aget pz-arr idx)
+                        dx    (- bx px)
+                        dy    (- by py)
+                        dz    (- bz pz)
+                        d2    (+ (* dx dx) (* dy dy) (* dz dz) soft2)
+                        inv-r (* d2 (Math/sqrt d2))
+                        scale (if (pos? inv-r)
+                                (/ (* G (aget mass idx)) inv-r)
+                                0.0)]
+                    (aset acc 0 (+ (aget acc 0) (* dx scale)))
+                    (aset acc 1 (+ (aget acc 1) (* dy scale)))
+                    (aset acc 2 (+ (aget acc 2) (* dz scale)))))))
+            (let [com (:com n)
+                  cx  (double (nth com 0))
+                  cy  (double (nth com 1))
+                  cz  (double (nth com 2))
+                  dx  (- cx px)
+                  dy  (- cy py)
+                  dz  (- cz pz)
+                  d2  (+ (* dx dx) (* dy dy) (* dz dz))
+                  s   (double (:aabb-side n))
+                  s2  (* s s)]
+              (if (or (zero? d2) (< s2 (* theta2 d2)))
+                (let [d2s   (+ d2 soft2)
+                      inv-r (* d2s (Math/sqrt d2s))
+                      scale (if (pos? inv-r)
+                              (/ (* G (double (:mass n))) inv-r)
+                              0.0)]
+                  (aset acc 0 (+ (aget acc 0) (* dx scale)))
+                  (aset acc 1 (+ (aget acc 1) (* dy scale)))
+                  (aset acc 2 (+ (aget acc 2) (* dz scale))))
+                (doseq [child (reverse (:children n))
+                        :when child]
+                  (.push stack child)))))))
+      [(aget acc 0) (aget acc 1) (aget acc 2)])))
+
+(defn acceleration-for-soa
+  "Gravitational acceleration for every entity in the SoA cache.
+
+   Returns a map {eid [ax ay az]} computed by walking the Barnes–Hut tree once
+   per target entity. Reads target positions and source positions/masses directly
+   from the SoA arrays. `tree` must have been built from the same spatial items
+   that produced `soa`. `self-id` is reserved for symmetry with `acceleration`
+   and is ignored; each target skips its own eid."
+  [G theta softening tree soa self-id]
+  (let [soft2   (* (double softening) (double softening))
+        theta2  (* (double theta) (double theta))
+        eids    (:eids soa)
+        ^doubles px-arr (:px soa)
+        ^doubles py-arr (:py soa)
+        ^doubles pz-arr (:pz soa)
+        n       (:n soa)
+        id->idx (java.util.HashMap. (int n))]
+    (dotimes [i n]
+      (.put id->idx (nth eids i) (Integer/valueOf i)))
+    (loop [i 0
+           acc (transient {})]
+      (if (< i n)
+        (let [eid (nth eids i)
+              px  (aget px-arr i)
+              py  (aget py-arr i)
+              pz  (aget pz-arr i)
+              [ax ay az] (traverse-soa G soft2 theta2 px py pz eid id->idx soa tree)]
+          (recur (inc i) (assoc! acc eid [ax ay az])))
+        (persistent! acc)))))
+
 (defn acceleration
   "Compute gravitational acceleration on `body` from all bodies in `tree`.
    G        — gravitational constant

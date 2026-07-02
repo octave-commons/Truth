@@ -87,10 +87,10 @@
                  (not= phase (:phase0/phase w))
                  (phase0/emit-threshold :event/phase-transition {:from (:phase0/phase w) :to phase}))
         world5 (cond-> (assoc world4
-                         :phase0/complexity complexity
-                         :phase0/stats      stats
-                         :phase0/phase      phase
-                         :phase0/sim-time   (+ (:phase0/sim-time world4) (:sim/dt w)))
+                              :phase0/complexity complexity
+                              :phase0/stats      stats
+                              :phase0/phase      phase
+                              :phase0/sim-time   (+ (:phase0/sim-time world4) (:sim/dt w)))
                  pacing (assoc :phase0/time-scale    (:rate pacing)
                                :phase0/rate-yr       (:rate-yr pacing)
                                :phase0/time-slipping? (boolean (:time-slipping? pacing))
@@ -132,17 +132,26 @@
         (tick/run-sequential emitters)
         (tick/run-sequential [integrator]))))
 
+(defn- profile-subs
+  "Return a sorted seq of [subsystem ms] from :phase0/_profile on `world`."
+  [world]
+  (sort-by val > (get world :phase0/_profile {})))
+
 (defn profile-step-physics-systems-on
   "Run each system in physics-systems-parallel on the given world and report
-   wall-clock ms per system."
+   wall-clock ms per system. Also prints nested subsystem timings when
+   :phase0/profile-subsystems? is true."
   [w label]
   (println (format "\n  Per-system step-physics profile (%s):" label))
   (let [systems (phase0/physics-systems-parallel w)]
     (doseq [{:keys [id run]} systems]
       (let [t0 (System/nanoTime)
-            _ (run w)
+            w' (run w)
             t1 (System/nanoTime)]
-        (println (format "  %-40s %.3f ms" (str id) (nanos->ms (- t1 t0))))))))
+        (println (format "  %-40s %.3f ms" (str id) (nanos->ms (- t1 t0))))
+        (when (and (:phase0/profile-subsystems? w) (map? w') (seq (:phase0/_profile w')))
+          (doseq [[sub ms] (profile-subs w')]
+            (println (format "    %-38s %.3f ms" (str sub) ms))))))))
 
 (defn profile-step-physics-systems
   "Run each system in physics-systems-parallel once on a 500-particle world and
@@ -161,20 +170,20 @@
   (profile-step-physics-systems)
   (let [w500 (make-medium-world)
         w1 (-> w500
-                 (ecs/advance-tick)
-                 (assoc :phase0/frame-offset (phase0/center-of-mass w500))
-                 (domain.spatial.index/spatial-index))]
+               (ecs/advance-tick)
+               (assoc :phase0/frame-offset (phase0/center-of-mass w500))
+               (domain.spatial.index/spatial-index))]
     (profile-step-physics-systems-on w1 "world1 with spatial tree"))
 
   ;; --- World creation ---
   (quick-bench "create-world (100 particles)"
-    (fn [] (make-small-world)))
+               (fn [] (make-small-world)))
 
   (quick-bench "create-world (500 particles)"
-    (fn [] (make-medium-world)))
+               (fn [] (make-medium-world)))
 
   (quick-bench "create-world (1000 particles)"
-    (fn [] (make-large-world)))
+               (fn [] (make-large-world)))
 
   ;; --- Single tick ---
   (let [w100  (make-small-world)
@@ -182,94 +191,94 @@
         w1000 (make-large-world)]
 
     (quick-bench "tick-world (100 particles)"
-      (fn [] (phase0/tick-world w100)))
+                 (fn [] (phase0/tick-world w100)))
 
     (quick-bench "tick-world (500 particles)"
-      (fn [] (phase0/tick-world w500)))
+                 (fn [] (phase0/tick-world w500)))
 
     (quick-bench "tick-world (1000 particles)"
-      (fn [] (phase0/tick-world w1000)))
+                 (fn [] (phase0/tick-world w1000)))
 
     ;; --- Full benchmark for the critical path (use quick-bench for speed) ---
     (quick-bench "tick-world (500 particles) — critical path"
-      (fn [] (phase0/tick-world w500)))
+                 (fn [] (phase0/tick-world w500)))
 
     ;; --- Overhead on post-physics world (500 particles) ---
     (println "\n  Overhead functions measured on post-physics world (500 particles):")
     (let [w1 (-> (ecs/advance-tick w500)
-                  (assoc :phase0/frame-offset (phase0/center-of-mass w500))
-                  (domain.spatial.index/spatial-index))
+                 (assoc :phase0/frame-offset (phase0/center-of-mass w500))
+                 (domain.spatial.index/spatial-index))
           w2 (phase0/step-physics w1)
           summ (phase0/system-summary w2)]
       (quick-bench "  advance-tick + center-of-mass + spatial-index"
-        (fn [] (-> (ecs/advance-tick w500)
-                   (assoc :phase0/frame-offset (phase0/center-of-mass w500))
-                   (domain.spatial.index/spatial-index))))
+                   (fn [] (-> (ecs/advance-tick w500)
+                              (assoc :phase0/frame-offset (phase0/center-of-mass w500))
+                              (domain.spatial.index/spatial-index))))
       (quick-bench "  system-summary (post-physics)"
-        (fn [] (phase0/system-summary w2)))
+                   (fn [] (phase0/system-summary w2)))
       (quick-bench "  stats-of (post-physics)"
-        (fn [] (phase0/stats-of w2 summ)))
+                   (fn [] (phase0/stats-of w2 summ)))
       (quick-bench "  detect-phase + complexity-score (post-physics)"
-        (fn [] (let [s (phase0/system-summary w2)]
-                 (phase0/detect-phase s (:phase0/sim-time w2))
-                 (stellar/complexity-score s))))
+                   (fn [] (let [s (phase0/system-summary w2)]
+                            (phase0/detect-phase s (:phase0/sim-time w2))
+                            (stellar/complexity-score s))))
       (quick-bench "  pacing (post-physics)"
-        (fn [] (when-not (false? (:phase0/adaptive-pacing? w2))
-                 (-> (pacing/pace w2)
-                     (pacing/with-time-slip false)))))
+                   (fn [] (when-not (false? (:phase0/adaptive-pacing? w2))
+                            (-> (pacing/pace w2)
+                                (pacing/with-time-slip false)))))
       (quick-bench "  observer-system (post-physics)"
-        (fn [] ((player/observer-system (:sim/dt w2)) w2)))
+                   (fn [] ((player/observer-system (:sim/dt w2)) w2)))
       (quick-bench "  non-physics tick overhead"
-        (fn [] (let [summ (phase0/system-summary w2)
-                     complexity (stellar/complexity-score summ)
-                     phase (phase0/detect-phase summ (:phase0/sim-time w2))
-                     stats (phase0/stats-of w2 summ)
-                     pacing (when-not (false? (:phase0/adaptive-pacing? w2))
-                              (-> (pacing/pace w2)
-                                  (pacing/with-time-slip false)))]
-                 (cond-> (assoc w2
-                              :phase0/complexity complexity
-                              :phase0/stats      stats
-                              :phase0/phase      phase
-                              :phase0/sim-time   (+ (:phase0/sim-time w2) (:sim/dt w2))
-                              :phase0/_prev-summary summ)
-                   pacing (assoc :phase0/time-scale    (:rate pacing)
-                                 :phase0/rate-yr       (:rate-yr pacing)
-                                 :phase0/time-slipping? (boolean (:time-slipping? pacing))
-                                 :sim/dt               (:dt pacing)
-                                                                                                                                       :sim/softening        (:softening pacing)))))))
+                   (fn [] (let [summ (phase0/system-summary w2)
+                                complexity (stellar/complexity-score summ)
+                                phase (phase0/detect-phase summ (:phase0/sim-time w2))
+                                stats (phase0/stats-of w2 summ)
+                                pacing (when-not (false? (:phase0/adaptive-pacing? w2))
+                                         (-> (pacing/pace w2)
+                                             (pacing/with-time-slip false)))]
+                            (cond-> (assoc w2
+                                           :phase0/complexity complexity
+                                           :phase0/stats      stats
+                                           :phase0/phase      phase
+                                           :phase0/sim-time   (+ (:phase0/sim-time w2) (:sim/dt w2))
+                                           :phase0/_prev-summary summ)
+                              pacing (assoc :phase0/time-scale    (:rate pacing)
+                                            :phase0/rate-yr       (:rate-yr pacing)
+                                            :phase0/time-slipping? (boolean (:time-slipping? pacing))
+                                            :sim/dt               (:dt pacing)
+                                            :sim/softening        (:softening pacing)))))))
 
     ;; --- Tick overhead breakdown ---
     (println "\n  Tick overhead breakdown (500 particles):")
 
     (quick-bench "  advance-tick + center-of-mass + spatial-index"
-      (fn [] (-> (ecs/advance-tick w500)
-                 (assoc :phase0/frame-offset (phase0/center-of-mass w500))
-                 (domain.spatial.index/spatial-index))))
+                 (fn [] (-> (ecs/advance-tick w500)
+                            (assoc :phase0/frame-offset (phase0/center-of-mass w500))
+                            (domain.spatial.index/spatial-index))))
 
     (quick-bench "  expire-interventions + materialize-lifecycle"
-      (fn [] (-> w500
-                 (intervention/expire-interventions)
-                 phase0/materialize-lifecycle)))
+                 (fn [] (-> w500
+                            (intervention/expire-interventions)
+                            phase0/materialize-lifecycle)))
 
     (quick-bench "  system-summary"
-      (fn [] (phase0/system-summary w500)))
+                 (fn [] (phase0/system-summary w500)))
 
     (quick-bench "  stats-of"
-      (fn [] (phase0/stats-of w500 (phase0/system-summary w500))))
+                 (fn [] (phase0/stats-of w500 (phase0/system-summary w500))))
 
     (quick-bench "  detect-phase + complexity-score"
-      (fn [] (let [summ (phase0/system-summary w500)]
-               (phase0/detect-phase summ (:phase0/sim-time w500))
-               (stellar/complexity-score summ))))
+                 (fn [] (let [summ (phase0/system-summary w500)]
+                          (phase0/detect-phase summ (:phase0/sim-time w500))
+                          (stellar/complexity-score summ))))
 
     (quick-bench "  pacing"
-      (fn [] (when-not (false? (:phase0/adaptive-pacing? w500))
-               (-> (pacing/pace w500)
-                   (pacing/with-time-slip false)))))
+                 (fn [] (when-not (false? (:phase0/adaptive-pacing? w500))
+                          (-> (pacing/pace w500)
+                              (pacing/with-time-slip false)))))
 
     (quick-bench "  observer-system"
-      (fn [] ((player/observer-system (:sim/dt w500)) w500)))
+                 (fn [] ((player/observer-system (:sim/dt w500)) w500)))
 
     ;; --- System-by-system breakdown ---
     (println "\n  System Breakdown (500 particles, one tick):")
@@ -277,98 +286,98 @@
 
     ;; Gravity (the usual suspect)
     (quick-bench "  gravity-acceleration system"
-      (fn []
-        (let [sys (orbital/gravity-acceleration 6.674e-11 0.5 1.0e14)]
-          ((:run sys) w500))))
+                 (fn []
+                   (let [sys (orbital/gravity-acceleration 6.674e-11 0.5 1.0e14)]
+                     ((:run sys) w500))))
 
     ;; Motion integration
     (quick-bench "  motion-integration system"
-      (fn []
-        (let [sys (orbital/motion-integration (:sim/dt w500))]
-          ((:run sys) w500))))
+                 (fn []
+                   (let [sys (orbital/motion-integration (:sim/dt w500))]
+                     ((:run sys) w500))))
 
     ;; SPH density
     (quick-bench "  density-system"
-      (fn [] ((hydro/density-system (:sim/dt w500)) w500)))
+                 (fn [] ((hydro/density-system (:sim/dt w500)) w500)))
 
     ;; Pressure acceleration
     (quick-bench "  pressure-acceleration system"
-      (fn []
-        (let [sys (hydro/pressure-acceleration)]
-          ((:run sys) w500))))
+                 (fn []
+                   (let [sys (hydro/pressure-acceleration)]
+                     ((:run sys) w500))))
 
     ;; EM field
     (quick-bench "  field-system"
-      (fn [] ((em/field-system (:sim/dt w500)) w500)))
+                 (fn [] ((em/field-system (:sim/dt w500)) w500)))
 
     ;; Lorentz
     (quick-bench "  lorentz-acceleration system"
-      (fn []
-        (let [sys (em/lorentz-acceleration-system (:sim/dt w500))]
-          ((:run sys) w500))))
+                 (fn []
+                   (let [sys (em/lorentz-acceleration-system (:sim/dt w500))]
+                     ((:run sys) w500))))
 
     ;; Collision
     (quick-bench "  collision-detection-system"
-      (fn [] (collision/collision-detection-system w500)))
+                 (fn [] (collision/collision-detection-system w500)))
 
     ;; Stellar systems
     (quick-bench "  stellar structure-system"
-      (fn [] ((:run (stellar/structure-system)) w500)))
+                 (fn [] ((:run (stellar/structure-system)) w500)))
 
     (quick-bench "  stellar classifier-system"
-      (fn [] ((:run (stellar/classifier-system)) w500)))
+                 (fn [] ((:run (stellar/classifier-system)) w500)))
 
     (quick-bench "  stellar temperature-system"
-      (fn [] ((:run (stellar/temperature-system (:sim/dt w500))) w500)))
+                 (fn [] ((:run (stellar/temperature-system (:sim/dt w500))) w500)))
 
     ;; Regime
     (quick-bench "  regime-system"
-      (fn [] (regime/regime-system w500)))
+                 (fn [] (regime/regime-system w500)))
 
     ;; --- Parallel vs sequential step-physics ---
     (println "\n  Step-physics parallel vs sequential (500 particles):")
     (quick-bench "  step-physics parallel (on initial w500)"
-      (fn [] (phase0/step-physics w500)))
+                 (fn [] (phase0/step-physics w500)))
     (let [w1 (-> (ecs/advance-tick w500)
                  (assoc :phase0/frame-offset (phase0/center-of-mass w500))
                  (domain.spatial.index/spatial-index))]
       (quick-bench "  step-physics parallel (on world1 with spatial tree)"
-        (fn [] (phase0/step-physics w1))))
+                   (fn [] (phase0/step-physics w1))))
     (quick-bench "  step-physics sequential"
-      (fn [] (step-physics-sequential w500)))
+                 (fn [] (step-physics-sequential w500)))
 
     ;; --- Parallel vs sequential ---
     (println "\n  Parallel vs Sequential (500 particles):")
 
     (quick-bench "  full parallel tick"
-      (fn [] (phase0/step-physics w500)))
+                 (fn [] (phase0/step-physics w500)))
 
     ;; Sequential fallback
     (quick-bench "  full sequential tick (approximate)"
-      (fn []
+                 (fn []
         ;; Run each system sequentially (approximates non-parallel path)
-        (-> w500
-            ((:run (stellar/structure-system)))
-            ((:run (stellar/eos-system)))
-            ((:run (stellar/classifier-system)))
-            ((:run (stellar/temperature-system (:sim/dt w500))))
-            ((:run (em/field-system (:sim/dt w500))))
-            (collision/collision-detection-system)
-            (stellar/fusion-promotion-system)
-            ((:run (stellar/deuterium-depletion-system)))
-            (stellar/sink-formation-system)
-            (stellar/disk-evolution-system)
-            ((:run (stellar/stellar-wind-system)))
-            ((:run (stellar/stellar-flare-system))))))
+                   (-> w500
+                       ((:run (stellar/structure-system)))
+                       ((:run (stellar/eos-system)))
+                       ((:run (stellar/classifier-system)))
+                       ((:run (stellar/temperature-system (:sim/dt w500))))
+                       ((:run (em/field-system (:sim/dt w500))))
+                       (collision/collision-detection-system)
+                       (stellar/fusion-promotion-system)
+                       ((:run (stellar/deuterium-depletion-system)))
+                       (stellar/sink-formation-system)
+                       (stellar/disk-evolution-system)
+                       ((:run (stellar/stellar-wind-system)))
+                       ((:run (stellar/stellar-flare-system))))))
 
     ;; --- Multi-tick scaling ---
     (println "\n  Multi-tick Scaling (500 particles):")
     (quick-bench "  10 ticks"
-      (fn []
-        (loop [w w500 n 10]
-          (if (pos? n)
-            (recur (phase0/tick-world w) (dec n))
-            w))))
+                 (fn []
+                   (loop [w w500 n 10]
+                     (if (pos? n)
+                       (recur (phase0/tick-world w) (dec n))
+                       w))))
 
     ;; --- Target analysis ---
     (println)
