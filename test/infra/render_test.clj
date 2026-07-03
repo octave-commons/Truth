@@ -7,9 +7,10 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.stellar :as stellar]
-   [domain.phase0 :as phase0]
+   [domain.genesis :as genesis]
    [domain.player :as player]
    [infra.camera :as cam]
+   [infra.input :as input]
    [infra.render :as r]
    [infra.render.units :as units]))
 
@@ -125,7 +126,7 @@
 
 (deftest test-player-overlay-shapes
   (testing "Observer yields a spark point + focus reticle ring"
-    (let [w      (phase0/create-world {:gas-count 10})
+    (let [w      (genesis/create-world {:gas-count 10})
           ctx    (units/make-context (cam/make-camera) {:width 1 :height 1})
           shapes (r/player-overlay-shapes ctx w)
           sparks (filter #(= :particle (:render-mode %)) shapes)
@@ -146,7 +147,7 @@
 
 (deftest test-hud-rects-from-world
   (testing "Coherence fill stays within its track; HUD empty without an observer"
-    (let [w     (phase0/create-world {:gas-count 10})
+    (let [w     (genesis/create-world {:gas-count 10})
           rects (r/hud-rects-from-world w)
           track (first rects)
           fill  (second rects)]
@@ -156,7 +157,7 @@
 
 (deftest test-hud-text-from-world
   (testing "Phase 0 worlds expose a clock/stats panel; bare worlds none"
-    (let [w     (phase0/tick-world (phase0/create-world {:gas-count 10}))
+    (let [w     (genesis/tick-world (genesis/create-world {:gas-count 10}))
           lines (r/hud-text-from-world w)]
       (is (seq lines) "phase0 world produces stat lines")
       (is (every? (comp string? :text) lines))
@@ -166,12 +167,12 @@
 
 (deftest test-focus-input-moves-and-resizes
   (testing "handle-input drives the observer focus (the player's controls)"
-    (let [w   (phase0/create-world {:gas-count 10})
+    (let [w   (genesis/create-world {:gas-count 10})
           obs (player/get-observer w)
           r0  (:focus-radius obs)
           p0  (:focus-position obs)
-          w1  (phase0/handle-input w :move-focus (mapv + p0 [3e15 0.0 0.0]))
-          w2  (phase0/handle-input w :narrow-focus)]
+          w1  (input/handle-input w :move-focus (mapv + p0 [3e15 0.0 0.0]))
+          w2  (input/handle-input w :narrow-focus)]
       (is (not= p0 (:focus-position (player/get-observer w1))) "move-focus shifts focus")
       (is (< (:focus-radius (player/get-observer w2)) r0) "narrow-focus shrinks the volume"))))
 

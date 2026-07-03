@@ -7,7 +7,7 @@
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core   :as ecs]
    [domain.ecs.components :as c]
-   [domain.phase0     :as phase0]
+   [domain.genesis     :as genesis]
    [domain.stellar    :as stellar]
    [law.stellar       :as law]
    [shape.spatial     :as sp]))
@@ -51,7 +51,7 @@
     (let [[w a b] (two-body-world {:ta 3000.0 :tb 3000.0 :vb (sp/vec3 1.0e4 0.0 0.0)})
           m0      (total-mass w)
           w'      (stellar/stellar-merge-handler w event)
-          w''     (phase0/materialize-lifecycle w')]
+          w''     (genesis/materialize-lifecycle w')]
       (is (= 1 (alive-count w'')) "one survivor after lifecycle reap")
       (is (ecs/alive? w'' a))
       (is (not (ecs/alive? w'' b)) "smaller body consumed")
@@ -68,7 +68,7 @@
           m0      (total-mass w)
           p0      (total-momentum w)
           w'      (stellar/stellar-merge-handler w event)
-          w''     (phase0/materialize-lifecycle w')]
+          w''     (genesis/materialize-lifecycle w')]
       (is (= 3 (alive-count w'')) "larger survives + 2 fragments (smaller gone)")
       (is (ecs/alive? w'' a) "the larger body survives")
       (is (not (ecs/alive? w'' b)) "the smaller body is gone")
@@ -81,7 +81,7 @@
   (testing "cold yet low-dv (below shatter threshold) ⇒ merge, not shatter"
     (let [[w a b] (two-body-world {:ta 100.0 :tb 100.0 :vb (sp/vec3 1.0e2 0.0 0.0)})
           w'      (stellar/stellar-merge-handler w event)
-          w''     (phase0/materialize-lifecycle w')]
+          w''     (genesis/materialize-lifecycle w')]
       (is (= 1 (alive-count w'')) "gentle contact merges")
       (is (ecs/alive? w'' a))
       (is (not (ecs/alive? w'' b)) "smaller body consumed"))))
@@ -91,5 +91,5 @@
     (let [[w a b] (two-body-world {:ta 100.0 :tb 100.0 :vb (sp/vec3 1.0e4 0.0 0.0)})
           w (ecs/put-component w b c/mass 1.0e20) ;; below shatter-min-mass
           w' (stellar/stellar-merge-handler w event)
-          w'' (phase0/materialize-lifecycle w')]
+          w'' (genesis/materialize-lifecycle w')]
       (is (= 1 (alive-count w'')) "merged after lifecycle"))))

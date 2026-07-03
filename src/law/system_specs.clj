@@ -283,7 +283,7 @@
 (def lod-scheduler-spec
   "System: lod-scheduler
    Phase: 1 (runs every tick, before radiation systems)
-   Namespace: domain.phase0
+   Namespace: domain.genesis
 
    READS:  c/position (player observer), c/position (all stars/planets),
            c/lod-level (if set)

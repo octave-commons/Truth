@@ -9,6 +9,10 @@ debugging-*.jsonl
 .eta-mu
 target/
 
+# Coverage / mutation-testing artifacts (config is tracked; caches are not)
+.heretic/
+.heretic-sandbox/
+
 # Actor runtime data (sessions, inbox, outbox) — definitions tracked, runtime ephemeral
 .ημ/actors/*/sessions/
 .ημ/actors/*/inbox/

@@ -188,7 +188,7 @@
    dt-robust cap the wind/flare/flux systems use, because a raw acceleration
    integrated over a Myr-scale step would blow up (Δv ≫ c). Tuned to be
    perceptible: bodies inside the collapse radius visibly drift toward your focus.
-   Set :phase0/observer-influence-speed 0.0 to disable."
+   Set :genesis/observer-influence-speed 0.0 to disable."
   1.0e5)
 
 (defn observer-acceleration
@@ -223,7 +223,7 @@
                (if-not obs
                  {c/accel-observer {}}
                  (let [dt        (double (or (:sim/dt world) 1.0e12))
-                       ref-speed (get world :phase0/observer-influence-speed
+                       ref-speed (get world :genesis/observer-influence-speed
                                       default-influence-speed)
                        cell      (into {}
                                        (keep (fn [eid]
@@ -257,72 +257,9 @@
   [{:keys [coherence]} system-complexity]
   (and (< coherence 0.3) (< system-complexity 5)))
 
-(defn phase-quest
-  "Player-facing objective for each formation phase."
-  [phase]
-  (case phase
-    :phase-0/nebula-collapse "Watch the cloud condense. Witness what ignites."
-    :phase-0/protostar       "A core is forming. Wait for ignition."
-    :phase-0/ignition        "A star is born. Watch it settle."
-    :phase-0/accretion       "Matter gathers. Watch for planets."
-    :phase-0/planets-formed  "Worlds exist. The gates may reveal themselves."
-    :phase-0/dispersed       "The cloud has scattered. A new nebula will form."
-    :initializing            "The cosmos is waking."
-    nil))
-
-(defn phase-description
-  "Short flavour text for the current phase."
-  [phase]
-  (case phase
-    :phase-0/nebula-collapse "A cold cloud of gas and dust collapses under its own gravity."
-    :phase-0/protostar       "A hot core forms at the centre. Not yet a star."
-    :phase-0/ignition        "Nuclear fusion ignites. A star is born."
-    :phase-0/accretion       "A disk of matter swirls. Bodies collide and grow."
-    :phase-0/planets-formed  "Planets orbit the star. The system is stable."
-    :phase-0/dispersed       "Gravity has scattered the cloud."
-    :initializing            ""
-    nil))
-
-(defn observation-note
-  "A narrative note reflecting the observer's current state, focus, and phase.
-   Priority: low-coherence warnings > high-focus drain notice > resonance > phase flavour."
-  [{:keys [coherence focus-intensity resonance-events]} phase]
-  (let [fi (double (or focus-intensity 0.5))]
-    (cond
-      (< coherence 0.15)
-        "You are fading. The universe recedes into statistics. Ease your focus."
-      (< coherence 0.3)
-        "Your coherence wavers. Relax your focus to recover."
-      (and (> fi 0.7) (< coherence 0.6))
-        "Intense focus drains coherence. Ease off to recover."
-      (> fi 0.8)
-        "Your attention burns bright. Coherence drains fast."
-      (> (count resonance-events) 10)
-        "Patterns emerge from the chaos. You have seen this before."
-      (= phase :phase-0/nebula-collapse)
-        "You drift through a forming cosmos. Watch closely."
-      (= phase :phase-0/protostar)
-        "Heat builds at the centre. Something is waking."
-      (= phase :phase-0/ignition)
-        "Light. For the first time, light."
-      (= phase :phase-0/accretion)
-        "Matter finds matter. The dance of accretion."
-      (= phase :phase-0/planets-formed)
-        "Worlds turn in silence. The gates may be watching."
-      :else
-        "You drift through the forming cosmos, a mote of awareness.")))
-
-(defn event-notification
-  "Short text for a witnessed event, or nil."
-  [event-type]
-  (case event-type
-    :stellar-ignition "A star ignites! +25 quanta"
-    :planet-formation "A planet forms! +10 quanta"
-    :collision        "A collision! +1 quanta"
-    :phase-transition "The phase shifts. +5 quanta"
-    :life-emergence   "Life emerges! +50 quanta"
-    :gate-discovery   "A gate is discovered! +100 quanta"
-    nil))
+;; Player-facing arc text (quest / observation note / event notification) lives
+;; in `domain.arc`: it is story state, not player mechanics, and `domain.arc`
+;; already depends on this namespace, so it cannot live here without a cycle.
 
 ;; --- ECS integration --------------------------------------------------------
 
@@ -368,17 +305,16 @@
 (defn observer-system
   "ECS system: drains/restores the observer's coherence based on the events that
    landed in the ledger since it last looked, and the world's current observable
-   complexity (read from :phase0/complexity). Then resolves the observation verbs
-   — caching observation-effect / collapse-radius / observation-note on the
-   observer for the renderer — and applies the pull-toward-focus influence to
-   nearby bodies (`apply-observer-influence`). Also tracks event notifications
-   and phase-aware quest/objective text for the player HUD."
+   complexity (read from :genesis/complexity), accrues agency from those events,
+   and caches the resolved observation verbs (observation-effect / collapse-radius)
+   for the renderer. Player-facing arc TEXT (quest / observation note / event
+   notification) is produced by `domain.arc/advance-arc`, not here — that keeps
+   the observer/coherence loop free of any dependency on the narrative layer."
   [dt]
   (fn [world]
     (if-let [obs (get-observer world)]
-      (let [complexity (get world :phase0/complexity 0)
+      (let [complexity (get world :genesis/complexity 0)
             this-tick  (:tick world)
-            phase      (:phase0/phase world)
             new-events (->> (event/events-since world this-tick)
                             (filter #(= (:tick %) this-tick))
                             (keep #(event-kind->coherence (:kind %))))
@@ -386,22 +322,11 @@
                      (accrue-agency new-events)
                      (assoc :last-tick this-tick)
                      (update :time-witnessed + dt))
-            ;; notification from the most recent event this tick
-            last-event-type (last (vec new-events))
-            notification    (when last-event-type
-                              {:text (event-notification last-event-type)
-                               :tick this-tick})
-            ;; resolve + cache the observation verbs (renderer/HUD read these)
-            obs' (cond-> (assoc obs1
-                                :observation-effect (observation-effect obs1)
-                                :collapse-radius    (probability-collapse-radius obs1)
-                                :observation-note   (observation-note obs1 phase)
-                                :phase-quest        (phase-quest phase)
-                                :phase-description  (phase-description phase)
-                                :current-phase      phase)
-                   notification (assoc :notification notification))]
-        ;; Sole writer of :component/observer — coherence/agency/HUD state. The
-        ;; pull-toward-focus force is now a separate fan-out emitter
+            obs' (assoc obs1
+                        :observation-effect (observation-effect obs1)
+                        :collapse-radius    (probability-collapse-radius obs1))]
+        ;; Sole writer of :component/observer — coherence/agency/observation state.
+        ;; The pull-toward-focus force is a separate fan-out emitter
         ;; (`observer-acceleration-system`), so this never touches physical state.
         (put-observer world obs'))
       world)))

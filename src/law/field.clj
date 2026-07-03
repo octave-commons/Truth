@@ -153,7 +153,7 @@
   finite-vec3?)
 
 (def neighbor-cache-entry-schema
-  "Malli schema for one entry of the transient :phase0/neighbor-cache shared by
+  "Malli schema for one entry of the transient :genesis/neighbor-cache shared by
    SPH hydro and MHD-lite EM. Neighbor maps must include :r2, the squared
    distance from the central particle, so consumers can filter without
    recomputing distance."
@@ -174,7 +174,7 @@
   (= (class x) (class (double-array 0))))
 
 (def physics-soa-schema
-  "Malli schema for the transient `:phase0/physics-soa` Structure-of-Arrays
+  "Malli schema for the transient `:genesis/physics-soa` Structure-of-Arrays
    cache. The cache holds only the fields the gravity and kinematics hot paths
    read: entity ids, count, and primitive double arrays for mass, radius,
    position, and velocity. Missing optional values are stored as 0.0."

@@ -39,11 +39,11 @@
 
 (defn apply-write-set
   "Fold one write-set `{ctype {eid value-or-removed}}` onto `world`. Pure.
-   A top-level `:phase0/_profile` entry, if present, is merged into the
+   A top-level `:genesis/_profile` entry, if present, is merged into the
    world's profile map rather than treated as a component."
   [world ws]
-  (let [world (if-let [prof (:phase0/_profile ws)]
-                (update world :phase0/_profile (fnil merge-with + {}) prof)
+  (let [world (if-let [prof (:genesis/_profile ws)]
+                (update world :genesis/_profile (fnil merge-with + {}) prof)
                 world)]
     (reduce-kv
      (fn [w ctype eid->v]
@@ -54,18 +54,18 @@
             (ecs/put-component w eid ctype v)))
         w eid->v))
      world
-     (dissoc ws :phase0/_profile))))
+     (dissoc ws :genesis/_profile))))
 
 (defn colliding-ctypes
   "Given `[[system-id write-set] ...]`, return `{ctype [system-id ...]}` for any
    component type written by more than one system. The transient
-   `:phase0/_profile` key is excluded from conflict detection."
+   `:genesis/_profile` key is excluded from conflict detection."
   [labeled-wsets]
   (->> labeled-wsets
        (reduce (fn [m [id ws]]
                  (reduce (fn [m ctype] (update m ctype (fnil conj []) id))
                          m
-                         (disj (set (keys ws)) :phase0/_profile)))
+                         (disj (set (keys ws)) :genesis/_profile)))
                {})
        (into (sorted-map)
              (filter (fn [[_ ids]] (> (count ids) 1))))))
@@ -156,8 +156,8 @@
    is enforced at the boundary, so a mis-declared system can't corrupt another's
    columns through the fan-out.
 
-   When the input world has `:phase0/profile-subsystems?` true, any
-   `:phase0/_profile` accumulated by the legacy fn is carried onto the returned
+   When the input world has `:genesis/profile-subsystems?` true, any
+   `:genesis/_profile` accumulated by the legacy fn is carried onto the returned
    write-set so the benchmark harness can report subsystem timings."
   [id owned sysfn]
   {:id     id
@@ -165,6 +165,6 @@
    :run    (fn [world]
              (let [after (sysfn world)
                    ws    (diff-write-set world after owned)]
-               (if (:phase0/profile-subsystems? world)
-                 (assoc ws :phase0/_profile (or (:phase0/_profile after) {}))
+               (if (:genesis/profile-subsystems? world)
+                 (assoc ws :genesis/_profile (or (:genesis/_profile after) {}))
                  ws)))})

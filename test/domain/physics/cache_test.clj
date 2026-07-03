@@ -30,7 +30,7 @@
 (deftest test-cache-built-for-active-particles
   (testing "The cache contains an entry for every hydro/EM-active particle"
     (let [w (-> (seeded-world 50) spatial/spatial-index cache/build-neighbor-cache)
-          cache (:phase0/neighbor-cache w)
+          cache (:genesis/neighbor-cache w)
           active-eids (filterv #(lfield/hydro-em-active?
                                  (ecs/get-component w % c/matter-state))
                                (ecs/entities-with w c/matter-state c/position c/radius c/mass))]
@@ -42,14 +42,14 @@
 (deftest test-cache-neighbors-include-self
   (testing "A particle is its own nearest neighbor and appears in its cache"
     (let [w (-> (seeded-world 10) spatial/spatial-index cache/build-neighbor-cache)
-          eid (first (keys (:phase0/neighbor-cache w)))
-          entry (get-in w [:phase0/neighbor-cache eid])]
+          eid (first (keys (:genesis/neighbor-cache w)))
+          entry (get-in w [:genesis/neighbor-cache eid])]
       (is (some #(= (:id %) eid) (:neighbors entry))))))
 
 (deftest test-cache-gradients-are-finite
   (testing "All cached gradients are finite 3-vectors"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)]
-      (doseq [entry (vals (:phase0/neighbor-cache w))
+      (doseq [entry (vals (:genesis/neighbor-cache w))
               grad  (concat (:gradients entry) (:curl-gradients entry))]
         (is (vector? grad))
         (is (= 3 (count grad)))
@@ -58,19 +58,19 @@
 (deftest test-cache-h-positive
   (testing "Every smoothing length is a positive finite number"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)]
-      (doseq [entry (vals (:phase0/neighbor-cache w))]
+      (doseq [entry (vals (:genesis/neighbor-cache w))]
         (is (pos? (:h entry)))
         (is (Double/isFinite (double (:h entry))))))))
 
 (deftest test-cache-matches-spatial-query
   (testing "Cache neighbors are exactly the grid neighbors within the cache radius"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)
-          eid (first (keys (:phase0/neighbor-cache w)))
-          entry (get-in w [:phase0/neighbor-cache eid])
+          eid (first (keys (:genesis/neighbor-cache w)))
+          entry (get-in w [:genesis/neighbor-cache eid])
           pos (:position entry)
           r (:radius entry)
           query-r (max (:h entry) (* 2.0 r))
-          grid (:phase0/spatial-grid w)
+          grid (:genesis/spatial-grid w)
           expected (set (map :id (spatial/grid-within-radius grid pos query-r (constantly true))))
           actual (set (map :id (:neighbors entry)))]
       (is (= expected actual)))))

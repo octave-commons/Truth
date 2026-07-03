@@ -189,7 +189,7 @@
    state. The returned `gradients` is nil when the cache is not used."
   [world data radius-fn state-pred gradient-key]
   (let [h (double (radius-fn data))]
-    (if-let [entry (get-in world [:phase0/neighbor-cache (:eid data)])]
+    (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
       (let [pos (:position data)
             hh2 (* h h)
             nbrs (filterv #(and (state-pred (:matter-state %))
@@ -197,7 +197,7 @@
                           (:neighbors entry))
             grads (mapv gradient-key nbrs)]
         [nbrs grads])
-      [(idx/within-radius (:phase0/spatial-tree world) (:position data) h
+      [(idx/within-radius (:genesis/spatial-tree world) (:position data) h
                           #(state-pred (:matter-state %))) nil])))
 
 (defn- entity->hydro-data
@@ -261,7 +261,7 @@
 (defn pressure-acceleration
   "Double-buffer write-set system: SPH pressure-gradient acceleration a = −∇p/ρ
    for every hydro-active clump → `accel.pressure`. Reads the shared spatial tree
-   from :phase0/spatial-tree (built once per tick by domain.spatial.index),
+   from :genesis/spatial-tree (built once per tick by domain.spatial.index),
    filters query results to hydro-active neighbors (`:nebula` and `:protostar`).
    Writes ONLY accel.pressure."
   []
@@ -325,7 +325,7 @@
    body-density; contracting `:protostar` neighbors still contribute mass to the
    SPH sums of nearby gas parcels.
 
-   Reads the shared spatial tree from :phase0/spatial-tree and filters query
+   Reads the shared spatial tree from :genesis/spatial-tree and filters query
    results to hydro-active neighbors (`:nebula` and `:protostar`)."
   [_dt]
   (fn [world]
@@ -335,7 +335,7 @@
           gas      (filterv #(= :nebula (:state %)) all-data)
           updates  (par/par-mapv
                     (fn [data]
-                      (let [entry (get-in world [:phase0/neighbor-cache (:eid data)])
+                      (let [entry (get-in world [:genesis/neighbor-cache (:eid data)])
                             h     (if entry
                                     (:h entry)
                                     (smoothing-length data world))
@@ -344,7 +344,7 @@
                                     (filterv #(and (hydro-active? (:matter-state %))
                                                    (<= (double (:r2 %)) hh2))
                                              (:neighbors entry))
-                                    (idx/within-radius (:phase0/spatial-tree world) (:position data) h
+                                    (idx/within-radius (:genesis/spatial-tree world) (:position data) h
                                                        #(hydro-active? (:matter-state %))))
                             rho   (sph-density (assoc data :radius (* 0.5 h)) nbrs)
                             press (ls/ideal-gas-pressure rho (:temperature data))]
@@ -369,7 +369,7 @@
    for the sequential path). For gas, density is primary (estimated from
    neighbours) and the radius is the smoothing length it implies.
 
-   Reads the shared spatial tree from :phase0/spatial-tree and filters query
+   Reads the shared spatial tree from :genesis/spatial-tree and filters query
    results to hydro-active neighbors (`:nebula` and `:protostar`)."
   [world]
   (let [eids     (ecs/entities-with world c/matter-state c/position c/density
@@ -378,7 +378,7 @@
         gas      (filterv #(= :nebula (:state %)) all-data)]
     (par/par-mapv
      (fn [data]
-       (let [entry (get-in world [:phase0/neighbor-cache (:eid data)])
+       (let [entry (get-in world [:genesis/neighbor-cache (:eid data)])
              h     (if entry
                      (:h entry)
                      (smoothing-length data world))
@@ -387,7 +387,7 @@
                      (filterv #(and (hydro-active? (:matter-state %))
                                     (<= (double (:r2 %)) hh2))
                               (:neighbors entry))
-                     (idx/within-radius (:phase0/spatial-tree world) (:position data) h
+                     (idx/within-radius (:genesis/spatial-tree world) (:position data) h
                                         #(hydro-active? (:matter-state %))))
              rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
          [(:eid data) rho (* 0.5 h)]))

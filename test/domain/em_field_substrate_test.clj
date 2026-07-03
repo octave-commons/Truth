@@ -11,7 +11,7 @@
    [domain.ecs.tick     :as tick]
    [domain.em           :as em]
    [domain.stellar      :as stellar]
-   [domain.phase0       :as phase0]
+   [domain.genesis       :as genesis]
    [shape.spatial       :as sp]
    [law.stellar         :as law]))
 
@@ -24,7 +24,7 @@
   (let [[w eid] (ecs/spawn (ecs/empty-world))]
     [(-> w
          (assoc :sim/dt 1.0e12 :tick 1
-                :phase0/wind-parcel-mass 1.0e26)
+                :genesis/wind-parcel-mass 1.0e26)
          (ecs/put-components eid
            {c/matter-state   :star
             c/mass           law/solar-mass
@@ -50,7 +50,7 @@
         sources  (em/field-sources w)              ;; pre-launch sources (the star)
         ws       ((:run (stellar/stellar-wind-system)) w)
         w'       (-> (tick/apply-write-set w ws)
-                     (phase0/materialize-lifecycle))
+                     (genesis/materialize-lifecycle))
         parcel   (launched-parcel w' star)]
     (is (some? parcel) "a wind parcel was launched")
     (let [b   (ecs/get-component w' parcel c/b-field)
@@ -63,11 +63,11 @@
 
 (deftest flare-parcel-carries-launch-point-field
   (let [[w star] (star-world)
-        w        (assoc w :phase0/flare-period 1 :phase0/flare-mass-factor 1.0)
+        w        (assoc w :genesis/flare-period 1 :genesis/flare-mass-factor 1.0)
         sources  (em/field-sources w)
         ws       ((:run (stellar/stellar-flare-system)) w)
         w'       (-> (tick/apply-write-set w ws)
-                     (phase0/materialize-lifecycle))
+                     (genesis/materialize-lifecycle))
         parcel   (launched-parcel w' star)]
     (is (some? parcel) "a flare/CME parcel was launched")
     (let [b   (ecs/get-component w' parcel c/b-field)

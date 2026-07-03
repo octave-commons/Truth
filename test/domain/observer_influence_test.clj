@@ -23,7 +23,7 @@
         w     (player/update-observer w #(player/set-focus % focus 1.0e15 0.5))
         [w b] (ecs/spawn w)
         w     (ecs/put-components w b {c/position body-pos c/mass 1.0e28})]
-    [(assoc w :sim/dt 1.0e12 :tick 1 :phase0/complexity 10) b]))
+    [(assoc w :sim/dt 1.0e12 :tick 1 :genesis/complexity 10) b]))
 
 (defn- run
   "Run the fan-out accel.observer emitter and fold its write-set — the emitter is
@@ -67,7 +67,7 @@
 
 (deftest disabled-when-influence-speed-zero
   (let [[w b] (world-with-body (sp/vec3 1.0e14 0.0 0.0))
-        w     (assoc w :phase0/observer-influence-speed 0.0)]
+        w     (assoc w :genesis/observer-influence-speed 0.0)]
     (is (nil? (ecs/get-component (run w) b c/accel-observer)))))
 
 ;; --- the dt hazard ----------------------------------------------------------

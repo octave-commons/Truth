@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Mutation testing for Gates of Truth (Heretic — EXPERIMENTAL, pre-1.0).
+#
+# Mutation testing asks a sharper question than coverage: not "was this line
+# run?" but "if I break this line, does a test notice?". A *surviving* mutant is
+# a real gap — code a test executes but never actually verifies.
+#
+#   bin/mutate                 # collect coverage (if stale) then mutate + report
+#   bin/mutate collect         # (re)build the test->code coverage map only
+#   bin/mutate mutate          # run mutation testing (assumes coverage collected)
+#   bin/mutate survivors       # show surviving mutants from the last run
+#   bin/mutate no-coverage     # forms no indexed test reaches
+#   bin/mutate watch           # continuous mutation testing on file changes
+#   bin/mutate clean           # drop the cached coverage index
+#   bin/mutate mutate --files src/domain/stellar.clj   # scope to one file
+#
+# Config: heretic.edn. ClojureStorm (a patched compiler) is swapped in via the
+# deps.edn :heretic alias — isolated to that alias; the normal build is untouched.
+# `rsync` is strongly recommended (incremental sandbox); without it every run
+# does a full copy + full re-collect. Scope = domain/law/shape only.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+command -v rsync >/dev/null 2>&1 || \
+  echo "warning: rsync not found — Heretic falls back to a full copy + full re-collect each run (slow)." >&2
+
+# Default to a full pipeline (collect if needed, then mutate) when no subcommand.
+CMD="${1:-mutate}"; [ $# -gt 0 ] && shift
+
+exec clojure -M:heretic -m heretic.core "$CMD" "$@"

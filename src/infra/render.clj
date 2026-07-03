@@ -3,27 +3,29 @@
    Renders ECS bodies as shaded spheres, point-sprite LOD proxies, volumetric
    fog and HUD overlays. Camera logic lives in `infra.camera`."
   (:require
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.orbital.system :as orbital]
-    [domain.phase0 :as phase0]
-    [domain.pacing :as pacing]
-    [domain.player :as player]
-    [domain.intervention :as intervention]
-    [domain.stellar :as stellar]
-    [domain.em :as em]
-    [law.stellar :as law]
-    [shape.spatial :as sp]
-    [infra.camera :as cam]
-    [infra.render.shader :as sh]
-    [infra.render.units :as units])
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.orbital.system :as orbital]
+   [domain.genesis :as genesis]
+   [domain.arc :as arc]
+   [domain.pacing :as pacing]
+   [domain.player :as player]
+   [domain.intervention :as intervention]
+   [domain.stellar :as stellar]
+   [domain.em :as em]
+   [law.stellar :as law]
+   [shape.spatial :as sp]
+   [infra.camera :as cam]
+   [infra.input :as input]
+   [infra.render.shader :as sh]
+   [infra.render.units :as units])
   (:import
-    (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback GLFWMouseButtonCallback)
-    (org.lwjgl.opengl GL GL11 GL12 GL13 GL15 GL20 GL30)
-    (org.lwjgl.stb STBImageWrite STBEasyFont)
-    (org.lwjgl.system MemoryUtil)
-    (org.lwjgl BufferUtils)
-    (java.nio ByteBuffer))
+   (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback GLFWMouseButtonCallback)
+   (org.lwjgl.opengl GL GL11 GL12 GL13 GL15 GL20 GL30)
+   (org.lwjgl.stb STBImageWrite STBEasyFont)
+   (org.lwjgl.system MemoryUtil)
+   (org.lwjgl BufferUtils)
+   (java.nio ByteBuffer))
   (:refer-clojure :exclude [compile]))
 
 ;; ---------------------------------------------------------------------------
@@ -173,7 +175,7 @@
   (let [buf   (BufferUtils/createByteBuffer (max 4096 (* (count text) 400)))
         ^ByteBuffer no-color nil
         quads (STBEasyFont/stb_easy_font_print
-                (float 0.0) (float 0.0) text no-color buf)
+               (float 0.0) (float 0.0) text no-color buf)
         ^java.nio.FloatBuffer fb (.asFloatBuffer buf)
         out   (float-array (* quads 12))
         ndcx  (fn ^double [^double px] (- (/ (* 2.0 px) w) 1.0))
@@ -248,59 +250,58 @@
       :else        (format "%.1f yr/s" r))))
 
 (defn- phase-label
-  "Player-facing name for a detected formation phase."
-  [phase]
-  (case phase
-    :phase-0/nebula-collapse "Nebula collapsing"
-    :phase-0/protostar       "Protostar forming"
-    :phase-0/ignition        "Ignition"
-    :phase-0/accretion       "Accretion"
-    :phase-0/planets-formed  "Planets formed"
-    :phase-0/dispersed       "Dispersed"
-    :initializing            "Initializing"
-    (when phase (name phase))))
+  "Player-facing name for the current genesis arc."
+  [arc]
+  (case arc
+    :arc/genesis-nebula-collapse "Nebula collapsing"
+    :arc/genesis-protostar       "Protostar forming"
+    :arc/genesis-ignition        "Ignition"
+    :arc/genesis-accretion       "Accretion"
+    :arc/genesis-planets-formed  "Planets formed"
+    :arc/genesis-dispersed       "Dispersed"
+    (if arc (name arc) "Initializing")))
 
 (defn hud-text-from-world
   "Top-left stats panel for a Phase 0 world: the adaptive clock (elapsed
    sim-time, current rate, phase) plus total mass, temperature, body counts,
-   and the simulation tick counter. Reads the per-tick `:phase0/stats` cache.
-   Empty for non-phase0/bare worlds."
+   and the simulation tick counter. Reads the per-tick `:genesis/stats` cache.
+   Empty for non-genesis/bare worlds."
   [world]
-  (if-let [rate-yr (:phase0/rate-yr world)]
-     (let [{:keys [total-mass-msun avg-temp peak-temp
+  (if-let [rate-yr (:genesis/rate-yr world)]
+    (let [{:keys [total-mass-msun avg-temp peak-temp
                   body-count resolved-count star-count planet-count
                   xuv-escape-count sed-band-count
                   lod-local lod-system lod-galaxy
                   imf-bins disk-count]
-            :or   {total-mass-msun 0.0 avg-temp 0.0 peak-temp 0.0
-                   body-count 0 resolved-count 0 star-count 0 planet-count 0
-                   xuv-escape-count 0 sed-band-count 0
-                   lod-local 0 lod-system 0 lod-galaxy 0
-                   imf-bins [0 0 0 0 0 0 0 0] disk-count 0}}
-           (:phase0/stats world)
-           tick (int (or (:tick world) 0))
-           lines [(format "tick   %d" tick)
-                  (format "%s   %s"
-                          (format-elapsed (:phase0/sim-time world))
-                          (phase-label (:phase0/phase world)))
-                  (format "clock  %s" (format-rate rate-yr))
-                  (format "mass   %.3f Msun" (double total-mass-msun))
-                  (format "temp   %.0f K  (peak %.0f K)"
-                          (double avg-temp) (double peak-temp))
-                  (format "bodies %d  resolved %d  stars %d  planets %d"
-                          (int body-count) (int resolved-count)
-                          (int star-count) (int planet-count))
-                  (format "SED    %d bands  XUV-esc %d"
-                          (int sed-band-count) (int xuv-escape-count))
-                  (format "LOD    local %d  system %d  galaxy %d"
-                          (int lod-local) (int lod-system) (int lod-galaxy))
-                  (format "disks  %d  planets %d"
-                          (int disk-count) (int planet-count))
-                  (format "IMF    <.1:%d  .1-.5:%d  .5-1:%d  1-2:%d  2-5:%d  5-10:%d  10-50:%d  >50:%d"
-                          (int (nth imf-bins 0)) (int (nth imf-bins 1))
-                          (int (nth imf-bins 2)) (int (nth imf-bins 3))
-                          (int (nth imf-bins 4)) (int (nth imf-bins 5))
-                          (int (nth imf-bins 6)) (int (nth imf-bins 7)))]]
+           :or   {total-mass-msun 0.0 avg-temp 0.0 peak-temp 0.0
+                  body-count 0 resolved-count 0 star-count 0 planet-count 0
+                  xuv-escape-count 0 sed-band-count 0
+                  lod-local 0 lod-system 0 lod-galaxy 0
+                  imf-bins [0 0 0 0 0 0 0 0] disk-count 0}}
+          (:genesis/stats world)
+          tick (int (or (:tick world) 0))
+          lines [(format "tick   %d" tick)
+                 (format "%s   %s"
+                         (format-elapsed (:genesis/sim-time world))
+                         (phase-label (:arc/current world)))
+                 (format "clock  %s" (format-rate rate-yr))
+                 (format "mass   %.3f Msun" (double total-mass-msun))
+                 (format "temp   %.0f K  (peak %.0f K)"
+                         (double avg-temp) (double peak-temp))
+                 (format "bodies %d  resolved %d  stars %d  planets %d"
+                         (int body-count) (int resolved-count)
+                         (int star-count) (int planet-count))
+                 (format "SED    %d bands  XUV-esc %d"
+                         (int sed-band-count) (int xuv-escape-count))
+                 (format "LOD    local %d  system %d  galaxy %d"
+                         (int lod-local) (int lod-system) (int lod-galaxy))
+                 (format "disks  %d  planets %d"
+                         (int disk-count) (int planet-count))
+                 (format "IMF    <.1:%d  .1-.5:%d  .5-1:%d  1-2:%d  2-5:%d  5-10:%d  10-50:%d  >50:%d"
+                         (int (nth imf-bins 0)) (int (nth imf-bins 1))
+                         (int (nth imf-bins 2)) (int (nth imf-bins 3))
+                         (int (nth imf-bins 4)) (int (nth imf-bins 5))
+                         (int (nth imf-bins 6)) (int (nth imf-bins 7)))]]
       (map-indexed (fn [i s]
                      {:text s :x 16.0 :y (+ 24.0 (* i 22.0))
                       :scale 2.2 :color [0.86 0.94 1.0 0.95]})
@@ -513,7 +514,6 @@
 ;; Camera types and behaviour live in `infra.camera`; render consumes a Camera
 ;; record as pure data.
 
-
 (defn init-glfw []
   (GLFW/glfwSetErrorCallback (GLFWErrorCallback/createPrint System/err))
   (when (not (GLFW/glfwInit))
@@ -537,7 +537,7 @@
   "Shift the observer's focus volume by `dpos` (world metres)."
   [world dpos]
   (if-let [obs (player/get-observer world)]
-    (phase0/handle-input world :move-focus (sp/v+ (:focus-position obs) dpos))
+    (input/handle-input world :move-focus (sp/v+ (:focus-position obs) dpos))
     world))
 
 ;; --- Action palette (single source of truth) --------------------------------
@@ -567,16 +567,16 @@
   "Map a key press to a focus / drift / release action on the world's observer.
    Arrows drift the focus volume, , / . narrow / widen it, Space releases the
    spark to drift toward the system. This is the player's interaction language."
-   [world-atom k]
+  [world-atom k]
   (let [step 3.0e15]
     (condp = k
       GLFW/GLFW_KEY_LEFT   (swap! world-atom move-focus-by [(- step) 0.0 0.0])
       GLFW/GLFW_KEY_RIGHT  (swap! world-atom move-focus-by [step 0.0 0.0])
       GLFW/GLFW_KEY_UP     (swap! world-atom move-focus-by [0.0 0.0 (- step)])
       GLFW/GLFW_KEY_DOWN   (swap! world-atom move-focus-by [0.0 0.0 step])
-      GLFW/GLFW_KEY_COMMA  (swap! world-atom phase0/handle-input :narrow-focus)
-      GLFW/GLFW_KEY_PERIOD (swap! world-atom phase0/handle-input :widen-focus)
-      GLFW/GLFW_KEY_SPACE  (swap! world-atom phase0/handle-input :release)
+      GLFW/GLFW_KEY_COMMA  (swap! world-atom input/handle-input :narrow-focus)
+      GLFW/GLFW_KEY_PERIOD (swap! world-atom input/handle-input :widen-focus)
+      GLFW/GLFW_KEY_SPACE  (swap! world-atom input/handle-input :release)
       nil)))
 
 (defn setup-input
@@ -586,88 +586,104 @@
    (setup-input window camera-atom keys-atom config-atom nil))
   ([window camera-atom keys-atom config-atom world-atom]
    (GLFW/glfwSetKeyCallback
-     window
-     (proxy [GLFWKeyCallback] []
-       (invoke [window key scancode action mods]
-         (when (= action GLFW/GLFW_PRESS)
-           (swap! keys-atom assoc key true))
-         (when (= action GLFW/GLFW_RELEASE)
-           (swap! keys-atom dissoc key))
-         (when (and (= key GLFW/GLFW_KEY_ESCAPE) (= action GLFW/GLFW_PRESS))
-           (GLFW/glfwSetWindowShouldClose window true))
+    window
+    (proxy [GLFWKeyCallback] []
+      (invoke [window key scancode action mods]
+        (when (= action GLFW/GLFW_PRESS)
+          (swap! keys-atom assoc key true))
+        (when (= action GLFW/GLFW_RELEASE)
+          (swap! keys-atom dissoc key))
+        (when (and (= key GLFW/GLFW_KEY_ESCAPE) (= action GLFW/GLFW_PRESS))
+          (GLFW/glfwSetWindowShouldClose window true))
          ;; Camera mode controls
-         (when (and (= key GLFW/GLFW_KEY_C) (= action GLFW/GLFW_PRESS))
-           (swap! config-atom cam/cycle-camera-mode)
-           (println "Camera mode:" (:mode @config-atom)))
-         (when (and (= key GLFW/GLFW_KEY_LEFT_BRACKET) (= action GLFW/GLFW_PRESS))
-           (swap! config-atom cam/adjust-fit-margin 0.9)
-           (println "Fit margin:" (:fit-margin @config-atom)))
-         (when (and (= key GLFW/GLFW_KEY_RIGHT_BRACKET) (= action GLFW/GLFW_PRESS))
-           (swap! config-atom cam/adjust-fit-margin 1.1)
-           (println "Fit margin:" (:fit-margin @config-atom)))
-         (when (and (= key GLFW/GLFW_KEY_R) (= action GLFW/GLFW_PRESS))
-           (reset! camera-atom (cam/make-camera))
-           (reset! config-atom (cam/default-camera-settings))
-           (println "Camera reset"))
+        (when (and (= key GLFW/GLFW_KEY_C) (= action GLFW/GLFW_PRESS))
+          (swap! config-atom cam/cycle-camera-mode)
+          (let [mode (:mode @config-atom)]
+            (println "Camera mode:" mode)
+            (if (= :manual mode)
+              (GLFW/glfwSetInputMode window GLFW/GLFW_CURSOR GLFW/GLFW_CURSOR_DISABLED)
+              (GLFW/glfwSetInputMode window GLFW/GLFW_CURSOR GLFW/GLFW_CURSOR_NORMAL))))
+        (when (and (= key GLFW/GLFW_KEY_LEFT_BRACKET) (= action GLFW/GLFW_PRESS))
+          (swap! config-atom cam/adjust-fit-margin 0.9)
+          (println "Fit margin:" (:fit-margin @config-atom)))
+        (when (and (= key GLFW/GLFW_KEY_RIGHT_BRACKET) (= action GLFW/GLFW_PRESS))
+          (swap! config-atom cam/adjust-fit-margin 1.1)
+          (println "Fit margin:" (:fit-margin @config-atom)))
+        (when (and (= key GLFW/GLFW_KEY_R) (= action GLFW/GLFW_PRESS))
+          (reset! camera-atom (cam/make-camera))
+          (reset! config-atom (cam/default-camera-settings))
+          (GLFW/glfwSetInputMode window GLFW/GLFW_CURSOR GLFW/GLFW_CURSOR_DISABLED)
+          (println "Camera reset"))
          ;; Paid actions — dispatched from `action-palette` (the same list the HUD
          ;; legend renders). Records an :action-request the window thread resolves
          ;; (cursor→world + spend agency); a no-op if the spark can't afford it.
-         (when (= action GLFW/GLFW_PRESS)
-           (when-let [a (action-for-key key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT)))]
-             (swap! config-atom assoc :action-request {:kind (:kind a)})))
+        (when (= action GLFW/GLFW_PRESS)
+          (when-let [a (action-for-key key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT)))]
+            (swap! config-atom assoc :action-request {:kind (:kind a)})))
          ;; Player focus / drift / release controls
-         (when (and world-atom (= action GLFW/GLFW_PRESS))
-           (player-key world-atom key)))))
-   ;; Cursor + click. A left-drag orbits the camera (manual modes); a left CLICK
-   ;; that did not drag records a :pick-request {:x :y} (window-pixel coords) into
-   ;; the config — the window thread resolves it to a selected entity next frame
-   ;; (see `infra.inspect/pick-entity`). `dragged?` separates the two gestures.
+        (when (and world-atom (= action GLFW/GLFW_PRESS))
+          (player-key world-atom key)))))
+    ;; Cursor + click. In third-person manual mode the mouse continuously rotates
+    ;; the camera. In tracking modes a left-drag orbits. A left CLICK that did
+    ;; not drag records a :pick-request {:x :y} (window-pixel coords) into the
+    ;; config — the window thread resolves it to a selected entity next frame
+    ;; (see `infra.inspect/pick-entity`). `dragged?` separates the two gestures.
    (let [last-pos (atom [0.0 0.0])
          fst      (atom true)
          cursor   (atom [0.0 0.0])
          dragged? (atom false)]
      (GLFW/glfwSetCursorPosCallback
-       window
-       (proxy [GLFWCursorPosCallback] []
-         (invoke [window x y]
-           (reset! cursor [x y])
-           (swap! config-atom assoc :cursor [x y])
-           (if @fst
-             (do (reset! last-pos [x y]) (reset! fst false))
-             (let [[lx ly] @last-pos
-                   dx (- x lx)
-                   dy (- y ly)]
-               (reset! last-pos [x y])
-               (when (= (GLFW/glfwGetMouseButton window GLFW/GLFW_MOUSE_BUTTON_LEFT) GLFW/GLFW_PRESS)
-                 (when (or (> (Math/abs (double dx)) 1.5) (> (Math/abs (double dy)) 1.5))
-                   (reset! dragged? true))
-                 (swap! camera-atom
-                        (fn [c]
-                          (-> c
-                              (update :yaw #(+ % (* dx 0.2)))
-                              (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
-                              cam/update-camera-position)))))))))
+      window
+      (proxy [GLFWCursorPosCallback] []
+        (invoke [window x y]
+          (reset! cursor [x y])
+          (swap! config-atom assoc :cursor [x y])
+          (if @fst
+            (do (reset! last-pos [x y]) (reset! fst false))
+            (let [[lx ly] @last-pos
+                  dx (- x lx)
+                  dy (- y ly)]
+              (reset! last-pos [x y])
+              (let [manual? (= :manual (:mode @config-atom :manual))]
+                (when (and manual? (or (> (Math/abs (double dx)) 0.5)
+                                       (> (Math/abs (double dy)) 0.5)))
+                  (reset! dragged? true)
+                  (swap! camera-atom
+                         (fn [c]
+                           (-> c
+                               (update :yaw #(+ % (* dx 0.2)))
+                               (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
+                               cam/update-camera-position))))
+                (when (and (not manual?)
+                           (= (GLFW/glfwGetMouseButton window GLFW/GLFW_MOUSE_BUTTON_LEFT) GLFW/GLFW_PRESS))
+                  (when (or (> (Math/abs (double dx)) 1.5) (> (Math/abs (double dy)) 1.5))
+                    (reset! dragged? true))
+                  (swap! camera-atom
+                         (fn [c]
+                           (-> c
+                               (update :yaw #(+ % (* dx 0.2)))
+                               (update :pitch #(max -89.0 (min 89.0 (- % (* dy 0.2)))))
+                               cam/update-camera-position))))))))))
      (GLFW/glfwSetMouseButtonCallback
-       window
-       (proxy [GLFWMouseButtonCallback] []
-         (invoke [window button action mods]
-           (when (= button GLFW/GLFW_MOUSE_BUTTON_LEFT)
-             (cond
-               (= action GLFW/GLFW_PRESS)   (reset! dragged? false)
-               (= action GLFW/GLFW_RELEASE) (when-not @dragged?
-                                              (let [[cx cy] @cursor]
-                                                (swap! config-atom assoc
-                                                       :pick-request {:x cx :y cy})))))))))
+      window
+      (proxy [GLFWMouseButtonCallback] []
+        (invoke [window button action mods]
+          (when (= button GLFW/GLFW_MOUSE_BUTTON_LEFT)
+            (cond
+              (= action GLFW/GLFW_PRESS)   (reset! dragged? false)
+              (= action GLFW/GLFW_RELEASE) (when-not @dragged?
+                                             (let [[cx cy] @cursor]
+                                               (swap! config-atom assoc
+                                                      :pick-request {:x cx :y cy})))))))))
    (GLFW/glfwSetScrollCallback
-     window
-     (proxy [GLFWScrollCallback] []
-       (invoke [window xoffset yoffset]
-         (swap! camera-atom
-                (fn [c]
-                  (-> c
-                      (update :distance #(max 10.0 (min 2000.0 (- % (* yoffset 10.0)))))
-                      cam/update-camera-position))))))))
-
+    window
+    (proxy [GLFWScrollCallback] []
+      (invoke [window xoffset yoffset]
+        (swap! camera-atom
+               (fn [c]
+                 (-> c
+                     (update :distance #(max 10.0 (min 2000.0 (- % (* yoffset 10.0)))))
+                     cam/update-camera-position))))))))
 
 (defn bodies-from-world [world]
   (map (fn [[eid comps]]
@@ -770,7 +786,7 @@
    gas reads pale tan, metal/rock-rich matter warm grey-brown, and an icy/volatile
    fraction cold blue-white. Primordial gas is mostly tan; differentiated rocky or
    icy worlds shift toward rock/ice as their composition diverges."
-   [compose]
+  [compose]
   (let [c      (or compose {})
         metals (double (get c :metals 0.0))
         ice    (double (+ (double (get c :ice 0.0))
@@ -787,7 +803,7 @@
   "Surface colour of a resolved body: its composition (material) colour when
    cold, crossfading to its thermal blackbody colour as it heats past ~1000 K.
    A cold rocky world shows rock; an incandescent one glows by temperature."
-   [temp compose]
+  [temp compose]
   (let [mat (composition->material-color compose)
         th  (temp-color temp)
         t   (double (or temp 10.0))
@@ -933,7 +949,7 @@
           p0   (sp/v- center half)
           p1   (sp/v+ center half)
           glow (max 0.3 (min 1.0 (+ 0.3 (* 0.25 (Math/log10
-                                                  (+ 1.0 (/ mag em/default-nebula-field)))))))
+                                                 (+ 1.0 (/ mag em/default-nebula-field)))))))
           color [(* 0.45 glow) (* 0.85 glow) (* 1.0 glow)]]
       [{:position (vec p0) :color color :size 1.0 :render-mode :line}
        {:position (vec p1) :color color :size 1.0 :render-mode :line}])))
@@ -978,34 +994,34 @@
                      (take 12))
         nseg 22]
     (vec (mapcat
-           (fn [{:keys [position moment eid]}]
-             (let [axis (unit-vec moment)
-                   e1   (any-perp axis)
-                   e2   (sp/cross axis e1)
-                   rpos (units/world->render ctx position)
+          (fn [{:keys [position moment eid]}]
+            (let [axis (unit-vec moment)
+                  e1   (any-perp axis)
+                  e2   (sp/cross axis e1)
+                  rpos (units/world->render ctx position)
                    ;; Size loops to the body's DRAWN radius so the field hugs its
                    ;; body and scales with it at every zoom — a fixed absolute
                    ;; size detaches from (and dwarfs) the body when zoomed in.
-                   rr   (max 0.6 (body-draw-radius ctx world eid))
-                   color [0.45 0.8 1.0]]
-               (vec (mapcat
-                      (fn [[shell az]]
-                        (let [ca (Math/cos (Math/toRadians az))
-                              sa (Math/sin (Math/toRadians az))
-                              rdir (sp/v+ (sp/v* e1 ca) (sp/v* e2 sa))
-                              pts (for [i (range (inc nseg))]
-                                    (let [th (+ 0.12 (* (- Math/PI 0.24) (/ (double i) nseg)))
-                                          r  (* shell rr (Math/sin th) (Math/sin th))]
-                                      (sp/v+ rpos
-                                             (sp/v+ (sp/v* rdir (* r (Math/sin th)))
-                                                    (sp/v* axis  (* r (Math/cos th)))))))]
-                          (segments-of pts color)))
+                  rr   (max 0.6 (body-draw-radius ctx world eid))
+                  color [0.45 0.8 1.0]]
+              (vec (mapcat
+                    (fn [[shell az]]
+                      (let [ca (Math/cos (Math/toRadians az))
+                            sa (Math/sin (Math/toRadians az))
+                            rdir (sp/v+ (sp/v* e1 ca) (sp/v* e2 sa))
+                            pts (for [i (range (inc nseg))]
+                                  (let [th (+ 0.12 (* (- Math/PI 0.24) (/ (double i) nseg)))
+                                        r  (* shell rr (Math/sin th) (Math/sin th))]
+                                    (sp/v+ rpos
+                                           (sp/v+ (sp/v* rdir (* r (Math/sin th)))
+                                                  (sp/v* axis  (* r (Math/cos th)))))))]
+                        (segments-of pts color)))
                       ;; Full azimuth circle so loops surround the body instead of
                       ;; fanning to one side (which read as the field being offset
                       ;; from its star).
-                      (for [shell [1.6 2.4 3.4]
-                            az [0.0 60.0 120.0 180.0 240.0 300.0]] [shell az])))))
-           sources))))
+                    (for [shell [1.6 2.4 3.4]
+                          az [0.0 60.0 120.0 180.0 240.0 300.0]] [shell az])))))
+          sources))))
 
 ;; --- Protoplanetary disk (particles in the disk plane) -----------------------
 ;; A flat torus of particles around a star or protostar that has accreted a disk.
@@ -1051,29 +1067,29 @@
         thick    (double (or thickness 0.05))
         _disk-m  (double (or disk-mass 1.0e25))]
     (mapv
-      (fn [_]
-        (let [;; Radial position: bias toward inner edge (surface density ∝ 1/r)
+     (fn [_]
+       (let [;; Radial position: bias toward inner edge (surface density ∝ 1/r)
               ;; so the bright core reads denser than the diffuse outer rim.
-              r-frac  (Math/pow (.nextDouble rng) 0.6)
-              r       (+ (double r-inner) (* r-frac r-span))
-              theta   (* 2.0 Math/PI (.nextDouble rng))
+             r-frac  (Math/pow (.nextDouble rng) 0.6)
+             r       (+ (double r-inner) (* r-frac r-span))
+             theta   (* 2.0 Math/PI (.nextDouble rng))
               ;; Vertical spread: thin Gaussian flaring outward
-              z-spread (* thick r-frac (.nextGaussian rng))
-              px (+ cx (* r (Math/cos theta)))
-              py (+ cy (* r (Math/sin theta)))
-              pz (+ cz z-spread)
+             z-spread (* thick r-frac (.nextGaussian rng))
+             px (+ cx (* r (Math/cos theta)))
+             py (+ cy (* r (Math/sin theta)))
+             pz (+ cz z-spread)
               ;; Surface density drives opacity: brighter at inner edge
-              sigma   (- 1.0 (* 0.6 r-frac))
+             sigma   (- 1.0 (* 0.6 r-frac))
               ;; Particle size: small uniform grains for a tight, dense disk
-              sz      (+ 1.5 (* 1.5 sigma) (* 0.8 (.nextDouble rng)))
+             sz      (+ 1.5 (* 1.5 sigma) (* 0.8 (.nextDouble rng)))
               ;; Colour: base tinted by density — inner disk warmer, outer dimmer
-              col     (mapv (fn [c] (max 0.0 (min 1.0 (* c (+ 0.55 (* 0.45 sigma)))))) color)]
-          {:position [px py pz]
-           :color    col
-           :size     sz
-           :density  (float (* 0.55 sigma))
-           :render-mode :particle}))
-      (range cnt))))
+             col     (mapv (fn [c] (max 0.0 (min 1.0 (* c (+ 0.55 (* 0.45 sigma)))))) color)]
+         {:position [px py pz]
+          :color    col
+          :size     sz
+          :density  (float (* 0.55 sigma))
+          :render-mode :particle}))
+     (range cnt))))
 
 (defn- disk-particles
   "Protoplanetary disk as a flat torus of particles, deterministic and cached.
@@ -1103,7 +1119,7 @@
                            (mapv (fn [p]
                                    (assoc p :position
                                           (vec (rotate-axis-angle
-                                                 (:position p) axis angle))))
+                                                (:position p) axis angle))))
                                  raw)))]
           (swap! disk-cache assoc ckey (assoc params :particles rotated))
           rotated))
@@ -1119,7 +1135,7 @@
                          (mapv (fn [p]
                                  (assoc p :position
                                         (vec (rotate-axis-angle
-                                               (:position p) axis angle))))
+                                              (:position p) axis angle))))
                                raw)))]
         (swap! disk-cache assoc ckey (assoc params :particles rotated))
         rotated))))
@@ -1132,14 +1148,14 @@
   [center radius color n]
   (let [[cx cy cz] center]
     (vec (mapcat
-           (fn [i]
-             (let [a0 (* 2.0 Math/PI (/ (double i) n))
-                   a1 (* 2.0 Math/PI (/ (double (inc i)) n))]
-               [{:position [(+ cx (* radius (Math/cos a0))) (+ cy (* radius (Math/sin a0))) cz]
-                 :color color :size 1.0 :render-mode :line}
-                {:position [(+ cx (* radius (Math/cos a1))) (+ cy (* radius (Math/sin a1))) cz]
-                 :color color :size 1.0 :render-mode :line}]))
-           (range n)))))
+          (fn [i]
+            (let [a0 (* 2.0 Math/PI (/ (double i) n))
+                  a1 (* 2.0 Math/PI (/ (double (inc i)) n))]
+              [{:position [(+ cx (* radius (Math/cos a0))) (+ cy (* radius (Math/sin a0))) cz]
+                :color color :size 1.0 :render-mode :line}
+               {:position [(+ cx (* radius (Math/cos a1))) (+ cy (* radius (Math/sin a1))) cz]
+                :color color :size 1.0 :render-mode :line}]))
+          (range n)))))
 
 (defn coherence-color
   "Reticle colour for each decoherence state: teal when highly coherent, warming
@@ -1196,9 +1212,9 @@
     (let [agency   (long (Math/floor (double (or (:agency obs) 0.0))))
           state    (player/decoherence-state obs)
           scol     (conj (coherence-color state) 1.0)
-          note     (:observation-note obs)
-          quest    (:phase-quest obs)
-          notif    (:notification obs)
+          note     (:arc/observation-note world)
+          quest    (:arc/quest world)
+          notif    (:arc/notification world)
           w        (double width)
           h        (double height)
           cx       (* w 0.5)  ;; horizontal center
@@ -1206,8 +1222,7 @@
           notif-age (when notif (- (long (or (:tick world) 0)) (long (:tick notif))))
           notif-alpha (when notif (max 0.0 (- 1.0 (/ (double (or notif-age 0)) 200.0))))
           notif-show? (and notif notif-alpha (> ^double notif-alpha 0.05))
-          notif-text (when notif-show? (:text notif))
-          ]
+          notif-text (when notif-show? (:text notif))]
       (cond->
        ;; bottom-left: quanta + spark state + focus intensity
        [{:text (format "%d quanta" agency)
@@ -1218,25 +1233,25 @@
          :x 16.0 :y (- h 48.0) :scale 1.5 :color [0.65 0.80 0.95 0.85]}]
 
        ;; bottom-center: observation note
-       note
-       (conj {:text note
-              :x (- cx 220.0) :y (- h 40.0) :scale 1.6 :color [0.90 0.95 1.0 0.85]})
+        note
+        (conj {:text note
+               :x (- cx 220.0) :y (- h 40.0) :scale 1.6 :color [0.90 0.95 1.0 0.85]})
 
        ;; bottom-center below note: quest
-       quest
-       (conj {:text quest
-              :x (- cx 200.0) :y (- h 18.0) :scale 1.4 :color [0.70 0.85 0.95 0.70]})
+        quest
+        (conj {:text quest
+               :x (- cx 200.0) :y (- h 18.0) :scale 1.4 :color [0.70 0.85 0.95 0.70]})
 
        ;; center: event notification (fading)
-       notif-text
-       (conj {:text notif-text
-              :x (- cx 140.0) :y (- h 200.0) :scale 2.8
-              :color [1.0 0.92 0.60 ^double notif-alpha]})
+        notif-text
+        (conj {:text notif-text
+               :x (- cx 140.0) :y (- h 200.0) :scale 2.8
+               :color [1.0 0.92 0.60 ^double notif-alpha]})
 
        ;; bottom-right: controls hint
-       true
-       (conj {:text "arrows: move focus   ,/.: narrow/widen   G: warp   space: drift"
-              :x (- w 440.0) :y (- h 18.0) :scale 1.2 :color [0.50 0.55 0.65 0.55]})))
+        true
+        (conj {:text "arrows: move focus   ,/.: narrow/widen   G: warp   space: drift"
+               :x (- w 440.0) :y (- h 18.0) :scale 1.2 :color [0.50 0.55 0.65 0.55]})))
     []))
 
 (defn- afford-colors
@@ -1271,18 +1286,56 @@
                 :scale 1.6 :color [0.70 0.82 1.0 0.95]}
         action-text
         (mapcat
-          (fn [i {:keys [keycap label kind accent]}]
-            (let [cost (intervention/cost-of kind)
-                  y    (+ y0 pad (* (inc i) line-h))
-                  {lc :label cc :cost} (afford-colors agency cost)]
-              [{:text keycap :x (+ x0 pad)        :y y :scale scale :color (conj (vec accent) 1.0)}
-               {:text label  :x (+ x0 pad 52.0)   :y y :scale scale :color lc}
-               {:text (format "%.0fq" (double cost)) :x (+ x0 pad 176.0) :y y :scale scale :color cc}]))
-          (range) action-palette)
-        passive {:text "drag orbit   scroll zoom   C camera   click inspect   move = attention"
+         (fn [i {:keys [keycap label kind accent]}]
+           (let [cost (intervention/cost-of kind)
+                 y    (+ y0 pad (* (inc i) line-h))
+                 {lc :label cc :cost} (afford-colors agency cost)]
+             [{:text keycap :x (+ x0 pad)        :y y :scale scale :color (conj (vec accent) 1.0)}
+              {:text label  :x (+ x0 pad 52.0)   :y y :scale scale :color lc}
+              {:text (format "%.0fq" (double cost)) :x (+ x0 pad 176.0) :y y :scale scale :color cc}]))
+         (range) action-palette)
+        passive {:text "mouse look   scroll zoom   C camera   click inspect   WASD = move mote"
                  :x 352.0 :y (- h 20.0) :scale 1.4 :color [0.55 0.68 0.85 0.8]}]
     {:rects [rect]
      :text  (into [header passive] action-text)}))
+
+(defn view-bar-hud
+  "Top-left status bar separating the active view/camera from the simulation.
+
+   Shows current camera mode, orbit distance, move speed, and whether the view
+   is user-driven or tracking the world. This makes camera state visible so the
+   player can tell why the camera behaves the way it does."
+  [camera-settings camera width height]
+  (let [w (double width) h (double height)
+        mode (:mode camera-settings :manual)
+        dist (:distance camera 50.0)
+        speed (:move-speed camera-settings 3.0e15)
+        tracking? (not= :manual mode)
+        label (case mode
+                :manual "3RD PERSON"
+                :track-largest-cluster "TRACK"
+                :fit-all "FIT ALL"
+                (name mode))
+        ndcx (fn [px] (- (/ (* 2.0 px) w) 1.0))
+        ndcy (fn [py] (- 1.0 (/ (* 2.0 py) h)))
+        x0 10.0 y0 10.0
+        line-h 20.0 pad 10.0
+        panel-w 230.0
+        panel-h (+ (* 2.0 pad) (* 3.0 line-h))
+        rect {:x0 (ndcx x0) :y0 (ndcy (+ y0 panel-h))
+              :x1 (ndcx (+ x0 panel-w)) :y1 (ndcy y0)
+              :color [0.04 0.06 0.12 0.82]}
+        header {:text (format "VIEW: %s%s" label (if tracking? " (AUTO)" ""))
+                :x (+ x0 pad) :y (+ y0 pad) :scale 1.7
+                :color (if tracking? [1.0 0.78 0.55 0.95] [0.65 1.0 0.78 0.95])}
+        dist-line {:text (format "dist: %.1f" dist)
+                   :x (+ x0 pad) :y (+ y0 pad line-h) :scale 1.4
+                   :color [0.78 0.92 1.0 0.9]}
+        speed-line {:text (format "move: %.2e m/s" (double speed))
+                    :x (+ x0 pad) :y (+ y0 pad (* 2.0 line-h)) :scale 1.4
+                    :color [0.70 0.82 1.0 0.85]}]
+    {:rects [rect]
+     :text  [header dist-line speed-line]}))
 
 (comment
   ;; First definition of phase0-bodies-from-world removed to fix
@@ -1332,33 +1385,33 @@
             ;; the same continuous medium is rendered in one fullscreen pass.
             []
 
-             :star
+            :star
              ;; Stars render with mass-based sizing and spectral-type colors.
-             (let [core-r (body-draw-radius ctx world eid)
-                   teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
-                   s-col  (stellar-spectral-color teff)
-                   body   {:entity      eid
-                           :position    center
-                           :radius      core-r
-                           :color       s-col
-                           :kind        state
-                           :oblateness  ob
-                           :rotation-axis axis
-                           :render-mode :body}
-                   disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                   disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
-               (concat
-                [body]
+            (let [core-r (body-draw-radius ctx world eid)
+                  teff   (double (or (ecs/get-component world eid c/temperature) 5800.0))
+                  s-col  (stellar-spectral-color teff)
+                  body   {:entity      eid
+                          :position    center
+                          :radius      core-r
+                          :color       s-col
+                          :kind        state
+                          :oblateness  ob
+                          :rotation-axis axis
+                          :render-mode :body}
+                  disk-m (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                  disk-L (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
+              (concat
+               [body]
                 ;; Stellar corona / disk glow is also part of the froxel volume
                 ;; when present; we only draw the body and field lines here.
-                (field-line center core-r (ecs/get-component world eid c/b-field))
-                (when (pos? disk-m)
+               (field-line center core-r (ecs/get-component world eid c/b-field))
+               (when (pos? disk-m)
                  (let [r-disk  (max (* 3.0 core-r)
                                     (stellar/disk-radius
-                                      (/ (sp/len disk-L) (max 1.0 disk-m))
-                                      (double (or (ecs/get-component world eid c/mass) 1.0e30))))
+                                     (/ (sp/len disk-L) (max 1.0 disk-m))
+                                     (double (or (ecs/get-component world eid c/mass) 1.0e30))))
                        r-out   (min 12.0 (* core-r 4.0
-                                           (Math/log10 (max 10.0 (/ r-disk (* core-r (:scale ctx)))))))
+                                            (Math/log10 (max 10.0 (/ r-disk (* core-r (:scale ctx)))))))
                        r-in    (* core-r 1.3)
                        d-col   (mapv (fn [c] (min 1.0 (* (+ 0.4 (* 0.6 c)) 0.90))) s-col)]
                    (disk-particles {:center    center
@@ -1367,34 +1420,34 @@
                                     :normal    disk-L
                                     :color     d-col
                                     :disk-mass disk-m
-                                     :cnt      90
+                                    :cnt      90
                                     :seed      eid})))))
 
-             :protostar
+            :protostar
              ;; A contracting core: render radius follows the physical radius
              ;; (log-compressed) so it shrinks smoothly as it collapses, glowing
              ;; by temperature. The diffuse envelope is baked into the froxel
              ;; volume; only the body, field line, and disk are drawn here.
-             (let [render-r (units/phys->render-radius ctx r-phys)
-                   disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                   disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
-               (concat
-                [{:entity      eid
-                  :position    center
-                  :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
-                  :color       color
-                  :kind        state
-                  :oblateness  ob
-                  :rotation-axis axis
-                  :render-mode :body}]
-                (field-line center render-r (ecs/get-component world eid c/b-field))
-                (when (pos? disk-m)
+            (let [render-r (units/phys->render-radius ctx r-phys)
+                  disk-m   (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                  disk-L   (or (ecs/get-component world eid c/disk-angular-mom) [0.0 0.0 0.0])]
+              (concat
+               [{:entity      eid
+                 :position    center
+                 :radius      (* render-r (Math/pow ob (/ 1.0 3.0)))
+                 :color       color
+                 :kind        state
+                 :oblateness  ob
+                 :rotation-axis axis
+                 :render-mode :body}]
+               (field-line center render-r (ecs/get-component world eid c/b-field))
+               (when (pos? disk-m)
                  (let [r-disk (max (* 3.0 render-r)
                                    (stellar/disk-radius
-                                     (/ (sp/len disk-L) (max 1.0 disk-m))
-                                     (double (or (ecs/get-component world eid c/mass) 1.0e30))))
+                                    (/ (sp/len disk-L) (max 1.0 disk-m))
+                                    (double (or (ecs/get-component world eid c/mass) 1.0e30))))
                        r-out  (min 12.0 (* render-r 4.0
-                                          (Math/log10 (max 10.0 (/ r-disk (* render-r (:scale ctx)))))))
+                                           (Math/log10 (max 10.0 (/ r-disk (* render-r (:scale ctx)))))))
                        r-in   (* render-r 1.3)
                        d-col  (mapv (fn [c] (min 1.0 (* (+ 0.35 (* 0.65 c)) 0.85))) color)]
                    (disk-particles {:center    center
@@ -1403,7 +1456,7 @@
                                     :normal    disk-L
                                     :color     d-col
                                     :disk-mass disk-m
-                                     :cnt      70
+                                    :cnt      70
                                     :seed      eid})))))
 
             ;; :planet :debris → shaded body sized by physical radius, coloured
@@ -1809,7 +1862,7 @@
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be `:particle`
    (soft fog puff) or `:body` (shaded sphere). Default is `:body`."
-   [{:keys [body-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies t]
+  [{:keys [body-program line-program hud-program hud hud-text volume]} mesh-world camera width height bodies t]
   ;; Match the GL viewport to the actual draw surface every frame. Without this
   ;; the viewport keeps its context-creation size, so a HiDPI/resized window
   ;; (framebuffer larger than the logical 1280×720) draws only into the
@@ -1939,7 +1992,7 @@
   ([world-atom path]
    (render-to-file world-atom path {}))
   ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode volumetric? volume-res
-                             sprite-lod-threshold]}]
+                            sprite-lod-threshold]}]
    (println "Rendering offscreen frame to" path)
    (init-glfw)
    (let [width   1280
@@ -1949,41 +2002,41 @@
          particle-program (create-particle-program)
          line-program     (create-line-program)
          hud-program      (create-hud-program)
-          volume-program   (create-volume-program)
-          sphere  (make-sphere-mesh 3)
-          mesh    (upload-mesh sphere)
-          fbo     (create-fbo width height)]
-      (let [w @world-atom
-            phase0?   (contains? w :phase0/phase)
-            tick-fn   (or tick-fn
-                          (if phase0?
-                            phase0/tick-world
-                            (orbital/orbital-system 6.674e-11 0.5 0.5)))
-            bodies-fn (or bodies-fn
-                          (if phase0?
-                            phase0-bodies-from-world
-                            bodies-from-world))
-            w (swap! world-atom tick-fn)
+         volume-program   (create-volume-program)
+         sphere  (make-sphere-mesh 3)
+         mesh    (upload-mesh sphere)
+         fbo     (create-fbo width height)]
+     (let [w @world-atom
+           phase0?   (contains? w :genesis/sim-time)
+           tick-fn   (or tick-fn
+                         (if phase0?
+                           arc/tick-genesis
+                           (orbital/orbital-system 6.674e-11 0.5 0.5)))
+           bodies-fn (or bodies-fn
+                         (if phase0?
+                           phase0-bodies-from-world
+                           bodies-from-world))
+           w (swap! world-atom tick-fn)
             ;; Frame the whole system: snap an auto-fit camera to the world unless
             ;; the caller supplied one explicitly.
-            camera  (or camera
-                        (if phase0?
-                          (cam/update-camera-for-world
-                            (cam/make-camera 60.0) w
-                            (assoc (cam/default-camera-settings)
-                                   :mode (or camera-mode :fit-all) :smoothing 1.0))
-                          (cam/make-camera)))
-            ctx    (units/make-context camera {:width width :height height})
-            bodies (bodies-fn w)
-            hud      (when phase0? (hud-rects-from-world w))
-            hud-text (when phase0? (hud-text-from-world w))
-            volume   (frame-volume ctx w volume-program (or volume-res :medium))]
-        (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
-        (render-scene {:body-program body-program
-                       :line-program line-program :hud-program hud-program
-                       :hud hud :hud-text hud-text :volume volume}
-                      mesh camera width height bodies 0.0)
-        (delete-volume volume))
+           camera  (or camera
+                       (if phase0?
+                         (cam/update-camera-for-world
+                          (cam/make-camera 60.0) w
+                          (assoc (cam/default-camera-settings)
+                                 :mode (or camera-mode :fit-all) :smoothing 1.0))
+                         (cam/make-camera)))
+           ctx    (units/make-context camera {:width width :height height})
+           bodies (bodies-fn w)
+           hud      (when phase0? (hud-rects-from-world w))
+           hud-text (when phase0? (hud-text-from-world w))
+           volume   (frame-volume ctx w volume-program (or volume-res :medium))]
+       (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
+       (render-scene {:body-program body-program
+                      :line-program line-program :hud-program hud-program
+                      :hud hud :hud-text hud-text :volume volume}
+                     mesh camera width height bodies 0.0)
+       (delete-volume volume))
      (GL11/glFlush)
      (let [pixels  (read-pixels width height)
            flipped (flip-rgba-vertical pixels width height)]
@@ -2000,14 +2053,14 @@
   (let [width          1280
         height         720
         window         (create-window width height "Gates of Truth — 3D View")
-         camera         (atom (cam/make-camera))
+        camera         (atom (cam/make-camera))
         ks             (atom {})
-         body-program   (create-program)
-         line-program   (create-line-program)
-         sprite-program (create-sprite-program)
-         sphere         (make-sphere-mesh 2)
+        body-program   (create-program)
+        line-program   (create-line-program)
+        sprite-program (create-sprite-program)
+        sphere         (make-sphere-mesh 2)
         mesh           (upload-mesh sphere)
-         config-atom    (atom (cam/default-camera-settings))]
+        config-atom    (atom (cam/default-camera-settings))]
     (println "Window created, entering render loop...")
     (setup-input window camera ks config-atom)
     (loop []

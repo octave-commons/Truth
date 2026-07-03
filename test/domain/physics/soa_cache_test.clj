@@ -34,7 +34,7 @@
 (deftest test-soa-cache-validated
   (testing "The SoA cache satisfies law.field/physics-soa-schema"
     (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-physics-soa)
-          soa (:phase0/physics-soa w)]
+          soa (:genesis/physics-soa w)]
       (is (map? soa))
       (is (lfield/physics-soa? soa))
       (is (pos? (:n soa)))
@@ -43,7 +43,7 @@
 (deftest test-soa-arrays-match-ecs
   (testing "Primitive arrays mirror ECS component values"
     (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-physics-soa)
-          soa (:phase0/physics-soa w)]
+          soa (:genesis/physics-soa w)]
       (doseq [[idx eid] (map-indexed vector (:eids soa))]
         (let [pos (ecs/get-component w eid c/position)
               vel (ecs/get-component w eid c/velocity)
@@ -62,19 +62,19 @@
   (testing "strip-physics-soa removes the cache without touching components"
     (let [w0 (-> (seeded-world 10) spatial/spatial-index cache/build-physics-soa)
           w1 (cache/strip-physics-soa w0)]
-      (is (contains? w0 :phase0/physics-soa))
-      (is (not (contains? w1 :phase0/physics-soa)))
+      (is (contains? w0 :genesis/physics-soa))
+      (is (not (contains? w1 :genesis/physics-soa)))
       (is (= (:components w0) (:components w1))))))
 
 (deftest test-soa-empty-world
   (testing "SoA construction and strip on an empty world"
     (let [w0 (-> (ecs/empty-world) spatial/spatial-index cache/build-physics-soa)
-          soa (:phase0/physics-soa w0)]
+          soa (:genesis/physics-soa w0)]
       (is (zero? (:n soa)))
       (is (empty? (:eids soa)))
       (is (lfield/physics-soa? soa))
       (let [w1 (cache/strip-physics-soa w0)]
-        (is (not (contains? w1 :phase0/physics-soa)))))))
+        (is (not (contains? w1 :genesis/physics-soa)))))))
 
 (deftest test-soa-missing-optional-components
   (testing "Entities missing density/pressure/b-field still produce a valid cache"
@@ -86,7 +86,7 @@
                      :radius 1e13
                      :matter-state :nebula}))
           w (-> w spatial/spatial-index cache/build-physics-soa)
-          soa (:phase0/physics-soa w)]
+          soa (:genesis/physics-soa w)]
       (is (= 1 (:n soa)))
       (is (lfield/physics-soa? soa))
       (is (= 1e25 (aget ^doubles (:mass soa) 0)))
@@ -162,9 +162,9 @@
                                  1e-3))))))
 
 (deftest test-soa-frame-offset-parity
-  (testing "SoA path respects :phase0/frame-offset exactly like the ECS path"
+  (testing "SoA path respects :genesis/frame-offset exactly like the ECS path"
     (let [w0 (-> (seeded-world 15)
-                 (assoc :phase0/frame-offset [1e12 2e12 3e12]))
+                 (assoc :genesis/frame-offset [1e12 2e12 3e12]))
           w-soa (step-with-soa-flag w0 true)
           w-no-soa (step-with-soa-flag w0 false)
           eids (ecs/entities-with w-soa c/position)]
@@ -240,11 +240,11 @@
 (deftest test-soa-validation-can-be-disabled
   (testing "Validation can be disabled for release runs"
     (let [w (-> (seeded-world 5)
-                (assoc :phase0/validate-soa? false)
+                (assoc :genesis/validate-soa? false)
                 spatial/spatial-index
                 cache/build-physics-soa)]
-      (is (contains? w :phase0/physics-soa))
-      (is (pos? (:n (:phase0/physics-soa w)))))))
+      (is (contains? w :genesis/physics-soa))
+      (is (pos? (:n (:genesis/physics-soa w)))))))
 
 (deftest test-soa-fallback-chain
   (testing "gravity-acceleration falls back through soa -> spatial-items -> world->bodies"

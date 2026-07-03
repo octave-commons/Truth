@@ -128,7 +128,7 @@
 
    Per-entity classification is pure, so it is computed in parallel and the tags
    folded back sequentially. Each phase is profiled separately when
-   `:phase0/profile-subsystems?` is enabled."
+   `:genesis/profile-subsystems?` is enabled."
   [world]
   (profile/profile-sections
    world

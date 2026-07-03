@@ -236,12 +236,12 @@
    position (a pure Galilean shift, §6). Absorb-accrete/merge packets are blended
    for COM preservation — the absorbed mass's momentum shifts the survivor."
   [world dt]
-  (let [foff (or (:phase0/frame-offset world) zero3)
+  (let [foff (or (:genesis/frame-offset world) zero3)
         eids (ecs/entities-with world c/position c/velocity
                                 c/mass c/radius c/body-kind)
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
-        profiling? (:phase0/profile-subsystems? world)
+        profiling? (:genesis/profile-subsystems? world)
         ;; Phase 1: accumulate accelerations from all influence cells.
         force-fn #(into {} (par/par-mapv
                             (fn [eid] [eid (sum-vec-influences world eid accel-sources)])
@@ -273,19 +273,19 @@
                        (profile/timing leapfrog-fn)
                        [(leapfrog-fn) nil])]
     (if profiling?
-      (assoc ws :phase0/_profile
-             (merge-with + (or (:phase0/_profile ws) {})
+      (assoc ws :genesis/_profile
+             (merge-with + (or (:genesis/_profile ws) {})
                          {:integrator/force-accum (double dt-force)
                           :integrator/leapfrog (double dt-leap)}))
       ws)))
 
 (defn- kinematics-ws-soa
   "SoA-aware position + velocity updater. Reads positions/velocities/masses from
-   the `:phase0/physics-soa` primitive arrays, sums acceleration contributions
+   the `:genesis/physics-soa` primitive arrays, sums acceleration contributions
    directly from their component cell maps, and produces the standard write-set
    for position and velocity. Falls back to the ECS path when the cache is absent."
   [world dt soa]
-  (let [foff        (or (:phase0/frame-offset world) zero3)
+  (let [foff        (or (:genesis/frame-offset world) zero3)
         [fox foy foz] foff
         {:keys [eids n mass px py pz vx vy vz]} soa
         absorbs     (merge (get-in world [:components c/absorb-accrete] {})
@@ -305,7 +305,7 @@
                                   [ax ay az]))
                               [0.0 0.0 0.0]
                               cells))
-        profiling?  (:phase0/profile-subsystems? world)
+        profiling?  (:genesis/profile-subsystems? world)
         ;; Phase 1: accumulate accelerations from all influence cells.
         force-fn    #(into {} (par/par-mapv
                                (fn [idx]
@@ -348,8 +348,8 @@
                        (profile/timing leapfrog-fn)
                        [(leapfrog-fn) nil])]
     (if profiling?
-      (assoc ws :phase0/_profile
-             (merge-with + (or (:phase0/_profile ws) {})
+      (assoc ws :genesis/_profile
+             (merge-with + (or (:genesis/_profile ws) {})
                          {:integrator/force-accum (double dt-force)
                           :integrator/leapfrog (double dt-leap)}))
       ws)))
@@ -516,17 +516,17 @@
    Composes the per-field updaters (each writes a disjoint set of components, so
    the fragments merge cleanly). Sole writer of position, velocity, temperature,
    composition, angular-momentum, spin (and, as the lifecycle milestone lands,
-   mass). Uses the `:phase0/physics-soa` cache for kinematics when present.
+   mass). Uses the `:genesis/physics-soa` cache for kinematics when present.
 
    Each major phase is wrapped with `profile/profile-section`; their
-   `:phase0/_profile` maps are merged into the returned write-set so the
+   `:genesis/_profile` maps are merged into the returned write-set so the
    benchmark harness can report subsystem timings."
   [dt]
   {:id     :integrator
    :writes #{c/position c/velocity c/mass c/temperature c/composition
              c/angular-momentum c/spin}
    :run    (fn [world]
-             (let [kin  (if-let [soa (:phase0/physics-soa world)]
+             (let [kin  (if-let [soa (:genesis/physics-soa world)]
                           (kinematics-ws-soa world dt soa)
                           (kinematics-ws world dt))
                    mass (profile/profile-section
@@ -542,6 +542,6 @@
                          world :integrator/rotation
                          (fn [_world] (rotation-ws world)))
                    profile (apply merge-with +
-                                  (map #(or (:phase0/_profile %) {}) [kin mass temp comp rot]))]
+                                  (map #(or (:genesis/_profile %) {}) [kin mass temp comp rot]))]
                (cond-> (merge kin mass temp comp rot)
-                 (seq profile) (assoc :phase0/_profile profile))))})
+                 (seq profile) (assoc :genesis/_profile profile))))})

@@ -335,6 +335,16 @@
 
 ;; --- ECS system -------------------------------------------------------------
 
+(defn- em-active?
+  "EM force/torque dynamics matter for diffuse and contracting gas."
+  [state]
+  (lf/hydro-em-active? state))
+
+(defn- em-active-neighbor?
+  "Predicate passed to spatial queries: keep only hydro/EM-active neighbors."
+  [n]
+  (em-active? (:matter-state n)))
+
 (defn- entity->em-data
   "Project an ECS entity into the map the SPH/Lorentz functions expect."
   [world eid]
@@ -350,23 +360,103 @@
    :rotation-axis    (ecs/get-component world eid c/rotation-axis)
    :state    (ecs/get-component world eid c/matter-state)})
 
-(defn- em-active?
-  "EM force/torque dynamics matter for diffuse and contracting gas."
-  [state]
-  (lf/hydro-em-active? state))
+(defn- lorentz-entity-data
+  "Project an ECS entity into the compact map the Lorentz acceleration system
+   needs. Required components come from `comps`; optional components are read
+   once from pre-fetched component tables in `opt`."
+  [eid comps opt]
+  {:eid      eid
+   :position (comps c/position)
+   :velocity (get (opt c/velocity) eid)
+   :mass     (get (opt c/mass) eid)
+   :radius   (comps c/radius)
+   :density  (comps c/density)
+   :pressure (get (opt c/pressure) eid)
+   :b-field  (comps c/b-field)
+   :angular-momentum (comps c/angular-momentum)
+   :rotation-axis    (get (opt c/rotation-axis) eid)
+   :state    (comps c/matter-state)})
+
+(defn- build-active-lorentz-data
+  "Build a vector of EM-active entity data maps for the Lorentz acceleration
+   system. Required components are fetched in one `ecs/all-of` pass; optional
+   components are read from pre-fetched component tables so the hot loop never
+   calls `ecs/get-component`."
+  [world]
+  (let [required (ecs/all-of world c/b-field c/radius c/position c/density
+                             c/angular-momentum c/matter-state)
+        opt-tables {c/velocity     (get-in world [:components c/velocity])
+                    c/mass         (get-in world [:components c/mass])
+                    c/pressure     (get-in world [:components c/pressure])
+                    c/rotation-axis (get-in world [:components c/rotation-axis])}]
+    (persistent!
+     (reduce (fn [acc [eid comps]]
+               (if (em-active? (comps c/matter-state))
+                 (conj! acc (lorentz-entity-data eid comps opt-tables))
+                 acc))
+             (transient [])
+             required))))
 
 (defn- em-neighbors-and-curl-gradients
   "Return [neighbors curl-gradients] for `data`, using the transient neighbor
    cache when present. `h` is the query radius. gradients is nil on fallback."
   [world data h]
-  (if-let [entry (get-in world [:phase0/neighbor-cache (:eid data)])]
+  (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
     (let [pos (:position data)
           hh2 (* h h)
           nbrs (filterv #(and (em-active? (:matter-state %))
                               (<= (double (:r2 %)) hh2))
                         (:neighbors entry))]
       [nbrs (mapv :gradient-curl nbrs)])
-    [(idx/within-radius (:phase0/spatial-tree world) (:position data) h #(em-active? (:matter-state %))) nil]))
+    [(idx/within-radius (:genesis/spatial-tree world) (:position data) h em-active-neighbor?) nil]))
+
+(defn- curl-estimate-from-cache
+  "Estimate (∇ × B) for the Lorentz acceleration system using a pre-built
+   neighbor-cache entry. Walks the cached neighbors once, skipping particles
+   that are not EM-active or lie outside the EM smoothing radius `h`, and
+   uses their pre-computed `:gradient-curl`. Avoids allocating a filtered
+   neighbor vector and a separate gradients vector."
+  [b-field density position h neighbors]
+  (if (or (not (lf/finite-vec3? b-field))
+          (not (pos? (double density))))
+    [0.0 0.0 0.0]
+    (let [[px py pz] position
+          px (double px)
+          py (double py)
+          pz (double pz)
+          [bx by bz] b-field
+          bx (double bx)
+          by (double by)
+          bz (double bz)
+          hh2 (* (double h) (double h))]
+      (reduce-kv
+       (fn [[cx cy cz] _idx n]
+         (if-not (and (em-active? (:matter-state n))
+                      (<= (double (:r2 n)) hh2)
+                      (lf/finite-vec3? (:b-field n)))
+           [cx cy cz]
+           (let [np (:position n)
+                 nx (double (nth np 0))
+                 ny (double (nth np 1))
+                 nz (double (nth np 2))
+                 rx (- px nx)
+                 ry (- py ny)
+                 rz (- pz nz)
+                 [gx gy gz] (:gradient-curl n)
+                 [bnx bny bnz] (:b-field n)
+                 dbx (- bx (double bnx))
+                 dby (- by (double bny))
+                 dbz (- bz (double bnz))
+                 cxj (- (* dby gz) (* dbz gy))
+                 cyj (- (* dbz gx) (* dbx gz))
+                 czj (- (* dbx gy) (* dby gx))
+                 factor (/ (double (:mass n 1.0))
+                           (double (:density n 1.0)))]
+             [(+ cx (* cxj factor))
+              (+ cy (* cyj factor))
+              (+ cz (* czj factor))])))
+       [0.0 0.0 0.0]
+       neighbors))))
 
 (defn capped-lorentz-acceleration
   "Lorentz acceleration a = (∇×B)×B/(μ₀ρ), computed only when magnetic pressure
@@ -399,7 +489,7 @@
    Diffuse clumps keep their field essentially unchanged; dense cores slowly
    shed flux — the design's non-ideal hook.
 
-   Reads the shared spatial tree from :phase0/spatial-tree and filters query
+   Reads the shared spatial tree from :genesis/spatial-tree and filters query
    results to EM-active entities."
   [dt]
   (fn [world]
@@ -459,6 +549,25 @@
               world1
               updates2))))
 
+(def ^:private resolved-field-states
+  "Matter states whose magnetic flux is frozen into the resolved body."
+  #{:debris :planet :protostar :star})
+
+(defn- field-entity-data
+  "Project one entity into the compact representation used by the field system."
+  [world eid]
+  (let [b-field (ecs/get-component world eid c/b-field)
+        radius  (double (or (ecs/get-component world eid c/radius) 0.0))
+        state   (ecs/get-component world eid c/matter-state)
+        resolved? (contains? resolved-field-states state)]
+    {:eid eid
+     :b-field b-field
+     :radius radius
+     :resolved? resolved?
+     :flux (when (and resolved? (lf/finite-vec3? b-field))
+             (or (ecs/get-component world eid c/frozen-flux)
+                 (sp/v* b-field (* radius radius))))}))
+
 (defn field-system
   "Double-buffer write-set system: SOLE writer of b-field.
 
@@ -470,80 +579,161 @@
     and em-system's b-field decay; Φ (frozen-flux) is the reference that turns the
     amplification into a derivation from the radius Structure owns."
   [dt]
-  {:id     :field
-   :writes #{c/b-field c/frozen-flux}
-   :run    (fn [world]
-             (profile/profile-sections
-              world
-              [[:field/scan
-                (fn [w]
-                  {:eids (ecs/entities-with w c/b-field c/radius)})]
-               [:field/compute
-                (fn [{:keys [eids]}]
-                  (reduce
-                   (fn [ws eid]
-                     (let [b (ecs/get-component world eid c/b-field)
-                           r (double (or (ecs/get-component world eid c/radius) 0.0))
-                           resolved? (contains? #{:debris :planet :protostar :star}
-                                                (ecs/get-component world eid c/matter-state))]
-                       (if (and (lf/finite-vec3? b) (pos? r))
+  (let [dt (double dt)]
+    {:id     :field
+     :writes #{c/b-field c/frozen-flux}
+     :run    (fn [world]
+               (profile/profile-sections
+                world
+                [[:field/scan
+                  (fn [w]
+                    {:entities (mapv #(field-entity-data world %)
+                                     (ecs/entities-with world c/b-field c/radius))})]
+                 [:field/compute
+                  (fn [{:keys [entities]}]
+                    (reduce
+                     (fn [ws {:keys [eid b-field radius resolved? flux]}]
+                       (if (and (lf/finite-vec3? b-field) (pos? radius))
                          (if resolved?
-                            ;; flux frozen at condensation, conserved then decayed:
-                            ;; B = Φ/R² — amplifies as R contracts.
-                           (let [flux  (or (ecs/get-component world eid c/frozen-flux)
-                                           (sp/v* b (* r r)))
-                                 flux' (resistive-decay flux r dt)
-                                 b'    (sp/v* flux' (/ 1.0 (* r r)))]
+                           (let [flux'  (resistive-decay flux radius dt)
+                                 inv-r2 (/ 1.0 (* radius radius))
+                                 b'     (sp/v* flux' inv-r2)]
                              (if (lf/bounded-b-field? b')
-                               (-> ws (assoc-in [c/b-field eid] b')
+                               (-> ws
+                                   (assoc-in [c/b-field eid] b')
                                    (assoc-in [c/frozen-flux eid] flux'))
                                ws))
-                            ;; diffuse gas: resistive decay only, no flux freezing
-                           (let [b' (resistive-decay b r dt)]
+                           (let [b' (resistive-decay b-field radius dt)]
                              (cond-> ws (lf/bounded-b-field? b') (assoc-in [c/b-field eid] b'))))
-                         ws)))
-                   {}
-                   eids))]]))})
+                         ws))
+                     {}
+                     entities))]]))}))
 
 (defn lorentz-acceleration-system
   "Double-buffer write-set system: Lorentz acceleration a = (∇×B)×B/(μ₀ρ) and
    magnetic-braking torque ΔL for every EM-active clump. Reads the shared spatial
-   tree from :phase0/spatial-tree (built once per tick by domain.spatial.index),
+   tree from :genesis/spatial-tree (built once per tick by domain.spatial.index),
    filters query results to EM-active entities. Writes accel.lorentz and
    torque.em; the integrator owns angular-momentum/spin and adds the torque."
   [dt]
   {:id     :em-lorentz
    :writes #{c/accel-lorentz c/torque-em}
    :run    (fn [world]
-             (let [eids     (ecs/entities-with world c/b-field c/radius c/position
-                                               c/density c/angular-momentum)
-                   all-data (mapv #(entity->em-data world %) eids)
-                   active   (filterv #(em-active? (:state %)) all-data)
+             (let [active    (build-active-lorentz-data world)
+                   tree      (:genesis/spatial-tree world)
+                   cache     (:genesis/neighbor-cache world)
                    [computed dt-compute] (profile/timing
                                           #(par/par-mapv
                                             (fn [data]
-                                              (let [h       (* 2.0 (double (or (:radius data) 1.0)))
-                                                    [nbrs grads] (em-neighbors-and-curl-gradients world data h)
-                                                    curl-b  (curl-estimate (:b-field data) (:density data)
-                                                                           (:position data) nbrs grads)
-                                                    accel   (capped-lorentz-acceleration data curl-b)
+                                              (let [eid     (:eid data)
+                                                    radius  (double (or (:radius data) 1.0))
+                                                    h       (* 2.0 radius)
+                                                    curl-b  (if-let [entry (get cache eid)]
+                                                              (curl-estimate-from-cache
+                                                               (:b-field data) (:density data)
+                                                               (:position data) h (:neighbors entry))
+                                                              (if tree
+                                                                (let [nbrs (idx/within-radius
+                                                                            tree (:position data) h
+                                                                            em-active-neighbor?)]
+                                                                  (curl-estimate
+                                                                   (:b-field data) (:density data)
+                                                                   (:position data) nbrs nil))
+                                                                [0.0 0.0 0.0]))
+                                                    accel   (let [[cx cy cz] curl-b]
+                                                              (if (and (zero? cx) (zero? cy) (zero? cz))
+                                                                [0.0 0.0 0.0]
+                                                                (capped-lorentz-acceleration data curl-b)))
                                                     torque  (magnetic-braking-torque data dt)]
-                                                [(:eid data) accel torque]))
+                                                [eid accel torque]))
                                             active))
-                   accel-cell (reduce (fn [m [eid a _]]
-                                        (if (lf/finite-vec3? a) (assoc m eid a) m))
-                                      {} computed)
-                   torque-cell (reduce (fn [m [eid _ t]]
-                                         (if (lf/finite-vec3? t) (assoc m eid t) m))
-                                       {} computed)
-                   ws (merge (tick/contribution-write-set
-                              c/accel-lorentz accel-cell
-                              (keys (get-in world [:components c/accel-lorentz])))
-                             (tick/contribution-write-set
-                              c/torque-em torque-cell
-                              (keys (get-in world [:components c/torque-em]))))]
-               (if (:phase0/profile-subsystems? world)
-                 (assoc ws :phase0/_profile (merge-with +
-                                                        (or (:phase0/_profile ws) {})
+                   accel-cell  (transient {})
+                   torque-cell (transient {})
+                   _           (doseq [[eid a t] computed]
+                                 (when (lf/finite-vec3? a) (assoc! accel-cell eid a))
+                                 (when (lf/finite-vec3? t) (assoc! torque-cell eid t)))
+                   ws          (merge (tick/contribution-write-set
+                                       c/accel-lorentz (persistent! accel-cell)
+                                       (keys (get-in world [:components c/accel-lorentz])))
+                                      (tick/contribution-write-set
+                                       c/torque-em (persistent! torque-cell)
+                                       (keys (get-in world [:components c/torque-em]))))]
+               (if (:genesis/profile-subsystems? world)
+                 (assoc ws :genesis/_profile (merge-with +
+                                                        (or (:genesis/_profile ws) {})
                                                         {:em-lorentz/compute (double dt-compute)}))
                  ws)))})
+
+;; --- Magnetosphere coupling --------------------------------------------------
+;; Stellar wind and CME parcels carry ram pressure and B-field. When they reach
+;; a planet, they compress its magnetosphere. The standoff distance r_mp is where
+;; the planet's magnetic pressure equals the wind ram pressure: B²/(2μ₀) = P_ram.
+
+(defn- magnetopause-distance
+  "Standoff distance (m) where planetary magnetic pressure balances wind ram
+   pressure: r_mp = R_p × (B_p² / (2μ₀ P_ram))^(1/6). Returns R_p when no wind."
+  [planet-radius planet-b-field ram-pressure]
+  (let [Rp   (double (or planet-radius 0.0))
+        Bp   (double (or planet-b-field 0.0))
+        Pram (double (or ram-pressure 0.0))]
+    (if (and (pos? Rp) (pos? Bp) (pos? Pram))
+      (* Rp (Math/pow (/ (* Bp Bp) (* 2.0 lf/mu-0 Pram)) (/ 1.0 6.0)))
+      Rp)))
+
+(defn magnetosphere-coupling-system
+  "For each :planet, find nearby ionized wind/CME parcels and compute magnetosphere
+   compression. Writes c/magnetosphere with standoff distance and compression factor.
+   A compressed magnetosphere (small standoff) means more atmospheric exposure.
+   Runs in the parallel fan-out (was a cargo-cult barrier)."
+  [world]
+  (let [profile? (:genesis/profile-subsystems? world)
+        [wind-parcels dt-winds]
+        (if profile?
+          (profile/timing
+           #(filterv (fn [eid]
+                       (let [st (ecs/get-component world eid c/matter-state)]
+                         (and (= :nebula st)
+                              (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
+                     (ecs/entities-with world c/matter-state c/position c/mass c/radius)))
+          [(filterv (fn [eid]
+                      (let [st (ecs/get-component world eid c/matter-state)]
+                        (and (= :nebula st)
+                             (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
+                    (ecs/entities-with world c/matter-state c/position c/mass c/radius))
+           0])
+        world (profile/with-profile world {:magnetosphere/filter-winds (double dt-winds)})
+        [wind-data dt-build]
+        (if profile?
+          (profile/timing
+           #(mapv (fn [eid]
+                    {:pos (ecs/get-component world eid c/position)
+                     :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
+                  wind-parcels))
+          [(mapv (fn [eid]
+                   {:pos (ecs/get-component world eid c/position)
+                    :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
+                 wind-parcels)
+           0])
+        world (profile/with-profile world {:magnetosphere/build-wind-data (double dt-build)})]
+    (profile/profile-section
+     world :magnetosphere/compute
+     (fn [w]
+       (let [planets (filterv #(= :planet (ecs/get-component w % c/matter-state))
+                              (ecs/entities-with w c/matter-state c/position c/radius))]
+         (reduce (fn [w eid]
+                   (let [pos    (ecs/get-component w eid c/position)
+                         Rp     (double (or (ecs/get-component w eid c/radius) 0.0))
+                         Bp     (double (or (some-> (ecs/get-component w eid c/b-field) sp/len) 0.0))
+                         cutoff (* 10.0 Rp)
+                         nearby-ram (reduce (fn [acc wd]
+                                              (if (< (sp/dist pos (:pos wd)) cutoff)
+                                                (+ acc (:ram wd))
+                                                acc))
+                                            0.0 wind-data)
+                         r-mp       (magnetopause-distance Rp Bp nearby-ram)
+                         compression (if (pos? Rp) (min 10.0 (/ Rp (max 1.0e3 r-mp))) 1.0)]
+                     (ecs/put-component w eid c/magnetosphere
+                                        {:standoff-distance r-mp
+                                         :compression compression})))
+                 w
+                 planets))))))

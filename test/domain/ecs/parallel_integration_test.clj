@@ -11,7 +11,7 @@
     [domain.ecs.components :as c]
     [domain.ecs.tick :as tick]
     [domain.physics.collision :as collision]
-    [domain.phase0 :as phase0]))
+    [domain.genesis :as genesis]))
 
 (defn- parallel-tick
   "One double-buffer tick: advance the logical tick, arm the integrator with the
@@ -20,8 +20,8 @@
    fold them, then run the discrete collision/merge barrier."
   [world]
   (let [world   (-> (ecs/advance-tick world)
-                    (assoc :phase0/frame-offset (phase0/center-of-mass world)))
-        systems (phase0/physics-systems-parallel world)]
+                    (assoc :genesis/frame-offset (genesis/center-of-mass world)))
+        systems (genesis/physics-systems-parallel world)]
     (-> (tick/run-parallel world systems) ;; :on-conflict :throw (default)
         (collision/collision-detection-system)))) ;; barrier: discrete events
 
@@ -29,7 +29,7 @@
   (and (vector? v) (= 3 (count v)) (every? #(and (number? %) (Double/isFinite (double %))) v)))
 
 (deftest fan-out-drives-a-real-world
-  (let [w0 (phase0/create-world {:gas-count 150 :dt 1e12})
+  (let [w0 (genesis/create-world {:gas-count 150 :dt 1e12})
         n  10
         wn (reduce (fn [w _] (parallel-tick w)) w0 (range n))]
     (testing "the world advanced n ticks without throwing"
@@ -52,8 +52,8 @@
   ;; itself is non-deterministic, independent of this work — see the design note.
   ;; Full system-ORDER independence holds once single-writer removes all conflicts;
   ;; single-writer holds, so the fold is conflict-free under the default :throw.)
-  (let [w       (ecs/advance-tick (phase0/create-world {:gas-count 120 :dt 1e12}))
-        systems (phase0/physics-systems-parallel w)
+  (let [w       (ecs/advance-tick (genesis/create-world {:gas-count 120 :dt 1e12}))
+        systems (genesis/physics-systems-parallel w)
         par-a   (tick/run-parallel   w systems)
         par-b   (tick/run-parallel   w systems)
         seqv    (tick/run-sequential w systems)]

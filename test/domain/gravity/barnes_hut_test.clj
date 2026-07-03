@@ -7,7 +7,7 @@
 (def ^:const G 6.67408e-11)
 
 (defn- bodies->soa
-  "Build a minimal `:phase0/physics-soa` cache from body maps."
+  "Build a minimal `:genesis/physics-soa` cache from body maps."
   [bodies]
   (let [n (count bodies)]
     {:eids   (vec (map :id bodies))

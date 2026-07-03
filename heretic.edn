@@ -1,0 +1,49 @@
+;; Heretic mutation-testing config for Gates of Truth.  See docs/TESTING.md.
+;;
+;; Heretic is EXPERIMENTAL / pre-1.0 (upstream README: "not ready for use").
+;; It maps tests -> code via ClojureStorm, then mutates source and re-runs only
+;; the covering tests. Run it with `bin/mutate` (wraps `clojure -M:heretic ...`).
+;;
+;; Scope: we mutate the pure simulation layers only (domain/law/shape). The
+;; infra layer is rendering/GL/IO — mutating it is slow and low-signal, so it is
+;; neither instrumented (see the :heretic alias) nor collected here.
+
+{:source-paths ["src"]
+ :test-paths   ["test"]
+
+ ;; Discover every test namespace, minus the infra/GL suites and the
+ ;; architecture invariant test — none of them exercise instrumented
+ ;; (domain/law/shape) code, so they only add collection time.
+ :test-namespaces :all
+ :exclude-test-namespaces #{architecture-test
+                            infra.camera-test
+                            infra.inspect-test
+                            infra.render-test
+                            infra.render.shader-test
+                            infra.render.units-test}
+
+ ;; Must match instrumentOnlyPrefixes in the :heretic alias. Never instrument
+ ;; heretic/clojure.* themselves (ClojureStorm would recurse infinitely).
+ :instrument-prefixes ["domain" "law" "shape"]
+ :instrument-skip-prefixes []
+
+ ;; Coverage index + reports.
+ :heretic-dir ".heretic"
+
+ ;; Operators: :fast (16) · :standard (36, default) · :minimal (31) ·
+ ;; :comprehensive (81). Start standard; raise once survivors are triaged.
+ :preset :standard
+ :skip-forms #{comment}
+
+ ;; Per-mutant test timeout. The N-body / integrator code has slow paths, so give
+ ;; it more headroom than the 5s default before a mutant is called a timeout.
+ :timeout-ms 15000
+
+ ;; mutate/watch run in a disposable copy of the tree (your working tree is only
+ ;; ever read). The child JVM reuses this alias for the ClojureStorm classpath.
+ :sandbox-aliases ["heretic"]
+ :sandbox-dir ".heretic-sandbox"
+ :keep-sandbox true
+
+ :report-format :terminal
+ :output-path "target/heretic-report"}

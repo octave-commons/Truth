@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Test-coverage report for Gates of Truth (cloverage).
+#
+#   bin/coverage            # full report: HTML + codecov.json + text summary
+#   bin/coverage --text     # text summary only (fast; no HTML), for terminals/CI
+#   bin/coverage -n 'domain.stellar' -t 'domain.stellar-test'   # scope to a ns
+#
+# Any extra args pass straight through to cloverage.core (see `--help`).
+# Output lands in target/coverage/ (git-ignored). Measures all of src; the whole
+# suite runs headless. Deps come from deps.edn :coverage alias.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+OUT="target/coverage"
+
+# Convenience flag: --text -> line-only summary, no HTML (much faster).
+EXTRA=()
+if [ "${1:-}" = "--text" ]; then
+  shift
+  EXTRA+=(--no-html --lcov)
+fi
+
+exec clojure -M:coverage \
+  -p src -s test \
+  --output "$OUT" \
+  --codecov \
+  "${EXTRA[@]}" "$@"

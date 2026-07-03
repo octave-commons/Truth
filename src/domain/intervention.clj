@@ -6,7 +6,7 @@
    domain.player). Phase 1 is warp-space: a gravity WELL (pull) or REPULSOR (push)
    that bends nearby bodies for a while, then fades.
 
-   Interventions live as a plain vector on the world at `:phase0/interventions`.
+   Interventions live as a plain vector on the world at `:genesis/interventions`.
    The warp system reads them and emits the single-writer `:component/accel.warp`
    channel; the motion integrator sums it like any other force. Expiry runs at the
    serial barrier. Nothing here adds or removes mass — warp is pure force (the
@@ -98,7 +98,7 @@
   {:id     :warp
    :writes #{c/accel-warp}
    :run    (fn [world]
-             (let [ivs  (filterv #(warp-kinds (:kind %)) (:phase0/interventions world))
+             (let [ivs  (filterv #(warp-kinds (:kind %)) (:genesis/interventions world))
                    tick (:tick world)
                    dt   (:sim/dt world)]
                (if (empty? ivs)
@@ -120,8 +120,8 @@
   [world]
   (let [tick (:tick world)]
     (cond-> world
-      (seq (:phase0/interventions world))
-      (update :phase0/interventions
+      (seq (:genesis/interventions world))
+      (update :genesis/interventions
               (fn [ivs] (filterv #(pos? (decay-fraction % tick)) ivs))))))
 
 (defn place
@@ -136,7 +136,7 @@
      (if (and obs (player/can-afford? obs cost))
        (-> world
            (player/update-observer player/spend-agency cost)
-           (update :phase0/interventions (fnil conj [])
+           (update :genesis/interventions (fnil conj [])
                    (make-intervention kind position (:tick world) opts)))
        world))))
 
@@ -209,7 +209,7 @@
   {:id     :thermal-intervention
    :writes #{c/heat-intervention}
    :run    (fn [world]
-             (let [ivs (filterv #(thermal-kinds (:kind %)) (:phase0/interventions world))]
+             (let [ivs (filterv #(thermal-kinds (:kind %)) (:genesis/interventions world))]
                (if (empty? ivs)
                  {c/heat-intervention {}}
                  (let [tick (:tick world)

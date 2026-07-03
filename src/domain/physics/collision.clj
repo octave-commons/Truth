@@ -122,11 +122,11 @@
   "ECS system: detects literal sphere overlaps, emits :event/collision for each
    pair. No state mutation — all response is via handlers.
 
-   Reads the shared spatial tree from :phase0/spatial-tree (built once per tick
+   Reads the shared spatial tree from :genesis/spatial-tree (built once per tick
    by domain.spatial.index) instead of building its own."
   [world]
   (let [bodies (collidable-bodies world)
-        tree   (:phase0/spatial-tree world)
+        tree   (:genesis/spatial-tree world)
         tick   (:tick world)
         pairs  (detect-pairs bodies tree)]
     (reduce (fn [w {:keys [eid-a eid-b pos-a pos-b

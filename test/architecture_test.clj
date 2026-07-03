@@ -14,21 +14,21 @@
        (filter #(and (.isFile %) (str/ends-with? (.getName %) ".clj")))))
 
 (deftest single-ecs-substrate
-  (testing "Phase 0 runs on the ONE ECS world (domain.phase0) — no parallel sim"
+  (testing "Phase 0 runs on the ONE ECS world (domain.genesis) — no parallel sim"
     ;; A separate particle/array world model (the old domain.particles path,
     ;; marked by its own world keys) is forbidden: phases are content layers over
     ;; the single ECS substrate, never parallel simulations. If you are
     ;; reintroducing such a path, you are violating the core architecture — stop
     ;; and read AGENTS.md › Single Simulation Substrate.
-    (let [forbidden #"domain\.particles|:phase0/mode|:phase0/field|:phase0/mesh"
+    (let [forbidden #"domain\.particles|:genesis/mode|:genesis/field|:genesis/mesh"
           offenders (->> (clj-files "src")
                          (filter #(re-find forbidden (slurp %)))
                          (mapv #(.getPath %)))]
       (is (empty? offenders)
           (str "Parallel-world markers found in: " offenders))))
 
-  (testing "domain.phase0 is the sole Phase 0 world bootstrap"
-    (is (.exists (io/file "src/domain/phase0.clj")))))
+  (testing "domain.genesis is the sole Phase 0 world bootstrap"
+    (is (.exists (io/file "src/domain/genesis.clj")))))
 
 (deftest one-renderer
   (testing "There is a single Phase 0 renderer (infra.render), no orphan copy"
@@ -65,3 +65,32 @@
         (reg/format-conflicts (reg/write-conflicts reg/systems))))
   (testing "assert-single-writer! passes (the boot-time guard)"
     (is (= reg/systems (reg/assert-single-writer! reg/systems)))))
+
+;; --- Genesis / arc separation (docs/specs/genesis-arc-separation.md) --------
+;; The physical genesis loop (domain.genesis) is portable and arc-agnostic; the
+;; narrative arc (domain.arc) is a separate story-state layer; ongoing physics
+;; that is not formation-specific lives with its proper owner.
+
+(deftest ongoing-physics-lives-in-proper-owners
+  (testing "systems evicted from the genesis loop resolve in their new namespaces"
+    (require 'domain.atmosphere 'domain.lod 'domain.em 'domain.habitability
+             'infra.input 'domain.arc)
+    (is (some? (resolve 'domain.atmosphere/xuv-atmospheric-escape-system)))
+    (is (some? (resolve 'domain.lod/lod-scheduler)))
+    (is (some? (resolve 'domain.em/magnetosphere-coupling-system)))
+    (is (some? (resolve 'domain.habitability/habitability-of)))
+    (is (some? (resolve 'domain.habitability/habitable-worlds)))
+    (is (some? (resolve 'infra.input/handle-input))))
+  (testing "the narrative arc lives in domain.arc, not the physics loop"
+    (is (some? (resolve 'domain.arc/detect-arc)))
+    (is (some? (resolve 'domain.arc/genesis-ending)))
+    (is (some? (resolve 'domain.arc/advance-arc))))
+  (testing "the evicted names no longer live in domain.genesis"
+    (require 'domain.genesis)
+    (is (nil? (resolve 'domain.genesis/xuv-atmospheric-escape-system)))
+    (is (nil? (resolve 'domain.genesis/lod-scheduler)))
+    (is (nil? (resolve 'domain.genesis/magnetosphere-coupling-system)))
+    (is (nil? (resolve 'domain.genesis/handle-input)))
+    (is (nil? (resolve 'domain.genesis/habitable-worlds)))
+    (is (nil? (resolve 'domain.genesis/detect-phase)))
+    (is (nil? (resolve 'domain.genesis/world-ending)))))

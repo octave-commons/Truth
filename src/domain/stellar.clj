@@ -257,9 +257,9 @@
      (if fusion? 20 0)
      (* 10 planet-count)))
 
-;; Observable complexity now drives the adaptive game clock and integration
-;; step in `domain.phase0` (see `pacing-tiers`), keyed on the detected formation
-;; phase rather than a single continuous time-compression factor.
+;; Observable complexity is folded into the adaptive game clock in
+;; `domain.pacing/pacing-for` as a per-tick step cap, combined with the bulk
+;; dynamical time bound that keeps the integrator stable.
 
 ;; --- ECS projection ---------------------------------------------------------
 
@@ -312,7 +312,7 @@
   [world]
   (let [eids (ecs/entities-with world c/matter-state c/position c/density
                                 c/radius c/temperature c/mass)
-        gas-mass (:phase0/gas-particle-mass world)]
+        gas-mass (:genesis/gas-particle-mass world)]
     (reduce (fn [w eid]
               (if (not= :nebula (ecs/get-component w eid c/matter-state))
                 w
@@ -356,7 +356,7 @@
 
    Contraction is RATE-LIMITED to the Kelvin–Helmholtz timescale, not a fixed
    fraction per tick: the equivalent radius relaxes toward the main-sequence
-   floor as 1 − e^(−dt/τ), where τ = `:phase0/contraction-time` (default ~30
+   floor as 1 − e^(−dt/τ), where τ = `:genesis/contraction-time` (default ~30
    Myr). With a fixed fraction the core reached the floor in a handful of ticks
    and ignited in ~50 kyr; rate-limiting spreads the ignition event over tens of
    Myr of simulation time, independent of how large `dt` is, while
@@ -366,7 +366,7 @@
    it compresses, then bounded below by the virial temperature so the core does
    not cool below the gravitational binding energy scale. Pressure follows from
    the ideal gas law."
-  [{:keys [phase0/collapse-fraction phase0/contraction-time sim/dt]
+  [{:keys [genesis/collapse-fraction genesis/contraction-time sim/dt]
     :or   {collapse-fraction 0.5 contraction-time 9.5e14 dt 1.0e12} :as world}]
   (let [frac (min (double collapse-fraction)
                   (- 1.0 (Math/exp (- (/ (double dt) (double contraction-time))))))]
@@ -414,7 +414,7 @@
    star) is left to the fusion system once contraction makes the core hot enough."
   [world]
   (let [eids     (ecs/entities-with world c/matter-state c/mass)
-        gas-mass (:phase0/gas-particle-mass world)
+        gas-mass (:genesis/gas-particle-mass world)
         updates  (mapv
                   (fn [eid]
                     (let [state (ecs/get-component world eid c/matter-state)]
@@ -891,10 +891,10 @@
 (defn condense-tick?
   "True when a new condensation is permitted this tick: either the timestep
    already spans a full `condense-interval`, or sim-time crosses an interval
-   boundary during this step. Stateless — derived from `:phase0/sim-time` and
+   boundary during this step. Stateless — derived from `:genesis/sim-time` and
    `:sim/dt` on the frozen snapshot, so it holds across the parallel fan-out."
   [world]
-  (let [t  (double (or (:phase0/sim-time world) 0.0))
+  (let [t  (double (or (:genesis/sim-time world) 0.0))
         dt (double (or (:sim/dt world) 0.0))]
     (or (not (pos? condense-interval))
         (>= dt condense-interval)
@@ -918,13 +918,13 @@
       world
       [[:classifier/scan
         (fn [w]
-          {:gas-mass      (:phase0/gas-particle-mass w)
+          {:gas-mass      (:genesis/gas-particle-mass w)
            :eids          (ecs/entities-with w c/matter-state c/mass)
            :zones         (sink-exclusion-zones w)
            :promotions    (get-in w [:components c/promotion-signal] {})
            :may-condense? (condense-tick? w)
-           :factor        (double (:phase0/feeding-zone-factor w feeding-zone-factor))
-           :gas-r         (double (or (:phase0/gas-smoothing-radius w) 0.0))})]
+           :factor        (double (:genesis/feeding-zone-factor w feeding-zone-factor))
+           :gas-r         (double (or (:genesis/gas-smoothing-radius w) 0.0))})]
        [:classifier/transitions
         (fn [{:keys [gas-mass eids zones promotions may-condense? factor gas-r] :as state}]
           (let [transitions
@@ -1002,8 +1002,8 @@
   {:id     :jeans-collapse
    :writes #{c/accretion-radius}
    :run    (fn [world]
-             (let [gas-mass (:phase0/gas-particle-mass world)
-                   factor   (double (:phase0/feeding-zone-factor world feeding-zone-factor))
+             (let [gas-mass (:genesis/gas-particle-mass world)
+                   factor   (double (:genesis/feeding-zone-factor world feeding-zone-factor))
                    eids     (ecs/entities-with world c/matter-state c/mass c/radius)]
                {c/accretion-radius
                 (into {}
@@ -1495,16 +1495,16 @@
       [[:stellar-wind/scan
         (fn [w]
           {:world  w
-           :k      (double (:phase0/wind-rate-scale w 1.0))
+           :k      (double (:genesis/wind-rate-scale w 1.0))
            :dt     (double (or (:sim/dt w) 1.0e12))
            :tick   (or (:tick w) 0)
-           :p-mass (double (or (:phase0/wind-parcel-mass w)
-                               (some-> (:phase0/gas-particle-mass w) (* 0.25))
+           :p-mass (double (or (:genesis/wind-parcel-mass w)
+                               (some-> (:genesis/gas-particle-mass w) (* 0.25))
                                1.0e27))
-           :v-fac  (double (:phase0/wind-speed-factor w 0.15))
-           :max-frac (double (:phase0/wind-max-loss-frac w 0.01))
-           :abl    (double (:phase0/ablation-floor w (* 1.0e-3 law/deuterium-burning-mass)))
-           :gas-r  (double (or (:phase0/gas-smoothing-radius w) 6.0e13))
+           :v-fac  (double (:genesis/wind-speed-factor w 0.15))
+           :max-frac (double (:genesis/wind-max-loss-frac w 0.01))
+           :abl    (double (:genesis/ablation-floor w (* 1.0e-3 law/deuterium-burning-mass)))
+           :gas-r  (double (or (:genesis/gas-smoothing-radius w) 6.0e13))
            :stars  (ecs/entities-with w c/matter-state c/mass c/radius
                                       c/position c/velocity)
            :sources (em/field-sources w)})]
@@ -1537,9 +1537,9 @@
    capped exactly like the wind (`v ≤ flare-speed-factor · feeding-zone / dt`), so
    flares never blow the system apart. Bipolar: successive flares alternate poles.
 
-   Tunables: `:phase0/flare-period` (ticks between flares per star; 0 disables),
-   `:phase0/flare-mass-factor` (× wind-parcel mass), `:phase0/flare-speed-factor`
-   (drift per tick as a fraction of the feeding zone), `:phase0/flare-temp-factor`
+   Tunables: `:genesis/flare-period` (ticks between flares per star; 0 disables),
+   `:genesis/flare-mass-factor` (× wind-parcel mass), `:genesis/flare-speed-factor`
+   (drift per tick as a fraction of the feeding zone), `:genesis/flare-temp-factor`
    (× virial temperature, for brightness). A flare never fires if it would pull
    the star below half the hydrogen-burning mass — flares decorate, they don't
    demote."
@@ -1548,19 +1548,19 @@
    :writes #{c/mass-flux-flare c/dv-flare c/spawn-request-flare c/flare-boost}
    :run
    (fn [world]
-     (let [period (long (:phase0/flare-period world 0))] ;; default OFF — opt in via :phase0/flare-period
+     (let [period (long (:genesis/flare-period world 0))] ;; default OFF — opt in via :genesis/flare-period
        (if-not (pos? period)
          {}
          (let [sources (em/field-sources world) ;; launch-point field sampler (research §5)
                dt     (double (or (:sim/dt world) 1.0e12))
                tick   (or (:tick world) 0)
-               p-mass (double (or (:phase0/wind-parcel-mass world)
-                                  (some-> (:phase0/gas-particle-mass world) (* 0.25))
+               p-mass (double (or (:genesis/wind-parcel-mass world)
+                                  (some-> (:genesis/gas-particle-mass world) (* 0.25))
                                   1.0e27))
-               m-fac  (double (:phase0/flare-mass-factor world 3.0))
-               v-fac  (double (:phase0/flare-speed-factor world 0.4))
-               t-fac  (double (:phase0/flare-temp-factor world 3.0))
-               gas-r  (double (or (:phase0/gas-smoothing-radius world) 6.0e13))
+               m-fac  (double (:genesis/flare-mass-factor world 3.0))
+               v-fac  (double (:genesis/flare-speed-factor world 0.4))
+               t-fac  (double (:genesis/flare-temp-factor world 3.0))
+               gas-r  (double (or (:genesis/gas-smoothing-radius world) 6.0e13))
                floor  (* 0.5 law/hydrogen-burning-mass)
                stars  (ecs/entities-with world c/matter-state c/mass c/radius
                                          c/position c/velocity)
@@ -1664,11 +1664,11 @@
   {:id     :structure
    :writes #{c/radius c/density c/oblateness c/rotation-axis}
    :run    (fn [world]
-             (let [cf (:phase0/collapse-fraction world 0.5)
-                   ct (:phase0/contraction-time world 9.5e14)
+             (let [cf (:genesis/collapse-fraction world 0.5)
+                   ct (:genesis/contraction-time world 9.5e14)
                    dt (:sim/dt world 1.0e12)
                     ;; gas branch (SPH): density primary, radius derived
-                   gas-ws (let [profile? (:phase0/profile-subsystems? world)
+                   gas-ws (let [profile? (:genesis/profile-subsystems? world)
                                 [gas-results dt-query]
                                 (if profile?
                                   (profile/timing #(hydro/gas-structure world))
@@ -1683,7 +1683,7 @@
                                                (assoc-in [c/radius eid] r))
                                            ws))
                                        (if profile?
-                                         {:phase0/_profile {:structure/gas-query (double dt-query)}}
+                                         {:genesis/_profile {:structure/gas-query (double dt-query)}}
                                          {})
                                        gas-results))))]
                ;; resolved branch: radius primary (or material density), rest derived
@@ -1841,9 +1841,9 @@
             ;; is already large, fall through to the inelastic merge (which removes
             ;; a body) instead of shattering. Uses the prior tick's resolved count
             ;; (O(1), carried on the snapshot) — exact count is unnecessary for a
-            ;; soft cap. Disable with :phase0/max-resolved-bodies 0.
-            budget (long (:phase0/max-resolved-bodies world 400))
-            resolved (long (or (get-in world [:phase0/stats :resolved-count]) 0))]
+            ;; soft cap. Disable with :genesis/max-resolved-bodies 0.
+            budget (long (:genesis/max-resolved-bodies world 400))
+            resolved (long (or (get-in world [:genesis/stats :resolved-count]) 0))]
         (if (and (> (double (:mass ms*)) law/shatter-min-mass)
                  (< (law/malleability t-cold) law/shatter-malleability-max)
                  (> (sp/len (sp/v- va vs)) law/shatter-dv-threshold)

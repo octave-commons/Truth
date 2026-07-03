@@ -4,10 +4,9 @@
    Physics reversal via negated dt (symplectic integrator time-reversal).
    Event reversal via :event/reverse-* handlers or explicit undo-fn on event payload."
   (:require
-    [domain.ecs.core       :as ecs]
-    [domain.ecs.event      :as event]
-    [domain.ecs.rewindable :refer [Rewindable current-tick restore seek step-backward step-forward]]
-    [law.ledger            :as ledger]))
+   [domain.ecs.core       :as ecs]
+   [domain.ecs.rewindable :refer [Rewindable current-tick restore seek step-backward step-forward]]
+   [law.ledger            :as ledger]))
 
 ;; ---------------------------------------------------------------------------
 ;; Snapshot interval — how often we checkpoint
@@ -20,12 +19,12 @@
 ;; ---------------------------------------------------------------------------
 
 (defrecord Timeline
-  [world          ;; current ECS world map
-   ledger         ;; law.ledger/Ledger
-   systems-fwd    ;; [system-fn] for forward tick
-   systems-bwd    ;; [system-fn] for backward tick
-    snap-every ;; long
-    ])
+           [world          ;; current ECS world map
+            ledger         ;; law.ledger/Ledger
+            systems-fwd    ;; [system-fn] for forward tick
+            systems-bwd    ;; [system-fn] for backward tick
+            snap-every ;; long
+            ])
 
 (defn- take-snapshot
   "Store current world as snapshot in ledger at current tick."
@@ -39,6 +38,23 @@
   (if (zero? (mod (get-in tl [:world :tick]) (:snap-every tl)))
     (take-snapshot tl)
     tl))
+
+;; ---------------------------------------------------------------------------
+;; Event collection (from the world's event ledger into the hash-chained ledger)
+;; ---------------------------------------------------------------------------
+
+(defn- world-events
+  "All events currently in the world's inline event ledger."
+  [world]
+  (get-in world [:ledger :events] []))
+
+(defn- new-world-events
+  "Return events appended to `world-after` since `world-before`.
+   Uses a cursor difference so it does not depend on event tick tagging."
+  [world-before world-after]
+  (let [old (count (world-events world-before))
+        new (count (world-events world-after))]
+    (subvec (world-events world-after) old new)))
 
 ;; ---------------------------------------------------------------------------
 ;; Event un-application (for rewind)
@@ -65,17 +81,18 @@
   Rewindable
 
   (step-forward [tl]
-    (let [world'     (ecs/tick (:world tl) (:systems-fwd tl))
-          new-events (event/events-since (:ledger tl)
-                                         (get-in tl [:world :tick]))
-          ledger'    (reduce ledger/append (:ledger tl) new-events)
-          tl'        (assoc tl :world world' :ledger ledger')]
+    (let [world     (:world tl)
+          world'    (ecs/tick world (:systems-fwd tl))
+          new-events (new-world-events world world')
+          ledger'   (reduce ledger/append (:ledger tl) new-events)
+          tl'       (assoc tl :world world' :ledger ledger')]
       (maybe-snapshot tl')))
 
   (step-backward [tl]
     (let [tick    (get-in tl [:world :tick])
           world'  (unapply-events-at-tick (:world tl) (:ledger tl) tick)
-          world'' (ecs/tick world' (:systems-bwd tl))]
+          world'' (-> (ecs/run-systems world' (:systems-bwd tl))
+                      (assoc :tick (dec tick)))]
       (assoc tl :world world'')))
 
   (snapshot [tl]
@@ -127,5 +144,5 @@
                   (ledger/empty-ledger)
                   systems-fwd
                   systems-bwd
-                   snapshot-every)
+                  snapshot-every)
       take-snapshot))

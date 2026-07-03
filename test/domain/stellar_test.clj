@@ -12,7 +12,7 @@
      [domain.ecs.tick :as tick]
      [domain.physics.collision :as collision]
      [domain.spatial.index    :as spatial]
-     [domain.phase0           :as phase0]
+     [domain.genesis           :as genesis]
      [law.stellar :as law]
      [shape.spatial :as sp]))
 
@@ -83,7 +83,7 @@
           total-L (sp/v+ La Lb)
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
-          w3      (phase0/materialize-lifecycle w3)
+          w3      (genesis/materialize-lifecycle w3)
           survivor (first (ecs/entities-with w3 c/mass))]
       (is (= 1 (count (ecs/entities-with w3 c/mass))))
       (testing "absorb-merge packet carries the small body's angular momentum"
@@ -125,7 +125,7 @@
                                                :accretion-radius 1.0e12})
           w2       (spatial/spatial-index w2)
           w3       (collision/collision-detection-system w2)
-          w3       (phase0/materialize-lifecycle w3)
+          w3       (genesis/materialize-lifecycle w3)
           survivor (first (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))]
       (is (= 1 (count (filter #(ecs/alive? w3 %) (ecs/entities-with w3 c/mass)))))
       (testing "survivor radius unchanged this tick (re-derived next tick by structure)"
@@ -163,9 +163,9 @@
                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
           w     (-> w
                     (ecs/put-component star c/pressure 1.0e13) ;; → fusion-possible → L>0
-                    (assoc :sim/dt 1.0e14 :phase0/wind-rate-scale 1.0e3
-                           :phase0/wind-parcel-mass 5.0e27
-                           :phase0/gas-smoothing-radius 6.0e13))
+                    (assoc :sim/dt 1.0e14 :genesis/wind-rate-scale 1.0e3
+                           :genesis/wind-parcel-mass 5.0e27
+                           :genesis/gas-smoothing-radius 6.0e13))
           total (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
                                           (ecs/entities-with w c/mass)))
                            (reduce + (map #(double (or (ecs/get-component w % c/wind-reservoir) 0.0))
@@ -175,7 +175,7 @@
           m0    (total w)
           ws    ((:run (stellar/stellar-wind-system)) w)
           w1    (-> (tick/apply-write-set w ws)
-                    (phase0/materialize-lifecycle))]
+                    (genesis/materialize-lifecycle))]
       (is (< (Math/abs (/ (- (total w1) m0) m0)) 1.0e-12) "total mass conserved")
       (is (some #(= :nebula (ecs/get-component w1 % c/matter-state))
                 (ecs/entities-with w1 c/matter-state))
@@ -189,8 +189,8 @@
                       :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
                       :matter-state :star
                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
-          w     (assoc w :sim/dt 1.0e12 :phase0/flare-period 1
-                         :phase0/wind-parcel-mass 5.0e27 :phase0/gas-smoothing-radius 6.0e13)
+          w     (assoc w :sim/dt 1.0e12 :genesis/flare-period 1
+                         :genesis/wind-parcel-mass 5.0e27 :genesis/gas-smoothing-radius 6.0e13)
           tmass (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
                                         (ecs/entities-with w c/mass)))
                            (reduce + (map #(double (or (ecs/get-component w % c/mass-flux-flare) 0.0))
@@ -198,7 +198,7 @@
           m0    (tmass w)
           ws    ((:run (stellar/stellar-flare-system)) w)
           w1    (-> (tick/apply-write-set w ws)
-                    (phase0/materialize-lifecycle))
+                    (genesis/materialize-lifecycle))
           hot   (filter #(and (= :nebula (ecs/get-component w1 % c/matter-state))
                               (> (double (or (ecs/get-component w1 % c/temperature) 0.0)) 1.0e6))
                         (ecs/entities-with w1 c/matter-state))]
@@ -228,7 +228,7 @@
                                                :temperature 3000.0})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
-          w3      (phase0/materialize-lifecycle w3)
+          w3      (genesis/materialize-lifecycle w3)
           survivor (first (ecs/entities-with w3 c/mass))
           pkts    (ecs/get-component w3 survivor c/absorb-merge)]
       (is (some? pkts) "collision must fire (bodies overlap)")
@@ -345,12 +345,12 @@
 (deftest test-collapse-floors-at-main-sequence
   (testing "A protostar contracts toward, but never below, its main-sequence radius"
     (let [floor   ((requiring-resolve 'law.stellar/main-sequence-radius) 2e30)
-          ;; Contraction is rate-limited to τ=:phase0/contraction-time; pick
+          ;; Contraction is rate-limited to τ=:genesis/contraction-time; pick
           ;; dt ≫ τ so each step contracts at the full per-tick cap
           ;; (collapse-fraction) and the core actually reaches the floor within a
           ;; bounded number of steps — this test pins the floor invariant, not
           ;; the production (tens-of-Myr) contraction pace.
-          base    (assoc (ecs/empty-world) :sim/dt 1e15 :phase0/contraction-time 1e12)
+          base    (assoc (ecs/empty-world) :sim/dt 1e15 :genesis/contraction-time 1e12)
           [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 2e30
@@ -402,7 +402,7 @@
 (deftest test-accretion-radius-set-on-protostar
   (testing "A clump reaching star-forming mass freezes its radius as a feeding zone"
     (let [base    (-> (ecs/empty-world)
-                      (assoc :phase0/gas-particle-mass 1e27))
+                      (assoc :genesis/gas-particle-mass 1e27))
           [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1.1e30   ;; above star-mass-threshold
@@ -434,7 +434,7 @@
                                            :matter-state :debris})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
-          w3      (phase0/materialize-lifecycle w3)]
+          w3      (genesis/materialize-lifecycle w3)]
       (is (= 1 (count (ecs/entities-with w3 c/mass)))
           "the debris was accreted even though it never touched the photosphere"))))
 
@@ -452,7 +452,7 @@
                                            :mass 5e27 :radius 6e13})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
-          w3      (phase0/materialize-lifecycle w3)
+          w3      (genesis/materialize-lifecycle w3)
           surv    (first (ecs/entities-with w3 c/mass))]
       ;; Accretion radius is NOT written by the merge handler anymore — it stays
       ;; on the survivor unchanged, re-derived by classifier next tick.

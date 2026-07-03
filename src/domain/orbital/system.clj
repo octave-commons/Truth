@@ -82,23 +82,23 @@
 (defn gravity-acceleration
   "Write-set system: per-body Barnes–Hut self-gravity → `accel.gravity`.
 
-   Reads the shared spatial tree from :phase0/spatial-tree (built once per tick
+   Reads the shared spatial tree from :genesis/spatial-tree (built once per tick
    by domain.spatial.index/spatial-index) instead of constructing its own.
    The tree contains ALL entities; gravity computes acceleration for every body
    in the tree. Self-gravity is skipped by the Barnes–Hut walker at leaf nodes
    via the body's `:id`.
 
-   When `:phase0/physics-soa` is present, the Barnes-Hut tree is walked directly
+   When `:genesis/physics-soa` is present, the Barnes-Hut tree is walked directly
    against the primitive arrays via `bh/acceleration-for-soa`; otherwise the
-   already projected `:phase0/spatial-items` are used as a fallback."
+   already projected `:genesis/spatial-items` are used as a fallback."
   [G theta softening]
   {:id     :gravity
    :writes #{c/accel-gravity}
    :run    (fn [world]
-             (let [tree (:phase0/spatial-tree world)]
-               (if-let [soa (:phase0/physics-soa world)]
+             (let [tree (:genesis/spatial-tree world)]
+               (if-let [soa (:genesis/physics-soa world)]
                  {c/accel-gravity (bh/acceleration-for-soa G theta softening tree soa nil)}
-                 (let [bodies (:phase0/spatial-items world (world->bodies world))]
+                 (let [bodies (:genesis/spatial-items world (world->bodies world))]
                    {c/accel-gravity
                     (into {}
                           (par/par-mapv

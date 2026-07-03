@@ -27,6 +27,28 @@
    ;; Splint: idiomatic-style / anti-pattern linter (maintained kibit successor).
    :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.24.0"}}
             :main-opts ["-m" "noahtheduke.splint" "src" "test"]}
+   ;; --- Test coverage (cloverage; see bin/coverage + docs/TESTING.md) ---------
+   ;; Instruments src, runs the test suite, reports line/form coverage. bin/coverage
+   ;; supplies -p/-s/report flags. Whole tree is measured (all tests pass headless).
+    :coverage {:extra-paths ["test"]
+               :extra-deps {cloverage/cloverage {:mvn/version "1.2.4"}
+                            nrepl/nrepl {:mvn/version "1.0.0"}}
+               :main-opts ["-m" "cloverage.coverage"]}
+   ;; --- Mutation testing (Heretic; EXPERIMENTAL) -----------------------------
+   ;; Heretic (github.com/parenstech/heretic) maps tests→code via ClojureStorm,
+   ;; mutates source, and re-runs only the covering tests. ClojureStorm REPLACES
+   ;; the Clojure compiler — isolated to THIS alias only; the normal build is
+   ;; untouched. Config in heretic.edn; wrapper bin/mutate; docs/TESTING.md.
+   ;; Pinned to main@45ed7c7 (no released tags exist; upstream is pre-1.0).
+   ;; Only domain/law/shape are instrumented — mutating GL/infra is low-value.
+   :heretic {:extra-paths ["test"]
+             :classpath-overrides {org.clojure/clojure nil}
+             :extra-deps {io.github.parenstech/heretic
+                          {:git/sha "45ed7c7deffd5fee1b3050efa7396d0113b30a4f"}
+                          com.github.flow-storm/clojure {:mvn/version "1.12.5"}}
+             :jvm-opts ["-Dclojure.storm.instrumentEnable=true"
+                        "-Dclojure.storm.instrumentAutoPrefixes=false"
+                        "-Dclojure.storm.instrumentOnlyPrefixes=domain,law,shape"]}
    ;; cljfmt: formatting consistency. `check` reports; `fix` rewrites.
    :cljfmt {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.16.4"}}
             :main-opts ["-m" "cljfmt.main"]}

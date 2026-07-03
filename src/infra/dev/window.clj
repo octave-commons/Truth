@@ -16,24 +16,26 @@
      (w/reload-mesh! 3)    ; change sphere subdivision level
      (w/take-screenshot! \"/tmp/truth-dev.png\")
 
-   Camera controls in the window:
+     Camera controls in the window:
      C              cycle camera mode (manual / track-largest-cluster / fit-all)
      [ / ]          decrease / increase fit margin
      R              reset camera and settings
-     LMB drag       orbit (manual modes)
+     W / S          move the mote forward / backward relative to the camera
+     A / D          strafe the mote left / right
+     mouse          rotate the camera around the mote (third-person)
      scroll         adjust distance"
   (:require
-    [domain.orbital.system :as orbital]
-    [domain.player         :as player]
-    [domain.intervention   :as intervention]
-    [infra.inspect         :as inspect]
-    [infra.render          :as render]
-    [infra.render.shader   :as sh]
-    [infra.render.units    :as units]
-    [infra.camera          :as cam])
+   [domain.orbital.system :as orbital]
+   [domain.player         :as player]
+   [domain.intervention   :as intervention]
+   [infra.inspect         :as inspect]
+   [infra.render          :as render]
+   [infra.render.shader   :as sh]
+   [infra.render.units    :as units]
+   [infra.camera          :as cam])
   (:import
-    (org.lwjgl.glfw GLFW)
-    (org.lwjgl.opengl GL15 GL30)))
+   (org.lwjgl.glfw GLFW)
+   (org.lwjgl.opengl GL15 GL30)))
 
 (defonce service-state
   (atom nil))
@@ -81,7 +83,7 @@
 
    The tick RATE is constant: the game always steps exactly once per frame. What
    dilates with complexity is `:sim/dt` — the in-game time each tick advances
-   (see `phase0/pacing-for`) — so the clock slows while the frame rate holds
+   (see `genesis/pacing-for`) — so the clock slows while the frame rate holds
    steady. There is no accumulator and no per-frame catch-up burst.
 
    Worlds without phase-0 pacing (e.g. the bare gravity demo) fall back to the
@@ -91,13 +93,13 @@
         tick-fn (:tick-fn cfg default-tick-fn)
         on-step (:on-step cfg identity)
         w       @world-atom]
-    (if (:phase0/time-scale w)
+    (if (:genesis/time-scale w)
       (swap! world-atom (fn [w] (on-step (tick-fn w))))
       (let [interval (:sim-frame-interval cfg 1)]
         (when (zero? (mod @frame-atom interval))
           (swap! world-atom (fn [w] (on-step (tick-fn w)))))))))
 
-(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom last-t-atom]
+(defn- render-frame-once [window world-atom camera-atom config-atom frame-atom time-atom last-t-atom keys-atom]
   (ensure-resources config-atom)
   (GLFW/glfwPollEvents)
   (let [cfg       @config-atom
@@ -118,29 +120,39 @@
           _      (GLFW/glfwGetFramebufferSize window wbuf hbuf)
           fb-w   (max 1 (aget wbuf 0))
           fb-h   (max 1 (aget hbuf 0))
-          _      (swap! camera-atom cam/update-camera-for-world w (:camera-settings cfg (cam/default-camera-settings)))
+          cam-settings cfg
+          _      (when (= :manual (:mode cam-settings))
+                   (let [ks @keys-atom
+                         input {:forward (cond (ks GLFW/GLFW_KEY_W) 1.0 (ks GLFW/GLFW_KEY_S) -1.0 :else 0.0)
+                                :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)}]
+                     (when (or (not= 0.0 (:forward input)) (not= 0.0 (:right input)))
+                       (let [velocity (cam/observer-move-velocity @camera-atom input cam-settings)]
+                         (swap! world-atom player/update-observer #(player/drift % velocity wall-dt))
+                         ;; In third-person mode the focus sphere travels with the mote.
+                         (swap! world-atom player/update-observer
+                                (fn [o] (player/set-focus o (:position o) (:focus-radius o) (:focus-intensity o))))))))
+          w      @world-atom
+          _      (swap! camera-atom cam/update-camera-for-world w cam-settings)
           cam    @camera-atom
           ctx    (units/make-context cam {:width fb-w :height fb-h})
           ;; Live cursor in framebuffer pixels (scale window→fb for HiDPI), shared
-          ;; by mouse-follow, hover, and click picking.
+          ;; by hover and click picking.
           [cur-sx cur-sy] (when-let [cur (:cursor cfg)]
                             (let [winw (int-array 1) winh (int-array 1)
                                   _    (GLFW/glfwGetWindowSize window winw winh)]
                               [(* (double (first cur)) (/ (double fb-w) (max 1 (aget winw 0))))
                                (* (double (second cur)) (/ (double fb-h) (max 1 (aget winh 0))))]))
-          ;; PASSIVE, free: the spark's attention follows the mouse. Sets the
-          ;; observer focus to the cursor's world point (reticle lags one frame —
-          ;; imperceptible). Keeps the existing gentle pull-toward-focus as the
-          ;; free 'observation' nudge; strong warps will be a paid action.
-          _      (when cur-sx
-                      (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
+          ;; PASSIVE, free: in tracking modes the spark's attention follows the
+          ;; mouse. In third-person manual mode the focus rides with the mote.
+          _      (when (and cur-sx (not= :manual (:mode cam-settings)))
+                   (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
                      (swap! world-atom player/update-observer
                             (fn [o] (player/set-focus o wp (:focus-radius o) (:focus-intensity o))))))
           ;; PAID: resolve a warp request (key G / Shift+G) at the cursor — spends
           ;; agency, no-op if unaffordable. The warp then bends nearby bodies.
           _      (when-let [ar (:action-request cfg)]
                    (when cur-sx
-                        (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
+                     (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
                        (swap! world-atom intervention/place (:kind ar) wp)))
                    (swap! config-atom dissoc :action-request))
           ;; Resolve a pending click into a selected entity (picks against the same
@@ -162,17 +174,20 @@
           hover    (when cur-sx (inspect/pick-entity ctx bodies cur-sx cur-sy))
           overlay  (concat (when sel (inspect/selection-overlay-shapes ctx w sel bodies))
                            (inspect/hover-overlay-shapes ctx bodies hover sel)
-                            (inspect/intervention-overlay-shapes ctx w))
+                           (inspect/intervention-overlay-shapes ctx w))
           card     (when sel (inspect/inspector-card ctx w sel bodies))
           controls (render/controls-hud w fb-w fb-h)
+          view-bar (render/view-bar-hud cfg cam fb-w fb-h)
           bodies   (if (seq overlay) (into (vec bodies) overlay) bodies)
           hud      (-> (vec (render/hud-rects-from-world w))
                        (into (:rects controls))
-                       (into (:rects card)))
+                       (into (:rects card))
+                       (into (:rects view-bar)))
           hud-text (concat (render/hud-text-from-world w)
                            (render/observer-hud-text w fb-w fb-h)
                            (:text controls)
-                           (:text card))
+                           (:text card)
+                           (:text view-bar))
           volume   (when (:volumetric? cfg true)
                      (render/frame-volume ctx w (:volume-program cfg)
                                           (:volume-res cfg :medium)))]
@@ -204,11 +219,12 @@
           last-t-atom (atom nil)
           ks       (atom {})]
       (swap! service-state assoc :window window)
+      (GLFW/glfwSetInputMode window GLFW/GLFW_CURSOR GLFW/GLFW_CURSOR_DISABLED)
       (render/setup-input window camera-atom ks config-atom world-atom)
       (loop []
         (when (and (not @stop-atom)
                    (render-frame-once window world-atom camera-atom config-atom
-                                      frame-atom time-atom last-t-atom))
+                                      frame-atom time-atom last-t-atom ks))
           (recur))))
     (catch Throwable t
       (swap! service-state assoc :error t)
@@ -224,13 +240,13 @@
      (throw (IllegalStateException. "Dev window already running. Call stop! first.")))
    (let [width          (get opts :width 1280)
          height         (get opts :height 720)
-          camera-atom    (atom (get opts :camera (cam/make-camera)))
-          config-atom    (atom (merge (cam/default-camera-settings)
+         camera-atom    (atom (get opts :camera (cam/make-camera)))
+         config-atom    (atom (merge (cam/default-camera-settings)
                                      {:width width :height height
-                                       :body-program nil
-                                       :line-program nil
-                                       :sprite-program nil
-                                       :hud-program nil
+                                      :body-program nil
+                                      :line-program nil
+                                      :sprite-program nil
+                                      :hud-program nil
                                       :volume-program nil
                                       ;; volumetric ray-marched fog is the default look
                                       :volumetric? true
@@ -275,7 +291,7 @@
     (swap! config-atom
            (fn [cfg]
              (assoc cfg :body-program nil :line-program nil :sprite-program nil
-                        :hud-program nil :volume-program nil)))))
+                    :hud-program nil :volume-program nil)))))
 
 (defn reload-mesh!
   "Change the sphere subdivision level used for bodies."
@@ -315,4 +331,4 @@
      :world    (identical? (:world s) (some-> s :world deref))
      :camera   @(:camera s)
      :config   (select-keys @(:config s) [:width :height :subdivisions
-                                           :mode :fit-margin :fit-percentile])}))
+                                          :mode :fit-margin :fit-percentile])}))

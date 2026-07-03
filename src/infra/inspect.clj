@@ -161,7 +161,7 @@
     []))
 
 (defn intervention-overlay-shapes
-  "Camera-facing rings for the player's active warps (`:phase0/interventions`):
+  "Camera-facing rings for the player's active warps (`:genesis/interventions`):
    a well reads cyan, a repulsor warm-orange; the ring sized to the warp's reach
    and dimmed as it decays, so a placed warp is visible and you watch it fade."
   [ctx world]
@@ -181,7 +181,7 @@
                          [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)])]
             (into (halo-shapes center (first r) ctx col 64)
                   (halo-shapes center (* (first r) 0.62) ctx col 48))))
-        (:phase0/interventions world)))))
+        (:genesis/interventions world)))))
 
 (defn selection-overlay-shapes
   "Halo + velocity arrow for the selected entity, riding on its already-projected

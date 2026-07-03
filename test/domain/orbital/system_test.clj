@@ -100,8 +100,8 @@
                         :velocity (comps c/velocity)})
                      (ecs/all-of world c/position c/velocity c/mass c/radius c/body-kind)))
           soa (pcache/build-physics-soa world)
-          world-with-soa (assoc world :phase0/spatial-tree tree :phase0/physics-soa (:phase0/physics-soa soa))
-          world-without-soa (assoc world :phase0/spatial-tree tree)
+          world-with-soa (assoc world :genesis/spatial-tree tree :genesis/physics-soa (:genesis/physics-soa soa))
+          world-without-soa (assoc world :genesis/spatial-tree tree)
           sys (sys/gravity-acceleration 6.674e-11 0.5 1.0e14)
           soa-result ((:run sys) world-with-soa)
           non-soa-result ((:run sys) world-without-soa)]

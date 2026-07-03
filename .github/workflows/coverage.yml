@@ -1,0 +1,46 @@
+name: coverage
+
+# Advisory test-coverage report (cloverage). Runs the suite, prints the
+# per-namespace coverage table to the log. Non-blocking, matching the
+# advisory-tools convention in bin/analyze — promote to a gate later by adding
+# --fail-threshold N to bin/coverage. See docs/TESTING.md.
+#
+# Mutation testing (Heretic) is intentionally NOT run in CI: coverage collection
+# under ClojureStorm instrumentation is expensive and the tool is pre-1.0.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clojure tooling
+        uses: DeLaGuardo/setup-clojure@13.0
+        with:
+          cli: latest
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+          key: deps-${{ hashFiles('deps.edn') }}
+
+      # Advisory: reports coverage, never fails the build (bare cloverage exits
+      # non-zero only on test failure or an explicit --fail-threshold).
+      - name: Coverage report
+        run: ./bin/coverage --text
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: target/coverage/
+          if-no-files-found: ignore

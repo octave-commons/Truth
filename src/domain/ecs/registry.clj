@@ -190,7 +190,7 @@
    ;; emitter — mass loss → mass-flux.xuv (integrator owns mass), plus the
    ;; diagnostic atmosphere-escape (its own column).
    {:id     :xuv-atmospheric-escape
-    :ns     'domain.phase0
+    :ns     'domain.genesis
     :reads  #{c/matter-state c/mass c/radius c/position c/sed-bands c/luminosity}
     :writes #{c/mass-flux-xuv c/atmosphere-escape}}
 
@@ -229,14 +229,14 @@
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
     {:id     :lod-scheduler
-     :ns     'domain.phase0
+     :ns     'domain.genesis
      :reads  #{c/matter-state c/position c/observer}
      :writes #{c/lod-level}}
 
    ;; Magnetosphere coupling: computes magnetopause standoff from wind ram pressure.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
     {:id     :magnetosphere-coupling
-     :ns     'domain.phase0
+     :ns     'domain.genesis
      :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
      :writes #{c/magnetosphere}}
 

@@ -120,11 +120,11 @@
    Allows 1% tolerance for floating-point accumulation."
   [c]
   (let [sum (+ (double (:H c 0.0))
-               (double (:He comp 0.0))
-               (double (:metals comp 0.0))
-               (double (:D comp 0.0))
-               (double (:He3 comp 0.0))
-               (double (:Li7 comp 0.0)))]
+               (double (:He c 0.0))
+               (double (:metals c 0.0))
+               (double (:D c 0.0))
+               (double (:He3 c 0.0))
+               (double (:Li7 c 0.0)))]
     (< (Math/abs (- sum 1.0)) 0.01)))
 
 (defn primordial-composition?

@@ -36,7 +36,7 @@
 
 (defn spatial-index
   "Build one Barnes–Hut octree from ALL entities with position+mass and store it
-   on the world at :phase0/spatial-tree. Runs before the parallel fan-out so
+   on the world at :genesis/spatial-tree. Runs before the parallel fan-out so
    every consumer (gravity, SPH, EM, collision) reads the same tree.
 
    Consumers filter query results by :matter-state as needed:
@@ -64,9 +64,9 @@
                       cell-size (/ side (Math/pow n (/ 1.0 3.0)))]
                   (build-grid items cell-size)))]
     (assoc world
-           :phase0/spatial-tree tree
-           :phase0/spatial-grid grid
-           :phase0/spatial-items items)))
+           :genesis/spatial-tree tree
+           :genesis/spatial-grid grid
+           :genesis/spatial-items items)))
 
 (defn- point-aabb-dist2
   "Squared distance from point `p` to axis-aligned box `bb` (0 if inside)."
@@ -141,9 +141,9 @@
   ([world pos r]
    (query-within-radius world pos r (constantly true)))
   ([world pos r pred]
-   (if-let [grid (:phase0/spatial-grid world)]
+   (if-let [grid (:genesis/spatial-grid world)]
      (grid-within-radius grid pos r pred)
-     (within-radius (:phase0/spatial-tree world) pos r pred))))
+     (within-radius (:genesis/spatial-tree world) pos r pred))))
 
 (defn query-nearest-dist
   "Nearest-neighbor distance from `pos` excluding `self-eid`.
@@ -153,9 +153,9 @@
    full neighbor set. Falls back to the uniform grid if no tree exists; returns
    ##Inf when neither index is available."
   [world pos self-eid]
-  (if-let [tree (:phase0/spatial-tree world)]
+  (if-let [tree (:genesis/spatial-tree world)]
     (nearest-dist tree pos self-eid)
-    (if-let [grid (:phase0/spatial-grid world)]
+    (if-let [grid (:genesis/spatial-grid world)]
       (grid-nearest-dist grid pos self-eid)
       Double/POSITIVE_INFINITY)))
 

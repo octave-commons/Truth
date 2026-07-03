@@ -6,13 +6,15 @@
    the in-game seconds each tick covers; the displayed wall-clock rate is DERIVED
    from it (`rate = dt · ticks-per-second`).
 
-   `dt` tracks the BULK cloud's dynamical time: `dt = clamp(cfl-factor · t_dyn)`
-   where `t_dyn = √(R³ / G·M)` and `R` is the radius enclosing `cloud-mass-fraction`
-   of the mass. As the cloud collapses, t_dyn shrinks → the clock dilates, and
-   because every body shares the contracting scale, none freeze. Using the bulk
-   (90%-mass) radius — not peak temperature, not the half-mass radius — keeps a
-   single hot/dominant central sink from collapsing the global step and freezing
-   the rest of the cloud.
+   `dt` is bounded by two things: the BULK cloud's dynamical time (for gravitational
+   stability) and the system's observable complexity (so articulated phases play
+   out longer). The dynamical bound is `dt_dyn = clamp(cfl-factor · t_dyn)` where
+   `t_dyn = √(R³ / G·M)` and `R` is the radius enclosing `cloud-mass-fraction` of
+   the mass. The complexity bound is `dt_complexity = clamp(complexity-dt-cap)`.
+   The effective step is `dt = min(dt_dyn, dt_complexity)`. As the cloud collapses
+   `t_dyn` shrinks; as stars and planets form `complexity` rises; both slow the
+   clock. Using the bulk (90%-mass) radius keeps a single hot/dominant central sink
+   from collapsing the global step and freezing the rest of the cloud.
 
    Pure data: no IO, no ECS mutation. Reads positions/masses to size the cloud."
   (:require
@@ -32,14 +34,14 @@
 
 (def cfl-factor
   "Fraction of the cloud's bulk dynamical time taken as one integration step.
-   1/1000 ⇒ ~1000 ticks per dynamical time: free-fall and orbital motion are
-   resolved smoothly AND visibly — a diffuse cloud's collapse plays out over
-   ~15–20 s at 60 Hz (a few % of the cloud radius of motion per real second),
-   rather than crawling imperceptibly." 1.0e-3)
+    1/10000 ⇒ ~10000 ticks per dynamical time: free-fall and orbital motion are
+    resolved smoothly AND visibly — a diffuse cloud's collapse plays out over
+    ~150–200 s at 60 Hz (a few % of the cloud radius of motion per real second),
+    rather than crawling imperceptibly." 1.0e-4)
 
 (def pacing-dt-max
   "Ceiling on the per-tick step. Caps how fast the diffuse cloud fast-forwards so
-   the early evolution stays watchable rather than blinking past." 2.0e11)
+    the early evolution stays watchable rather than blinking past." 5.0e10)
 
 (def pacing-dt-min
   "Floor on the per-tick step, for numerical sanity once the cloud is very
@@ -82,7 +84,7 @@
                 rmax' (if (> d rmax) d rmax)]
             (if (or (>= acc' target) (nil? more))
               {:radius rmax' :mass mtot}
-               (recur acc' more rmax'))))))))
+              (recur acc' more rmax'))))))))
 
 (defn dynamical-time
   "Free-fall/orbital timescale t_dyn = √(R³ / G·M). 0 for a degenerate scale."
@@ -99,34 +101,54 @@
   (let [{:keys [radius mass]} (cloud-scale world)]
     (dynamical-time radius mass)))
 
+(defn complexity-dt-cap
+  "Maximum per-tick step allowed for a given observable `complexity`. Higher
+   complexity slows the clock so that articulated phases (protostars, stars,
+   planets) play out longer. `complexity=0` leaves the cap at `pacing-dt-max`;
+   every point of complexity divides that ceiling by one more step. Pure."
+  [complexity]
+  (/ pacing-dt-max (max 1.0 (+ 1.0 (double complexity)))))
+
 (defn pacing-for
-  "Pacing from the cloud's bulk dynamical time `t-dyn` and bulk `radius`. The tick
-   RATE is fixed (`ticks-per-second`); the per-tick step tracks the WHOLE cloud's
-   collapse: `dt = clamp(cfl-factor · t_dyn, min, max)`. As the cloud contracts
-   t_dyn shrinks, so the clock dilates and EVERY body — all sharing the
-   contracting scale — stays resolved; a single hot protostar, which does not
-   change the bulk scale, can never freeze the integration. Softening tracks the
-   bulk radius. The displayed wall-clock rate is DERIVED as `rate = dt · tps`.
+  "Pacing from the cloud's bulk dynamical time `t-dyn`, bulk `radius`, and
+   observable `complexity`. The tick RATE is fixed (`ticks-per-second`); the
+   per-tick step is bounded by BOTH the CFL stability of the whole cloud's
+   collapse and by the complexity of the bodies that have formed:
+
+     dt-physics  = clamp(cfl-factor · t_dyn, min, max)
+     dt-articulation = clamp(complexity-dt-cap(complexity), min, max)
+     dt          = min(dt-physics, dt-articulation)
+
+   As the cloud contracts `t_dyn` shrinks, and as stars/planets form `complexity`
+   rises; both act together to slow the clock. Softening tracks the bulk radius.
+   The displayed wall-clock rate is DERIVED as `rate = dt · tps`.
    Returns `{:rate :rate-yr :dt :softening}`."
-  [t-dyn radius]
-  (let [dt      (-> (* cfl-factor (double t-dyn))
-                   (max pacing-dt-min) (min pacing-dt-max))
-        soft    (-> (* soft-factor (double radius))
-                   (max pacing-soft-min) (min pacing-soft-max))
-        rate    (* dt ticks-per-second)
-        rate-yr (/ rate seconds-per-year)]
-    {:rate      rate
-     :rate-yr   rate-yr
-     :dt        dt
-     :softening soft}))
+  ([t-dyn radius]
+   (pacing-for t-dyn radius 0.0))
+  ([t-dyn radius complexity]
+   (let [dt-physics  (-> (* cfl-factor (double t-dyn))
+                         (max pacing-dt-min) (min pacing-dt-max))
+         dt-articulation (-> (complexity-dt-cap complexity)
+                             (max pacing-dt-min) (min pacing-dt-max))
+         dt          (min dt-physics dt-articulation)
+         soft        (-> (* soft-factor (double radius))
+                         (max pacing-soft-min) (min pacing-soft-max))
+         rate        (* dt ticks-per-second)
+         rate-yr     (/ rate seconds-per-year)]
+     {:rate      rate
+      :rate-yr   rate-yr
+      :dt        dt
+      :softening soft})))
 
 (defn pace
-  "Pacing for the world's CURRENT bulk state: one `cloud-scale` pass, derive the
-   bulk dynamical time, and return `pacing-for`. The entry point the tick loop
-   calls each step."
-  [world]
-  (let [{:keys [radius mass]} (cloud-scale world)]
-    (pacing-for (dynamical-time radius mass) radius)))
+  "Pacing for the world's CURRENT bulk state and observable complexity. One
+   `cloud-scale` pass derives the bulk dynamical time; `pacing-for` folds in
+   complexity. The entry point the tick loop calls each step."
+  ([world]
+   (pace world 0.0))
+  ([world complexity]
+   (let [{:keys [radius mass]} (cloud-scale world)]
+     (pacing-for (dynamical-time radius mass) radius complexity))))
 
 ;; --- Time slip --------------------------------------------------------------
 

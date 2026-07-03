@@ -449,7 +449,7 @@
           "gas-structure results match with and without cache"))))
 
 (deftest test-hydro-system-fallback-without-cache
-  (testing "hydro-system runs correctly when :phase0/neighbor-cache is absent"
+  (testing "hydro-system runs correctly when :genesis/neighbor-cache is absent"
     (let [base (ecs/empty-world)
           [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
@@ -477,7 +477,7 @@
       (is (pos? (first a-b)) "low-pressure right pushes right"))))
 
 (deftest test-density-system-fallback-without-cache
-  (testing "density-system runs correctly when :phase0/neighbor-cache is absent"
+  (testing "density-system runs correctly when :genesis/neighbor-cache is absent"
     (let [base (ecs/empty-world)
           [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]

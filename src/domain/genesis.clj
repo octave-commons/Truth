@@ -1,4 +1,4 @@
-(ns domain.phase0
+(ns domain.genesis
   "Phase 0: Stellar Nebula — composition layer over the ECS substrate.
 
    This is NOT a separate engine. It bootstraps a normal ECS world, wires the
@@ -13,14 +13,13 @@
    [domain.hydro            :as hydro]
    [domain.regime           :as regime]
    [domain.chemistry        :as chemistry]
+   [domain.atmosphere       :as atmosphere]
+   [domain.lod              :as lod]
    [domain.player           :as player]
    [domain.intervention     :as intervention]
    [domain.pacing           :as pacing]
-   [domain.profile          :as profile]
    [law.stellar             :as law]
    [law.composition         :as lcomp]
-   [law.sed                 :as lsed]
-   [law.plasma              :as lplasma]
    [law.registry            :as lreg]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
@@ -219,9 +218,9 @@
    law.registry governed by law.stellar/matter-state-contract — a malformed seed
    throws HERE, before a long run, rather than corrupting physics mid-flight.
    Runs once at world creation (no per-tick cost). Returns the world unchanged.
-   Disable with :phase0/validate-seed? false."
+   Disable with :genesis/validate-seed? false."
   [world]
-  (when-not (false? (:phase0/validate-seed? world))
+  (when-not (false? (:genesis/validate-seed? world))
     (reduce (fn [reg eid] (lreg/add reg (entity->matter-state-resource world eid)))
             (lreg/->registry law/matter-state-contract)
             (ecs/entities-with world c/matter-state c/mass c/radius
@@ -269,29 +268,28 @@
                                              stellar/stellar-merge-handler)
                      (assoc :sim/G G :sim/theta theta
                             :sim/dt (or dt (:dt neb)) :sim/softening (or softening (:softening neb))
-                            :phase0/sim-time          0.0
-                            :phase0/time-scale        (:rate neb)
-                            :phase0/rate-yr           (:rate-yr neb)
-                            :phase0/stats             nil
-                            :phase0/complexity        0
-                            :phase0/phase             :initializing
-                            :phase0/active            true
+                            :genesis/sim-time          0.0
+                            :genesis/time-scale        (:rate neb)
+                            :genesis/rate-yr           (:rate-yr neb)
+                            :genesis/stats             nil
+                            :genesis/complexity        0
+                            :genesis/active            true
                             ;; Adaptive pacing dilates :sim/dt with complexity at
                             ;; a fixed 60 Hz tick rate (see `pacing-for`). Set
                             ;; false to hold :sim/dt constant — useful for fast,
                             ;; pace-independent tests and deterministic runs.
-                            :phase0/adaptive-pacing?  true
-                            :phase0/wind-rate-scale   wind-rate-scale
-                            :phase0/collapse-fraction collapse-fraction
-                            :phase0/contraction-time  contraction-time
-                            :phase0/gas-particle-mass pmass
-                            :phase0/feeding-zone-factor
+                            :genesis/adaptive-pacing?  true
+                            :genesis/wind-rate-scale   wind-rate-scale
+                            :genesis/collapse-fraction collapse-fraction
+                            :genesis/contraction-time  contraction-time
+                            :genesis/gas-particle-mass pmass
+                            :genesis/feeding-zone-factor
                             (stellar/resolution-feeding-zone-factor gas-count)))
          seeded (seed-nebula base nebula-mass nebula-radius
                              {:gas-count gas-count :spin spin :turb turb})
          ;; Store the gas smoothing radius so the classifier can compute
          ;; accretion radii from it (before KH contraction shrinks bodies).
-         seeded (assoc seeded :phase0/gas-smoothing-radius (* nebula-radius 0.003))
+         seeded (assoc seeded :genesis/gas-smoothing-radius (* nebula-radius 0.003))
          [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
      (assert-seed-contracts! w))))
 
@@ -325,31 +323,19 @@
                  more))))))
 
 (defn- cached-system-summary
-  "Return a system summary, caching it on the world under :phase0/_summary-cache
+  "Return a system summary, caching it on the world under :genesis/_summary-cache
    so repeated reads in the same tick are O(1). The cache is invalidated by
    `tick-world` advancing the tick."
   [world]
-  (if-let [cached (get-in world [:phase0/_summary-cache (:tick world)])]
+  (if-let [cached (get-in world [:genesis/_summary-cache (:tick world)])]
     cached
     (let [s (system-summary world)]
-      (assoc-in world [:phase0/_summary-cache (:tick world)] s))))
+      (assoc-in world [:genesis/_summary-cache (:tick world)] s))))
 
-(defn detect-phase
-  "Detect the current phase of the forming system from its summary."
-  [{:keys [star? planet-count body-count regions]} sim-time]
-  (let [nebula?    (some #(= :nebula (:matter-state %)) regions)
-        protostar? (some #(= :protostar (:matter-state %)) regions)
-        planet?    (some #(= :planet (:matter-state %)) regions)
-        debris?    (some #(= :debris (:matter-state %)) regions)]
-    (cond
-      (and star? (pos? planet-count)) :phase-0/planets-formed
-      (and star? (>= body-count 3))   :phase-0/accretion
-      star?                           :phase-0/ignition
-      protostar?                      :phase-0/protostar
-      (or planet? debris?)            :phase-0/accretion
-      (zero? body-count)              :phase-0/dispersed
-      (and nebula? (< sim-time 1e18)) :phase-0/nebula-collapse
-      :else                           :phase-0/dispersed)))
+;; Arc detection (`detect-arc`, formerly `detect-phase`) now lives in
+;; `domain.arc`: the current arc is the player's STORY state, interpreted from
+;; the physical summary, not a property of the physics loop. The genesis tick
+;; below emits physical threshold events; `domain.arc/advance-arc` reads them.
 
 ;; --- Tick driver ------------------------------------------------------------
 
@@ -378,169 +364,11 @@
         (if (pos? m) [(/ sx m) (/ sy m) (/ sz m)] [0.0 0.0 0.0]))
       [0.0 0.0 0.0])))
 
-(defn xuv-atmospheric-escape-system
-  "Write-set emitter: planetary atmospheric escape under stellar XUV. For each
-   :planet, find the nearest star's SED bands, compute the XUV flux at the
-   planet's distance, the escape regime, and the mass-loss rate; emit the mass
-   loss as :component/mass-flux.xuv (negative, the integrator owns mass) and the
-   diagnostic :component/atmosphere-escape (its own column). A pure snapshot-
-   reading fan-out emitter (was a serial barrier writing mass directly). Mass
-   loss is clamped to ≤1% of M per tick and never below a 1e20 kg rocky core."
-  []
-  {:id     :xuv-atmospheric-escape
-   :writes #{c/mass-flux-xuv c/atmosphere-escape}
-   :run
-   (fn [world]
-     (let [dt     (double (or (:sim/dt world) 1.0e12))
-           stars  (ecs/entities-with world c/matter-state c/luminosity c/position c/sed-bands)
-           star-data (mapv (fn [eid]
-                             {:eid eid
-                              :pos (ecs/get-component world eid c/position)
-                              :sed (ecs/get-component world eid c/sed-bands)})
-                           stars)
-           planets (filterv #(= :planet (ecs/get-component world % c/matter-state))
-                            (ecs/entities-with world c/matter-state c/mass c/radius c/position))
-           results
-           (keep (fn [eid]
-                   (let [pos   (ecs/get-component world eid c/position)
-                         R     (double (or (ecs/get-component world eid c/radius) 0.0))
-                         M     (double (or (ecs/get-component world eid c/mass) 0.0))
-                         nearest (when (seq star-data)
-                                   (apply min-key #(sp/dist pos (:pos %)) star-data))
-                         dist    (when nearest (sp/dist pos (:pos nearest)))
-                         bands   (when nearest (get-in nearest [:sed :bands]))]
-                     (when (and bands dist (pos? dist) (pos? R) (pos? M))
-                       (let [L-xuv (lsed/xuv-luminosity bands)
-                             F-xuv (lplasma/xuv-flux-at L-xuv dist)
-                             regime (lplasma/escape-regime F-xuv R)
-                             mdot   (case regime
-                                      :energy-limited
-                                      (lplasma/energy-limited-escape F-xuv R M 0.15)
-                                      :recombination-limited
-                                      (* (lplasma/energy-limited-escape F-xuv R M 0.15) 0.6)
-                                      :blow-off
-                                      (* (lplasma/energy-limited-escape F-xuv R M 0.15) 2.0)
-                                      0.0)
-                             ;; dm = Ṁ·dt, ≤1% of M/tick, never below a 1e20 kg core
-                             dm     (min (* mdot dt) (* 0.01 M) (max 0.0 (- M 1.0e20)))]
-                         [eid dm {:regime regime :xuv-flux F-xuv :mass-loss-rate mdot}]))))
-                 planets)]
-       {c/mass-flux-xuv (into {} (keep (fn [[eid dm _]] (when (pos? dm) [eid (- dm)]))) results)
-        c/atmosphere-escape (into {} (map (fn [[eid _ esc]] [eid esc])) results)}))})
-
-;; --- LOD Scheduler (Phase 1) ------------------------------------------------
-;; Observer-centric level-of-detail: assigns c/lod-level to stars and planets
-;; based on distance from the player's focus. Controls which Phase 1 systems
-;; are relevant at each fidelity level.
-;; :local  — within 0.5 AU: full detail (atmosphere shells, XUV escape, CME)
-;; :system — within 5 AU: band luminosities and steady winds
-;; :galaxy — beyond 5 AU: coarse SED only
-
-(def ^:const lod-local-radius
-  "Distance (m) within which entities are at :local LOD. ~0.5 AU."
-  7.5e10)
-
-(def ^:const lod-system-radius
-  "Distance (m) within which entities are at :system LOD. ~5 AU."
-  7.5e11)
-
-(defn lod-scheduler
-  "Assign c/lod-level (:local, :system, :galaxy) to every star and planet
-   based on distance from the player observer's focus position."
-  [world]
-  (if-let [obs (player/get-observer world)]
-    (let [focus (:focus-position obs [0.0 0.0 0.0])
-          eids (filterv (fn [eid]
-                          (let [st (ecs/get-component world eid c/matter-state)]
-                            (or (= :star st) (= :planet st))))
-                        (ecs/entities-with world c/matter-state c/position))]
-      (reduce (fn [w eid]
-                (let [pos  (ecs/get-component w eid c/position)
-                      dist (sp/dist focus pos)
-                      level (cond
-                              (< dist lod-local-radius)  :local
-                              (< dist lod-system-radius) :system
-                              :else                       :galaxy)]
-                  (ecs/put-component w eid c/lod-level level)))
-              world
-              eids))
-    world))
-
-;; --- Magnetosphere coupling (Phase 1) ----------------------------------------
-;; Stellar wind and CME parcels carry ram pressure and B-field. When they reach
-;; a planet, they compress its magnetosphere. The standoff distance r_mp is where
-;; the planet's magnetic pressure equals the wind ram pressure: B²/(2μ₀) = P_ram.
-
-(def ^:const mu-0 1.25663706212e-6) ;; vacuum permeability (T·m/A)
-
-(defn- magnetopause-distance
-  "Standoff distance (m) where planetary magnetic pressure balances wind ram
-   pressure: r_mp = R_p × (B_p² / (2μ₀ P_ram))^(1/6). Returns R_p when no wind."
-  [planet-radius planet-b-field ram-pressure]
-  (let [Rp  (double (or planet-radius 0.0))
-        Bp  (double (or planet-b-field 0.0))
-        Pram (double (or ram-pressure 0.0))]
-    (if (and (pos? Rp) (pos? Bp) (pos? Pram))
-      (* Rp (Math/pow (/ (* Bp Bp) (* 2.0 mu-0 Pram)) (/ 1.0 6.0)))
-      Rp)))
-
-(defn magnetosphere-coupling-system
-  "For each :planet, find nearby ionized wind/CME parcels and compute magnetosphere
-   compression. Writes c/magnetosphere with standoff distance and compression factor.
-   A compressed magnetosphere (small standoff) means more atmospheric exposure.
-   Runs in the parallel fan-out (was a cargo-cult barrier)."
-  [world]
-  (let [profile? (:phase0/profile-subsystems? world)
-        [wind-parcels dt-winds]
-        (if profile?
-          (profile/timing
-           #(filterv (fn [eid]
-                       (let [st (ecs/get-component world eid c/matter-state)]
-                         (and (= :nebula st)
-                              (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
-                     (ecs/entities-with world c/matter-state c/position c/mass c/radius)))
-          [(filterv (fn [eid]
-                      (let [st (ecs/get-component world eid c/matter-state)]
-                        (and (= :nebula st)
-                             (pos? (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))))))
-                    (ecs/entities-with world c/matter-state c/position c/mass c/radius))
-           0])
-        world (profile/with-profile world {:magnetosphere/filter-winds (double dt-winds)})
-        [wind-data dt-build]
-        (if profile?
-          (profile/timing
-           #(mapv (fn [eid]
-                    {:pos (ecs/get-component world eid c/position)
-                     :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
-                  wind-parcels))
-          [(mapv (fn [eid]
-                   {:pos (ecs/get-component world eid c/position)
-                    :ram (double (or (ecs/get-component world eid c/ram-pressure) 0.0))})
-                 wind-parcels)
-           0])
-        world (profile/with-profile world {:magnetosphere/build-wind-data (double dt-build)})]
-    (profile/profile-section
-     world :magnetosphere/compute
-     (fn [w]
-       (let [planets (filterv #(= :planet (ecs/get-component w % c/matter-state))
-                              (ecs/entities-with w c/matter-state c/position c/radius))]
-         (reduce (fn [w eid]
-                   (let [pos    (ecs/get-component w eid c/position)
-                         Rp     (double (or (ecs/get-component w eid c/radius) 0.0))
-                         Bp     (double (or (some-> (ecs/get-component w eid c/b-field) sp/len) 0.0))
-                         cutoff (* 10.0 Rp)
-                         nearby-ram (reduce (fn [acc wd]
-                                              (if (< (sp/dist pos (:pos wd)) cutoff)
-                                                (+ acc (:ram wd))
-                                                acc))
-                                            0.0 wind-data)
-                         r-mp       (magnetopause-distance Rp Bp nearby-ram)
-                         compression (if (pos? Rp) (min 10.0 (/ Rp (max 1.0e3 r-mp))) 1.0)]
-                     (ecs/put-component w eid c/magnetosphere
-                                        {:standoff-distance r-mp
-                                         :compression compression})))
-                 w
-                 planets))))))
+;; Ongoing physics that is not specific to formation moved to its proper owner:
+;;   xuv-atmospheric-escape-system → domain.atmosphere
+;;   lod-scheduler                 → domain.lod
+;;   magnetosphere-coupling-system → domain.em
+;; The genesis system table below references them from their new namespaces.
 
 (defn physics-systems-parallel
   "The transform systems as write-set systems for the double-buffer fan-out
@@ -583,7 +411,7 @@
      (stellar/deuterium-depletion-system)
      (stellar/stellar-wind-system)
      (stellar/stellar-flare-system)
-     (xuv-atmospheric-escape-system)
+     (atmosphere/xuv-atmospheric-escape-system)
      (legacy :regime         regime/regime-system)
      ;; Collision detection: now a fan-out emitter (B3). Its handler emits
       ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
@@ -598,10 +426,10 @@
       ;; c/torque-disk, c/spawn-request-disk (all single-writer).
      (legacy :disk-evolution stellar/disk-evolution-system)
       ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
-     (legacy :lod-scheduler lod-scheduler)
+     (legacy :lod-scheduler lod/lod-scheduler)
       ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
       ;; cargo-cult barrier).
-     (legacy :magnetosphere-coupling magnetosphere-coupling-system)]))
+     (legacy :magnetosphere-coupling em/magnetosphere-coupling-system)]))
 
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
@@ -650,7 +478,7 @@
 
    Two-phase pipeline: all force emitters run in parallel (phase 1), their
    write-sets fold, then the integrator runs on the updated world (phase 2).
-   Transient `:phase0/neighbor-cache` and `:phase0/physics-soa` are built before
+   Transient `:genesis/neighbor-cache` and `:genesis/physics-soa` are built before
    the fan-out and stripped after physics so hydro/EM share one neighbor
    discovery / gradient pass and gravity/motion read flat primitive arrays.
 
@@ -672,35 +500,34 @@
 (defn tick-world
   "Advance the world by one tick. Pure: world -> world'."
   [world]
-  (if-not (:phase0/active world)
+  (if-not (:genesis/active world)
     world
     (let [dt         (:sim/dt world)
           effective-dt dt
-          prev       (or (:phase0/_prev-summary world) (system-summary world))
-          prev-phase (:phase0/phase world)
+          prev       (or (:genesis/_prev-summary world) (system-summary world))
         ;; advance logical tick first so every event this step shares its tick;
         ;; arm the integrator with the recenter frame-offset — the COM of THIS
         ;; snapshot, subtracted from every new position so the formation stays in
         ;; its COM frame (spec §6: a one-tick-stale, pure-Galilean shift, replacing
         ;; the old post-fold recenter-system). A world scalar, single-owner.
           world1     (-> (ecs/advance-tick world)
-                         (assoc :phase0/frame-offset (center-of-mass world))
+                         (assoc :genesis/frame-offset (center-of-mass world))
                          spatial/spatial-index)
           world2     (-> (step-physics world1)
                          (intervention/expire-interventions)
                          materialize-lifecycle)
           summ       (system-summary world2)
           complexity (stellar/complexity-score summ)
-          phase      (detect-phase summ (:phase0/sim-time world2))
           stats      (stats-of world2 summ)
-        ;; Fixed tick rate, dilating timestep: the per-tick step tracks the BULK
-        ;; cloud's dynamical time (see `pacing-for`). The tick count never changes
-        ;; — 60 Hz throughout — so as the cloud actually collapses, t_dyn shrinks,
-        ;; the clock dilates, and every body (all sharing the contracting scale)
-        ;; stays resolved. A single hot protostar does not change the bulk scale,
-        ;; so it can never freeze the outer cloud — the failure of the old
-        ;; temperature-driven dt.
-        ;; Disabled (`:phase0/adaptive-pacing? false`) → :sim/dt is held constant.
+        ;; Fixed tick rate, dilating timestep: the per-tick step is bounded by
+        ;; the BULK cloud's dynamical time (for gravitational stability) AND by
+        ;; the system's observable complexity. As the cloud contracts `t_dyn`
+        ;; shrinks; as stars/planets form `complexity` rises; both slow the clock
+        ;; so the articulated phases (ignition, accretion, planet formation) play
+        ;; out longer. The tick count never changes — 60 Hz throughout. A single
+        ;; hot protostar does not change the bulk scale, so it can never freeze
+        ;; the outer cloud — the failure of the old temperature-driven dt.
+        ;; Disabled (`:genesis/adaptive-pacing? false`) → :sim/dt is held constant.
         ;; Time slip: when the observer's attention has lapsed (low coherence) over
         ;; a low-complexity region, the clock SLIPS — the per-tick step inflates and
         ;; the unwatched universe fast-forwards until something draws the eye back.
@@ -712,38 +539,39 @@
         ;; pacing is on.
           slipping?      (when-let [obs (player/get-observer world2)]
                            (player/time-slip-threshold? obs complexity))
-          pacing         (when-not (false? (:phase0/adaptive-pacing? world))
-                           (-> (pacing/pace world2)
+          pacing         (when-not (false? (:genesis/adaptive-pacing? world))
+                           (-> (pacing/pace world2 complexity)
                                (pacing/with-time-slip (boolean slipping?))))
+        ;; Emit PHYSICAL threshold events only. The arc-transition event
+        ;; (:event/phase-transition) is emitted by `domain.arc/advance-arc` when
+        ;; the story arc advances — the genesis loop stays arc-agnostic.
           world3     (cond-> world2
                        (and (:star? summ) (not (:star? prev)))
                        (emit-threshold :event/stellar-ignition (first (:stars summ)))
 
                        (> (:planet-count summ) (:planet-count prev))
-                       (emit-threshold :event/planet-formation (first (:planets summ)))
-
-                       (not= phase prev-phase)
-                       (emit-threshold :event/phase-transition {:from prev-phase :to phase}))
+                       (emit-threshold :event/planet-formation (first (:planets summ))))
         ;; `dt` here is the step this tick actually integrated (captured above);
         ;; advance the clock by it. When adaptive, arm the NEXT tick with the
         ;; complexity-refined dt/softening and report the derived wall-clock rate
         ;; for the player's clock; otherwise leave the fixed step in place.
           world4     (cond-> (assoc world3
-                                    :phase0/complexity complexity
-                                    :phase0/stats      stats
-                                    :phase0/phase      phase
-                                    :phase0/sim-time   (+ (:phase0/sim-time world3) dt)
-                                    :phase0/_prev-summary summ)
-                       pacing (assoc :phase0/time-scale    (:rate pacing)
-                                     :phase0/rate-yr       (:rate-yr pacing)
-                                     :phase0/time-slipping? (boolean (:time-slipping? pacing))
+                                    :genesis/complexity complexity
+                                    :genesis/stats      stats
+                                    :genesis/sim-time   (+ (:genesis/sim-time world3) dt)
+                                    :genesis/_prev-summary summ)
+                       pacing (assoc :genesis/time-scale    (:rate pacing)
+                                     :genesis/rate-yr       (:rate-yr pacing)
+                                     :genesis/time-slipping? (boolean (:time-slipping? pacing))
                                      :sim/dt               (:dt pacing)
                                      :sim/softening        (:softening pacing)))
           world5     ((player/observer-system effective-dt) world4)
           obs        (player/get-observer world5)]
-      (assoc world5 :phase0/active
+      ;; Stay active while the spark can still act and any matter remains; a fully
+      ;; dispersed cloud (no bodies) ends the run. Arc naming lives in domain.arc.
+      (assoc world5 :genesis/active
              (and (player/can-interact? obs)
-                  (not= phase :phase-0/dispersed))))))
+                  (pos? (:body-count summ)))))))
 
 ;; --- Field insight ----------------------------------------------------------
 
@@ -757,75 +585,14 @@
         regimes (frequencies (keep #(ecs/get-component world % c/regime) eids))
         summ    (system-summary world)]
     (format "t=%-4d %-22s | bodies=%-4d resolved=%-3d star=%-5s planets=%d | T=%.0f..%.1e K | Bmax=%.1e T | %s"
-            (:tick world) (name (:phase0/phase world))
+            (:tick world) (name (or (:arc/current world) :genesis/ticking))
             (:body-count summ) (:resolved-count summ)
             (str (:star? summ)) (:planet-count summ)
             (double (reduce min 1.0e30 temps)) (double (reduce max 0.0 temps))
             (double (reduce max 0.0 bmags))
             (pr-str regimes))))
 
-;; --- Player input -----------------------------------------------------------
-
-(defn handle-input
-  "Apply a player control to the world's observer."
-  [world input-type & args]
-  (case input-type
-    :move-focus  (let [[pos] args]
-                   (player/update-observer world
-                                           #(player/set-focus % pos (:focus-radius %) (:focus-intensity %))))
-    :narrow-focus (player/update-observer world #(player/narrow-focus % 2.0))
-    :widen-focus  (player/update-observer world #(player/widen-focus % 2.0))
-    :release      (player/update-observer world
-                                          #(player/release-focus %
-                                                                 (fn [pos]
-                                                                   (let [dir (sp/v- (sp/vec3 0 0 0) pos)
-                                                                         l   (sp/len dir)]
-                                                                     (if (pos? l) (sp/v* dir (/ 1.0 l)) dir)))))
-    world))
-
-;; --- Habitability / handoff -------------------------------------------------
-
-(defn habitability-of
-  "Habitability score of a resolved body region for the chemistry model."
-  [region]
-  (chemistry/habitability-score region))
-
-(defn habitable-worlds
-  "Resolved planet regions with non-trivial habitability potential, for the
-   handoff to Phase 1."
-  [world]
-  (->> (:planets (system-summary world))
-       (filter #(> (habitability-of %) 0.2))))
-
-(defn ready-for-phase-1?
-  [world]
-  (and (= (:phase0/phase world) :phase-0/planets-formed)
-       (seq (habitable-worlds world))))
-
-;; --- Endings ----------------------------------------------------------------
-
-(defn world-ending
-  "If the world has reached a terminal state, describe it; else nil."
-  [world]
-  (let [phase (:phase0/phase world)
-        obs   (player/get-observer world)]
-    (cond
-      (ready-for-phase-1? world)
-      {:type :success
-       :worlds (habitable-worlds world)
-       :time (:phase0/sim-time world)
-       :message "A world capable of harboring life has formed."}
-
-      (and obs (not (player/can-interact? obs)))
-      {:type :fadeout
-       :message "You dissolve back into the quantum foam."}
-
-      (= phase :phase-0/dispersed)
-      {:type :dispersal
-       :message "The nebula disperses. No stars form here."}
-
-      (and (= phase :phase-0/planets-formed) (empty? (habitable-worlds world)))
-      {:type :sterile
-       :message "Beautiful, but sterile. Life will not arise here."}
-
-      :else nil)))
+;; Player input dispatch (`handle-input`) moved to `infra.input`.
+;; Habitability scoring (`habitability-of`, `habitable-worlds`) moved to
+;; `domain.habitability`. The handoff predicate (`ready-to-narrow?`) and the
+;; terminal-outcome descriptor (`genesis-ending`) live in `domain.arc`.

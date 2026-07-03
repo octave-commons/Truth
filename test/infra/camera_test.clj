@@ -5,15 +5,17 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.stellar :as stellar]
-   [infra.camera :as cam]))
+   [infra.camera :as cam]
+   [shape.spatial :as sp]))
 
 (deftest test-update-camera-track-largest-cluster
   (testing "Camera target moves toward the largest mass cluster"
     (let [[w _] (stellar/spawn-clump (ecs/empty-world)
-                   {:position [3e15 0.0 0.0] :mass 2e30 :radius 1e14
-                    :matter-state :star})
+                                     {:position [3e15 0.0 0.0] :mass 2e30 :radius 1e14
+                                      :matter-state :star})
           cam0 (cam/make-camera)
-          cam1 (cam/update-camera-for-world cam0 w (cam/default-camera-settings))]
+          cam1 (cam/update-camera-for-world cam0 w (assoc (cam/default-camera-settings)
+                                                          :mode :track-largest-cluster))]
       (is (not= (:target cam0) (:target cam1)))
       (is (> (first (:target cam1)) 0.0) "target shifts toward positive x")
       (is (pos? (:distance cam1)) "distance remains positive"))))
@@ -60,10 +62,10 @@
           s1 (cam/cycle-camera-mode s0)
           s2 (cam/cycle-camera-mode s1)
           s3 (cam/cycle-camera-mode s2)]
-      (is (= :track-largest-cluster (:mode s0)))
-      (is (= :fit-all (:mode s1)))
-      (is (= :manual (:mode s2)))
-      (is (= :track-largest-cluster (:mode s3)))))
+      (is (= :manual (:mode s0)))
+      (is (= :track-largest-cluster (:mode s1)))
+      (is (= :fit-all (:mode s2)))
+      (is (= :manual (:mode s3)))))
   (testing "Fit margin is clamped"
     (let [s (cam/default-camera-settings)]
       (is (>= (:fit-margin (cam/adjust-fit-margin s 0.1)) 1.0))
@@ -84,3 +86,61 @@
           f (cam/camera-forward c)]
       (is (> (last f) 0.0) "default camera looks toward +z")
       (is (pos? (reduce + (map * f f))) "forward is non-zero"))))
+
+(deftest test-camera-horizontal-basis
+  (testing "Horizontal basis is normalized and right is perpendicular to forward"
+    (let [c (cam/make-camera 10.0)
+          {:keys [forward right]} (cam/camera-horizontal-basis c)]
+      (is (pos? (sp/len forward)))
+      (is (pos? (sp/len right)))
+      (is (< (Math/abs (- (sp/len forward) 1.0)) 1e-6))
+      (is (< (Math/abs (- (sp/len right) 1.0)) 1e-6))
+      (is (< (Math/abs (sp/dot forward right)) 1e-6))
+      (is (zero? (second forward)) "forward is horizontal")
+      (is (zero? (second right)) "right is horizontal"))))
+
+(deftest test-flight-move
+  (testing "W input moves the target along the camera's horizontal forward"
+    (let [c (cam/make-camera 10.0)
+          c' (cam/flight-move c {:forward 1.0 :right 0.0} 1.0 (cam/default-camera-settings))]
+      (is (not= (:target c) (:target c')))
+      (is (> (Math/abs (- (first (:target c')) (first (:target c))))
+             (Math/abs (- (second (:target c')) (second (:target c)))))
+          "movement is mostly along x/z, not y")))
+  (testing "No input leaves camera unchanged"
+    (let [c (cam/make-camera 10.0)
+          c' (cam/flight-move c {:forward 0.0 :right 0.0} 1.0 (cam/default-camera-settings))]
+      (is (= (:target c) (:target c')))
+      (is (= (:position c) (:position c')))))
+  (testing "Strafe input moves target along the right vector"
+    (let [c (cam/make-camera 10.0)
+          c-fwd (cam/flight-move c {:forward 1.0 :right 0.0} 1.0 (cam/default-camera-settings))
+          c-rgt (cam/flight-move c {:forward 0.0 :right 1.0} 1.0 (cam/default-camera-settings))]
+      (is (not= (:target c-fwd) (:target c-rgt)) "forward and strafe move in different directions"))))
+
+(deftest test-flight-move-scales-with-distance
+  (testing "Larger orbit distance yields faster flight for the same speed setting"
+    (let [settings (cam/default-camera-settings)
+          c-near (cam/make-camera 10.0)
+          c-far (cam/make-camera 100.0)
+          n (cam/flight-move c-near {:forward 1.0 :right 0.0} 1.0 settings)
+          f (cam/flight-move c-far {:forward 1.0 :right 0.0} 1.0 settings)]
+      (is (> (sp/dist (:target f) (:target c-far))
+             (sp/dist (:target n) (:target c-near)))))))
+
+(deftest test-observer-move-velocity
+  (testing "Observer velocity aligns with camera horizontal basis"
+    (let [settings (cam/default-camera-settings)
+          c (cam/make-camera 10.0)
+          v-fwd (cam/observer-move-velocity c {:forward 1.0 :right 0.0} settings)
+          v-rgt (cam/observer-move-velocity c {:forward 0.0 :right 1.0} settings)
+          v-none (cam/observer-move-velocity c {:forward 0.0 :right 0.0} settings)
+          {:keys [forward right]} (cam/camera-horizontal-basis c)
+          speed (:move-speed settings)]
+      (is (= [0.0 0.0 0.0] v-none))
+      (is (< (Math/abs (- (first v-fwd) (* speed (first forward)))) 1.0)
+          "forward velocity matches camera forward direction scaled by move speed")
+      (is (< (Math/abs (- (first v-rgt) (* speed (first right)))) 1.0)
+          "strafe velocity matches camera right direction scaled by move speed")
+      (is (zero? (second v-fwd)) "forward velocity is horizontal")
+      (is (zero? (second v-rgt)) "strafe velocity is horizontal"))))

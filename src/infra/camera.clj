@@ -2,14 +2,15 @@
   "Orbital camera for the Gates of Truth renderer.
 
    Computes view/projection matrices and drives the camera from the live ECS
-   world. Supports three tracking modes — :manual, :track-largest-cluster and
-   :fit-all — and owns the Phase 0 view scale that maps simulation metres to
-   render units."
+   world. Supports three tracking modes — :manual (third-person follow),
+   :track-largest-cluster and :fit-all — and owns the Phase 0 view scale that
+   maps simulation metres to render units."
   (:require
-    [clojure.math :as math]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [shape.spatial :as sp]))
+   [clojure.math :as math]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.player :as player]
+   [shape.spatial :as sp]))
 
 ;; ---------------------------------------------------------------------------
 ;; View scale
@@ -69,8 +70,7 @@
 ;; ---------------------------------------------------------------------------
 
 (defrecord Camera
-  [position yaw pitch distance target]
-  )
+           [position yaw pitch distance target])
 
 (defn make-camera
   "Create an orbital camera. `distance` is the initial orbit radius in render
@@ -89,6 +89,30 @@
      (- (math/sin pitch-rad))
      (- (* cp (math/sin yaw-rad)))]))
 
+(defn observer-render-position
+  "The observer (player spark/mote) position in render units, or the origin when
+   there is no observer."
+  [world]
+  (if-let [obs (player/get-observer world)]
+    (mapv #(/ (double %) phase0-view-scale) (:position obs))
+    [0.0 0.0 0.0]))
+
+(defn camera-horizontal-basis
+  "Horizontal forward and right vectors for `camera`, both normalized.
+
+   Forward is the projection of the camera→target direction onto the xz-plane.
+   Right is forward × world-up. Used for movement in :manual mode so WASD moves
+   the mote relative to the camera's horizontal facing."
+  [camera]
+  (let [[fx _ fz] (camera-forward camera)
+        fwd-h [fx 0.0 fz]
+        len   (sp/len fwd-h)]
+    (if (pos? len)
+      (let [forward (sp/v* fwd-h (/ 1.0 len))
+            right   (normalize (cross forward [0.0 1.0 0.0]))]
+        {:forward forward :right right})
+      {:forward [0.0 0.0 1.0] :right [1.0 0.0 0.0]})))
+
 (defn update-camera-position
   "Recompute :position from :target, :distance, :yaw and :pitch."
   [camera]
@@ -101,6 +125,47 @@
         z (+ tz (* d (math/cos pitch-rad) (math/sin yaw-rad)))]
     (assoc camera :position (sp/vec3 x y z))))
 
+(defn flight-move
+  "Apply one frame of flight translation to `camera`.
+
+   `input` is a map {:forward signed :right signed} where +1 means the positive
+   key is held (W or D) and -1 means the negative key (S or A). `dt` is elapsed
+   wall-clock seconds. Speed is `(:flight-speed settings)` orbit radii per
+   second, so flying scales naturally with the current orbit distance.
+
+   Only meaningful in :manual mode; tracking modes overwrite the target each
+   frame. Returns `camera` unchanged when no flight key is held."
+  [camera input dt settings]
+  (let [fwd-input (double (:forward input 0.0))
+        rgt-input (double (:right input 0.0))]
+    (if (and (zero? fwd-input) (zero? rgt-input))
+      camera
+      (let [{:keys [forward right]} (camera-horizontal-basis camera)
+            speed (* (:distance camera)
+                     (double (:flight-speed settings 0.5))
+                     (double dt))
+            dx (sp/v+ (sp/v* forward (* speed fwd-input))
+                      (sp/v* right (* speed rgt-input)))]
+        (-> camera
+            (update :target sp/v+ dx)
+            update-camera-position)))))
+
+(defn observer-move-velocity
+  "Physical velocity [m/s] for the observer from camera-relative input.
+
+   `input` is a map {:forward signed :right signed} where +1 means the positive
+   key is held (W or D) and -1 means the negative key (S or A). `settings`
+   provides :move-speed in m/s. Multiply by `dt` to obtain displacement."
+  [camera input settings]
+  (let [fwd-input (double (:forward input 0.0))
+        rgt-input (double (:right input 0.0))]
+    (if (and (zero? fwd-input) (zero? rgt-input))
+      [0.0 0.0 0.0]
+      (let [{:keys [forward right]} (camera-horizontal-basis camera)
+            speed (double (:move-speed settings 3.0e15))]
+        (sp/v+ (sp/v* forward (* speed fwd-input))
+               (sp/v* right (* speed rgt-input)))))))
+
 ;; ---------------------------------------------------------------------------
 ;; Camera modes and settings
 ;; ---------------------------------------------------------------------------
@@ -112,12 +177,13 @@
    :camera-settings entry from the REPL, or use the key bindings in the dev
    window."
   []
-  {:mode :track-largest-cluster
+  {:mode :manual
    :fit-margin 1.6
    :smoothing 0.06
    :fit-percentile 0.90
    :manual-yaw -90.0
-   :manual-pitch -20.0})
+   :manual-pitch -20.0
+   :move-speed 3.0e15})
 
 (defn cycle-camera-mode
   "Advance to the next camera mode."
@@ -224,8 +290,7 @@
   (case (:mode settings :fit-all)
     :manual
     (-> camera
-        (assoc :yaw (double (:manual-yaw settings -90.0))
-               :pitch (double (:manual-pitch settings -20.0)))
+        (assoc :target (observer-render-position world))
         update-camera-position)
 
     :track-largest-cluster

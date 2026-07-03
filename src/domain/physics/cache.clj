@@ -78,8 +78,8 @@
         h       (hydro/smoothing-length data world)
         ;; Density/pressure/EM all need neighbors inside this radius.
         query-r (max h (* 2.0 r-c))
-        grid    (:phase0/spatial-grid world)
-        tree    (:phase0/spatial-tree world)
+        grid    (:genesis/spatial-grid world)
+        tree    (:genesis/spatial-tree world)
         raw     (if (and grid (pos? (:cell-size grid)))
                   (idx/grid-within-radius grid pos query-r (constantly true))
                   (idx/within-radius tree pos query-r (constantly true)))
@@ -98,7 +98,7 @@
      :curl-gradients   (mapv :gradient-curl nbrs)}))
 
 (defn build-neighbor-cache
-  "Build and assoc a fresh `:phase0/neighbor-cache` onto `world`.
+  "Build and assoc a fresh `:genesis/neighbor-cache` onto `world`.
 
    The cache covers every hydro/EM-active particle with its smoothing length,
    neighbor list, and both pressure and curl gradients. Consumers fall back to
@@ -113,15 +113,15 @@
                          (when (neighbor-cache-entry? entry)
                            [(:eid data) entry])))))
                  eids)]
-    (assoc world :phase0/neighbor-cache (into {} (keep identity) entries))))
+    (assoc world :genesis/neighbor-cache (into {} (keep identity) entries))))
 
 (defn strip-neighbor-cache
-  "Remove the transient `:phase0/neighbor-cache` from `world`."
+  "Remove the transient `:genesis/neighbor-cache` from `world`."
   [world]
-  (dissoc world :phase0/neighbor-cache))
+  (dissoc world :genesis/neighbor-cache))
 
 (defn build-physics-soa
-  "Build and assoc a fresh `:phase0/physics-soa` SoA cache onto `world`.
+  "Build and assoc a fresh `:genesis/physics-soa` SoA cache onto `world`.
 
    The cache covers every entity with position, velocity, mass, and radius,
    packing the dominant physics fields into primitive double arrays for the hot
@@ -129,7 +129,7 @@
    single `ecs/all-of` projection so the builder itself issues one ECS lookup
    per entity, not one per component.
 
-   Validation runs by default but is skipped when `:phase0/validate-soa?` is
+   Validation runs by default but is skipped when `:genesis/validate-soa?` is
    explicitly false, avoiding the per-tick Malli cost on release runs. The
    cache is transient world plumbing, not an ECS component."
   [world]
@@ -169,12 +169,12 @@
                :vx     vx
                :vy     vy
                :vz     vz}]
-      (when (and (not (false? (:phase0/validate-soa? world)))
+      (when (and (not (false? (:genesis/validate-soa? world)))
                  (not (lf/physics-soa? soa)))
         (throw (ex-info "Physics SoA cache failed validation" {})))
-      (assoc world :phase0/physics-soa soa))))
+      (assoc world :genesis/physics-soa soa))))
 
 (defn strip-physics-soa
-  "Remove the transient `:phase0/physics-soa` from `world`."
+  "Remove the transient `:genesis/physics-soa` from `world`."
   [world]
-  (dissoc world :phase0/physics-soa))
+  (dissoc world :genesis/physics-soa))

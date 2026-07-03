@@ -77,7 +77,7 @@
                 (ecs/put-components e1 {c/matter-state :nebula c/mass pm
                                         c/temperature 15.0 c/density 1.0e-16
                                         c/radius 1.0e10 c/composition cloud-comp}))
-        w   (assoc w :phase0/gas-particle-mass pm)
+        w   (assoc w :genesis/gas-particle-mass pm)
         sys (stellar/classifier-system)
         ws  ((:run sys) w)]
     (testing "sole writer of matter-state and accretion-radius"
