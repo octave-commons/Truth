@@ -151,7 +151,7 @@
     :ns            'domain.stellar
     :reads         #{c/matter-state c/accretion-radius c/position c/mass
                       c/velocity c/disk-mass c/disk-angular-mom c/luminosity
-                      c/consumed-accrete}
+                      c/temperature c/consumed-accrete}
     :writes        #{c/absorb-accrete c/consumed-accrete}}
 
    ;; :collapse is fully retired: its writes were dissolved into Structure (shape),
@@ -219,12 +219,13 @@
    ;; c/spawn-request-disk (materialized next tick by materialize-lifecycle).
    ;; Reads c/absorb-accrete from sink-formation (one-tick Jacobi delay).
    ;; Runs in the parallel fan-out (was a post-fold barrier).
-   {:id     :disk-evolution
-    :ns     'domain.stellar
-    :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
-              c/radius c/position c/velocity c/absorb-accrete}
-    :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
-              c/spawn-request-disk}}
+    {:id     :disk-evolution
+     :ns     'domain.stellar
+     :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
+               c/radius c/position c/velocity c/absorb-accrete c/luminosity
+               c/composition c/planets-seeded c/disc-tag c/rotation-axis}
+     :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
+               c/spawn-request-disk c/spawn-request-planet c/planets-seeded}}
 
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
@@ -252,12 +253,19 @@
     :reads  #{c/matter-state c/composition c/temperature c/mass}
     :writes #{c/comp-burn}}
 
-   {:id     :regime
-    :ns     'domain.regime
-    :reads  #{c/matter-state c/density c/temperature c/b-field}
-    :writes #{c/regime}}
+    {:id     :regime
+     :ns     'domain.regime
+     :reads  #{c/matter-state c/density c/temperature c/b-field c/disc-tag}
+     :writes #{c/regime}}
 
-    ;; EM is split: the Lorentz force and magnetic braking are computed together
+    ;; Disc identification: tags non-star bodies relative to the central star as
+    ;; :disc, :envelope, :outflow, or nil. Sole writer of c/disc-tag (Part 2).
+    {:id     :disc-identification
+     :ns     'domain.stellar
+     :reads  #{c/matter-state c/position c/velocity c/mass c/oblateness}
+     :writes #{c/disc-tag}}
+
+     ;; EM is split: the Lorentz force and magnetic braking are computed together
     ;; in one pass over EM-active entities; the integrator owns angular-momentum/
     ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
     {:id     :em-lorentz

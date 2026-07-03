@@ -1,14 +1,14 @@
 (ns infra.inspect-test
   "Tests for inspection / picking transforms in infra.inspect."
   (:require
-    [clojure.test :refer [deftest testing is]]
-    [domain.ecs.core :as ecs]
-    [domain.stellar :as stellar]
-    [infra.camera :as cam]
-    [infra.inspect :as inspect]
-    [infra.render :as render]
-    [infra.render.units :as units]
-    [shape.spatial :as sp]))
+   [clojure.test :refer [deftest testing is]]
+   [domain.ecs.core :as ecs]
+   [domain.stellar :as stellar]
+   [infra.camera :as cam]
+   [infra.inspect :as inspect]
+   [infra.render :as render]
+   [infra.render.units :as units]
+   [shape.spatial :as sp]))
 
 (deftest test-screen-ray-projects-through-center
   (testing "Center screen ray points along the camera forward axis"
@@ -28,7 +28,8 @@
       (is (number? sy))
       (is (pos? depth) "depth is positive in front of the camera")
       (let [{:keys [ro rd]} (inspect/screen->ray ctx sx sy)
-            t       (/ depth (sp/dot rd [0.0 0.0 1.0]))
+            fwd     (:fwd (units/camera-basis ctx))
+            t       (/ depth (sp/dot rd fwd))
             closest (sp/v+ ro (sp/v* rd t))]
         (is (< (sp/dist p closest) 1e-3) "ray at projected depth lands near original point")))))
 
@@ -44,13 +45,15 @@
   (testing "A body directly under the screen center is picked"
     (let [camera (-> (cam/make-camera 50.0) (assoc :pitch 0.0) cam/update-camera-position)
           ctx    (units/make-context camera {:width 1280 :height 720})
-          body   {:entity 1 :render-mode :body :position [0.0 0.0 20.0] :radius 5.0}
+          ;; z-up camera at pitch 0 looks along +y, so a center-screen body sits
+          ;; on the +y axis in front of the camera (not +z).
+          body   {:entity 1 :render-mode :body :position [0.0 20.0 0.0] :radius 5.0}
           picked (inspect/pick-entity ctx [body] 640.0 360.0)]
       (is (= 1 picked) "center-screen body is picked")))
   (testing "A body far from the cursor is not picked"
     (let [camera (-> (cam/make-camera 50.0) (assoc :pitch 0.0) cam/update-camera-position)
           ctx    (units/make-context camera {:width 1280 :height 720})
-          body   {:entity 2 :render-mode :body :position [0.0 0.0 20.0] :radius 1.0}
+          body   {:entity 2 :render-mode :body :position [0.0 20.0 0.0] :radius 1.0}
           picked (inspect/pick-entity ctx [body] 10.0 10.0)]
       (is (nil? picked) "off-cursor body is not picked"))))
 
@@ -73,10 +76,10 @@
 (deftest test-inspector-card
   (testing "Inspector card is anchored to the body's screen position"
     (let [[w eid] (stellar/spawn-clump (ecs/empty-world)
-                     {:position [0.0 0.0 -3.0e15]
-                      :mass 2e30 :radius 1e9
-                      :matter-state :star
-                      :temperature 5800.0})
+                                       {:position [0.0 0.0 -3.0e15]
+                                        :mass 2e30 :radius 1e9
+                                        :matter-state :star
+                                        :temperature 5800.0})
           camera (cam/make-camera 50.0)
           ctx    (units/make-context camera {:width 1280 :height 720})
           bodies (render/phase0-bodies-from-world w)

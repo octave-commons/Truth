@@ -43,6 +43,7 @@
   (testing "Program definitions expose inputs/uniforms/outputs as data"
     (is (= #{:aPos} (set (keys (get-in sh/body-program [:vertex :inputs])))))
     (is (= #{:model :view :projection} (set (keys (get-in sh/body-program [:vertex :uniforms])))))
-    (is (= #{:color :cameraPos :glow} (set (keys (get-in sh/body-program [:fragment :uniforms])))))
+    (is (= #{:color :accent :cameraPos :glow :seed :surfaceType}
+           (set (keys (get-in sh/body-program [:fragment :uniforms])))))
     (is (string? (get-in sh/body-program [:vertex :source])))
     (is (string? (get-in sh/body-program [:fragment :source])))))

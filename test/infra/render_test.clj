@@ -6,6 +6,7 @@
    [clojure.math :as math]
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [domain.stellar :as stellar]
    [domain.genesis :as genesis]
    [domain.player :as player]
@@ -48,14 +49,14 @@
 (deftest test-phase0-projection
   (testing "Gas contributes to froxel volume, protostar → body + field line, star → shaded body"
     (let [[w1 _] (stellar/spawn-clump (ecs/empty-world)
-                   {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e13
-                    :matter-state :nebula})
+                                      {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e13
+                                       :matter-state :nebula})
           [w2 _] (stellar/spawn-clump w1
-                   {:position [2e15 0.0 0.0] :mass 2e30 :radius 1e14
-                    :matter-state :protostar})
+                                      {:position [2e15 0.0 0.0] :mass 2e30 :radius 1e14
+                                       :matter-state :protostar})
           [w3 _] (stellar/spawn-clump w2
-                   {:position [4e16 0.0 0.0] :mass 2e30 :radius 1e9
-                    :matter-state :star})
+                                      {:position [4e16 0.0 0.0] :mass 2e30 :radius 1e9
+                                       :matter-state :star})
           shapes (r/phase0-bodies-from-world w3)
           modes  (frequencies (map :render-mode shapes))]
       (is (pos? (get modes :body 0))     "protostar + star produce shaded bodies")
@@ -65,8 +66,8 @@
   (testing "Froxel gas samples carry density in volume builder"
     (let [base (ecs/empty-world)
           [w1 _] (stellar/spawn-clump base
-                   {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
-                    :matter-state :nebula :density 1e-18 :temperature 12.0})
+                                      {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                       :matter-state :nebula :density 1e-18 :temperature 12.0})
           ctx  (units/make-context (cam/make-camera) {:width 1 :height 1})
           pts  (#'r/gas-points ctx w1)]
       (is (seq pts) "nebula produces gas samples for the froxel texture")
@@ -85,7 +86,6 @@
           hot  (r/temp-color 1e4)]
       (is (< (first cold) (first hot)) "hot gas reads redder/warmer than cold gas")
       (is (not= cold hot) "different temperatures produce different colours"))))
-
 
 ;; --- Physics-coupled size and colour -----------------------------------------
 
@@ -179,12 +179,12 @@
 (deftest test-oblate-body-projection
   (testing "Rotating protostars are projected with oblateness and rotation axis"
     (let [[w _eid] (stellar/spawn-clump (ecs/empty-world)
-                     {:position [0.0 0.0 0.0]
-                      :velocity [0.0 0.0 0.0]
-                      :mass 2e30
-                      :radius 1e15
-                      :matter-state :protostar
-                      :angular-momentum [0.0 0.0 1e45]})
+                                        {:position [0.0 0.0 0.0]
+                                         :velocity [0.0 0.0 0.0]
+                                         :mass 2e30
+                                         :radius 1e15
+                                         :matter-state :protostar
+                                         :angular-momentum [0.0 0.0 1e45]})
           w2 (stellar/collapse-system w)
           shapes (r/phase0-bodies-from-world w2)
           bodies (filter #(= :body (:render-mode %)) shapes)]
@@ -234,4 +234,27 @@
           huge   {:render-mode :body :position [0.0 0.0 200.0] :radius 50.0}
           [solids sprites] (#'r/classify-body-lod [huge] camera 1280 720 nil)]
       (is (= 1 (count solids)))
-      (is (zero? (count sprites))))))
+      (is (zero? (count sprites)))))
+  (testing "Bright stars produce larger sprites than dim bodies at the same distance"
+    (let [camera (cam/make-camera 50.0)
+          dim    {:render-mode :body :kind :planet :position [0.0 0.0 500.0] :radius 1.0 :brightness 0.3}
+          bright {:render-mode :body :kind :star   :position [0.0 0.0 500.0] :radius 1.0 :brightness 3.0}
+          [_ dim-sprites]    (#'r/classify-body-lod [dim]    camera 1280 720 nil)
+          [_ star-sprites]   (#'r/classify-body-lod [bright] camera 1280 720 nil)]
+      (is (= 1 (count dim-sprites)))
+      (is (= 1 (count star-sprites)))
+      (is (> (:size (first star-sprites)) (:size (first dim-sprites)))
+          "luminous stars get a bigger point sprite"))))
+
+(deftest test-body-brightness
+  (testing "Stars scale with luminosity; non-stars are dim"
+    (let [[w eid] (stellar/spawn-clump (ecs/empty-world)
+                                       {:position [0.0 0.0 0.0]
+                                        :mass 2e30 :radius 6.957e8
+                                        :matter-state :star
+                                        :temperature 5800.0})
+          w (ecs/put-component w eid c/luminosity 3.828e26)
+          b (r/body-brightness w eid :star)]
+      (is (>= b 1.0) "a sun-like star is at least unit brightness")
+      (is (< (r/body-brightness (ecs/empty-world) 999 :planet) 0.5)
+          "planets are dim"))))

@@ -33,6 +33,7 @@
    :focus-position  position
    :focus-radius    1e15            ;; nebula-scale focus to start
    :focus-intensity 0.5
+   :resolution      0.0             ;; local simulation detail [0,1]
    :drift-velocity  (sp/vec3 0 0 0)
    :resonance-events []
    :time-witnessed  0.0
@@ -228,13 +229,13 @@
                        cell      (into {}
                                        (keep (fn [eid]
                                                (when-let [a (observer-acceleration
-                                                              obs (ecs/get-component world eid c/position)
-                                                              dt ref-speed)]
+                                                             obs (ecs/get-component world eid c/position)
+                                                             dt ref-speed)]
                                                  [eid a])))
                                        (ecs/entities-with world c/position c/mass))]
                    (tick/contribution-write-set
-                     c/accel-observer cell
-                     (keys (get-in world [:components c/accel-observer])))))))})
+                    c/accel-observer cell
+                    (keys (get-in world [:components c/accel-observer])))))))})
 
 ;; --- Decoherence / endings --------------------------------------------------
 

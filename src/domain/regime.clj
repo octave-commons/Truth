@@ -10,11 +10,17 @@
      β     = P_gas / P_B      gas vs magnetic pressure
      ℳ     = |v| / c_s        flow vs sound speed (shocks)
      M_A   = |v| / v_A        flow vs Alfvén speed
-     L/λ_J = jeans ratio      gravity vs pressure support"
+     L/λ_J = jeans ratio      gravity vs pressure support
+
+   Disc regimes (Part 3):
+     :stable-disc              — Toomre Q > 1
+     :gravitationally-unstable — Q ≤ 1 and fast cooling (fragments)
+     :unstable-no-fragment     — Q ≤ 1 but slow cooling"
   (:require
    [law.field             :as lf]
    [law.stellar           :as ls]
    [domain.em             :as em]
+   [domain.stellar        :as stellar]
    [shape.spatial         :as sp]
    [domain.ecs.core       :as ecs]
    [domain.ecs.parallel   :as par]
@@ -89,25 +95,44 @@
      :mhd-dominated            β < 1 AND M_A ≤ 1   (field shapes the flow)
      :gravity-hydro            otherwise           (gas pressure + gravity)
 
+   If `disc-context` is provided and the cell is tagged :disc, the disc is
+   further classified by Toomre Q and cooling time:
+     :stable-disc              — Q > 1
+     :gravitationally-unstable — Q ≤ 1 AND fast cooling (fragments)
+     :unstable-no-fragment     — Q ≤ 1 AND slow cooling
+
    Gravitational instability is checked first: β compares the field to *thermal*
    pressure, but a Jeans-unstable clump's decisive fact is that it tends to
    collapse, so that tag wins even when the field is locally strong. (Whether
    the field actually halts that collapse is the separate magnetic-support /
-   mass-to-flux test in domain.em, which the collapse system applies.)
-
-   These are the nebula-scale tags; interior/disc tags (:convective,
-   :stable-disc, :tectonically-dead) attach later from the same machinery."
-  [cell]
-  (let [n  (numbers cell)
-        b  (:beta n)
-        ma (:alfven-mach n)
-        jr (:jeans-ratio n)
-        tag (cond
-              (>= jr lf/jeans-unstable)               :gravitationally-unstable
-              (and (< b lf/beta-magnetized)
-                   (<= ma lf/alfven-mach-magnetized)) :mhd-dominated
-              :else                                   :gravity-hydro)]
-    {:regime tag :numbers n}))
+   mass-to-flux test in domain.em, which the collapse system applies.)"
+  ([cell]
+   (classify cell nil))
+  ([cell disc-context]
+   (let [n  (numbers cell)
+         b  (:beta n)
+         ma (:alfven-mach n)
+         jr (:jeans-ratio n)
+         base (cond
+                (>= jr lf/jeans-unstable)               :gravitationally-unstable
+                (and (< b lf/beta-magnetized)
+                     (<= ma lf/alfven-mach-magnetized)) :mhd-dominated
+                :else                                   :gravity-hydro)
+         tag (if (and (= base :gravity-hydro)
+                      disc-context
+                      (= (:disc-tag disc-context) :disc)
+                      (pos? (double (:star-mass disc-context 0.0)))
+                      (pos? (double (:radius disc-context 0.0)))
+                      (pos? (double (:temperature disc-context 0.0))))
+               (let [Q-regime (stellar/disc-regime (:star-mass disc-context)
+                                                   (:mass disc-context)
+                                                   (:radius disc-context)
+                                                   (:temperature disc-context))]
+                 (if (#{:stable-disc :gravitationally-unstable :unstable-no-fragment} Q-regime)
+                   Q-regime
+                   base))
+               base)]
+     {:regime tag :numbers n})))
 
 ;; --- ECS projection + system ------------------------------------------------
 
@@ -121,10 +146,24 @@
    :velocity    (ecs/get-component world eid c/velocity)
    :b-field     (ecs/get-component world eid c/b-field)})
 
+(defn- central-star
+  "Return {:star-id :star-pos :star-v :star-m} for the most massive star or
+   protostar in the world, or nil if none exists."
+  [world]
+  (let [candidates (filterv #(let [s (ecs/get-component world % c/matter-state)]
+                               (or (= s :star) (= s :protostar)))
+                            (ecs/entities-with world c/matter-state c/mass))]
+    (when (seq candidates)
+      (let [eid (apply max-key #(ecs/get-component world % c/mass) candidates)]
+        {:star-id  eid
+         :star-pos (ecs/get-component world eid c/position)
+         :star-v   (ecs/get-component world eid c/velocity)
+         :star-m   (double (or (ecs/get-component world eid c/mass) 0.0))}))))
+
 (defn regime-system
   "Tag every matter entity with its dominant-physics regime for this tick.
-   Runs after gravity and EM so β and M_A reflect the current field, and before
-   hydro so collapse/render can read the tag. Stores :component/regime.
+   Runs after gravity, EM, and disc-identification so β, M_A, and disc-tag are
+   all available. Stores :component/regime.
 
    Per-entity classification is pure, so it is computed in parallel and the tags
    folded back sequentially. Each phase is profiled separately when
@@ -134,10 +173,24 @@
    world
    [[:regime/classify
      (fn [w]
-       (assoc w :regime/tags
-              (par/par-mapv
-               (fn [eid] [eid (:regime (classify (entity->cell w eid)))])
-               (ecs/entities-with w c/matter-state c/density c/temperature))))]
+       (let [star (central-star w)
+             disc-context (when star
+                            {:star-mass (:star-m star)
+                             :star-pos  (:star-pos star)
+                             :star-v    (:star-v star)})
+             eids (ecs/entities-with w c/matter-state c/density c/temperature)]
+         (assoc w :regime/tags
+                (par/par-mapv
+                 (fn [eid]
+                   (let [cell (entity->cell w eid)
+                         ctx (when (= :disc (ecs/get-component w eid c/disc-tag))
+                               (assoc disc-context
+                                      :disc-tag :disc
+                                      :mass (double (or (ecs/get-component w eid c/mass) 0.0))
+                                      :radius (double (or (:radius cell) 0.0))
+                                      :temperature (double (or (:temperature cell) 0.0))))]
+                     [eid (:regime (classify cell ctx))]))
+                 eids))))]
     [:regime/apply
      (fn [w]
        (reduce (fn [w' [eid tag]] (ecs/put-component w' eid c/regime tag))

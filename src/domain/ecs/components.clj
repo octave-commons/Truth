@@ -55,10 +55,16 @@
 ;; `spin` is the body-fixed angular velocity vector (rad/s).
 ;; `oblateness` is the polar/equatorial axis ratio c/a (1 = spherical).
 ;; `rotation-axis` is the unit vector along L; used to orient the flattened body.
+;; `disc-tag` classifies a body's kinematic relationship to the central star:
+;;   :disc      — rotationally supported (v_tang > 2 |v_rad|, h/r < 0.3, bound)
+;;   :envelope  — radially infalling, bound
+;;   :outflow   — unbound / hyperbolic
+;;   nil       — not associated with a disc
 (def angular-momentum :component/angular-momentum) ;; [Lx Ly Lz]
 (def spin             :component/spin)             ;; [ωx ωy ωz]
 (def oblateness       :component/oblateness)       ;; double in (0,1]
 (def rotation-axis    :component/rotation-axis)    ;; unit [nx ny nz]
+(def disc-tag         :component/disc-tag)         ;; :disc | :envelope | :outflow | nil
 
 ;; --- Hydrodynamics ----------------------------------------------------------
 ;; `hydro-accel` is the pressure-gradient acceleration a = -∇p/ρ (m/s²).
@@ -130,6 +136,7 @@
 (def spawn-request-accretion :component/spawn-request.accretion)
 (def spawn-request-shatter   :component/spawn-request.shatter)
 (def spawn-request-disk      :component/spawn-request.disk)   ;; disk fragment spawns (binary/planet)
+(def spawn-request-planet    :component/spawn-request.planet) ;; sub-grid planet seeder (Part 4)
 ;; Lifecycle markers, reaped/materialized at world-construction (spec §5). Each
 ;; consumed marker has a single owner so single-writer holds; the reaper removes
 ;; any entity carrying ANY consumed.* marker.
@@ -161,12 +168,15 @@
 (def magnetosphere      :component/magnetosphere)       ;; {:compression :standoff-distance} — planetary magnetosphere state
 (def disk-mass          :component/disk-mass)            ;; kg — protoplanetary disk mass
 (def disk-angular-mom   :component/disk-angular-mom)    ;; [Lx Ly Lz] — disk angular momentum vector
+(def planets-seeded     :component/planets-seeded)      ;; bool — a star whose disk has run the one-shot planet sub-grid
+(def planet-type        :component/planet-type)         ;; :terrestrial | :ice-giant | :gas-giant — sub-grid planet class
 
 ;; --- Atmosphere -------------------------------------------------------------
 (def atmos-cell  :component/atmos-cell)
 
-;; --- Biome ------------------------------------------------------------------
+;; --- Biome / Ecology --------------------------------------------------------
 (def biome-cell  :component/biome-cell)
+(def ecology     :component/ecology)      ;; {:moisture :temp :biomass :complexity :stability :phase :seeded :record}
 
 ;; --- Civilization -----------------------------------------------------------
 (def civilization :component/civilization)

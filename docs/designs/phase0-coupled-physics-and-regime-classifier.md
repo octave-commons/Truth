@@ -203,13 +203,24 @@ Once a protostellar disc exists, the gravity-vs-pressure-vs-rotation balance is 
 Toomre parameter Q(R) = c_s κ / (πGΣ):
 
 - Q ≳ 1 — disc locally stable → smooth disc + core accretion.
-- Q ≲ 1 — locally unstable → spiral arms, fragmentation into clumps/planets,
+- Q ≲ 1 — locally unstable → spiral arms, fragmentation into clumps,
   **but only if cooling is fast enough**: Gammie's criterion t_cool ≲ 3Ω⁻¹.
 
 Per disc cell the classifier evaluates Q and t_cool/t_dyn and tags
-`:gravitationally-unstable` vs `:stable-disc`. Terrestrial growth, collisions, and
-migration then reuse the existing N-body gravity and `collision/collision-detection-system`
-+ `stellar-merge-handler` — no new field equations, just gravity plus disc drag/torque.
+`:gravitationally-unstable` / `:unstable-no-fragment` / `:stable-disc`
+(implemented in `stellar/disc-regime`, `domain.regime/classify`).
+
+> **Correction (2026-07-03, per
+> [`genesis-formation-authoritative.md`](../specs/genesis-formation-authoritative.md)):**
+> planets are **sub-grid** — they are NOT produced by fragmenting/merging gas
+> parcels. The Q<1 tag marks a self-gravitating disc region; actual `:planet`
+> entities are emitted by the core-accretion seeder
+> (`domain.planet-formation/planet-seeds`, wired through
+> `stellar/disk-evolution-system`), which draws mass from the disk's solid
+> surface density. Toomre Q is a *modifier* on the seeder, not the mechanism that
+> creates planets. The N-body gravity + `collision-detection-system` +
+> `stellar-merge-handler` govern how already-seeded planets evolve and collide —
+> they do not turn gas into planets.
 
 ### Planet interior (end of Phase 0)
 

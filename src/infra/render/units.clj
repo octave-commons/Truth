@@ -6,15 +6,16 @@
    `RenderContext` record carries the scale (physical metres per render unit),
    the camera value from `infra.camera`, and the viewport in pixels."
   (:require
-    [infra.camera :as cam]
-    [shape.spatial :as sp]))
+   [clojure.math :as math]
+   [infra.camera :as cam]
+   [shape.spatial :as sp]))
 
 ;; ---------------------------------------------------------------------------
 ;; Context
 ;; ---------------------------------------------------------------------------
 
 (defrecord RenderContext
-  [scale camera viewport])
+           [scale camera viewport])
 
 (defn make-context
   "Build a RenderContext from a camera and viewport.
@@ -66,7 +67,7 @@
   (let [r (double (or r-phys 0.0))]
     (if (pos? r)
       (let [linear (/ r render-radius-ref)
-            log-r  (* 0.42 (Math/log10 (max 1e-6 linear)))]
+            log-r  (* 0.42 (math/log10 (max 1e-6 linear)))]
         (max (* 0.5 linear) (+ 0.01 log-r) 0.001))
       0.001)))
 
@@ -77,25 +78,52 @@
   (let [r (double (or r-render 0.001))]
     (* r render-radius-ref)))
 
+(def ^:const body-radius-floor-ru
+  "Absolute floor on a body's render radius [ru] so a degenerate (zero/negative
+   radius) body never vanishes from picking or produces a singular model
+   matrix. 1e-9 ru = 1e6 m at the default scale — far below one pixel; the
+   sprite LOD pass, not this floor, is what keeps distant bodies visible."
+  1.0e-9)
+
+(defn phys->body-render-radius
+  "Physical radius [m] → render-unit radius at TRUE scale: the same linear
+   `r / ctx.scale` mapping positions use, so a body's viewed size IS its
+   physical size (the Sun is ~7e-7 ru across at the default 1e15 m/ru scale).
+
+   Bodies too small to subtend a pixel are handed to the sprite-LOD pass
+   (`classify-body-lod`), which renders them as clamped glints — discoverable
+   at any distance without lying about scale. To SEE a body as a globe the
+   camera must genuinely approach it (selection tether)."
+  [ctx r-phys]
+  (let [r (double (or r-phys 0.0))
+        s (double (:scale ctx))]
+    (if (pos? r)
+      (max body-radius-floor-ru (/ r s))
+      body-radius-floor-ru)))
+
 ;; ---------------------------------------------------------------------------
 ;; Camera basis shared by screen / ray transforms
 ;; ---------------------------------------------------------------------------
 
 (def ^:private fov-deg 60.0)
-(def ^:private near 0.1)
+(def ^:private near
+  "Behind-camera cutoff for projection/picking. Small enough that a camera
+   tethered a few body-radii from a true-scale planet (~1e-7 ru) still projects
+   it; this is a guard against division blow-up, not the GL near plane."
+  1.0e-8)
 
 (defn camera-basis
   "Orthonormal view frame {:cam-pos :fwd :right :up :tan-half} for the context's
    camera, matching `cam/look-at` and the volume shader exactly: fwd =
-   target−cam-pos, right = fwd×[0 1 0], up = right×fwd."
+   target−cam-pos, right = fwd×[0 0 1], up = right×fwd. World is z-up."
   [ctx]
   (let [camera (:camera ctx)
         cam-pos (vec (:position camera))
         fwd     (cam/normalize (sp/v- (:target camera) cam-pos))
-        right   (cam/normalize (cam/cross fwd [0.0 1.0 0.0]))
+        right   (cam/normalize (cam/cross fwd [0.0 0.0 1.0]))
         up      (cam/cross right fwd)]
     {:cam-pos cam-pos :fwd fwd :right right :up up
-     :tan-half (Math/tan (cam/deg->rad (/ fov-deg 2.0)))}))
+     :tan-half (math/tan (cam/deg->rad (/ fov-deg 2.0)))}))
 
 ;; ---------------------------------------------------------------------------
 ;; Screen / ray transforms
@@ -132,7 +160,7 @@
         ndcx (- (/ (* 2.0 px) w) 1.0)
         ndcy (- 1.0 (/ (* 2.0 py) h))
         rd (cam/normalize
-             (sp/v+ fwd
-                    (sp/v+ (sp/v* right (* ndcx aspect tan-half))
-                           (sp/v* up (* ndcy tan-half)))))]
+            (sp/v+ fwd
+                   (sp/v+ (sp/v* right (* ndcx aspect tan-half))
+                          (sp/v* up (* ndcy tan-half)))))]
     {:ro cam-pos :rd rd}))

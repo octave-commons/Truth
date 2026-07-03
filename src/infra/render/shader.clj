@@ -116,41 +116,115 @@
 ;; ---------------------------------------------------------------------------
 
 (def body-program
-  "Shaded sphere with view-dependent diffuse + fresnel glow."
+  "Shaded sphere with view-dependent diffuse + fresnel glow and a procedural
+   surface chosen by `surfaceType` (see infra.render/body-appearance):
+     0 flat  1 star (granulation + limb darkening)  2 gas-giant bands
+     3 ice-giant bands  4 terrestrial (ocean/land/ice)  5 rocky  6 molten
+   Surfaces are generated from the body's LOCAL unit-sphere coordinates
+   (vLocal), so the pattern is glued to the body — stable across frames and
+   camera moves — and `seed` gives each body its own face."
   {:name :body
    :version "330 core"
    :vertex {:inputs    {:aPos :vec3}
             :uniforms  {:model :mat4 :view :mat4 :projection :mat4}
-            :outputs   {:vNormal :vec3 :vWorldPos :vec3}
+            :outputs   {:vNormal :vec3 :vWorldPos :vec3 :vLocal :vec3}
             :source    "#version 330 core
                         layout(location = 0) in vec3 aPos;
                         out vec3 vNormal;
                         out vec3 vWorldPos;
+                        out vec3 vLocal;
                         uniform mat4 model;
                         uniform mat4 view;
                         uniform mat4 projection;
                         void main() {
                           vNormal = mat3(transpose(inverse(model))) * aPos;
+                          vLocal = aPos;
                           vec4 worldPos = model * vec4(aPos, 1.0);
                           vWorldPos = worldPos.xyz;
                           gl_Position = projection * view * worldPos;
                         }"}
-   :fragment {:inputs    {:vNormal :vec3 :vWorldPos :vec3}
-              :uniforms  {:color :vec3 :cameraPos :vec3 :glow :float}
+   :fragment {:inputs    {:vNormal :vec3 :vWorldPos :vec3 :vLocal :vec3}
+              :uniforms  {:color :vec3 :accent :vec3 :cameraPos :vec3
+                          :glow :float :seed :float :surfaceType :int}
               :outputs   {:FragColor :vec4}
               :source    "#version 330 core
                           in vec3 vNormal;
                           in vec3 vWorldPos;
+                          in vec3 vLocal;
                           out vec4 FragColor;
                           uniform vec3 color;
+                          uniform vec3 accent;
                           uniform vec3 cameraPos;
                           uniform float glow;
+                          uniform float seed;
+                          uniform int surfaceType;
+
+                          float hash3(vec3 p) {
+                            p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+                            p *= 17.0;
+                            return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+                          }
+                          float vnoise(vec3 p) {
+                            vec3 i = floor(p);
+                            vec3 f = fract(p);
+                            f = f * f * (3.0 - 2.0 * f);
+                            return mix(mix(mix(hash3(i), hash3(i+vec3(1,0,0)), f.x),
+                                           mix(hash3(i+vec3(0,1,0)), hash3(i+vec3(1,1,0)), f.x), f.y),
+                                       mix(mix(hash3(i+vec3(0,0,1)), hash3(i+vec3(1,0,1)), f.x),
+                                           mix(hash3(i+vec3(0,1,1)), hash3(i+vec3(1,1,1)), f.x), f.y), f.z);
+                          }
+                          float fbm(vec3 p) {
+                            float v = 0.0, a = 0.5;
+                            for (int i = 0; i < 4; i++) {
+                              v += a * vnoise(p);
+                              p = p * 2.03 + vec3(11.7);
+                              a *= 0.5;
+                            }
+                            return v;
+                          }
+
                           void main() {
                             vec3 N = normalize(vNormal);
                             vec3 V = normalize(cameraPos - vWorldPos);
                             float diff = max(dot(N, V), 0.0);
                             float fresnel = pow(1.0 - abs(dot(N, V)), 2.0);
-                            vec3 surface = color * (0.15 + 0.35 * diff);
+                            vec3 L = normalize(vLocal);
+                            vec3 sp = L * 4.0 + vec3(seed);
+                            vec3 base = color;
+                            float emissive = 0.0;
+
+                            if (surfaceType == 1) {          // star: granulation + limb darkening
+                              float g = fbm(L * 9.0 + vec3(seed));
+                              float limb = pow(max(diff, 0.0), 0.45);
+                              base = color * (0.75 + 0.5 * g) * (0.55 + 0.45 * limb);
+                              emissive = 1.0;
+                            } else if (surfaceType == 2) {   // gas giant: turbulent latitude bands
+                              float warp = fbm(L * 3.0 + vec3(seed)) * 1.6;
+                              float band = 0.5 + 0.5 * sin(L.z * 14.0 + warp * 3.0 + seed);
+                              float storm = smoothstep(0.72, 0.95, fbm(L * 6.0 - vec3(seed * 2.0)));
+                              base = mix(color, accent, band * 0.65);
+                              base = mix(base, accent * 1.25, storm * 0.5);
+                            } else if (surfaceType == 3) {   // ice giant: soft, few, low-contrast bands
+                              float warp = fbm(L * 2.0 + vec3(seed));
+                              float band = 0.5 + 0.5 * sin(L.z * 6.0 + warp * 2.0 + seed);
+                              base = mix(color, accent, band * 0.30);
+                            } else if (surfaceType == 4) {   // terrestrial: ocean / land / polar ice
+                              float n = fbm(sp);
+                              float land = smoothstep(0.47, 0.53, n);
+                              base = mix(color, accent, land);
+                              float cap = smoothstep(0.78, 0.9, abs(L.z) + 0.15 * (n - 0.5));
+                              base = mix(base, vec3(0.93, 0.96, 1.0), cap);
+                            } else if (surfaceType == 5) {   // rocky: albedo patches
+                              float n = fbm(sp * 1.6);
+                              base = color * (0.65 + 0.7 * n);
+                            } else if (surfaceType == 6) {   // molten: dark crust over glowing cracks
+                              float n = fbm(sp * 1.3);
+                              float crack = smoothstep(0.55, 0.8, n);
+                              base = mix(color * 0.55, vec3(1.0, 0.5, 0.12), crack);
+                              emissive = 0.6 * crack;
+                            }
+
+                            vec3 surface = mix(base * (0.15 + 0.35 * diff), base, emissive);
                             vec3 glowColor = color * glow * (0.8 + 0.6 * fresnel);
                             FragColor = vec4(surface + glowColor, 1.0);
                           }"}})

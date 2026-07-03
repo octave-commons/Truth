@@ -23,7 +23,7 @@ Five layers, each with a strict single job.
 | Layer | Job | Always visible |
 |---|---|---|
 | **Viewport** | World, motion, threshold events, ambient narrator manifestations | Yes |
-| **Top bar** | Domain navigation: World · View · Spark · Phase · Journal · Narrator · Multiverse | Yes |
+| **Top bar** | Domain navigation: World · View · Entities · Spark · Phase · Journal · Narrator · Multiverse | Yes |
 | **Right drawer** | Context detail for the current domain or selected body | On demand |
 | **Modal** | Setup, irreversible choices, worldgen config, chat shell expansion, save/load | On demand |
 | **Status bar** | Phase · time rate · simulation mode · hint state · 1-line telemetry | Yes |
@@ -59,6 +59,12 @@ World
 │       └── Day length tendency
 ├── System bodies >                 (HIDDEN Phase 0, dimmed late Phase 0, active Phase 1+)
 │   └── [per-body entries once stable bodies exist]
+│       NOTE: promoted to the top-level **Entities** domain (the entity
+│       explorer): a live list of every resolved body — name, kind, mass,
+│       radius — where selecting a row tethers the camera to that body.
+│       Bodies render at TRUE physical scale; the explorer and the tether are
+│       how a sub-pixel world stays reachable ("see further than you can
+│       reach" — the list always shows more than the eye resolves).
 ├── History >                       (active Phase 3+)
 ├── ── separator ──
 └── Release world…                  (irreversible modal, red)

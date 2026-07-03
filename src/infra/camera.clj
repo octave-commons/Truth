@@ -72,22 +72,29 @@
 (defrecord Camera
            [position yaw pitch distance target])
 
+(declare update-camera-position)
+
 (defn make-camera
   "Create an orbital camera. `distance` is the initial orbit radius in render
-   units."
+   units. Position is derived from yaw/pitch/distance so it is consistent with
+   the z-up orbit geometry (see `update-camera-position`)."
   ([] (make-camera 50.0))
   ([distance]
-   (->Camera (sp/vec3 0.0 (* distance 0.33) distance) -90.0 -20.0 distance (sp/vec3 0.0 0.0 0.0))))
+   (update-camera-position
+    (->Camera (sp/vec3 0.0 0.0 0.0) -90.0 -20.0 distance (sp/vec3 0.0 0.0 0.0)))))
 
 (defn camera-forward
-  "World-space forward direction of `camera` (from camera toward target)."
+  "World-space forward direction of `camera` (from camera toward target).
+
+   The world is z-up (the disk lies in the xy-plane, spin axis +z): `yaw` sweeps
+   the xy-plane and `pitch` tilts toward ±z."
   [camera]
   (let [yaw-rad   (deg->rad (:yaw camera))
         pitch-rad (deg->rad (:pitch camera))
         cp        (math/cos pitch-rad)]
     [(- (* cp (math/cos yaw-rad)))
-     (- (math/sin pitch-rad))
-     (- (* cp (math/sin yaw-rad)))]))
+     (- (* cp (math/sin yaw-rad)))
+     (- (math/sin pitch-rad))]))
 
 (defn observer-render-position
   "The observer (player spark/mote) position in render units, or the origin when
@@ -97,21 +104,23 @@
     (mapv #(/ (double %) phase0-view-scale) (:position obs))
     [0.0 0.0 0.0]))
 
-(defn camera-horizontal-basis
-  "Horizontal forward and right vectors for `camera`, both normalized.
+(defn camera-move-basis
+  "Forward and right movement vectors for `camera`, both normalized — FPS /
+   free-flight style.
 
-   Forward is the projection of the camera→target direction onto the xz-plane.
-   Right is forward × world-up. Used for movement in :manual mode so WASD moves
-   the mote relative to the camera's horizontal facing."
+   `:forward` is the FULL camera→target look direction (into the screen,
+   including any pitch), so W/S fly the mote toward / away from exactly where the
+   camera is pointed — like moving forward in any 3D game. `:right` is
+   forward × world-up ([0 0 1]), kept level so A/D strafe horizontally regardless
+   of pitch. Looking straight up/down degenerates the strafe axis; we fall back to
+   a stable one."
   [camera]
-  (let [[fx _ fz] (camera-forward camera)
-        fwd-h [fx 0.0 fz]
-        len   (sp/len fwd-h)]
-    (if (pos? len)
-      (let [forward (sp/v* fwd-h (/ 1.0 len))
-            right   (normalize (cross forward [0.0 1.0 0.0]))]
-        {:forward forward :right right})
-      {:forward [0.0 0.0 1.0] :right [1.0 0.0 0.0]})))
+  (let [forward (normalize (camera-forward camera))
+        r       (cross forward [0.0 0.0 1.0])
+        rlen    (sp/len r)]
+    (if (pos? rlen)
+      {:forward forward :right (sp/v* r (/ 1.0 rlen))}
+      {:forward forward :right [1.0 0.0 0.0]})))
 
 (defn update-camera-position
   "Recompute :position from :target, :distance, :yaw and :pitch."
@@ -121,8 +130,8 @@
         d         (:distance camera)
         [tx ty tz] (:target camera)
         x (+ tx (* d (math/cos pitch-rad) (math/cos yaw-rad)))
-        y (+ ty (* d (math/sin pitch-rad)))
-        z (+ tz (* d (math/cos pitch-rad) (math/sin yaw-rad)))]
+        y (+ ty (* d (math/cos pitch-rad) (math/sin yaw-rad)))
+        z (+ tz (* d (math/sin pitch-rad)))]
     (assoc camera :position (sp/vec3 x y z))))
 
 (defn flight-move
@@ -140,7 +149,7 @@
         rgt-input (double (:right input 0.0))]
     (if (and (zero? fwd-input) (zero? rgt-input))
       camera
-      (let [{:keys [forward right]} (camera-horizontal-basis camera)
+      (let [{:keys [forward right]} (camera-move-basis camera)
             speed (* (:distance camera)
                      (double (:flight-speed settings 0.5))
                      (double dt))
@@ -155,13 +164,16 @@
 
    `input` is a map {:forward signed :right signed} where +1 means the positive
    key is held (W or D) and -1 means the negative key (S or A). `settings`
-   provides :move-speed in m/s. Multiply by `dt` to obtain displacement."
+   provides :move-speed in m/s. Multiply by `dt` to obtain displacement.
+
+   Forward flies along the camera's full look direction (FPS-style), so W/S move
+   the mote toward / away from wherever the camera is aimed."
   [camera input settings]
   (let [fwd-input (double (:forward input 0.0))
         rgt-input (double (:right input 0.0))]
     (if (and (zero? fwd-input) (zero? rgt-input))
       [0.0 0.0 0.0]
-      (let [{:keys [forward right]} (camera-horizontal-basis camera)
+      (let [{:keys [forward right]} (camera-move-basis camera)
             speed (double (:move-speed settings 3.0e15))]
         (sp/v+ (sp/v* forward (* speed fwd-input))
                (sp/v* right (* speed rgt-input)))))))
@@ -170,7 +182,14 @@
 ;; Camera modes and settings
 ;; ---------------------------------------------------------------------------
 
-(def ^:private camera-modes [:manual :track-largest-cluster :fit-all])
+(def ^:private camera-modes [:manual :follow-selection :track-largest-cluster :fit-all])
+
+(defn min-approach-distance
+  "Closest orbit distance [ru] the camera may take to a body of render radius
+   `r-ru`: a couple of radii out so the globe fills the view without clipping,
+   floored so a degenerate radius can't pin the camera to a point."
+  [r-ru]
+  (max (* 2.5 (double (or r-ru 0.0))) 1.0e-7))
 
 (defn default-camera-settings
   "Default in-game camera configuration. Mutate the window config's
@@ -183,7 +202,11 @@
    :fit-percentile 0.90
    :manual-yaw -90.0
    :manual-pitch -20.0
-   :move-speed 3.0e15})
+   :move-speed 3.0e15
+   ;; Mouse look degrees-per-pixel and scroll-zoom render-units-per-notch.
+   ;; Adjustable live from the View panel (infra.menu) or the REPL.
+   :look-sensitivity 0.02
+   :zoom-sensitivity 10.0})
 
 (defn cycle-camera-mode
   "Advance to the next camera mode."
@@ -292,6 +315,33 @@
     (-> camera
         (assoc :target (observer-render-position world))
         update-camera-position)
+
+    ;; Tether to the selected body: the target tracks the entity's live render
+    ;; position (it keeps orbiting/falling — the camera rides along), yaw/pitch
+    ;; stay under mouse control, and the orbit distance is clamped no closer
+    ;; than a couple of body radii so a true-scale planet can fill the sky
+    ;; without clipping. Falls back to :manual behaviour when nothing is
+    ;; selected or the body is gone.
+    :follow-selection
+    (let [eid (:follow-eid settings)
+          pos (when eid (ecs/get-component world eid c/position))]
+      (if-not pos
+        (-> camera
+            (assoc :target (observer-render-position world))
+            update-camera-position)
+        (let [target (mapv #(/ (double %) phase0-view-scale) pos)
+              r-ru   (/ (double (or (ecs/get-component world eid c/radius) 0.0))
+                        phase0-view-scale)
+              t      (double (:smoothing settings 0.06))
+              ;; snap, don't lag, once the tether is close — a lerped target
+              ;; would smear a fast-orbiting body across the view
+              target' (if (< (sp/dist (:target camera [0.0 0.0 0.0]) target) (* 4.0 (max r-ru 1.0e-7)))
+                        target
+                        (vlerp (:target camera [0.0 0.0 0.0]) target (max t 0.15)))
+              dist'  (max (:distance camera) (min-approach-distance r-ru))]
+          (-> camera
+              (assoc :target target' :distance dist')
+              update-camera-position))))
 
     :track-largest-cluster
     (let [bodies (bodies->render world phase0-view-scale)

@@ -160,7 +160,12 @@
 (defn habitability-score
   "Calculate rough habitability potential"
   [{:keys [temperature pressure composition]}]
-  (let [has-water (> (get composition :H2O 0) 0.001)
+  (let [;; Water may be tracked explicitly (:H2O) or folded into the seeded
+        ;; planets' bulk :volatiles / :ices fractions (planet-composition) —
+        ;; count either, or no formed world could ever score habitable.
+        has-water (or (> (get composition :H2O 0) 0.001)
+                      (> (+ (double (get composition :volatiles 0.0))
+                            (double (get composition :ices 0.0))) 0.01))
         temp-ok (and (> temperature 273) (< temperature 373))
         has-carbon (> (+ (get composition :C 0)
                         (get composition :CO2 0)

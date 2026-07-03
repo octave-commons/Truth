@@ -10,6 +10,7 @@
   (:require
    [domain.stellar          :as stellar]
    [domain.em               :as em]
+   [domain.ecology          :as ecology]
    [domain.hydro            :as hydro]
    [domain.regime           :as regime]
    [domain.chemistry        :as chemistry]
@@ -273,7 +274,9 @@
                             :genesis/rate-yr           (:rate-yr neb)
                             :genesis/stats             nil
                             :genesis/complexity        0
-                            :genesis/active            true
+                             :genesis/active            true
+                             :genesis/disk-maturity     3.156e13
+                             :genesis/star-ignition-time 0.0
                             ;; Adaptive pacing dilates :sim/dt with complexity at
                             ;; a fixed 60 Hz tick rate (see `pacing-for`). Set
                             ;; false to hold :sim/dt constant — useful for fast,
@@ -290,7 +293,9 @@
          ;; Store the gas smoothing radius so the classifier can compute
          ;; accretion radii from it (before KH contraction shrinks bodies).
          seeded (assoc seeded :genesis/gas-smoothing-radius (* nebula-radius 0.003))
-         [w _]  (player/spawn-observer seeded (sp/vec3 0 0 (* nebula-radius 2)))]
+         ;; Spawn the observer at the nebula's centre (origin) so the player
+         ;; starts inside the cloud, not outside/below it.
+         [w _]  (player/spawn-observer seeded (sp/vec3 0 0 0))]
      (assert-seed-contracts! w))))
 
 ;; --- Observable summary -----------------------------------------------------
@@ -400,20 +405,21 @@
      (intervention/thermal-intervention-system)
      (integ/integrator-system dt)
      ;; legacy-bridged transform systems
-     (stellar/structure-system)
-     (stellar/eos-system)
-     (stellar/classifier-system)
-     (em/field-system dt)
-     (legacy :fusion         stellar/fusion-system)
-     (stellar/stellar-sed-system)
-     (stellar/atmosphere-shells-system)
-     (chemistry/nucleosynthesis-system dt)
-     (stellar/deuterium-depletion-system)
-     (stellar/stellar-wind-system)
-     (stellar/stellar-flare-system)
-     (atmosphere/xuv-atmospheric-escape-system)
-     (legacy :regime         regime/regime-system)
-     ;; Collision detection: now a fan-out emitter (B3). Its handler emits
+      (stellar/structure-system)
+      (stellar/eos-system)
+      (stellar/classifier-system)
+      (em/field-system dt)
+      (legacy :fusion         stellar/fusion-system)
+      (stellar/stellar-sed-system)
+      (stellar/atmosphere-shells-system)
+      (chemistry/nucleosynthesis-system dt)
+      (stellar/deuterium-depletion-system)
+      (stellar/stellar-wind-system)
+      (stellar/stellar-flare-system)
+      (atmosphere/xuv-atmospheric-escape-system)
+      (stellar/disc-identification-system)
+      (legacy :regime         regime/regime-system)
+      ;; Collision detection: now a fan-out emitter (B3). Its handler emits
       ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
       ;; single-writer. Runs in parallel, not serially at the barrier.
      (legacy :collision-detection collision/collision-detection-system)
@@ -429,7 +435,11 @@
      (legacy :lod-scheduler lod/lod-scheduler)
       ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
       ;; cargo-cult barrier).
-     (legacy :magnetosphere-coupling em/magnetosphere-coupling-system)]))
+     (legacy :magnetosphere-coupling em/magnetosphere-coupling-system)
+      ;; Toy biosphere: habitable planets adopt + tick an ecology (single-writer
+      ;; of c/ecology; throttled internally to its own slower cadence). Phase
+      ;; events are emitted post-physics by ecology/emit-phase-events.
+     (ecology/ecology-system)]))
 
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
@@ -440,7 +450,7 @@
    entities at world-construction."
   [c/spawn-request-wind c/spawn-request-flare
    c/spawn-request-accretion c/spawn-request-shatter
-   c/spawn-request-disk])
+   c/spawn-request-disk c/spawn-request-planet])
 
 (defn materialize-lifecycle
   "World-construction step (spec §5): spawn the entities requested by the fan-out
@@ -451,7 +461,13 @@
    tick was invisible to every this-tick reader; a body removed was fully present
    in the snapshot). Pure: world → world'."
   [world]
-  (let [;; spawn requested entities, clearing each request as it is consumed
+  (let [;; Spawn specs were computed by emitters reading the SNAPSHOT frame,
+        ;; but the integrator shifted every integrated body by −frame-offset
+        ;; this tick. Apply the same shift to spawn positions so new entities
+        ;; land in the same frame as their parents (an inner planet's orbit is
+        ;; smaller than the offset, so skipping this misplaces it entirely).
+        foff (or (:genesis/frame-offset world) [0.0 0.0 0.0])
+        ;; spawn requested entities, clearing each request as it is consumed
         spawned
         (reduce
          (fn [w req-ct]
@@ -459,7 +475,8 @@
             (fn [w eid specs]
               (let [w (ecs/remove-component w eid req-ct)]
                 (reduce (fn [w spec]
-                          (let [extra (:extra-components spec)
+                          (let [spec  (update spec :position sp/v- foff)
+                                extra (:extra-components spec)
                                 [w2 neweid] (stellar/spawn-clump w (dissoc spec :extra-components))]
                             (reduce-kv (fn [w k v] (ecs/put-component w neweid k v))
                                        w2 (or extra {}))))
@@ -545,12 +562,17 @@
         ;; Emit PHYSICAL threshold events only. The arc-transition event
         ;; (:event/phase-transition) is emitted by `domain.arc/advance-arc` when
         ;; the story arc advances — the genesis loop stays arc-agnostic.
-          world3     (cond-> world2
-                       (and (:star? summ) (not (:star? prev)))
-                       (emit-threshold :event/stellar-ignition (first (:stars summ)))
+           world3     (-> (cond-> world2
+                            (and (:star? summ) (not (:star? prev)))
+                            (-> (emit-threshold :event/stellar-ignition (first (:stars summ)))
+                                (assoc :genesis/star-ignition-time (:genesis/sim-time world2)))
 
-                       (> (:planet-count summ) (:planet-count prev))
-                       (emit-threshold :event/planet-formation (first (:planets summ))))
+                            (> (:planet-count summ) (:planet-count prev))
+                            (emit-threshold :event/planet-formation (first (:planets summ))))
+                          ;; Biosphere phase transitions (life emergence,
+                          ;; ecology advances, extinctions) — diffed against the
+                          ;; pre-physics snapshot.
+                          (ecology/emit-phase-events world1))
         ;; `dt` here is the step this tick actually integrated (captured above);
         ;; advance the clock by it. When adaptive, arm the NEXT tick with the
         ;; complexity-refined dt/softening and report the derived wall-clock rate

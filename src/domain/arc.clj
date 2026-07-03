@@ -16,28 +16,42 @@
   (:require
    [domain.genesis      :as genesis]
    [domain.habitability :as habitability]
+   [domain.ecology      :as ecology]
    [domain.player       :as player]
+   [domain.ecs.components :as c]
    [domain.ecs.event    :as event]))
 
 ;; --- Arc detection ----------------------------------------------------------
 
+(defn living-worlds
+  "Entity ids of bodies whose ecology has crossed into a living phase — the
+   worlds the perspective will narrow toward."
+  [world]
+  (->> (get-in world [:components c/ecology] {})
+       (filter (fn [[_ eco]] (ecology/living? eco)))
+       (mapv first)))
+
 (defn detect-arc
-  "Detect the current genesis arc from the resolved-matter summary. Returns an
-   `:arc/genesis-*` keyword — the player's story state, not a physics gate."
-  [{:keys [star? planet-count body-count regions]} sim-time]
-  (let [nebula?    (some #(= :nebula (:matter-state %)) regions)
-        protostar? (some #(= :protostar (:matter-state %)) regions)
-        planet?    (some #(= :planet (:matter-state %)) regions)
-        debris?    (some #(= :debris (:matter-state %)) regions)]
-    (cond
-      (and star? (pos? planet-count)) :arc/genesis-planets-formed
-      (and star? (>= body-count 3))   :arc/genesis-accretion
-      star?                           :arc/genesis-ignition
-      protostar?                      :arc/genesis-protostar
-      (or planet? debris?)            :arc/genesis-accretion
-      (zero? body-count)              :arc/genesis-dispersed
-      (and nebula? (< sim-time 1e18)) :arc/genesis-nebula-collapse
-      :else                           :arc/genesis-dispersed)))
+  "Detect the current arc from the resolved-matter summary (and, in the
+   3-arity, whether any world is alive). Returns an `:arc/*` keyword — the
+   player's story state, not a physics gate. Life continues the narrowing:
+   the awe of a god collapsing, world by world, toward a single being."
+  ([summ sim-time] (detect-arc summ sim-time false))
+  ([{:keys [star? planet-count body-count regions]} sim-time life?]
+   (let [nebula?    (some #(= :nebula (:matter-state %)) regions)
+         protostar? (some #(= :protostar (:matter-state %)) regions)
+         planet?    (some #(= :planet (:matter-state %)) regions)
+         debris?    (some #(= :debris (:matter-state %)) regions)]
+     (cond
+       (and life? (pos? planet-count)) :arc/life-emergence
+       (and star? (pos? planet-count)) :arc/genesis-planets-formed
+       (and star? (>= body-count 3))   :arc/genesis-accretion
+       star?                           :arc/genesis-ignition
+       protostar?                      :arc/genesis-protostar
+       (or planet? debris?)            :arc/genesis-accretion
+       (zero? body-count)              :arc/genesis-dispersed
+       (and nebula? (< sim-time 1e18)) :arc/genesis-nebula-collapse
+       :else                           :arc/genesis-dispersed))))
 
 ;; --- Player-facing text -----------------------------------------------------
 
@@ -50,6 +64,7 @@
     :arc/genesis-ignition        "A star is born. Watch it settle."
     :arc/genesis-accretion       "Matter gathers. Watch for planets."
     :arc/genesis-planets-formed  "Worlds exist. The gates may reveal themselves."
+    :arc/life-emergence          "Something stirs on a world below. Draw close."
     :arc/genesis-dispersed       "The cloud has scattered. A new nebula will form."
     "The cosmos is waking."))
 
@@ -62,6 +77,7 @@
     :arc/genesis-ignition        "Nuclear fusion ignites. A star is born."
     :arc/genesis-accretion       "A disk of matter swirls. Bodies collide and grow."
     :arc/genesis-planets-formed  "Planets orbit the star. The system is stable."
+    :arc/life-emergence          "On one world, chemistry has learned to remember itself."
     :arc/genesis-dispersed       "Gravity has scattered the cloud."
     ""))
 
@@ -91,6 +107,8 @@
         "Matter finds matter. The dance of accretion."
       (= arc :arc/genesis-planets-formed)
         "Worlds turn in silence. The gates may be watching."
+      (= arc :arc/life-emergence)
+        "You were the whole sky once. Now one small world holds your gaze."
       :else
         "You drift through the forming cosmos, a mote of awareness.")))
 
@@ -122,7 +140,7 @@
    candidate world exists — the soft handoff from cosmic witness toward a
    narrower perspective."
   [world]
-  (and (= (:arc/current world) :arc/genesis-planets-formed)
+  (and (#{:arc/genesis-planets-formed :arc/life-emergence} (:arc/current world))
        (seq (habitability/habitable-worlds world))))
 
 (defn genesis-ending
@@ -167,7 +185,7 @@
   (let [summ      (or (:genesis/_prev-summary world) (genesis/system-summary world))
         sim-time  (:genesis/sim-time world 0.0)
         prev      (:arc/current world)
-        cur       (detect-arc summ sim-time)
+        cur       (detect-arc summ sim-time (boolean (seq (living-worlds world))))
         obs       (player/get-observer world)
         this-tick (:tick world)
         new-cats  (->> (event/events-since world this-tick)

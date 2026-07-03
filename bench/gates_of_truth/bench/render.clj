@@ -9,7 +9,7 @@
    All rendering happens in an offscreen GLFW context so no visible window is
    needed and the benchmark can run headless."
   (:require
-   [domain.phase0         :as phase0]
+   [domain.genesis        :as genesis]
    [infra.render          :as render]
    [infra.render.units    :as units]
    [infra.camera          :as cam]
@@ -138,9 +138,9 @@
 
 (defn run [quick-bench full-bench]
   (let [rs      (make-render-state 1280 720)
-        w100    (phase0/create-world {:gas-count 100 :nebula-mass 4e29 :nebula-radius 1.0e16})
-        w500    (phase0/create-world {:gas-count 500 :nebula-mass 2e30 :nebula-radius 1.5e16})
-        w1000   (phase0/create-world {:gas-count 1000 :nebula-mass 4e30 :nebula-radius 2.0e16})]
+        w100    (genesis/create-world {:gas-count 100 :nebula-mass 4e29 :nebula-radius 1.0e16})
+        w500    (genesis/create-world {:gas-count 500 :nebula-mass 2e30 :nebula-radius 1.5e16})
+        w1000   (genesis/create-world {:gas-count 1000 :nebula-mass 4e30 :nebula-radius 2.0e16})]
 
     ;; --- CPU projection (cache cleared each iteration, as in real frame loop) ---
     (quick-bench "phase0-bodies-from-world (100 particles, cache miss)"

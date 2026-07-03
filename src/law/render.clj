@@ -1,8 +1,8 @@
 (ns law.render
   "Malli schemas for renderer data structures. Pure schemas — no GL imports."
   (:require
-    [malli.core :as m]
-    [malli.registry :as mr]))
+   [malli.core :as m]
+   [malli.registry :as mr]))
 
 (def glsl-type
   "Valid GLSL type names for uniforms, inputs, and outputs. Includes vector
@@ -49,6 +49,7 @@
    [:radius {:optional true} :double]
    [:color {:optional true} [:tuple :double :double :double]]
    [:glow {:optional true} :double]
+   [:brightness {:optional true} :double]
    [:label {:optional true} :string]])
 
 (def registry

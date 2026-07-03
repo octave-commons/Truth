@@ -57,15 +57,17 @@
       (is (> d2x d60) "larger margin needs farther camera"))))
 
 (deftest test-camera-settings-cycle
-  (testing "Camera mode cycles through the three modes"
+  (testing "Camera mode cycles through the four modes"
     (let [s0 (cam/default-camera-settings)
           s1 (cam/cycle-camera-mode s0)
           s2 (cam/cycle-camera-mode s1)
-          s3 (cam/cycle-camera-mode s2)]
+          s3 (cam/cycle-camera-mode s2)
+          s4 (cam/cycle-camera-mode s3)]
       (is (= :manual (:mode s0)))
-      (is (= :track-largest-cluster (:mode s1)))
-      (is (= :fit-all (:mode s2)))
-      (is (= :manual (:mode s3)))))
+      (is (= :follow-selection (:mode s1)))
+      (is (= :track-largest-cluster (:mode s2)))
+      (is (= :fit-all (:mode s3)))
+      (is (= :manual (:mode s4)))))
   (testing "Fit margin is clamped"
     (let [s (cam/default-camera-settings)]
       (is (>= (:fit-margin (cam/adjust-fit-margin s 0.1)) 1.0))
@@ -84,29 +86,31 @@
   (testing "Forward vector points from camera toward target"
     (let [c (cam/make-camera 10.0)
           f (cam/camera-forward c)]
-      (is (> (last f) 0.0) "default camera looks toward +z")
+      (is (< (Math/abs (- (sp/len f) 1.0)) 1e-6) "forward is a unit vector")
       (is (pos? (reduce + (map * f f))) "forward is non-zero"))))
 
-(deftest test-camera-horizontal-basis
-  (testing "Horizontal basis is normalized and right is perpendicular to forward"
+(deftest test-camera-move-basis
+  (testing "Move basis: forward follows the full look direction, right stays level"
     (let [c (cam/make-camera 10.0)
-          {:keys [forward right]} (cam/camera-horizontal-basis c)]
-      (is (pos? (sp/len forward)))
-      (is (pos? (sp/len right)))
-      (is (< (Math/abs (- (sp/len forward) 1.0)) 1e-6))
-      (is (< (Math/abs (- (sp/len right) 1.0)) 1e-6))
-      (is (< (Math/abs (sp/dot forward right)) 1e-6))
-      (is (zero? (second forward)) "forward is horizontal")
-      (is (zero? (second right)) "right is horizontal"))))
+          {:keys [forward right]} (cam/camera-move-basis c)
+          f (cam/camera-forward c)]
+      (is (< (Math/abs (- (sp/len forward) 1.0)) 1e-6) "forward is a unit vector")
+      (is (< (Math/abs (- (sp/len right) 1.0)) 1e-6) "right is a unit vector")
+      (is (< (Math/abs (sp/dot forward right)) 1e-6) "right ⟂ forward")
+      ;; forward is the FULL camera look direction, including the pitch (z) tilt.
+      (is (> (sp/dot forward (cam/normalize f)) 0.999) "forward tracks camera look direction")
+      (is (not (zero? (nth forward 2))) "pitched forward carries a vertical (z) component")
+      ;; strafe stays level regardless of pitch.
+      (is (zero? (nth right 2)) "right is horizontal (no z)"))))
 
 (deftest test-flight-move
   (testing "W input moves the target along the camera's horizontal forward"
     (let [c (cam/make-camera 10.0)
-          c' (cam/flight-move c {:forward 1.0 :right 0.0} 1.0 (cam/default-camera-settings))]
+          c' (cam/flight-move c {:forward 1.0 :right 0.0} 1.0 (cam/default-camera-settings))
+          d  (sp/v- (:target c') (:target c))]
       (is (not= (:target c) (:target c')))
-      (is (> (Math/abs (- (first (:target c')) (first (:target c))))
-             (Math/abs (- (second (:target c')) (second (:target c)))))
-          "movement is mostly along x/z, not y")))
+      (is (> (sp/dot (cam/normalize d) (cam/normalize (cam/camera-forward c))) 0.999)
+          "forward flight follows the full camera look direction, pitch included")))
   (testing "No input leaves camera unchanged"
     (let [c (cam/make-camera 10.0)
           c' (cam/flight-move c {:forward 0.0 :right 0.0} 1.0 (cam/default-camera-settings))]
@@ -135,12 +139,12 @@
           v-fwd (cam/observer-move-velocity c {:forward 1.0 :right 0.0} settings)
           v-rgt (cam/observer-move-velocity c {:forward 0.0 :right 1.0} settings)
           v-none (cam/observer-move-velocity c {:forward 0.0 :right 0.0} settings)
-          {:keys [forward right]} (cam/camera-horizontal-basis c)
+          {:keys [forward right]} (cam/camera-move-basis c)
           speed (:move-speed settings)]
       (is (= [0.0 0.0 0.0] v-none))
       (is (< (Math/abs (- (first v-fwd) (* speed (first forward)))) 1.0)
           "forward velocity matches camera forward direction scaled by move speed")
       (is (< (Math/abs (- (first v-rgt) (* speed (first right)))) 1.0)
           "strafe velocity matches camera right direction scaled by move speed")
-      (is (zero? (second v-fwd)) "forward velocity is horizontal")
-      (is (zero? (second v-rgt)) "strafe velocity is horizontal"))))
+      (is (not (zero? (nth v-fwd 2))) "forward velocity follows the pitched look direction (has z)")
+      (is (zero? (nth v-rgt 2)) "strafe velocity stays horizontal (no vertical z)"))))

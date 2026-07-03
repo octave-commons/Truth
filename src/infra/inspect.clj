@@ -10,11 +10,12 @@
    Everything here uses `infra.render.units` for coordinate transforms so that
    picking, projection, and rendering share one transform chain and cannot drift."
   (:require
-    [clojure.string :as str]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [shape.spatial :as sp]
-    [infra.render.units :as units]))
+   [clojure.string :as str]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.naming :as naming]
+   [shape.spatial :as sp]
+   [infra.render.units :as units]))
 
 ;; Physical reference scales for human-readable readouts.
 (def ^:const solar-mass   1.989e30)  ;; kg
@@ -124,16 +125,18 @@
 (defn velocity-arrow-shapes
   "An arrow from `center` along the body's world velocity, as :line segments.
    Direction is scale-invariant (render space is a uniform shrink of world), so we
-   reuse the world velocity vector directly. Length is log-scaled by speed and
-   floored to the body radius so even a slow body shows a stub; colour ramps with
-   speed. nil for a motionless body."
+   reuse the world velocity vector directly. Length scales with the passed
+   `body-r` (the caller supplies a screen-floored radius, so the arrow stays
+   proportionate whether framing the nebula or hovering over a true-scale
+   planet) and stretches with log speed; colour ramps with speed. nil for a
+   motionless body."
   [center vel-world body-r ctx]
   (when (and vel-world (pos? (sp/len vel-world)))
     (let [speed-ms (sp/len vel-world)
           kms      (/ speed-ms 1000.0)
           dir      (normalize vel-world)
-          len      (+ (double body-r)
-                      (max 0.6 (min 6.0 (* 1.1 (Math/log10 (+ 1.0 kms))))))
+          len      (* (double body-r)
+                      (+ 1.5 (min 4.0 (* 1.1 (Math/log10 (+ 1.0 kms))))))
           tip      (sp/v+ (vec center) (sp/v* dir len))
           col      (speed-color kms)
           {:keys [fwd]} (units/camera-basis ctx)
@@ -148,6 +151,17 @@
             (concat (line-seg tip (sp/v+ back (sp/v* perp hw)) col)
                     (line-seg tip (sp/v- back (sp/v* perp hw)) col))))))
 
+(defn overlay-radius
+  "Halo radius for a body of render radius `r` at `center`: `k`× the body, but
+   never smaller than `min-frac` of the view height at the body's depth. At true
+   scale most bodies are sub-pixel — the floor is what keeps the selection ring
+   readable; it shrinks naturally as the tethered camera closes in."
+  [ctx center r k min-frac]
+  (let [{:keys [cam-pos tan-half]} (units/camera-basis ctx)
+        dist (sp/len (sp/v- (vec center) cam-pos))]
+    (max (* (double (or r 0.0)) (double k))
+         (* (double min-frac) dist (double tan-half)))))
+
 (defn hover-overlay-shapes
   "A faint, thin halo around the body the cursor is over — the passive 'this is
    resolvable' cue, shown before a click commits to selection. Empty when nothing
@@ -155,7 +169,9 @@
   [ctx bodies hover-eid sel-eid]
   (if (and hover-eid (not= hover-eid sel-eid))
     (if-let [shape (selected-shape bodies hover-eid)]
-      (halo-shapes (:position shape) (* (double (or (:radius shape) 0.6)) 1.3)
+      (halo-shapes (:position shape)
+                   (overlay-radius ctx (:position shape)
+                                   (double (or (:radius shape) 0.6)) 1.3 0.014)
                    ctx [0.35 0.55 0.7] 40)
       [])
     []))
@@ -167,21 +183,21 @@
   [ctx world]
   (let [tick (long (or (:tick world) 0))]
     (vec
-      (mapcat
-        (fn [{:keys [kind position radius born-tick ttl]}]
-          (let [center (units/world->render ctx position)
-                r      (units/world->render ctx [radius 0.0 0.0])
-                age    (- tick (long (or born-tick 0)))
-                fade   (max 0.15 (- 1.0 (/ (double age) (double (or ttl 1)))))
-                col    (case kind
-                         :warp/repulsor [(* 1.0 fade) (* 0.55 fade) (* 0.25 fade)] ;; warm orange
-                         :warp/well     [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)] ;; cyan
-                         :heat/source   [(* 1.0 fade) (* 0.35 fade) (* 0.12 fade)] ;; hot red
-                         :heat/sink     [(* 0.55 fade) (* 0.85 fade) (* 1.0 fade)] ;; cold blue-white
-                         [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)])]
-            (into (halo-shapes center (first r) ctx col 64)
-                  (halo-shapes center (* (first r) 0.62) ctx col 48))))
-        (:genesis/interventions world)))))
+     (mapcat
+      (fn [{:keys [kind position radius born-tick ttl]}]
+        (let [center (units/world->render ctx position)
+              r      (units/world->render ctx [radius 0.0 0.0])
+              age    (- tick (long (or born-tick 0)))
+              fade   (max 0.15 (- 1.0 (/ (double age) (double (or ttl 1)))))
+              col    (case kind
+                       :warp/repulsor [(* 1.0 fade) (* 0.55 fade) (* 0.25 fade)] ;; warm orange
+                       :warp/well     [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)] ;; cyan
+                       :heat/source   [(* 1.0 fade) (* 0.35 fade) (* 0.12 fade)] ;; hot red
+                       :heat/sink     [(* 0.55 fade) (* 0.85 fade) (* 1.0 fade)] ;; cold blue-white
+                       [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)])]
+          (into (halo-shapes center (first r) ctx col 64)
+                (halo-shapes center (* (first r) 0.62) ctx col 48))))
+      (:genesis/interventions world)))))
 
 (defn selection-overlay-shapes
   "Halo + velocity arrow for the selected entity, riding on its already-projected
@@ -190,24 +206,24 @@
   [ctx world eid bodies]
   (if-let [shape (selected-shape bodies eid)]
     (let [center (:position shape)
-          r      (double (or (:radius shape) 0.6))
+          r      (overlay-radius ctx center (double (or (:radius shape) 0.6)) 1.45 0.02)
           vel    (ecs/get-component world eid c/velocity)]
-      (into (halo-shapes center (* r 1.45) ctx [0.55 0.95 1.0] 56)
-            (or (velocity-arrow-shapes center vel r ctx) [])))
+      (into (halo-shapes center r ctx [0.55 0.95 1.0] 56)
+            (or (velocity-arrow-shapes center vel (* 0.7 r) ctx) [])))
     []))
 
 ;; ---------------------------------------------------------------------------
 ;; Inspector card — live ECS readout, drawn via the HUD text/rect programs.
 ;; ---------------------------------------------------------------------------
 
-(defn- fmt-mass [kg stellar?]
+(defn fmt-mass [kg stellar?]
   (let [kg (double (or kg 0.0))]
     (cond
       (or stellar? (>= kg (* 0.05 solar-mass))) (format "%.3f Msun" (/ kg solar-mass))
       (>= kg (* 0.05 earth-mass)) (format "%.2f Mearth" (/ kg earth-mass))
       :else                       (format "%.2e kg" kg))))
 
-(defn- fmt-radius [m star?]
+(defn fmt-radius [m star?]
   (let [m (double (or m 0.0))]
     (cond
       star?            (format "%.2f Rsun" (/ m solar-radius))
@@ -225,7 +241,7 @@
          (map (fn [[k v]] (format "%s %.2f" (name k) (double v))))
          (str/join "  "))))
 
-(defn- state-label [state]
+(defn state-label [state]
   (case state
     :nebula "Nebula gas"
     :protostar "Protostar"
@@ -261,7 +277,7 @@
       speed       (conj ["speed" (format "%.2f km/s" (double speed))])
       (and lum (pos? (double lum)))
       (conj ["lum"   (format "%.3g Lsun" (/ (double lum) solar-lum))])
-       c        (conj ["comp"  c])
+      c        (conj ["comp"  c])
       regime      (conj ["regime" (name regime)])
       true        (conj ["eid"   (str eid)]))))
 
@@ -273,7 +289,7 @@
   [ctx world eid bodies]
   (when-let [shape (selected-shape bodies eid)]
     (let [state   (ecs/get-component world eid c/matter-state)
-          title   (or (state-label state) "Body")
+          title   (naming/display-label eid state)
           tcol    (state-color state)
           facts   (body-facts world eid)
           lines   (into [title] (map (fn [[k v]] (format "%-7s%s" k v)) facts))
@@ -307,11 +323,11 @@
                   :x1 (px->ndcx (+ x0 card-w)) :y1 (px->ndcy (+ y0 line-h pad))
                   :color tcol}]
           text  (map-indexed
-                  (fn [i s]
-                    {:text s
-                     :x (+ x0 pad)
-                     :y (+ y0 pad (* i line-h))
-                     :scale scale
-                     :color (if (zero? i) tcol [0.86 0.94 1.0 0.96])})
-                  lines)]
+                 (fn [i s]
+                   {:text s
+                    :x (+ x0 pad)
+                    :y (+ y0 pad (* i line-h))
+                    :scale scale
+                    :color (if (zero? i) tcol [0.86 0.94 1.0 0.96])})
+                 lines)]
       {:rects rects :text text})))

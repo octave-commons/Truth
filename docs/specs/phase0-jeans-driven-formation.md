@@ -1,6 +1,20 @@
 # Phase 0 Jeans-Driven Formation Spec
 
-**Status:** implemented  
+> **⚠️ SUPERSEDED (2026-07-03) by
+> [`genesis-formation-authoritative.md`](./genesis-formation-authoritative.md).**
+> This spec's mass-tier path — promoting a gas parcel to `:planet` once it is
+> heavy enough (`law/mass-class`) — is the "lie dressed as emergence" the
+> authoritative formation physics forbids: planets are **sub-grid** and are
+> seeded by a core-accretion prescription on the disk's solid surface density
+> (`domain.planet-formation`), never by a mass threshold on a gas parcel.
+> `law/mass-class` and its callers (`stellar/classify-system`,
+> `jeans-collapse-system`) are **unwired** from the production pipeline; the live
+> transition is `stellar/classify-next-state` (density + Jeans + fusion gates,
+> no `:planet` tier). Retained for historical reference and the tests that pin
+> the old behaviour. Where this doc and the authoritative spec disagree, the
+> authoritative spec wins.
+
+**Status:** superseded (was: implemented)  
 **Goal:** Replace collision-driven gas growth with Jeans-instability-driven collapse. Gas sample particles become resolved bodies only when self-gravity overcomes thermal pressure. Collisions then handle merging of already-resolved bodies.
 
 **Principle:** Collision merging should not create new resolved bodies out of gas. Jeans instability is the single transition mechanism from gaseous sample particle to physical object. One ECS substrate; one renderer; no parallel world models.

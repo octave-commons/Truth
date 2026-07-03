@@ -1,10 +1,10 @@
 (ns infra.render.units-test
   "Tests for the pure coordinate-transform layer in infra.render.units."
   (:require
-    [clojure.test :refer [deftest testing is]]
-    [infra.camera :as cam]
-    [infra.render.units :as units]
-    [shape.spatial :as sp]))
+   [clojure.test :refer [deftest testing is]]
+   [infra.camera :as cam]
+   [infra.render.units :as units]
+   [shape.spatial :as sp]))
 
 (deftest test-make-context
   (testing "Context carries scale, camera and viewport"
@@ -36,6 +36,24 @@
     (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})]
       (is (= 0.001 (units/phys->render-radius ctx 0.0)))
       (is (= 0.001 (units/phys->render-radius ctx nil))))))
+
+(deftest test-phys->body-render-radius
+  (testing "Bodies project at TRUE scale: render radius = physical radius / scale"
+    (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
+          s   (double (:scale ctx))]
+      (is (< (Math/abs (- (units/phys->body-render-radius ctx 6.957e8)
+                          (/ 6.957e8 s)))
+             1e-15)
+          "solar radius maps linearly — viewed size IS physical size")
+      (is (< (units/phys->body-render-radius ctx 6.371e6)
+             (units/phys->body-render-radius ctx 6.957e8))
+          "Earth is smaller than the Sun")
+      (is (= (/ (units/phys->body-render-radius ctx 6.957e8)
+                (units/phys->body-render-radius ctx 6.957e7))
+             10.0)
+          "relative sizes are honest: 10× the radius reads 10× as large")
+      (is (= units/body-radius-floor-ru (units/phys->body-render-radius ctx 0.0))
+          "non-positive radius clamps to the degenerate floor"))))
 
 (deftest test-screen-render-ray-normalized
   (testing "screen → render ray returns a normalized direction"

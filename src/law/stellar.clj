@@ -14,6 +14,10 @@
 (def ^:const rounding-mass-threshold 3e20) ;; kg — above this self-gravity pulls a body into hydrostatic roundness
 (def ^:const solar-mass 1.989e30) ;; kg
 (def ^:const solar-radius 6.957e8) ;; m
+(def ^:const solar-luminosity 3.828e26) ;; W
+(def ^:const earth-mass 5.972e24) ;; kg
+(def ^:const jupiter-mass 1.898e27) ;; kg
+(def ^:const au 1.495978707e11) ;; m — astronomical unit
 
 ;; --- Real stellar/sub-stellar mass boundaries (authentic formation fate) -----
 ;; The two physical thresholds that decide a contracting core's destiny. These
@@ -30,6 +34,27 @@
   "Pressure of a gas region from the ideal gas law: P = ρ k_B T / m_H."
   [density temperature]
   (/ (* density k-B temperature) m-H))
+
+(defn softened-circular-speed
+  "Circular-orbit speed (m/s) around mass `M` at radius `r` in the Plummer-
+   softened gravity the integrator actually applies:
+
+       v_c² = G M r² / (r² + ε²)^{3/2}
+
+   Reduces to Kepler √(GM/r) for r ≫ ε and to the harmonic-core speed Ω·r
+   (Ω = √(GM/ε³)) for r ≪ ε — a circular orbit is exact in BOTH regimes, so a
+   body launched with this speed is bound and orbits at ANY radius. The
+   unsoftened √(GM/r), by contrast, overshoots the softened field's grip by
+   ~(ε/r)^{3/2} inside the softening length: a fragment placed at r ≪ ε with
+   Keplerian speed feels almost no pull and leaves the system ballistically."
+  [M r softening]
+  (let [M (double (or M 0.0))
+        r (double (or r 0.0))
+        e (double (or softening 0.0))
+        d2 (+ (* r r) (* e e))]
+    (if (and (pos? M) (pos? r) (pos? d2))
+      (Math/sqrt (/ (* G M r r) (Math/pow d2 1.5)))
+      0.0)))
 
 (defn main-sequence-radius
   "Approximate zero-age main-sequence radius (m) for a star of `mass`, from the
@@ -57,9 +82,19 @@
 (def ^:const star-mass-threshold   1.0e30) ;; kg — planet → star-forming core (dominant)
 
 (defn mass-class
-  "Classify an accreted clump's matter-state purely from its mass. A clump that
-   has reached star-forming mass becomes a :protostar — 'big and hot', contracting
-   — and only the fusion test promotes it to a true :star.
+  "UNWIRED / HISTORICAL (Genesis Formation spec Part 7.1). Classify an accreted
+   clump's matter-state purely from its mass, including a `:planet` tier.
+
+   This mass-tier path — 'promote a gas parcel to :planet when it is heavy
+   enough' — is the 'lie dressed as emergence' the authoritative formation
+   physics forbids: planets are SUB-GRID and are seeded by a core-accretion
+   prescription on the disk's solid surface density (domain.planet-formation),
+   never by a mass threshold on a gas parcel. Its only callers,
+   `domain.stellar/classify-system` and `jeans-collapse-system`, are NOT in the
+   production pipeline (`genesis/physics-systems-parallel`); the live path is
+   `classify-next-state` (density + Jeans + fusion gates, no :planet tier) plus
+   the Part 4 seeder. Kept only for the historical tests that pin its behaviour;
+   do not wire into new formation code.
 
    `gas-particle-mass` is the fixed mass of one equal-mass nebula sample. Any
    clump heavier than that is resolved debris (or larger), because it is no
@@ -173,6 +208,24 @@
   (and (> temperature fusion-temp-threshold)
        (> pressure fusion-pressure-threshold)
        (> (get composition :H 0) 0.1))) ;; at least 10% hydrogen
+
+(def ^:const fusion-sustain-temp-threshold 7e6)
+;; K — once ignited, a star keeps fusing down to this temperature before it
+;; extinguishes. Ignition needs 1e7 K (fusion-temp-threshold); sustaining a
+;; running fusion core needs less. This gap is the HYSTERESIS that stops a
+;; marginal star (one sitting right on the 0.08 M☉ / 1e7 K knife-edge) from
+;; flickering :star↔:protostar every time a wind dip nudges T across 1e7.
+
+(defn fusion-sustaining?
+  "Test if an ALREADY-IGNITED star still sustains fusion. Hysteresis below
+   `fusion-possible?`: a burning star keeps fusing down to
+   `fusion-sustain-temp-threshold`, so a small transient dip in T or mass does
+   not extinguish it. Real main-sequence stars do not wink out when they shed a
+   little wind mass."
+  [{:keys [temperature pressure composition]}]
+  (and (> temperature fusion-sustain-temp-threshold)
+       (> pressure fusion-pressure-threshold)
+       (> (get composition :H 0) 0.1)))
 
 (defn orbital-cleared?
   "Test if a body has cleared its orbital neighborhood"

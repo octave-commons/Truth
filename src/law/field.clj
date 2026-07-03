@@ -70,7 +70,11 @@
 (def regime-tags
   "The closed set of regime tags the classifier may emit for Phase 0."
   #{:gravity-hydro :mhd-dominated :gravitationally-unstable
-    :radiation-dominated :convective :stable-disc :tectonically-dead})
+    :radiation-dominated :convective :stable-disc :unstable-no-fragment :tectonically-dead})
+
+(def disc-regime-tags
+  "Regime tags specific to rotationally-supported discs (Part 3)."
+  #{:stable-disc :gravitationally-unstable :unstable-no-fragment})
 
 (defn regime-tag? [k] (contains? regime-tags k))
 
@@ -137,6 +141,16 @@
       (/ (* va va) r)
       0.0)))
 
+;; --- Disc-regime thresholds (Part 3) ----------------------------------------
+
+(def ^:const toomre-q-stable 1.0)
+;; Toomre Q = c_s Ω / (π G Σ). Q > 1 ⇒ gravitationally stable against axisymmetric
+;; perturbations; Q < 1 ⇒ the disc is unstable and can fragment.
+
+(def ^:const cooling-dynamical-ratio-fast 3.0)
+;; Gammie (2001): fragmentation requires t_cool < 3 Ω⁻¹. If cooling is slower,
+;; the disc heats up and stabilizes even when Q < 1.
+
 ;; --- Schemas ----------------------------------------------------------------
 
 (def field-cell-schema
@@ -193,6 +207,14 @@
 (def physics-soa?
   "Predicate: does `value` satisfy `law.field/physics-soa-schema`?"
   (m/validator physics-soa-schema))
+
+(def toomre-q-schema
+  "Toomre Q parameter for a disc annulus: a positive finite number."
+  finite-number?)
+
+(def cool-dyn-ratio-schema
+  "Cooling-time to dynamical-time ratio t_cool / Ω⁻¹: a positive finite number."
+  finite-number?)
 
 ;; --- Contracts --------------------------------------------------------------
 

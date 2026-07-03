@@ -138,19 +138,26 @@
           (is (= 5.0e29 (:mass (first pkts)))))))))
 
 (deftest test-mass-loss-demotes-never-dissolves
-  (testing "A star stripped of mass demotes down the BOUND ladder
-            (star→brown-dwarf→debris) and NEVER returns to :nebula — collapse is
-            irreversible; only the shed material becomes gas (winds spec §2)."
-    (let [base     {:matter-state :star :radius 3.0e8 :density 1.0e4
-                    :temperature 2.0e7 :pressure 1.0e13
+  (testing "A star whose fusion has CEASED demotes down the BOUND ladder
+            (star→brown-dwarf→debris) by mass and NEVER returns to :nebula —
+            collapse is irreversible; only the shed material becomes gas (winds
+            spec §2). While fusion is still sustained, ignition HYSTERESIS keeps
+            it a star despite a mass dip below the 0.08 M☉ formation threshold."
+    (let [cold     {:matter-state :star :radius 3.0e8 :density 1.0e4
+                    :temperature 1.0e5 :pressure 1.0e13   ;; T ≪ sustain → fusion stopped
                     :composition {:H 0.7 :He 0.28 :metals 0.02}}
+          hot      (assoc cold :temperature 2.0e7)         ;; still fusing
           gas-mass 1.0e28
           msun     1.989e30
-          state-at (fn [f] (stellar/classify-next-state (assoc base :mass (* f msun)) gas-mass))]
-      (is (= :star        (state-at 0.5)))    ;; above hydrogen-burning → stays a star
-      (is (= :brown-dwarf (state-at 0.05)))   ;; below H, above deuterium → brown dwarf
-      (is (= :debris      (state-at 0.005)))  ;; below deuterium → stripped core
-      (is (not-any? #{:nebula} (map state-at [0.5 0.05 0.005 0.0005]))
+          cold-at  (fn [f] (stellar/classify-next-state (assoc cold :mass (* f msun)) gas-mass))
+          hot-at   (fn [f] (stellar/classify-next-state (assoc hot  :mass (* f msun)) gas-mass))]
+      ;; hysteresis: a still-fusing star does NOT demote on mass alone
+      (is (= :star (hot-at 0.05)) "a still-fusing star keeps burning despite mass loss")
+      ;; once fusion has ceased, demotion follows the bound mass ladder
+      (is (= :star        (cold-at 0.5)))     ;; above hydrogen-burning → stays a star
+      (is (= :brown-dwarf (cold-at 0.05)))    ;; below H, above deuterium → brown dwarf
+      (is (= :debris      (cold-at 0.005)))   ;; below deuterium → stripped core
+      (is (not-any? #{:nebula} (map cold-at [0.5 0.05 0.005 0.0005]))
           "a collapsed body never re-dissolves to gas"))))
 
 (deftest test-stellar-wind-conserves-mass-and-sheds
