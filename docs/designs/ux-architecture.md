@@ -117,15 +117,13 @@ not as a loadout. Renames to **Self** at Gate discovery without announcement.
 
 ```
 Spark  [→ Self at Phase 6]
-├── Current state                   live bars: Coherence · Agency · Resolution
-├── Abilities >
-│   └── [flat list — same items across all phases, descriptions rewrite at thresholds]
-│       Phase 0: Drift · Focus · Influence · Release
-│       Phase 1: + Resonate        (unlocked by fusion)
-│       Phase 2: + Retarget        (unlocked by stable bodies)
-│       Phase 2: + Seed Diff.      (unlocked by first rocky world)
-│       Phase 3: + Survey          (unlocked by 2+ worlds)
-│       [each old ability shows new phase description — old description never removed]
+├── Current state                   live bars: Coherence · Agency · Resolution · Resonance
+├── Spark verbs (innate)            Q Focus · E Nudge · R Release
+│   └── [descriptions rewrite by phase; never locked, never removed]
+├── Allocated slots (1–6)           Resonance-powered loadout
+│   └── [rewrites once at planetary Commitment]
+│       Phase 0: Seed · Heat · Cool · Spark · Grow · Evolve
+│       Phase 1: Atmosphere · Hydrography · Tectonics · Orbit · Biosphere · Culture
 ├── Decoherence risk                low / moderate / critical — brief plain text
 └── Ontology                        single non-interactive paragraph, rewrites by phase
 
@@ -138,8 +136,9 @@ Phase 5:  "Narrowed to a lineage. The next threshold is a person."
 Phase 6:  [Spark becomes Self. Ontology becomes the avatar's name and city.]
 ```
 
-**Rule:** No tech tree. No skill web. Just a flat list that quietly rewrites itself.
-The player feels the change before they read it.
+**Rule:** No ability is ever removed. Spark verbs rewrite. The allocated slots rewrite once at Commitment. The player feels the change before they read it.
+
+**Rule:** Resonance is the build currency; Agency is the action currency. Both are visible here, but only Resonance is allocated into slots.
 
 ---
 
@@ -154,6 +153,8 @@ Phase
 │       each entry: name · physics precondition · what it unlocks
 ├── What just changed >             [EMPTY until first threshold crossed]
 │   └── [updates only post-crossing: old meaning → new meaning, per ability]
+├── Commitment >                    [EMPTY until a habitable world exists]
+│   └── [lists candidate worlds; choosing one is irreversible]
 └── Evolution states >
     ├── Thriving world → Gate-ready civilization
     ├── Sterile world → no ecology arose

@@ -16,6 +16,7 @@
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.tick       :as tick]
+   [domain.physics.cache  :as pcache]
    [domain.player         :as player]))
 
 (def ^:const zero3 [0.0 0.0 0.0])
@@ -103,15 +104,19 @@
                    dt   (:sim/dt world)]
                (if (empty? ivs)
                  {c/accel-warp {}}
-                 {c/accel-warp
-                  (into {}
-                        (keep (fn [eid]
-                                (let [pos (ecs/get-component world eid c/position)
-                                      a   (reduce (fn [acc iv]
-                                                    (sp/v+ acc (or (warp-accel-on iv pos tick dt) zero3)))
-                                                  zero3 ivs)]
-                                  (when (pos? (sp/len a)) [eid a]))))
-                        (ecs/entities-with world c/position c/mass))})))})
+                 ;; Evaluate at drift-predicted positions: the kick lands next
+                 ;; tick, and a point-attractor evaluated one drift stale is a
+                 ;; negatively-damped spring (see pcache/predicted-position-fn).
+                 (let [pos-of (pcache/predicted-position-fn world)]
+                   {c/accel-warp
+                    (into {}
+                          (keep (fn [eid]
+                                  (let [pos (pos-of eid)
+                                        a   (reduce (fn [acc iv]
+                                                      (sp/v+ acc (or (warp-accel-on iv pos tick dt) zero3)))
+                                                    zero3 ivs)]
+                                    (when (pos? (sp/len a)) [eid a]))))
+                          (ecs/entities-with world c/position c/mass))}))))})
 
 ;; --- Lifecycle --------------------------------------------------------------
 

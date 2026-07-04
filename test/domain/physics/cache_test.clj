@@ -1,5 +1,5 @@
 (ns domain.physics.cache-test
-  "Tests for the transient hydro/EM shared neighbor cache."
+  "Tests for the persistent hydro/EM shared neighbor cache."
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
@@ -68,9 +68,125 @@
           eid (first (keys (:genesis/neighbor-cache w)))
           entry (get-in w [:genesis/neighbor-cache eid])
           pos (:position entry)
-          r (:radius entry)
-          query-r (max (:h entry) (* 2.0 r))
+          query-r (:query-r entry)
           grid (:genesis/spatial-grid w)
           expected (set (map :id (spatial/grid-within-radius grid pos query-r (constantly true))))
           actual (set (map :id (:neighbors entry)))]
       (is (= expected actual)))))
+
+(deftest test-cache-entry-reused-below-tolerance
+  (testing "The neighbor set is reused when the entity moves less than displacement-tolerance * h"
+    (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-neighbor-cache)
+          eid (first (keys (:genesis/neighbor-cache w)))
+          entry (get-in w [:genesis/neighbor-cache eid])
+          h (:h entry)
+          anchor (:anchor-position entry)
+          delta (* 0.5 cache/displacement-tolerance h)
+          [x y z] (ecs/get-component w eid c/position)
+          w2 (-> w
+                 (ecs/put-component eid c/position [(+ x delta) y z])
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache (:genesis/neighbor-cache w) 1))
+          entry2 (get-in w2 [:genesis/neighbor-cache eid])
+          old-ids (set (map :id (:neighbors entry)))
+          new-ids (set (map :id (:neighbors entry2)))]
+      (is (= old-ids new-ids))
+      (is (= anchor (:anchor-position entry2))
+          "reused entry keeps the anchor of the last real query")
+      (is (= [(+ x delta) y z] (:position entry2))
+          "reused entry reads the current position"))))
+
+(deftest test-cache-entry-rebuilt-above-tolerance
+  (testing "A cache entry is requeried when the entity moves more than displacement-tolerance * h"
+    (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-neighbor-cache)
+          eid (first (keys (:genesis/neighbor-cache w)))
+          entry (get-in w [:genesis/neighbor-cache eid])
+          h (:h entry)
+          delta (* 2.0 cache/displacement-tolerance h)
+          [x y z] (ecs/get-component w eid c/position)
+          moved [(+ x delta) y z]
+          w2 (-> w
+                 (ecs/put-component eid c/position moved)
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache (:genesis/neighbor-cache w) 1))
+          entry2 (get-in w2 [:genesis/neighbor-cache eid])]
+      (is (= moved (:anchor-position entry2))
+          "rebuilt entry re-anchors at the fresh query position"))))
+
+(deftest test-cache-drift-accumulates-against-anchor
+  (testing "Displacement is measured from the last spatial query, not the last tick"
+    (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-neighbor-cache)
+          eid (first (keys (:genesis/neighbor-cache w)))
+          entry (get-in w [:genesis/neighbor-cache eid])
+          h (:h entry)
+          anchor (:anchor-position entry)
+          ;; Each step is below tolerance, but the two together exceed it —
+          ;; the second rebuild call must requery.
+          step (* 0.6 cache/displacement-tolerance h)
+          [x y z] (ecs/get-component w eid c/position)
+          w2 (-> w
+                 (ecs/put-component eid c/position [(+ x step) y z])
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache (:genesis/neighbor-cache w) 1))
+          w3 (-> w2
+                 (ecs/put-component eid c/position [(+ x step step) y z])
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache (:genesis/neighbor-cache w2) 2))]
+      (is (= anchor (get-in w2 [:genesis/neighbor-cache eid :anchor-position]))
+          "first sub-tolerance move reuses the entry")
+      (is (= [(+ x step step) y z]
+             (get-in w3 [:genesis/neighbor-cache eid :anchor-position]))
+          "accumulated drift past tolerance forces a requery"))))
+
+(deftest test-reused-entry-refreshes-neighbor-fields
+  (testing "A reused entry reads neighbor field data from the current snapshot"
+    (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-neighbor-cache)
+          cache0 (:genesis/neighbor-cache w)
+          ;; Find an entry with a neighbor other than itself.
+          [eid entry] (first (filter (fn [[k v]]
+                                       (some #(not= (:id %) k) (:neighbors v)))
+                                     cache0))
+          nbr-id (:id (first (filter #(not= (:id %) eid) (:neighbors entry))))
+          new-density 4.2e-3
+          w2 (-> w
+                 (ecs/put-component nbr-id c/density new-density)
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache cache0 1))
+          refreshed (->> (get-in w2 [:genesis/neighbor-cache eid :neighbors])
+                         (filter #(= (:id %) nbr-id))
+                         first)]
+      (is (some? refreshed))
+      (is (= new-density (:density refreshed))
+          "the cached neighbor map carries the neighbor's current density"))))
+
+(deftest test-cache-entry-evicted-when-inactive
+  (testing "A cache entry is evicted when the entity is no longer hydro/EM-active"
+    (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-neighbor-cache)
+          eid (first (keys (:genesis/neighbor-cache w)))
+          w2 (-> w
+                 (ecs/put-component eid c/matter-state :star)
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache (:genesis/neighbor-cache w) 1))]
+      (is (not (contains? (:genesis/neighbor-cache w2) eid))))))
+
+(deftest test-forced-full-rebuild-on-interval
+  (testing "A cache entry is rebuilt when tick is a multiple of the rebuild interval"
+    (let [w (-> (seeded-world 20) spatial/spatial-index cache/build-neighbor-cache)
+          eid (first (keys (:genesis/neighbor-cache w)))
+          h (get-in w [:genesis/neighbor-cache eid :h])
+          delta (* 0.5 cache/displacement-tolerance h)
+          [x y z] (ecs/get-component w eid c/position)
+          moved [(+ x delta) y z]
+          w2 (-> w
+                 (ecs/put-component eid c/position moved)
+                 spatial/spatial-index
+                 (cache/rebuild-neighbor-cache (:genesis/neighbor-cache w) 10))]
+      (is (= moved (get-in w2 [:genesis/neighbor-cache eid :anchor-position]))
+          "forced interval rebuild re-anchors at the fresh query position"))))
+
+(deftest test-full-rebuild-matches-initial-rebuild
+  (testing "Full-rebuild mode produces the same cache as a fresh rebuild on tick 0"
+    (let [w (-> (seeded-world 20) spatial/spatial-index)
+          fresh-cache (:genesis/neighbor-cache (cache/build-neighbor-cache w))
+          rebuild-cache (:genesis/neighbor-cache (cache/rebuild-neighbor-cache w nil 0))]
+      (is (= fresh-cache rebuild-cache)))))

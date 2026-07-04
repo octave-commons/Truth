@@ -23,10 +23,11 @@
   (:require
    [domain.ecs.core          :as ecs]
    [domain.ecs.components    :as c]
+   [domain.ecs.parallel      :as par]
    [domain.gravity.barnes-hut :as bh]
    [shape.spatial :as sp]))
 
-(declare build-grid grid-within-radius grid-nearest-dist)
+(declare build-grid grid-within-radius grid-nearest grid-nearest-dist)
 
 (defn build
   "Build a neighbour index from a seq of item maps (each needs :position, :mass).
@@ -45,24 +46,32 @@
      - em: only entities with :b-field
      - collision: only non-:nebula (resolved bodies)"
   [world]
-  (let [items (->> (ecs/all-of world c/position c/mass c/radius)
-                   (filter (fn [[_eid comps]] (some? (comps c/radius))))
-                   (mapv (fn [[eid comps]]
-                           {:id           eid
-                            :position     (comps c/position)
-                            :mass         (comps c/mass)
-                            :radius       (comps c/radius)
-                            :matter-state (ecs/get-component world eid c/matter-state)
-                            :density      (ecs/get-component world eid c/density)
-                            :pressure     (ecs/get-component world eid c/pressure)
-                            :b-field      (ecs/get-component world eid c/b-field)})))
-        tree  (bh/build-tree items)
+  (let [items (->> (ecs/entities-with world c/position c/mass c/radius)
+                   ;; per-entity projection (7 component reads) fans out in
+                   ;; parallel; par-mapv preserves eid order so the item vector
+                   ;; is identical to the serial walk's.
+                   (par/par-mapv
+                    (fn [eid]
+                      (when (some? (ecs/get-component world eid c/radius))
+                        {:id           eid
+                         :position     (ecs/get-component world eid c/position)
+                         :mass         (ecs/get-component world eid c/mass)
+                         :radius       (ecs/get-component world eid c/radius)
+                         :matter-state (ecs/get-component world eid c/matter-state)
+                         :density      (ecs/get-component world eid c/density)
+                         :pressure     (ecs/get-component world eid c/pressure)
+                         :b-field      (ecs/get-component world eid c/b-field)})))
+                   (filterv some?))
+        ;; tree and grid are independent projections of the same items — build
+        ;; the octree in a future while the grid is bucketed on this thread.
+        treef (future (bh/build-tree items))
         grid  (when (seq items)
                 (let [aabb    (sp/aabb-from-points (map :position items))
                       side    (max (sp/max-side aabb) 1.0)
                       n       (count items)
                       cell-size (/ side (Math/pow n (/ 1.0 3.0)))]
-                  (build-grid items cell-size)))]
+                  (build-grid items cell-size)))
+        tree  @treef]
     (assoc world
            :genesis/spatial-tree tree
            :genesis/spatial-grid grid
@@ -108,14 +117,16 @@
                    (reduce (fn [a child] (walk child a)) acc (:children node)))))]
        (walk tree [])))))
 
-(defn nearest-dist
-  "Distance from `pos` to the nearest item whose `:id` differs from `self-eid`.
-   ##Inf when the tree holds no other item. Branch-and-bound on the octree:
-   a node is visited only while its AABB could still hold something closer than
-   the best distance found so far. Children are visited unsorted; the sort cost
-   usually outweighs the benefit for the smoothing-length queries SPH issues."
+(defn nearest
+  "`[distance id]` of the nearest item whose `:id` differs from `self-eid`.
+   `[##Inf nil]` when the tree holds no other item. Branch-and-bound on the
+   octree: a node is visited only while its AABB could still hold something
+   closer than the best distance found so far. Children are visited unsorted;
+   the sort cost usually outweighs the benefit for the smoothing-length queries
+   SPH issues."
   [tree pos self-eid]
-  (let [best (volatile! Double/POSITIVE_INFINITY)
+  (let [best    (volatile! Double/POSITIVE_INFINITY)
+        best-id (volatile! nil)
         [px py pz] pos]
     (letfn [(walk [node]
               (when (and node (< (point-aabb-dist2 (:aabb node) pos) (double @best)))
@@ -127,11 +138,19 @@
                             dy (- py (double (nth bp 1)))
                             dz (- pz (double (nth bp 2)))
                             d2 (+ (* dx dx) (* dy dy) (* dz dz))]
-                        (when (< d2 (double @best)) (vreset! best d2)))))
+                        (when (< d2 (double @best))
+                          (vreset! best d2)
+                          (vreset! best-id (:id b))))))
                   (doseq [c (:children node)]
                     (walk c)))))]
       (walk tree)
-      (Math/sqrt (double @best)))))
+      [(Math/sqrt (double @best)) @best-id])))
+
+(defn nearest-dist
+  "Distance from `pos` to the nearest item whose `:id` differs from `self-eid`.
+   ##Inf when the tree holds no other item. See `nearest`."
+  [tree pos self-eid]
+  (first (nearest tree pos self-eid)))
 
 ;; --- Unified query wrappers ------------------------------------------------
 
@@ -145,19 +164,24 @@
      (grid-within-radius grid pos r pred)
      (within-radius (:genesis/spatial-tree world) pos r pred))))
 
-(defn query-nearest-dist
-  "Nearest-neighbor distance from `pos` excluding `self-eid`.
+(defn query-nearest
+  "`[distance id]` of the nearest neighbor from `pos` excluding `self-eid`.
    The Barnes–Hut tree is kept for nearest-neighbor queries: its branch-and-bound
    traversal is consistently faster than expanding uniform-grid shells, especially
    when the smoothing-length regime needs a single nearest distance rather than a
    full neighbor set. Falls back to the uniform grid if no tree exists; returns
-   ##Inf when neither index is available."
+   `[##Inf nil]` when neither index is available."
   [world pos self-eid]
   (if-let [tree (:genesis/spatial-tree world)]
-    (nearest-dist tree pos self-eid)
+    (nearest tree pos self-eid)
     (if-let [grid (:genesis/spatial-grid world)]
-      (grid-nearest-dist grid pos self-eid)
-      Double/POSITIVE_INFINITY)))
+      (grid-nearest grid pos self-eid)
+      [Double/POSITIVE_INFINITY nil])))
+
+(defn query-nearest-dist
+  "Nearest-neighbor distance from `pos` excluding `self-eid`. See `query-nearest`."
+  [world pos self-eid]
+  (first (query-nearest world pos self-eid)))
 
 ;; --- Uniform grid (for short-range SPH/EM queries) -------------------------
 
@@ -219,15 +243,16 @@
                                               acc
                                               (get-in grid [:cells [(+ ix dx) (+ iy dy) (+ iz dz)]]))))))))))))))
 
-(defn grid-nearest-dist
-  "Distance from `pos` to the nearest item whose `:id` differs from `self-eid`
+(defn grid-nearest
+  "`[distance id]` of the nearest item whose `:id` differs from `self-eid`
    in a uniform `grid`. Expands the search cell-by-cell until a neighbor is found
-   or the grid is exhausted; returns ##Inf when no other item exists."
+   or the grid is exhausted; returns `[##Inf nil]` when no other item exists."
   [grid pos self-eid]
   (let [cs (:cell-size grid)
         [px py pz] pos
         [ix iy iz] (item-key cs pos)
-        best (volatile! Double/POSITIVE_INFINITY)]
+        best (volatile! Double/POSITIVE_INFINITY)
+        best-id (volatile! nil)]
     (loop [k 0]
       (when (<= k 50)
         (let [min-dist-at-k (if (zero? k) 0.0 (* (dec k) cs))]
@@ -245,7 +270,15 @@
                         y (- py (double (nth bp 1)))
                         z (- pz (double (nth bp 2)))
                         d2 (+ (* x x) (* y y) (* z z))]
-                    (when (< d2 (double @best)) (vreset! best d2))))))
+                    (when (< d2 (double @best))
+                      (vreset! best d2)
+                      (vreset! best-id (:id b)))))))
             (recur (inc k))))))
-    (Math/sqrt (double @best))))
+    [(Math/sqrt (double @best)) @best-id]))
+
+(defn grid-nearest-dist
+  "Distance from `pos` to the nearest item whose `:id` differs from `self-eid`
+   in a uniform `grid`. See `grid-nearest`."
+  [grid pos self-eid]
+  (first (grid-nearest grid pos self-eid)))
 

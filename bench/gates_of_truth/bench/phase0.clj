@@ -124,14 +124,10 @@
     (into {:samples 10} (for [k ks] [k (avg k)]))))
 
 (defn step-physics-sequential
-  "Reference sequential step-physics using write-set folding without futures."
+  "Reference sequential step-physics: the SAME single fan-out as production
+   (integrator included — spec Fix 5), folded on one thread without futures."
   [world]
-  (let [all-systems (genesis/physics-systems-parallel world)
-        emitters    (remove #(= :integrator (:id %)) all-systems)
-        integrator  (first (filter #(= :integrator (:id %)) all-systems))]
-    (-> world
-        (tick/run-sequential emitters)
-        (tick/run-sequential [integrator]))))
+  (tick/run-sequential world (genesis/physics-systems-parallel world)))
 
 (defn- profile-subs
   "Return a sorted seq of [subsystem ms] from :genesis/_profile on `world`."

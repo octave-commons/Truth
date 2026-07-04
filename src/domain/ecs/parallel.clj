@@ -12,8 +12,15 @@
 
 (def ^:private parallel-threshold
   "Below this many items the future/threadpool overhead outweighs the work, so
-   fall back to a plain sequential mapv."
-  256)
+   fall back to a plain sequential mapv. Kept low (with `min-chunk-size` as the
+   real granularity guard) so late-game per-state populations — a few hundred
+   resolved bodies — still fan out instead of running serially
+   (docs/specs/perf-60fps-parallel-tick.md, Fix 4)."
+  64)
+
+(def ^:private min-chunk-size
+  "Never create chunks smaller than this; tiny chunks dilute the future overhead."
+  32)
 
 (defn par-mapv
   "Like `mapv` but evaluates `f` in parallel chunks. `f` must be pure (no shared
@@ -24,7 +31,7 @@
         n     (count items)]
     (if (< n parallel-threshold)
       (mapv f items)
-      (let [chunks (max 1 (min n-cores (quot n 32)))
+      (let [chunks (max 1 (min n-cores (quot n min-chunk-size)))
             size   (long (Math/ceil (/ (double n) chunks)))
             futs   (mapv (fn [part] (future (mapv f part)))
                          (partition-all size items))]

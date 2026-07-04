@@ -40,19 +40,40 @@
 (defn apply-write-set
   "Fold one write-set `{ctype {eid value-or-removed}}` onto `world`. Pure.
    A top-level `:genesis/_profile` entry, if present, is merged into the
-   world's profile map rather than treated as a component."
+   world's profile map rather than treated as a component.
+
+   Each ctype's cells are folded through ONE transient of the component map
+   instead of per-cell `put-component`/`remove-component` (which pay an
+   `assoc-in` path rebuild and an archetype-set update per cell). Archetypes
+   are only touched for entities the write-set actually adds to or removes
+   from the component map — on a consistent world (component maps and
+   archetypes updated together everywhere) the resulting world is identical."
   [world ws]
   (let [world (if-let [prof (:genesis/_profile ws)]
                 (update world :genesis/_profile (fnil merge-with + {}) prof)
                 world)]
     (reduce-kv
      (fn [w ctype eid->v]
-       (reduce-kv
-        (fn [w eid v]
-          (if (removed? v)
-            (ecs/remove-component w eid ctype)
-            (ecs/put-component w eid ctype v)))
-        w eid->v))
+       (let [cmap (get-in w [:components ctype] {})
+             [cmap' arch-add arch-del]
+             (reduce-kv
+              (fn [[m adds dels] eid v]
+                (if (removed? v)
+                  [(dissoc! m eid)
+                   adds
+                   (if (contains? cmap eid) (conj dels eid) dels)]
+                  [(assoc! m eid v)
+                   (if (contains? cmap eid) adds (conj adds eid))
+                   dels]))
+              [(transient cmap) [] []]
+              eid->v)
+             w (assoc-in w [:components ctype] (persistent! cmap'))
+             w (reduce (fn [w eid]
+                         (update-in w [:archetypes eid] (fnil conj #{}) ctype))
+                       w arch-add)]
+         (reduce (fn [w eid]
+                   (update-in w [:archetypes eid] disj ctype))
+                 w arch-del)))
      world
      (dissoc ws :genesis/_profile))))
 

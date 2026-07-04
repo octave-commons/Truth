@@ -182,6 +182,50 @@
      0.0
      neighbors)))
 
+(defn- sph-density-from-cache
+  "SPH density ρ = Σ_j m_j W(r²_j, h) computed directly from a neighbor-cache
+   entry's neighbor vector: each neighbor's cached `:r2` (same arithmetic as a
+   fresh query) is reused and non-hydro-active / out-of-kernel neighbors are
+   skipped inline, so no filtered vector is allocated and no distance is
+   recomputed. Result is identical to filtering the entry and calling
+   `sph-density`."
+  [neighbors h]
+  (let [h   (double h)
+        hh2 (* h h)]
+    (reduce (fn [rho n]
+              (let [r2 (double (:r2 n))]
+                (if (and (< r2 hh2)
+                         (lf/hydro-em-active? (:matter-state n)))
+                  (+ (double rho) (* (double (:mass n)) (kernel-r2 r2 h)))
+                  rho)))
+            0.0
+            neighbors)))
+
+(defn- pressure-gradient-acceleration-from-cache
+  "SPH pressure-gradient acceleration computed directly from a neighbor-cache
+   entry's neighbor vector, using each neighbor's cached `:r2` (inline range /
+   state filter) and precomputed `:gradient-pressure`. Identical to filtering
+   the entry and calling `pressure-gradient-acceleration` with the matching
+   gradients, without allocating the filtered neighbor and gradient vectors."
+  [data neighbors hh2]
+  (let [density  (double (:density data))
+        pressure (double (:pressure data))
+        hh2      (double hh2)]
+    (reduce
+     (fn [[ax ay az :as acc] n]
+       (if-not (and (<= (double (:r2 n)) hh2)
+                    (lf/hydro-em-active? (:matter-state n)))
+         acc
+         (let [[gx gy gz] (:gradient-pressure n)
+               term  (pressure-term density pressure
+                                    (double (:density n)) (double (:pressure n)))
+               scale (* (double (:mass n)) term -1.0)]
+           [(+ (double ax) (* (double gx) scale))
+            (+ (double ay) (* (double gy) scale))
+            (+ (double az) (* (double gz) scale))])))
+     [0.0 0.0 0.0]
+     neighbors)))
+
 (defn- cache-neighbors-and-gradients
   "Return [neighbors gradients] for `data` using the transient neighbor cache
    when present, otherwise query the spatial index. `radius-fn` produces the
@@ -277,11 +321,16 @@
                              (fn [_world]
                                (par/par-mapv
                                 (fn [data]
-                                  (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
-                                        [nbrs grads] (cache-neighbors-and-gradients
-                                                      world data radius-fn hydro-active?
-                                                      :gradient-pressure)]
-                                    [(:eid data) (pressure-gradient-acceleration data nbrs grads)]))
+                                  (let [h (* 2.0 (double (or (:radius data) 1.0)))]
+                                    (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
+                                      [(:eid data)
+                                       (pressure-gradient-acceleration-from-cache
+                                        data (:neighbors entry) (* h h))]
+                                      (let [nbrs (idx/within-radius
+                                                  (:genesis/spatial-tree world) (:position data) h
+                                                  #(hydro-active? (:matter-state %)))]
+                                        [(:eid data)
+                                         (pressure-gradient-acceleration data nbrs nil)]))))
                                 active)))
                    cell     (reduce (fn [m [eid a]]
                                       (if (lf/finite-vec3? a) (assoc m eid a) m))
@@ -305,16 +354,21 @@
   "Absolute floor on the smoothing length (m), a final guard so a coincident pair
    cannot produce an infinite density." 1.0e9)
 
+(defn smoothing-length-from-dist
+  "Geometric SPH smoothing length for parcel `data` given its nearest-neighbour
+   distance `d`: h = factor · d, floored at `sph-h-min`. Falls back to the
+   parcel's own 2·radius when `d` is infinite (isolated parcel)."
+  [data d]
+  (if (Double/isInfinite (double d))
+    (* 2.0 (double (or (:radius data) sph-h-min)))
+    (max sph-h-min (* sph-h-factor (double d)))))
+
 (defn smoothing-length
   "Geometric SPH smoothing length for parcel `data`: h = factor · d_nn,
    floored at `sph-h-min`. Falls back to the parcel's own 2·radius if isolated.
    Uses the world's Barnes–Hut tree for the nearest-neighbour distance."
   [data world]
-  (let [d     (idx/query-nearest-dist world (:position data) (:eid data))
-        r-own (* 2.0 (double (or (:radius data) sph-h-min)))]
-    (if (Double/isInfinite d)
-      r-own
-      (max sph-h-min (* sph-h-factor d)))))
+  (smoothing-length-from-dist data (idx/query-nearest-dist world (:position data) (:eid data))))
 
 (defn density-system
   "SPH density pass: compute ρ_i = Σ_j m_j W for every `:nebula` particle from
@@ -378,19 +432,14 @@
         gas      (filterv #(= :nebula (:state %)) all-data)]
     (par/par-mapv
      (fn [data]
-       (let [entry (get-in world [:genesis/neighbor-cache (:eid data)])
-             h     (if entry
-                     (:h entry)
-                     (smoothing-length data world))
-             hh2   (* h h)
-             nbrs  (if entry
-                     (filterv #(and (hydro-active? (:matter-state %))
-                                    (<= (double (:r2 %)) hh2))
-                              (:neighbors entry))
-                     (idx/within-radius (:genesis/spatial-tree world) (:position data) h
-                                        #(hydro-active? (:matter-state %))))
-             rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
-         [(:eid data) rho (* 0.5 h)]))
+       (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
+         (let [h (:h entry)]
+           [(:eid data) (sph-density-from-cache (:neighbors entry) h) (* 0.5 h)])
+         (let [h    (smoothing-length data world)
+               nbrs (idx/within-radius (:genesis/spatial-tree world) (:position data) h
+                                       #(hydro-active? (:matter-state %)))
+               rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
+           [(:eid data) rho (* 0.5 h)])))
      gas)))
 
 (defn sound-speed

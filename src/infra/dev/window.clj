@@ -80,27 +80,93 @@
   "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo)."
   (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
 
-(defn- advance-sim!
-  "Advance the simulation one fixed tick per rendered frame (~60 Hz), mutating
-   `world-atom`.
+;; --- Sim thread ≠ render thread (spec: perf-60fps-parallel-tick.md, Fix 1) ---
+;;
+;; The world-atom has exactly ONE writer: the sim thread. Everything the render
+;; and input threads want to do to the world (observer drift, focus moves,
+;; intervention placement) is enqueued as an INTENT — a pure world → world' fn —
+;; and applied by the sim thread at the top of the next tick (≤ one tick period
+;; later, and Jacobi-consistent: input lands between ticks, never mid-fold).
+;;
+;; `IntentAtom` lets the render/input code keep its existing `swap!` call sites
+;; verbatim: it looks like an atom, but swap! enqueues instead of mutating, and
+;; deref reads the latest world the sim thread published. swap!'s return value
+;; is the CURRENT (pre-intent) world — fine for every existing caller, all of
+;; which discard it. compareAndSet is deliberately unsupported.
 
-   The tick RATE is constant: the game always steps exactly once per frame. What
-   dilates with complexity is `:sim/dt` — the in-game time each tick advances
-   (see `genesis/pacing-for`) — so the clock slows while the frame rate holds
-   steady. There is no accumulator and no per-frame catch-up burst.
+(deftype IntentAtom [^java.util.concurrent.ConcurrentLinkedQueue queue world-atom]
+  clojure.lang.IDeref
+  (deref [_] (deref world-atom))
+  clojure.lang.IAtom
+  (swap [_ f] (.add queue f) (deref world-atom))
+  (swap [_ f a] (.add queue (fn [w] (f w a))) (deref world-atom))
+  (swap [_ f a b] (.add queue (fn [w] (f w a b))) (deref world-atom))
+  (swap [_ f a b args] (.add queue (fn [w] (apply f w a b args))) (deref world-atom))
+  (compareAndSet [_ _ _]
+    (throw (UnsupportedOperationException.
+            "IntentAtom: world mutations must go through swap!/reset! (intents)")))
+  (reset [_ v] (.add queue (constantly v)) v))
 
-   Worlds without phase-0 pacing (e.g. the bare gravity demo) fall back to the
-   fixed `:sim-frame-interval` frame-skip."
-  [world-atom config-atom frame-atom]
-  (let [cfg     @config-atom
-        tick-fn (:tick-fn cfg default-tick-fn)
-        on-step (:on-step cfg identity)
-        w       @world-atom]
-    (if (:genesis/time-scale w)
-      (swap! world-atom (fn [w] (on-step (tick-fn w))))
-      (let [interval (:sim-frame-interval cfg 1)]
-        (when (zero? (mod @frame-atom interval))
-          (swap! world-atom (fn [w] (on-step (tick-fn w)))))))))
+(defn- drain-intents
+  "Apply every queued intent to `w`, in arrival order. An intent that throws or
+   returns a non-map is dropped (logged) rather than corrupting the world."
+  [w ^java.util.concurrent.ConcurrentLinkedQueue queue]
+  (loop [w w]
+    (if-let [f (.poll queue)]
+      (recur (try
+               (let [w' (f w)]
+                 (if (map? w') w' w))
+               (catch Throwable t
+                 (binding [*out* *err*]
+                   (println "[INTENT ERROR]" (.getMessage t)))
+                 w)))
+      w)))
+
+(declare dump-error-artifacts! log-frame-error!)
+
+(defn- sim-loop
+  "The dedicated simulation thread: drain intents → tick → publish → pace.
+
+   Targets one tick per `period-ns` (16.6 ms — the fixed 60 Hz tick rate the
+   pacing model assumes; `:sim/dt` dilation, not tick rate, is the game clock).
+   Free-runs when a tick exceeds the period. Worlds without `:genesis/time-scale`
+   (bare demos) tick every `:sim-frame-interval` iterations, as they previously
+   ticked every Nth frame.
+
+   On a tick error: dump world+ledger artifacts and set `:ui/error-state` (the
+   render thread shows the error frame), then stop ticking — but keep draining
+   intents so the queue cannot grow unboundedly."
+  [world-atom ^java.util.concurrent.ConcurrentLinkedQueue queue config-atom stop-atom]
+  (let [period-ns 16666667]
+    (loop [iter (long 0)]
+      (when-not @stop-atom
+        (let [t0  (System/nanoTime)
+              cfg @config-atom
+              w0  (drain-intents @world-atom queue)
+              w1  (if (:ui/error-state cfg)
+                    w0
+                    (let [tick-fn (:tick-fn cfg default-tick-fn)
+                          on-step (:on-step cfg identity)
+                          tick?   (or (:genesis/time-scale w0)
+                                      (zero? (mod iter (long (:sim-frame-interval cfg 1)))))]
+                      (if-not tick?
+                        w0
+                        (try
+                          (on-step (tick-fn w0))
+                          (catch Throwable t
+                            (let [tick (long (or (:tick w0) 0))
+                                  dump (dump-error-artifacts! w0)]
+                              (log-frame-error! t tick dump)
+                              (swap! config-atom assoc :ui/error-state
+                                     {:exception t :tick tick
+                                      :timestamp (System/currentTimeMillis) :paths dump})
+                              (swap! service-state assoc :error t))
+                            w0)))))]
+          (reset! world-atom w1)
+          (let [elapsed  (- (System/nanoTime) t0)
+                sleep-ms (quot (- period-ns elapsed) 1000000)]
+            (when (pos? sleep-ms) (Thread/sleep sleep-ms)))
+          (recur (inc iter)))))))
 
 (defn- sync-cursor-mode!
   "Capture the cursor for third-person mouse-look, or free it
@@ -214,7 +280,8 @@
                           (reset! last-t-atom now)
                           (if lt (min 0.1 (- now lt)) 0.016))]
           (sync-cursor-mode! window config-atom cfg)
-          (advance-sim! world-atom config-atom frame-atom)
+          ;; The sim advances on its own thread (sim-loop); this thread only
+          ;; renders the latest published world and enqueues input intents.
           (swap! frame-atom inc)
           (swap! time-atom + wall-dt)
           (let [w      @world-atom
@@ -348,7 +415,11 @@
         (render-error-frame! window config-atom t tick))
       true)))
 
-(defn- window-loop [world-atom camera-atom config-atom stop-atom]
+(defn- window-loop
+  "The render thread. Receives the world only through `world-intents` — an
+   IntentAtom whose deref reads the sim thread's latest published world and
+   whose swap! enqueues intents. This thread never writes the world-atom."
+  [world-intents camera-atom config-atom stop-atom]
   (try
     (render/init-glfw)
     (let [{:keys [width height]} @config-atom
@@ -359,10 +430,10 @@
           ks       (atom {})]
       (swap! service-state assoc :window window)
       (GLFW/glfwSetInputMode window GLFW/GLFW_CURSOR GLFW/GLFW_CURSOR_DISABLED)
-      (render/setup-input window camera-atom ks config-atom world-atom)
+      (render/setup-input window camera-atom ks config-atom world-intents)
       (loop []
         (when (and (not @stop-atom)
-                   (render-frame-once window world-atom camera-atom config-atom
+                   (render-frame-once window world-intents camera-atom config-atom
                                       frame-atom time-atom last-t-atom ks))
           (recur))))
     (catch Throwable t
@@ -396,17 +467,26 @@
                                                         :tick-fn :bodies-fn :volumetric? :volume-res
                                                         :sim-frame-interval :on-step])))
          stop-atom      (atom false)
-         thread         (Thread. #(window-loop world-atom camera-atom config-atom stop-atom))]
+         intent-queue   (java.util.concurrent.ConcurrentLinkedQueue.)
+         world-intents  (IntentAtom. intent-queue world-atom)
+         thread         (Thread. #(window-loop world-intents camera-atom config-atom stop-atom))
+         sim-thread     (Thread. #(sim-loop world-atom intent-queue config-atom stop-atom))]
      (.setDaemon thread true)
      (.setName thread "gates-of-truth-dev-window")
+     (.setDaemon sim-thread true)
+     (.setName sim-thread "gates-of-truth-sim")
      (reset! service-state
              {:thread thread
+              :sim-thread sim-thread
               :stop   stop-atom
               :world  world-atom
+              :world-intents world-intents
               :camera camera-atom
               :config config-atom})
      (.start thread)
-     (println "Dev window thread started on" (.getName thread))
+     (.start sim-thread)
+     (println "Dev window thread started on" (.getName thread)
+              "— sim thread on" (.getName sim-thread))
      service-state)))
 
 (defn stop!
@@ -418,6 +498,8 @@
     (GLFW/glfwSetWindowShouldClose window true))
   (when-let [thread (:thread @service-state)]
     (.join thread 5000))
+  (when-let [sim-thread (:sim-thread @service-state)]
+    (.join sim-thread 5000))
   (reset! service-state nil)
   (println "Dev window stopped."))
 

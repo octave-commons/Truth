@@ -164,15 +164,15 @@
     :writes #{c/luminosity}}
 
    ;; Panchromatic SED: computes per-band luminosities from T_eff and log g.
-   ;; Reads luminosity (from fusion) and radius (from structure). Must run AFTER
-   ;; fusion so luminosity is settled.
+   ;; Reads fusion's one-tick-stale luminosity and structure's one-tick-stale
+   ;; radius — ordinary Jacobi lag, NOT an ordering requirement.
    {:id     :stellar-sed
     :ns     'domain.stellar
     :reads  #{c/matter-state c/luminosity c/radius c/mass}
     :writes #{c/sed-bands}}
 
    ;; Stellar atmosphere shells: 4-layer profile (photosphere → corona).
-   ;; Reads luminosity, radius, mass, b-field. Must run AFTER fusion and field.
+   ;; Reads one-tick-stale luminosity/radius/b-field — Jacobi lag, no ordering.
    {:id     :atmosphere-shells
     :ns     'domain.stellar
     :reads  #{c/matter-state c/luminosity c/radius c/mass c/b-field}
@@ -280,6 +280,13 @@
     :ns     'domain.em
     :reads  #{c/b-field c/radius c/matter-state c/frozen-flux}
     :writes #{c/b-field c/frozen-flux}}
+
+   ;; Debris sink: marks unbound :debris past the system edge for reaping
+   ;; (consumed at world-construction). Sole writer of consumed.escape.
+   {:id     :debris-reaper
+    :ns     'domain.debris
+    :reads  #{c/matter-state c/position c/velocity c/mass}
+    :writes #{c/consumed-escape}}
 
    ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position

@@ -88,16 +88,49 @@
    in the tree. Self-gravity is skipped by the Barnes–Hut walker at leaf nodes
    via the body's `:id`.
 
-   When `:genesis/physics-soa` is present, the Barnes-Hut tree is walked directly
-   against the primitive arrays via `bh/acceleration-for-soa`; otherwise the
-   already projected `:genesis/spatial-items` are used as a fallback."
+    When `:genesis/physics-soa` is present, gravity projects drift-predicted
+    body maps from the SoA arrays, builds a private Barnes–Hut tree from those
+    predicted positions, and walks it with the same scalar traversal used by the
+    non-SoA path. This is faster than the array-specialised path it replaced and
+    keeps force/position alignment for the next-tick kick.
+
+   With the integrator in the fan-out (spec Fix 5), the kick this system emits
+   is applied NEXT tick — to the post-drift positions. So when the SoA carries
+   drift-predicted arrays (:px-pred …, see pcache/build-physics-soa), gravity
+   evaluates at those AND builds its own tree from them (on this system's own
+   thread, overlapped with the rest of the fan-out): structure, multipole
+   centroids, leaf sources, and targets all sit at x̂, so the emitted force is
+   exactly the force the position will feel when the kick lands. Force and
+   position stay aligned; the leapfrog stays symplectic with zero ordering.
+   The shared :genesis/spatial-tree (snapshot positions) still serves
+   collision/sink/neighbor queries unchanged."
   [G theta softening]
   {:id     :gravity
    :writes #{c/accel-gravity}
    :run    (fn [world]
              (let [tree (:genesis/spatial-tree world)]
                (if-let [soa (:genesis/physics-soa world)]
-                 {c/accel-gravity (bh/acceleration-for-soa G theta softening tree soa nil)}
+                 (let [eids      (:eids soa)
+                       n         (:n soa)
+                       ^doubles ms (:mass soa)
+                       ^doubles pxs (or (:px-pred soa) (:px soa))
+                       ^doubles pys (or (:py-pred soa) (:py soa))
+                       ^doubles pzs (or (:pz-pred soa) (:pz soa))
+                       bodies    (mapv (fn [i]
+                                         (let [ii (int i)]
+                                           {:id       (nth eids ii)
+                                            :mass     (aget ms ii)
+                                            :position [(aget pxs ii)
+                                                       (aget pys ii)
+                                                       (aget pzs ii)]}))
+                                       (range n))
+                       tree      (bh/build-tree bodies)]
+                   {c/accel-gravity
+                    (into {}
+                          (par/par-mapv
+                           (fn [body]
+                             [(:id body) (bh/acceleration G theta softening tree body)])
+                           bodies))})
                  (let [bodies (:genesis/spatial-items world (world->bodies world))]
                    {c/accel-gravity
                     (into {}

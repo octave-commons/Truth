@@ -9,6 +9,7 @@
    Everything here is pure data transformation; rendering and IO live in infra."
   (:require
    [domain.stellar          :as stellar]
+   [domain.debris           :as debris]
    [domain.em               :as em]
    [domain.ecology          :as ecology]
    [domain.hydro            :as hydro]
@@ -24,7 +25,7 @@
    [law.registry            :as lreg]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
-   [domain.ecs.registry     :as reg]
+   [domain.ecs.parallel     :as par]
    [domain.ecs.tick         :as tick]
    [domain.ecs.components    :as c]
    [domain.orbital.system   :as orbital]
@@ -126,14 +127,21 @@
 (def ^:private solar-mass 1.989e30)
 
 (defn- stats-aux
-  "Single-pass accumulator for stats-of. Returns [m mt peak stars bins disk-mass resv-mass]."
+  "Single-pass accumulator for stats-of. Returns [m mt peak stars bins disk-mass resv-mass].
+   The per-entity component reads fan out in parallel (order-preserving), then
+   the fold walks the projections in eid order — the same floating-point
+   accumulation order as the serial walk it replaces."
   [world eids]
-  (reduce (fn [[m mt peak stars bins disk-mass resv-mass] eid]
-            (let [mass (double (or (ecs/get-component world eid c/mass) 0.0))
-                  t    (double (or (ecs/get-component world eid c/temperature) 0.0))
-                  st   (ecs/get-component world eid c/matter-state)
-                  disk (double (or (ecs/get-component world eid c/disk-mass) 0.0))
-                  resv (double (or (ecs/get-component world eid c/wind-reservoir) 0.0))]
+  (let [cells (par/par-mapv
+               (fn [eid]
+                 [eid
+                  (double (or (ecs/get-component world eid c/mass) 0.0))
+                  (double (or (ecs/get-component world eid c/temperature) 0.0))
+                  (ecs/get-component world eid c/matter-state)
+                  (double (or (ecs/get-component world eid c/disk-mass) 0.0))
+                  (double (or (ecs/get-component world eid c/wind-reservoir) 0.0))])
+               eids)]
+    (reduce (fn [[m mt peak stars bins disk-mass resv-mass] [eid mass t st disk resv]]
               [(+ m mass)
                (+ mt (* mass t))
                (max peak t)
@@ -151,9 +159,9 @@
                      :else           (update bins 7 inc)))
                  bins)
                (+ disk-mass disk)
-               (+ resv-mass resv)]))
-          [0.0 0.0 0.0 [] (vec (repeat 8 0)) 0.0 0.0]
-          eids))
+               (+ resv-mass resv)])
+            [0.0 0.0 0.0 [] (vec (repeat 8 0)) 0.0 0.0]
+            cells)))
 
 (defn stats-of
   "Observable readouts for the HUD, tallied once per tick from the post-physics
@@ -164,6 +172,7 @@
   [world summ]
   (let [eids   (ecs/entities-with world c/mass)
         [m mt peak stars bins disk-mass resv-mass] (stats-aux world eids)
+        lod-freq (frequencies (vals (get-in world [:components c/lod-level] {})))
         total     (+ m disk-mass resv-mass)
         resolved-mass (reduce (fn [acc r]
                                 (if (= :nebula (:matter-state r))
@@ -182,17 +191,16 @@
      :star-count        (count (:stars summ))
      :planet-count      (:planet-count summ)
      ;; Phase 1 stats
-     :xuv-escape-count  (count (ecs/entities-with world c/atmosphere-escape))
-     :sed-band-count    (count (ecs/entities-with world c/sed-bands))
-     :lod-local         (count (filterv #(= :local (ecs/get-component world % c/lod-level))
-                                        (ecs/entities-with world c/lod-level)))
-     :lod-system        (count (filterv #(= :system (ecs/get-component world % c/lod-level))
-                                        (ecs/entities-with world c/lod-level)))
-     :lod-galaxy        (count (filterv #(= :galaxy (ecs/get-component world % c/lod-level))
-                                        (ecs/entities-with world c/lod-level)))
+     :xuv-escape-count  (count (get-in world [:components c/atmosphere-escape] {}))
+     :sed-band-count    (count (get-in world [:components c/sed-bands] {}))
+     :lod-local         (get lod-freq :local 0)
+     :lod-system        (get lod-freq :system 0)
+     :lod-galaxy        (get lod-freq :galaxy 0)
      :imf-bins          bins
-     :disk-count        (count (filterv #(pos? (double (or (ecs/get-component world % c/disk-mass) 0.0)))
-                                        (ecs/entities-with world c/disk-mass)))}))
+     :disk-count        (reduce-kv (fn [n _eid dm]
+                                     (if (pos? (double (or dm 0.0))) (inc n) n))
+                                   0
+                                   (get-in world [:components c/disk-mass] {}))}))
 
 ;; --- World construction -----------------------------------------------------
 
@@ -274,9 +282,9 @@
                             :genesis/rate-yr           (:rate-yr neb)
                             :genesis/stats             nil
                             :genesis/complexity        0
-                             :genesis/active            true
-                             :genesis/disk-maturity     3.156e13
-                             :genesis/star-ignition-time 0.0
+                            :genesis/active            true
+                            :genesis/disk-maturity     3.156e13
+                            :genesis/star-ignition-time 0.0
                             ;; Adaptive pacing dilates :sim/dt with complexity at
                             ;; a fixed 60 Hz tick rate (see `pacing-for`). Set
                             ;; false to hold :sim/dt constant — useful for fast,
@@ -304,13 +312,16 @@
   "Tally the world's resolved matter into the shape used for complexity, phase
    detection, and habitability. Single-pass over entities with matter-state+mass."
   [world]
-  (let [eids    (ecs/entities-with world c/matter-state c/mass)]
-    (loop [regions  []
-           stars    []
+  (let [eids    (ecs/entities-with world c/matter-state c/mass)
+        ;; The projection (9 component reads per entity) fans out in parallel;
+        ;; par-mapv preserves eid order so the tallied vectors are identical to
+        ;; the serial walk's.
+        regions (par/par-mapv #(stellar/entity->region world %) eids)]
+    (loop [stars    []
            planets  []
            resolved []
-           [eid & more] eids]
-      (if (nil? eid)
+           i        0]
+      (if (= i (count regions))
         {:body-count     (count regions)
          :resolved-count (count resolved)
          :star?          (boolean (seq stars))
@@ -319,13 +330,12 @@
          :stars          stars
          :planets        planets
          :regions        regions}
-        (let [r (stellar/entity->region world eid)
+        (let [r  (nth regions i)
               st (:matter-state r)]
-          (recur (conj regions r)
-                 (if (= :star st) (conj stars r) stars)
+          (recur (if (= :star st) (conj stars r) stars)
                  (if (= :planet st) (conj planets r) planets)
                  (if (= :nebula st) resolved (conj resolved r))
-                 more))))))
+                 (inc i)))))))
 
 (defn- cached-system-summary
   "Return a system summary, caching it on the world under :genesis/_summary-cache
@@ -376,74 +386,69 @@
 ;; The genesis system table below references them from their new namespaces.
 
 (defn physics-systems-parallel
-  "The transform systems as write-set systems for the double-buffer fan-out
-   (`domain.ecs.tick/run-parallel`). Each entry is its legacy `(fn [world] world')`
-   wrapped by the bridge and masked to its registry-declared `:writes`.
+  "The transform systems as NATIVE write-set systems for the double-buffer
+   fan-out (`domain.ecs.tick/run-parallel`). Every entry is
+   `{:id kw :writes #{ctype ...} :run (fn [frozen] write-set)}` — each emits
+   only the component types it exclusively owns, sourced from its
+   registry-declared `:writes` (spec Fix 3: zero `tick/legacy-system` wraps, so
+   no per-system world copy or diff).
 
-   EXCLUDES barrier systems that do not belong in the parallel region:
-     • `recenter` — a global centre-of-mass reduction; runs at the barrier or
-       becomes a frame-offset in the motion integrator (spec §5).
-     • `disk-evolution`, `fusion-promotion`, `sink-formation` — post-fold barriers
-       that read folded state (Part C will convert these).
-
-   Gravity and motion are NATIVE write-set systems (the gravity tree-walk runs
-   on its own thread, the integrator sums all accel.* contributions). The rest
-   are still legacy `(fn [world] world')` systems run through the bridge and
-   masked to their registry-declared `:writes`. Transitional: the caller folds
-   with `:last-wins` until single-writer holds (spec §9). Legacy `:writes` is
-   sourced from `domain.ecs.registry` so the pairing and the invariant cannot
-   drift apart."
+   EXCLUDES `recenter`, which is not a system at all any more: the integrator
+   subtracts the one-tick-stale COM frame-offset (a world scalar set in
+   tick-world) from every new position (spec §6)."
   [{:keys [sim/G sim/theta sim/dt sim/softening]}]
-  (let [writes-for (fn [id] (some #(when (= id (:id %)) (:writes %)) reg/systems))
-        legacy     (fn [id f] (tick/legacy-system id (writes-for id) f))]
-    [;; native write-set systems (force emitters + integrator)
-     (orbital/gravity-acceleration G theta (or softening 1e14))
-     (hydro/pressure-acceleration)
-     (em/lorentz-acceleration-system dt)
-     (intervention/warp-acceleration-system)
-     (player/observer-acceleration-system)
-     (intervention/thermal-intervention-system)
-     (integ/integrator-system dt)
-     ;; legacy-bridged transform systems
-      (stellar/structure-system)
-      (stellar/eos-system)
-      (stellar/classifier-system)
-      (em/field-system dt)
-      (legacy :fusion         stellar/fusion-system)
-      (stellar/stellar-sed-system)
-      (stellar/atmosphere-shells-system)
-      (chemistry/nucleosynthesis-system dt)
-      (stellar/deuterium-depletion-system)
-      (stellar/stellar-wind-system)
-      (stellar/stellar-flare-system)
-      (atmosphere/xuv-atmospheric-escape-system)
-      (stellar/disc-identification-system)
-      (legacy :regime         regime/regime-system)
-      ;; Collision detection: now a fan-out emitter (B3). Its handler emits
-      ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
-      ;; single-writer. Runs in parallel, not serially at the barrier.
-     (legacy :collision-detection collision/collision-detection-system)
-      ;; Former serial barriers — now fan-out emitters (Part C):
-      ;; Fusion promotion: emits c/promotion-signal (single-writer).
-     (legacy :fusion-promotion stellar/fusion-promotion-system)
-      ;; Sink formation: emits c/absorb-accrete, c/consumed-accrete (single-writer).
-     (legacy :sink-formation stellar/sink-formation-system)
-      ;; Disk evolution: emits c/disk-mass, c/disk-angular-mom, c/mass-flux-disk,
-      ;; c/torque-disk, c/spawn-request-disk (all single-writer).
-     (legacy :disk-evolution stellar/disk-evolution-system)
-      ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
-     (legacy :lod-scheduler lod/lod-scheduler)
-      ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
-      ;; cargo-cult barrier).
-     (legacy :magnetosphere-coupling em/magnetosphere-coupling-system)
-      ;; Toy biosphere: habitable planets adopt + tick an ecology (single-writer
-      ;; of c/ecology; throttled internally to its own slower cadence). Phase
-      ;; events are emitted post-physics by ecology/emit-phase-events.
-     (ecology/ecology-system)]))
+  [;; force emitters + integrator
+   (orbital/gravity-acceleration G theta (or softening 1e14))
+   (hydro/pressure-acceleration)
+   (em/lorentz-acceleration-system dt)
+   (intervention/warp-acceleration-system)
+   (player/observer-acceleration-system)
+   (intervention/thermal-intervention-system)
+   (integ/integrator-system dt)
+   ;; transform systems
+   (stellar/structure-system)
+   (stellar/eos-system)
+   (stellar/classifier-system)
+   (em/field-system dt)
+   (stellar/fusion-system)
+   (stellar/stellar-sed-system)
+   (stellar/atmosphere-shells-system)
+   (chemistry/nucleosynthesis-system dt)
+   (stellar/deuterium-depletion-system)
+   (stellar/stellar-wind-system)
+   (stellar/stellar-flare-system)
+   (atmosphere/xuv-atmospheric-escape-system)
+   (stellar/disc-identification-system)
+   (regime/regime-system)
+   ;; Collision detection: a fan-out emitter (B3). Its handler emits
+   ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
+   ;; single-writer. Runs in parallel, not serially at the barrier.
+   (collision/collision-detection-system)
+   ;; Former serial barriers — now fan-out emitters (Part C):
+   ;; Fusion promotion: emits c/promotion-signal (single-writer).
+   (stellar/fusion-promotion-system)
+   ;; Sink formation: emits c/absorb-accrete, c/consumed-accrete (single-writer).
+   (stellar/sink-formation-system)
+   ;; Disk evolution: emits c/disk-mass, c/disk-angular-mom, c/mass-flux-disk,
+   ;; c/torque-disk, c/spawn-request-disk (all single-writer).
+   (stellar/disk-evolution-system)
+   ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
+   (lod/lod-scheduler)
+   ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
+   ;; cargo-cult barrier).
+   (em/magnetosphere-coupling-system)
+   ;; Toy biosphere: habitable planets adopt + tick an ecology (single-writer
+   ;; of c/ecology; throttled internally to its own slower cadence). Phase
+   ;; events are emitted post-physics by ecology/emit-phase-events.
+   (ecology/ecology-system)
+   ;; Debris sink: unbound debris past the system edge is marked consumed
+   ;; (single-writer of c/consumed-escape) and reaped at world-construction.
+   ;; Without it late-game N grows without bound (spec Fix 6).
+   (debris/debris-reaper-system)])
 
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
-  [c/consumed-merge c/consumed-accrete c/consumed-wind])
+  [c/consumed-merge c/consumed-accrete c/consumed-wind c/consumed-escape])
 
 (def ^:private spawn-request-components
   "Lifecycle spawn requests; each is {eid [seed-spec ...]} materialized into new
@@ -487,31 +492,53 @@
          spawn-request-components)
         ;; reap every consumed entity (despawn removes all its components)
         consumed (into #{} (mapcat #(keys (get-in spawned [:components %] {})))
-                       consumed-markers)]
+                       consumed-markers)
+        ;; Escapers leave the books through a ledger event (mass-honest reap):
+        ;; one aggregated :event/body-escape per tick.
+        escapers (keys (get-in spawned [:components c/consumed-escape] {}))
+        spawned  (if (seq escapers)
+                   (emit-threshold spawned :event/body-escape
+                                   {:count (count escapers)
+                                    :mass  (reduce + 0.0
+                                                   (map #(double (or (ecs/get-component spawned % c/mass) 0.0))
+                                                        escapers))})
+                   spawned)]
     (reduce ecs/despawn spawned consumed)))
 
 (defn step-physics
   "Run one tick of physics over `world` (already tick-advanced).
 
-   Two-phase pipeline: all force emitters run in parallel (phase 1), their
-   write-sets fold, then the integrator runs on the updated world (phase 2).
-   Transient `:genesis/neighbor-cache` and `:genesis/physics-soa` are built before
-   the fan-out and stripped after physics so hydro/EM share one neighbor
-   discovery / gradient pass and gravity/motion read flat primitive arrays.
+   ONE fan-out, no phases: every system — the integrator included — reads the
+   same frozen snapshot and emits a write-set for the components it owns
+   (docs/specs/perf-60fps-parallel-tick.md). The integrator therefore sums the
+   accel/influence channels emitted LAST tick: forces, like every other
+   channel, propagate with one tick of Jacobi lag. There is deliberately no
+   post-fold phase and no second simulation path.
 
-   System order within each phase is irrelevant by construction (disjoint
-   write-sets, single-writer invariant). There is deliberately no second
-   simulation path."
+   Transient snapshot caches — `:ecs/_query-cache` and `:genesis/physics-soa` —
+   are built before the fan-out and stripped after the fold. The
+   `:genesis/neighbor-cache` is now persistent across ticks: it is rebuilt from
+   the previous tick's cache in `step-physics` and survives the fold so the next
+   tick can reuse valid entries."
   [world]
-  (let [all-systems (physics-systems-parallel world)
-        emitters    (remove #(= :integrator (:id %)) all-systems)
-        integrator  (first (filter #(= :integrator (:id %)) all-systems))
-        world       (pcache/build-neighbor-cache world)
-        world       (pcache/build-physics-soa world)
-        world       (tick/run-parallel world emitters)]
-    (-> world
-        (tick/apply-write-set ((:run integrator) world))
-        (pcache/strip-neighbor-cache)
+  (let [systems (physics-systems-parallel world)
+        ;; The neighbor-cache rebuild and the SoA build both read only the
+        ;; frozen input world (spatial tree + components), so they run
+        ;; concurrently — the rebuild is the most expensive pre-fan-out step
+        ;; and previously serialized in front of the SoA build.
+        nb-fut  (future
+                  (:genesis/neighbor-cache
+                   (pcache/rebuild-neighbor-cache
+                    world
+                    (when-not (:genesis/invalidate-neighbor-cache? world)
+                      (:genesis/neighbor-cache world))
+                    (:tick world))))
+        world   (-> world
+                    (ecs/with-query-cache)
+                    (pcache/build-physics-soa)
+                    (assoc :genesis/neighbor-cache @nb-fut))]
+    (-> (tick/run-parallel world systems)
+        (ecs/strip-query-cache)
         (pcache/strip-physics-soa))))
 
 (defn tick-world
@@ -562,17 +589,17 @@
         ;; Emit PHYSICAL threshold events only. The arc-transition event
         ;; (:event/phase-transition) is emitted by `domain.arc/advance-arc` when
         ;; the story arc advances — the genesis loop stays arc-agnostic.
-           world3     (-> (cond-> world2
-                            (and (:star? summ) (not (:star? prev)))
-                            (-> (emit-threshold :event/stellar-ignition (first (:stars summ)))
-                                (assoc :genesis/star-ignition-time (:genesis/sim-time world2)))
+          world3     (-> (cond-> world2
+                           (and (:star? summ) (not (:star? prev)))
+                           (-> (emit-threshold :event/stellar-ignition (first (:stars summ)))
+                               (assoc :genesis/star-ignition-time (:genesis/sim-time world2)))
 
-                            (> (:planet-count summ) (:planet-count prev))
-                            (emit-threshold :event/planet-formation (first (:planets summ))))
+                           (> (:planet-count summ) (:planet-count prev))
+                           (emit-threshold :event/planet-formation (first (:planets summ))))
                           ;; Biosphere phase transitions (life emergence,
                           ;; ecology advances, extinctions) — diffed against the
                           ;; pre-physics snapshot.
-                          (ecology/emit-phase-events world1))
+                         (ecology/emit-phase-events world1))
         ;; `dt` here is the step this tick actually integrated (captured above);
         ;; advance the clock by it. When adaptive, arm the NEXT tick with the
         ;; complexity-refined dt/softening and report the derived wall-clock rate
@@ -586,14 +613,11 @@
                                      :genesis/rate-yr       (:rate-yr pacing)
                                      :genesis/time-slipping? (boolean (:time-slipping? pacing))
                                      :sim/dt               (:dt pacing)
-                                     :sim/softening        (:softening pacing)))
-          world5     ((player/observer-system effective-dt) world4)
-          obs        (player/get-observer world5)]
-      ;; Stay active while the spark can still act and any matter remains; a fully
-      ;; dispersed cloud (no bodies) ends the run. Arc naming lives in domain.arc.
-      (assoc world5 :genesis/active
-             (and (player/can-interact? obs)
-                  (pos? (:body-count summ)))))))
+                                     :sim/softening        (:softening pacing)))]
+       ;; Observer update and :genesis/active live in `domain.arc/tick-genesis`
+       ;; so they run AFTER arc events (nebula-collapse, protostar-formation,
+       ;; phase-transition) are emitted. The physics loop stays arc-agnostic.
+      world4)))
 
 ;; --- Field insight ----------------------------------------------------------
 

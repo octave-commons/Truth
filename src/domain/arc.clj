@@ -88,50 +88,54 @@
   (let [fi (double (or focus-intensity 0.5))]
     (cond
       (< coherence 0.15)
-        "You are fading. The universe recedes into statistics. Ease your focus."
+      "You are fading. The universe recedes into statistics. Ease your focus."
       (< coherence 0.3)
-        "Your coherence wavers. Relax your focus to recover."
+      "Your coherence wavers. Relax your focus to recover."
       (and (> fi 0.7) (< coherence 0.6))
-        "Intense focus drains coherence. Ease off to recover."
+      "Intense focus drains coherence. Ease off to recover."
       (> fi 0.8)
-        "Your attention burns bright. Coherence drains fast."
+      "Your attention burns bright. Coherence drains fast."
       (> (count resonance-events) 10)
-        "Patterns emerge from the chaos. You have seen this before."
+      "Patterns emerge from the chaos. You have seen this before."
       (= arc :arc/genesis-nebula-collapse)
-        "You drift through a forming cosmos. Watch closely."
+      "You drift through a forming cosmos. Watch closely."
       (= arc :arc/genesis-protostar)
-        "Heat builds at the centre. Something is waking."
+      "Heat builds at the centre. Something is waking."
       (= arc :arc/genesis-ignition)
-        "Light. For the first time, light."
+      "Light. For the first time, light."
       (= arc :arc/genesis-accretion)
-        "Matter finds matter. The dance of accretion."
+      "Matter finds matter. The dance of accretion."
       (= arc :arc/genesis-planets-formed)
-        "Worlds turn in silence. The gates may be watching."
+      "Worlds turn in silence. The gates may be watching."
       (= arc :arc/life-emergence)
-        "You were the whole sky once. Now one small world holds your gaze."
+      "You were the whole sky once. Now one small world holds your gaze."
       :else
-        "You drift through the forming cosmos, a mote of awareness.")))
+      "You drift through the forming cosmos, a mote of awareness.")))
 
 (defn event-notification
   "Short text for a witnessed event category, or nil."
   [event-category]
   (case event-category
-    :stellar-ignition "A star ignites! +25 quanta"
-    :planet-formation "A planet forms! +10 quanta"
-    :collision        "A collision! +1 quanta"
-    :phase-transition "The phase shifts. +5 quanta"
-    :life-emergence   "Life emerges! +50 quanta"
-    :gate-discovery   "A gate is discovered! +100 quanta"
+    :nebula-collapse    "The nebula collapses. +3 quanta"
+    :protostar-formation "A protostar forms. +8 quanta"
+    :stellar-ignition   "A star ignites! +25 quanta"
+    :planet-formation   "A planet forms! +10 quanta"
+    :collision          "A collision! +1 quanta"
+    :phase-transition   "The phase shifts. +5 quanta"
+    :life-emergence     "Life emerges! +50 quanta"
+    :gate-discovery     "A gate is discovered! +100 quanta"
     nil))
 
 (def ^:private event-kind->category
   "Map ledger event kinds to the player-facing notification categories."
-  {:event/stellar-ignition :stellar-ignition
-   :event/planet-formation :planet-formation
-   :event/collision        :collision
-   :event/phase-transition :phase-transition
-   :event/life-emergence   :life-emergence
-   :event/gate-discovery   :gate-discovery})
+  {:event/nebula-collapse    :nebula-collapse
+   :event/protostar-formation :protostar-formation
+   :event/stellar-ignition   :stellar-ignition
+   :event/planet-formation   :planet-formation
+   :event/collision          :collision
+   :event/phase-transition   :phase-transition
+   :event/life-emergence     :life-emergence
+   :event/gate-discovery     :gate-discovery})
 
 ;; --- Handoff / endings ------------------------------------------------------
 
@@ -188,12 +192,23 @@
         cur       (detect-arc summ sim-time (boolean (seq (living-worlds world))))
         obs       (player/get-observer world)
         this-tick (:tick world)
-        new-cats  (->> (event/events-since world this-tick)
+        ;; Emit physical threshold events tied to entering an arc. These are
+        ;; distinct from :event/phase-transition (the generic arc change) so the
+        ;; observer can be paid for witnessing each specific transition.
+        world0    (cond-> world
+                    (and prev (not= prev :arc/genesis-nebula-collapse)
+                         (= cur :arc/genesis-nebula-collapse))
+                    (genesis/emit-threshold :event/nebula-collapse {:arc cur})
+
+                    (and prev (not= prev :arc/genesis-protostar)
+                         (= cur :arc/genesis-protostar))
+                    (genesis/emit-threshold :event/protostar-formation {:arc cur}))
+        new-cats  (->> (event/events-since world0 this-tick)
                        (filter #(= (:tick %) this-tick))
                        (keep #(event-kind->category (:kind %))))
         last-cat  (last (vec new-cats))
         notif     (when last-cat {:text (event-notification last-cat) :tick this-tick})
-        world1    (cond-> world
+        world1    (cond-> world0
                     (and prev (not= cur prev))
                     (genesis/emit-threshold :event/phase-transition {:from prev :to cur}))]
     (assoc world1
@@ -206,9 +221,20 @@
            :arc/recent-events    (vec new-cats))))
 
 (defn tick-genesis
-  "One combined tick: advance the physical world (`genesis/tick-world`) then the
-   narrative arc (`advance-arc`). The single entry point for consumers that want
-   both physics and story state; `genesis/tick-world` alone remains available for
-   pure-physics callers (tests, headless runs)."
+  "One combined tick: advance the physical world (`genesis/tick-world`), then the
+   narrative arc (`advance-arc`), then update the observer from the full ledger so
+   every event this tick — physical thresholds and arc transitions — pays quanta
+   and coherence. Sets `:genesis/active` from the updated observer state. The
+   single entry point for consumers that want both physics and story state;
+   `genesis/tick-world` alone remains available for pure-physics callers (tests,
+   headless runs)."
   [world]
-  (-> world genesis/tick-world advance-arc))
+  (let [w1     (genesis/tick-world world)
+        dt     (- (:genesis/sim-time w1) (:genesis/sim-time world))
+        w2     (advance-arc w1)
+        w3     ((player/observer-system dt) w2)
+        obs    (player/get-observer w3)
+        summ   (or (:genesis/_prev-summary w3) (genesis/system-summary w3))]
+    (assoc w3 :genesis/active
+           (and (player/can-interact? obs)
+                (pos? (:body-count summ))))))

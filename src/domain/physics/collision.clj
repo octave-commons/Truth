@@ -21,6 +21,7 @@
     [domain.ecs.core           :as ecs]
     [domain.ecs.components     :as c]
     [domain.ecs.event          :as event]
+    [domain.ecs.registry       :as reg]
     [domain.gravity.barnes-hut :as bh]
     [shape.spatial             :as sp]))
 
@@ -118,17 +119,12 @@
                   [(:id o) (:position o) (:radius o) (:velocity o)]
                   (sp/dist (:position q) (:position o)))))))
 
-(defn collision-detection-system
-  "ECS system: detects literal sphere overlaps, emits :event/collision for each
-   pair. No state mutation — all response is via handlers.
-
-   Reads the shared spatial tree from :genesis/spatial-tree (built once per tick
-   by domain.spatial.index) instead of building its own."
-  [world]
-  (let [bodies (collidable-bodies world)
-        tree   (:genesis/spatial-tree world)
-        tick   (:tick world)
-        pairs  (detect-pairs bodies tree)]
+(defn- dispatch-pairs
+  "Dispatch one :event/collision per overlap pair into `world` — the ledger
+   append plus the registered handler's response — and return the resulting
+   world."
+  [world pairs]
+  (let [tick (:tick world)]
     (reduce (fn [w {:keys [eid-a eid-b pos-a pos-b
                             rad-a rad-b depth normal]}]
               (event/dispatch w
@@ -146,3 +142,60 @@
                               :normal normal}})))
             world
             pairs)))
+
+(defn- registry-writes
+  "This system's declared :writes from domain.ecs.registry — sourced from the
+   registry so the emitter and the single-writer declaration cannot drift."
+  [id]
+  (some #(when (= id (:id %)) (:writes %)) reg/systems))
+
+(defn collision-detection-system
+  "ECS system: detects literal sphere overlaps and dispatches :event/collision
+   for each pair; the response is whatever handler is registered for the kind
+   (the genesis world registers stellar/stellar-merge-handler, which emits
+   c/absorb-merge, c/consumed-merge, and c/spawn-request-shatter).
+
+   Reads the shared spatial tree from :genesis/spatial-tree (built once per tick
+   by domain.spatial.index) instead of building its own.
+
+   0-arity returns the native write-set system for the fan-out: the event
+   dispatch (ledger append + handler) runs on an internal working copy of the
+   frozen snapshot, and only the handler's writes to the registry-declared
+   component types are emitted. The ledger events stay internal — exactly what
+   the legacy bridge's ownership mask did, so no event-observable behavior
+   changes. 1-arity is the direct form (world → world'), keeping the dispatched
+   events on the returned world's ledger — used by tests, benches, and the
+   bootstrap pipeline."
+  ([world]
+   (dispatch-pairs world (detect-pairs (collidable-bodies world)
+                                       (:genesis/spatial-tree world))))
+  ([]
+   {:id     :collision-detection
+    :writes (registry-writes :collision-detection)
+    :run
+    (fn [world]
+      (let [pairs (detect-pairs (collidable-bodies world)
+                                (:genesis/spatial-tree world))]
+        (if (empty? pairs)
+          {}
+          (let [after (dispatch-pairs world pairs)
+                eids  (into #{} (mapcat (fn [{:keys [eid-a eid-b]}] [eid-a eid-b]))
+                            pairs)]
+            ;; Handlers write only onto the colliding entities, so extracting
+            ;; the changed cells is O(pairs) — no column diff.
+            (reduce
+             (fn [ws ctype]
+               (let [before-col (get-in world [:components ctype] {})
+                     after-col  (get-in after [:components ctype] {})
+                     cell (if (identical? before-col after-col)
+                            {}
+                            (reduce (fn [m eid]
+                                      (let [v (get after-col eid ::absent)]
+                                        (if (or (identical? v ::absent)
+                                                (= v (get before-col eid ::absent)))
+                                          m
+                                          (assoc m eid v))))
+                                    {} eids))]
+                 (cond-> ws (seq cell) (assoc ctype cell))))
+             {}
+             (registry-writes :collision-detection))))))}))

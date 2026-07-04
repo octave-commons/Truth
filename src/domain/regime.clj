@@ -24,6 +24,8 @@
    [shape.spatial         :as sp]
    [domain.ecs.core       :as ecs]
    [domain.ecs.parallel   :as par]
+   [domain.ecs.registry   :as reg]
+   [domain.ecs.tick       :as tick]
    [domain.ecs.components  :as c]
    [domain.profile        :as profile]))
 
@@ -160,39 +162,52 @@
          :star-v   (ecs/get-component world eid c/velocity)
          :star-m   (double (or (ecs/get-component world eid c/mass) 0.0))}))))
 
-(defn regime-system
-  "Tag every matter entity with its dominant-physics regime for this tick.
-   Runs after gravity, EM, and disc-identification so β, M_A, and disc-tag are
-   all available. Stores :component/regime.
+(defn- registry-writes
+  "This system's declared :writes from domain.ecs.registry — sourced from the
+   registry so the emitter and the single-writer declaration cannot drift."
+  [id]
+  (some #(when (= id (:id %)) (:writes %)) reg/systems))
 
-   Per-entity classification is pure, so it is computed in parallel and the tags
-   folded back sequentially. Each phase is profiled separately when
-   `:genesis/profile-subsystems?` is enabled."
-  [world]
-  (profile/profile-sections
-   world
-   [[:regime/classify
-     (fn [w]
-       (let [star (central-star w)
-             disc-context (when star
-                            {:star-mass (:star-m star)
-                             :star-pos  (:star-pos star)
-                             :star-v    (:star-v star)})
-             eids (ecs/entities-with w c/matter-state c/density c/temperature)]
-         (assoc w :regime/tags
-                (par/par-mapv
-                 (fn [eid]
-                   (let [cell (entity->cell w eid)
-                         ctx (when (= :disc (ecs/get-component w eid c/disc-tag))
-                               (assoc disc-context
-                                      :disc-tag :disc
-                                      :mass (double (or (ecs/get-component w eid c/mass) 0.0))
-                                      :radius (double (or (:radius cell) 0.0))
-                                      :temperature (double (or (:temperature cell) 0.0))))]
-                     [eid (:regime (classify cell ctx))]))
-                 eids))))]
-    [:regime/apply
-     (fn [w]
-       (reduce (fn [w' [eid tag]] (ecs/put-component w' eid c/regime tag))
-               w
-               (:regime/tags w)))]]))
+(defn regime-system
+  "Double-buffer write-set system: SOLE writer of c/regime. Tags every matter
+   entity with its dominant-physics regime, reading the frozen snapshot's
+   one-tick-stale pressure, b-field, and disc-tag channels.
+
+   Per-entity classification is pure, so it is computed in parallel; the emitted
+   cell carries only the tags that CHANGED (an unchanged regime writes nothing).
+   The classify phase is profiled when `:genesis/profile-subsystems?` is enabled.
+
+   0-arity returns the native write-set system for the fan-out; 1-arity applies
+   the emitted write-set to `world` and returns the updated world — a
+   convenience for benches, tests, and REPL use."
+  ([world] (tick/apply-write-set world ((:run (regime-system)) world)))
+  ([]
+   {:id     :regime
+    :writes (registry-writes :regime)
+    :run
+    (fn [world]
+      (profile/profile-sections
+       world
+       [[:regime/classify
+         (fn [w]
+           (let [star (central-star w)
+                 disc-context (when star
+                                {:star-mass (:star-m star)
+                                 :star-pos  (:star-pos star)
+                                 :star-v    (:star-v star)})
+                 eids (ecs/entities-with w c/matter-state c/density c/temperature)]
+             (par/par-mapv
+              (fn [eid]
+                (let [cell (entity->cell w eid)
+                      ctx (when (= :disc (ecs/get-component w eid c/disc-tag))
+                            (assoc disc-context
+                                   :disc-tag :disc
+                                   :mass (double (or (ecs/get-component w eid c/mass) 0.0))
+                                   :radius (double (or (:radius cell) 0.0))
+                                   :temperature (double (or (:temperature cell) 0.0))))
+                      tag (:regime (classify cell ctx))]
+                  (when (not= tag (ecs/get-component w eid c/regime))
+                    [eid tag])))
+              eids)))]
+        [:regime/write-set
+         (fn [tags] {c/regime (into {} (keep identity) tags)})]]))}))

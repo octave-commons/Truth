@@ -167,12 +167,18 @@
   finite-vec3?)
 
 (def neighbor-cache-entry-schema
-  "Malli schema for one entry of the transient :genesis/neighbor-cache shared by
-   SPH hydro and MHD-lite EM. Neighbor maps must include :r2, the squared
+  "Malli schema for one entry of the persistent :genesis/neighbor-cache shared
+   by SPH hydro and MHD-lite EM. Neighbor maps must include :r2, the squared
    distance from the central particle, so consumers can filter without
-   recomputing distance."
+   recomputing distance. :anchor-position is where the neighbor set was last
+   actually queried and :query-r the radius that query covered — the reuse
+   skin is measured against them. :nn-id (optional) remembers the nearest
+   neighbor's identity so the refresh path can rederive the smoothing length
+   without a tree descent."
   [:map
    [:position [:tuple :double :double :double]]
+   [:anchor-position [:tuple :double :double :double]]
+   [:query-r [:and :double [:> 0]]]
    [:h [:and :double [:> 0]]]
    [:neighbors [:vector [:map]]]
    [:gradients [:vector [:tuple :double :double :double]]]
@@ -202,7 +208,12 @@
    [:pz [:fn double-array?]]
    [:vx [:fn double-array?]]
    [:vy [:fn double-array?]]
-   [:vz [:fn double-array?]]])
+   [:vz [:fn double-array?]]
+   ;; Drift-predicted positions x̂ = x + (v + Σa·dt + Σdv)·dt — where the force
+   ;; emitted this tick will actually land next tick (Jacobi force alignment).
+   [:px-pred {:optional true} [:fn double-array?]]
+   [:py-pred {:optional true} [:fn double-array?]]
+   [:pz-pred {:optional true} [:fn double-array?]]])
 
 (def physics-soa?
   "Predicate: does `value` satisfy `law.field/physics-soa-schema`?"

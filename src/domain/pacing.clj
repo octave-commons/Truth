@@ -76,11 +76,15 @@
       {:radius 0.0 :mass 0.0}
       (let [com    (sp/v* (reduce (fn [a [p m]] (sp/v+ a (sp/v* p m))) [0.0 0.0 0.0] items)
                           (/ 1.0 mtot))
-            target (* cloud-mass-fraction mtot)]
-        (loop [acc 0.0 [[p m] & more] (sort-by (fn [[p _]] (sp/dist com p)) items)
-               rmax 0.0]
-          (let [acc' (+ acc (double m))
-                d    (sp/dist com p)
+            target (* cloud-mass-fraction mtot)
+            ;; Precompute each item's distance ONCE and sort on the cached key.
+            ;; `sort-by` re-evaluates its keyfn inside the comparator, so the
+            ;; previous form paid O(N log N) sqrt+destructure calls per tick —
+            ;; the most expensive line of the serial tick tail.
+            dm     (sort-by first (mapv (fn [[p m]] [(sp/dist com p) m]) items))]
+        (loop [acc 0.0 [[d m] & more] dm rmax 0.0]
+          (let [acc'  (+ acc (double m))
+                d     (double d)
                 rmax' (if (> d rmax) d rmax)]
             (if (or (>= acc' target) (nil? more))
               {:radius rmax' :mass mtot}

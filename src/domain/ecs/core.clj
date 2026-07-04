@@ -88,21 +88,59 @@
   [world eid]
   (get-in world [:archetypes eid] #{}))
 
+(defn- entities-with*
+  "Uncached scan: pivot on the smallest component population, then check the
+   other component maps directly (no per-candidate archetype materialization)."
+  [world ks]
+  (let [cmps  (:components world)
+        maps  (mapv (fn [k] (get cmps k {})) ks)
+        pivot (apply min-key count maps)
+        rest-maps (filterv #(not (identical? pivot %)) maps)]
+    (persistent!
+     (reduce-kv (fn [acc eid _]
+                  (if (every? (fn [m] (contains? m eid)) rest-maps)
+                    (conj! acc eid)
+                    acc))
+                (transient [])
+                pivot))))
+
 (defn entities-with
-  "Return a seq of entity ids that have ALL of the requested component keys.
-   Uses archetype index — O(n entities matching first key)."
+  "Return a vector of entity ids that have ALL of the requested component keys.
+
+   When the world carries a `:ecs/_query-cache` (attached to the frozen
+   per-tick snapshot by `step-physics`), results are memoized per ctype-set:
+   the fan-out systems all query the SAME immutable snapshot, so one scan
+   serves every system. The cache remembers the snapshot's `:components`
+   identity and is bypassed the moment a world's components differ — a system
+   that mutates its own working world mid-run falls back to a live scan
+   instead of reading stale snapshot results. The compute is pure and the
+   snapshot frozen, so a racing computeIfAbsent is benign."
   [world & component-keys]
   (when (seq component-keys)
-    (let [ks (set component-keys)
-          ;; start from the smallest population for efficiency
-          pivot (->> ks
-                     (map (fn [k] [k (count (get-in world [:components k] {}))]))
-                     (sort-by second)
-                     ffirst)
-          candidates (keys (get-in world [:components pivot] {}))]
-      (filterv (fn [eid]
-                 (every? #(contains? (archetype world eid) %) ks))
-               candidates))))
+    (let [ks (vec (distinct component-keys))
+          {:keys [^java.util.concurrent.ConcurrentHashMap chm components]}
+          (:ecs/_query-cache world)]
+      (if (and chm (identical? components (:components world)))
+        (.computeIfAbsent chm (set ks)
+                          (reify java.util.function.Function
+                            (apply [_ _] (entities-with* world ks))))
+        (entities-with* world ks)))))
+
+(defn with-query-cache
+  "Attach a fresh per-snapshot query cache for `entities-with` memoization.
+   Attach ONLY to a frozen snapshot (the fan-out input); the cache is keyed by
+   ctype set and never invalidated, so it MUST be stripped before any world
+   whose :components differ from the snapshot becomes visible (a stale cache is
+   a correctness bug, not a slowdown). Transient plumbing, not EDN."
+  [world]
+  (assoc world :ecs/_query-cache
+         {:chm        (java.util.concurrent.ConcurrentHashMap.)
+          :components (:components world)}))
+
+(defn strip-query-cache
+  "Remove the transient query cache (see `with-query-cache`)."
+  [world]
+  (dissoc world :ecs/_query-cache))
 
 (defn all-entities
   "Return all currently alive entity ids."

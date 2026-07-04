@@ -16,6 +16,7 @@
    [domain.hydro          :as hydro]
    [domain.ecs.core       :as ecs]
    [domain.ecs.parallel   :as par]
+   [domain.ecs.registry   :as reg]
    [domain.ecs.tick       :as tick]
    [domain.ecs.components  :as c]
    [domain.planet-formation :as pf]
@@ -527,85 +528,99 @@
             world
             updates)))
 
-(defn fusion-system
-  "Fan-out system: sole writer of c/luminosity.
+(defn- registry-writes
+  "This system's declared :writes from domain.ecs.registry — sourced from the
+   registry so the emitter and the single-writer declaration cannot drift."
+  [id]
+  (some #(when (= id (:id %)) (:writes %)) reg/systems))
 
-    Reads c/promotion-signal from the previous tick's fusion-promotion barrier
-    and applies its :luminosity value. Falls back to computing luminosity from
-    scratch when there is no signal (initial ignition before the barrier path
-    activates). The mask to #{c/luminosity} in the legacy bridge ensures no
-    matter-state writes leak through."
-  [world]
-  (profile/profile-sections
-   world
-   [[:fusion/scan
-     (fn [w]
-       {:promotions (get-in w [:components c/promotion-signal] {})
-        :eids       (ecs/entities-with w c/matter-state c/temperature c/pressure c/composition)})]
-    [:fusion/burn
-     (fn [{:keys [promotions eids]}]
-       (reduce
-        (fn [w eid]
-          (let [region (entity->region world eid)
-                sig    (get promotions eid)
-                lum    (if sig
-                         (:luminosity sig)
-                         (when (law/fusion-possible? region)
-                           (star-luminosity region)))]
-            (if lum
-              (ecs/put-component w eid c/luminosity lum)
-              w)))
-        world
-        eids))]]))
+(defn fusion-system
+  "Double-buffer write-set system: SOLE writer of c/luminosity.
+
+   Reads fusion-promotion's one-tick-stale c/promotion-signal and applies its
+   :luminosity value. Falls back to computing luminosity from scratch when
+   there is no signal (initial ignition before a signal has propagated). Emits
+   only the luminosities that CHANGED; a body whose fusion has ceased keeps its
+   stale luminosity (never removed — same as the legacy path)."
+  []
+  {:id     :fusion
+   :writes (registry-writes :fusion)
+   :run
+   (fn [world]
+     (profile/profile-sections
+      world
+      [[:fusion/scan
+        (fn [w]
+          {:promotions (get-in w [:components c/promotion-signal] {})
+           :eids       (ecs/entities-with w c/matter-state c/temperature c/pressure c/composition)})]
+       [:fusion/burn
+        (fn [{:keys [promotions eids]}]
+          {c/luminosity
+           (into {}
+                 (keep (fn [eid]
+                         (let [region (entity->region world eid)
+                               sig    (get promotions eid)
+                               lum    (if sig
+                                        (:luminosity sig)
+                                        (when (law/fusion-possible? region)
+                                          (star-luminosity region)))]
+                           (when (and lum
+                                      (not= lum (ecs/get-component world eid c/luminosity)))
+                             [eid lum]))))
+                 eids)})]]))})
 
 (defn fusion-promotion-system
-  "Fan-out emitter: emits c/promotion-signal for protostars that now meet fusion
-    conditions (and for stars with stale zero luminosity).
+  "Double-buffer write-set system: SOLE writer of c/promotion-signal — emits a
+   signal for protostars that now meet fusion conditions (and for stars with
+   stale zero luminosity).
 
-    Instead of directly writing c/matter-state and c/luminosity (conflicting with
-    classifier and fusion respectively — spec §7), it emits a signal that both
-    systems read on the NEXT tick's frozen snapshot. The one-tick latency is
-    accepted (§2). Runs in the parallel fan-out (was a post-fold barrier)."
-  [world]
-  (profile/profile-sections
-   world
-   [[:fusion-promotion/scan
-     (fn [w]
-       (let [w' (reduce (fn [w eid]
-                          (ecs/remove-component w eid c/promotion-signal))
-                        w
-                        (keys (get-in w [:components c/promotion-signal] {})))]
-         {:world w'
-          :eids  (ecs/entities-with w' c/matter-state c/temperature c/pressure
-                                    c/composition c/density c/radius c/mass)}))]
-    [:fusion-promotion/evaluate
-     (fn [{:keys [world eids]}]
-       {:world   world
-        :signals (into []
-                       (keep (fn [eid]
-                               (let [state (ecs/get-component world eid c/matter-state)
-                                     region (entity->region world eid)]
-                                 (cond
-                                   ;; Protostar → star promotion
-                                   (and (= :protostar state) (law/fusion-possible? region))
-                                   [eid {:promotion :star
-                                         :luminosity (star-luminosity region)}]
+   Instead of directly writing c/matter-state and c/luminosity (conflicting with
+   classifier and fusion respectively — spec §7), it emits a signal that both
+   systems read on the NEXT tick's frozen snapshot. The one-tick latency is
+   accepted (§2). Signals not re-emitted this tick are cleared with the
+   `removed` sentinel (single owner clears its own staleness).
 
-                                   ;; Existing star with zero luminosity → refresh
-                                   (and (= :star state) (law/fusion-possible? region)
-                                        (let [lum (double (or (ecs/get-component world eid c/luminosity) 0.0))]
-                                          (zero? lum)))
-                                   [eid {:promotion :star
-                                         :luminosity (star-luminosity region)}]
+   0-arity returns the native write-set system for the fan-out; 1-arity applies
+   the emitted write-set to `world` and returns the updated world — a
+   convenience for benches, tests, and REPL use."
+  ([world] (tick/apply-write-set world ((:run (fusion-promotion-system)) world)))
+  ([]
+   {:id     :fusion-promotion
+    :writes (registry-writes :fusion-promotion)
+    :run
+    (fn [world]
+      (profile/profile-sections
+       world
+       [[:fusion-promotion/scan
+         (fn [w]
+           {:prior (keys (get-in w [:components c/promotion-signal] {}))
+            :eids  (ecs/entities-with w c/matter-state c/temperature c/pressure
+                                      c/composition c/density c/radius c/mass)})]
+        [:fusion-promotion/evaluate
+         (fn [{:keys [prior eids]}]
+           {:prior   prior
+            :signals (into {}
+                           (keep (fn [eid]
+                                   (let [state (ecs/get-component world eid c/matter-state)
+                                         region (entity->region world eid)]
+                                     (cond
+                                       ;; Protostar → star promotion
+                                       (and (= :protostar state) (law/fusion-possible? region))
+                                       [eid {:promotion :star
+                                             :luminosity (star-luminosity region)}]
 
-                                   :else nil))))
-                       eids)})]
-    [:fusion-promotion/write-set
-     (fn [{:keys [world signals]}]
-       (if (seq signals)
-         (reduce (fn [w [eid sig]] (ecs/put-component w eid c/promotion-signal sig))
-                 world signals)
-         world))]]))
+                                       ;; Existing star with zero luminosity → refresh
+                                       (and (= :star state) (law/fusion-possible? region)
+                                            (let [lum (double (or (ecs/get-component world eid c/luminosity) 0.0))]
+                                              (zero? lum)))
+                                       [eid {:promotion :star
+                                             :luminosity (star-luminosity region)}]
+
+                                       :else nil))))
+                           eids)})]
+        [:fusion-promotion/write-set
+         (fn [{:keys [prior signals]}]
+           (tick/contribution-write-set c/promotion-signal signals prior))]]))}))
 
 ;; --- Radiation from stars ---------------------------------------------------
 
@@ -870,6 +885,23 @@
    the Bondi capture radius. Bounds the radius so a cold, slow core does not get an
    unbounded feeding zone; ~0.25 km/s ≈ the sound speed of ~10 K molecular gas." 250.0)
 
+(defn pending-absorbed-mass
+  "Σ mass of the absorb packets (accrete + merge) already emitted for `eid` and
+   sitting in the snapshot awaiting the integrator. With the integrator in the
+   fan-out (spec Fix 5) an absorbed parcel's mass lands on the sink one tick
+   after its packet is emitted; anything that gates on the sink's mass must
+   count that in-flight generation or the Bondi runaway doubles its doubling
+   time (each capture generation would wait a tick to enlarge the reach).
+   Reads only snapshot channels — Jacobi-pure prediction, like the gravity
+   drift predictor."
+  [world eid]
+  (reduce (fn [acc ct]
+            (reduce (fn [a p] (+ a (double (or (:mass p) 0.0))))
+                    acc
+                    (get-in world [:components ct eid] [])))
+          0.0
+          [c/absorb-accrete c/absorb-merge]))
+
 (defn effective-accretion-radius
   "The gravitational capture / feeding radius actually in force for a sink this
    tick (used by sink-formation to decide which gas it swallows): the LARGER of its
@@ -878,13 +910,16 @@
    Bondi term grows ∝ M, the most massive core reaches — and captures — the most
    gas, so it accretes fastest and RUNS AWAY, funnelling the cloud into one dominant
    star instead of a swarm of equal cores (spec Part 1a, Bonnell/Bate competitive
-   accretion). Read-only: never writes the component, so the single-writer invariant
-   on c/accretion-radius holds."
+   accretion). The mass includes the snapshot's in-flight absorb packets
+   (`pending-absorbed-mass`) so the runaway is not slowed by the integrator's
+   one-tick application lag. Read-only: never writes the component, so the
+   single-writer invariant on c/accretion-radius holds."
   [world eid]
   (let [frozen (double (or (ecs/get-component world eid c/accretion-radius) 0.0))]
     (if (false? (:genesis/competitive-accretion? world))
       frozen ;; disabled → fixed condensation zone (the pre-Part-1a fragmenting behaviour)
-      (let [m   (double (or (ecs/get-component world eid c/mass) 0.0))]
+      (let [m   (+ (double (or (ecs/get-component world eid c/mass) 0.0))
+                   (pending-absorbed-mass world eid))]
         ;; The capture denominator is the ambient velocity DISPERSION of the gas
         ;; relative to the core — the cold nebular sound speed plus turbulence
         ;; (~0.25 km/s). Deliberately NOT the sink's own temperature (a protostar is
@@ -1133,12 +1168,12 @@
                                   [eid (* factor r)]))))
                       eids)}))})
 
-(defn- absorb-parcels
-  "Emit absorb-accrete + consumed-accrete for the absorbed parcels, instead of
-   directly writing position/velocity/mass/disk-mass (spec §5). The integrator
-   reads absorb-accrete next tick and applies COM-preserving velocity/position/
-   mass changes; disk-evolution reads it to grow disk-mass/disk-angular-mom.
-   The parcels are marked consumed and reaped by materialize-lifecycle.
+(defn- absorb-packets
+  "Build the absorb-accrete packet vector for the parcels a sink swallows this
+   tick, instead of directly writing position/velocity/mass/disk-mass (spec §5).
+   The integrator reads absorb-accrete next tick and applies COM-preserving
+   velocity/position/mass changes; disk-evolution reads it to grow
+   disk-mass/disk-angular-mom. Pure — reads only the frozen snapshot.
 
    Only diffuse :nebula gas is routed through the disk (so it can form a
    rotationally-supported accretion disk around a protostar/star). Swallowed
@@ -1149,43 +1184,35 @@
   (let [sink-p    (or (ecs/get-component world sink-eid c/position) [0 0 0])
         sink-v    (or (ecs/get-component world sink-eid c/velocity) [0 0 0])
         sink-state (ecs/get-component world sink-eid c/matter-state)
-        disk-former? (contains? #{:protostar :star} sink-state)
-        ;; Build per-parcel absorb data packets
-        packets (mapv (fn [eid]
-                        (let [m (double (or (ecs/get-component world eid c/mass) 0.0))
-                              v (or (ecs/get-component world eid c/velocity) [0 0 0])
-                              p (or (ecs/get-component world eid c/position) [0 0 0])
-                              pstate (ecs/get-component world eid c/matter-state)
-                              r-rel (sp/v- p sink-p)
-                              v-rel (sp/v- v sink-v)
-                              L-p (orbital-angular-momentum m r-rel v-rel)]
-                          {:mass m :velocity v :position p
-                           :angular-momentum L-p
-                           ;; Diffuse gas and small planetesimals are routed
-                           ;; through the disk around a protostar/star so they
-                           ;; can participate in viscous accretion and planet
-                           ;; formation. Swallowed protostellar fragments are
-                           ;; merged directly into the sink (spec Part 1a
-                           ;; competitive accretion — fragments are swallowed,
-                           ;; not re-disked).
-                           :disk-route (and disk-former?
-                                            (or (= :nebula pstate)
-                                                (= :debris pstate)))}))
-                      parcels)]
-    (-> world
-        ;; Emit absorb-accrete on the sink (the integrator/disk-evolution
-        ;; read this next tick; caller clears for non-absorbing sinks)
-        (ecs/put-component sink-eid c/absorb-accrete packets)
-        ;; Emit consumed markers on the parcels (reaped by materialize-lifecycle)
-        (as-> w (reduce (fn [w eid] (ecs/put-component w eid c/consumed-accrete true))
-                        w parcels)))))
+        disk-former? (contains? #{:protostar :star} sink-state)]
+    (mapv (fn [eid]
+            (let [m (double (or (ecs/get-component world eid c/mass) 0.0))
+                  v (or (ecs/get-component world eid c/velocity) [0 0 0])
+                  p (or (ecs/get-component world eid c/position) [0 0 0])
+                  pstate (ecs/get-component world eid c/matter-state)
+                  r-rel (sp/v- p sink-p)
+                  v-rel (sp/v- v sink-v)
+                  L-p (orbital-angular-momentum m r-rel v-rel)]
+              {:mass m :velocity v :position p
+               :angular-momentum L-p
+               ;; Diffuse gas and small planetesimals are routed
+               ;; through the disk around a protostar/star so they
+               ;; can participate in viscous accretion and planet
+               ;; formation. Swallowed protostellar fragments are
+               ;; merged directly into the sink (spec Part 1a
+               ;; competitive accretion — fragments are swallowed,
+               ;; not re-disked).
+               :disk-route (and disk-former?
+                                (or (= :nebula pstate)
+                                    (= :debris pstate)))}))
+          parcels)))
 
 (declare imf-accretion-bias stellar-feedback-temperature hash01 feedback-radius
          sphere-radius planet-material-density)
 
 (defn sink-formation-system
-  "Fan-out emitter: every sink absorbs :nebula gas parcels within its
-   gravitational capture zone. Three Phase 1 additions:
+  "Double-buffer write-set system: every sink absorbs :nebula gas parcels within
+   its gravitational capture zone. Three Phase 1 additions:
 
    1. IMF bias: accretion probability is mass-dependent — high-mass sinks
       accrete less efficiently, steering toward the Kroupa/Salpeter IMF.
@@ -1195,80 +1222,96 @@
       c/disk-angular-mom and c/disk-mass.
 
    Emits absorb-accrete influence + consumed-accrete lifecycle markers (spec §5)
-   instead of directly writing contended physical state. Clears stale absorb-accrete
-   before processing so the integrator never double-counts.
+   instead of directly writing contended physical state. Stale absorb-accrete
+   entries not re-emitted this tick get the `removed` sentinel (the integrator
+   consumed last tick's; lingering packets would double-count) — and the Bondi
+   feeding radius is computed WITHOUT the snapshot's in-flight accrete packets,
+   matching the clear-first legacy path. Parcels claimed by one sink this tick
+   are tracked locally so a later (smaller) sink cannot double-claim them.
 
-   Runs in the parallel fan-out (was a post-fold barrier)."
-  [world]
-  (let [;; Clear stale absorb-accrete from ALL entities (the integrator consumed
-        ;; last tick's; if we don't clear, lingering stale packets double-count).
-        world (reduce (fn [w eid]
-                        (ecs/remove-component w eid c/absorb-accrete))
-                      world
-                      (keys (get-in world [:components c/absorb-accrete] {})))
-        sinks       (->> (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
-                         (sort-by #(double (or (ecs/get-component world % c/mass) 0.0)) #(compare %2 %1))
-                         vec)
-        gas-parcels (ecs/entities-with world c/matter-state c/position c/mass c/velocity)
-        ;; Precompute star positions + luminosities for feedback
-        star-data (mapv (fn [eid]
-                          {:pos (ecs/get-component world eid c/position)
-                           :lum (double (or (ecs/get-component world eid c/luminosity) 0.0))})
-                        (filterv #(= :star (ecs/get-component world % c/matter-state))
-                                 (ecs/entities-with world c/matter-state c/position c/luminosity)))]
-    (if (empty? sinks)
-      world
-      (reduce
-       (fn [w sink-eid]
-         (if-not (ecs/alive? w sink-eid)
-           w
-           (let [sink-pos (ecs/get-component w sink-eid c/position)
-                 sink-m   (double (or (ecs/get-component w sink-eid c/mass) 0.0))
-                 ;; Competitive accretion (spec Part 1a): capture within the
-                 ;; mass-dependent effective radius, so the most massive core runs
-                 ;; away and funnels the cloud into one dominant star.
-                 sink-acc (effective-accretion-radius w sink-eid)
-                 bias     (imf-accretion-bias sink-m)
-                 nearby   (filterv
-                           (fn [eid]
-                             (and (not= eid sink-eid)
-                                  (ecs/alive? w eid)
-                                  (nil? (ecs/get-component w eid c/consumed-accrete))
-                                  (let [pstate (ecs/get-component w eid c/matter-state)
-                                        pmass  (double (or (ecs/get-component w eid c/mass) 0.0))
-                                        competitive? (not (false? (:genesis/competitive-accretion? w)))]
-                                    (and
-                                     ;; Diffuse gas, planetesimals, and (under
-                                     ;; competitive accretion) smaller protostellar
-                                     ;; fragments can all be swallowed by a larger
-                                     ;; sink. Planets and stars are terminal/disk-
-                                     ;; owned and are not re-accreted through the
-                                     ;; feeding zone — they merge only via literal
-                                     ;; collision.
-                                     (or (= :nebula pstate)
-                                         (and (= :debris pstate) (< pmass sink-m))
-                                         (and competitive?
-                                              (= :protostar pstate)
-                                              (< pmass sink-m)))
-                                     (let [pos  (ecs/get-component w eid c/position)
-                                           dist (sp/dist sink-pos pos)]
-                                       (and (< dist sink-acc)
-                                            ;; IMF bias: probabilistic accretion for high-mass sinks
-                                            (< (hash01 (hash [eid sink-eid (:tick world)])) bias)
-                                            (if (= :nebula pstate)
-                                              ;; Stellar feedback: reject gas heated above Jeans temp
-                                              (< (stellar-feedback-temperature pos star-data feedback-radius)
-                                                 1.0e4) ;; ~10⁴ K suppresses Jeans
-                                              ;; Solid debris / protostar: hierarchical capture — a sink only
-                                              ;; swallows a body LESS massive than itself, so the larger body grows
-                                              ;; (and the swarm shrinks) rather than two equals double-absorbing.
-                                              true)))))))
-                           gas-parcels)]
-             (if (seq nearby)
-               (absorb-parcels w sink-eid nearby)
-               w))))
-       world
-       sinks))))
+   0-arity returns the native write-set system for the fan-out; 1-arity applies
+   the emitted write-set to `world` and returns the updated world — a
+   convenience for benches, tests, and REPL use."
+  ([world] (tick/apply-write-set world ((:run (sink-formation-system)) world)))
+  ([]
+   {:id     :sink-formation
+    :writes (registry-writes :sink-formation)
+    :run
+    (fn [world]
+      (let [prior-absorb (keys (get-in world [:components c/absorb-accrete] {}))
+            ;; The feeding radius must NOT count the snapshot's own stale accrete
+            ;; packets (they are cleared this tick): drop the column before
+            ;; `effective-accretion-radius` reads `pending-absorbed-mass`.
+            w0          (update world :components dissoc c/absorb-accrete)
+            sinks       (->> (ecs/entities-with world c/matter-state c/accretion-radius c/position c/mass)
+                             (sort-by #(double (or (ecs/get-component world % c/mass) 0.0)) #(compare %2 %1))
+                             vec)
+            gas-parcels (ecs/entities-with world c/matter-state c/position c/mass c/velocity)
+            ;; Precompute star positions + luminosities for feedback
+            star-data (mapv (fn [eid]
+                              {:pos (ecs/get-component world eid c/position)
+                               :lum (double (or (ecs/get-component world eid c/luminosity) 0.0))})
+                            (filterv #(= :star (ecs/get-component world % c/matter-state))
+                                     (ecs/entities-with world c/matter-state c/position c/luminosity)))
+            ;; Parcels already marked consumed in the snapshot are never re-claimed.
+            consumed0 (set (keys (get-in world [:components c/consumed-accrete] {})))
+            [absorbs consumed]
+            (reduce
+             (fn [[absorbs consumed :as acc] sink-eid]
+               (if-not (ecs/alive? world sink-eid)
+                 acc
+                 (let [sink-pos (ecs/get-component world sink-eid c/position)
+                       sink-m   (double (or (ecs/get-component world sink-eid c/mass) 0.0))
+                       ;; Competitive accretion (spec Part 1a): capture within the
+                       ;; mass-dependent effective radius, so the most massive core runs
+                       ;; away and funnels the cloud into one dominant star.
+                       sink-acc (effective-accretion-radius w0 sink-eid)
+                       bias     (imf-accretion-bias sink-m)
+                       nearby   (filterv
+                                 (fn [eid]
+                                   (and (not= eid sink-eid)
+                                        (ecs/alive? world eid)
+                                        (not (contains? consumed eid))
+                                        (let [pstate (ecs/get-component world eid c/matter-state)
+                                              pmass  (double (or (ecs/get-component world eid c/mass) 0.0))
+                                              competitive? (not (false? (:genesis/competitive-accretion? world)))]
+                                          (and
+                                           ;; Diffuse gas, planetesimals, and (under
+                                           ;; competitive accretion) smaller protostellar
+                                           ;; fragments can all be swallowed by a larger
+                                           ;; sink. Planets and stars are terminal/disk-
+                                           ;; owned and are not re-accreted through the
+                                           ;; feeding zone — they merge only via literal
+                                           ;; collision.
+                                           (or (= :nebula pstate)
+                                               (and (= :debris pstate) (< pmass sink-m))
+                                               (and competitive?
+                                                    (= :protostar pstate)
+                                                    (< pmass sink-m)))
+                                           (let [pos  (ecs/get-component world eid c/position)
+                                                 dist (sp/dist sink-pos pos)]
+                                             (and (< dist sink-acc)
+                                                  ;; IMF bias: probabilistic accretion for high-mass sinks
+                                                  (< (hash01 (hash [eid sink-eid (:tick world)])) bias)
+                                                  (if (= :nebula pstate)
+                                                    ;; Stellar feedback: reject gas heated above Jeans temp
+                                                    (< (stellar-feedback-temperature pos star-data feedback-radius)
+                                                       1.0e4) ;; ~10⁴ K suppresses Jeans
+                                                    ;; Solid debris / protostar: hierarchical capture — a sink only
+                                                    ;; swallows a body LESS massive than itself, so the larger body grows
+                                                    ;; (and the swarm shrinks) rather than two equals double-absorbing.
+                                                    true)))))))
+                                 gas-parcels)]
+                   (if (seq nearby)
+                     [(assoc absorbs sink-eid (absorb-packets world sink-eid nearby))
+                      (into consumed nearby)]
+                     acc))))
+             [{} consumed0]
+             sinks)
+            new-consumed (reduce disj consumed consumed0)]
+        (cond-> (tick/contribution-write-set c/absorb-accrete absorbs prior-absorb)
+          (seq new-consumed)
+          (assoc c/consumed-accrete (into {} (map (fn [eid] [eid true])) new-consumed)))))}))
 
 ;; --- Stellar formation: IMF, disks, feedback (Phase 1) ----------------------
 ;; Three improvements to the formation pipeline:
@@ -1463,9 +1506,21 @@
           :else                             :unstable-no-fragment)
         :stable-disc)))
 
-(defn disk-evolution-system
-  "Fan-out emitter: evolves protoplanetary disks on the viscous timescale and
-   triggers planet/binary formation via gravitational instability.
+(defn- put-tracked
+  "`ecs/put-component` on disk-evolution's internal working world, recording the
+   written cell in the `::disk-ws` write-set accumulator carried on the world
+   map. The emitter returns the accumulated write-set (later writes to the same
+   cell win); the working world itself is discarded — it exists only so the
+   pass's later steps (viscous transfer, fragmentation, planet seeding) can read
+   the earlier steps' this-tick disk state."
+  [w eid ctype v]
+  (-> (ecs/put-component w eid ctype v)
+      (update ::disk-ws assoc-in [ctype eid] v)))
+
+(defn- disk-evolution-pass
+  "The disk-evolution computation on a working copy of the frozen snapshot;
+   every component write goes through `put-tracked` so the accumulated
+   `::disk-ws` IS the system's write-set. See `disk-evolution-system`.
 
    1. Absorb-accrete processing: reads c/absorb-accrete packets from sink-formation
       and adds disk-routed mass/angmom to c/disk-mass and c/disk-angular-mom (spec §5).
@@ -1498,8 +1553,8 @@
                            old-dm   (double (or (ecs/get-component w eid c/disk-mass) 0.0))
                            old-L    (or (ecs/get-component w eid c/disk-angular-mom) [0.0 0.0 0.0])]
                        (-> w
-                           (ecs/put-component eid c/disk-mass (+ old-dm add-mass))
-                           (ecs/put-component eid c/disk-angular-mom (sp/v+ old-L add-L))))
+                           (put-tracked eid c/disk-mass (+ old-dm add-mass))
+                           (put-tracked eid c/disk-angular-mom (sp/v+ old-L add-L))))
                      w)))
                world
                (get-in world [:components c/absorb-accrete] {}))
@@ -1532,10 +1587,10 @@
                    disk-L'   (sp/v- disk-L L-transfer)
                     ;; Emit influences (integrator owns mass/angmom/spin — spec §7.5)
                    w' (-> w
-                          (ecs/put-component eid c/disk-mass disk-m')
-                          (ecs/put-component eid c/disk-angular-mom disk-L')
-                          (ecs/put-component eid c/mass-flux-disk dm)
-                          (ecs/put-component eid c/torque-disk L-transfer))]
+                          (put-tracked eid c/disk-mass disk-m')
+                          (put-tracked eid c/disk-angular-mom disk-L')
+                          (put-tracked eid c/mass-flux-disk dm)
+                          (put-tracked eid c/torque-disk L-transfer))]
                 ;; Check for gravitational instability
                (cond
                   ;; Binary formation: massive disk fragments into companion
@@ -1570,13 +1625,13 @@
                                     :composition (or (ecs/get-component w' eid c/composition)
                                                      default-composition)
                                     :temperature 1000.0}
-                       w'' (ecs/put-component w' eid c/spawn-request-disk [spawn-spec])
+                       w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
                         ;; Update disk after fragmentation
                        w''' (-> w''
-                                (ecs/put-component eid c/disk-mass (- disk-m' companion-m))
-                                (ecs/put-component eid c/disk-angular-mom
-                                                   (sp/v* disk-L' (/ (- disk-m' companion-m)
-                                                                     (max 1.0 disk-m')))))]
+                                (put-tracked eid c/disk-mass (- disk-m' companion-m))
+                                (put-tracked eid c/disk-angular-mom
+                                             (sp/v* disk-L' (/ (- disk-m' companion-m)
+                                                               (max 1.0 disk-m')))))]
                    w''')
 
                   ;; Planet formation: disk fragments into planetary embryo
@@ -1606,12 +1661,12 @@
                                    :composition (or (ecs/get-component w' eid c/composition)
                                                     default-composition)
                                    :temperature 300.0}
-                       w'' (ecs/put-component w' eid c/spawn-request-disk [spawn-spec])
+                       w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
                        w''' (-> w''
-                                (ecs/put-component eid c/disk-mass (- disk-m' embryo-m))
-                                (ecs/put-component eid c/disk-angular-mom
-                                                   (sp/v* disk-L' (/ (- disk-m' embryo-m)
-                                                                     (max 1.0 disk-m')))))]
+                                (put-tracked eid c/disk-mass (- disk-m' embryo-m))
+                                (put-tracked eid c/disk-angular-mom
+                                             (sp/v* disk-L' (/ (- disk-m' embryo-m)
+                                                               (max 1.0 disk-m')))))]
                    w''')
 
                   ;; Just viscous evolution, no fragmentation
@@ -1634,16 +1689,36 @@
        (let [res (pf/planet-seeds w star)]
          (if (and res (seq (:spawns res)))
            (-> w
-               (ecs/put-component star c/disk-mass (:disk-m res))
-               (ecs/put-component star c/disk-angular-mom (:disk-L res))
-               (ecs/put-component star c/planets-seeded true)
-               (ecs/put-component star c/spawn-request-planet (mapv second (:spawns res))))
+               (put-tracked star c/disk-mass (:disk-m res))
+               (put-tracked star c/disk-angular-mom (:disk-L res))
+               (put-tracked star c/planets-seeded true)
+               (put-tracked star c/spawn-request-planet (mapv second (:spawns res))))
            w)))
      world-evolved
      (filterv (fn [eid]
                 (and (= :star (ecs/get-component world-evolved eid c/matter-state))
                      (pos? (double (or (ecs/get-component world-evolved eid c/disk-mass) 0.0)))))
               (ecs/entities-with world-evolved c/matter-state c/mass c/disk-mass)))))
+
+(defn disk-evolution-system
+  "Double-buffer write-set system: evolves protoplanetary disks on the viscous
+   timescale and triggers planet/binary formation via gravitational instability
+   (see `disk-evolution-pass` for the physics). Sole writer of c/disk-mass,
+   c/disk-angular-mom, c/mass-flux-disk, c/torque-disk, c/spawn-request-disk,
+   c/spawn-request-planet, and c/planets-seeded.
+
+   The pass runs on an internal working copy of the frozen snapshot (its later
+   steps read its earlier steps' this-tick disk state); only the accumulated
+   write-set leaves the emitter — no world diff.
+
+   0-arity returns the native write-set system for the fan-out; 1-arity applies
+   the pass to `world` and returns the updated world — a convenience for
+   benches, tests, and REPL use."
+  ([world] (dissoc (disk-evolution-pass world) ::disk-ws))
+  ([]
+   {:id     :disk-evolution
+    :writes (registry-writes :disk-evolution)
+    :run    (fn [world] (get (disk-evolution-pass world) ::disk-ws {}))}))
 
 (defn wind-direction
   "A deterministic-but-varying outward unit vector for a wind ejection, seeded by
@@ -1928,24 +2003,41 @@
                                          {:genesis/_profile {:structure/gas-query (double dt-query)}}
                                          {})
                                        gas-results))))]
-               ;; resolved branch: radius primary (or material density), rest derived
+               ;; resolved branch: radius primary (or material density), rest derived.
+               ;; Resolved bodies are selected straight off the matter-state
+               ;; component map — projecting every entity (mostly gas) through
+               ;; entity->region just to discard it dominated this branch.
                (profile/profile-section
                 world :structure/resolved
                 (fn [_world]
-                  (reduce
-                   (fn [ws eid]
-                     (let [region (entity->region world eid)]
-                       (if-let [s (and (#{:debris :planet :protostar :star}
-                                        (:matter-state region))
-                                       (resolved-shape region cf ct dt))]
+                  (let [ms-map   (get-in world [:components c/matter-state] {})
+                        mass-map (get-in world [:components c/mass] {})
+                        rad-map  (get-in world [:components c/radius] {})
+                        resolved-eids
+                        (persistent!
+                         (reduce-kv (fn [acc eid st]
+                                      (if (and (#{:debris :planet :protostar :star} st)
+                                               (contains? mass-map eid)
+                                               (contains? rad-map eid))
+                                        (conj! acc eid)
+                                        acc))
+                                    (transient [])
+                                    ms-map))
+                        shapes (par/par-mapv
+                                (fn [eid]
+                                  [eid (resolved-shape (entity->region world eid) cf ct dt)])
+                                resolved-eids)]
+                    (reduce
+                     (fn [ws [eid s]]
+                       (if s
                          (cond-> ws
                            (:radius s)        (assoc-in [c/radius eid] (:radius s))
                            (:density s)       (assoc-in [c/density eid] (:density s))
                            (:oblateness s)    (assoc-in [c/oblateness eid] (:oblateness s))
                            (:rotation-axis s) (assoc-in [c/rotation-axis eid] (:rotation-axis s)))
-                         ws)))
-                   gas-ws
-                   (ecs/entities-with world c/matter-state c/mass c/radius))))))})
+                         ws))
+                     gas-ws
+                     shapes))))))})
 
 (defn temperature-system
   "Double-buffer write-set system: SOLE writer of temperature.

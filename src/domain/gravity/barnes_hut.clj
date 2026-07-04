@@ -142,6 +142,64 @@
     (throw (ex-info "propagate-mass: unknown node type"
                     {:node node}))))
 
+(def ^:private parallel-build-threshold
+  "Body count above which the octree is built by partitioning the bodies into
+   the root's eight octants and building + propagating each subtree on its own
+   thread. Below it the serial insert loop wins (future overhead)."
+  512)
+
+(defn- child-leaf-bb
+  "The AABB the FIRST body inserted into an empty child of `bb` at `oct` gets —
+   the same min-size padding rule as `insert-body-into-node`'s nil-child branch."
+  [bb oct]
+  (let [child-bb (sp/child-aabb bb oct)
+        pad      [min-aabb-size min-aabb-size min-aabb-size]]
+    (if (< (sp/max-side child-bb) min-aabb-size)
+      (sp/aabb (sp/v- (:aabb-min child-bb) pad)
+               (sp/v+ (:aabb-max child-bb) pad))
+      child-bb)))
+
+(defn- build-tree-parallel
+  "Build the octree by partitioning `bodies` (order-preserving) into the root's
+   eight octants and building each subtree in a future. Produces a tree EQUAL
+   to the serial `reduce insert-body-into-node` + `propagate-mass` build: each
+   octant's insertion sequence is the original body order restricted to that
+   octant (which is exactly what the serial root dispatch does), and the root
+   aggregation below mirrors `propagate-mass`'s internal-node branch, walking
+   the children in the same order."
+  [bb bodies]
+  (let [root      (empty-internal bb)
+        groups    (reduce (fn [gs b]
+                            (let [i (octant-index (sp/octant bb (:position b)))]
+                              (update gs i conj b)))
+                          (vec (repeat 8 []))
+                          bodies)
+        futs      (mapv (fn [oct grp]
+                          (future
+                            (when (seq grp)
+                              (propagate-mass
+                               (reduce insert-body-into-node
+                                       (leaf-node (child-leaf-bb bb oct) (first grp))
+                                       (rest grp))))))
+                        all-octants groups)
+        children' (mapv deref futs)
+        total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
+        max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children')
+        com        (if (zero? total-mass)
+                     (sp/center bb)
+                     (->> children'
+                          (reduce (fn [acc child]
+                                    (sp/v+ acc (sp/v* (node-com child)
+                                                      (node-mass child))))
+                                  (sp/vec3 0.0 0.0 0.0))
+                          (#(sp/v* % (/ 1.0 total-mass)))))]
+    (assoc root
+           :children  children'
+           :mass      total-mass
+           :aabb-side (sp/max-side bb)
+           :max-radius max-radius
+           :com       com)))
+
 (defn build-tree
   "Build a Barnes–Hut octree from a seq of Body records."
   [bodies]
@@ -154,11 +212,12 @@
                           (sp/v+ (:position b) pad))
                  b))
     :else
-    (let [bb   (-> (bounding-aabb-for-bodies bodies)
-                   (update :aabb-min #(sp/v+ % [-1e-6 -1e-6 -1e-6]))
-                   (update :aabb-max #(sp/v+ % [1e-6 1e-6 1e-6])))
-          tree (reduce insert-body-into-node (empty-internal bb) bodies)]
-      (propagate-mass tree))))
+    (let [bb (-> (bounding-aabb-for-bodies bodies)
+                 (update :aabb-min #(sp/v+ % [-1e-6 -1e-6 -1e-6]))
+                 (update :aabb-max #(sp/v+ % [1e-6 1e-6 1e-6])))]
+      (if (>= (count bodies) parallel-build-threshold)
+        (build-tree-parallel bb bodies)
+        (propagate-mass (reduce insert-body-into-node (empty-internal bb) bodies))))))
 
 ;; --- Acceleration evaluation ------------------------------------------------
 

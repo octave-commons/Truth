@@ -13,6 +13,7 @@
   (:require
    [domain.ecs.core       :as ecs]
    [domain.ecs.components :as c]
+   [domain.ecs.registry   :as reg]
    [domain.player         :as player]
    [shape.spatial         :as sp]))
 
@@ -24,24 +25,38 @@
   "Distance (m) within which entities are at :system LOD. ~5 AU."
   7.5e11)
 
+(defn- registry-writes
+  "This system's declared :writes from domain.ecs.registry — sourced from the
+   registry so the emitter and the single-writer declaration cannot drift."
+  [id]
+  (some #(when (= id (:id %)) (:writes %)) reg/systems))
+
 (defn lod-scheduler
-  "Assign c/lod-level (:local, :system, :galaxy) to every star and planet
-   based on distance from the player observer's focus position."
-  [world]
-  (if-let [obs (player/get-observer world)]
-    (let [focus (:focus-position obs [0.0 0.0 0.0])
-          eids (filterv (fn [eid]
-                          (let [st (ecs/get-component world eid c/matter-state)]
-                            (or (= :star st) (= :planet st))))
-                        (ecs/entities-with world c/matter-state c/position))]
-      (reduce (fn [w eid]
-                (let [pos  (ecs/get-component w eid c/position)
-                      dist (sp/dist focus pos)
-                      level (cond
-                              (< dist lod-local-radius)  :local
-                              (< dist lod-system-radius) :system
-                              :else                       :galaxy)]
-                  (ecs/put-component w eid c/lod-level level)))
-              world
-              eids))
-    world))
+  "Double-buffer write-set system: SOLE writer of c/lod-level — assigns :local,
+   :system, or :galaxy to every star and planet based on distance from the
+   player observer's focus position. Emits only the levels that CHANGED (an
+   unchanged level writes nothing); with no observer it emits nothing."
+  []
+  {:id     :lod-scheduler
+   :writes (registry-writes :lod-scheduler)
+   :run
+   (fn [world]
+     (if-let [obs (player/get-observer world)]
+       (let [focus (:focus-position obs [0.0 0.0 0.0])
+             eids (filterv (fn [eid]
+                             (let [st (ecs/get-component world eid c/matter-state)]
+                               (or (= :star st) (= :planet st))))
+                           (ecs/entities-with world c/matter-state c/position))]
+         {c/lod-level
+          (into {}
+                (keep (fn [eid]
+                        (let [pos  (ecs/get-component world eid c/position)
+                              dist (sp/dist focus pos)
+                              level (cond
+                                      (< dist lod-local-radius)  :local
+                                      (< dist lod-system-radius) :system
+                                      :else                       :galaxy)]
+                          (when (not= level (ecs/get-component world eid c/lod-level))
+                            [eid level]))))
+                eids)})
+       {}))})

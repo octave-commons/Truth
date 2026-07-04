@@ -37,10 +37,10 @@
   (let [M law/solar-mass
         au law/au
         [w star] (stellar/spawn-clump w
-                   {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                    :mass M :radius law/solar-radius :temperature 2.0e7
-                    :matter-state :star
-                    :composition {:H 0.7 :He 0.28 :metals 0.02}})
+                                      {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                       :mass M :radius law/solar-radius :temperature 2.0e7
+                                       :matter-state :star
+                                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
         w (-> w
               (ecs/put-component star c/pressure 1.0e13)  ;; fusion sustaining
               (ecs/put-component star c/luminosity law/solar-luminosity)
@@ -59,9 +59,9 @@
                        [(* r (Math/cos theta)) (* r (Math/sin theta)) 0.0]))
         w (reduce (fn [w pos]
                     (let [[w2 eid] (stellar/spawn-clump w
-                                     {:position pos :velocity (circular-velocity M pos)
-                                      :mass body-mass :radius 1.0e7
-                                      :matter-state :debris})]
+                                                        {:position pos :velocity (circular-velocity M pos)
+                                                         :mass body-mass :radius 1.0e7
+                                                         :matter-state :debris})]
                       (ecs/put-component w2 eid c/disc-tag :disc)))
                   w placements)]
     [w star]))
@@ -151,3 +151,71 @@
       (is (seq fired) ":event/planet-formation was emitted into the ledger")
       (is (= :arc/genesis-planets-formed arc-state)
           "arc advances to genesis-planets-formed once a planet orbits the star"))))
+
+(defn- without-transient-caches
+  "Drop per-tick caches and cache-config flags so two otherwise-identical worlds
+   can be compared."
+  [world]
+  (dissoc world
+          :genesis/neighbor-cache
+          :genesis/neighbor-cache-full-rebuild-interval
+          :genesis/physics-soa
+          :ecs/_query-cache
+          :genesis/invalidate-neighbor-cache?))
+
+(deftest persistent-cache-matches-full-rebuild
+  (testing "20 ticks with persistent cache and full-rebuild produce identical worlds"
+    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0})
+                   (assoc :sim/G 0.0
+                          :genesis/adaptive-pacing? false
+                          :sim/dt 0.0))]
+      (loop [i 0
+             persist base
+             full    (assoc base :genesis/invalidate-neighbor-cache? true)]
+        (when (< i 20)
+          (let [p1 (genesis/tick-world persist)
+                f1 (genesis/tick-world full)]
+            (is (= (without-transient-caches p1) (without-transient-caches f1))
+                (str "worlds diverged at tick " (inc i)))
+            (recur (inc i) p1 f1)))))))
+
+(deftest persistent-cache-interval-one-matches-invalidation
+  (testing "20 ticks with interval=1 persistent cache match invalidate=true mode"
+    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0})
+                   (assoc :sim/G 0.0
+                          :genesis/adaptive-pacing? false
+                          :sim/dt 0.0))
+          interval-one (assoc base :genesis/neighbor-cache-full-rebuild-interval 1)
+          invalid      (assoc base :genesis/invalidate-neighbor-cache? true)]
+      (loop [i 0
+             persist interval-one
+             full    invalid]
+        (when (< i 20)
+          (let [p1 (genesis/tick-world persist)
+                f1 (genesis/tick-world full)]
+            (is (= (without-transient-caches p1) (without-transient-caches f1))
+                (str "worlds diverged at tick " (inc i)))
+            (recur (inc i) p1 f1)))))))
+
+(deftest persistent-cache-default-interval-stays-stable
+  (testing "50 ticks with default persistent-cache interval stay stable vs full rebuild"
+    (let [base (-> (genesis/create-world {:gas-count 50 :spin 0.4 :turb 0.05})
+                   (assoc :genesis/adaptive-pacing? false))
+          full (assoc base :genesis/invalidate-neighbor-cache? true)
+          run #(reduce (fn [w _] (genesis/tick-world w)) % (range 50))
+          w-full (run full)
+          w-persist (run base)
+          body-count #(count (ecs/entities-with % c/matter-state c/mass))
+          total-mass #(reduce + 0.0
+                              (map (fn [eid]
+                                     (double (or (ecs/get-component % eid c/mass) 0.0)))
+                                   (ecs/entities-with % c/mass)))
+          bc-full (body-count w-full)
+          bc-persist (body-count w-persist)
+          m-full (total-mass w-full)
+          m-persist (total-mass w-persist)]
+      (is (pos? bc-persist) "persistent-cache world still has bodies")
+      (is (= bc-full bc-persist) "same final body count")
+      (is (< (Math/abs (- m-persist m-full))
+             (* 1e-6 (max 1.0 m-full)))
+          "total mass matches within tolerance"))))

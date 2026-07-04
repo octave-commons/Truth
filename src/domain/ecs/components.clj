@@ -143,6 +143,7 @@
 (def consumed-merge :component/consumed.merge)  ;; absorbed body, reaped (collision)
 (def consumed-accrete :component/consumed.accrete) ;; absorbed gas parcel, reaped (sink)
 (def consumed-wind  :component/consumed.wind)   ;; star ablated below floor, reaped (wind)
+(def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
 
 ;; Fusion promotion signal: post-fold barrier emits this; classifier and
 ;; fusion-system read it on the next tick's snapshot (spec §7). Single writer.

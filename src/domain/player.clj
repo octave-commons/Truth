@@ -11,7 +11,8 @@
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.tick       :as tick]
-   [domain.ecs.event      :as event]))
+   [domain.ecs.event      :as event]
+   [domain.physics.cache  :as pcache]))
 
 (declare get-observer)
 
@@ -61,12 +62,14 @@
    as coherence approaches its maximum."
   [event-type current-coherence]
   (let [base (case event-type
-               :stellar-ignition 0.3
-               :planet-formation 0.2
-               :collision        0.1
-               :phase-transition 0.15
-               :life-emergence   0.5
-               :gate-discovery   1.0
+               :nebula-collapse    0.10
+               :protostar-formation 0.15
+               :stellar-ignition   0.3
+               :planet-formation   0.2
+               :collision          0.1
+               :phase-transition   0.15
+               :life-emergence     0.5
+               :gate-discovery     1.0
                0.05)]
     (* base (- 1.0 current-coherence))))
 
@@ -76,12 +79,14 @@
    routine phase tick. These are the player's earned capacity to act."
   [event-type]
   (case event-type
-    :stellar-ignition 25.0
-    :planet-formation 10.0
-    :phase-transition 5.0
-    :collision        1.0
-    :life-emergence   50.0
-    :gate-discovery   100.0
+    :nebula-collapse    3.0
+    :protostar-formation 8.0
+    :stellar-ignition   25.0
+    :planet-formation   10.0
+    :phase-transition   5.0
+    :collision          1.0
+    :life-emergence     50.0
+    :gate-discovery     100.0
     0.0))
 
 (defn accrue-agency
@@ -226,10 +231,15 @@
                  (let [dt        (double (or (:sim/dt world) 1.0e12))
                        ref-speed (get world :genesis/observer-influence-speed
                                       default-influence-speed)
+                       ;; Evaluate the pull at drift-predicted positions: the
+                       ;; kick lands next tick, and a restoring force applied
+                       ;; one drift stale pumps the very oscillation it should
+                       ;; damp (see pcache/predicted-position-fn).
+                       pos-of    (pcache/predicted-position-fn world)
                        cell      (into {}
                                        (keep (fn [eid]
                                                (when-let [a (observer-acceleration
-                                                             obs (ecs/get-component world eid c/position)
+                                                             obs (pos-of eid)
                                                              dt ref-speed)]
                                                  [eid a])))
                                        (ecs/entities-with world c/position c/mass))]
@@ -296,12 +306,14 @@
 
 (def ^:private event-kind->coherence
   "Map ledger event kinds to the coherence-gain categories."
-  {:event/stellar-ignition :stellar-ignition
-   :event/planet-formation :planet-formation
-   :event/collision        :collision
-   :event/phase-transition :phase-transition
-   :event/life-emergence   :life-emergence
-   :event/gate-discovery   :gate-discovery})
+  {:event/nebula-collapse    :nebula-collapse
+   :event/protostar-formation :protostar-formation
+   :event/stellar-ignition   :stellar-ignition
+   :event/planet-formation   :planet-formation
+   :event/collision          :collision
+   :event/phase-transition   :phase-transition
+   :event/life-emergence     :life-emergence
+   :event/gate-discovery     :gate-discovery})
 
 (defn observer-system
   "ECS system: drains/restores the observer's coherence based on the events that

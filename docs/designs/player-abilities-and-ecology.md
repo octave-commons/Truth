@@ -20,38 +20,53 @@ aesthetic and mechanical reference for this design.
 
 ## 2. The Hotbar
 
-Nine ability slots in two groups, separated by a visual divider. Slot selection
-is instant; activation fires on the selected slot.
+Nine ability slots in two layers.
 
-### Key bindings
+### Innate Spark verbs (Q/E/R)
 
-| Key | Slot | Group |
-|-----|------|-------|
-| `Q` | Focus   | Spark verbs |
-| `E` | Nudge   | Spark verbs |
-| `R` | Release | Spark verbs |
-| `1` | Seed    | Ecology |
-| `2` | Heat    | Ecology |
-| `3` | Cool    | Ecology |
-| `4` | Spark   | Ecology |
-| `5` | Grow    | Ecology — locked until prokaryotic |
-| `6` | Evolve  | Ecology — locked until eukaryotic |
+These are the player's continuous body. They never lock, never cost Resonance,
+and their descriptions rewrite by phase. They are the "flat list that quietly
+rewrites itself" from `docs/designs/ux-architecture.md`.
 
-Clicking while the cursor is captured fires the active slot. Each slot displays:
+| Key | Phase 0 name | Later phase names | Cost |
+|---|---|---|---|
+| `Q` | Focus | Focus / Narrow | 0.04 coherence |
+| `E` | Nudge | Nudge / Perturb | 0.06 coherence |
+| `R` | Release | Release / Widen | 0 |
+
+### Allocatable slots (1–6)
+
+These are the Resonance-powered loadout. Slots 1–4 appear once the player can
+act on a planetary surface. Slots 5–6 cost Resonance to unlock and are gated by
+ecology phase. Each slot can be intensified by spending additional Resonance.
+
+| Key | Slot | Group | Unlock | Intensify |
+|---|---|---|---|---|
+| `1` | Seed    | Ecology | 0 | 1 point per level, max 3 |
+| `2` | Heat    | Ecology | 0 | 1 point per level, max 3 |
+| `3` | Cool    | Ecology | 0 | 1 point per level, max 3 |
+| `4` | Spark   | Ecology | 0 | 1 point per level, max 3 |
+| `5` | Grow    | Ecology | 1 + `:prokaryotic` | 1 point per level, max 3 |
+| `6` | Evolve  | Ecology | 1 + `:eukaryotic` | 1 point per level, max 3 |
+
+Slot selection is instant; activation fires on the selected slot. Clicking while
+the cursor is captured fires the active slot. Each slot displays:
 
 - An icon (20 px)
 - A key label
 - A **cooldown fill bar** (3 px, bottom of slot) that drains from full to empty
   over the cooldown duration, giving the player an instant gestalt of readiness
+- A small **Resonance pip** indicator if the slot has been intensified
 
 Selected slots highlight with a color that matches their group: teal for spark
 verbs, gold for ecology.
 
 ---
 
-## 3. The Three Resources
+## 3. The Four Resources
 
-The player carries three continuous scalar resources in `[0, 1]`:
+The player carries three continuous scalar resources in `[0, 1]` and one
+progression currency:
 
 ### Coherence
 
@@ -62,18 +77,25 @@ fail silently with a log message.
 
 *Prototype drift rates: +0.00003/ms on surface, -0.000008/ms in space.*
 
-### Agency
+### Agency ("quanta")
 
-A slowly oscillating measure of how much the player's attention is shaping
-outcomes. Currently informational only. Planned future use: agency gates
-high-cost interventions in Phase 1 (e.g. redirecting asteroid bombardment).
+The spendable action currency. Earned by witnessing threshold events and spent
+every time a paid ability fires. See `docs/designs/commitment-and-resonance.md`
+for the full economy.
 
 ### Resolution
 
 Tracks how much of the local region has been promoted to full simulation detail.
 Focus increases it; Release decreases it. This directly maps to the LOD zone
-system in `domain.pacing` — at sufficient resolution, the region upgrades from
-statistical particle to fully integrated ECS entities.
+system — at sufficient resolution, the region upgrades from statistical particle
+to fully integrated ECS entity. After planetary Commitment, Resolution is
+localized to the committed world and its immediate neighborhood.
+
+### Resonance
+
+The build currency. Earned once per arc threshold. Allocated into slots 1–6 to
+unlock or intensify them. Resonance unallocates at planetary Commitment and a
+new palette appears. See `docs/designs/commitment-and-resonance.md`.
 
 ---
 
@@ -139,16 +161,18 @@ player, or physics mutations but do not own any simulation loop.
 - **Effect:** Excites chemistry; +6% biomass, +3% complexity. Fails
   gracefully if preconditions unmet — the log reports why.
 
-### 5 — Grow  *(locked until prokaryotic)*
+### 5 — Grow
 
 - **Cost:** 0.09 coherence
 - **Cooldown:** 4000 ms
+- **Unlock:** 1 Resonance + ecology phase `:prokaryotic`
 - **Effect:** +12% biomass, +4% complexity. Stimulates autonomous replication.
 
-### 6 — Evolve  *(locked until eukaryotic)*
+### 6 — Evolve
 
 - **Cost:** 0.12 coherence
 - **Cooldown:** 8000 ms
+- **Unlock:** 1 Resonance + ecology phase `:eukaryotic`
 - **Effect:** +15% complexity, −5% stability. Selection pressure: drives
   complexity upward but destabilises intermediate forms. The player must manage
   this trade-off or face extinction.
@@ -237,26 +261,46 @@ and complexity snapshot.
 
 ---
 
-## 7. ECS mapping
+## 7. Commitment
+
+When at least one habitable planet exists, the player may **Commit** to one of
+them. Commitment is the objective of the Genesis arc: create a world worth
+becoming.
+
+On Commitment:
+
+- All Resonance unallocates from the Genesis palette (slots 1–6).
+- A new Phase 1 palette appears in the same slots:
+  1. Atmosphere, 2. Hydrography, 3. Tectonics, 4. Orbit, 5. Biosphere, 6. Culture.
+- The unchosen worlds remain visible but are no longer interactive.
+- Time compression ends for the committed world; the simulation enters one-second-per-second time.
+
+See `docs/designs/commitment-and-resonance.md` for the full economy and LOD
+implications.
+
+---
+
+## 8. ECS mapping
 
 These concepts map directly to `domain/` namespaces in the real simulation:
 
 | Prototype concept | ECS target |
 |-------------------|-----------|
-| `coherence`, `agency`, `resolution` | `domain.player` — player state map |
+| `coherence`, `agency`, `resolution`, `resonance` | `domain.player` — player state map |
 | Ability `fire!` | `domain.intervention/apply-intervention!` |
-| Ecology variables | New ECS component `:ecology` on planetary body entities |
-| Passive tick rules | New system in `domain.phase0/ecology-systems` |
-| Phase transitions | `domain.intervention` watches for threshold crossings |
+| Ecology variables | ECS component `:ecology` on planetary body entities |
+| Passive tick rules | `domain.ecology/ecology-system` |
+| Phase transitions | `domain.ecology/emit-phase-events` |
 | Ecology → narrator unlock | Event emitted to `infra.myth_engine` |
 | Slot lock/unlock | `domain.player` flag map, reflected in `infra.render` HUD |
+| Commitment | `:event/world-commitment` ledger event + `:player/committed-world` |
 
 The ecology component schema belongs in `law/ecology.clj` following the same
 pattern as `law/composition.clj` and `law/plasma.clj`.
 
 ---
 
-## 8. Open questions
+## 9. Open questions
 
 - **Body persistence:** When the player leaves a body, does the ecology
   continue ticking on a degraded (non-surface) schedule, or does it pause?

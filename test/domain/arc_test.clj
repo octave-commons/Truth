@@ -50,6 +50,8 @@
 
 (deftest event-notification-maps-stellar-ignition
   (is (= "A star ignites! +25 quanta" (arc/event-notification :stellar-ignition)))
+  (is (= "The nebula collapses. +3 quanta" (arc/event-notification :nebula-collapse)))
+  (is (= "A protostar forms. +8 quanta" (arc/event-notification :protostar-formation)))
   (is (nil? (arc/event-notification :nonexistent))))
 
 ;; --- Handoff / endings ------------------------------------------------------
@@ -117,4 +119,79 @@
       (is (= :arc/genesis-nebula-collapse (:arc/previous w')))
       (is (seq (filter #(= :event/phase-transition (:kind %))
                        (get-in w' [:ledger :events])))
-          "a phase-transition threshold event lands in the ledger"))))
+          "a phase-transition threshold event lands in the ledger")))
+  (testing "entering nebula-collapse arc emits :event/nebula-collapse"
+    (let [w  (-> (ecs/empty-world)
+                 (event/with-ledger)
+                 (assoc :tick 1
+                        :genesis/sim-time 0.0
+                        :arc/current :arc/genesis-dispersed
+                        :genesis/_prev-summary
+                        {:star? false :planet-count 0 :body-count 3
+                         :regions [{:matter-state :nebula}]}))
+          w' (arc/advance-arc w)]
+      (is (= :arc/genesis-nebula-collapse (:arc/current w')))
+      (is (seq (filter #(= :event/nebula-collapse (:kind %))
+                       (get-in w' [:ledger :events])))
+          "a nebula-collapse threshold event lands in the ledger")
+      (is (= :nebula-collapse (last (:arc/recent-events w')))
+          "the specific event category is surfaced to the player")))
+  (testing "entering protostar arc emits :event/protostar-formation"
+    (let [w  (-> (ecs/empty-world)
+                 (event/with-ledger)
+                 (assoc :tick 2
+                        :genesis/sim-time 0.0
+                        :arc/current :arc/genesis-nebula-collapse
+                        :genesis/_prev-summary
+                        {:star? false :planet-count 0 :body-count 1
+                         :regions [{:matter-state :protostar}]}))
+          w' (arc/advance-arc w)]
+      (is (= :arc/genesis-protostar (:arc/current w')))
+      (is (seq (filter #(= :event/protostar-formation (:kind %))
+                       (get-in w' [:ledger :events])))
+          "a protostar-formation threshold event lands in the ledger")
+      (is (= :protostar-formation (last (:arc/recent-events w')))
+          "the specific event category is surfaced to the player"))))
+
+(deftest tick-genesis-pays-quanta-for-arc-events-on-same-tick
+  (testing "arc-emitted events award agency in the same combined tick"
+    (let [w0  (-> (genesis/create-world {:gas-count 20})
+                  (assoc :arc/current :arc/genesis-dispersed
+                         :genesis/_prev-summary
+                         {:star? false :planet-count 0 :body-count 3
+                          :regions [{:matter-state :nebula}]}))
+          obs0 (player/get-observer w0)
+          w1  (arc/tick-genesis w0)
+          obs1 (player/get-observer w1)]
+      (is (= :arc/genesis-nebula-collapse (:arc/current w1))
+          "the arc advances to nebula-collapse")
+      (is (seq (filter #(= :event/nebula-collapse (:kind %))
+                       (get-in w1 [:ledger :events])))
+          "a nebula-collapse event is emitted")
+      (is (> (:agency obs1) (:agency obs0))
+          "the observer gains agency from the arc-emitted event in the same tick"))))
+
+(deftest tick-genesis-pays-quanta-for-phase-transition-on-same-tick
+  (testing "phase-transition events award agency in the same combined tick"
+    (let [[w0 _] (-> (ecs/empty-world)
+                     (event/with-ledger)
+                     (player/spawn-observer [0.0 0.0 0.0]))
+          w0   (assoc w0 :tick 0
+                      :genesis/sim-time 0.0
+                      :sim/dt 1.0e12
+                      :arc/current :arc/genesis-nebula-collapse
+                      :genesis/_prev-summary
+                      {:star? true :planet-count 1 :body-count 3
+                       :regions [{:matter-state :star}]})
+          obs0 (player/get-observer w0)
+          w1   (arc/advance-arc w0)
+          dt   (:sim/dt w0)
+          w2   ((player/observer-system dt) w1)
+          obs1 (player/get-observer w2)]
+      (is (= :arc/genesis-planets-formed (:arc/current w1))
+          "the arc advances to planets-formed")
+      (is (seq (filter #(= :event/phase-transition (:kind %))
+                       (get-in w1 [:ledger :events])))
+          "a phase-transition event is emitted")
+      (is (> (:agency obs1) (:agency obs0))
+          "the observer gains agency from the phase-transition in the same tick"))))
