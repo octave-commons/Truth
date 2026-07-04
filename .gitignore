@@ -3,8 +3,6 @@
 .lsp/
 .nrepl-port
 hs_err_pid*.log
-receipts.log
-receipts.edn
 debugging-*.jsonl
 .eta-mu
 target/
