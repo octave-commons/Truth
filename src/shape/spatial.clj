@@ -174,7 +174,7 @@
 ;; --- Bodies -----------------------------------------------------------------
 
 (defrecord Body
-  [id mass radius kind position velocity])
+           [id mass radius kind position velocity])
 
 (defn ->body
   "Construct a Body from a map with keys:

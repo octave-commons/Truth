@@ -20,8 +20,8 @@
 
    No tick logic lives here — only the declaration and its validation."
   (:require
-    [clojure.string :as str]
-    [domain.ecs.components :as c]))
+   [clojure.string :as str]
+   [domain.ecs.components :as c]))
 
 ;; ---------------------------------------------------------------------------
 ;; The registry — current reality of the 12-system Gauss–Seidel pipeline.
@@ -126,21 +126,21 @@
    ;; c/absorb-merge, c/consumed-merge, and c/spawn-request-shatter — all
    ;; single-writer. Runs in the parallel fan-out, not as a serial barrier.
    {:id            :collision-detection
-     :ns            'domain.physics.collision
-     :reads         #{c/position c/radius c/matter-state c/accretion-radius
-                      c/velocity c/mass c/angular-momentum
-                      c/temperature c/composition c/body-kind}
-     :writes        #{c/absorb-merge c/consumed-merge c/spawn-request-shatter}
-     :emits-events? true}
+    :ns            'domain.physics.collision
+    :reads         #{c/position c/radius c/matter-state c/accretion-radius
+                     c/velocity c/mass c/angular-momentum
+                     c/temperature c/composition c/body-kind}
+    :writes        #{c/absorb-merge c/consumed-merge c/spawn-request-shatter}
+    :emits-events? true}
 
    ;; Fusion promotion: emits c/promotion-signal for protostars that now meet
    ;; fusion conditions. Runs in the parallel fan-out (was a post-fold barrier).
    ;; One-tick Jacobi delay — classifier + fusion read the signal next tick.
    {:id            :fusion-promotion
-     :ns            'domain.stellar
-     :reads         #{c/matter-state c/temperature c/pressure c/composition
-                       c/density c/radius c/mass c/luminosity}
-     :writes        #{c/promotion-signal}}
+    :ns            'domain.stellar
+    :reads         #{c/matter-state c/temperature c/pressure c/composition
+                     c/density c/radius c/mass c/luminosity}
+    :writes        #{c/promotion-signal}}
 
    ;; Sink formation: absorbs nearby gas parcels into sinks. Emits
    ;; absorb.accrete + consumed.accrete; the integrator reads absorb-accrete and
@@ -150,8 +150,8 @@
    {:id            :sink-formation
     :ns            'domain.stellar
     :reads         #{c/matter-state c/accretion-radius c/position c/mass
-                      c/velocity c/disk-mass c/disk-angular-mom c/luminosity
-                      c/temperature c/consumed-accrete}
+                     c/velocity c/disk-mass c/disk-angular-mom c/luminosity
+                     c/temperature c/consumed-accrete}
     :writes        #{c/absorb-accrete c/consumed-accrete}}
 
    ;; :collapse is fully retired: its writes were dissolved into Structure (shape),
@@ -219,27 +219,27 @@
    ;; c/spawn-request-disk (materialized next tick by materialize-lifecycle).
    ;; Reads c/absorb-accrete from sink-formation (one-tick Jacobi delay).
    ;; Runs in the parallel fan-out (was a post-fold barrier).
-    {:id     :disk-evolution
-     :ns     'domain.stellar
-     :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
-               c/radius c/position c/velocity c/absorb-accrete c/luminosity
-               c/composition c/planets-seeded c/disc-tag c/rotation-axis}
-     :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
-               c/spawn-request-disk c/spawn-request-planet c/planets-seeded}}
+   {:id     :disk-evolution
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
+              c/radius c/position c/velocity c/absorb-accrete c/luminosity
+              c/composition c/planets-seeded c/disc-tag c/rotation-axis}
+    :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
+              c/spawn-request-disk c/spawn-request-planet c/planets-seeded}}
 
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
-    {:id     :lod-scheduler
-     :ns     'domain.genesis
-     :reads  #{c/matter-state c/position c/observer}
-     :writes #{c/lod-level}}
+   {:id     :lod-scheduler
+    :ns     'domain.genesis
+    :reads  #{c/matter-state c/position c/observer}
+    :writes #{c/lod-level}}
 
    ;; Magnetosphere coupling: computes magnetopause standoff from wind ram pressure.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
-    {:id     :magnetosphere-coupling
-     :ns     'domain.genesis
-     :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
-     :writes #{c/magnetosphere}}
+   {:id     :magnetosphere-coupling
+    :ns     'domain.genesis
+    :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
+    :writes #{c/magnetosphere}}
 
    ;; :thermal retired — temperature is now owned by the integrator, which reuses
    ;; stellar/temperature-system's virial/radiative derivation and layers the
@@ -253,25 +253,25 @@
     :reads  #{c/matter-state c/composition c/temperature c/mass}
     :writes #{c/comp-burn}}
 
-    {:id     :regime
-     :ns     'domain.regime
-     :reads  #{c/matter-state c/density c/temperature c/b-field c/disc-tag}
-     :writes #{c/regime}}
+   {:id     :regime
+    :ns     'domain.regime
+    :reads  #{c/matter-state c/density c/temperature c/b-field c/disc-tag}
+    :writes #{c/regime}}
 
     ;; Disc identification: tags non-star bodies relative to the central star as
     ;; :disc, :envelope, :outflow, or nil. Sole writer of c/disc-tag (Part 2).
-    {:id     :disc-identification
-     :ns     'domain.stellar
-     :reads  #{c/matter-state c/position c/velocity c/mass c/oblateness}
-     :writes #{c/disc-tag}}
+   {:id     :disc-identification
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/position c/velocity c/mass c/oblateness}
+    :writes #{c/disc-tag}}
 
      ;; EM is split: the Lorentz force and magnetic braking are computed together
     ;; in one pass over EM-active entities; the integrator owns angular-momentum/
     ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
-    {:id     :em-lorentz
-     :ns     'domain.em
-     :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
-     :writes #{c/accel-lorentz c/torque-em}}
+   {:id     :em-lorentz
+    :ns     'domain.em
+    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
+    :writes #{c/accel-lorentz c/torque-em}}
 
     ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
    ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
@@ -364,9 +364,9 @@
     (str "single-writer INVARIANT VIOLATED — "
          (count conflicts) " component(s) have multiple writers:\n"
          (str/join "\n"
-           (for [[ct ids] conflicts]
-             (format "  %-28s written by %d systems: %s"
-                     ct (count ids) (str/join ", " ids)))))))
+                   (for [[ct ids] conflicts]
+                     (format "  %-28s written by %d systems: %s"
+                             ct (count ids) (str/join ", " ids)))))))
 
 (defn assert-single-writer!
   "Throw if the registry violates single-writer across ALL systems (no barrier

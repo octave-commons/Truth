@@ -57,12 +57,12 @@
   (let [base {:kind kind :position (vec position) :radius default-radius
               :strength 1.0 :born-tick tick :ttl default-ttl}]
     (merge
-      (case kind
-        (:warp/well :warp/repulsor) (assoc base :base-speed default-base-speed)
-        :heat/source                (assoc base :target-temp heat-target-hot)
-        :heat/sink                  (assoc base :target-temp heat-target-cold)
-        base)
-      opts)))
+     (case kind
+       (:warp/well :warp/repulsor) (assoc base :base-speed default-base-speed)
+       :heat/source                (assoc base :target-temp heat-target-hot)
+       :heat/sink                  (assoc base :target-temp heat-target-cold)
+       base)
+     opts)))
 
 ;; --- Acceleration -----------------------------------------------------------
 
@@ -161,16 +161,16 @@
    proximity² and decay, clamped to [min-temp, max-temp]."
   [ivs body-pos temp tick]
   (let [t' (reduce
-             (fn [t {:keys [position radius target-temp strength] :as iv}]
-               (let [d (sp/dist body-pos position)
-                     R (double radius)]
-                 (if (< d R)
-                   (let [prox (let [u (- 1.0 (/ d R))] (* u u))
-                         ease (* heat-approach (double (or strength 1.0))
-                                 prox (decay-fraction iv tick))]
-                     (+ t (* (- (double target-temp) t) ease)))
-                   t)))
-             (double temp) ivs)]
+            (fn [t {:keys [position radius target-temp strength] :as iv}]
+              (let [d (sp/dist body-pos position)
+                    R (double radius)]
+                (if (< d R)
+                  (let [prox (let [u (- 1.0 (/ d R))] (* u u))
+                        ease (* heat-approach (double (or strength 1.0))
+                                prox (decay-fraction iv tick))]
+                    (+ t (* (- (double target-temp) t) ease)))
+                  t)))
+            (double temp) ivs)]
     (max min-temp (min max-temp t'))))
 
 (defn thermal-contributions
@@ -222,9 +222,9 @@
                                   (keep (fn [eid]
                                           (when (thermal-states (ecs/get-component world eid c/matter-state))
                                             (let [cs (thermal-contributions
-                                                       ivs (ecs/get-component world eid c/position) tick)]
+                                                      ivs (ecs/get-component world eid c/position) tick)]
                                               (when (seq cs) [eid cs])))))
                                   (ecs/entities-with world c/position c/matter-state c/temperature))]
                    (tick/contribution-write-set
-                     c/heat-intervention cell
-                     (keys (get-in world [:components c/heat-intervention])))))))})
+                    c/heat-intervention cell
+                    (keys (get-in world [:components c/heat-intervention])))))))})

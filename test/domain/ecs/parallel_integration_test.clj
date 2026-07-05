@@ -6,12 +6,12 @@
    stays structurally well-formed across ticks. Single-writer now holds, so the
    fold runs with :on-conflict :throw — any runtime write-set overlap fails."
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.ecs.tick :as tick]
-    [domain.physics.collision :as collision]
-    [domain.genesis :as genesis]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.ecs.tick :as tick]
+   [domain.physics.collision :as collision]
+   [domain.genesis :as genesis]))
 
 (defn- parallel-tick
   "One double-buffer tick: advance the logical tick, arm the integrator with the

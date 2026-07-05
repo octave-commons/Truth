@@ -1,8 +1,8 @@
 (ns law.ledger-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.event :as event]
-    [law.ledger :as ledger]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.event :as event]
+   [law.ledger :as ledger]))
 
 (deftest empty-ledger-is-valid
   (testing "An empty ledger has the genesis hash and is valid"

@@ -1,10 +1,10 @@
 (ns domain.ecs.dsl-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.event :as evt]
-    [domain.ecs.dsl :refer [defcomponent defevent defsystem defreaction
-                             install-reaction]]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.event :as evt]
+   [domain.ecs.dsl :refer [defcomponent defevent defsystem defreaction
+                           install-reaction]]))
 
 (defcomponent position
   "Cartesian position."
@@ -49,7 +49,7 @@
 (deftest event-dsl-defines-constructor
   (testing "defevent creates a checked constructor"
     (let [event (->collision 7 #{:a :b} {:normal [1.0 0.0 0.0]
-                                          :depth  0.25})]
+                                         :depth  0.25})]
       (is (= :event/collision (:kind event)))
       (is (= 7 (:tick event)))
       (is (= #{:a :b} (:entities event)))

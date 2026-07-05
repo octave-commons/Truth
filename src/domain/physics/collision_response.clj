@@ -6,9 +6,9 @@
    - elastic-bounce-handler: conserves momentum + KE
    - inelastic-merge-handler: merges two bodies into one"
   (:require
-    [domain.ecs.core       :as ecs]
-    [domain.ecs.components :as c]
-    [shape.spatial         :as sp]))
+   [domain.ecs.core       :as ecs]
+   [domain.ecs.components :as c]
+   [shape.spatial         :as sp]))
 
 (defn- get-body
   "Pull position, velocity, mass for eid from world."

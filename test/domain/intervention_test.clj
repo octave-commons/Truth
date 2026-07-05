@@ -75,7 +75,7 @@
   (let [[w e] (world-with-body [5.0 0 0] 1.0)
         w (-> w
               (assoc :genesis/interventions [(iv/make-intervention :warp/well [0 0 0] 0 {:radius 10})
-                                            (iv/make-intervention :warp/repulsor [10 0 0] 0 {:radius 10})]
+                                             (iv/make-intervention :warp/repulsor [10 0 0] 0 {:radius 10})]
                      :sim/dt 1.0))
         sys (iv/warp-acceleration-system)
         ws ((:run sys) w)]
@@ -90,7 +90,7 @@
 
 (deftest expire-interventions-removes-faded
   (let [w {:tick 1000 :genesis/interventions [(iv/make-intervention :warp/well [0 0 0] 0 {:ttl 500})
-                                             (iv/make-intervention :warp/well [0 0 0] 900 {:ttl 500})]}
+                                              (iv/make-intervention :warp/well [0 0 0] 900 {:ttl 500})]}
         w' (iv/expire-interventions w)]
     (is (= 1 (count (:genesis/interventions w'))))
     (is (= 900 (:born-tick (first (:genesis/interventions w')))))))

@@ -11,15 +11,16 @@ articulate, into geology, ecology, and civilization.
 
 Every phase is a *content layer* over that one world — new components and new
 ordered systems — **never a parallel simulation with its own world model**. Phase
-0 is `domain.phase0`; it is the only Phase 0 sim. There is one renderer,
-`infra.render`, which reads the ECS world as pure data.
+0 physics is `domain.genesis` (its narrative/quest layer is `domain.arc`); it is
+the only Phase 0 sim. There is one renderer, `infra.render`, which reads the ECS
+world as pure data.
 
 This is not a style preference. A second world model was added once (a particle
 gas field running beside the ECS world) and silently became the thing the live
 window rendered, while new physics went into the ECS path — so the two drifted
 apart. That is now removed and forbidden, and `test/architecture_test.clj` fails
 the build if it returns. If you want new physics, add a system + components to
-`domain.phase0/physics-systems`; do not start a second engine.
+`domain.genesis/physics-systems-parallel`; do not start a second engine.
 
 ## Architecture (four quadrants)
 
@@ -45,11 +46,13 @@ component has exactly one writer — gravity→`accel.gravity`, motion→`positi
 `velocity`, structure→`radius`/`density`, classifier→`matter-state`,
 thermal→`temperature`, field→`b-field`, … — enforced by `architecture_test`.
 
-The double-buffer path is `phase0/physics-systems-parallel` (set
-`:phase0/parallel? true`); the live default is still the sequential
-`physics-systems` pipeline until the parallel model is tuned to form a star
-(see the spec §10). The formation physics — Jeans collapse → protostar →
-ignition / brown-dwarf — is grounded in real solar-system formation
+The double-buffer fan-out (`domain.genesis/physics-systems-parallel`, run by
+`domain.ecs.tick/run-parallel`) is the **only** tick path — the old sequential
+pipeline is deleted, and there is no serial "barrier" tier: every system,
+lifecycle included, reads the frozen snapshot and emits a single-writer write-set
+(entity spawn/reap goes through `spawn-request.*`/`consumed.*` markers
+materialized at world-construction). The formation physics — Jeans collapse →
+protostar → ignition / brown-dwarf — is grounded in real solar-system formation
 (`docs/notes/2026.06.26-authentic-phase0-formation-physics.md`).
 
 - **`domain.regime`** — the dimensionless-number classifier (plasma β, Mach,

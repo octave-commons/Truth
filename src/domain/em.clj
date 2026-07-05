@@ -668,8 +668,8 @@
                                        (keys (get-in world [:components c/torque-em]))))]
                (if (:genesis/profile-subsystems? world)
                  (assoc ws :genesis/_profile (merge-with +
-                                                        (or (:genesis/_profile ws) {})
-                                                        {:em-lorentz/compute (double dt-compute)}))
+                                                         (or (:genesis/_profile ws) {})
+                                                         {:em-lorentz/compute (double dt-compute)}))
                  ws)))})
 
 ;; --- Magnetosphere coupling --------------------------------------------------

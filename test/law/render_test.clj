@@ -1,8 +1,8 @@
 (ns law.render-test
   "Tests for Malli schemas in law.render."
   (:require
-    [clojure.test :refer [deftest testing is]]
-    [law.render :as lr]))
+   [clojure.test :refer [deftest testing is]]
+   [law.render :as lr]))
 
 (deftest test-render-context-schema
   (testing "Valid and invalid render contexts"

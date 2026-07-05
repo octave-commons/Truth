@@ -35,10 +35,34 @@
   [items]
   (bh/build-tree items))
 
+(defn- com-from-items
+  "Mass-weighted centre of mass of spatial `items`, using the same arithmetic
+   and accumulation order as `domain.genesis/center-of-mass`. The items vector
+   is in eid order, so the result is identical to the serial ECS walk."
+  [items]
+  (if (seq items)
+    (let [[sx sy sz sm]
+          (reduce (fn [[ax ay az am] item]
+                    (let [[x y z] (:position item)
+                          m (double (:mass item))]
+                      [(+ ax (* (double x) m))
+                       (+ ay (* (double y) m))
+                       (+ az (* (double z) m))
+                       (+ am m)]))
+                  [0.0 0.0 0.0 0.0]
+                  items)]
+      (if (pos? sm) [(/ sx sm) (/ sy sm) (/ sz sm)] [0.0 0.0 0.0]))
+    [0.0 0.0 0.0]))
+
 (defn spatial-index
   "Build one Barnes–Hut octree from ALL entities with position+mass and store it
    on the world at :genesis/spatial-tree. Runs before the parallel fan-out so
    every consumer (gravity, SPH, EM, collision) reads the same tree.
+
+   Also computes the snapshot's centre of mass and stores it as
+   :genesis/frame-offset, folding the formerly serial COM scan into the same
+   projection so tick-world no longer pays for a separate pass
+   (docs/specs/perf-60fps-parallel-tick.md).
 
    Consumers filter query results by :matter-state as needed:
      - gravity: all bodies (no filter needed)
@@ -47,9 +71,9 @@
      - collision: only non-:nebula (resolved bodies)"
   [world]
   (let [items (->> (ecs/entities-with world c/position c/mass c/radius)
-                   ;; per-entity projection (7 component reads) fans out in
-                   ;; parallel; par-mapv preserves eid order so the item vector
-                   ;; is identical to the serial walk's.
+                  ;; per-entity projection (7 component reads) fans out in
+                  ;; parallel; par-mapv preserves eid order so the item vector
+                  ;; is identical to the serial walk's.
                    (par/par-mapv
                     (fn [eid]
                       (when (some? (ecs/get-component world eid c/radius))
@@ -62,6 +86,7 @@
                          :pressure     (ecs/get-component world eid c/pressure)
                          :b-field      (ecs/get-component world eid c/b-field)})))
                    (filterv some?))
+        com  (com-from-items items)
         ;; tree and grid are independent projections of the same items — build
         ;; the octree in a future while the grid is bucketed on this thread.
         treef (future (bh/build-tree items))
@@ -75,7 +100,8 @@
     (assoc world
            :genesis/spatial-tree tree
            :genesis/spatial-grid grid
-           :genesis/spatial-items items)))
+           :genesis/spatial-items items
+           :genesis/frame-offset com)))
 
 (defn- point-aabb-dist2
   "Squared distance from point `p` to axis-aligned box `bb` (0 if inside)."

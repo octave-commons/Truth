@@ -42,9 +42,9 @@
     (let [w     (genesis/create-world {:gas-count 20})
           [w b] (ecs/spawn w)
           bad   (ecs/put-components w b
-                  {c/position (sp/vec3 0.0 0.0 0.0) c/velocity (sp/vec3 0.0 0.0 0.0)
-                   c/mass 1.0e28 c/radius 1.0e12 c/temperature -5.0 c/density 1.0e-15
-                   c/composition {:H 1.0} c/matter-state :nebula c/pressure 0.0})]
+                                    {c/position (sp/vec3 0.0 0.0 0.0) c/velocity (sp/vec3 0.0 0.0 0.0)
+                                     c/mass 1.0e28 c/radius 1.0e12 c/temperature -5.0 c/density 1.0e-15
+                                     c/composition {:H 1.0} c/matter-state :nebula c/pressure 0.0})]
       (is (thrown? clojure.lang.ExceptionInfo (genesis/assert-seed-contracts! bad))))))
 
 (deftest guard-can-be-disabled
@@ -52,8 +52,8 @@
     (let [w     (genesis/create-world {:gas-count 20})
           [w b] (ecs/spawn w)
           bad   (-> (ecs/put-components w b
-                      {c/position (sp/vec3 0.0 0.0 0.0) c/velocity (sp/vec3 0.0 0.0 0.0)
-                       c/mass 1.0e28 c/radius 1.0e12 c/temperature -5.0 c/density 1.0e-15
-                       c/composition {:H 1.0} c/matter-state :nebula c/pressure 0.0})
+                                        {c/position (sp/vec3 0.0 0.0 0.0) c/velocity (sp/vec3 0.0 0.0 0.0)
+                                         c/mass 1.0e28 c/radius 1.0e12 c/temperature -5.0 c/density 1.0e-15
+                                         c/composition {:H 1.0} c/matter-state :nebula c/pressure 0.0})
                     (assoc :genesis/validate-seed? false))]
       (is (some? (genesis/assert-seed-contracts! bad))))))

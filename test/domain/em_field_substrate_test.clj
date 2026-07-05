@@ -26,17 +26,17 @@
          (assoc :sim/dt 1.0e12 :tick 1
                 :genesis/wind-parcel-mass 1.0e26)
          (ecs/put-components eid
-           {c/matter-state   :star
-            c/mass           law/solar-mass
-            c/radius         1.0e9
-            c/position       (sp/vec3 0.0 0.0 0.0)
-            c/velocity       (sp/vec3 0.0 0.0 0.0)
-            c/temperature    1.0e7
-            c/density        1.0e3
-            c/pressure       1.0e13
-            c/composition    {:H 0.7 :He 0.3}
-            c/b-field        (sp/vec3 0.0 0.0 0.1)
-            c/wind-reservoir 2.0e26}))
+                             {c/matter-state   :star
+                              c/mass           law/solar-mass
+                              c/radius         1.0e9
+                              c/position       (sp/vec3 0.0 0.0 0.0)
+                              c/velocity       (sp/vec3 0.0 0.0 0.0)
+                              c/temperature    1.0e7
+                              c/density        1.0e3
+                              c/pressure       1.0e13
+                              c/composition    {:H 0.7 :He 0.3}
+                              c/b-field        (sp/vec3 0.0 0.0 0.1)
+                              c/wind-reservoir 2.0e26}))
      eid]))
 
 (defn- launched-parcel [world star]

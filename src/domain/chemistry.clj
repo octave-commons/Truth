@@ -54,13 +54,13 @@
     ;; Very hot - everything is atomic/ionized
     (> temperature 3000)
     elemental-comp
-    
+
     ;; Warm - simple molecules form
     (> temperature 1000)
     (-> elemental-comp
         (assoc :H2 (* 0.5 (:H elemental-comp 0)))
         (update :H #(* % 0.5)))
-    
+
     ;; Cool - complex molecules and ices possible
     :else
     (let [h (:H elemental-comp 0)
@@ -98,13 +98,13 @@
                      (get composition :NH3 0)
                      (get composition :CH4 0))
         rocks (+ (get composition :Si 0)
-                (get composition :O 0)
-                (get composition :Mg 0)
-                (get composition :Fe 0)
-                (get composition :Al 0)
-                (get composition :Ca 0))
+                 (get composition :O 0)
+                 (get composition :Mg 0)
+                 (get composition :Fe 0)
+                 (get composition :Al 0)
+                 (get composition :Ca 0))
         metals (+ (get composition :Fe 0)
-                 (get composition :Ni 0))
+                  (get composition :Ni 0))
         total (reduce + (vals composition))]
     (cond
       (> (/ volatiles total) 0.9) :gas-giant
@@ -126,8 +126,8 @@
   (let [v-escape (escape-velocity body-mass body-radius)
         molecular-mass (get-in element-properties [gas-element :mass] 1.0)
         ;; Maxwell-Boltzmann thermal velocity
-        v-thermal (Math/sqrt (/ (* 3 1.38e-23 temperature) 
-                               (* molecular-mass 1.66e-27)))
+        v-thermal (Math/sqrt (/ (* 3 1.38e-23 temperature)
+                                (* molecular-mass 1.66e-27)))
         ;; Jeans parameter - need v_escape > 6 * v_thermal for long-term retention
         jeans-parameter (/ v-escape v-thermal)]
     (> jeans-parameter 6)))
@@ -137,7 +137,7 @@
   [body-mass body-radius composition temperature]
   (reduce (fn [atmo element]
             (if (and (> (get composition element 0) 0.001)
-                    (can-retain-gas? body-mass body-radius element temperature))
+                     (can-retain-gas? body-mass body-radius element temperature))
               (assoc atmo element (get composition element))
               atmo))
           {}
@@ -168,10 +168,10 @@
                             (double (get composition :ices 0.0))) 0.01))
         temp-ok (and (> temperature 273) (< temperature 373))
         has-carbon (> (+ (get composition :C 0)
-                        (get composition :CO2 0)
-                        (get composition :CH4 0)) 0.0001)
+                         (get composition :CO2 0)
+                         (get composition :CH4 0)) 0.0001)
         has-nitrogen (> (+ (get composition :N 0)
-                          (get composition :NH3 0)) 0.0001)
+                           (get composition :NH3 0)) 0.0001)
         pressure-ok (and (> pressure 1000) (< pressure 1e8))]
     (cond
       (and has-water temp-ok has-carbon has-nitrogen pressure-ok) 1.0

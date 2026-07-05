@@ -4,10 +4,10 @@
    projections, aggregates, and rewind handlers.
    Runtime stays plain ECS maps and pure functions."
   (:require
-    [malli.core :as m]
-    [law.ecs-dsl :as law]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.event :as evt]))
+   [malli.core :as m]
+   [law.ecs-dsl :as law]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.event :as evt]))
 
 (defn query-rows
   "Return [eid {component-key value ...}] rows for every entity
@@ -44,10 +44,10 @@
         validator-sym (symbol (str nm "-validator"))
         pred-sym      (symbol (str nm "?"))]
     (law/assert-component-def!
-      {:name nm
-       :doc doc
-       :schema schema
-       :key k})
+     {:name nm
+      :doc doc
+      :schema schema
+      :key k})
     `(do
        (def ~schema-sym ~schema)
        (def ~validator-sym (m/validator ~schema-sym))
@@ -72,11 +72,11 @@
         entity-count  (:entity-count options)
         rev?          (:reversible? options false)]
     (law/assert-event-def!
-      {:name nm
-       :doc doc
-       :payload-schema payload-schema
-       :key k
-       :options options})
+     {:name nm
+      :doc doc
+      :payload-schema payload-schema
+      :key k
+      :options options})
     `(do
        (def ~schema-sym ~payload-schema)
        (def ~validator-sym (m/validator ~schema-sym))
@@ -87,31 +87,31 @@
                     :event/key ~k
                     :event/payload-schema '~schema-sym
                     :event/entity-count ~entity-count
-                     :event/reversible? ~rev?)
+                    :event/reversible? ~rev?)
        (defn ~ctor-sym
          {:doc ~doc
           :ecs/kind :event-constructor}
          ([tick# entities# payload#]
           (~ctor-sym tick# entities# payload# nil))
-          ([tick# entities# payload# cause#]
-           (let [~'entities-set (set entities#)]
-             ~@(when entity-count
-                 [(list 'when-not (list '= entity-count '(count entities-set))
-                        (list 'throw (list 'ex-info "Invalid entity count for event"
-                                           {:kind ::invalid-entity-count
-                                            :event k
-                                            :expected entity-count
-                                            :actual '(count entities-set)})))])
-             (when-not (~validator-sym payload#)
-               (throw (ex-info "Invalid event payload"
-                               {:kind ::invalid-event-payload
-                                :event ~k
-                                :payload payload#})))
-             (evt/->event {:tick tick#
-                           :kind ~k
-                           :entities ~'entities-set
-                           :payload payload#
-                           :cause cause#}))))
+         ([tick# entities# payload# cause#]
+          (let [~'entities-set (set entities#)]
+            ~@(when entity-count
+                [(list 'when-not (list '= entity-count '(count entities-set))
+                       (list 'throw (list 'ex-info "Invalid entity count for event"
+                                          {:kind ::invalid-entity-count
+                                           :event k
+                                           :expected entity-count
+                                           :actual '(count entities-set)})))])
+            (when-not (~validator-sym payload#)
+              (throw (ex-info "Invalid event payload"
+                              {:kind ::invalid-event-payload
+                               :event ~k
+                               :payload payload#})))
+            (evt/->event {:tick tick#
+                          :kind ~k
+                          :entities ~'entities-set
+                          :payload payload#
+                          :cause cause#}))))
        (defn ~emit-sym
          {:doc ~doc
           :ecs/kind :event-emitter}
@@ -127,9 +127,9 @@
 (defmacro defsystem
   [nm doc {:keys [query]} [world-sym rows-sym] & body]
   (law/assert-system-def!
-    {:name nm
-     :doc doc
-     :query query})
+   {:name nm
+    :doc doc
+    :query query})
   `(defn ~nm
      {:doc ~doc
       :ecs/kind :system

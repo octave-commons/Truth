@@ -1,11 +1,11 @@
 (ns domain.ecs.ledger-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.event :as evt]
-    [domain.ecs.dsl :refer [defcomponent defevent
-                             defprojection defaggregate]]
-    [domain.ecs.ledger :as ledger]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.event :as evt]
+   [domain.ecs.dsl :refer [defcomponent defevent
+                           defprojection defaggregate]]
+   [domain.ecs.ledger :as ledger]))
 
 (defcomponent hp     "Hit points."  :int)
 (defcomponent alive? "Alive flag."  :boolean)

@@ -275,7 +275,7 @@
     ;; accreting the surrounding gas until it ignites. Resolved bodies merge only
     ;; on literal collision; gas accretion is the dominant growth channel.
     (let [w0    (-> (genesis/create-world {:gas-count 50 :nebula-radius 1.2e16
-                                          :contraction-time 2e12 :spin 0.55})
+                                           :contraction-time 2e12 :spin 0.55})
                     ;; fixed coarse step keeps the emergence regression fast and
                     ;; independent of the pacing curve (pacing covered elsewhere).
                     (assoc :genesis/adaptive-pacing? false :sim/dt 1.0e12))

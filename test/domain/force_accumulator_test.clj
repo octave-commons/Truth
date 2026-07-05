@@ -3,12 +3,12 @@
    accel.lorentz (em). Each emitter writes only its own contribution and clears
    it from bodies that stop being active."
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.ecs.tick :as tick]
-    [domain.hydro :as hydro]
-    [domain.em :as em]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.ecs.tick :as tick]
+   [domain.hydro :as hydro]
+   [domain.em :as em]))
 
 (defn- gas [w eid pos]
   (ecs/put-components w eid {c/matter-state :nebula

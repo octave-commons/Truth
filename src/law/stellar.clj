@@ -232,7 +232,7 @@
   [{:keys [mass orbital-radius]} other-bodies]
   ;; Simplified Stern-Levison parameter
   (let [hill-radius (* orbital-radius (Math/pow (/ mass (* 3 1.989e30)) 0.333))
-        nearby (filter #(< (- (:orbital-radius %) orbital-radius) (* 2 hill-radius)) 
+        nearby (filter #(< (- (:orbital-radius %) orbital-radius) (* 2 hill-radius))
                        other-bodies)
         nearby-mass (reduce + 0 (map :mass nearby))]
     (> mass (* 100 nearby-mass)))) ;; dominates by factor of 100
@@ -249,7 +249,7 @@
 (def matter-state-contract
   (contract/->contract
    {:id       ::matter-state
-    :shape-id ::stellar-body  
+    :shape-id ::stellar-body
     :kind     :type
     :schema   matter-state-schema
     :name     "Matter State"

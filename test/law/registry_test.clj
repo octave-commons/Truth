@@ -1,23 +1,23 @@
 (ns law.registry-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [shape.core :as shape]
-    [law.contract :as contract]
-    [law.registry :as registry]))
+   [clojure.test :refer [deftest is testing]]
+   [shape.core :as shape]
+   [law.contract :as contract]
+   [law.registry :as registry]))
 
 (defn demo-resource-contract []
   (let [shape (shape/->shape
-                {:id          (shape/new-shape-id)
-                 :kind        :state
-                 :form        {:id int?}
-                 :name        "simple-resource"
-                 :description "demo"})]
+               {:id          (shape/new-shape-id)
+                :kind        :state
+                :form        {:id int?}
+                :name        "simple-resource"
+                :description "demo"})]
     (contract/->contract
-      {:id       (shape/new-resource-id)
-       :shape-id (:id shape)
-       :kind     :type
-       :schema   {:id int?}
-       :name     "simple-resource-type"})))
+     {:id       (shape/new-resource-id)
+      :shape-id (:id shape)
+      :kind     :type
+      :schema   {:id int?}
+      :name     "simple-resource-type"})))
 
 (deftest registry-enforces-contract
   (testing "Only resources that pass the registry's contract can be added"
@@ -27,9 +27,9 @@
       (is (= ct (:resource-contract reg1)))
       (is (= {:id 1} (registry/get-by-id reg1 1)))
       (is (thrown-with-msg?
-            clojure.lang.ExceptionInfo
-            #"contract.*violation"
-            (registry/add reg1 {:id "not-int"}))))))
+           clojure.lang.ExceptionInfo
+           #"contract.*violation"
+           (registry/add reg1 {:id "not-int"}))))))
 
 (deftest registry-index-consistency
   (testing "Index mirrors the items vector and can be recomputed"
@@ -49,6 +49,6 @@
           reg (-> (registry/->registry ct)
                   (registry/add {:id 1}))]
       (is (thrown-with-msg?
-            clojure.lang.ExceptionInfo
-            #"duplicate.*id"
-            (registry/add reg {:id 1}))))))
+           clojure.lang.ExceptionInfo
+           #"duplicate.*id"
+           (registry/add reg {:id 1}))))))

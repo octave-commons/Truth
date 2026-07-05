@@ -32,8 +32,8 @@
   "True anomaly ν from eccentric anomaly E and eccentricity e."
   [^double E ^double e]
   (* 2.0 (Math/atan2
-           (* (Math/sqrt (+ 1.0 e)) (Math/sin (* E 0.5)))
-           (* (Math/sqrt (- 1.0 e)) (Math/cos (* E 0.5))))))
+          (* (Math/sqrt (+ 1.0 e)) (Math/sin (* E 0.5)))
+          (* (Math/sqrt (- 1.0 e)) (Math/cos (* E 0.5))))))
 
 (defn orbital-state
   "Compute position and velocity in the orbital plane from classic elements."

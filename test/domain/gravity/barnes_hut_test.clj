@@ -96,7 +96,7 @@
           tree (bh/build-tree bodies)
           soa (bodies->soa bodies)
           θ 0.5
-          soa-result (bh/acceleration-for-soa G θ 1.0e-4 tree soa nil)]
+          soa-result (bh/acceleration-for-soa G θ 1.0e-4 soa nil)]
       (doseq [body bodies]
         (let [expected (bh/acceleration G θ 1.0e-4 tree body)
               actual (get soa-result (:id body))]
@@ -109,11 +109,11 @@
              :position [1.0 2.0 3.0] :velocity [0.0 0.0 0.0]}
           tree (bh/build-tree [b])
           soa (bodies->soa [b])]
-      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 tree soa nil) :only))))))
+      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 soa nil) :only))))))
 
 (deftest test-soa-empty-tree
   (testing "Empty tree returns zero acceleration for all SoA eids"
     (let [b {:id :lonely :mass 1.0 :radius 1.0 :kind :body/gas
              :position [1.0 2.0 3.0] :velocity [0.0 0.0 0.0]}
           soa (bodies->soa [b])]
-      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 nil soa nil) :lonely))))))
+      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 soa nil) :lonely))))))

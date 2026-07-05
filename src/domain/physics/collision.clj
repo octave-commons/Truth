@@ -18,12 +18,12 @@
    sparse halo) that a single grid cell-size cannot. Overlap queries prune any
    octree node whose AABB is farther than the query's reach."
   (:require
-    [domain.ecs.core           :as ecs]
-    [domain.ecs.components     :as c]
-    [domain.ecs.event          :as event]
-    [domain.ecs.registry       :as reg]
-    [domain.gravity.barnes-hut :as bh]
-    [shape.spatial             :as sp]))
+   [domain.ecs.core           :as ecs]
+   [domain.ecs.components     :as c]
+   [domain.ecs.event          :as event]
+   [domain.ecs.registry       :as reg]
+   [domain.gravity.barnes-hut :as bh]
+   [shape.spatial             :as sp]))
 
 (defn- collidable-bodies
   "Project world into vec of [eid position radius velocity mass] for all RESOLVED
@@ -41,15 +41,14 @@
    accretion radius — see `stellar/sink-formation-system`). Keeping the two
    channels distinct is the standard sink-particle split: gas accretes via the
    gravitational capture radius; bound bodies merge only on contact."
-   [world]
-   (->> (ecs/all-of world c/position c/radius c/mass c/velocity c/matter-state)
-        (filter (fn [[_eid comps]] (not= :nebula (comps c/matter-state))))
-        (mapv (fn [[eid comps]]
-                [eid (comps c/position)
-                 (double (comps c/radius))
-                 (comps c/velocity)
-                 (double (comps c/mass))]))))
-
+  [world]
+  (->> (ecs/all-of world c/position c/radius c/mass c/velocity c/matter-state)
+       (filter (fn [[_eid comps]] (not= :nebula (comps c/matter-state))))
+       (mapv (fn [[eid comps]]
+               [eid (comps c/position)
+                (double (comps c/radius))
+                (comps c/velocity)
+                (double (comps c/mass))]))))
 
 (defn- pair-map [[eid-a pos-a rad-a _vel-a] [eid-b pos-b rad-b _vel-b] d]
   {:eid-a  eid-a :eid-b  eid-b
@@ -126,20 +125,20 @@
   [world pairs]
   (let [tick (:tick world)]
     (reduce (fn [w {:keys [eid-a eid-b pos-a pos-b
-                            rad-a rad-b depth normal]}]
+                           rad-a rad-b depth normal]}]
               (event/dispatch w
-                (event/->event
-                  {:tick     tick
-                   :kind     :event/collision
-                   :entities #{eid-a eid-b}
-                   :payload  {:eid-a  eid-a
-                              :eid-b  eid-b
-                              :pos-a  pos-a
-                              :pos-b  pos-b
-                              :rad-a  rad-a
-                              :rad-b  rad-b
-                              :depth  depth
-                              :normal normal}})))
+                              (event/->event
+                               {:tick     tick
+                                :kind     :event/collision
+                                :entities #{eid-a eid-b}
+                                :payload  {:eid-a  eid-a
+                                           :eid-b  eid-b
+                                           :pos-a  pos-a
+                                           :pos-b  pos-b
+                                           :rad-a  rad-a
+                                           :rad-b  rad-b
+                                           :depth  depth
+                                           :normal normal}})))
             world
             pairs)))
 

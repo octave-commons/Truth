@@ -3,12 +3,12 @@
    its own write-set system (accel.gravity); a thin motion integrator sums every
    acceleration contribution and advances position/velocity symplectically."
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.orbital.system :as orbital]
-    [domain.spatial.index  :as spatial]
-    [law.stellar :as law]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.orbital.system :as orbital]
+   [domain.spatial.index  :as spatial]
+   [law.stellar :as law]))
 
 (defn- body [w eid pos vel]
   (ecs/put-components w eid {c/position pos c/velocity vel
@@ -41,7 +41,7 @@
   (let [[w e0] (ecs/spawn (ecs/empty-world))
         [w e1] (ecs/spawn w)
         w  (-> (body w e0 [-1.0e12 0.0 0.0] [0.0 0.0 0.0])
-               (body e1 [ 1.0e12 0.0 0.0] [0.0 0.0 0.0]))
+               (body e1 [1.0e12 0.0 0.0] [0.0 0.0 0.0]))
         w  (spatial/spatial-index w)
         sys (orbital/gravity-acceleration law/G 0.5 5.0e14)
         ws  ((:run sys) w)

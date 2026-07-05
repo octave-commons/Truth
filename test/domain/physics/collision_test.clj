@@ -1,12 +1,12 @@
 (ns domain.physics.collision-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core                  :as ecs]
-    [domain.ecs.components            :as c]
-    [domain.ecs.event                 :as event]
-    [domain.physics.collision         :as col]
-    [domain.physics.collision-response :as response]
-    [domain.spatial.index             :as spatial]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core                  :as ecs]
+   [domain.ecs.components            :as c]
+   [domain.ecs.event                 :as event]
+   [domain.physics.collision         :as col]
+   [domain.physics.collision-response :as response]
+   [domain.spatial.index             :as spatial]))
 
 (defn- two-body-world
   "Spawn two collidable bodies, optionally overlapping."
@@ -23,17 +23,16 @@
                                     c/matter-state :debris
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position (if overlap?
-                                                  [1.5 0.0 0.0]
-                                                  [5.0 0.0 0.0])
-                                     c/velocity  [-1.0 0.0 0.0]
-                                     c/mass      1.0
-                                     c/radius    1.0
-                                     c/accretion-radius 1.0
-                                     c/matter-state :debris
-                                     c/body-kind :body/test})
+                                                 [1.5 0.0 0.0]
+                                                 [5.0 0.0 0.0])
+                                    c/velocity  [-1.0 0.0 0.0]
+                                    c/mass      1.0
+                                    c/radius    1.0
+                                    c/accretion-radius 1.0
+                                    c/matter-state :debris
+                                    c/body-kind :body/test})
         w (spatial/spatial-index w)]
     [w e1 e2]))
-
 
 (deftest collision-detected-when-overlapping
   (let [[w _ _] (two-body-world true)
@@ -73,21 +72,20 @@
                                     c/matter-state :debris
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position [2.5 0.0 0.0]
-                                     c/velocity  [0.0 0.0 0.0]
-                                     c/mass      1.0
-                                     c/radius    0.5
-                                     c/accretion-radius 0.5
-                                     c/matter-state :debris
-                                     c/body-kind :body/test})
+                                    c/velocity  [0.0 0.0 0.0]
+                                    c/mass      1.0
+                                    c/radius    0.5
+                                    c/accretion-radius 0.5
+                                    c/matter-state :debris
+                                    c/body-kind :body/test})
         w (event/register-handler w :event/collision
-                                   response/inelastic-merge-handler)
+                                  response/inelastic-merge-handler)
         w (spatial/spatial-index w)
         w' (col/collision-detection-system w)]
     (is (not (contains? (:entities w') e2))
         "Smaller body should be despawned")
     (is (= 11.0 (ecs/get-component w' e1 c/mass))
         "Larger body should absorb mass")))
-
 
 (deftest literal-overlap-ignores-non-touching-fast-bodies
   ;; Detection is literal overlap, NOT swept prediction: two fast bodies that are
@@ -97,24 +95,24 @@
   ;; collapsing (converging) cloud that never actually touches. A high-speed
   ;; fly-through is not an accretion event.
   (let [[w e1] (ecs/spawn (-> (ecs/empty-world)
-                               event/with-ledger
-                               event/with-handlers
-                               (assoc :sim/dt 1.0)))
+                              event/with-ledger
+                              event/with-handlers
+                              (assoc :sim/dt 1.0)))
         [w e2] (ecs/spawn w)
-         w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
-                                     c/velocity  [3.0 0.0 0.0]
-                                     c/mass      1.0
-                                     c/radius    1.0
-                                     c/accretion-radius 1.0
-                                     c/matter-state :debris
-                                     c/body-kind :body/test})
-         w (ecs/put-components w e2 {c/position [5.0 0.0 0.0]
-                                      c/velocity  [-3.0 0.0 0.0]
-                                      c/mass      1.0
-                                      c/radius    1.0
-                                      c/accretion-radius 1.0
-                                      c/matter-state :debris
-                                      c/body-kind :body/test})
+        w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
+                                    c/velocity  [3.0 0.0 0.0]
+                                    c/mass      1.0
+                                    c/radius    1.0
+                                    c/accretion-radius 1.0
+                                    c/matter-state :debris
+                                    c/body-kind :body/test})
+        w (ecs/put-components w e2 {c/position [5.0 0.0 0.0]
+                                    c/velocity  [-3.0 0.0 0.0]
+                                    c/mass      1.0
+                                    c/radius    1.0
+                                    c/accretion-radius 1.0
+                                    c/matter-state :debris
+                                    c/body-kind :body/test})
         w (spatial/spatial-index w)
         w' (col/collision-detection-system w)]
     (is (empty? (event/events-of-kind w' :event/collision))
@@ -141,10 +139,10 @@
                                       c/radius    1e12
                                       c/matter-state :nebula})
           w (ecs/put-components w e2 {c/position [1.0e12 0.0 0.0]
-                                       c/velocity  [0.0 0.0 0.0]
-                                       c/mass      1e28
-                                       c/radius    1e12
-                                       c/matter-state :nebula})
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/matter-state :nebula})
           w (spatial/spatial-index w)
           w' (col/collision-detection-system w)]
       (is (empty? (event/events-of-kind w' :event/collision))
@@ -157,17 +155,17 @@
                                 event/with-handlers))
           [w e2] (ecs/spawn w)
           w (ecs/put-components w e1 {c/position [0.0 0.0 0.0]
-                                       c/velocity  [0.0 0.0 0.0]
-                                       c/mass      1e28
-                                       c/radius    1e12
-                                       c/accretion-radius 1e12
-                                       c/matter-state :debris})
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/accretion-radius 1e12
+                                      c/matter-state :debris})
           w (ecs/put-components w e2 {c/position [1.0e12 0.0 0.0]
-                                       c/velocity  [0.0 0.0 0.0]
-                                       c/mass      1e28
-                                       c/radius    1e12
-                                       c/accretion-radius 1e12
-                                       c/matter-state :debris})
+                                      c/velocity  [0.0 0.0 0.0]
+                                      c/mass      1e28
+                                      c/radius    1e12
+                                      c/accretion-radius 1e12
+                                      c/matter-state :debris})
           w (spatial/spatial-index w)
           w' (col/collision-detection-system w)]
       (is (seq (event/events-of-kind w' :event/collision))

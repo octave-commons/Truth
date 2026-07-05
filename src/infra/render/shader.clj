@@ -6,10 +6,10 @@
    :source string. This gives us named slots for validation and hot-reload
    without taking on a Clojure-to-GLSL compiler dependency."
   (:require
-    [clojure.string :as str]
-    [law.render :as law])
+   [clojure.string :as str]
+   [law.render :as law])
   (:import
-    (org.lwjgl.opengl GL20)))
+   (org.lwjgl.opengl GL20)))
 
 ;; ---------------------------------------------------------------------------
 ;; Program cache

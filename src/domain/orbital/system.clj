@@ -88,11 +88,10 @@
    in the tree. Self-gravity is skipped by the Barnes–Hut walker at leaf nodes
    via the body's `:id`.
 
-    When `:genesis/physics-soa` is present, gravity projects drift-predicted
-    body maps from the SoA arrays, builds a private Barnes–Hut tree from those
-    predicted positions, and walks it with the same scalar traversal used by the
-    non-SoA path. This is faster than the array-specialised path it replaced and
-    keeps force/position alignment for the next-tick kick.
+   When `:genesis/physics-soa` is present, gravity builds an index-leaf
+   Barnes–Hut tree directly from the SoA arrays and walks it reading source
+   positions/masses straight from those arrays (`bh/acceleration-for-soa`) —
+   no per-tick body-map projection.
 
    With the integrator in the fan-out (spec Fix 5), the kick this system emits
    is applied NEXT tick — to the post-drift positions. So when the SoA carries
@@ -108,36 +107,16 @@
   {:id     :gravity
    :writes #{c/accel-gravity}
    :run    (fn [world]
-             (let [tree (:genesis/spatial-tree world)]
-               (if-let [soa (:genesis/physics-soa world)]
-                 (let [eids      (:eids soa)
-                       n         (:n soa)
-                       ^doubles ms (:mass soa)
-                       ^doubles pxs (or (:px-pred soa) (:px soa))
-                       ^doubles pys (or (:py-pred soa) (:py soa))
-                       ^doubles pzs (or (:pz-pred soa) (:pz soa))
-                       bodies    (mapv (fn [i]
-                                         (let [ii (int i)]
-                                           {:id       (nth eids ii)
-                                            :mass     (aget ms ii)
-                                            :position [(aget pxs ii)
-                                                       (aget pys ii)
-                                                       (aget pzs ii)]}))
-                                       (range n))
-                       tree      (bh/build-tree bodies)]
-                   {c/accel-gravity
-                    (into {}
-                          (par/par-mapv
-                           (fn [body]
-                             [(:id body) (bh/acceleration G theta softening tree body)])
-                           bodies))})
-                 (let [bodies (:genesis/spatial-items world (world->bodies world))]
-                   {c/accel-gravity
-                    (into {}
-                          (par/par-mapv
-                           (fn [body]
-                             [(:id body) (bh/acceleration G theta softening tree body)])
-                           bodies))}))))})
+             (if-let [soa (:genesis/physics-soa world)]
+               {c/accel-gravity (bh/acceleration-for-soa G theta softening soa nil)}
+               (let [tree   (:genesis/spatial-tree world)
+                     bodies (:genesis/spatial-items world (world->bodies world))]
+                 {c/accel-gravity
+                  (into {}
+                        (par/par-mapv
+                         (fn [body]
+                           [(:id body) (bh/acceleration G theta softening tree body)])
+                         bodies))})))})
 
 (defn motion-integration
   "Write-set system: sum all acceleration contributions and advance the body by

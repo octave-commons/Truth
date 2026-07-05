@@ -12,8 +12,7 @@
    is a bug.
 
    See: docs/research/cosmology/primordial-nucleosynthesis-yields.md §7
-   See: docs/research/phase1-radiation-plasma-truth.md §5-7"
-  )
+   See: docs/research/phase1-radiation-plasma-truth.md §5-7")
 
 ;; ============================================================================
 ;; Phase 0: BBN Initial Composition
@@ -87,7 +86,7 @@
              world' (deuterium-depletion-system world)
              eid    (first (ecs/entities-with world' c/matter-state))]
           (is (= 5e-6 (:D (ecs/get-component world' eid c/composition))))))")
- 
+
 ;; ============================================================================
 ;; Phase 1: Stellar SED
 ;; Source: phase1-radiation-plasma-truth.md §2

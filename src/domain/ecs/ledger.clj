@@ -5,16 +5,16 @@
 ;; ---- Data shapes -----------------------------------------------------------
 
 (defrecord Ledger
-  [events    ;; vector of event maps, append-only
-   cursor])  ;; integer: index of next unread position (monotone)
+           [events    ;; vector of event maps, append-only
+            cursor])  ;; integer: index of next unread position (monotone)
 
 (defn empty-ledger
   []
   (->Ledger [] 0))
 
 (defrecord Checkpoint
-  [cursor    ;; ledger index at the point of checkpointing
-   value])   ;; materialized aggregate value at cursor
+           [cursor    ;; ledger index at the point of checkpointing
+            value])   ;; materialized aggregate value at cursor
 
 (defn append
   "Append a single event to the ledger. Returns a new Ledger."

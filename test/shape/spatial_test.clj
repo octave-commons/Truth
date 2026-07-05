@@ -1,7 +1,7 @@
 (ns shape.spatial-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [shape.spatial :as spatial]))
+   [clojure.test :refer [deftest is testing]]
+   [shape.spatial :as spatial]))
 
 (deftest vec3-ops
   (testing "Basic vec3 arithmetic and norms"
@@ -42,12 +42,12 @@
 (deftest body-shape
   (testing "Bodies have mass, radius, position, velocity, and kind"
     (let [b (spatial/->body
-              {:id       1
-               :mass     5.972e24
-               :radius   6.371e6
-               :kind     :body/planet
-               :position (spatial/vec3 0.0 0.0 0.0)
-               :velocity (spatial/vec3 0.0 0.0 0.0)})]
+             {:id       1
+              :mass     5.972e24
+              :radius   6.371e6
+              :kind     :body/planet
+              :position (spatial/vec3 0.0 0.0 0.0)
+              :velocity (spatial/vec3 0.0 0.0 0.0)})]
       (is (= 1 (:id b)))
       (is (= :body/planet (:kind b)))
       (is (= 5.972e24 (:mass b)))

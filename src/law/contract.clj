@@ -3,11 +3,11 @@
    They do not perform side-effects; they return facts about validity
    that other layers can record in the ledger."
   (:require
-    ^:clj-kondo/ignore [shape.core :as shape]
-    [clojure.set :as set]))
+   ^:clj-kondo/ignore [shape.core :as shape]
+   [clojure.set :as set]))
 
 (defrecord Contract
-  [id shape-id kind schema nm description on-true on-false on-any])
+           [id shape-id kind schema nm description on-true on-false on-any])
 
 (defn ->contract
   "Construct a Contract. Required keys:
@@ -38,18 +38,18 @@
    Returns nil on success, or a seq of issue maps."
   [schema value]
   (reduce
-    (fn [acc [k pred]]
-      (let [v (get value k ::missing)]
-        (cond
-          (= v ::missing)
-          (conj acc {:path [k] :value nil :reason :missing})
+   (fn [acc [k pred]]
+     (let [v (get value k ::missing)]
+       (cond
+         (= v ::missing)
+         (conj acc {:path [k] :value nil :reason :missing})
 
-          (not (pred v))
-          (conj acc {:path [k] :value v :reason :invalid})
+         (not (pred v))
+         (conj acc {:path [k] :value v :reason :invalid})
 
-          :else acc)))
-    []
-    schema))
+         :else acc)))
+   []
+   schema))
 
 (defn- type-extra-keys
   "For :type contracts, extra keys beyond schema are violations."

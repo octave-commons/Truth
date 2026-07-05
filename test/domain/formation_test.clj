@@ -134,10 +134,10 @@
          sim-time 1.0e14 ignition-time 0.0 maturity pf/disk-maturity-seconds}}]
   (let [M solar-mass
         [w star] (stellar/spawn-clump (ecs/empty-world)
-                   {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                    :mass M :radius law/solar-radius :temperature 5800.0
-                    :matter-state :star
-                    :composition {:H 0.7 :He 0.28 :metals 0.02}})
+                                      {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                       :mass M :radius law/solar-radius :temperature 5800.0
+                                       :matter-state :star
+                                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
         w (-> w
               (ecs/put-component star c/luminosity law/solar-luminosity)
               (ecs/put-component star c/disk-mass disk-mass)
@@ -151,15 +151,15 @@
                     (let [pos [r 0.0 0.0]
                           vel (circular-velocity M pos)
                           [w2 eid] (stellar/spawn-clump w
-                                     {:position pos :velocity vel
-                                      :mass body-mass :radius 1.0e7
-                                      :matter-state :debris})]
+                                                        {:position pos :velocity vel
+                                                         :mass body-mass :radius 1.0e7
+                                                         :matter-state :debris})]
                       (ecs/put-component w2 eid c/disc-tag :disc)))
                   w radii)]
     [(assoc w :genesis/sim-time sim-time
-              :genesis/star-ignition-time ignition-time
-              :genesis/disk-maturity maturity
-              :tick 100)
+            :genesis/star-ignition-time ignition-time
+            :genesis/disk-maturity maturity
+            :tick 100)
      star]))
 
 (deftest seeder-produces-planets-on-a-mature-disk

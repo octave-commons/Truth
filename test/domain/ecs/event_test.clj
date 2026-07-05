@@ -1,8 +1,8 @@
 (ns domain.ecs.event-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.event :as evt]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.event :as evt]))
 
 (deftest event-construction
   (testing "Events require tick, kind, and entities set"
@@ -15,21 +15,21 @@
 (deftest dispatch-appends-and-handles
   (testing "dispatch appends event and runs handler"
     (let [[w eid] (ecs/spawn (-> (ecs/empty-world)
-                                  evt/with-ledger
-                                  evt/with-handlers))
+                                 evt/with-ledger
+                                 evt/with-handlers))
           w       (evt/register-handler w :event/boom
-                                         (fn [w _event]
-                                           (ecs/put-component w eid :boomed true)))
+                                        (fn [w _event]
+                                          (ecs/put-component w eid :boomed true)))
           w'      (evt/dispatch w (evt/->event {:tick 0
-                                                 :kind :event/boom
-                                                 :entities #{eid}}))]
+                                                :kind :event/boom
+                                                :entities #{eid}}))]
       (is (true? (ecs/get-component w' eid :boomed)))
       (is (= 1 (count (get-in w' [:ledger :events])))))))
 
 (deftest events-of-kind-filter
   (testing "events-of-kind returns only matching events"
     (let [w (-> (ecs/empty-world)
-                 evt/with-ledger)
+                evt/with-ledger)
           w (evt/emit w (evt/->event {:tick 1 :kind :a :entities #{1}}))
           w (evt/emit w (evt/->event {:tick 2 :kind :b :entities #{1}}))
           w (evt/emit w (evt/->event {:tick 3 :kind :a :entities #{1}}))]

@@ -57,7 +57,6 @@
   [w]
   (let [t0 (System/nanoTime)
         world1 (-> (ecs/advance-tick w)
-                   (assoc :genesis/frame-offset (genesis/center-of-mass w))
                    (domain.spatial.index/spatial-index))
         t1 (System/nanoTime)
         world2 (genesis/step-physics world1)
@@ -170,7 +169,6 @@
   (let [w500 (make-medium-world)
         w1 (-> w500
                (ecs/advance-tick)
-               (assoc :genesis/frame-offset (genesis/center-of-mass w500))
                (domain.spatial.index/spatial-index))]
     (profile-step-physics-systems-on w1 "world1 with spatial tree"))
 
@@ -205,13 +203,11 @@
     ;; --- Overhead on post-physics world (500 particles) ---
     (println "\n  Overhead functions measured on post-physics world (500 particles):")
     (let [w1 (-> (ecs/advance-tick w500)
-                 (assoc :genesis/frame-offset (genesis/center-of-mass w500))
                  (domain.spatial.index/spatial-index))
           w2 (genesis/step-physics w1)
           summ (genesis/system-summary w2)]
-      (quick-bench "  advance-tick + center-of-mass + spatial-index"
+      (quick-bench "  advance-tick + spatial-index"
                    (fn [] (-> (ecs/advance-tick w500)
-                              (assoc :genesis/frame-offset (genesis/center-of-mass w500))
                               (domain.spatial.index/spatial-index))))
       (quick-bench "  system-summary (post-physics)"
                    (fn [] (genesis/system-summary w2)))
@@ -250,9 +246,8 @@
     ;; --- Tick overhead breakdown ---
     (println "\n  Tick overhead breakdown (500 particles):")
 
-    (quick-bench "  advance-tick + center-of-mass + spatial-index"
+    (quick-bench "  advance-tick + spatial-index"
                  (fn [] (-> (ecs/advance-tick w500)
-                            (assoc :genesis/frame-offset (genesis/center-of-mass w500))
                             (domain.spatial.index/spatial-index))))
 
     (quick-bench "  expire-interventions + materialize-lifecycle"
@@ -338,7 +333,6 @@
     (quick-bench "  step-physics parallel (on initial w500)"
                  (fn [] (genesis/step-physics w500)))
     (let [w1 (-> (ecs/advance-tick w500)
-                 (assoc :genesis/frame-offset (genesis/center-of-mass w500))
                  (domain.spatial.index/spatial-index))]
       (quick-bench "  step-physics parallel (on world1 with spatial tree)"
                    (fn [] (genesis/step-physics w1))))

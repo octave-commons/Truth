@@ -1,10 +1,10 @@
 (ns domain.ecs.rewind-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.event :as evt]
-    [domain.ecs.dsl :refer [defevent defreaction defrewind]]
-    [domain.ecs.ledger :as ledger]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.event :as evt]
+   [domain.ecs.dsl :refer [defevent defreaction defrewind]]
+   [domain.ecs.ledger :as ledger]))
 
 (defevent healed
   "Entity received healing."
@@ -50,9 +50,9 @@
     (let [[world e1] (ecs/spawn (-> (ecs/empty-world) evt/with-ledger))
           world      (evt/dispatch world (->permanent-death 1 #{e1} {:cause :old-age}))]
       (is (thrown-with-msg?
-            clojure.lang.ExceptionInfo
-            #"not reversible"
-            (ledger/rewind world 1))))))
+           clojure.lang.ExceptionInfo
+           #"not reversible"
+           (ledger/rewind world 1))))))
 
 (deftest rewind-n-ticks
   (testing "rewind N steps undoes N events in reverse order"

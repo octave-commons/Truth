@@ -1,8 +1,8 @@
 (ns domain.ecs.tick-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.tick :as tick]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.tick :as tick]))
 
 (def ca :component/a)
 (def cb :component/b)
@@ -87,7 +87,7 @@
         w2 {:id :w2 :writes #{ca} :run (fn [_] {ca {0 2}})}]
     (testing "default :throw rejects two writers of the same component type"
       (is (thrown-with-msg? clojure.lang.ExceptionInfo #"single-writer"
-            (tick/run-parallel w [w1 w2]))))
+                            (tick/run-parallel w [w1 w2]))))
     (testing "colliding-ctypes names the offenders"
       (is (= {ca [:w1 :w2]}
              (tick/colliding-ctypes [[:w1 {ca {0 1}}] [:w2 {ca {0 2}}]]))))

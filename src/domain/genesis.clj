@@ -290,6 +290,11 @@
                             ;; false to hold :sim/dt constant — useful for fast,
                             ;; pace-independent tests and deterministic runs.
                             :genesis/adaptive-pacing?  true
+                             ;; Validation of transient caches is expensive on
+                             ;; the hot tick path (~3 µs × N per check). Tests
+                             ;; and debug runs can enable it; production ticks
+                             ;; trust the builder (docs/specs/perf-60fps-parallel-tick.md).
+                            :genesis/validate-neighbor-cache? false
                             :genesis/wind-rate-scale   wind-rate-scale
                             :genesis/collapse-fraction collapse-fraction
                             :genesis/contraction-time  contraction-time
@@ -550,12 +555,10 @@
           effective-dt dt
           prev       (or (:genesis/_prev-summary world) (system-summary world))
         ;; advance logical tick first so every event this step shares its tick;
-        ;; arm the integrator with the recenter frame-offset — the COM of THIS
-        ;; snapshot, subtracted from every new position so the formation stays in
-        ;; its COM frame (spec §6: a one-tick-stale, pure-Galilean shift, replacing
-        ;; the old post-fold recenter-system). A world scalar, single-owner.
+        ;; the COM frame-offset is now computed inside spatial/spatial-index,
+        ;; folded into the same projection so tick-world does not pay for a
+        ;; separate serial pass (docs/specs/perf-60fps-parallel-tick.md).
           world1     (-> (ecs/advance-tick world)
-                         (assoc :genesis/frame-offset (center-of-mass world))
                          spatial/spatial-index)
           world2     (-> (step-physics world1)
                          (intervention/expire-interventions)

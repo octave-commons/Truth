@@ -2,12 +2,12 @@
   "Bootstrap a world with orbital + collision systems and handlers.
    This is the entry point for composing subsystems."
   (:require
-    [domain.ecs.core                  :as ecs]
-    [domain.ecs.event                 :as event]
-    [domain.ecs.timeline              :as timeline]
-    [domain.orbital.system            :as orbital]
-    [domain.physics.collision         :as collision]
-    [domain.physics.collision-response :as response]))
+   [domain.ecs.core                  :as ecs]
+   [domain.ecs.event                 :as event]
+   [domain.ecs.timeline              :as timeline]
+   [domain.orbital.system            :as orbital]
+   [domain.physics.collision         :as collision]
+   [domain.physics.collision-response :as response]))
 
 (defn bootstrap
   "Create a fully wired world ready to tick.

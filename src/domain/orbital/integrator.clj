@@ -3,7 +3,7 @@
    All positions and velocities are vec3 from shape.spatial.
    Requires a pure acceleration function (fn [body] -> vec3)."
   (:require
-    [shape.spatial :as sp]))
+   [shape.spatial :as sp]))
 
 (defn leapfrog-kick
   "Velocity half-step (kick): v_half = v + a * (dt/2)"

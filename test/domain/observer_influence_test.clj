@@ -61,7 +61,7 @@
         _     (is (some? (ecs/get-component w1 b c/accel-observer)))
         ;; move focus far from the body, run again
         w2    (run (player/update-observer w1
-                     #(player/set-focus % (sp/vec3 1.0e17 0.0 0.0) 1.0e15 0.5)))]
+                                           #(player/set-focus % (sp/vec3 1.0e17 0.0 0.0) 1.0e15 0.5)))]
     (is (nil? (ecs/get-component w2 b c/accel-observer))
         "stale influence is cleared once the body leaves the zone")))
 

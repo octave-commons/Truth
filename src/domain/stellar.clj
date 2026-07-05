@@ -1499,12 +1499,12 @@
   [star-mass disc-mass radius temperature]
   (let [Q (toomre-q star-mass disc-mass radius temperature)
         cool-ratio (cooling-time-ratio star-mass disc-mass radius temperature)]
-      (if (Double/isFinite Q)
-        (cond
-          (> Q 1.0)                         :stable-disc
-          (and (<= Q 1.0) (< cool-ratio 3.0)) :gravitationally-unstable
-          :else                             :unstable-no-fragment)
-        :stable-disc)))
+    (if (Double/isFinite Q)
+      (cond
+        (> Q 1.0)                         :stable-disc
+        (and (<= Q 1.0) (< cool-ratio 3.0)) :gravitationally-unstable
+        :else                             :unstable-no-fragment)
+      :stable-disc)))
 
 (defn- put-tracked
   "`ecs/put-component` on disk-evolution's internal working world, recording the
@@ -1560,117 +1560,117 @@
                (get-in world [:components c/absorb-accrete] {}))
         evolve
         (fn [w eid]
-       (if-not (ecs/alive? w eid)
-         w
-         (let [M       (double (or (ecs/get-component w eid c/mass) 0.0))
-               disk-m  (double (or (ecs/get-component w eid c/disk-mass) 0.0))
-               disk-L  (or (ecs/get-component w eid c/disk-angular-mom) [0.0 0.0 0.0])
-               disk-j  (sp/len disk-L)]
-           (if-not (and (pos? M) (pos? disk-m))
-             w
-             (let [ratio    (/ disk-m M)
+          (if-not (ecs/alive? w eid)
+            w
+            (let [M       (double (or (ecs/get-component w eid c/mass) 0.0))
+                  disk-m  (double (or (ecs/get-component w eid c/disk-mass) 0.0))
+                  disk-L  (or (ecs/get-component w eid c/disk-angular-mom) [0.0 0.0 0.0])
+                  disk-j  (sp/len disk-L)]
+              (if-not (and (pos? M) (pos? disk-m))
+                w
+                (let [ratio    (/ disk-m M)
                     ;; Disk outer radius from angular momentum
-                   r-disk   (disk-radius (/ disk-j (max 1.0 disk-m)) M)
-                   t-visc   (disk-viscous-timescale r-disk M)
+                      r-disk   (disk-radius (/ disk-j (max 1.0 disk-m)) M)
+                      t-visc   (disk-viscous-timescale r-disk M)
                     ;; Viscous accretion rate: Ṁ = M_disk / t_visc × dt
-                   mdot-visc (* disk-m (/ dt t-visc))
-                   dm        (min mdot-visc (* 0.05 disk-m)) ;; cap at 5% per tick
-                   disk-m'   (- disk-m dm)
-                   M'        (+ M dm)
+                      mdot-visc (* disk-m (/ dt t-visc))
+                      dm        (min mdot-visc (* 0.05 disk-m)) ;; cap at 5% per tick
+                      disk-m'   (- disk-m dm)
+                      M'        (+ M dm)
                     ;; Angular momentum transfer: star spins up, disk shrinks
                     ;; L_disk scales with disk mass (assuming same specific L)
-                   L-transfer (if (pos? disk-m)
-                                (sp/v* disk-L (/ dm disk-m))
-                                [0.0 0.0 0.0])
-                   L-star    (or (ecs/get-component w eid c/angular-momentum) [0.0 0.0 0.0])
-                   L-star'   (sp/v+ L-star L-transfer)
-                   disk-L'   (sp/v- disk-L L-transfer)
+                      L-transfer (if (pos? disk-m)
+                                   (sp/v* disk-L (/ dm disk-m))
+                                   [0.0 0.0 0.0])
+                      L-star    (or (ecs/get-component w eid c/angular-momentum) [0.0 0.0 0.0])
+                      L-star'   (sp/v+ L-star L-transfer)
+                      disk-L'   (sp/v- disk-L L-transfer)
                     ;; Emit influences (integrator owns mass/angmom/spin — spec §7.5)
-                   w' (-> w
-                          (put-tracked eid c/disk-mass disk-m')
-                          (put-tracked eid c/disk-angular-mom disk-L')
-                          (put-tracked eid c/mass-flux-disk dm)
-                          (put-tracked eid c/torque-disk L-transfer))]
+                      w' (-> w
+                             (put-tracked eid c/disk-mass disk-m')
+                             (put-tracked eid c/disk-angular-mom disk-L')
+                             (put-tracked eid c/mass-flux-disk dm)
+                             (put-tracked eid c/torque-disk L-transfer))]
                 ;; Check for gravitational instability
-               (cond
+                  (cond
                   ;; Binary formation: massive disk fragments into companion
-                 (> ratio binary-fragment-threshold)
-                 (let [companion-m (* 0.3 disk-m') ;; companion gets 30% of disk
-                       r-disk-now  (disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
+                    (> ratio binary-fragment-threshold)
+                    (let [companion-m (* 0.3 disk-m') ;; companion gets 30% of disk
+                          r-disk-now  (disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
                         ;; Place companion at half the disk radius, but never inside
                         ;; the dt-resolvable radius (else the integrator flings it).
-                       r-orbit     (max (* 0.5 (max 1.0e10 r-disk-now))
-                                        (resolvable-orbit-radius M' dt min-fragment-orbit-periods))
+                          r-orbit     (max (* 0.5 (max 1.0e10 r-disk-now))
+                                           (resolvable-orbit-radius M' dt min-fragment-orbit-periods))
                         ;; Circular orbit speed in the SOFTENED field the
                         ;; integrator applies — the unsoftened √(GM/r) at an
                         ;; r-orbit inside the Plummer length ejected every
                         ;; fragment at several × the cloud escape speed.
-                       v-orbit     (law/softened-circular-speed M' r-orbit eps)
+                          v-orbit     (law/softened-circular-speed M' r-orbit eps)
                         ;; Random orbital phase
-                       angle       (* 2.0 Math/PI (hash01 (hash [eid (:tick world) :binary])))
-                       pos         (ecs/get-component w' eid c/position)
-                       offset      [(* r-orbit (Math/cos angle))
-                                    (* r-orbit (Math/sin angle))
-                                    0.0]
-                       comp-pos    (sp/v+ pos offset)
-                       comp-vel    (sp/v+ (ecs/get-component w' eid c/velocity)
-                                          [(* (- v-orbit) (Math/sin angle))
-                                           (* v-orbit (Math/cos angle))
-                                           0.0])
+                          angle       (* 2.0 Math/PI (hash01 (hash [eid (:tick world) :binary])))
+                          pos         (ecs/get-component w' eid c/position)
+                          offset      [(* r-orbit (Math/cos angle))
+                                       (* r-orbit (Math/sin angle))
+                                       0.0]
+                          comp-pos    (sp/v+ pos offset)
+                          comp-vel    (sp/v+ (ecs/get-component w' eid c/velocity)
+                                             [(* (- v-orbit) (Math/sin angle))
+                                              (* v-orbit (Math/cos angle))
+                                              0.0])
                         ;; Emit spawn request (materialized next tick by materialize-lifecycle)
-                       spawn-spec  {:position comp-pos :velocity comp-vel
-                                    :mass companion-m
-                                    :radius (sphere-radius companion-m 1.0e3)
-                                    :matter-state :protostar
-                                    :composition (or (ecs/get-component w' eid c/composition)
-                                                     default-composition)
-                                    :temperature 1000.0}
-                       w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
+                          spawn-spec  {:position comp-pos :velocity comp-vel
+                                       :mass companion-m
+                                       :radius (sphere-radius companion-m 1.0e3)
+                                       :matter-state :protostar
+                                       :composition (or (ecs/get-component w' eid c/composition)
+                                                        default-composition)
+                                       :temperature 1000.0}
+                          w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
                         ;; Update disk after fragmentation
-                       w''' (-> w''
-                                (put-tracked eid c/disk-mass (- disk-m' companion-m))
-                                (put-tracked eid c/disk-angular-mom
-                                             (sp/v* disk-L' (/ (- disk-m' companion-m)
-                                                               (max 1.0 disk-m')))))]
-                   w''')
+                          w''' (-> w''
+                                   (put-tracked eid c/disk-mass (- disk-m' companion-m))
+                                   (put-tracked eid c/disk-angular-mom
+                                                (sp/v* disk-L' (/ (- disk-m' companion-m)
+                                                                  (max 1.0 disk-m')))))]
+                      w''')
 
                   ;; Planet formation: disk fragments into planetary embryo
-                 (> ratio disk-fragment-threshold)
-                 (let [embryo-m (* 0.1 disk-m') ;; embryo gets 10% of disk
-                       r-disk-now (disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
+                    (> ratio disk-fragment-threshold)
+                    (let [embryo-m (* 0.1 disk-m') ;; embryo gets 10% of disk
+                          r-disk-now (disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
                         ;; never inside the dt-resolvable radius (else it is flung)
-                       r-orbit   (max (* 0.3 (max 1.0e10 r-disk-now))
-                                      (resolvable-orbit-radius M' dt min-fragment-orbit-periods))
+                          r-orbit   (max (* 0.3 (max 1.0e10 r-disk-now))
+                                         (resolvable-orbit-radius M' dt min-fragment-orbit-periods))
                         ;; softened-field circular speed — see binary branch
-                       v-orbit   (law/softened-circular-speed M' r-orbit eps)
-                       angle     (* 2.0 Math/PI (hash01 (hash [eid (:tick world) :planet])))
-                       pos       (ecs/get-component w' eid c/position)
-                       offset    [(* r-orbit (Math/cos angle))
-                                  (* r-orbit (Math/sin angle))
-                                  0.0]
-                       epos      (sp/v+ pos offset)
-                       evel      (sp/v+ (ecs/get-component w' eid c/velocity)
-                                        [(* (- v-orbit) (Math/sin angle))
-                                         (* v-orbit (Math/cos angle))
-                                         0.0])
+                          v-orbit   (law/softened-circular-speed M' r-orbit eps)
+                          angle     (* 2.0 Math/PI (hash01 (hash [eid (:tick world) :planet])))
+                          pos       (ecs/get-component w' eid c/position)
+                          offset    [(* r-orbit (Math/cos angle))
+                                     (* r-orbit (Math/sin angle))
+                                     0.0]
+                          epos      (sp/v+ pos offset)
+                          evel      (sp/v+ (ecs/get-component w' eid c/velocity)
+                                           [(* (- v-orbit) (Math/sin angle))
+                                            (* v-orbit (Math/cos angle))
+                                            0.0])
                         ;; Emit spawn request (materialized next tick by materialize-lifecycle)
-                       spawn-spec {:position epos :velocity evel
-                                   :mass embryo-m
-                                   :radius (sphere-radius embryo-m planet-material-density)
-                                   :matter-state :debris
-                                   :composition (or (ecs/get-component w' eid c/composition)
-                                                    default-composition)
-                                   :temperature 300.0}
-                       w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
-                       w''' (-> w''
-                                (put-tracked eid c/disk-mass (- disk-m' embryo-m))
-                                (put-tracked eid c/disk-angular-mom
-                                             (sp/v* disk-L' (/ (- disk-m' embryo-m)
-                                                               (max 1.0 disk-m')))))]
-                   w''')
+                          spawn-spec {:position epos :velocity evel
+                                      :mass embryo-m
+                                      :radius (sphere-radius embryo-m planet-material-density)
+                                      :matter-state :debris
+                                      :composition (or (ecs/get-component w' eid c/composition)
+                                                       default-composition)
+                                      :temperature 300.0}
+                          w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
+                          w''' (-> w''
+                                   (put-tracked eid c/disk-mass (- disk-m' embryo-m))
+                                   (put-tracked eid c/disk-angular-mom
+                                                (sp/v* disk-L' (/ (- disk-m' embryo-m)
+                                                                  (max 1.0 disk-m')))))]
+                      w''')
 
                   ;; Just viscous evolution, no fragmentation
-                 :else w'))))))
+                    :else w'))))))
         world-evolved
         (reduce
          evolve

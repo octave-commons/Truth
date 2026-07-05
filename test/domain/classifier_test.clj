@@ -4,11 +4,11 @@
    These are the documentary beats expressed as assertions — see
    docs/notes/2026.06.26-authentic-phase0-formation-physics.md §3."
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.stellar :as stellar]
-    [law.stellar :as law]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.stellar :as stellar]
+   [law.stellar :as law]))
 
 (def ^:private pm 4.0e27)          ;; one gas parcel ≈ 2 M_Jupiter
 (def ^:private cloud-comp {:H 0.71 :He 0.27 :metals 0.015})

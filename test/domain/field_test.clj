@@ -3,10 +3,10 @@
    and conserved, so B = Φ/R² amplifies as Structure contracts the radius (flux
    freezing); diffuse gas just decays resistively."
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.em :as em]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.em :as em]))
 
 (defn- body [w eid b r state]
   (ecs/put-components w eid {c/b-field b c/radius r c/matter-state state c/density 1.0e3}))
@@ -25,7 +25,7 @@
     (testing "halving the radius amplifies B ~4× (B ∝ 1/R²)"
       (let [flux (get-in ws1 [c/frozen-flux e])
             w2   (-> w (ecs/put-component e c/radius 5.0e11)
-                       (ecs/put-component e c/frozen-flux flux))
+                     (ecs/put-component e c/frozen-flux flux))
             bx   (first (get-in ((:run sys) w2) [c/b-field e]))]
         (is (> bx 3.5e-6) "flux freezing amplifies the field as the core shrinks")))))
 

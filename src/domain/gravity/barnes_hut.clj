@@ -3,7 +3,8 @@
    - build-tree: bodies -> tree
    - acceleration: G θ tree body -> vec3 acceleration on body."
   (:require
-   [shape.spatial :as sp]))
+   [shape.spatial :as sp]
+   [domain.ecs.parallel :as par]))
 
 ;; --- Node representation ----------------------------------------------------
 
@@ -219,6 +220,255 @@
         (build-tree-parallel bb bodies)
         (propagate-mass (reduce insert-body-into-node (empty-internal bb) bodies))))))
 
+;; --- SoA-aware tree build + traversal ---------------------------------------
+
+(defn- leaf-node-idx
+  "Leaf node carrying integer indices into a SoA array rather than body maps.
+   Mass/COM accumulation uses the same vector operations as `leaf-node` so the
+   SoA path is bit-identical to the body-map path for the same positions."
+  [bb idxs ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr]
+  (let [idxs (vec idxs)
+        bodies (mapv (fn [i]
+                       (let [ii (int i)]
+                         {:mass (aget mass-arr ii)
+                          :position [(aget px-arr ii)
+                                     (aget py-arr ii)
+                                     (aget pz-arr ii)]}))
+                     idxs)
+        total (double (reduce + (map :mass bodies)))]
+    {:type   :leaf
+     :aabb   bb
+     :aabb-side (sp/max-side bb)
+     :idxs   idxs
+     :mass   total
+     :com    (if (pos? total)
+               (sp/v* (reduce (fn [acc b]
+                                (sp/v+ acc (sp/v* (:position b) (:mass b))))
+                              (sp/vec3 0.0 0.0 0.0)
+                              bodies)
+                      (/ 1.0 total))
+               (sp/center bb))}))
+
+(defn- bounding-aabb-for-soa
+  "AABB around all positions in the SoA arrays (0..n-1)."
+  [^doubles px-arr ^doubles py-arr ^doubles pz-arr n]
+  (loop [i 0
+         minx Double/POSITIVE_INFINITY
+         miny Double/POSITIVE_INFINITY
+         minz Double/POSITIVE_INFINITY
+         maxx Double/NEGATIVE_INFINITY
+         maxy Double/NEGATIVE_INFINITY
+         maxz Double/NEGATIVE_INFINITY]
+    (if (< i n)
+      (let [x (aget px-arr i)
+            y (aget py-arr i)
+            z (aget pz-arr i)]
+        (recur (inc i)
+               (min minx x) (min miny y) (min minz z)
+               (max maxx x) (max maxy y) (max maxz z)))
+      (sp/aabb [minx miny minz] [maxx maxy maxz]))))
+
+(defn- insert-idx-into-node
+  "Insert index `idx` into node using position from SoA arrays."
+  [node idx ^doubles px-arr ^doubles py-arr ^doubles pz-arr ^doubles mass-arr]
+  (let [pos [(aget px-arr (int idx))
+             (aget py-arr (int idx))
+             (aget pz-arr (int idx))]]
+    (cond
+      (nil? node)
+      (let [pad [min-aabb-size min-aabb-size min-aabb-size]]
+        (leaf-node-idx (sp/aabb (sp/v- pos pad) (sp/v+ pos pad))
+                       [idx] mass-arr px-arr py-arr pz-arr))
+
+      (leaf-node? node)
+      (let [bb   (:aabb node)
+            idxs (:idxs node)
+            all  (conj idxs idx)]
+        (if (< (sp/max-side bb) min-aabb-size)
+          (leaf-node-idx bb all mass-arr px-arr py-arr pz-arr)
+          (let [internal  (empty-internal bb)
+                internal' (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr)
+                                  internal idxs)]
+            (insert-idx-into-node internal' idx px-arr py-arr pz-arr mass-arr))))
+
+      (internal-node? node)
+      (let [bb       (:aabb node)
+            oct      (sp/octant bb pos)
+            oidx     (octant-index oct)
+            child    (get (:children node) oidx)
+            child-bb (sp/child-aabb bb oct)
+            child'   (if (nil? child)
+                       (let [pad      [min-aabb-size min-aabb-size min-aabb-size]
+                             child-bb (if (< (sp/max-side child-bb) min-aabb-size)
+                                        (sp/aabb (sp/v- (:aabb-min child-bb) pad)
+                                                 (sp/v+ (:aabb-max child-bb) pad))
+                                        child-bb)]
+                         (leaf-node-idx child-bb [idx] mass-arr px-arr py-arr pz-arr))
+                       (insert-idx-into-node child idx px-arr py-arr pz-arr mass-arr))]
+        (assoc node :children (assoc (:children node) oidx child')))
+
+      :else
+      (throw (ex-info "insert-idx-into-node: unknown node type"
+                      {:kind ::unknown-node-type :node node})))))
+
+(defn- propagate-mass-idx
+  "Recompute mass/COM for a tree whose leaves carry SoA indices."
+  [node ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr]
+  (cond
+    (nil? node) nil
+
+    (leaf-node? node)
+    (leaf-node-idx (:aabb node) (:idxs node) mass-arr px-arr py-arr pz-arr)
+
+    (internal-node? node)
+    (let [children'  (mapv #(propagate-mass-idx % mass-arr px-arr py-arr pz-arr)
+                           (:children node))
+          total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
+          com        (if (zero? total-mass)
+                       (sp/center (:aabb node))
+                       (->> children'
+                            (reduce (fn [acc child]
+                                      (sp/v+ acc (sp/v* (node-com child)
+                                                        (node-mass child))))
+                                    (sp/vec3 0.0 0.0 0.0))
+                            (#(sp/v* % (/ 1.0 total-mass)))))]
+      (assoc node
+             :children children'
+             :mass     total-mass
+             :aabb-side (sp/max-side (:aabb node))
+             :com      com))
+
+    :else
+    (throw (ex-info "propagate-mass-idx: unknown node type"
+                    {:node node}))))
+
+(defn- build-tree-parallel-idx
+  "Parallel SoA tree build: partition indices by root octant and build each
+   subtree in a future."
+  [bb idxs ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr]
+  (let [root   (empty-internal bb)
+        groups (reduce (fn [gs i]
+                         (let [pos [(aget px-arr (int i))
+                                    (aget py-arr (int i))
+                                    (aget pz-arr (int i))]
+                               o (octant-index (sp/octant bb pos))]
+                           (update gs o conj i)))
+                       (vec (repeat 8 []))
+                       idxs)
+        futs   (mapv (fn [oct grp]
+                       (future
+                         (when (seq grp)
+                           (propagate-mass-idx
+                            (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr)
+                                    (leaf-node-idx (child-leaf-bb bb oct)
+                                                   [(first grp)] mass-arr px-arr py-arr pz-arr)
+                                    (rest grp))
+                            mass-arr px-arr py-arr pz-arr))))
+                     all-octants groups)
+        children' (mapv deref futs)
+        total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
+        com        (if (zero? total-mass)
+                     (sp/center bb)
+                     (->> children'
+                          (reduce (fn [acc child]
+                                    (sp/v+ acc (sp/v* (node-com child)
+                                                      (node-mass child))))
+                                  (sp/vec3 0.0 0.0 0.0))
+                          (#(sp/v* % (/ 1.0 total-mass)))))]
+    (assoc root
+           :children  children'
+           :mass      total-mass
+           :aabb-side (sp/max-side bb)
+           :com       com)))
+
+(defn build-tree-from-soa
+  "Build a Barnes–Hut octree directly from the `:genesis/physics-soa` arrays.
+   Leaves store integer indices into the arrays instead of body maps, avoiding
+   the intermediate body vector allocation of the body-map path
+   (docs/specs/perf-60fps-parallel-tick.md)."
+  [soa]
+  (let [^doubles px-arr (or (:px-pred soa) (:px soa))
+        ^doubles py-arr (or (:py-pred soa) (:py soa))
+        ^doubles pz-arr (or (:pz-pred soa) (:pz soa))
+        ^doubles mass-arr (:mass soa)
+        n (:n soa)
+        idxs (range n)]
+    (cond
+      (zero? n) nil
+      (= 1 n) (leaf-node-idx (sp/aabb [(aget px-arr 0) (aget py-arr 0) (aget pz-arr 0)]
+                                      [(aget px-arr 0) (aget py-arr 0) (aget pz-arr 0)])
+                             [0] mass-arr px-arr py-arr pz-arr)
+      :else
+      (let [bb (-> (bounding-aabb-for-soa px-arr py-arr pz-arr n)
+                   (update :aabb-min #(sp/v+ % [-1e-6 -1e-6 -1e-6]))
+                   (update :aabb-max #(sp/v+ % [1e-6 1e-6 1e-6])))]
+        (if (>= n parallel-build-threshold)
+          (build-tree-parallel-idx bb idxs mass-arr px-arr py-arr pz-arr)
+          (propagate-mass-idx
+           (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr)
+                   (empty-internal bb)
+                   idxs)
+           mass-arr px-arr py-arr pz-arr))))))
+
+(defn- traverse-soa-idx
+  "Explicit-stack Barnes-Hut traversal reading source bodies from SoA arrays
+   via leaf indices. No id->idx map or body maps are allocated."
+  [G soft2 theta2 px py pz self-idx ^doubles mass-arr
+   ^doubles px-arr ^doubles py-arr ^doubles pz-arr node]
+  (if (nil? node)
+    [0.0 0.0 0.0]
+    (let [G      (double G)
+          soft2  (double soft2)
+          theta2 (double theta2)
+          px     (double px)
+          py     (double py)
+          pz     (double pz)
+          acc    (double-array 3)
+          stack  (java.util.ArrayDeque.)]
+      (.push stack node)
+      (while (not (.isEmpty stack))
+        (when-let [n (.pop stack)]
+          (if (leaf-node? n)
+            (doseq [idx (:idxs n)
+                    :when (not= idx self-idx)]
+              (let [ii (int idx)
+                    bx (aget px-arr ii)
+                    by (aget py-arr ii)
+                    bz (aget pz-arr ii)
+                    dx (- bx px)
+                    dy (- by py)
+                    dz (- bz pz)
+                    d2 (+ (* dx dx) (* dy dy) (* dz dz) soft2)
+                    inv-r (* d2 (Math/sqrt d2))
+                    scale (if (pos? inv-r)
+                            (/ (* G (aget mass-arr ii)) inv-r)
+                            0.0)]
+                (aset acc 0 (+ (aget acc 0) (* dx scale)))
+                (aset acc 1 (+ (aget acc 1) (* dy scale)))
+                (aset acc 2 (+ (aget acc 2) (* dz scale)))))
+            (let [com (:com n)
+                  cx  (double (nth com 0))
+                  cy  (double (nth com 1))
+                  cz  (double (nth com 2))
+                  dx  (- cx px)
+                  dy  (- cy py)
+                  dz  (- cz pz)
+                  d2  (+ (* dx dx) (* dy dy) (* dz dz))
+                  s   (double (:aabb-side n))
+                  s2  (* s s)]
+              (if (or (zero? d2) (< s2 (* theta2 d2)))
+                (let [d2s   (+ d2 soft2)
+                      inv-r (* d2s (Math/sqrt d2s))
+                      scale (if (pos? inv-r)
+                              (/ (* G (double (:mass n))) inv-r)
+                              0.0)]
+                  (aset acc 0 (+ (aget acc 0) (* dx scale)))
+                  (aset acc 1 (+ (aget acc 1) (* dy scale)))
+                  (aset acc 2 (+ (aget acc 2) (* dz scale))))
+                (doseq [child (reverse (:children n))
+                        :when child]
+                  (.push stack child)))))))
+      [(aget acc 0) (aget acc 1) (aget acc 2)])))
 ;; --- Acceleration evaluation ------------------------------------------------
 
 (def ^:const default-theta 0.5)
@@ -343,107 +593,37 @@
                     (.push stack child))))))))
       [(aget acc 0) (aget acc 1) (aget acc 2)])))
 
-;; --- SoA-aware traversal ----------------------------------------------------
-
-(defn- traverse-soa
-  "Explicit-stack scalar Barnes–Hut traversal reading source bodies from SoA.
-
-   Returns [ax ay az] for target coordinates (px,py,pz). `self-eid` is skipped
-   at leaf nodes, as is any leaf body whose :id is not present in `id->idx`.
-   Internal nodes use the node's aggregate :mass and :com. The tree itself is
-   unchanged; only local stack and accumulator state is mutated."
-  [G soft2 theta2 px py pz self-eid ^java.util.HashMap id->idx soa node]
-  (if (nil? node)
-    [0.0 0.0 0.0]
-    (let [G      (double G)
-          soft2  (double soft2)
-          theta2 (double theta2)
-          px     (double px)
-          py     (double py)
-          pz     (double pz)
-          ^objects eids   (:eids soa)
-          ^doubles mass   (:mass soa)
-          ^doubles px-arr (:px soa)
-          ^doubles py-arr (:py soa)
-          ^doubles pz-arr (:pz soa)
-          acc    (double-array 3)
-          stack  (java.util.ArrayDeque.)]
-      (.push stack node)
-      (while (not (.isEmpty stack))
-        (when-let [n (.pop stack)]
-          (if (leaf-node? n)
-            (doseq [body (:bodies n)]
-              (let [bid (:id body)]
-                (when (and (not= bid self-eid)
-                           (.containsKey id->idx bid))
-                  (let [idx   (int (.get id->idx bid))
-                        bx    (aget px-arr idx)
-                        by    (aget py-arr idx)
-                        bz    (aget pz-arr idx)
-                        dx    (- bx px)
-                        dy    (- by py)
-                        dz    (- bz pz)
-                        d2    (+ (* dx dx) (* dy dy) (* dz dz) soft2)
-                        inv-r (* d2 (Math/sqrt d2))
-                        scale (if (pos? inv-r)
-                                (/ (* G (aget mass idx)) inv-r)
-                                0.0)]
-                    (aset acc 0 (+ (aget acc 0) (* dx scale)))
-                    (aset acc 1 (+ (aget acc 1) (* dy scale)))
-                    (aset acc 2 (+ (aget acc 2) (* dz scale)))))))
-            (let [com (:com n)
-                  cx  (double (nth com 0))
-                  cy  (double (nth com 1))
-                  cz  (double (nth com 2))
-                  dx  (- cx px)
-                  dy  (- cy py)
-                  dz  (- cz pz)
-                  d2  (+ (* dx dx) (* dy dy) (* dz dz))
-                  s   (double (:aabb-side n))
-                  s2  (* s s)]
-              (if (or (zero? d2) (< s2 (* theta2 d2)))
-                (let [d2s   (+ d2 soft2)
-                      inv-r (* d2s (Math/sqrt d2s))
-                      scale (if (pos? inv-r)
-                              (/ (* G (double (:mass n))) inv-r)
-                              0.0)]
-                  (aset acc 0 (+ (aget acc 0) (* dx scale)))
-                  (aset acc 1 (+ (aget acc 1) (* dy scale)))
-                  (aset acc 2 (+ (aget acc 2) (* dz scale))))
-                (doseq [child (reverse (:children n))
-                        :when child]
-                  (.push stack child)))))))
-      [(aget acc 0) (aget acc 1) (aget acc 2)])))
-
 (defn acceleration-for-soa
   "Gravitational acceleration for every entity in the SoA cache.
 
-   Returns a map {eid [ax ay az]} computed by walking the Barnes–Hut tree once
-   per target entity. Reads target positions and source positions/masses directly
-   from the SoA arrays. `tree` must have been built from the same spatial items
-   that produced `soa`. `self-id` is reserved for symmetry with `acceleration`
-   and is ignored; each target skips its own eid."
-  [G theta softening tree soa self-id]
-  (let [soft2   (* (double softening) (double softening))
-        theta2  (* (double theta) (double theta))
-        eids    (:eids soa)
-        ^doubles px-arr (:px soa)
-        ^doubles py-arr (:py soa)
-        ^doubles pz-arr (:pz soa)
-        n       (:n soa)
-        id->idx (java.util.HashMap. (int n))]
-    (dotimes [i n]
-      (.put id->idx (nth eids i) (Integer/valueOf i)))
-    (loop [i 0
-           acc (transient {})]
-      (if (< i n)
-        (let [eid (nth eids i)
-              px  (aget px-arr i)
-              py  (aget py-arr i)
-              pz  (aget pz-arr i)
-              [ax ay az] (traverse-soa G soft2 theta2 px py pz eid id->idx soa tree)]
-          (recur (inc i) (assoc! acc eid [ax ay az])))
-        (persistent! acc)))))
+   Returns a map {eid [ax ay az]}. Builds an index-leaf Barnes–Hut tree
+   directly from the SoA arrays (`build-tree-from-soa`) and walks it once per
+   target with the explicit-stack index traversal, reading source positions and
+   masses straight from the arrays — no intermediate body maps or eid→index
+   lookups are allocated (docs/specs/perf-60fps-parallel-tick.md).
+   Drift-predicted arrays (:px-pred …) are preferred when present, so tree
+   structure, multipole centroids, leaf sources, and targets all sit at the
+   predicted positions. `self-id` is reserved for symmetry with `acceleration`
+   and is ignored; each target skips its own index."
+  [G theta softening soa _self-id]
+  (let [soft2  (* (double softening) (double softening))
+        theta2 (* (double theta) (double theta))
+        eids   (:eids soa)
+        ^doubles mass-arr (:mass soa)
+        ^doubles px-arr (or (:px-pred soa) (:px soa))
+        ^doubles py-arr (or (:py-pred soa) (:py soa))
+        ^doubles pz-arr (or (:pz-pred soa) (:pz soa))
+        n      (long (:n soa))
+        tree   (build-tree-from-soa soa)]
+    (into {}
+          (par/par-mapv
+           (fn [i]
+             (let [ii (int i)]
+               [(nth eids ii)
+                (traverse-soa-idx G soft2 theta2
+                                  (aget px-arr ii) (aget py-arr ii) (aget pz-arr ii)
+                                  ii mass-arr px-arr py-arr pz-arr tree)]))
+           (range n)))))
 
 (defn acceleration
   "Compute gravitational acceleration on `body` from all bodies in `tree`.

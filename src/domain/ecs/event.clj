@@ -9,12 +9,12 @@
    Rewind handlers are registered at :rewind-handlers.")
 
 (defrecord Event
-  [id       ;; UUID — unique per event
-   tick     ;; long — tick on which this occurred
-   kind     ;; keyword — e.g. :event/collision :event/death :event/trade
-   entities ;; #{entity-id} — all entities involved
-   payload  ;; map — event-specific data
-   cause])  ;; nil | event-id — causal chain
+           [id       ;; UUID — unique per event
+            tick     ;; long — tick on which this occurred
+            kind     ;; keyword — e.g. :event/collision :event/death :event/trade
+            entities ;; #{entity-id} — all entities involved
+            payload  ;; map — event-specific data
+            cause])  ;; nil | event-id — causal chain
 
 (defn new-event-id [] (java.util.UUID/randomUUID))
 
@@ -36,9 +36,9 @@
   "Add an empty ledger to a world map."
   [world]
   (assoc world
-    :ledger   {:events [] :cursor 0}
-    :handlers {}
-    :rewind-handlers {}))
+         :ledger   {:events [] :cursor 0}
+         :handlers {}
+         :rewind-handlers {}))
 
 (defn with-handlers
   "Alias — no-op if ledger already present; used for test legibility."

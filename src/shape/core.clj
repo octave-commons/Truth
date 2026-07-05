@@ -26,7 +26,7 @@
 ;; --- Records ----------------------------------------------------------------
 
 (defrecord Shape
-  [id kind form name description])
+           [id kind form name description])
 
 (defn ->shape
   "Construct a Shape from a map. Required keys: :id, :kind, :form."
@@ -37,7 +37,7 @@
   (->Shape id kind form name description))
 
 (defrecord Claim
-  [id shape-id value context asserted-by])
+           [id shape-id value context asserted-by])
 
 (defn ->claim
   "Construct a Claim tying a Shape to a concrete value in a context.

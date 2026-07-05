@@ -13,8 +13,8 @@
    Snapshots store a materialized world state at a given tick,
    keyed by tick number, for O(1) seek anchoring."
   (:import
-    (java.security MessageDigest)
-    (java.nio.charset StandardCharsets)))
+   (java.security MessageDigest)
+   (java.nio.charset StandardCharsets)))
 
 ;; ---------------------------------------------------------------------------
 ;; Hashing
@@ -46,10 +46,10 @@
 ;; ---------------------------------------------------------------------------
 
 (defrecord Ledger
-  [entries   ;; vector of entry maps (append-only)
-   head-hash ;; hash of last entry (or genesis-hash if empty)
-   snapshots ;; {tick -> world-snapshot}
-   ])
+           [entries   ;; vector of entry maps (append-only)
+            head-hash ;; hash of last entry (or genesis-hash if empty)
+            snapshots ;; {tick -> world-snapshot}
+            ])
 
 (defn empty-ledger
   "Construct an empty ledger."
@@ -129,8 +129,8 @@
   (loop [entries (:entries ledger)
          prev    genesis-hash]
     (if-let [{:keys [event prev-hash entry-hash]} (first entries)]
-       (if (and (= prev-hash prev)
-                (= entry-hash (compute-entry-hash prev event)))
+      (if (and (= prev-hash prev)
+               (= entry-hash (compute-entry-hash prev event)))
         (recur (next entries) entry-hash)
         false)
       true)))

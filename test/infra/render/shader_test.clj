@@ -3,9 +3,9 @@
    not require an OpenGL context; they exercise the pure data side of shader
    program records and the Malli schemas in `law.render`."
   (:require
-    [clojure.test :refer [deftest testing is]]
-    [law.render :as law]
-    [infra.render.shader :as sh]))
+   [clojure.test :refer [deftest testing is]]
+   [law.render :as law]
+   [infra.render.shader :as sh]))
 
 (deftest test-program-def-schema
   (testing "Built-in programs validate against the law.render schema"

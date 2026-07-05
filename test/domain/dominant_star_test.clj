@@ -47,11 +47,11 @@
                     d (* dens (+ 1.0 (* 3.0 (- 1.0 (/ rr clump-r)))))
                     [w2 e] (ecs/spawn w)]
                 (ecs/put-components w2 e
-                  {c/matter-state :nebula c/mass pmass c/radius (* 0.5 clump-r)
-                   c/density d c/temperature temp c/position pos
-                   c/velocity [0.0 0.0 0.0]
-                   c/composition {:H 0.75 :He 0.25 :metals 0.0}
-                   c/luminosity 0.0})))
+                                    {c/matter-state :nebula c/mass pmass c/radius (* 0.5 clump-r)
+                                     c/density d c/temperature temp c/position pos
+                                     c/velocity [0.0 0.0 0.0]
+                                     c/composition {:H 0.75 :He 0.25 :metals 0.0}
+                                     c/luminosity 0.0})))
             w0 (range n))))
 
 (defn- masses-solar [w]

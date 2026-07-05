@@ -5,10 +5,10 @@
    - ids are unique
    - index is consistent with items"
   (:require
-    [law.contract :as contract]))
+   [law.contract :as contract]))
 
 (defrecord Registry
-  [resource-contract items index])
+           [resource-contract items index])
 
 (defn ->registry
   "Create an empty Registry for resources governed by `resource-contract`."
@@ -49,9 +49,9 @@
     (ensure-unique-id! index id resource)
     (let [idx (count items)]
       (->Registry
-        resource-contract
-        (conj items resource)
-        (assoc index id idx)))))
+       resource-contract
+       (conj items resource)
+       (assoc index id idx)))))
 
 (defn get-by-id
   "Lookup a resource by id. Returns nil if not present."
@@ -67,11 +67,11 @@
   (let [{:keys [resource-contract items]} reg
         new-index (into {}
                         (map-indexed
-                          (fn [idx {:keys [id]}]
-                            (when (nil? id)
-                              (throw (ex-info "Registry item missing :id while rebuilding index"
-                                              {:kind  ::missing-id
-                                               :index idx})))
-                            [id idx])
-                          items))]
+                         (fn [idx {:keys [id]}]
+                           (when (nil? id)
+                             (throw (ex-info "Registry item missing :id while rebuilding index"
+                                             {:kind  ::missing-id
+                                              :index idx})))
+                           [id idx])
+                         items))]
     (->Registry resource-contract items new-index)))

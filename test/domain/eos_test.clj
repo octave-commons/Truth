@@ -2,11 +2,11 @@
   "Step 5: pressure as a pure equation of state. One :eos system owns pressure
    and derives P = ρ k_B T / m_H; the former four writers no longer touch it."
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.components :as c]
-    [domain.stellar :as stellar]
-    [law.stellar :as law]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.stellar :as stellar]
+   [law.stellar :as law]))
 
 (deftest eos-derives-ideal-gas-pressure
   (let [[w e0] (ecs/spawn (ecs/empty-world))

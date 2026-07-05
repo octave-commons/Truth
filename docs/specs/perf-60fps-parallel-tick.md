@@ -8,11 +8,10 @@ sequential 28.4 ms: the thread-per-system fan-out yields **1.36×** on 16 cores.
 The dev window additionally serializes tick + render + a hard 16 ms sleep on one
 thread, which is how 43 ms of physics becomes ~12 fps on screen.
 
-**Current (2026-07-03, after Fix 4 rounds 2–3 — see Progress):** sustained
-warm-cache ticking (the number the live sim sees) ≈ 15.6 ms @500 / 27.1 ms
-@1000 (was 21 / 44 this morning). Cold-cache `tick-world` is roughly unchanged
-(~19 @500 / ~49 @1000) because the forced full cache rebuild dominates cold
-ticks.
+**Current (2026-07-05, after Fix 4 round 4 — see Progress):** sustained
+warm-cache ticking (the number the live sim sees) ≈ 13.5 ms @500 / 21.9 ms
+@1000 mean (p50 12.8 / 21.3, best 10.9 / 18.4; was 15.6 / 27.1 after round 3).
+@500 is now under the 16.6 ms budget sustained; @1000 still ~5 ms over.
 
 ## Why the fan-out doesn't pay today
 
@@ -268,29 +267,46 @@ survives).
     reads — identical arrays). 3.4 → 0.9 ms.
   - **`spatial-index` overlaps tree/grid** builds. 6.6 → 2.2 ms.
 
-### Remaining bottlenecks (measured @1000 bodies, warm snapshot, tick 16; sustained ≈ 27 ms)
+- Fix 4 round 4 (2026-07-05) — sustained 27.1→21.9 ms @1000, 15.6→13.5 @500
+  (means; p50 21.3 / 12.8):
+  - **Gravity walks straight from the SoA arrays.** `bh/build-tree-from-soa`
+    builds an index-leaf octree directly from the `:genesis/physics-soa`
+    arrays (leaves carry integer indices, not body maps; parallel-by-octant
+    above the same 512 threshold), and an explicit-stack index traversal reads
+    source positions/masses from the arrays. `acceleration-for-soa` is now
+    build + par-mapv'd walks in one call; the gravity system's SoA branch is a
+    one-liner and allocates zero per-tick body maps. **Bit-identical** (max
+    component divergence 0.0) to the body-map path on the same warm snapshot;
+    isolated gravity `:run` @1000 p50 19.5 → 14.3 ms, best 12.7 → 10.4.
+    Drift-predicted arrays (`:px-pred` …) are preferred throughout, preserving
+    the Fix-5 force/position alignment.
+  - **Per-tick Malli gated** (the cheap safe cut named below):
+    `neighbor-cache-entry?` checks in `cache-entry-valid?` and
+    `rebuild-neighbor-cache` are skipped when
+    `:genesis/validate-neighbor-cache?` is false — the `create-world` default;
+    tests and debug runs can re-enable it.
+  - **COM scan folded into `spatial-index`:** `:genesis/frame-offset` is
+    computed from the same projected items vector (identical arithmetic and
+    accumulation order to the old `center-of-mass` walk), deleting a separate
+    serial per-tick pass from `tick-world`.
 
-- **`gravity` ≈ 9 ms on its thread — the fan-out floor.** Project bodies from
-  SoA 0.7 + private predicted-position tree build 3.0 (parallel-by-octant) +
-  BH walks 6.9 (par-mapv, 41 ms serial — parallelizes fine; tree is healthy,
-  max depth 9). Next lever: walk from the SoA arrays without allocating 1000
-  body maps, and/or amortize the predicted tree.
-- **`rebuild-neighbor-cache` ≈ 5 ms warm** (now overlapped with the ~1 ms SoA
-  build, so ~4 ms of it is still exposed serial time). Entries average ONE
-  neighbor (self; sub-threshold gas by design) — the cost is per-entity
-  overhead: only ~49% of entries pass the 0.1·h reuse skin (h = 0.013·d_nn is
-  tiny), each miss pays a `query-nearest` descent (~27 µs) + grid query, and
-  Malli `neighbor-cache-entry?` runs ~2×/entity/tick (~3 µs each). Widening
-  the skin trades against the byte-equal-for-20-ticks equivalence test;
-  gating the per-tick Malli behind a flag is the cheap safe cut.
+### Remaining bottlenecks (@1000 bodies, warm; sustained mean ≈ 21.9 ms)
+
+- **`gravity` ≈ 10–14 ms isolated on its thread — still the fan-out floor.**
+  Now all tree build (~3 ms, parallel-by-octant) + walks (par-mapv); the
+  body-map projection is gone. Next levers: amortize the predicted tree across
+  ticks (rebuild every K ticks + refit COMs), flatten the tree into primitive
+  arrays for the walk (node maps still dominate cache misses), or cut walk
+  count with a dual-tree / interaction-list pass.
+- **`rebuild-neighbor-cache`:** Malli is gated (round 4), but only ~49% of
+  entries pass the 0.1·h reuse skin (h = 0.013·d_nn is tiny) and each miss
+  pays a `query-nearest` descent (~27 µs) + grid query. Widening the skin
+  trades against the byte-equal-for-20-ticks equivalence test.
 - `em-lorentz` ≈ 3 ms; `spatial-index` ≈ 2.2 ms serial pre; post-fold tail
-  (summary 0.3 + stats 0.3 + pacing 1.0 + events/materialize) ≈ 2.5 ms;
-  everything else ≤ 2 ms.
+  (summary + stats + pacing + events/materialize) ≈ 2.5 ms.
 
-Warm best-of-5 `tick-world` @1000 ≈ 24 ms (sustained mean 27 — the tail above
-p50 is GC + the every-10th-tick full rebuild). To reach 16.6 ms @1000 the
-remaining moves are gravity's walk/tree, the neighbor-cache miss rate, and
-overlapping `spatial-index` with the COM/advance segment.
+To reach 16.6 ms @1000 the remaining moves are gravity's tree/walk (above)
+and the neighbor-cache miss rate.
 
 ## The ordering law (for every future agent reading this)
 

@@ -22,7 +22,7 @@
           :or   {state :star temp 1.5e7 mass solar composition primordial}}]
   (let [[w eid] (ecs/spawn world)]
     [(ecs/put-components w eid
-       {c/matter-state state c/temperature temp c/mass mass c/composition composition})
+                         {c/matter-state state c/temperature temp c/mass mass c/composition composition})
      eid]))
 
 (defn- comp-of [world eid] (ecs/get-component world eid c/composition))

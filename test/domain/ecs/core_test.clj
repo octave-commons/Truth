@@ -1,7 +1,7 @@
 (ns domain.ecs.core-test
   (:require
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.core :as ecs]))
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.core :as ecs]))
 
 (deftest spawn-returns-unique-ids
   (testing "each spawn call produces a distinct entity id"
@@ -42,16 +42,16 @@
   (testing "remove-component makes get-component return nil"
     (let [[w e1] (ecs/spawn (ecs/empty-world))
           w      (-> w
-                      (ecs/put-component e1 :hp 100)
-                      (ecs/remove-component e1 :hp))]
+                     (ecs/put-component e1 :hp 100)
+                     (ecs/remove-component e1 :hp))]
       (is (nil? (ecs/get-component w e1 :hp))))))
 
 (deftest get-all-components
   (testing "get-components returns a map of all keys for an entity"
     (let [[w e1] (ecs/spawn (ecs/empty-world))
           w      (-> w
-                      (ecs/put-component e1 :hp 50)
-                      (ecs/put-component e1 :pos [1.0 2.0 3.0]))]
+                     (ecs/put-component e1 :hp 50)
+                     (ecs/put-component e1 :pos [1.0 2.0 3.0]))]
       (is (= {:hp 50 :pos [1.0 2.0 3.0]}
              (ecs/get-components w e1))))))
 
@@ -61,9 +61,9 @@
           [w e2] (ecs/spawn w)
           [w e3] (ecs/spawn w)
           w      (-> w
-                      (ecs/put-component e1 :pos [0.0 0.0 0.0])
-                      (ecs/put-component e2 :pos [1.0 1.0 1.0])
-                      (ecs/put-component e3 :vel [0.0 0.0 0.0]))]
+                     (ecs/put-component e1 :pos [0.0 0.0 0.0])
+                     (ecs/put-component e2 :pos [1.0 1.0 1.0])
+                     (ecs/put-component e3 :vel [0.0 0.0 0.0]))]
       (is (= #{e1 e2} (set (ecs/entities-with w :pos))))
       (is (= #{e3}    (set (ecs/entities-with w :vel)))))))
 
@@ -73,10 +73,10 @@
           [w e2] (ecs/spawn w)
           [w e3] (ecs/spawn w)
           w      (-> w
-                      (ecs/put-component e1 :pos [0.0 0.0 0.0])
-                      (ecs/put-component e1 :vel [0.0 0.0 0.0])
-                      (ecs/put-component e2 :pos [1.0 1.0 1.0])
-                      (ecs/put-component e3 :vel [0.0 0.0 0.0]))]
+                     (ecs/put-component e1 :pos [0.0 0.0 0.0])
+                     (ecs/put-component e1 :vel [0.0 0.0 0.0])
+                     (ecs/put-component e2 :pos [1.0 1.0 1.0])
+                     (ecs/put-component e3 :vel [0.0 0.0 0.0]))]
       (is (= #{e1} (set (ecs/entities-with w :pos :vel)))))))
 
 (deftest entities-with-no-match-returns-empty
@@ -89,8 +89,8 @@
   (testing "archetype index reflects live component topology"
     (let [[w e1] (ecs/spawn (ecs/empty-world))
           w      (-> w
-                      (ecs/put-component e1 :a 1)
-                      (ecs/put-component e1 :b 2))
+                     (ecs/put-component e1 :a 1)
+                     (ecs/put-component e1 :b 2))
           arch   (ecs/archetype w e1)]
       (is (= #{:a :b} arch))
       (let [w' (ecs/remove-component w e1 :a)]

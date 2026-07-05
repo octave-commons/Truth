@@ -78,13 +78,18 @@
    from the entry's `:anchor-position` — the position of the last actual
    spatial query, so a slowly drifting particle still requeries once its total
    drift exceeds the skin. Kernel growth past the recorded coverage is checked
-   in `refresh-cache-entry`, where the fresh smoothing length is known."
+   in `refresh-cache-entry`, where the fresh smoothing length is known.
+
+   The Malli schema check is skipped when `:genesis/validate-neighbor-cache?`
+   is false; on the hot tick path the builder is trusted and validation cost
+   (~3 µs × 2 × N) dominates cache rebuild time (docs/specs/perf-60fps-parallel-tick.md)."
   [world prev-entry eid]
   (boolean
    (when prev-entry
      (and (ecs/alive? world eid)
           (some-> (ecs/get-component world eid c/matter-state) cache-active?)
-          (neighbor-cache-entry? prev-entry)
+          (or (false? (:genesis/validate-neighbor-cache? world))
+              (neighbor-cache-entry? prev-entry))
           (number? (:query-r prev-entry))
           (let [pos    (ecs/get-component world eid c/position)
                 anchor (or (:anchor-position prev-entry) (:position prev-entry))
@@ -279,7 +284,8 @@
                              (let [entry (or (when reusable?
                                                (refresh-cache-entry data prev-entry item-by-id))
                                              (build-cache-entry world data))]
-                               (when (neighbor-cache-entry? entry)
+                               (when (or (false? (:genesis/validate-neighbor-cache? world))
+                                         (neighbor-cache-entry? entry))
                                  [eid entry])))))
                        eids)]
     (assoc world :genesis/neighbor-cache (into {} (keep identity) entries))))
