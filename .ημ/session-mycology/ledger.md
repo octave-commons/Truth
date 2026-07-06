@@ -88,3 +88,12 @@
   spore: none
   receipt-refs: none
   note: Paid fork tax for 130-file changeset. Friction: architecture_test failing on single-writer invariant (mass-transfer vs classifier/roche-lobe) required documenting failure in Π artifacts rather than green snapshot. Manifest self-hash bootstrapping required temp-file placeholder pattern. Lesson: run architecture test first on large domain refactors; resolve single-writer conflicts before staging.
+- ts: 2026-07-06T23:17:44.462618612Z
+  session: /home/err/spaces/Truth
+  task: Fix kimi's special-case + O(N) perf bug; complete M3 gas→sink unification
+  p-efficiency: 0.6
+  p-friction: 0.8
+  p-skill-candidate: 0.75
+  spore: none
+  receipt-refs: none
+  note: Two requested fixes (special-case, perf) surfaced a latent mass-conservation conflict (mass_transfer BHL + stellar absorb both draining gas). Big friction: ad-hoc test running was slow + cascaded (orphaned timeout'd JVMs piled up load→more timeouts). Lesson: pause pm2 dev + reap orphaned test JVMs before iterating; a perf 'fix' that activates a dormant duplicate channel can break conservation — always run a conservation trace, not just pass/fail.
