@@ -25,3 +25,12 @@
   spore: none
   receipt-refs: 2026-07-05T20:19:11Z
   note: Tests passed before commit; manifest generation required a small Clojure script to handle Unicode paths and avoid shell-quoting issues. No concurrent dirt detected. .ημ/.env stayed gitignored.
+- ts: 2026-07-06T00:03:51.409981086Z
+  session: ses_0cb4aac08ffekrSeYJiflwC7Go
+  task: Pay fork tax for gravity/intervention/player snapshot
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.4
+  spore: none
+  receipt-refs: none
+  note: Standard fork-tax execution. Minor friction from self-inflicted previous-commit hash typo in Π_STATE.sexp and manifest self-hash fixed-point confusion. Receipt appended after push required a follow-up commit. No concurrent dirt; tests passed; all handoff artifacts updated.
