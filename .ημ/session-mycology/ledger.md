@@ -79,3 +79,12 @@
   spore: none
   receipt-refs: none
   note: Dispatching 4 focused research-specialist agents in parallel worked well; synthesis into notebook+spec was straightforward. Pattern may generalize to other interrupted research workflows.
+- ts: 2026-07-06T19:16:29.941619443Z
+  session: ses_0c72d7908ffekLj1B7GRUY7TJh
+  task: Π fork tax: Phase 0 physics honesty pass
+  p-efficiency: 0.7
+  p-friction: 0.5
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: none
+  note: Paid fork tax for 130-file changeset. Friction: architecture_test failing on single-writer invariant (mass-transfer vs classifier/roche-lobe) required documenting failure in Π artifacts rather than green snapshot. Manifest self-hash bootstrapping required temp-file placeholder pattern. Lesson: run architecture test first on large domain refactors; resolve single-writer conflicts before staging.
