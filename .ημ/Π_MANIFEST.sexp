@@ -1,26 +1,14 @@
 (Π-manifest
-  :tag "Π-20260706000058"
-  :generated "2026-07-06T00:00:58Z"
+  :tag "Π-20260706015353"
+  :generated "2026-07-06T01:53:53Z"
   :files (
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "2f6a15d28553d91d4985c8a681922a6cd711f6ede843dff1907c402724f7db5c")
-    (M ".ημ/Π_LAST.md" :sha256 "94b8f58dd812c0a3945c91bd1a77bdef23374f9a5af3d9da647aea7887e2b473")
-    (M ".ημ/Π_STATE.sexp" :sha256 "01c42b6dda35b055a5cd6f283ef87504ca4b07c2a32f4e50fb1e6362577e5f73")
-    (M "docs/notes/2026.07.05.16.41.22.md" :sha256 "238a07903c19fe74b895cafb26c6273dc7dcf5e00236240d67f8d1c0a2a6c466")
-    (M "docs/notes/2026.07.05-dark-halo-influence.md" :sha256 "fd5517fcd4265f49d3f5545ef87ceab7b67c8b3105a7c6c20d976894d153c9d7")
-    (M "docs/notes/esc-should-not-close-window.md" :sha256 "8dd7f27921741a88f56d1bf4a026de7a45a59f85c74923eded727b1adfa1eaa3")
-    (M "docs/specs/perf-60fps-parallel-tick.md" :sha256 "e520c24541c6f47a64b36dc92d6a48afc3e0bc3c60c29afe71c1eac72b0e5c6b")
-    (M "receipts.edn" :sha256 "f0f3548e31ca1fcff532e21e3cb424679e5e6f5d2471428077334d494b4f60aa")
-    (M "src/domain/genesis.clj" :sha256 "63f39875cde4972a0a93bd9a70eb2638492e041de9b343f5e00d363d66119fd0")
-    (M "src/domain/gravity/barnes_hut.clj" :sha256 "d9a9647c87c6e1998048c6903dd282fdf1c33a54a0d168be0d8107257ab0b0b0")
-    (M "src/domain/intervention.clj" :sha256 "2904f618e428ab73f6628628c43e1d67ff8b088df13af5015f3b268e589b3ff5")
-    (M "src/domain/orbital/system.clj" :sha256 "9127b62c6ecbb17abc55660a9b92edfe8137f12bb55ee331c0191e3b8630b0f2")
-    (M "src/domain/player.clj" :sha256 "618cc1372a6a7974a7efe987de12543675328d78d6e65cac2c606ee38ad9589c")
-    (M "src/infra/dev/window.clj" :sha256 "060cc0c748710e389821fad64e0d1097242ce7f273c378b72cbb15a719f34ca9")
-    (M "src/infra/menu.clj" :sha256 "36ef1edb2e90284681f40e7766583a4bcc72a0e7801298ff042fe16099679cac")
-    (M "src/law/stellar.clj" :sha256 "f04805a1db1ced339831e55c82cbb1198de14e56aaa0b21706b676c5824d2e11")
-    (M "test/domain/gravity/barnes_hut_test.clj" :sha256 "7457c34a3239e1a239ed64fc5679d9e9e83270a29ca5d58d8af2fc8960611222")
-    (M "test/domain/intervention_test.clj" :sha256 "1452d7e31e4d7e2855bde90fd03679bdbf58cfaa5a6ea46d9e551495793ba168")
-    (M "test/domain/observer_influence_test.clj" :sha256 "f0ffe7c2acd323d99a4df1dcfae4694c44af4af3fe657cb46707a400ab9de960")
-    (M "test/infra/menu_test.clj" :sha256 "1b3e8c9f1e9f1558f244ad65a48d948828109330e7ae911b1abf28d35da16c99")
-    (A "test/law/stellar_halo_test.clj" :sha256 "7c29f6a69e71ac09a85005968f3d3b556f0d2e1adfe3145fa7697e397a4d3b6e")
+    (A ".opencode/opencode.json" :sha256 "b6c736f1410ce6c8ed878f9664b4959bfe284acb2863f0e50812538f7343bc99")
+    (M ".opencode/plugin/index.ts" :sha256 "1a56c6b823a51264101f8881cf00d71863a388b5532ba958d85590bd00803fd9")
+    (M ".opencode/plugin/package.json" :sha256 "9f082086a9911f555d66bcedf328d4b678d4c795271c43147e6a5cc551f27c61")
+    (M ".ημ/session-mycology/ledger.md" :sha256 "5da01df22d0980df3d37685590c42613c34c5ad0f181d1e98de1362c509565ef")
+    (M ".ημ/Π_LAST.md" :sha256 "d3e81d50f7c70eb4381fa56a979e74351c5ec2d56ac90a57853fad16d4ac0661")
+    (M ".ημ/Π_STATE.sexp" :sha256 "c55a9123f9690a74beebcb4bedd6bc0bdafec4c2496b9a371b1945189a385eec")
+    (M "CLAUDE.md" :sha256 "6ff6a2b330943824e9afbd643f55c38115eb071932da4b5242fc11360d15b1d0")
+    (A "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
+    (A ".ημ/Π_MANIFEST.sexp" :sha256 "33739bdb4c36844219efd7498172680705f0b3202f6357a8a7d824b729bb6ed6")
   ))

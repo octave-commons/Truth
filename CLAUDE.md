@@ -127,6 +127,116 @@ current UX/render code is acknowledged ad-hoc, not design intent.
   `law.stellar/softened-circular-speed` — unsoftened Kepler inside the
   softening length ejects them.
 
+## Agent workflow (shared with OpenCode)
+
+This repository is cohabited by **Claude Code** and **OpenCode**. Both agents
+read the same project state and must write shared artifacts in the same format.
+The canonical skills live under `~/.agents/skills/`.
+
+### Receipt River
+
+Non-trivial work must leave a trace in the append-only `receipts.edn`. The
+project already has one at the repository root (the `.ημ/` copy is used only if
+it already exists; do not create a second ledger).
+
+Use the harness-agnostic bb scripts:
+
+```bash
+~/.agents/skills/receipt-river/scripts/rr-tail.bb --limit 20
+~/.agents/skills/receipt-river/scripts/rr-append.bb \
+  --kind :observation \
+  --origin "domain.genesis refactor" \
+  --note "Starting refactor of accretion logic"
+```
+
+Canonical keys: `ts kind origin owner dod pi host manifest refs` (required),
+plus `note tests decisions drift`. Read the last ~20 lines before any major
+decision; never edit or delete past lines.
+
+### Session Mycology
+
+After a hard or repetitive turn, score it and append a reflection to
+`.ημ/session-mycology/ledger.md`. If the pattern generalizes with confidence
+`>= 0.7`, create a candidate spore under `.ημ/session-mycology/spores/`.
+
+```bash
+~/.agents/skills/session-mycology/scripts/sm-log.bb \
+  --task "Refactored hydro cache rebuild" \
+  --efficiency 0.75 \
+  --friction 0.4 \
+  --candidate 0.8 \
+  --note "Cache-equivalence test had to become windowed; document this"
+~/.agents/skills/session-mycology/scripts/sm-spore.bb \
+  --slug "windowed-cache-equivalence" \
+  --task "Refactored hydro cache rebuild" \
+  --problem "Cache-equivalence tests fail when physics changes from stale geometry" \
+  --pattern "Any Jacobi-lag cache needs a windowed equivalence test, not bit-equality" \
+  --better-path "Write a spec for windowed equivalence before changing the cache" \
+  --candidate 0.8
+```
+
+Do not promote your own spores during the same session; the `spore-reviewer`
+actor decides promotion.
+
+### Fork Tax (Π)
+
+When the user asks for a handoff, snapshot, or "full dump", pay the fork tax.
+Assume the workspace may be shared with other agents.
+
+```bash
+# Verify, write .ημ/Π_* artifacts, commit, tag, push.
+# Prefer path-scoped staging; never blanket-reset unrelated dirt.
+```
+
+Steps:
+
+1. Check `git status` and split dirt into owned paths, concurrent/unowned paths,
+   and blocked/generated paths.
+2. Run the smallest verification that covers the owned paths.
+3. Write/update `.ημ/Π_STATE.sexp`, `.ημ/Π_MANIFEST.sexp`, and `.ημ/Π_LAST.md`,
+   explicitly noting any concurrent dirt you did not absorb.
+4. Commit only the owned/stageable changes.
+5. Create a deterministic tag `Π-YYYYMMDDhhmmss`.
+6. Push branch + tag; record failures verbatim if blocked.
+
+### Shared memory system
+
+Claude Code's project memories live under
+`~/.claude/projects/-home-err-spaces-Truth/memory/`. OpenCode has a local plugin
+(`.opencode/plugins/claude-memory-bridge/`) that reads and writes the same
+Markdown + YAML-frontmatter files and keeps `MEMORY.md` index in sync.
+
+Treat that directory as the single source of durable project context. When you
+create or update a memory, keep the same format:
+
+```markdown
+---
+name: memory-slug
+description: One-line summary for the index
+metadata:
+  node_type: memory
+  type: project
+---
+
+Detailed content with [[other-memory]] wiki links.
+```
+
+And update `MEMORY.md`:
+
+```markdown
+- [Memory slug](memory-slug.md) — one-line summary for the index
+```
+
+### Working alongside OpenCode
+
+- Read `receipts.edn` tail before major decisions; expect `:owner "opencode"`
+  entries.
+- Do not delete, re-order, or rewrite receipt lines.
+- Prefer the bb scripts for receipt/session-mycology operations so both agents
+  get the same formatting.
+- When OpenCode creates a memory, it will appear in the same Claude memory
+  directory; review it as you would a memory you wrote yourself.
+
 ## Gotchas
 
 - `create-world` is nondeterministic run-to-run despite a fixed seed

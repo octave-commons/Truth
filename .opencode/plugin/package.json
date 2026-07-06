@@ -1,0 +1,10 @@
+{
+  "name": "claude-memory-bridge",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.ts",
+  "module": "index.ts",
+  "dependencies": {
+    "@opencode-ai/plugin": "1.17.7"
+  }
+}

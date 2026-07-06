@@ -1,9 +1,9 @@
 (Π-state
   :branch "main"
-  :previous-commit "bb455b3bf02b8e7e5233490d54fdc68fd817c2aa"
-  :previous-tag "Π-20260705201911"
-  :tag "Π-20260706000058"
-  :timestamp "2026-07-06T00:00:58Z"
+  :previous-commit "2d732ee5364c9daea53a07beb064f5e56352566b"
+  :previous-tag "Π-20260706000058-2-g2d732ee"
+  :tag "Π-20260706015353"
+  :timestamp "2026-07-06T01:53:53Z"
   :architecture-test :passing
 
   :verification
@@ -11,15 +11,11 @@
   (architecture-test "passing")
 
   :summary
-  ("Gravity hardening: dead-zone cutoff suppresses extreme close-encounter pairwise acceleration in domain.gravity.barnes-hut; default cutoff = 0.1 * softening, configurable via :sim/cutoff."
-   "Intervention system evolution: influence cost/lifespan scaling, dark-halo resonance, and observer agency wiring in domain.intervention and domain.player."
-   "Genesis/orbital/player/menu/dev-window iteration: arc transitions, HUD/controls, and error-handling resilience."
-   "Law/stellar expansion: dark-halo contracts and stellar schema additions with test coverage."
-   "Spec refresh: perf-60fps-parallel-tick.md updated with current design decisions."
-   "Notes: three new docs/notes/ entries capture dark-halo influence, ESC handling, and session context."
-   "Test coverage maintained across all touched namespaces.")
+  ("CLAUDE.md refresh: documented receipt river, session mycology, fork tax, and shared memory bridge workflow."
+   "OpenCode Claude memory bridge plugin: .opencode/plugin/index.ts exposes claude_memory_* tools and receipt_append, syncing with ~/.claude/projects/<slug>/memory and receipts.edn."
+   "Session-mycology ledger updated with latest reflection."
+   "Receipt river updated with session records.")
 
   :notes
   ("All repo-relevant working-tree changes were absorbed; .ημ/.env remains gitignored and unstaged."
-   "No unrelated concurrent dirt was detected."
-   "Session-mycology ledger .ημ/session-mycology/ledger.md is unchanged in this snapshot."))
+   "No unrelated concurrent dirt was detected."))

@@ -34,3 +34,12 @@
   spore: none
   receipt-refs: none
   note: Standard fork-tax execution. Minor friction from self-inflicted previous-commit hash typo in Π_STATE.sexp and manifest self-hash fixed-point confusion. Receipt appended after push required a follow-up commit. No concurrent dirt; tests passed; all handoff artifacts updated.
+- ts: 2026-07-06T00:14:09.872659455Z
+  session: ses_0cb402573ffedCQ47oIL4QjNby
+  task: Taught CLAUDE.md receipt river, session mycology, fork tax; built OpenCode Claude memory bridge plugin
+  p-efficiency: 0.75
+  p-friction: 0.3
+  p-skill-candidate: 0.7
+  spore: none
+  receipt-refs: none
+  note: Plugin testing polluted real memory/receipts briefly; future tests should use temp dirs. Cross-agent memory sharing now has a concrete implementation.
