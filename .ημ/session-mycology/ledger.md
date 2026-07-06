@@ -43,3 +43,12 @@
   spore: none
   receipt-refs: none
   note: Plugin testing polluted real memory/receipts briefly; future tests should use temp dirs. Cross-agent memory sharing now has a concrete implementation.
+- ts: 2026-07-06T01:55:38.496543275Z
+  session: ses_0cae49b44ffed2G1c5d46xUVtq
+  task: Pay fork tax for CLAUDE.md refresh and OpenCode memory bridge plugin
+  p-efficiency: 0.75
+  p-friction: 0.4
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: 2026-07-06T01:53:53
+  note: Append receipt AFTER commit/tag to avoid stale tag refs; .opencode/.gitignore may ignore plugin package.json and require force-add. Regenerate Π artifacts after any receipt change to keep manifest hashes valid.
