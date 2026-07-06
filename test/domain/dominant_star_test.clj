@@ -93,12 +93,19 @@
             than the fragmenting baseline, from an identical initial clump"
     (let [on   (run (collapsing-clump {:competitive? true}) 45)
           off  (run (collapsing-clump {:competitive? false}) 45)
-          top-on  (first (masses-solar on))
-          top-off (first (masses-solar off))
-          n-on  (count (ecs/entities-with on c/matter-state c/mass))
-          n-off (count (ecs/entities-with off c/matter-state c/mass))]
+          ms-on   (masses-solar on)
+          ms-off  (masses-solar off)
+          top-on  (first ms-on)
+          top-off (first ms-off)
+          tot-on  (reduce + 0.0 ms-on)
+          tot-off (reduce + 0.0 ms-off)]
       (is (> top-on (* 2.0 top-off)) "ON grows a much larger dominant core than OFF")
-      (is (< n-on n-off) "ON leaves far fewer surviving bodies (mass merged into the winner)"))))
+      ;; Under gradual (M3) accretion gas is DRAINED, not swallowed whole, so a
+      ;; competitive core spreads its draw thinly across many donors that persist
+      ;; as low-mass remnants — body count is no longer the concentration proxy.
+      ;; The intent (mass funnels into ONE winner) is the mass-fraction claim:
+      (is (> (/ top-on tot-on) (/ top-off tot-off))
+          "ON concentrates a larger share of the cloud's mass into its winner"))))
 
 (deftest effective-accretion-radius-grows-with-mass
   (testing "the effective capture radius increases with sink mass (Bondi ∝ M)"

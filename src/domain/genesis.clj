@@ -511,7 +511,9 @@
      ;; c/torque-disk, c/spawn-request-disk (all single-writer).
      (stellar/disk-evolution-system)
      ;; Mass transfer: rate-limited gradual accretion and Roche-lobe overflow.
-     ;; Emits c/mass-flux influences for the integrator.
+     ;; Sinks are resolved bodies only. Emits self-owned c/mass-flux-transfer +
+     ;; c/dv-transfer influences the integrator folds through its uniform
+     ;; :mass / :velocity-delta accumulate.
      (mt/mass-transfer-system)
      ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
      (lod/lod-scheduler)
@@ -529,7 +531,8 @@
 
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
-  [c/consumed-merge c/consumed-accrete c/consumed-wind c/consumed-escape])
+  [c/consumed-merge c/consumed-accrete c/consumed-wind c/consumed-escape
+   c/consumed-transfer])
 
 (def ^:private spawn-request-components
   "Lifecycle spawn requests; each is {eid [seed-spec ...]} materialized into new

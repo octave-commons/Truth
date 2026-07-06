@@ -92,7 +92,9 @@
     (is (contains? rate :sink/dot-m))
     (is (contains? rate :sink/regime))))
 
-(deftest sink-flux-system-emits-mass-flux-events
+(deftest sink-flux-system-routes-gas-to-a-protostars-disk
+  ;; The sink is a :protostar (disk-former), so captured gas is routed to its
+  ;; protoplanetary disk (c/disk-mass-flux), NOT merged straight into the core.
   (let [[w sink gas] (world-with-sink-and-gas)
         w (-> w
               (assoc :sim/dt 1.0e12 :tick 0)
@@ -102,10 +104,14 @@
                                   :sink/dot-m 1.0e20
                                   :sink/ambient-density 1.0e-14}))
         ws ((:run (mt/sink-accretion-flux-system)) w)
-        events (get-in ws [c/mass-flux sink])]
-    (is (seq events))
-    (is (some #(= gas (:mass-flux/donor-id %)) events))
-    (is (every? #(= :bhl (:mass-flux/kind %)) events))))
+        disk-dm (get-in ws [c/disk-mass-flux sink])
+        gas-dm  (get-in ws [c/mass-flux-transfer gas])]
+    (testing "gas is disk-routed and drained from the donor, conservatively"
+      (is (pos? disk-dm) "the protostar's disk gains the accreted gas mass")
+      (is (neg? gas-dm) "the donor gas parcel is debited")
+      (is (== disk-dm (- gas-dm)) "disk gain equals donor loss"))
+    (testing "accreted angular momentum feeds the disk-L channel"
+      (is (contains? (get ws c/disk-l-flux) sink)))))
 
 (deftest roche-lobe-system-emits-conservative-overflow
   (let [w (ecs/empty-world)
@@ -130,15 +136,14 @@
                                   :orbit/semi-major-axis 3.0e9
                                   :orbit/eccentricity 0.0}))
         ws ((:run (mt/roche-lobe-system)) w)
-        events (get-in ws [c/mass-flux pair-eid])
-        roche (get-in ws [c/roche-lobe pair-eid])]
+        roche (get-in ws [c/roche-lobe pair-eid])
+        dm-donor (get-in ws [c/mass-flux-transfer donor])
+        dm-accr  (get-in ws [c/mass-flux-transfer accr])]
     (is (some? roche))
     (is (true? (:roche-lobe/overflow? roche)))
-    (is (= 2 (count events)))
-    (is (neg? (:mass-flux/delta-m (first events))))
-    (is (pos? (:mass-flux/delta-m (second events))))
-    (is (== (:mass-flux/delta-m (first events))
-            (- (:mass-flux/delta-m (second events))))
+    (is (neg? dm-donor))
+    (is (pos? dm-accr))
+    (is (== dm-donor (- dm-accr))
         "conservative: donor debit equals accretor credit")))
 
 (deftest combined-system-emits-both-kinds
@@ -163,14 +168,13 @@
                                   :orbit/semi-major-axis 1.0e10
                                   :orbit/eccentricity 0.0}))
         ws ((:run (mt/mass-transfer-system)) w)
-        bhl-events (get-in ws [c/mass-flux sink])
-        rlof-events (get-in ws [c/mass-flux pair-eid])]
-    (is (seq bhl-events))
-    (is (= :bhl (:mass-flux/kind (first bhl-events))))
-    (is (seq rlof-events))
-    (is (= :rlof (:mass-flux/kind (first rlof-events))))))
+        transfers (get ws c/mass-flux-transfer)]
+    (testing "BHL debits the gas donor"
+      (is (neg? (get transfers gas))))
+    (testing "RLOF credits the accretor"
+      (is (pos? (get transfers accr))))))
 
-(deftest integrator-applies-mass-flux-debit-and-credit
+(deftest integrator-applies-transfer-debit-and-credit
   (let [w (ecs/empty-world)
         [w sink] (stellar/spawn-clump
                   w {:position [0.0 0.0 0.0]
@@ -186,22 +190,14 @@
                       :matter-state :nebula})
         w (-> w
               (assoc :sim/dt 1.0e12 :tick 0)
-              (ecs/put-component sink c/mass-flux
-                                 [{:mass-flux/kind :bhl
-                                   :mass-flux/sink-id sink
-                                   :mass-flux/delta-m 1.0e27
-                                   :mass-flux/delta-p [0.0 1.0e30 0.0]
-                                   :mass-flux/tick 0}
-                                  {:mass-flux/kind :bhl
-                                   :mass-flux/donor-id donor
-                                   :mass-flux/delta-m -1.0e27
-                                   :mass-flux/delta-p [0.0 -1.0e30 0.0]
-                                   :mass-flux/tick 0}]))
+              (ecs/put-component sink c/mass-flux-transfer 1.0e27)
+              (ecs/put-component donor c/mass-flux-transfer -1.0e27))
         ws (integ/mass-ws w)
         sink-m (get-in ws [c/mass sink])
         donor-m (get-in ws [c/mass donor])]
-    (is (== sink-m (+ 1.0e30 1.0e27)))
-    (is (== donor-m (- 1.0e28 1.0e27)))))
+    (testing "mass-flux-transfer folds through the generic :mass accumulate"
+      (is (== sink-m (+ 1.0e30 1.0e27)))
+      (is (== donor-m (- 1.0e28 1.0e27))))))
 
 (deftest integrator-reaps-depleted-donors
   (let [w (ecs/empty-world)
@@ -219,17 +215,8 @@
                       :matter-state :nebula})
         w (-> w
               (assoc :sim/dt 1.0e12 :tick 0)
-              (ecs/put-component sink c/mass-flux
-                                 [{:mass-flux/kind :bhl
-                                   :mass-flux/sink-id sink
-                                   :mass-flux/delta-m 1.0e25
-                                   :mass-flux/delta-p [0.0 1.0e20 0.0]
-                                   :mass-flux/tick 0}
-                                  {:mass-flux/kind :bhl
-                                   :mass-flux/donor-id donor
-                                   :mass-flux/delta-m -1.0e25
-                                   :mass-flux/delta-p [0.0 -1.0e20 0.0]
-                                   :mass-flux/tick 0}]))
+              (ecs/put-component sink c/mass-flux-transfer 1.0e25)
+              (ecs/put-component donor c/mass-flux-transfer -1.0e25))
         ws (integ/mass-ws w)]
-    (is (get-in ws [c/consumed-accrete donor])
-        "donor whose new mass would be negative is marked for reaping")))
+    (is (get-in ws [c/consumed-transfer donor])
+        "donor drained below floor is marked for reaping via consumed-transfer")))

@@ -54,9 +54,10 @@
    :angular-momentum {:accumulate [c/torque-em c/torque-disk]
                       :compose :sum :scale :dt}
    :mass             {:accumulate [c/mass-flux-wind c/mass-flux-flare
-                                   c/mass-flux-xuv c/mass-flux-disk]
+                                   c/mass-flux-xuv c/mass-flux-disk
+                                   c/mass-flux-transfer]
                       :compose :sum :scale :raw}
-   :velocity-delta   {:accumulate [c/dv-wind c/dv-flare]
+   :velocity-delta   {:accumulate [c/dv-wind c/dv-flare c/dv-transfer]
                       :compose :sum :scale :raw}
    :temperature      {:influences [c/heat-intervention]
                       :derived "virial (cores) / radiative (worlds) + intervention ease"}
@@ -97,55 +98,21 @@
 ;; fields (spec §5). c/absorb-merge is the same shape for collision merges.
 ;; Each per-field updater below reads the same data and applies its field.
 
-(defn- mass-flux-events
-  "All c/mass-flux events in the world, flattened from their emitting entities."
-  [world]
-  (mapcat (fn [[_eid events]]
-            (if (sequential? events) events []))
-          (get-in world [:components c/mass-flux] {})))
-
-(defn- mass-flux-deltas
-  "Return {eid delta-m} from all c/mass-flux events. Positive = gain."
-  [world]
-  (let [events (mass-flux-events world)]
-    (reduce (fn [m event]
-              (let [dm (double (:mass-flux/delta-m event 0.0))
-                    ids (filterv some?
-                                 [(when (:mass-flux/sink-id event) (:mass-flux/sink-id event))
-                                  (:mass-flux/donor-id event)
-                                  (:mass-flux/donor-eid event)
-                                  (:mass-flux/accretor-eid event)])]
-                (reduce (fn [m id] (update m id (fnil + 0.0) dm)) m ids)))
-            {}
-            events)))
-
-(defn- mass-flux-momentum-deltas
-  "Return {eid delta-p} from all c/mass-flux events."
-  [world]
-  (let [events (mass-flux-events world)]
-    (reduce (fn [m event]
-              (let [dp (vec (:mass-flux/delta-p event [0.0 0.0 0.0]))
-                    ids (filterv some?
-                                 [(when (:mass-flux/sink-id event) (:mass-flux/sink-id event))
-                                  (:mass-flux/donor-id event)
-                                  (:mass-flux/donor-eid event)
-                                  (:mass-flux/accretor-eid event)])]
-                (reduce (fn [m id] (update m id (fnil sp/v+ zero3) dp)) m ids)))
-            {}
-            events)))
-
 (defn- depleted-donors
-  "Return {eid true} for donors whose new mass would be below floor."
-  [world deltas floor-mass]
+  "Return {eid true} for gradual-transfer donors whose new mass would fall below
+   `floor-mass`. Scoped to the c/mass-flux-transfer channel (a donor is a body
+   that lost mass to accretion/overflow this tick) so ordinary mass loss (wind,
+   flare, XUV) never triggers reaping. Reaped via c/consumed-transfer."
+  [world floor-mass]
   (let [floor (double (or floor-mass 0.0))]
     (reduce-kv (fn [acc eid dm]
-                 (let [m0 (double (or (ecs/get-component world eid c/mass) 0.0))
-                       m1 (+ m0 dm)]
-                   (if (and (< m1 floor) (pos? m0))
+                 (let [dm (double dm)
+                       m0 (double (or (ecs/get-component world eid c/mass) 0.0))]
+                   (if (and (neg? dm) (pos? m0) (< (+ m0 dm) floor))
                      (assoc acc eid true)
                      acc)))
                {}
-               deltas)))
+               (get-in world [:components c/mass-flux-transfer] {}))))
 
 (defn- absorb-mass-delta
   "Sum of absorbed bulk mass for `eid` from absorb-accrete and absorb-merge
@@ -286,14 +253,13 @@
    (symplectic Euler), then the one-tick-stale COM frame-offset is subtracted from
    position (a pure Galilean shift, §6). Absorb-accrete/merge packets are blended
    for COM preservation — the absorbed mass's momentum shifts the survivor.
-   c/mass-flux momentum deltas are also applied."
+   Gradual mass-transfer recoil rides the c/dv-transfer velocity-delta channel."
   [world dt]
   (let [foff (or (:genesis/frame-offset world) zero3)
         eids (ecs/entities-with world c/position c/velocity
                                 c/mass c/radius c/body-kind)
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
-        mf-dp (mass-flux-momentum-deltas world)
         profiling? (:genesis/profile-subsystems? world)
         ;; Phase 1: accumulate accelerations from all influence cells.
         force-fn #(into {} (par/par-mapv
@@ -312,14 +278,10 @@
                               (fn [eid]
                                 (let [a    (get forces eid zero3)
                                       dv   (sum-vec-influences world eid dv-sources)
-                                      dp-m (get mf-dp eid zero3)
                                       v    (ecs/get-component world eid c/velocity)
                                       x    (ecs/get-component world eid c/position)
                                       m0   (double (or (ecs/get-component world eid c/mass) 0.0))
-                                      v0   (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
-                                      v1   (if (pos? m0)
-                                             (sp/v+ v0 (sp/v* dp-m (/ 1.0 m0)))
-                                             v0)
+                                      v1   (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
                                       x1   (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
                                   (if-let [pkts (get absorbs eid)]
                                     (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
@@ -420,32 +382,28 @@
   (let [eids      (ecs/entities-with world c/mass)
         absorbs   (merge (get-in world [:components c/absorb-accrete] {})
                          (get-in world [:components c/absorb-merge] {}))
-        mf-deltas (mass-flux-deltas world)
         cell      (into {}
                         (keep (fn [eid]
                                 (let [dm   (sum-scalar-influences world eid mass-flux-sources)
                                       dm-a (absorb-mass-delta world eid)
-                                      dm-m (get mf-deltas eid 0.0)
-                                      dm-t (+ dm dm-a dm-m)]
+                                      dm-t (+ dm dm-a)]
                                   (when-not (zero? dm-t)
                                     [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))]))))
                         eids)
-        ;; Absorb packets and mass-flux events may target entities that lacked
-        ;; a mass-flux scalar influence but still gained mass. Ensure included.
+        ;; Absorb packets may target entities that lacked a scalar mass-flux
+        ;; influence but still gained mass. Ensure they are included.
         extra     (into {}
                         (keep (fn [eid]
-                                (when-not (contains? (into #{} (keys cell)) eid)
-                                  (let [dm-a (absorb-mass-delta world eid)
-                                        dm-m (get mf-deltas eid 0.0)
-                                        dm-t (+ dm-a dm-m)]
-                                    (when-not (zero? dm-t)
-                                      [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))])))))
-                        (concat (keys absorbs) (keys mf-deltas)))
-        depleted  (depleted-donors world mf-deltas 0.0)
+                                (when-not (contains? cell eid)
+                                  (let [dm-a (absorb-mass-delta world eid)]
+                                    (when-not (zero? dm-a)
+                                      [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-a))])))))
+                        (keys absorbs))
+        depleted  (depleted-donors world 0.0)
         mass-ws   (if (empty? (merge cell extra)) {} {c/mass (merge cell extra)})]
     (if (empty? depleted)
       mass-ws
-      (assoc mass-ws c/consumed-accrete depleted))))
+      (assoc mass-ws c/consumed-transfer depleted))))
 
 (defn temperature-ws
   "Temperature. The base value is the virial/radiative derivation owned by

@@ -252,28 +252,6 @@
    [:sink/efficiency number?]
    [:sink/regime keyword?]])
 
-(def mass-flux-schema
-  "Shared influence for all gradual mass transfer.
-
-   Stored as a vector of event maps on the emitting entity (sink or binary-pair).
-   The integrator reads the vector and applies each event to the referenced
-   entities, so c/mass remains single-writer."
-  [:vector
-   [:map
-    [:mass-flux/kind [:enum :bhl :rlof]]
-    [:mass-flux/delta-m number?]
-    [:mass-flux/delta-p [:vector number?]]
-    [:mass-flux/tick int?]
-    [:mass-flux/sink-id {:optional true} int?]
-    [:mass-flux/donor-id {:optional true} int?]
-    [:mass-flux/binary-pair-id {:optional true} int?]
-    [:mass-flux/donor-eid {:optional true} int?]
-    [:mass-flux/accretor-eid {:optional true} int?]
-    [:mass-flux/delta-l {:optional true} [:vector number?]]
-    [:mass-flux/accretion-zone-density {:optional true} number?]
-    [:mass-flux/roche-overfilling {:optional true} number?]
-    [:mass-flux/accreted-fraction {:optional true} number?]]])
-
 (def binary-pair-schema
   "A relation entity linking a donor and an accretor."
   [:map
@@ -311,14 +289,6 @@
     :kind     :type
     :schema   accretion-rate-schema}))
 
-(def mass-flux-contract
-  "Shared influence for all gradual mass transfer."
-  (contract/->contract
-   {:id       ::mass-flux
-    :shape-id ::mass-flux
-    :kind     :type
-    :schema   mass-flux-schema}))
-
 (def binary-pair-contract
   "A relation entity linking a donor and an accretor."
   (contract/->contract
@@ -345,7 +315,6 @@
 
 (defn validate-accretion-radius [x] (contract/validate accretion-radius-contract x))
 (defn validate-accretion-rate   [x] (contract/validate accretion-rate-contract   x))
-(defn validate-mass-flux        [x] (contract/validate mass-flux-contract        x))
 (defn validate-binary-pair      [x] (contract/validate binary-pair-contract      x))
 (defn validate-roche-lobe       [x] (contract/validate roche-lobe-contract       x))
 (defn validate-mass-transfer-rate [x] (contract/validate mass-transfer-rate-contract x))

@@ -112,6 +112,7 @@
 (def mass-flux-flare :component/mass-flux.flare) ;; kg Δm from flare ejection (negative)
 (def mass-flux-xuv  :component/mass-flux.xuv)  ;; kg Δm from XUV atmospheric escape (negative)
 (def mass-flux-disk :component/mass-flux.disk) ;; kg Δm from disk→star viscous transfer (positive)
+(def mass-flux-transfer :component/mass-flux.transfer) ;; kg Δm from gradual mass transfer (BHL sink accretion + Roche-lobe overflow); signed, written on both donor (−) and sink/accretor (+)
 ;; Absorb contributions → full N→1 merge/accretion blend on the survivor. Each is
 ;; a vector of absorbed-body state maps the integrator folds into the survivor's
 ;; physical fields (conservative blend); the absorbed bodies carry a consumed
@@ -122,6 +123,7 @@
 ;; recoil from ejecting a wind/flare parcel, momentum-conserving). One per source.
 (def dv-wind  :component/dv.wind)  ;; [dvx dvy dvz] wind ejection recoil
 (def dv-flare :component/dv.flare) ;; [dvx dvy dvz] flare ejection recoil
+(def dv-transfer :component/dv.transfer) ;; [dvx dvy dvz] recoil/gain from gradual mass transfer (Δp/m, momentum-conserving); written on both donor and sink/accretor
 ;; Frame-offset → position (recenter as a one-tick-stale COM Galilean shift):
 (def frame-offset :component/frame-offset)     ;; [dx dy dz] subtracted from every position
 ;; Disk-feed contributions (sink accretion → the disk owner). The accretion
@@ -145,6 +147,7 @@
 (def consumed-accrete :component/consumed.accrete) ;; absorbed gas parcel, reaped (sink)
 (def consumed-wind  :component/consumed.wind)   ;; star ablated below floor, reaped (wind)
 (def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
+(def consumed-transfer :component/consumed.transfer) ;; donor drained below floor by gradual mass transfer, reaped (integrator)
 
 ;; Fusion promotion signal: post-fold barrier emits this; classifier and
 ;; fusion-system read it on the next tick's snapshot (spec §7). Single writer.
@@ -180,7 +183,6 @@
 ;; See docs/specs/gradual-mass-transfer-realspec.md.
 (def accretion-rate     :component/accretion-rate)     ;; {:sink/dot-m :sink/dot-m-this-tick :sink/efficiency :sink/regime}
 (def sink-identity      :component/sink-identity)      ;; {:sink/softening-length :sink/created-at-tick}
-(def mass-flux          :component/mass-flux)          ;; shared influence: {:mass-flux/kind :delta-m :delta-p :tick ...}
 (def binary-pair        :component/binary-pair)        ;; {:binary-pair/donor :binary-pair/accretor :orbit/semi-major-axis :orbit/eccentricity}
 (def roche-lobe         :component/roche-lobe)         ;; {:roche-lobe/radius :overfilling :overflow?}
 (def mass-transfer-rate :component/mass-transfer-rate) ;; {:mass-transfer/rate :mass-transfer/accreted-fraction}

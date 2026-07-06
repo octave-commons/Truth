@@ -629,8 +629,10 @@
           next-state (stellar/classify-next-state region 1e25 zones)]
       (is (= :gas-giant next-state) "Parcel outside sink radius condenses to :gas-giant"))))
 
-(deftest test-sink-formation-absorbs-parcels
-  (testing "Newly formed sink absorbs nearby :nebula parcels within accretion radius"
+(deftest test-sink-formation-does-not-absorb-gas
+  (testing "sink-formation NO LONGER swallows :nebula gas whole — gas→sink accretion
+            is domain.mass-transfer's gradual BHL channel (M3), so the two do not
+            double-count. Gas parcels in the feeding zone are left untouched here."
     (let [base (ecs/empty-world)
           ;; Create a sink that just condensed (:planetesimal with accretion-radius)
           [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
@@ -664,23 +666,17 @@
           w5 (stellar/sink-formation-system w4)
           sink-mass (ecs/get-component w5 sink-eid c/mass)
           absorbs (ecs/get-component w5 sink-eid c/absorb-accrete)]
-      ;; Parcels within radius are marked consumed (reaped by materialize-lifecycle)
-      (is (some? (ecs/get-component w5 p1 c/consumed-accrete)) "Parcel within radius is consumed")
-      (is (some? (ecs/get-component w5 p2 c/consumed-accrete)) "Parcel within radius is consumed")
-      ;; Parcel outside radius is untouched
-      (is (ecs/alive? w5 p3) "Parcel outside radius survives")
-      (is (nil? (ecs/get-component w5 p3 c/consumed-accrete)) "Parcel outside radius not consumed")
-      ;; Absorb-accrete influence emitted (integrator applies mass/velocity next tick)
-      (is (some? absorbs) "Absorb-accrete influence emitted on sink")
-      (is (= 2 (count absorbs)) "Two parcels absorbed")
-      (is (= (+ 1e27 1e27) (reduce + 0.0 (map :mass absorbs)))
-          "Total absorbed mass matches parcels")
-      (is (false? (:disk-route (first absorbs))) "Debris sink → no disk-route")
-      (is (= (double sink-mass) 2e28) "Sink bulk mass unchanged (integrator applies next tick)")
+      ;; Gas within the feeding zone is NOT consumed by sink-formation any more —
+      ;; mass-transfer drains it gradually instead.
+      (is (nil? (ecs/get-component w5 p1 c/consumed-accrete)) "Gas within radius NOT consumed by sink-formation")
+      (is (nil? (ecs/get-component w5 p2 c/consumed-accrete)) "Gas within radius NOT consumed by sink-formation")
+      (is (ecs/alive? w5 p3) "Gas outside radius survives")
+      (is (nil? (ecs/get-component w5 p3 c/consumed-accrete)) "Gas outside radius not consumed")
+      ;; No gas absorb-accrete emitted (only solid bodies are captured here).
+      (is (or (nil? absorbs) (empty? absorbs)) "No gas absorbed by sink-formation")
+      (is (= (double sink-mass) 2e28) "Sink bulk mass unchanged")
       (is (zero? (double (or (ecs/get-component w5 sink-eid c/disk-mass) 0.0)))
-          "Debris sink forms no disk")
-      (is (zero? (first (ecs/get-component w5 sink-eid c/velocity)))
-          "Sink velocity unchanged (COM blend applied by integrator next tick)"))))
+          "Debris sink forms no disk from gas"))))
 
 (deftest test-sink-formation-absorbs-debris-onto-protostar
   (testing "A protostar sink drains nearby small :planetesimal via absorb-accrete"

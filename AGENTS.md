@@ -59,6 +59,53 @@ This is enforced by `test/architecture_test.clj`. If that test fails, you are
 splitting reality in two — stop and converge, don't add a flag. (This rule
 already cost one cleanup; that is why it is now a test.)
 
+### No Special Cases — Everything Rides the Uniform Path
+
+The tick has **one** way to do each thing. Do not invent a bespoke side-channel
+because your feature "doesn't quite fit." If it doesn't fit, either it reshapes
+to fit or the uniform mechanism grows — it never gets an exemption.
+
+- **Forces, mass flux, recoil, torque all flow through the influence-registry**
+  (`domain.integrator/influence-registry`). A system emits a **self-owned
+  influence component on each affected entity**; the integrator folds every
+  contributor with the generic `:sum` accumulate. Adding a new influence = adding
+  a keyword to an `:accumulate` list + one `def` in `components.clj`. It is
+  **never** a new hand-written scan/route/dispatch inside the integrator.
+- **Cross-entity effects still stay uniform.** A transfer (donor → sink) does
+  NOT become one rich event stuffed on one entity that the integrator then
+  unpacks and routes by id. Emit the self-owned influence on *both* entities
+  directly — the same component type written to multiple entity ids in one
+  write-set is still single-writer. (This is exactly how gradual mass transfer
+  works: see `domain.mass-transfer` → `c/mass-flux-transfer` / `c/dv-transfer`.)
+- **One writer per component, always declared.** Every component a system writes
+  must appear in its registry `:writes`, and every component it reads in
+  `:reads`. Undeclared reads/writes are latent single-writer violations the
+  static guard can't see — they are bugs even when the build is green. Lifecycle
+  reaping uses a **per-owner** `consumed.*` marker (the reaper despawns any of
+  them); do not emit another system's marker.
+- If you feel the urge to special-case, that is the signal to **stop and make the
+  general mechanism handle it** — or ask. A special case is a fork in reality,
+  the same failure mode the single-substrate rule exists to prevent.
+
+### Performance Is a Correctness Property (No O(N) Storms)
+
+Every system runs **every entity, every tick**. A nebula is thousands of gas
+parcels. Before you write a per-entity loop, ask what it costs at N=10⁴.
+
+- **Never do a spatial neighbour query (or any O(N) inner scan) over *all*
+  parcels** unless the physics genuinely is all-pairs. Gate expensive systems to
+  the set that actually needs them — accretion **sinks are resolved bodies only**
+  (`sink-states`, i.e. not `:nebula`); treating every gas parcel as a sink is
+  both ~2N wasted spatial queries per tick *and* physically wrong (gas-on-gas
+  capture is SPH/merge's job). This exact bug shipped once and slowed the whole
+  sim; don't reintroduce it.
+- Filter the entity set **before** the expensive work, not inside it. Prefer
+  `entities-with` + a cheap state predicate over querying-then-discarding.
+- If you must bound coverage (top-N, sampling, skip-frames), `log` what you
+  dropped — silent truncation reads as "handled everything" when it wasn't.
+- Measure with `bin/bench` (stop the pm2 dev service first) before and after any
+  change to the hot path; a green suite does not prove you didn't 10× the tick.
+
 ### Code Style (House Rules)
 
 - Threading macros `->` and `->>` over nested `let` chains.
@@ -89,11 +136,22 @@ No HTTP libraries in `domain/`. No rendering libraries in `domain/`. The LLM
 and embedding model calls live exclusively in `infra/myth_engine.clj`.
 
 ### Invariants
-- Read receipt receipts
-- Read recent lessons
+- Read recent receipts
+- Read recent session mycology lessons
+- Ground work in specs, always.
 - Never cut corners
-- Correct is better than fast
-- Document everything
+  - no fallback
+  - no stop gaps
+  - fail loudly and gracefully
+- Correct is better than easy
+- Always Document everything
+  - AGENTS.md
+  - README.md
+  - CLAUDE.md
+  - docs/specs
+  - docs/research
+  - docs/notes
+- use the claude memory tool
 
 ### Running the dev service
 
@@ -113,44 +171,7 @@ watching is OFF, so it does NOT auto-reload on edits:
 
 ---
 
+
 ## Deep Research Actors
 
-Gates of Truth has a family of ημ actors that periodically conduct deep academic
-research into every domain the simulation touches. They are non-destructive — they
-only write to `docs/research/` and never modify source code.
-
-| Actor | Domain | Schedule | Topics |
-|-------|--------|----------|--------|
-| `truth-research-cosmology` | Cosmology | 48h | Stellar physics, galaxy formation, nucleosynthesis, CMB, dark matter |
-| `truth-research-geology` | Geology | 48h | Plate tectonics, mantle convection, volcanism, cratering, erosion |
-| `truth-research-biology` | Biology | 48h | Ecology, evolution, astrobiology, Lotka-Volterra, abiogenesis |
-| `truth-research-atmosphere` | Atmosphere | 48h | Radiative transfer, climate, Hadley cell, greenhouse, clouds |
-| `truth-research-physics` | Physics | 48h | SPH, N-body, MHD, orbital mechanics, numerical methods |
-| `truth-research-culture` | Culture | 48h | Agent-based social models, mythogenesis, civilization dynamics |
-| `truth-research-coordinator` | Cross-domain | 72h | Index maintenance, topic assignment, gap analysis, synthesis |
-
-### Dispatching Research
-
-```bash
-# Manual dispatch (uses eta-mu CLI)
-~/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor-eta-mu.sh truth-research-cosmology "Research primordial nucleosynthesis yields for Phase 0 composition."
-
-# Check status
-~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-cosmology
-
-# Install automated timers (one-time)
-systemctl --user enable truth-research-cosmology.timer
-systemctl --user start truth-research-cosmology.timer
-```
-
-### Research Output
-
-All research notebooks are written to `docs/research/<domain>/` and indexed in
-`docs/research/INDEX.md`. Each notebook includes:
-- Governing equations in LaTeX
-- Clojure pseudocode mapped to ECS patterns
-- Charts and visualizations
-- Validation against published benchmarks
-- A promotion path to `domain/` code
-
-See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
+Read and update the  @docs/research/ACTORS.md for each research agent actor when asked to do or review research.

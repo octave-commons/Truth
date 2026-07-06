@@ -1300,15 +1300,16 @@
                                               pmass  (double (or (ecs/get-component world eid c/mass) 0.0))
                                               competitive? (not (false? (:genesis/competitive-accretion? world)))]
                                           (and
-                                            ;; Diffuse gas, planetesimals, and (under
-                                            ;; competitive accretion) smaller protostellar
-                                            ;; fragments can all be swallowed by a larger
-                                            ;; sink. Planets and stars are terminal/disk-
-                                            ;; owned and are not re-accreted through the
-                                            ;; feeding zone — they merge only via literal
-                                            ;; collision.
-                                           (or (= :nebula pstate)
-                                               (and (#{:planetesimal :gas-giant :brown-dwarf} pstate)
+                                            ;; Nebula GAS is no longer swallowed whole here:
+                                            ;; gas→sink accretion is the sole responsibility of
+                                            ;; domain.mass-transfer's gradual BHL channel (M3),
+                                            ;; so the two do not double-count (mass conservation).
+                                            ;; This system still handles hierarchical CAPTURE of
+                                            ;; smaller solid/degenerate bodies and — under
+                                            ;; competitive accretion — smaller protostellar
+                                            ;; fragments. Planets and stars are terminal/disk-
+                                            ;; owned and merge only via literal collision.
+                                           (or (and (#{:planetesimal :gas-giant :brown-dwarf} pstate)
                                                     (< pmass sink-m))
                                                (and competitive?
                                                     (= :protostar pstate)
@@ -1615,6 +1616,7 @@
   (let [dt  (double (or (:sim/dt world) 1.0e12))
         eps (double (or (:sim/softening world) 0.0))
         ;; Incorporate disk-routed absorb-accrete packets from sink-formation
+        ;; (solid bodies still captured whole by the hierarchical path).
         world (reduce-kv
                (fn [w eid packets]
                  (let [disk-pkts (filter :disk-route packets)]
@@ -1629,6 +1631,26 @@
                      w)))
                world
                (get-in world [:components c/absorb-accrete] {}))
+        ;; Incorporate gradual gas accretion routed to the disk by
+        ;; domain.mass-transfer (c/disk-mass-flux / c/disk-l-flux). This is the
+        ;; gas→disk channel that replaced sink-formation's whole-parcel gas
+        ;; swallowing (M3); disk-evolution is the sole writer of c/disk-mass and
+        ;; c/disk-angular-mom, so folding it here keeps single-writer.
+        world (let [dmf (get-in world [:components c/disk-mass-flux] {})
+                    dlf (get-in world [:components c/disk-l-flux] {})]
+                (reduce
+                 (fn [w eid]
+                   (let [add-mass (double (or (get dmf eid) 0.0))]
+                     (if (pos? add-mass)
+                       (let [add-L  (or (get dlf eid) [0.0 0.0 0.0])
+                             old-dm (double (or (ecs/get-component w eid c/disk-mass) 0.0))
+                             old-L  (or (ecs/get-component w eid c/disk-angular-mom) [0.0 0.0 0.0])]
+                         (-> w
+                             (put-tracked eid c/disk-mass (+ old-dm add-mass))
+                             (put-tracked eid c/disk-angular-mom (sp/v+ old-L add-L))))
+                       w)))
+                 world
+                 (keys dmf)))
         evolve
         (fn [w eid]
           (if-not (ecs/alive? w eid)

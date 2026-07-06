@@ -100,9 +100,10 @@
               c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk
               c/mass-flux-wind c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
-              c/dv-wind c/dv-flare c/absorb-merge c/absorb-accrete}
+              c/mass-flux-transfer c/dv-wind c/dv-flare c/dv-transfer
+              c/absorb-merge c/absorb-accrete}
     :writes #{c/position c/velocity c/temperature c/composition c/comp-condensed
-              c/angular-momentum c/spin c/mass}}
+              c/angular-momentum c/spin c/mass c/consumed-transfer}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
    ;; tick-world). Sole writer of accel.observer; the integrator sums it.
@@ -223,6 +224,7 @@
     :ns     'domain.stellar
     :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
               c/radius c/position c/velocity c/absorb-accrete c/luminosity
+              c/disk-mass-flux c/disk-l-flux
               c/composition c/planets-seeded c/disc-tag c/rotation-axis
               c/disk-regime c/disk-fragments-spawned}
     :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
@@ -230,13 +232,20 @@
               c/disk-regime c/disk-fragments-spawned}}
 
    ;; Mass transfer: Bondi–Hoyle–Lyttleton sink accretion and Roche-lobe overflow.
-   ;; A single system owns c/accretion-rate, c/mass-flux, c/roche-lobe and
-   ;; c/mass-transfer-rate; it merges the internal BHL and RLOF write-sets.
+   ;; Sinks are resolved bodies only (not nebula gas — that would be an O(N)
+   ;; neighbour-query storm). Emits self-owned c/mass-flux-transfer (signed Δm)
+   ;; and c/dv-transfer (Δp/m) influences on donor AND sink, which the integrator
+   ;; folds through its generic :mass / :velocity-delta accumulate — no bespoke
+   ;; routing. A single system owns c/accretion-rate, c/mass-flux-transfer,
+   ;; c/dv-transfer, c/roche-lobe and c/mass-transfer-rate; it merges the internal
+   ;; BHL and RLOF write-sets.
    {:id     :mass-transfer
     :ns     'domain.mass-transfer
     :reads  #{c/mass c/position c/velocity c/temperature c/matter-state
-              c/accretion-rate c/binary-pair c/radius}
-    :writes #{c/accretion-rate c/mass-flux c/roche-lobe c/mass-transfer-rate}}
+              c/accretion-rate c/accretion-radius c/binary-pair c/radius
+              c/luminosity}
+    :writes #{c/accretion-rate c/mass-flux-transfer c/dv-transfer
+              c/disk-mass-flux c/disk-l-flux c/roche-lobe c/mass-transfer-rate}}
 
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).

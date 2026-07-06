@@ -221,53 +221,88 @@
 (defn build-grid
   "Build a uniform 3D grid from `items` (maps with :position and :id) using the
    supplied `cell-size`. Returns a map with `:cell-size`, `:cells` {[i j k] [items]},
-   and `:items`. Empty input returns a grid with no cells."
+   `:items`, and the inclusive occupied cell-index bounds `:cell-min`/`:cell-max`
+   ([i j k] each). Empty input returns a grid with no cells and nil bounds.
+
+   The bounds let `grid-within-radius` clamp its cell walk to occupied space so a
+   huge query radius never iterates empty cells — while keeping the exact walk
+   order, hence bit-identical results."
   [items cell-size]
-  (let [cs (double cell-size)]
+  (let [cs (double cell-size)
+        cells (reduce (fn [m item]
+                        (update m (item-key cs (:position item))
+                                (fnil conj []) item))
+                      {}
+                      items)
+        ks (keys cells)]
     {:cell-size cs
-     :cells (reduce (fn [m item]
-                      (update m (item-key cs (:position item))
-                              (fnil conj []) item))
-                    {}
-                    items)
-     :items items}))
+     :cells cells
+     :items items
+     :cell-min (when (seq ks)
+                 [(apply min (map #(nth % 0) ks))
+                  (apply min (map #(nth % 1) ks))
+                  (apply min (map #(nth % 2) ks))])
+     :cell-max (when (seq ks)
+                 [(apply max (map #(nth % 0) ks))
+                  (apply max (map #(nth % 1) ks))
+                  (apply max (map #(nth % 2) ks))])}))
 
 (defn grid-within-radius
   "Every item within distance `r` of `pos` (inclusive) from a uniform `grid`.
    `pred` optionally filters items before the distance check. Includes self if
-   self is within the radius; callers exclude by `:id` as needed."
+   self is within the radius; callers exclude by `:id` as needed.
+
+   Walks the cell cube [pos−k, pos+k] (k = ⌈r/cell-size⌉) but clamps each axis to
+   the grid's occupied cell-index range (`:cell-min`/`:cell-max`). Cells outside
+   that range are empty and contribute nothing, so clamping is bit-identical to an
+   unbounded walk — same cells visited in the same order — while making the cost
+   O(occupied bounding box) instead of O(r³). Without the clamp a huge `r` (e.g. a
+   cold, massive sink's Bondi radius) would iterate empty space without end."
   ([grid pos r]
    (grid-within-radius grid pos r (constantly true)))
   ([grid pos r pred]
    (let [cs (:cell-size grid)
-         r2 (* (double r) (double r))
-         [px py pz] pos
-         [ix iy iz] (item-key cs pos)
-         k (max 0 (long (Math/ceil (/ (double r) cs))))]
-     (loop [dx (- k) acc []]
-       (if (> dx k)
-         acc
-         (recur (inc dx)
-                (loop [dy (- k) acc acc]
-                  (if (> dy k)
-                    acc
-                    (recur (inc dy)
-                           (loop [dz (- k) acc acc]
-                             (if (> dz k)
-                               acc
-                               (recur (inc dz)
-                                      (reduce (fn [a b]
-                                                (if (pred b)
-                                                  (let [bp (:position b)
-                                                        x (- px (double (nth bp 0)))
-                                                        y (- py (double (nth bp 1)))
-                                                        z (- pz (double (nth bp 2)))]
-                                                    (if (<= (+ (* x x) (* y y) (* z z)) r2)
-                                                      (conj a b)
-                                                      a))
-                                                  a))
-                                              acc
-                                              (get-in grid [:cells [(+ ix dx) (+ iy dy) (+ iz dz)]]))))))))))))))
+         cells (:cells grid)
+         cmin (:cell-min grid)
+         cmax (:cell-max grid)]
+     (if (or (nil? cmin) (empty? cells))
+       []
+       (let [r2 (* (double r) (double r))
+             [px py pz] pos
+             within? (fn [a b]
+                       (if (pred b)
+                         (let [bp (:position b)
+                               x (- px (double (nth bp 0)))
+                               y (- py (double (nth bp 1)))
+                               z (- pz (double (nth bp 2)))]
+                           (if (<= (+ (* x x) (* y y) (* z z)) r2)
+                             (conj a b)
+                             a))
+                         a))
+             [ix iy iz] (item-key cs pos)
+             k  (max 0 (long (Math/ceil (/ (double r) cs))))
+             ;; clamp the ±k cube to the occupied index range on each axis; the
+             ;; skipped cells are guaranteed empty, so order over non-empty cells
+             ;; (hence the float reduction) is preserved exactly.
+             [xmn ymn zmn] cmin
+             [xmx ymx zmx] cmax
+             xlo (max (- ix k) xmn) xhi (min (+ ix k) xmx)
+             ylo (max (- iy k) ymn) yhi (min (+ iy k) ymx)
+             zlo (max (- iz k) zmn) zhi (min (+ iz k) zmx)]
+         (loop [x xlo acc []]
+           (if (> x xhi)
+             acc
+             (recur (inc x)
+                    (loop [y ylo acc acc]
+                      (if (> y yhi)
+                        acc
+                        (recur (inc y)
+                               (loop [z zlo acc acc]
+                                 (if (> z zhi)
+                                   acc
+                                   (recur (inc z)
+                                          (reduce within? acc
+                                                  (get cells [x y z]))))))))))))))))
 
 (defn grid-nearest
   "`[distance id]` of the nearest item whose `:id` differs from `self-eid`
