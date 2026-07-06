@@ -230,23 +230,13 @@
               c/disk-regime c/disk-fragments-spawned}}
 
    ;; Mass transfer: Bondi–Hoyle–Lyttleton sink accretion and Roche-lobe overflow.
-   ;; Emits c/mass-flux events for the integrator to apply; the integrator remains
-   ;; sole writer of c/mass, c/position, c/velocity. Runs in the parallel fan-out.
-   {:id     :mass-transfer-radius
+   ;; A single system owns c/accretion-rate, c/mass-flux, c/roche-lobe and
+   ;; c/mass-transfer-rate; it merges the internal BHL and RLOF write-sets.
+   {:id     :mass-transfer
     :ns     'domain.mass-transfer
-    :reads  #{c/mass c/position c/velocity c/temperature c/matter-state}
-    :writes #{c/accretion-radius c/accretion-rate}}
-
-   {:id     :mass-transfer-flux
-    :ns     'domain.mass-transfer
-    :reads  #{c/mass c/position c/velocity c/accretion-radius c/accretion-rate
-              c/matter-state c/temperature}
-    :writes #{c/mass-flux}}
-
-   {:id     :roche-lobe
-    :ns     'domain.mass-transfer
-    :reads  #{c/binary-pair c/mass c/radius c/position c/velocity}
-    :writes #{c/roche-lobe c/mass-transfer-rate c/mass-flux}}
+    :reads  #{c/mass c/position c/velocity c/temperature c/matter-state
+              c/accretion-rate c/binary-pair c/radius}
+    :writes #{c/accretion-rate c/mass-flux c/roche-lobe c/mass-transfer-rate}}
 
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).

@@ -1,7 +1,7 @@
 ---
 uuid: "gradual-mass-transfer-spec"
 title: "Gradual Mass Transfer Spec"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "phase0", "physics"]
 created_at: "2026-07-06T17:00:00.000000000Z"

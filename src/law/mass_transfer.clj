@@ -212,7 +212,7 @@
         delta    (roche-overfilling R-donor R-L)]
     (if (and (pos? M-donor) (pos? a) (pos? delta))
       (- (* rlof-pols-A (/ M-donor (orbital-period a M-donor 1.0))
-          (* delta delta delta)))
+            (* delta delta delta)))
       0.0)))
 
 ;; --- Conservation helpers -----------------------------------------------------

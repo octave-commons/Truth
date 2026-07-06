@@ -512,9 +512,7 @@
      (stellar/disk-evolution-system)
      ;; Mass transfer: rate-limited gradual accretion and Roche-lobe overflow.
      ;; Emits c/mass-flux influences for the integrator.
-     (mt/accretion-radius-system)
-     (mt/sink-accretion-flux-system)
-     (mt/roche-lobe-system)
+     (mt/mass-transfer-system)
      ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
      (lod/lod-scheduler)
      ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was

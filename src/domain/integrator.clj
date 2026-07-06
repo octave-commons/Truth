@@ -49,23 +49,22 @@
 ;; spin) are derived by the per-field updaters below and documented in :derived.
 (def influence-registry
   {:velocity         {:accumulate [c/accel-gravity c/accel-pressure c/accel-lorentz
-                                    c/accel-observer c/accel-warp]
-                       :compose :sum :scale :dt}
-    :angular-momentum {:accumulate [c/torque-em c/torque-disk]
-                       :compose :sum :scale :dt}
-    :mass             {:accumulate [c/mass-flux-wind c/mass-flux-flare
-                                    c/mass-flux-xuv c/mass-flux-disk
-                                    c/mass-flux]
-                       :compose :sum :scale :raw}
-    :velocity-delta   {:accumulate [c/dv-wind c/dv-flare]
-                       :compose :sum :scale :raw}
-    :temperature      {:influences [c/heat-intervention]
-                       :derived "virial (cores) / radiative (worlds) + intervention ease"}
-    :composition      {:influences [c/comp-burn c/comp-depletion]
-                       :derived "comp.burn replaces, comp.depletion zeroes"}
-    :position         {:influences [c/frame-offset]
-                       :derived "x + v·dt − frame-offset (COM Galilean shift)"}
-    :spin             {:derived "L / I (moment of inertia)"}})
+                                   c/accel-observer c/accel-warp]
+                      :compose :sum :scale :dt}
+   :angular-momentum {:accumulate [c/torque-em c/torque-disk]
+                      :compose :sum :scale :dt}
+   :mass             {:accumulate [c/mass-flux-wind c/mass-flux-flare
+                                   c/mass-flux-xuv c/mass-flux-disk]
+                      :compose :sum :scale :raw}
+   :velocity-delta   {:accumulate [c/dv-wind c/dv-flare]
+                      :compose :sum :scale :raw}
+   :temperature      {:influences [c/heat-intervention]
+                      :derived "virial (cores) / radiative (worlds) + intervention ease"}
+   :composition      {:influences [c/comp-burn c/comp-depletion]
+                      :derived "comp.burn replaces, comp.depletion zeroes"}
+   :position         {:influences [c/frame-offset]
+                      :derived "x + v·dt − frame-offset (COM Galilean shift)"}
+   :spin             {:derived "L / I (moment of inertia)"}})
 
 (defn- sum-vec-influences
   "Σ of the vector influence components `ctypes` on `eid` (missing ⇒ zero)."
