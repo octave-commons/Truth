@@ -1,21 +1,22 @@
 (Π-state
   :branch "main"
-  :previous-commit "9c85f39e796c47a7257ab27b35e99d10eef36812"
-  :previous-tag "Π-20260704021440"
-  :tag "Π-20260705201911"
-  :timestamp "2026-07-05T20:19:11Z"
+  :previous-commit "bb455b3bf02b8e7e5233490d54fdc68fd817c2aa"
+  :previous-tag "Π-20260705201911"
+  :tag "Π-20260706000058"
+  :timestamp "2026-07-06T00:00:58Z"
   :architecture-test :passing
 
   :verification
-  (tests "507 tests, 6416 assertions, 0 failures, 0 errors")
+  (tests "522 tests, 6560 assertions, 0 failures, 0 errors")
   (architecture-test "passing")
 
   :summary
-  ("Project-wide formatting and alignment pass across domain, law, shape, and test namespaces."
-   "ECS substrate evolution: dsl, event, ledger, and registry refinements."
-   "Physics and simulation: chemistry, EM, genesis, Barnes-Hut, orbital integrator/Kepler/system, physics cache, collision/response, spatial index, stellar, and world bootstrap updates."
-   "Infrastructure and law: render shader, contract, ECS DSL law, ledger law, registry law, stellar law, and system specs."
-   "Documentation: README refresh and perf-60fps-parallel-tick spec revisions; added CLAUDE.md project guide for Claude Code."
+  ("Gravity hardening: dead-zone cutoff suppresses extreme close-encounter pairwise acceleration in domain.gravity.barnes-hut; default cutoff = 0.1 * softening, configurable via :sim/cutoff."
+   "Intervention system evolution: influence cost/lifespan scaling, dark-halo resonance, and observer agency wiring in domain.intervention and domain.player."
+   "Genesis/orbital/player/menu/dev-window iteration: arc transitions, HUD/controls, and error-handling resilience."
+   "Law/stellar expansion: dark-halo contracts and stellar schema additions with test coverage."
+   "Spec refresh: perf-60fps-parallel-tick.md updated with current design decisions."
+   "Notes: three new docs/notes/ entries capture dark-halo influence, ESC handling, and session context."
    "Test coverage maintained across all touched namespaces.")
 
   :notes

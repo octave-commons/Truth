@@ -17,6 +17,7 @@
    [clojure.string :as str]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.intervention :as intervention]
    [domain.naming :as naming]
    [domain.player :as player]
    [infra.camera :as cam]
@@ -82,9 +83,69 @@
     :dec [:setting/scale :move-speed 0.5 1.0e13 1.0e17]
     :inc [:setting/scale :move-speed 2.0 1.0e13 1.0e17]}])
 
+(def spark-knobs
+  "Adjustable influence knobs for the Spark panel — every magic number of the
+   observer halo / warp-well model, as data. Each row names where the value
+   lives (:observer key or :world key + default), a printf format, and the
+   stepper (:scale multiplies by ±factor, :add steps by ±delta), clamped to
+   [lo, hi]. `spark-rows` resolves live values; `world-action` applies steps."
+  [{:label "Focus radius" :scope :observer :key :focus-radius :fmt "%.1e"
+    :mode :scale :down 0.5 :up 2.0 :lo 1.0e14 :hi 2.0e16}
+   {:label "Focus intens" :scope :observer :key :focus-intensity :fmt "%.2f"
+    :mode :add :down -0.1 :up 0.1 :lo 0.1 :hi 1.0}
+   {:label "Halo mass xM" :scope :world :key :genesis/observer-halo-mass-factor
+    :dflt player/default-halo-mass-factor :fmt "%.2f"
+    :mode :add :down -0.25 :up 0.25 :lo 0.0 :hi 8.0}
+   {:label "Dv cap xVir" :scope :world :key :genesis/influence-dv-cap
+    :dflt player/default-influence-dv-cap :fmt "%.2f"
+    :mode :scale :down 0.5 :up 2.0 :lo 0.125 :hi 16.0}
+   {:label "Well mass xM" :scope :world :key :genesis/well-mass-factor
+    :dflt intervention/default-well-mass-factor :fmt "%.2f"
+    :mode :add :down -0.1 :up 0.1 :lo 0.0 :hi 4.0}
+   {:label "Well radius" :scope :world :key :genesis/well-radius
+    :dflt intervention/default-radius :fmt "%.1e"
+    :mode :scale :down 0.5 :up 2.0 :lo 5.0e14 :hi 2.0e16}
+   {:label "Well ttl" :scope :world :key :genesis/well-ttl
+    :dflt intervention/default-ttl :fmt "%.0f"
+    :mode :scale :down 0.5 :up 2.0 :lo 60.0 :hi 6000.0}
+   {:label "Heat rate" :scope :world :key :genesis/heat-approach
+    :dflt intervention/default-heat-approach :fmt "%.3f"
+    :mode :scale :down 0.5 :up 2.0 :lo 0.001 :hi 0.5}])
+
+(defn- knob-action
+  "The [:spark/knob ...] menu action for stepping knob `k` in `direction`
+   (:down / :up)."
+  [{:keys [scope key dflt mode lo hi] :as k} direction]
+  [:spark/knob scope key (or dflt lo) mode (get k direction) lo hi])
+
+(defn- knob-value
+  "Live value of a spark knob: observer knobs read the observer map, world
+   knobs the :genesis/* key (falling back to the domain default)."
+  ^double [{:keys [scope key dflt lo]} world obs]
+  (double (or (if (= scope :observer) (get obs key) (get world key))
+              dflt lo)))
+
+(defn world-action
+  "The world→world' fn a menu :action implies, or nil when the action targets
+   the shell config (`apply-action`). World actions adjust the SIMULATION —
+   observer focus knobs and :genesis/* influence keys — so the window loop
+   enqueues the returned fn as a sim intent and it lands between ticks, like
+   every other input."
+  [action]
+  (when (= :spark/knob (first action))
+    (let [[_ scope k dflt mode step lo hi] action
+          bump (fn [v]
+                 (let [v  (double (or v dflt))
+                       v' (case mode :scale (* v (double step)) :add (+ v (double step)))]
+                   (max (double lo) (min (double hi) v'))))]
+      (if (= scope :observer)
+        (fn [w] (player/update-observer w #(update % k bump)))
+        (fn [w] (update w k bump))))))
+
 (defn apply-action
   "Fold a menu :action into the config map. Pure — the window loop swaps the
-   result into config-atom."
+   result into config-atom. Sim-side actions are not handled here: the window
+   loop routes anything `world-action` recognizes to the sim intent queue."
   [cfg action]
   (case (first action)
     :ui/toggle-domain
@@ -112,6 +173,43 @@
     (cam/cycle-camera-mode cfg)
 
     cfg))
+
+(defn escape-action
+  "The menu :action an ESC press implies for the current shell state, or nil
+   when there is nothing left to escape.
+
+   Hierarchical — each press peels one shell layer and hands attention back to
+   its parent: an open panel closes first; then a live selection releases
+   (untethering the camera). ESC never reaches the window itself — closing the
+   window goes through the quit-confirm prompt (`confirm-close-hud`) instead."
+  [cfg]
+  (cond
+    (:ui/active-domain cfg) [:ui/toggle-domain (:ui/active-domain cfg)]
+    (:selection cfg)        [:ui/select-entity nil]
+    :else                   nil))
+
+(defn confirm-close-hud
+  "Centered quit-confirmation prompt over a `w`×`h` framebuffer, shown while
+   `:ui/confirm-close?` is set (the OS close button was pressed). Returns
+   {:rects :text} in the same NDC / pixel formats as `menu-hud`."
+  [^double w ^double h]
+  (let [ndcx  (fn [px] (- (/ (* 2.0 (double px)) w) 1.0))
+        ndcy  (fn [py] (- 1.0 (/ (* 2.0 (double py)) h)))
+        bw    440.0
+        bh    96.0
+        x0    (/ (- w bw) 2.0)
+        y0    (/ (- h bh) 2.0)
+        lines [["Close the dev window?" 1.8 col-active]
+               ["The sim keeps running; reopen with (w/resurrect-window!)." 1.3 col-dim]
+               ["Enter — close        Esc — keep watching" 1.4 col-value]]]
+    {:rects [{:x0 (ndcx x0) :y0 (ndcy (+ y0 bh)) :x1 (ndcx (+ x0 bw)) :y1 (ndcy y0)
+              :color col-panel}
+             {:x0 (ndcx x0) :y0 (ndcy (+ y0 3.0)) :x1 (ndcx (+ x0 bw)) :y1 (ndcy y0)
+              :color col-accent}]
+     :text  (map-indexed
+             (fn [i [s scale color]]
+               {:text s :x (+ x0 16.0) :y (+ y0 14.0 (* i 26.0)) :scale scale :color color})
+             lines)}))
 
 ;; ---------------------------------------------------------------------------
 ;; Read-only domain panels
@@ -212,6 +310,30 @@
 ;; Layout
 ;; ---------------------------------------------------------------------------
 
+(defn- stepper-rows!
+  "Emit `rows` — {:label :value :dec :inc} — as 'label · value · [-] [+]' lines
+   starting at framebuffer y `y0`, `row-h` apart. Mutates the draw-list atoms
+   the panel layout accumulates into (shared by the View and Spark panels)."
+  [rects text hits rect px0 px1 pad y0 row-h rows]
+  (let [lab-scale 1.5
+        y0 (double y0)
+        row-h (double row-h)]
+    (doseq [[i r] (map-indexed vector rows)]
+      (let [ry  (+ y0 (* (double i) row-h))
+            bsz 22.0
+            bx+ (- px1 pad bsz)
+            bx- (- bx+ 6.0 bsz)]
+        (swap! text conj {:text (:label r) :x (+ px0 pad) :y (+ ry 5.0)
+                          :scale lab-scale :color col-dim})
+        (swap! text conj {:text (:value r) :x (+ px0 pad 118.0) :y (+ ry 5.0)
+                          :scale lab-scale :color col-value})
+        (swap! rects conj (rect bx- ry (+ bx- bsz) (+ ry bsz) col-btn))
+        (swap! text conj {:text "-" :x (+ bx- 7.0) :y (+ ry 5.0) :scale 1.8 :color col-value})
+        (swap! hits conj {:x0 bx- :y0 ry :x1 (+ bx- bsz) :y1 (+ ry bsz) :action (:dec r)})
+        (swap! rects conj (rect bx+ ry (+ bx+ bsz) (+ ry bsz) col-btn))
+        (swap! text conj {:text "+" :x (+ bx+ 6.0) :y (+ ry 4.0) :scale 1.8 :color col-value})
+        (swap! hits conj {:x0 bx+ :y0 ry :x1 (+ bx+ bsz) :y1 (+ ry bsz) :action (:inc r)})))))
+
 (defn menu-hud
   "Lay out the top bar and the open sub-view panel for the current `cfg` and
    `world` over an `w`×`h` framebuffer. Returns {:rects :text :hits :regions}."
@@ -255,22 +377,13 @@
             (swap! regions conj {:x0 px0 :y0 py0 :x1 px1 :y1 (+ py0 ph)})
             (swap! text conj {:text "VIEW · CAMERA" :x (+ px0 pad) :y (+ py0 pad)
                               :scale 1.6 :color col-active})
-            (doseq [[i r] (map-indexed vector view-rows)]
-              (let [ry  (+ py0 pad header-h (* i row-h))
-                    val (format (:fmt r) (double (get cfg (:key r) 0.0)))
-                    bsz 22.0
-                    bx+ (- px1 pad bsz)
-                    bx- (- bx+ 6.0 bsz)]
-                (swap! text conj {:text (:label r) :x (+ px0 pad) :y (+ ry 5.0)
-                                  :scale lab-scale :color col-dim})
-                (swap! text conj {:text val :x (+ px0 pad 118.0) :y (+ ry 5.0)
-                                  :scale lab-scale :color col-value})
-                (swap! rects conj (rect bx- ry (+ bx- bsz) (+ ry bsz) col-btn))
-                (swap! text conj {:text "-" :x (+ bx- 7.0) :y (+ ry 5.0) :scale 1.8 :color col-value})
-                (swap! hits conj {:x0 bx- :y0 ry :x1 (+ bx- bsz) :y1 (+ ry bsz) :action (:dec r)})
-                (swap! rects conj (rect bx+ ry (+ bx+ bsz) (+ ry bsz) col-btn))
-                (swap! text conj {:text "+" :x (+ bx+ 6.0) :y (+ ry 4.0) :scale 1.8 :color col-value})
-                (swap! hits conj {:x0 bx+ :y0 ry :x1 (+ bx+ bsz) :y1 (+ ry bsz) :action (:inc r)})))
+            (stepper-rows! rects text hits rect px0 px1 pad (+ py0 pad header-h) row-h
+                           (mapv (fn [r]
+                                   {:label (:label r)
+                                    :value (format (:fmt r) (double (get cfg (:key r) 0.0)))
+                                    :dec   (:dec r)
+                                    :inc   (:inc r)})
+                                 view-rows))
             (let [ry (+ py0 pad header-h (* (count view-rows) row-h))
                   bw 104.0 bh 22.0 bx (- px1 pad bw)]
               (swap! text conj {:text "Mode" :x (+ px0 pad) :y (+ ry 5.0)
@@ -299,6 +412,43 @@
                                   :scale 1.3 :color col-value})
                 (swap! hits conj {:x0 px0 :y0 ry :x1 px1 :y1 (+ ry row-h)
                                   :action [:ui/select-entity (:eid ent)]}))))
+
+          ;; Spark: live influence knobs (falls through to the read-only panel
+          ;; when no observer has been spawned).
+          (and (= active :spark) (some? (player/get-observer world)))
+          (let [obs    (player/get-observer world)
+                row-h  30.0 header-h 26.0 line-h 22.0
+                {:keys [ref-mass dv-cap]} (player/influence-reference world)
+                kf     (double (or (:genesis/observer-halo-mass-factor world)
+                                   player/default-halo-mass-factor))
+                halo   (player/halo-mass obs kf ref-mass)
+                info   [{:text (format "Coherence %.2f    Agency %d"
+                                       (double (or (:coherence obs) 0.0))
+                                       (long (math/floor (double (or (:agency obs) 0.0)))))}
+                        {:text (format "Halo %.2e kg" halo) :color col-dim}
+                        {:text (format "Reach %.1e m   dv cap %.0f m/s"
+                                       (* player/halo-reach-factor
+                                          (double (or (:focus-radius obs) 0.0)))
+                                       (double dv-cap))
+                         :color col-dim}]
+                rows   (mapv (fn [k]
+                               {:label (:label k)
+                                :value (format (:fmt k) (knob-value k world obs))
+                                :dec   (knob-action k :down)
+                                :inc   (knob-action k :up)})
+                             spark-knobs)
+                info-h (* line-h (count info))
+                ph     (+ (* 2.0 pad) header-h info-h (* (count rows) row-h) 4.0)]
+            (swap! rects conj (rect px0 py0 px1 (+ py0 ph) col-panel))
+            (swap! regions conj {:x0 px0 :y0 py0 :x1 px1 :y1 (+ py0 ph)})
+            (swap! text conj {:text "SPARK · INFLUENCE" :x (+ px0 pad) :y (+ py0 pad)
+                              :scale 1.6 :color col-active})
+            (doseq [[i ln] (map-indexed vector info)]
+              (swap! text conj {:text (:text ln)
+                                :x (+ px0 pad) :y (+ py0 pad header-h (* i line-h))
+                                :scale 1.3 :color (or (:color ln) col-value)}))
+            (stepper-rows! rects text hits rect px0 px1 pad
+                           (+ py0 pad header-h info-h) row-h rows))
 
           :else
               ;; read-only domain panel

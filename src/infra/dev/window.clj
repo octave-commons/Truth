@@ -326,24 +326,31 @@
                          (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
                            (swap! world-atom player/update-observer
                                   (fn [o] (player/set-focus o wp (:focus-radius o) (:focus-intensity o))))))
-                ;; PAID: resolve a warp request (key G / Shift+G) at the cursor — spends
-                ;; agency, no-op if unaffordable. The warp then bends nearby bodies.
+                ;; PAID: resolve an ability request (key G / Shift+G / H / J) at the
+                ;; spark avatar's position — spends agency, no-op if no observer or
+                ;; unaffordable. The placed intervention then bends nearby bodies or
+                ;; eases temperature.
                 _      (when-let [ar (:action-request cfg)]
-                         (when (and cur-sx (not over-menu?))
-                           (let [wp (inspect/cursor->world ctx cur-sx cur-sy)]
-                             (swap! world-atom intervention/place (:kind ar) wp)))
+                         (when-let [obs (player/get-observer @world-atom)]
+                           (swap! world-atom intervention/place (:kind ar) (:position obs)))
                          (swap! config-atom dissoc :action-request))
                 ;; Resolve a pending click. A click on the menu bar / panel folds the
-                ;; hit's :action into the config; otherwise it picks an entity in the
-                ;; scene. pr coords are window pixels → scale to fb.
+                ;; hit's :action into the config — unless it is a sim-side action
+                ;; (Spark knobs), which is enqueued as a world intent so the sim
+                ;; thread applies it between ticks. Otherwise it picks an entity in
+                ;; the scene. pr coords are window pixels → scale to fb.
                 _      (when-let [prn-val (:pick-request cfg)]
                          (let [winw (int-array 1) winh (int-array 1)
                                _    (GLFW/glfwGetWindowSize window winw winh)
                                sx   (* (double (:x prn-val)) (/ (double fb-w) (max 1 (aget winw 0))))
                                sy   (* (double (:y prn-val)) (/ (double fb-h) (max 1 (aget winh 0))))]
                            (if-let [hit (menu/hit-at (:hits menu) sx sy)]
-                             (swap! config-atom #(-> % (dissoc :pick-request)
-                                                     (menu/apply-action (:action hit))))
+                             (do
+                               (when-let [wf (menu/world-action (:action hit))]
+                                 (swap! world-atom wf))
+                               (swap! config-atom #(cond-> (dissoc % :pick-request)
+                                                     (nil? (menu/world-action (:action hit)))
+                                                     (menu/apply-action (:action hit)))))
                              ;; Scene click: route through the SAME select action the
                              ;; explorer rows use, so a pick tethers the camera and a
                              ;; void-click releases it — one selection semantics.

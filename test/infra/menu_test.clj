@@ -102,5 +102,34 @@
                     (assoc :next-id 1))
           cfg (menu/apply-action base [:ui/toggle-domain :spark])
           {:keys [text]} (menu/menu-hud cfg w 1280.0 720.0)]
-      (is (seq (filter #(re-find #"Agency" (:text %)) text)) "panel shows agency line")
-      (is (seq (filter #(re-find #"7 quanta" (:text %)) text)) "agency floors to integer quanta"))))
+      (is (seq (filter #(re-find #"Agency 7" (:text %)) text))
+          "agency floors to integer quanta"))))
+
+(deftest spark-panel-exposes-influence-knobs
+  (let [[w _] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+        cfg (menu/apply-action base [:ui/toggle-domain :spark])
+        {:keys [hits text]} (menu/menu-hud cfg w 1280.0 720.0)
+        knob-hits (filter #(= :spark/knob (first (:action %))) hits)]
+    (testing "every influence knob gets a -/+ stepper pair"
+      (is (= (* 2 (count menu/spark-knobs)) (count knob-hits))))
+    (testing "the halo readout is shown"
+      (is (seq (filter #(re-find #"Halo" (:text %)) text))))
+    (testing "without an observer the panel falls back to read-only"
+      (let [{:keys [hits]} (menu/menu-hud cfg (ecs/empty-world) 1280.0 720.0)]
+        (is (empty? (filter #(= :spark/knob (first (:action %))) hits)))))))
+
+(deftest world-action-adjusts-the-simulation
+  (testing "config actions are not world actions"
+    (is (nil? (menu/world-action [:setting/scale :move-speed 2.0 1.0 10.0])))
+    (is (nil? (menu/world-action [:ui/toggle-domain :view]))))
+  (testing "an observer knob steps the observer map and clamps"
+    (let [[w _] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+          grow  (menu/world-action [:spark/knob :observer :focus-radius 5.0e15 :scale 2.0 1.0e14 2.0e16])
+          w'    (reduce (fn [w _] (grow w)) w (range 20))]
+      (is (= 2.0e16 (:focus-radius (player/get-observer w')))
+          "scaling up 20× clamps at the ceiling")))
+  (testing "a world knob steps the :genesis/* key from its default and clamps"
+    (let [shrink (menu/world-action [:spark/knob :world :genesis/observer-halo-mass-factor 2.0 :add -0.25 0.0 8.0])
+          w      (reduce (fn [w _] (shrink w)) {} (range 20))]
+      (is (= 0.0 (:genesis/observer-halo-mass-factor w))
+          "stepping down from the default lands on the floor, not below"))))

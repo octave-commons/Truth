@@ -4,14 +4,20 @@
    An intervention is a PLACED, DECAYING transient the player drops into the world
    by spending agency quanta (earned from witnessing classifier transitions, see
    domain.player). Phase 1 is warp-space: a gravity WELL (pull) or REPULSOR (push)
-   that bends nearby bodies for a while, then fades.
+   — a placed, decaying Plummer halo (law.stellar/plummer-acceleration), the same
+   large-diffuse-mass field the observer's own influence is. Zero force at its
+   centre, peak pull at ~0.7× its radius, Keplerian fade beyond; being a
+   conservative field, a static well can only bind and gather — it cannot
+   slingshot matter out (the old fixed per-tick Δv kick accumulated without
+   bound and ejected anything that lingered near the core).
 
    Interventions live as a plain vector on the world at `:genesis/interventions`.
    The warp system reads them and emits the single-writer `:component/accel.warp`
-   channel; the motion integrator sums it like any other force. Expiry runs at the
-   serial barrier. Nothing here adds or removes mass — warp is pure force (the
-   conservation invariant the player economy is built on)."
+   channel; the motion integrator sums it like any other force. Nothing here adds
+   or removes REAL mass — warp is pure force (the conservation invariant the
+   player economy is built on)."
   (:require
+   [law.stellar           :as law]
    [shape.spatial         :as sp]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
@@ -30,22 +36,31 @@
 
 (defn cost-of [kind] (double (get action-cost kind 15.0)))
 
-(def ^:const default-radius   4.0e15)  ;; m — influence reach (~4 render units)
-(def ^:const default-ttl      600)     ;; ticks an intervention persists before fading
-;; Peak per-tick warp Δv at the core. SIZED TO THE CLOUD: the nebula's own
-;; velocities are ~40–115 m/s (virial speed √(GM/R) ≈ 115 m/s for the default
-;; cloud), so a warp must nudge at that scale to gather matter — not eject it. The
-;; old 2e4 m/s was 173× the virial speed and blew the cloud apart on contact. At
-;; ~1.3× virial it pulls gently, and over the (now longer) ttl it still draws a
-;; visible inflow. Weaker, for longer.
-(def ^:const default-base-speed 1.5e2) ;; m/s
+(def default-radius
+  "m — a placed well's Plummer scale radius (~4 render units): where its pull
+   peaks (~0.7×) and the ring the inspector overlay draws. Force reaches
+   `player/halo-reach-factor` × this. Live knob: :genesis/well-radius."
+  4.0e15)
+
+(def default-ttl
+  "Ticks an intervention persists before fading. Live knob: :genesis/well-ttl."
+  600)
+
+(def default-well-mass-factor
+  "A fresh, full-strength well's gravitating mass as a multiple of the seeded
+   cloud's mass — SIZED TO THE CLOUD, like the observer halo, so it deepens the
+   local potential at the scale self-gravity works at rather than kicking
+   matter. Decays to zero over the ttl. Live knob: :genesis/well-mass-factor."
+  0.5)
 
 ;; Thermal targets the intervention eases matter toward (Kelvin). A source pumps
 ;; toward hot, a sink drains toward the CMB floor. Easing (not a fixed ΔT) keeps
 ;; it bounded and self-limiting regardless of how long the source lingers.
 (def ^:const heat-target-hot 1.0e5)
 (def ^:const heat-target-cold 3.0)
-(def ^:const heat-approach   0.03)     ;; fraction of the gap closed per tick at the core
+;; Fraction of the gap to the target closed per tick at the core.
+;; Live knob: :genesis/heat-approach.
+(def default-heat-approach 0.03)
 (def ^:const min-temp        3.0)
 (def ^:const max-temp        1.0e7)
 
@@ -58,9 +73,8 @@
               :strength 1.0 :born-tick tick :ttl default-ttl}]
     (merge
      (case kind
-       (:warp/well :warp/repulsor) (assoc base :base-speed default-base-speed)
-       :heat/source                (assoc base :target-temp heat-target-hot)
-       :heat/sink                  (assoc base :target-temp heat-target-cold)
+       :heat/source (assoc base :target-temp heat-target-hot)
+       :heat/sink   (assoc base :target-temp heat-target-cold)
        base)
      opts)))
 
@@ -74,48 +88,61 @@
   (max 0.0 (- 1.0 (/ (double (- (long tick) (long born-tick))) (double ttl)))))
 
 (defn warp-accel-on
-  "Bounded per-tick acceleration a single warp imparts on a body at `body-pos`,
-   or nil outside its radius. dt-ROBUST like the observer nudge: it targets a
-   bounded Δv (base-speed × strength × proximity² × decay) toward the centre
-   (well) or away (repulsor), then divides by dt so `v += Δv` regardless of the
-   Myr-scale step — a raw GM/r² integrated over such a dt would blow past c."
-  [{:keys [kind position radius strength base-speed] :as iv} body-pos tick dt]
+  "Acceleration a single warp exerts on a body at `body-pos`: a placed Plummer
+   halo of mass well-mass-factor × strength × decay × ref-mass with scale
+   radius :radius — pull toward the centre for a well, push away for a
+   repulsor. Nil beyond `player/halo-reach-factor` scale radii, at the exact
+   centre, or once fully decayed. The per-tick Δv cap is applied by the SYSTEM
+   on the summed field, not per warp."
+  [{:keys [kind position radius strength] :as iv} body-pos tick
+   {:keys [ref-mass well-mass-factor]}]
   (let [d    (sp/v- position body-pos)        ;; vector toward the warp centre
-        dist (sp/len d)]
-    (when (and (pos? dist) (< dist (double radius)))
-      (let [prox  (let [u (- 1.0 (/ dist (double radius)))] (* u u)) ;; smooth falloff
-            sign  (if (= kind :warp/repulsor) -1.0 1.0)
-            dv    (* (double base-speed) (double strength) prox
-                     (decay-fraction iv tick) sign)
-            dir   (sp/v* d (/ 1.0 dist))]       ;; unit toward centre
-        (sp/v* dir (/ dv (max 1.0 (double dt))))))))
+        dist (sp/len d)
+        scale (double radius)
+        M    (* (double well-mass-factor) (double (or strength 1.0))
+                (decay-fraction iv tick) (double ref-mass))]
+    (when (and (pos? M) (pos? dist) (< dist (* player/halo-reach-factor scale)))
+      (let [g    (law/plummer-acceleration M scale dist)
+            sign (if (= kind :warp/repulsor) -1.0 1.0)]
+        (when (pos? g)
+          (sp/v* d (* sign (/ g dist))))))))
 
 (defn warp-acceleration-system
-  "Write-set system (sole writer of accel.warp): sum every active warp's
-   contribution onto each body. Returns a full replacement map each tick, so a
-   body that has drifted out of every warp simply has no entry → zero force
-   (auto-clearing, no stale push). No-op map when there are no interventions."
+  "Write-set system (sole writer of accel.warp): sum every active warp's halo
+   field onto each body, then cap the summed per-tick Δv at the influence
+   ceiling (`player/influence-reference` — the dt backstop; a sane field never
+   hits it). Returns a full replacement map each tick, so a body that has
+   drifted out of every warp simply has no entry → zero force (auto-clearing,
+   no stale push). No-op map when there are no interventions."
   []
   {:id     :warp
    :writes #{c/accel-warp}
    :run    (fn [world]
              (let [ivs  (filterv #(warp-kinds (:kind %)) (:genesis/interventions world))
-                   tick (:tick world)
-                   dt   (:sim/dt world)]
+                   tick (:tick world)]
                (if (empty? ivs)
                  {c/accel-warp {}}
                  ;; Evaluate at drift-predicted positions: the kick lands next
                  ;; tick, and a point-attractor evaluated one drift stale is a
                  ;; negatively-damped spring (see pcache/predicted-position-fn).
-                 (let [pos-of (pcache/predicted-position-fn world)]
+                 (let [dt     (double (or (:sim/dt world) 1.0e12))
+                       {:keys [ref-mass dv-cap]} (player/influence-reference world)
+                       ctx    {:ref-mass ref-mass
+                               :well-mass-factor
+                               (double (or (:genesis/well-mass-factor world)
+                                           default-well-mass-factor))}
+                       a-max  (/ (double dv-cap) (max 1.0 dt))
+                       pos-of (pcache/predicted-position-fn world)]
                    {c/accel-warp
                     (into {}
                           (keep (fn [eid]
                                   (let [pos (pos-of eid)
                                         a   (reduce (fn [acc iv]
-                                                      (sp/v+ acc (or (warp-accel-on iv pos tick dt) zero3)))
-                                                    zero3 ivs)]
-                                    (when (pos? (sp/len a)) [eid a]))))
+                                                      (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))
+                                                    zero3 ivs)
+                                        l   (sp/len a)]
+                                    (when (pos? l)
+                                      [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))
                           (ecs/entities-with world c/position c/mass))}))))})
 
 ;; --- Lifecycle --------------------------------------------------------------
@@ -132,17 +159,21 @@
 (defn place
   "Spend agency to place an intervention of `kind` at world-metre `position`.
    No-op (returns world unchanged) when there is no observer or it can't afford
-   `cost-of` the kind — so the caller never has to pre-check. `opts` overrides
-   intervention fields (e.g. :radius :strength :ttl :target-temp)."
+   `cost-of` the kind — so the caller never has to pre-check. Radius and ttl
+   default to the world's live knobs (:genesis/well-radius, :genesis/well-ttl);
+   `opts` overrides any intervention field (e.g. :radius :strength :ttl
+   :target-temp)."
   ([world kind position] (place world kind position {}))
   ([world kind position opts]
    (let [obs  (player/get-observer world)
-         cost (cost-of kind)]
+         cost (cost-of kind)
+         knobs {:radius (double (or (:genesis/well-radius world) default-radius))
+                :ttl    (double (or (:genesis/well-ttl world) default-ttl))}]
      (if (and obs (player/can-afford? obs cost))
        (-> world
            (player/update-observer player/spend-agency cost)
            (update :genesis/interventions (fnil conj [])
-                   (make-intervention kind position (:tick world) opts)))
+                   (make-intervention kind position (:tick world) (merge knobs opts))))
        world))))
 
 ;; --- Thermal (heat source / sink) -------------------------------------------
@@ -159,19 +190,20 @@
   "New temperature for a body at `body-pos`/`temp` after one tick of every active
    thermal intervention: ease toward each source/sink's target, shaped by
    proximity² and decay, clamped to [min-temp, max-temp]."
-  [ivs body-pos temp tick]
-  (let [t' (reduce
-            (fn [t {:keys [position radius target-temp strength] :as iv}]
-              (let [d (sp/dist body-pos position)
-                    R (double radius)]
-                (if (< d R)
-                  (let [prox (let [u (- 1.0 (/ d R))] (* u u))
-                        ease (* heat-approach (double (or strength 1.0))
-                                prox (decay-fraction iv tick))]
-                    (+ t (* (- (double target-temp) t) ease)))
-                  t)))
-            (double temp) ivs)]
-    (max min-temp (min max-temp t'))))
+  ([ivs body-pos temp tick] (thermal-step ivs body-pos temp tick default-heat-approach))
+  ([ivs body-pos temp tick approach]
+   (let [t' (reduce
+             (fn [t {:keys [position radius target-temp strength] :as iv}]
+               (let [d (sp/dist body-pos position)
+                     R (double radius)]
+                 (if (< d R)
+                   (let [prox (let [u (- 1.0 (/ d R))] (* u u))
+                         ease (* (double approach) (double (or strength 1.0))
+                                 prox (decay-fraction iv tick))]
+                     (+ t (* (- (double target-temp) t) ease)))
+                   t)))
+             (double temp) ivs)]
+     (max min-temp (min max-temp t')))))
 
 (defn thermal-contributions
   "The list of {:target-temp :ease} eases an in-range body at `body-pos` receives
@@ -179,17 +211,18 @@
    it). `ease` already folds in proximity², decay, strength and the approach
    fraction; the integrator applies T += (target − T)·ease per contribution and
    clamps to [min-temp, max-temp]. The single-influence form of `thermal-step`."
-  [ivs body-pos tick]
-  (into []
-        (keep (fn [{:keys [position radius target-temp strength] :as iv}]
-                (let [d (sp/dist body-pos position)
-                      R (double radius)]
-                  (when (< d R)
-                    (let [prox (let [u (- 1.0 (/ d R))] (* u u))]
-                      {:target-temp (double target-temp)
-                       :ease        (* heat-approach (double (or strength 1.0))
-                                       prox (decay-fraction iv tick))})))))
-        ivs))
+  ([ivs body-pos tick] (thermal-contributions ivs body-pos tick default-heat-approach))
+  ([ivs body-pos tick approach]
+   (into []
+         (keep (fn [{:keys [position radius target-temp strength] :as iv}]
+                 (let [d (sp/dist body-pos position)
+                       R (double radius)]
+                   (when (< d R)
+                     (let [prox (let [u (- 1.0 (/ d R))] (* u u))]
+                       {:target-temp (double target-temp)
+                        :ease        (* (double approach) (double (or strength 1.0))
+                                        prox (decay-fraction iv tick))})))))
+         ivs)))
 
 (defn apply-thermal-contributions
   "Apply a body's `heat.intervention` contributions (from `thermal-contributions`)
@@ -218,11 +251,13 @@
                (if (empty? ivs)
                  {c/heat-intervention {}}
                  (let [tick (:tick world)
+                       approach (double (or (:genesis/heat-approach world)
+                                            default-heat-approach))
                        cell (into {}
                                   (keep (fn [eid]
                                           (when (thermal-states (ecs/get-component world eid c/matter-state))
                                             (let [cs (thermal-contributions
-                                                      ivs (ecs/get-component world eid c/position) tick)]
+                                                      ivs (ecs/get-component world eid c/position) tick approach)]
                                               (when (seq cs) [eid cs])))))
                                   (ecs/entities-with world c/position c/matter-state c/temperature))]
                    (tick/contribution-write-set

@@ -8,10 +8,13 @@ sequential 28.4 ms: the thread-per-system fan-out yields **1.36×** on 16 cores.
 The dev window additionally serializes tick + render + a hard 16 ms sleep on one
 thread, which is how 43 ms of physics becomes ~12 fps on screen.
 
-**Current (2026-07-05, after Fix 4 round 4 — see Progress):** sustained
-warm-cache ticking (the number the live sim sees) ≈ 13.5 ms @500 / 21.9 ms
-@1000 mean (p50 12.8 / 21.3, best 10.9 / 18.4; was 15.6 / 27.1 after round 3).
-@500 is now under the 16.6 ms budget sustained; @1000 still ~5 ms over.
+**Current (2026-07-05, after Fix 4 round 5 — see Progress):** sustained
+warm-cache ticking, measured with the dev service STOPPED (it contends for the
+same cores and skews numbers — always stop it before benchmarking) ≈ 11.6 ms
+@500 / 17.6 ms @1000 mean (p50 10.9 / 17.1, best 8.5 / 14.1; clean pre-round-5
+baseline was 13.4 / 24.1). @500 is well under the 16.6 ms budget; @1000 sits
+right at it — p50 straddles 16.6–17.4 across worlds (`create-world` is
+nondeterministic, world-to-world spread is ±2 ms).
 
 ## Why the fan-out doesn't pay today
 
@@ -268,7 +271,9 @@ survives).
   - **`spatial-index` overlaps tree/grid** builds. 6.6 → 2.2 ms.
 
 - Fix 4 round 4 (2026-07-05) — sustained 27.1→21.9 ms @1000, 15.6→13.5 @500
-  (means; p50 21.3 / 12.8):
+  (means; p50 21.3 / 12.8 — measured with the dev service still running, so
+  contaminated by core contention; the clean re-measurement is 13.4 @500 /
+  24.1 @1000, the round-5 baseline):
   - **Gravity walks straight from the SoA arrays.** `bh/build-tree-from-soa`
     builds an index-leaf octree directly from the `:genesis/physics-soa`
     arrays (leaves carry integer indices, not body maps; parallel-by-octant
@@ -290,23 +295,57 @@ survives).
     accumulation order to the old `center-of-mass` walk), deleting a separate
     serial per-tick pass from `tick-world`.
 
-### Remaining bottlenecks (@1000 bodies, warm; sustained mean ≈ 21.9 ms)
+- Fix 4 round 5 (2026-07-05) — sustained (clean, dev service stopped)
+  24.1→17.6 ms @1000, 13.4→11.6 @500 (means):
+  - **Flat (primitive-array) gravity tree.** `bh/flatten-idx-tree` flattens
+    the index-leaf octree into preorder-numbered parallel primitive arrays
+    (com xyz / mass / side doubles; leaf?/start/cnt; shared `leaf-idxs` /
+    `child-ids` int arrays), and the walk (`traverse-flat`) is an explicit
+    int-stack loop over those arrays — no map lookups per node visit. Visit
+    order and arithmetic are identical to the map walk, so results stay
+    **bit-identical** to the body-map path (verified 0.0 divergence @1000).
+    Isolated gravity `:run` @1000: p50 11.1 → 3.3 ms (build 1.3 + flatten 1.0
+    + walks ~1). The map-tree `traverse-soa-idx` from round 4 is deleted;
+    `build-tree-from-soa` → flatten → walk is the only SoA gravity path.
+  - **The fan-out now clears the Fix-4 acceptance:** `run-parallel` 8.3 ms vs
+    `run-sequential` 39 ms on the same warm @1000 snapshot ≈ 4.7× (gate was
+    ≥3×). Fold itself is 0.7–1.5 ms of that.
+  - **Negative result (do not redo):** replacing par-mapv's per-call `future`
+    chunks with a shared fixed-size worker pool (n-cores threads, nested-call
+    guard) measured p50 16.7/19.4/17.0 vs 17.1/18.0/17.4 unbounded across
+    3 sustained @1000 runs each — indistinguishable under world-to-world
+    variance. The oversubscription (~150 runnable threads) is not the
+    binding constraint; reverted to keep `future` semantics (binding
+    conveyance, familiar failure mode).
 
-- **`gravity` ≈ 10–14 ms isolated on its thread — still the fan-out floor.**
-  Now all tree build (~3 ms, parallel-by-octant) + walks (par-mapv); the
-  body-map projection is gone. Next levers: amortize the predicted tree across
-  ticks (rebuild every K ticks + refit COMs), flatten the tree into primitive
-  arrays for the walk (node maps still dominate cache misses), or cut walk
-  count with a dual-tree / interaction-list pass.
-- **`rebuild-neighbor-cache`:** Malli is gated (round 4), but only ~49% of
-  entries pass the 0.1·h reuse skin (h = 0.013·d_nn is tiny) and each miss
-  pays a `query-nearest` descent (~27 µs) + grid query. Widening the skin
-  trades against the byte-equal-for-20-ticks equivalence test.
-- `em-lorentz` ≈ 3 ms; `spatial-index` ≈ 2.2 ms serial pre; post-fold tail
-  (summary + stats + pacing + events/materialize) ≈ 2.5 ms.
+### Remaining bottlenecks (@1000 bodies, warm, clean; sustained mean ≈ 17.6 ms)
 
-To reach 16.6 ms @1000 the remaining moves are gravity's tree/walk (above)
-and the neighbor-cache miss rate.
+Measured p50 on a warm frozen snapshot — serial chain: `spatial-index` 2.8
+(advance-tick ~0) → step-physics 12–13 → post tail ~1.5. Inside step-physics:
+SoA build 2.6 serial (nb-cache rebuild 2.6 hidden behind it in a future), then
+the fan-out ≈ 8–12 with fold 0.7–1.5. Slowest lanes serially: gravity 3.4–4.0,
+em-lorentz 3.3, integrator 2.4, hydro 1.5, structure 1.4 — under 29-lane load
+the floor lane stretches ~2× (gravity 3.4 → 6.5), which is mostly legitimate
+core sharing (total sequential work ≈ 25–39 ms).
+
+- **The one remaining structural move: the neighbor-cache rebuild becomes a
+  fan-out lane.** It is the last serial pre-phase (2.6 ms exposed, chained
+  behind spatial-index because it queries the tree/grid). ECS-ify it: a
+  `:neighbor-cache` system that reads the frozen snapshot and emits per-entity
+  cache entries as an ordinary single-writer component — consumers (hydro,
+  em-lorentz) then read **one-tick-stale** neighbor geometry, exactly the
+  Jacobi lag every other channel carries (Fix 5 precedent). This is a
+  deliberate physics-semantics change (SPH density/gradients from tick-N−1
+  positions): it needs its own spec, the cache-equivalence tests rewritten to
+  the windowed form, and a formation-integration re-verification. Est. −2.6 ms
+  serial plus removing the rebuild's future-join.
+- `em-lorentz` 3.3 ms is already fused over the cache (prefetched tables, no
+  per-entity get-component) — further cuts mean SoA-ifying its inner loop.
+- Widening the nb-cache reuse skin (only ~49% pass 0.1·h) still trades
+  against the byte-equal-for-20-ticks equivalence test.
+
+@500 is done. @1000 needs ~1 ms sustained: the neighbor-cache lane above is
+the designed next step.
 
 ## The ordering law (for every future agent reading this)
 

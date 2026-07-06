@@ -117,3 +117,56 @@
              :position [1.0 2.0 3.0] :velocity [0.0 0.0 0.0]}
           soa (bodies->soa [b])]
       (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 soa nil) :lonely))))))
+
+(deftest test-body-map-gravity-cutoff
+  (testing "Pairs inside the cutoff radius contribute zero acceleration"
+    (let [heavy (spatial/->body
+                 {:id 1 :mass 1.0e30 :radius 1.0e9 :kind :body/star
+                  :position (spatial/vec3 0.0 0.0 0.0)
+                  :velocity (spatial/vec3 0.0 0.0 0.0)})
+          probe (spatial/->body
+                 {:id 2 :mass 1.0 :radius 1.0e6 :kind :body/gas
+                  :position (spatial/vec3 1.0e10 0.0 0.0)
+                  :velocity (spatial/vec3 0.0 0.0 0.0)})
+          tree (bh/build-tree [heavy probe])
+          theta 0.5
+          soft 1.0e8
+          cutoff 2.0e10]
+      (is (= [0.0 0.0 0.0] (bh/acceleration G theta soft cutoff tree probe))
+          "probe inside dead zone feels no gravity")
+      (is (not= [0.0 0.0 0.0] (bh/acceleration G theta soft 0.0 tree probe))
+          "probe without cutoff feels gravity"))))
+
+(deftest test-soa-gravity-cutoff
+  (testing "SoA path also suppresses gravity inside the cutoff radius"
+    (let [heavy {:id :heavy :mass 1.0e30 :radius 1.0e9 :kind :body/star
+                 :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          probe {:id :probe :mass 1.0 :radius 1.0e6 :kind :body/gas
+                 :position [5.0e9 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          soa (bodies->soa [heavy probe])
+          theta 0.5
+          soft 1.0e8
+          cutoff 1.0e10]
+      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G theta soft cutoff soa nil) :probe))
+          "SoA probe inside dead zone feels no gravity")
+      (is (not= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G theta soft 0.0 soa nil) :probe))
+          "SoA probe without cutoff feels gravity"))))
+
+(deftest test-cutoff-preserves-distant-gravity
+  (testing "Cutoff does not affect bodies separated by more than the dead zone"
+    (let [sun   (spatial/->body
+                 {:id 1 :mass 1.0e6 :radius 1.0 :kind :body/star
+                  :position (spatial/vec3 0.0 0.0 0.0)
+                  :velocity (spatial/vec3 0.0 0.0 0.0)})
+          earth (spatial/->body
+                 {:id 2 :mass 1.0 :radius 1.0 :kind :body/planet
+                  :position (spatial/vec3 10.0 0.0 0.0)
+                  :velocity (spatial/vec3 0.0 0.0 0.0)})
+          tree  (bh/build-tree [sun earth])
+          theta 0.1
+          soft  1.0e-4
+          cutoff 1.0]
+      (is (< (spatial/dist (bh/acceleration G theta soft 0.0 tree earth)
+                           (bh/acceleration G theta soft cutoff tree earth))
+             1.0e-9)
+          "distant bodies are unaffected by a cutoff smaller than their separation"))))

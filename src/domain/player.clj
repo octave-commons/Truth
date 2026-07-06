@@ -7,6 +7,7 @@
    Pure helpers operate on that map; `observer-system` drives it from the
    world's event ledger so coherence responds to what actually happened."
   (:require
+   [law.stellar           :as law]
    [shape.spatial         :as sp]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
@@ -32,7 +33,10 @@
    ;; moving) costs nothing and earns nothing. Starts empty: you must witness to act.
    :agency          0.0
    :focus-position  position
-   :focus-radius    1e15            ;; nebula-scale focus to start
+   ;; The focus radius doubles as the halo's Plummer scale radius, so it starts
+   ;; genuinely nebula-scale (25% of the default cloud): a wide, diffuse
+   ;; shepherd. Narrowing it concentrates the same mass into a stronger pull.
+   :focus-radius    5e15
    :focus-intensity 0.5
    :resolution      0.0             ;; local simulation detail [0,1]
    :drift-velocity  (sp/vec3 0 0 0)
@@ -175,74 +179,106 @@
         speed (* 1e12 (- 1.0 (:coherence observer)))]
     (assoc observer :drift-velocity (sp/v* g speed))))
 
-;; --- Influence --------------------------------------------------------------
+;; --- Influence: the dark halo -------------------------------------------------
+;; The spark influences matter as a LARGE, DIFFUSE body of mass — a dark-matter-
+;; like Plummer halo centred on the focus, not a point kick. Zero force at the
+;; centre, peak pull at ~0.7× the focus radius, Keplerian fade beyond. A static
+;; halo is a conservative field: it can only deepen the local potential well and
+;; gather matter. Ejecting matter requires deliberately dragging or narrowing a
+;; strong halo — possible, never free — and is the seam where destructive play
+;; will later drain coherence (the ledger already records the transitions).
 
-(defn influence-strength
-  "How strongly the spark can bias local physics — it nudges, never commands."
-  [{:keys [coherence focus-intensity]}]
-  (* coherence focus-intensity 0.1))
+(def default-halo-mass-factor
+  "Halo mass at FULL coherence and focus intensity, as a multiple of the seeded
+   cloud's mass. Halo mass = factor · coherence · focus-intensity · cloud-mass,
+   so at spawn defaults (0.8, 0.5) the spark weighs ~0.8 cloud masses — felt
+   everywhere, dominant nowhere. Live knob: :genesis/observer-halo-mass-factor
+   (Spark menu panel); 0.0 disables the halo entirely."
+  2.0)
 
-(defn influence-vector
-  [observer target-position desired-direction]
-  (let [in-focus? (< (sp/dist (:focus-position observer) target-position)
-                     (:focus-radius observer))]
-    (sp/v* desired-direction (if in-focus? (influence-strength observer) 0.0))))
+(def default-influence-dv-cap
+  "Per-tick Δv ceiling for influence fields, as a multiple of the cloud's virial
+   speed. A dt-robustness BACKSTOP (a Myr-scale step across a concentrated halo
+   must not teleport parcels), not the design lever — at sane knob values the
+   halo field stays far below it. Live knob: :genesis/influence-dv-cap."
+  1.0)
 
-(def ^:private default-influence-speed
-  "Reference speed (m/s) for the observer's pull-toward-focus nudge. The per-tick
-   Δv it imparts is influence-strength × this, BOUNDED regardless of dt — the same
-   dt-robust cap the wind/flare/flux systems use, because a raw acceleration
-   integrated over a Myr-scale step would blow up (Δv ≫ c). Tuned to be
-   perceptible: bodies inside the collapse radius visibly drift toward your focus.
-   Set :genesis/observer-influence-speed 0.0 to disable."
-  1.0e5)
+(def ^:const halo-reach-factor
+  "Influence cutoff in scale radii. Beyond 3a the Plummer pull is under 10% of
+   peak; cutting there keeps the write-set sparse and auto-clearing."
+  3.0)
+
+(defn influence-reference
+  "Reference scales every influence field (observer halo, warp wells) shares,
+   read off the world with the seeded-cloud defaults: `:ref-mass`, the cloud
+   mass that halo mass factors multiply, and `:dv-cap` (m/s), the per-tick Δv
+   ceiling — the cloud's virial speed × :genesis/influence-dv-cap."
+  [world]
+  (let [m   (double (or (:genesis/nebula-mass world) 4.0e30))
+        r   (double (or (:genesis/nebula-radius world) 2.0e16))
+        cap (double (or (:genesis/influence-dv-cap world) default-influence-dv-cap))]
+    {:ref-mass m
+     :dv-cap   (* cap (law/virial-speed m r))}))
+
+(defn halo-mass
+  "The observer halo's gravitating mass (kg): mass-factor · coherence ·
+   focus-intensity · ref-mass. Coherence is the live scaling — the spark's
+   gravitational presence grows and fades with its clarity."
+  [{:keys [coherence focus-intensity]} mass-factor ref-mass]
+  (* (double mass-factor)
+     (double (or coherence 0.0))
+     (double (or focus-intensity 0.0))
+     (double ref-mass)))
 
 (defn observer-acceleration
-  "Acceleration to write on a body so the motion integrator applies a BOUNDED
-   per-tick velocity nudge toward the focus — 'reality condenses where you look.'
-   accel = pull·(ref-speed/dt) ⇒ v += pull·ref-speed, independent of dt. Returns
-   nil outside the probability-collapse radius. Composes the wired verbs
-   `influence-vector` (focus-gated strength) and `probability-collapse-radius`."
-  [observer body-pos dt ref-speed]
-  (let [d    (sp/v- (:focus-position observer) body-pos)
-        dist (sp/len d)]
-    (when (and (pos? dist) (pos? (double ref-speed))
-               (< dist (probability-collapse-radius observer)))
-      (let [dir  (sp/v* d (/ 1.0 dist))                   ;; unit pull toward focus
-            pull (influence-vector observer body-pos dir)] ;; dir × influence-strength
-        (when (pos? (sp/len pull))
-          (sp/v* pull (/ (double ref-speed) (max 1.0 (double dt)))))))))
+  "Acceleration the observer's halo exerts on a body at `body-pos`: a Plummer
+   pull toward the focus (law.stellar/plummer-acceleration) with scale radius
+   :focus-radius and mass from `halo-mass`, capped so |Δv| = |a|·dt never
+   exceeds `:dv-cap` — the dt backstop. Nil outside `halo-reach-factor` scale
+   radii, at the exact centre, or when the halo mass is zero."
+  [obs body-pos dt {:keys [ref-mass mass-factor dv-cap]}]
+  (let [scale (double (or (:focus-radius obs) 0.0))
+        M     (halo-mass obs mass-factor ref-mass)
+        d     (sp/v- (:focus-position obs) body-pos)
+        dist  (sp/len d)]
+    (when (and (pos? M) (pos? scale) (pos? dist)
+               (< dist (* halo-reach-factor scale)))
+      (let [g (-> (law/plummer-acceleration M scale dist)
+                  (min (/ (double dv-cap) (max 1.0 (double dt)))))]
+        (when (pos? g)
+          (sp/v* d (/ g dist)))))))
 
 (defn observer-acceleration-system
-  "Write-set system (sole writer of :component/accel.observer): the pull-toward-
-   focus nudge for every body inside the collapse radius — 'reality condenses
-   where you look.' A pure snapshot-reading fan-out emitter (spec §6: the observer
-   was the half-done case); the integrator sums accel.observer like any other
+  "Write-set system (sole writer of :component/accel.observer): the halo pull
+   toward the focus for every body within reach — the spark as a large, diffuse
+   centre of gravity, 'reality condenses where you look.' A pure snapshot-
+   reading fan-out emitter; the integrator sums accel.observer like any other
    force. Reads the observer focus from the snapshot (set by last tick's
    observer-system / player input — one-tick lag, accepted) and auto-clears the
-   contribution from bodies that have drifted out of the zone."
+   contribution from bodies that have drifted out of reach. Set
+   :genesis/observer-halo-mass-factor to 0.0 to disable."
   []
   {:id     :observer-accel
    :writes #{c/accel-observer}
    :run    (fn [world]
-             (let [obs (get-observer world)]
-               (if-not obs
+             (let [obs (get-observer world)
+                   kf  (double (or (:genesis/observer-halo-mass-factor world)
+                                   default-halo-mass-factor))]
+               (if (or (nil? obs) (not (pos? kf)))
                  {c/accel-observer {}}
-                 (let [dt        (double (or (:sim/dt world) 1.0e12))
-                       ref-speed (get world :genesis/observer-influence-speed
-                                      default-influence-speed)
+                 (let [dt     (double (or (:sim/dt world) 1.0e12))
+                       ref    (assoc (influence-reference world) :mass-factor kf)
                        ;; Evaluate the pull at drift-predicted positions: the
                        ;; kick lands next tick, and a restoring force applied
                        ;; one drift stale pumps the very oscillation it should
                        ;; damp (see pcache/predicted-position-fn).
-                       pos-of    (pcache/predicted-position-fn world)
-                       cell      (into {}
-                                       (keep (fn [eid]
-                                               (when-let [a (observer-acceleration
-                                                             obs (pos-of eid)
-                                                             dt ref-speed)]
-                                                 [eid a])))
-                                       (ecs/entities-with world c/position c/mass))]
+                       pos-of (pcache/predicted-position-fn world)
+                       cell   (into {}
+                                    (keep (fn [eid]
+                                            (when-let [a (observer-acceleration
+                                                          obs (pos-of eid) dt ref)]
+                                              [eid a])))
+                                    (ecs/entities-with world c/position c/mass))]
                    (tick/contribution-write-set
                     c/accel-observer cell
                     (keys (get-in world [:components c/accel-observer])))))))})

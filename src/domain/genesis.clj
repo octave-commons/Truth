@@ -299,6 +299,21 @@
                             :genesis/collapse-fraction collapse-fraction
                             :genesis/contraction-time  contraction-time
                             :genesis/gas-particle-mass pmass
+                            ;; Reference scales for player influence fields: the
+                            ;; observer halo and warp wells size themselves as
+                            ;; multiples of the seeded cloud's mass, and the
+                            ;; per-tick Δv backstop as a multiple of its virial
+                            ;; speed (see player/influence-reference).
+                            :genesis/nebula-mass       nebula-mass
+                            :genesis/nebula-radius     nebula-radius
+                            ;; Player-influence knobs, adjustable live from the
+                            ;; Spark menu panel (infra.menu/spark-rows).
+                            :genesis/observer-halo-mass-factor player/default-halo-mass-factor
+                            :genesis/influence-dv-cap  player/default-influence-dv-cap
+                            :genesis/well-mass-factor  intervention/default-well-mass-factor
+                            :genesis/well-radius       intervention/default-radius
+                            :genesis/well-ttl          intervention/default-ttl
+                            :genesis/heat-approach     intervention/default-heat-approach
                             :genesis/feeding-zone-factor
                             (stellar/resolution-feeding-zone-factor gas-count)))
          seeded (seed-nebula base nebula-mass nebula-radius
@@ -401,9 +416,9 @@
    EXCLUDES `recenter`, which is not a system at all any more: the integrator
    subtracts the one-tick-stale COM frame-offset (a world scalar set in
    tick-world) from every new position (spec §6)."
-  [{:keys [sim/G sim/theta sim/dt sim/softening]}]
+  [{:keys [sim/G sim/theta sim/dt sim/softening sim/cutoff]}]
   [;; force emitters + integrator
-   (orbital/gravity-acceleration G theta (or softening 1e14))
+   (orbital/gravity-acceleration G theta (or softening 1e14) (or cutoff (* 0.1 (or softening 1e14))))
    (hydro/pressure-acceleration)
    (em/lorentz-acceleration-system dt)
    (intervention/warp-acceleration-system)

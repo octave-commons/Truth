@@ -56,6 +56,45 @@
       (Math/sqrt (/ (* G M r r) (Math/pow d2 1.5)))
       0.0)))
 
+(defn virial-speed
+  "Characteristic gravitational speed √(G·M/R) (m/s) of a self-gravitating cloud
+   of mass `M` and radius `R` — the velocity scale that balances self-gravity.
+
+   The natural yardstick for any external influence on the cloud: velocity
+   kicks well below it shepherd matter, kicks well above it unbind matter
+   (escape speed from the edge is only √2 × this). 0 for a degenerate scale."
+  [M R]
+  (let [M (double (or M 0.0))
+        R (double (or R 0.0))]
+    (if (and (pos? M) (pos? R))
+      (Math/sqrt (/ (* G M) R))
+      0.0)))
+
+(defn plummer-acceleration
+  "Gravitational acceleration magnitude (m/s²) at distance `r` from the centre
+   of a Plummer sphere of mass `M` and scale radius `a`:
+
+       g(r) = G·M·r / (r² + a²)^{3/2}
+
+   The field of a LARGE, DIFFUSE body of mass — a dark-matter-halo-like
+   presence: zero at the centre (the enclosed mass vanishes), peak pull
+   2·G·M/(3√3·a²) at r = a/√2, Keplerian G·M/r² far outside. It is the same
+   softened field family `softened-circular-speed` orbits (v_c²/r = g).
+
+   Because the field is conservative, a STATIC halo can only deepen the local
+   potential well — it binds and gathers matter and can never pump a body past
+   escape speed. Only moving or re-concentrating the halo does work on the
+   system. `M` must be the mass MAGNITUDE (≥ 0); callers flip the direction for
+   repulsive fields."
+  [M a r]
+  (let [M  (double (or M 0.0))
+        a  (double (or a 0.0))
+        r  (double (or r 0.0))
+        d2 (+ (* r r) (* a a))]
+    (if (and (pos? M) (pos? r) (pos? d2))
+      (/ (* G M r) (Math/pow d2 1.5))
+      0.0)))
+
 (defn main-sequence-radius
   "Approximate zero-age main-sequence radius (m) for a star of `mass`, from the
    broken power law R/R_sun ≈ (M/M_sun)^0.8 below a solar mass and ^0.57 above.

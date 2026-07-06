@@ -102,21 +102,27 @@
    exactly the force the position will feel when the kick lands. Force and
    position stay aligned; the leapfrog stays symplectic with zero ordering.
    The shared :genesis/spatial-tree (snapshot positions) still serves
-   collision/sink/neighbor queries unchanged."
-  [G theta softening]
-  {:id     :gravity
-   :writes #{c/accel-gravity}
-   :run    (fn [world]
-             (if-let [soa (:genesis/physics-soa world)]
-               {c/accel-gravity (bh/acceleration-for-soa G theta softening soa nil)}
-               (let [tree   (:genesis/spatial-tree world)
-                     bodies (:genesis/spatial-items world (world->bodies world))]
-                 {c/accel-gravity
-                  (into {}
-                        (par/par-mapv
-                         (fn [body]
-                           [(:id body) (bh/acceleration G theta softening tree body)])
-                         bodies))})))})
+   collision/sink/neighbor queries unchanged.
+
+   `cutoff` is a gravitational dead-zone radius: any pair closer than this
+   contributes zero acceleration, preventing close-encounter numerical flings.
+   Pass 0.0 to disable the dead zone."
+  ([G theta softening]
+   (gravity-acceleration G theta softening 0.0))
+  ([G theta softening cutoff]
+   {:id     :gravity
+    :writes #{c/accel-gravity}
+    :run    (fn [world]
+              (if-let [soa (:genesis/physics-soa world)]
+                {c/accel-gravity (bh/acceleration-for-soa G theta softening cutoff soa nil)}
+                (let [tree   (:genesis/spatial-tree world)
+                      bodies (:genesis/spatial-items world (world->bodies world))]
+                  {c/accel-gravity
+                   (into {}
+                         (par/par-mapv
+                          (fn [body]
+                            [(:id body) (bh/acceleration G theta softening cutoff tree body)])
+                          bodies))})))}))
 
 (defn motion-integration
   "Write-set system: sum all acceleration contributions and advance the body by
