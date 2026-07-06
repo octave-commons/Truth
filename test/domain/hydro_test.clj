@@ -425,6 +425,125 @@
              (* 1e-12 (max 1.0 (sp/len a-uncached))))
           "cached acceleration equals uncached acceleration"))))
 
+(deftest test-kernel-shape-properties
+  (testing "kernel-shape is the dimensionless M4 profile: peak 1 at r=0, zero outside support"
+    (let [h 2.0]
+      (is (= 1.0 (hydro/kernel-shape 0.0 h)) "peak is exactly 1 at r = 0")
+      (is (= 0.0 (hydro/kernel-shape (* h h) h)) "zero at r = h")
+      (is (= 0.0 (hydro/kernel-shape (* 4.0 h h) h)) "zero beyond support")
+      (is (= 0.0 (hydro/kernel-shape 1.0 0.0)) "zero smoothing length yields zero")))
+  (testing "pinned interior values kill coefficient mutants"
+    (let [h 2.0
+          at-q (fn [q] (hydro/kernel-shape (Math/pow (* q h) 2) h))]
+      (is (< (Math/abs (- (at-q 0.25) 0.71875)) 1e-12) "W(1/4) = 1 - 6/16 + 6/64")
+      (is (< (Math/abs (- (at-q 0.5) 0.25)) 1e-12) "W(1/2) = 1 - 3/2 + 3/4")
+      (is (< (Math/abs (- (at-q 0.75) 0.03125)) 1e-12) "W(3/4) = 2 (1/4)³")))
+  (testing "monotone non-increasing over the support"
+    (let [h 3.0
+          qs (map #(/ % 40.0) (range 41))
+          ws (map #(hydro/kernel-shape (Math/pow (* % h) 2) h) qs)]
+      (is (every? (fn [[a b]] (>= a b)) (partition 2 1 ws))))))
+
+(deftest test-kernel-shape-matches-kernel-r2
+  (testing "kernel-r2 = 8/(π h³) · kernel-shape — the physics kernel and the render falloff are one profile"
+    (doseq [h [0.5 2.0 1.0e10]
+            frac [0.0 0.3 0.6 0.9 0.999 1.0 1.2]]
+      (let [r  (* frac h)
+            r2 (* r r)
+            expected (* (/ 8.0 (* Math/PI h h h)) (hydro/kernel-shape r2 h))
+            actual   (hydro/kernel-r2 r2 h)]
+        (is (< (Math/abs (- actual expected))
+               (* 1e-12 (max 1e-30 (Math/abs expected))))
+            (str "identity holds at q=" frac " h=" h))))))
+
+(deftest test-gas-samples-schema-and-coverage
+  (testing "gas-samples projects exactly the hydro-active states, each valid per law.field"
+    (let [base (ecs/empty-world)
+          spawn (fn [w state pos]
+                  (stellar/spawn-clump w {:position pos
+                                          :velocity [0.0 0.0 0.0]
+                                          :mass 1e28
+                                          :radius 1e14
+                                          :matter-state state
+                                          :temperature 12.0}))
+          [w1 e-neb]  (spawn base :nebula [0.0 0.0 0.0])
+          [w2 e-prot] (spawn w1 :protostar [3e14 0.0 0.0])
+          [w3 _e-st]  (spawn w2 :star [6e14 0.0 0.0])
+          [w4 _e-deb] (spawn w3 :planetesimal [9e14 0.0 0.0])
+          samples (hydro/gas-samples w4)]
+      (is (= #{e-neb e-prot} (set (map :eid samples)))
+          "only :nebula and :protostar become gas samples")
+      (is (every? lfield/gas-sample? samples)
+          "every sample satisfies law.field/gas-sample-schema"))))
+
+(deftest test-gas-samples-reads-tick-components
+  (testing "gas-samples is a pure projection of the components the tick maintains"
+    (let [base (ecs/empty-world)
+          [w1 ea] (stellar/spawn-clump base {:position [1.0e14 2.0e14 3.0e14]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          rho0 2.5e-15
+          r0   1.25e13
+          ion0 0.35
+          w2 (-> w1
+                 (ecs/put-component ea c/density rho0)
+                 (ecs/put-component ea c/radius r0)
+                 (ecs/put-component ea c/ionization-fraction ion0))
+          [sample] (hydro/gas-samples w2)]
+      (is (= rho0 (:density sample)) "density is read verbatim from c/density")
+      (is (= (* 2.0 r0) (:smoothing-h sample)) "smoothing-h = 2 × c/radius exactly")
+      (is (= [1.0e14 2.0e14 3.0e14] (:position sample)))
+      (is (= 12.0 (double (:temperature sample))))
+      (is (= ion0 (:ionization sample)))
+      (is (= :nebula (:matter-state sample))))))
+
+(deftest test-gas-samples-cache-independent
+  (testing "gas-samples never touches the neighbor cache — identical with and without it"
+    (let [base (ecs/empty-world)
+          [w1 _ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                              :velocity [0.0 0.0 0.0]
+                                              :mass 1e28
+                                              :radius 1e14
+                                              :matter-state :nebula
+                                              :temperature 12.0})
+          [w2 _eb] (stellar/spawn-clump w1 {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          w2 (spatial/spatial-index w2)
+          cached (pcache/build-neighbor-cache w2)]
+      (is (= (hydro/gas-samples cached)
+             (hydro/gas-samples (dissoc cached :genesis/neighbor-cache)))
+          "samples are equal whether or not :genesis/neighbor-cache exists"))))
+
+(deftest test-gas-samples-agrees-with-gas-structure
+  (testing "after the tick's density pass, gas-samples mirrors gas-structure's [eid ρ h/2]"
+    (let [base (ecs/empty-world)
+          spawn (fn [w pos] (stellar/spawn-clump w {:position pos
+                                                    :velocity [0.0 0.0 0.0]
+                                                    :mass 1e28
+                                                    :radius 1e14
+                                                    :matter-state :nebula
+                                                    :temperature 12.0}))
+          [w1 _] (spawn base [0.0 0.0 0.0])
+          [w2 _] (spawn w1 [1e14 0.0 0.0])
+          [w3 _] (spawn w2 [0.0 1.5e14 0.0])
+          w3 (spatial/spatial-index w3)
+          w4 ((hydro/density-system 1e10) w3)
+          structure (into {} (map (fn [[eid rho r]] [eid [rho r]])) (hydro/gas-structure w4))
+          close? (fn [a b] (< (Math/abs (- (double a) (double b)))
+                              (* 1e-9 (max 1e-30 (Math/abs (double b))))))]
+      (doseq [{:keys [eid density smoothing-h]} (hydro/gas-samples w4)]
+        (let [[rho r] (get structure eid)]
+          (is (some? rho) "every gas sample has a structure row")
+          (is (close? density rho) "sample density matches the SPH structure density")
+          (is (close? (* 0.5 smoothing-h) r) "smoothing-h/2 matches the structure radius"))))))
+
 (deftest test-gas-structure-matches-with-cache
   (testing "gas-structure returns identical [eid density radius] with cache"
     (let [base (ecs/empty-world)

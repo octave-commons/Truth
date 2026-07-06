@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
-exec "/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor-eta-mu.sh" "truth-research-coordinator" "$@"
+# Dispatch one research session via OpenCode and exit.
+exec "/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh" "truth-research-coordinator" "$@"

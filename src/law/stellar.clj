@@ -20,15 +20,46 @@
 (def ^:const au 1.495978707e11) ;; m — astronomical unit
 
 ;; --- Real stellar/sub-stellar mass boundaries (authentic formation fate) -----
-;; The two physical thresholds that decide a contracting core's destiny. These
-;; are NOT toy tiers — they are the actual deuterium- and hydrogen-burning limits.
-(def ^:const deuterium-burning-mass (* 0.013 solar-mass))
-;; ~2.59e28 kg (~13 M_Jupiter). Below this, no fusion of any kind → planet/debris.
-;; Between this and the hydrogen limit → brown dwarf: burns deuterium, then
-;; contraction is halted by electron degeneracy before hydrogen can ignite.
-(def ^:const hydrogen-burning-mass  (* 0.08 solar-mass))
-;; ~1.59e29 kg (~80 M_Jupiter). At/above this a contracting core reaches the
-;; ~1e7 K needed for sustained hydrogen fusion → a true main-sequence star.
+;; The physical thresholds that decide a contracting core's destiny. These are
+;; NOT toy tiers — they are the actual opacity limit, deuterium-burning limit,
+;; brown-dwarf desert, and hydrogen-burning minimum mass.
+;;
+;; Source: docs/research/physics/stellar-nebula-mass-hierarchy.md
+
+;; Opacity-limited minimum mass for direct turbulent fragmentation of a
+;; molecular cloud. Bodies below this cannot condense directly from the gas and
+;; must form by solid growth in a disk. ~3 M_Jupiter.
+(def ^:const opacity-limit-mass      (* 0.003 solar-mass))
+
+;; Deuterium-burning limit: the conventional planet / brown-dwarf boundary.
+;; ~13 M_Jupiter.
+(def ^:const deuterium-burning-mass  (* 0.013 solar-mass))
+
+;; Brown-dwarf desert: a population dip in the substellar companion mass
+;; function near ~30 M_Jupiter (Cui et al. 2026). Useful as a secondary
+;; classifier threshold between gas-giant embryos and brown dwarfs.
+(def ^:const brown-dwarf-desert-mass (* 30.0 jupiter-mass))
+
+;; Hydrogen-burning minimum mass: the brown-dwarf / star boundary. ~80 M_Jupiter.
+(def ^:const hydrogen-burning-mass   (* 0.08 solar-mass))
+
+(defn substellar-mass-class
+  "Classify a resolved, non-nebula body below the hydrogen-burning limit into a
+   literature-grounded mass ladder.
+
+     :planetesimal  < opacity limit          (< ~3 M_J)   proxy for unresolved solids
+     :gas-giant     opacity limit to desert   (~3–30 M_J) giant-planet / super-Jovian
+     :brown-dwarf   desert to H-burning       (~30–80 M_J)
+     :protostar     ≥ hydrogen-burning mass, pre-ignition
+
+   See docs/research/physics/stellar-nebula-mass-hierarchy.md."
+  [mass]
+  (let [m (double (or mass 0.0))]
+    (cond
+      (>= m hydrogen-burning-mass)              :protostar
+      (>= m brown-dwarf-desert-mass)            :brown-dwarf
+      (>= m opacity-limit-mass)                 :gas-giant
+      :else                                     :planetesimal)))
 
 (defn ideal-gas-pressure
   "Pressure of a gas region from the ideal gas law: P = ρ k_B T / m_H."
@@ -145,7 +176,7 @@
      (cond
        (>= m star-mass-threshold)   :protostar
        (>= m planet-mass-threshold) :planet
-       (> m pm)                     :debris
+       (> m pm)                     :planetesimal
        :else                        :nebula))))
 
 ;; --- Material response (collision malleability) ---
@@ -180,7 +211,7 @@
    :temperature pos?
    :density     pos?
    :composition map? ;; {:H 0.75 :He 0.24 :metals 0.01}
-   :state       keyword? ;; :nebula :protostar :star :planet :debris
+   :state       keyword? ;; :nebula :planetesimal :gas-giant :brown-dwarf :protostar :star :planet
    :luminosity  number?
    :pressure    number?})
 

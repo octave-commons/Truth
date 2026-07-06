@@ -8,6 +8,7 @@
    [domain.planet-formation :as pf]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
+   [law.composition       :as lcomp]
    [law.stellar           :as law]
    [shape.spatial         :as sp]))
 
@@ -33,7 +34,7 @@
           pos [au 0.0 0.0]
           vel (circular-velocity M pos)
           region {:position pos :velocity vel :mass 1.0e25
-                  :matter-state :debris :oblateness 1.0}]
+                  :matter-state :planetesimal :oblateness 1.0}]
       (is (= :disc (stellar/disc-classify region (central M)))))))
 
 (deftest disc-classify-radial-infall-is-envelope
@@ -42,7 +43,7 @@
           pos [au 0.0 0.0]
           v-in (* 0.3 (Math/sqrt (/ (* law/G M) au)))  ;; slow inward, stays bound
           region {:position pos :velocity [(- v-in) 0.0 0.0] :mass 1.0e25
-                  :matter-state :debris :oblateness 1.0}]
+                  :matter-state :planetesimal :oblateness 1.0}]
       (is (= :envelope (stellar/disc-classify region (central M)))))))
 
 (deftest disc-classify-hyperbolic-is-outflow
@@ -51,7 +52,7 @@
           pos [au 0.0 0.0]
           v-esc (Math/sqrt (/ (* 2.0 law/G M) au))
           region {:position pos :velocity [(* 2.0 v-esc) 0.0 0.0] :mass 1.0e25
-                  :matter-state :debris :oblateness 1.0}]
+                  :matter-state :planetesimal :oblateness 1.0}]
       (is (= :outflow (stellar/disc-classify region (central M)))))))
 
 (deftest disc-classify-oblate-spinner-is-disc
@@ -60,7 +61,7 @@
           pos [au 0.0 0.0]
           vel (circular-velocity M pos)
           region {:position pos :velocity vel :mass 1.0e25
-                  :matter-state :debris :oblateness 0.9}]  ;; h/r = 0.1
+                  :matter-state :planetesimal :oblateness 0.9}]  ;; h/r = 0.1
       (is (= :disc (stellar/disc-classify region (central M)))))))
 
 (deftest disc-classify-star-itself-is-nil
@@ -137,7 +138,7 @@
                                       {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
                                        :mass M :radius law/solar-radius :temperature 5800.0
                                        :matter-state :star
-                                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
+                                       :composition lcomp/solar-composition})
         w (-> w
               (ecs/put-component star c/luminosity law/solar-luminosity)
               (ecs/put-component star c/disk-mass disk-mass)
@@ -153,7 +154,7 @@
                           [w2 eid] (stellar/spawn-clump w
                                                         {:position pos :velocity vel
                                                          :mass body-mass :radius 1.0e7
-                                                         :matter-state :debris})]
+                                                         :matter-state :planetesimal})]
                       (ecs/put-component w2 eid c/disc-tag :disc)))
                   w radii)]
     [(assoc w :genesis/sim-time sim-time

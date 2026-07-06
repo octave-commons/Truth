@@ -13,7 +13,7 @@
 
 (deftest resolved-shape-solids-use-material-density
   (testing "debris: fixed rocky density, radius derived from mass"
-    (let [s (stellar/resolved-shape {:matter-state :debris :mass 1.0e22} 0.5 9.5e14 1.0e12)]
+    (let [s (stellar/resolved-shape {:matter-state :planetesimal :mass 1.0e22} 0.5 9.5e14 1.0e12)]
       (is (= stellar/debris-material-density (:density s)))
       (is (= (stellar/sphere-radius 1.0e22 stellar/debris-material-density) (:radius s)))
       (is (nil? (:oblateness s)) "solids carry no oblate shape")))
@@ -41,7 +41,7 @@
         w (-> (ecs/put-components w gas {c/matter-state :nebula c/position [0.0 0.0 0.0]
                                          c/density 1.0e-16 c/pressure 1.0e-10
                                          c/mass 4.0e27 c/radius 6.0e13 c/temperature 15.0})
-              (ecs/put-components deb {c/matter-state :debris c/position [1.0e15 0.0 0.0]
+              (ecs/put-components deb {c/matter-state :planetesimal c/position [1.0e15 0.0 0.0]
                                        c/density 1.0e3 c/pressure 0.0
                                        c/mass 1.0e23 c/radius 1.0e6 c/temperature 100.0}))
         w (spatial/spatial-index w)

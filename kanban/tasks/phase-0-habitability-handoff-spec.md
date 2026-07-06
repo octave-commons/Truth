@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-habitability-handoff-spec"
 title: "Phase 0 Habitability Handoff Spec"
-status: "todo"
+status: "ready"
 priority: "P1"
 labels: ["specs", "phase0", "handoff"]
 created_at: "2026-07-02T19:35:28.967130946Z"

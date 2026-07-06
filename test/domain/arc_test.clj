@@ -51,7 +51,7 @@
 (deftest event-notification-maps-stellar-ignition
   (is (= "A star ignites! +25 quanta" (arc/event-notification :stellar-ignition)))
   (is (= "The nebula collapses. +3 quanta" (arc/event-notification :nebula-collapse)))
-  (is (= "A protostar forms. +8 quanta" (arc/event-notification :protostar-formation)))
+  (is (= "A protostar forms. +12 quanta" (arc/event-notification :protostar-formation)))
   (is (nil? (arc/event-notification :nonexistent))))
 
 ;; --- Handoff / endings ------------------------------------------------------
@@ -136,7 +136,7 @@
           "a nebula-collapse threshold event lands in the ledger")
       (is (= :nebula-collapse (last (:arc/recent-events w')))
           "the specific event category is surfaced to the player")))
-  (testing "entering protostar arc emits :event/protostar-formation"
+  (testing "entering protostar arc emits :event/phase-transition"
     (let [w  (-> (ecs/empty-world)
                  (event/with-ledger)
                  (assoc :tick 2
@@ -147,11 +147,20 @@
                          :regions [{:matter-state :protostar}]}))
           w' (arc/advance-arc w)]
       (is (= :arc/genesis-protostar (:arc/current w')))
-      (is (seq (filter #(= :event/protostar-formation (:kind %))
+      (is (seq (filter #(= :event/phase-transition (:kind %))
                        (get-in w' [:ledger :events])))
-          "a protostar-formation threshold event lands in the ledger")
+          "a phase-transition event lands in the ledger when the arc advances")))
+
+  (testing "per-body protostar formation events are surfaced as :protostar-formation"
+    (let [w  (-> (ecs/empty-world)
+                 (event/with-ledger)
+                 (assoc :tick 2
+                        :genesis/sim-time 0.0
+                        :arc/current :arc/genesis-protostar)
+                 (event/emit (event/->event {:tick 2 :kind :event/protostar-formation :entities #{}})))
+          w' (arc/advance-arc w)]
       (is (= :protostar-formation (last (:arc/recent-events w')))
-          "the specific event category is surfaced to the player"))))
+          "arc surfaces per-body protostar-formation events"))))
 
 (deftest tick-genesis-pays-quanta-for-arc-events-on-same-tick
   (testing "arc-emitted events award agency in the same combined tick"

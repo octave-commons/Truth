@@ -31,19 +31,28 @@
     (is (= :nebula (next-state (region pm :density 1.0e-16 :radius 1.0e10)))))
   (testing "Jeans-unstable but still a single parcel ⇒ stays nebula (not yet accreted)"
     (is (= :nebula (next-state (apply region pm (mapcat identity unstable))))))
-  (testing "Jeans-unstable AND accreted past one parcel, sub-stellar ⇒ debris"
-    (is (= :debris (next-state (apply region (* 3.0 pm) (mapcat identity unstable))))))
+  (testing "Jeans-unstable AND accreted past one parcel, sub-stellar ⇒ planetesimal"
+    (is (= :planetesimal (next-state (apply region (* 1.2 pm) (mapcat identity unstable))))))
+  (testing "Jeans-unstable AND accreted to gas-giant mass ⇒ gas-giant"
+    (is (= :gas-giant (next-state (apply region (* 5.0 pm) (mapcat identity unstable))))))
+  (testing "Jeans-unstable AND accreted to brown-dwarf mass ⇒ brown dwarf"
+    (is (= :brown-dwarf (next-state (apply region law/deuterium-burning-mass
+                                           (mapcat identity unstable))))))
   (testing "Jeans-unstable AND accreted to stellar-forming mass ⇒ protostar"
-    (is (= :protostar (next-state (apply region law/deuterium-burning-mass
+    (is (= :protostar (next-state (apply region law/hydrogen-burning-mass
                                          (mapcat identity unstable)))))))
 
-(deftest debris-promotes-to-protostar-by-accreted-mass
-  (testing "debris below the deuterium limit keeps accreting as debris"
-    (is (= :debris (next-state (region (* 5.0 pm) :state :debris :radius 1.0e9)))))
-  (testing "debris that has accreted past the deuterium limit becomes a protostar"
-    ;; note: no Jeans gate here — it is already a condensed core, fate is by mass
-    (is (= :protostar (next-state (region law/deuterium-burning-mass
-                                          :state :debris :radius 1.0e9))))))
+(deftest planetesimal-promotes-up-the-substellar-ladder
+  (testing "planetesimal below the opacity limit keeps accreting as a planetesimal"
+    (is (= :planetesimal (next-state (region (* 1.2 pm) :state :planetesimal :radius 1.0e9)))))
+  (testing "planetesimal that has accreted past the opacity limit becomes a gas giant"
+    (is (= :gas-giant (next-state (region (* 5.0 pm) :state :planetesimal :radius 1.0e9)))))
+  (testing "gas-giant embryo that has accreted past the deuterium limit becomes a brown dwarf"
+    (is (= :brown-dwarf (next-state (region law/deuterium-burning-mass
+                                            :state :gas-giant :radius 1.0e9)))))
+  (testing "brown dwarf that has accreted to the hydrogen-burning limit becomes a protostar"
+    (is (= :protostar (next-state (region law/hydrogen-burning-mass
+                                          :state :brown-dwarf :radius 1.0e9))))))
 
 (deftest protostar-fate-is-decided-by-mass-and-ignition
   (testing "hot, ≥0.08 M⊙ protostar ignites hydrogen → star"

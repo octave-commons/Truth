@@ -35,13 +35,13 @@
 
 (deftest pressure-system-clears-stale-contribution
   ;; A body that carried accel.pressure but is no longer hydro-active (became
-  ;; :debris) must have its contribution cleared with the removed sentinel.
+  ;; :planetesimal) must have its contribution cleared with the removed sentinel.
   (let [[w e0] (ecs/spawn (ecs/empty-world))
         [w e1] (ecs/spawn w)
         w   (-> (gas w e0 [0.0 0.0 0.0])
                 (gas e1 [1.0e13 0.0 0.0])
                 ;; e1 was contributing last tick, but is now solid debris
-                (ecs/put-component e1 c/matter-state :debris)
+                (ecs/put-component e1 c/matter-state :planetesimal)
                 (ecs/put-component e1 c/accel-pressure [9.0 9.0 9.0]))
         ws  ((:run (hydro/pressure-acceleration)) w)]
     (is (tick/removed? (get-in ws [c/accel-pressure e1]))

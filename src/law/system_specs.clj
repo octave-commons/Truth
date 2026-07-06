@@ -81,7 +81,7 @@
          (is (zero? (:D (ecs/get-component world' eid c/composition))))))
 
      (deftest deuterium-retained-in-cold-bodies
-       (let [world  (seed-entity {:matter-state :debris :temperature 300.0
+       (let [world  (seed-entity {:matter-state :planetesimal :temperature 300.0
                                    :composition {:H 0.75 :He 0.24 :D 5e-6}})
              world' (deuterium-depletion-system world)
              eid    (first (ecs/entities-with world' c/matter-state))]

@@ -133,7 +133,7 @@
    rather than a per-tick fraction is essential now the tick rate is a fixed
    60 Hz: a per-tick cap would shed angular momentum ~38× faster than the old
    variable cadence, braking the cloud's rotation away in seconds."
-  [{:keys [mass radius density b-field angular-momentum rotation-axis]} dt]
+  [{:keys [mass radius density b-field angular-momentum rotation-axis ionization]} dt]
   (if (and (pos? (double mass))
            (pos? (double radius))
            (pos? (double density))
@@ -143,9 +143,8 @@
           omega (if (and rotation-axis (lf/finite-vec3? rotation-axis))
                   (sp/dot angular-momentum rotation-axis)
                   (sp/len angular-momentum))
-          ;; characteristic Alfvén torque RATE: ~ B² r³ / (μ₀ ρ^(1/2)) · (ω / v_A)
-          ;; simplify to ~ B² r³ ω / √(ρ) / μ₀ (angular momentum per unit sim-time)
-          base (* B2 (Math/pow (double radius) 3) (Math/abs omega))
+          ion  (double (or ionization 1.0))
+          base (* B2 (Math/pow (double radius) 3) (Math/abs omega) ion)
           denom (* lf/mu-0 (Math/sqrt (double density)))
           tau-raw  (if (pos? denom) (/ base denom) 0.0)
           ;; angular momentum removed THIS step = rate · dt
@@ -376,6 +375,7 @@
    :b-field  (comps c/b-field)
    :angular-momentum (comps c/angular-momentum)
    :rotation-axis    (get (opt c/rotation-axis) eid)
+   :ionization       (get (opt c/ionization-fraction) eid 1.0)
    :state    (comps c/matter-state)})
 
 (defn- build-active-lorentz-data
@@ -386,10 +386,11 @@
   [world]
   (let [required (ecs/all-of world c/b-field c/radius c/position c/density
                              c/angular-momentum c/matter-state)
-        opt-tables {c/velocity     (get-in world [:components c/velocity])
-                    c/mass         (get-in world [:components c/mass])
-                    c/pressure     (get-in world [:components c/pressure])
-                    c/rotation-axis (get-in world [:components c/rotation-axis])}]
+        opt-tables {c/velocity      (get-in world [:components c/velocity])
+                    c/mass          (get-in world [:components c/mass])
+                    c/pressure      (get-in world [:components c/pressure])
+                    c/rotation-axis (get-in world [:components c/rotation-axis])
+                    c/ionization-fraction (get-in world [:components c/ionization-fraction])}]
     (persistent!
      (reduce (fn [acc [eid comps]]
                (if (em-active? (comps c/matter-state))
@@ -468,9 +469,10 @@
   (let [b       (:b-field data)
         rho     (:density data)
         r       (double (or (:radius data) 1.0))
-        v       (sp/len (or (:velocity data) [0.0 0.0 0.0]))]
+        v       (sp/len (or (:velocity data) [0.0 0.0 0.0]))
+        ion     (double (or (:ionization data) 1.0))]
     (if (lf/mhd-regime? (:pressure data) b v rho)
-      (let [a   (lorentz-acceleration b curl-b rho)
+      (let [a   (sp/v* (lorentz-acceleration b curl-b rho) ion)
             cap (lf/lorentz-acceleration-cap b rho r)]
         (if (pos? cap)
           (let [mag (sp/len a)]
@@ -552,7 +554,7 @@
 
 (def ^:private resolved-field-states
   "Matter states whose magnetic flux is frozen into the resolved body."
-  #{:debris :planet :protostar :star})
+  #{:planetesimal :gas-giant :brown-dwarf :planet :protostar :star})
 
 (defn- field-entity-data
   "Project one entity into the compact representation used by the field system."

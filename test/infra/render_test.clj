@@ -13,6 +13,7 @@
    [infra.camera :as cam]
    [infra.input :as input]
    [infra.render :as r]
+   [infra.render.field :as rfield]
    [infra.render.units :as units]))
 
 (deftest test-tint-color
@@ -69,7 +70,7 @@
                                       {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
                                        :matter-state :nebula :density 1e-18 :temperature 12.0})
           ctx  (units/make-context (cam/make-camera) {:width 1 :height 1})
-          pts  (#'r/gas-points ctx w1)]
+          pts  (#'r/render-samples ctx w1 rfield/default-volume-config)]
       (is (seq pts) "nebula produces gas samples for the froxel texture")
       (is (every? #(number? (:dens %)) pts)
           "every gas sample carries a density value")))
@@ -105,20 +106,30 @@
       (is (= 0.001 (units/phys->render-radius ctx nil))))))
 
 (deftest test-composition->material-color
-  (testing "Composition drives material colour"
-    (let [rock (r/composition->material-color {:metals 1.0})
-          ice  (r/composition->material-color {:ice 1.0})
-          gas  (r/composition->material-color {:H 0.75 :He 0.25})]
+  (testing "Element-resolved composition drives material colour via bulk categories"
+    ;; Fe/Si condense to rock+metal below ~1300 K; O freezes to ice below 170 K;
+    ;; H/He stay gas. Colour is derived from the condensation partition, not from
+    ;; retired :metals/:ice keys.
+    (let [rock (r/composition->material-color {:Fe 0.5 :Si 0.5} 300.0)
+          ice  (r/composition->material-color {:O 1.0} 100.0)
+          gas  (r/composition->material-color {:H 0.75 :He 0.25} 5000.0)]
       (is (every? #(<= 0.0 % 1.0) rock))
       (is (> (first rock) (nth rock 2)) "rock is warm (red > blue)")
       (is (> (nth ice 2) (first ice)) "ice is cold (blue > red)")
-      (is (not= rock gas) "different composition → different colour"))))
+      (is (not= rock gas) "different composition → different colour")))
+  (testing "The same rocky composition renders rock when cold, not gas-tan"
+    ;; regression: composition used to read retired keys → every body rendered
+    ;; gas-tan regardless of composition.
+    (let [rock (r/composition->material-color {:Fe 0.5 :Si 0.5} 300.0)
+          gas  (r/composition->material-color {:H 0.75 :He 0.25} 5000.0)]
+      (is (< (first rock) (first gas))
+          "cold Fe/Si is darker than pale H/He gas — not identical tan"))))
 
 (deftest test-body-render-color
   (testing "Cold bodies show material; hot bodies glow thermally"
-    (let [rocky-cold (r/body-render-color 200.0 {:metals 1.0})
-          rocky-hot  (r/body-render-color 5.0e6 {:metals 1.0})
-          material   (r/composition->material-color {:metals 1.0})]
+    (let [rocky-cold (r/body-render-color 200.0 {:Fe 0.5 :Si 0.5})
+          rocky-hot  (r/body-render-color 5.0e6 {:Fe 0.5 :Si 0.5})
+          material   (r/composition->material-color {:Fe 0.5 :Si 0.5} 200.0)]
       (is (= rocky-cold material) "a cold rocky body is its material colour")
       (is (not= rocky-hot material) "a hot body crossfades toward thermal colour"))))
 

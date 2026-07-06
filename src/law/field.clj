@@ -227,6 +227,25 @@
   "Cooling-time to dynamical-time ratio t_cool / Ω⁻¹: a positive finite number."
   finite-number?)
 
+(def gas-sample-schema
+  "Malli schema for one render-facing SPH gas sample as produced by
+   domain.hydro/gas-samples (SI units). :smoothing-h is the full kernel
+   support h (= 2 × particle radius, the SPH convention used throughout
+   domain.hydro); :density is the SPH density the tick's density pass wrote,
+   in kg/m³. :temperature may be absent for entities that never received one."
+  [:map
+   [:eid :int]
+   [:position [:tuple :double :double :double]]
+   [:smoothing-h [:and :double [:> 0]]]
+   [:density [:and :double [:> 0]]]
+   [:temperature {:optional true} [:maybe :double]]
+   [:ionization [:and :double [:>= 0.0] [:<= 1.0]]]
+   [:matter-state [:fn hydro-em-active?]]])
+
+(def gas-sample?
+  "Predicate: does `value` satisfy `law.field/gas-sample-schema`?"
+  (m/validator gas-sample-schema))
+
 ;; --- Contracts --------------------------------------------------------------
 
 (def field-cell-contract

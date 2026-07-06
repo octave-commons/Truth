@@ -240,6 +240,36 @@
       (is (> (sp/len a-a) 1e-20))
       (is (> (sp/len a-b) 1e-20)))))
 
+(deftest test-neutral-parcel-feels-no-lorentz-force
+  "A parcel with ionization-fraction zero experiences zero Lorentz acceleration."
+  (let [base (ecs/empty-world)
+        [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                           :velocity [0.0 0.0 0.0]
+                                           :mass 1e28
+                                           :radius 2e14
+                                           :matter-state :nebula
+                                           :density 1.0
+                                           :pressure 1.0
+                                           :b-field [0.0 0.0 1.0]
+                                           :angular-momentum [0.0 0.0 1e30]})
+        [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                           :velocity [0.0 0.0 0.0]
+                                           :mass 1e28
+                                           :radius 2e14
+                                           :matter-state :nebula
+                                           :density 1.0
+                                           :pressure 1.0
+                                           :b-field [0.0 0.0 0.5]
+                                           :angular-momentum [0.0 0.0 0.0]})
+        w2 (-> w2
+               (ecs/put-component ea c/ionization-fraction 0.0)
+               (ecs/put-component eb c/ionization-fraction 0.0)
+               (spatial/spatial-index))
+        ws ((:run (em/lorentz-acceleration-system 1e10)) w2)
+        w3 (tick/apply-write-set w2 ws)]
+    (is (zero? (sp/len (ecs/get-component w3 ea c/accel-lorentz))))
+    (is (zero? (sp/len (ecs/get-component w3 eb c/accel-lorentz))))))
+
 (deftest test-curl-estimate-skips-nil-b-field
   (testing "curl-estimate ignores neighbors with missing or nil b-field"
     (let [b [0.0 0.0 1.0]

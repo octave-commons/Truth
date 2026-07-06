@@ -40,9 +40,9 @@
           v-circ (Math/sqrt (/ (* G msun) r-far))
           v-esc  (Math/sqrt (/ (* 2.0 G msun) r-far))
           [w [_ bound esc]] (star-world
-                             [{:state :debris :mass 1.0e22
+                             [{:state :planetesimal :mass 1.0e22
                                :pos [r-far 0.0 0.0] :vel [0.0 v-circ 0.0]}
-                              {:state :debris :mass 1.0e22
+                              {:state :planetesimal :mass 1.0e22
                                :pos [0.0 r-far 0.0] :vel [0.0 (* 1.5 v-esc) 0.0]}])
           ws ((:run (debris/debris-reaper-system)) w)
           marked (set (keys (get ws c/consumed-escape {})))]
@@ -54,13 +54,13 @@
             body whose radial velocity is not outward may still interact"
     (let [r-near 1.0e10
           [w [_ near]] (star-world
-                        [{:state :debris :mass 1.0e22
+                        [{:state :planetesimal :mass 1.0e22
                           :pos [r-near 0.0 0.0] :vel [0.0 1.0e6 0.0]}])
           ws ((:run (debris/debris-reaper-system)) w)]
       (is (not (contains? (set (keys (get ws c/consumed-escape {}))) near))))))
 
 (deftest non-debris-never-reaped
-  (testing "only :debris is eligible — a runaway planet or star is not reaped"
+  (testing "only :planetesimal is eligible — a runaway planet or star is not reaped"
     (let [r-far 2.0e13
           v-esc (Math/sqrt (/ (* 2.0 G msun) r-far))
           [w [_ planet]] (star-world
@@ -74,7 +74,7 @@
     (let [r-far 2.0e13
           v-esc (Math/sqrt (/ (* 2.0 G msun) r-far))
           [w [_ esc]] (star-world
-                       [{:state :debris :mass 1.0e22
+                       [{:state :planetesimal :mass 1.0e22
                          :pos [r-far 0.0 0.0] :vel [(* 1.5 v-esc) 0.0 0.0]}])
           ws ((:run (debris/debris-reaper-system)) w)
           w' (-> (reduce-kv (fn [w eid v] (ecs/put-component w eid c/consumed-escape v))

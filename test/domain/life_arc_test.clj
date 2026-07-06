@@ -21,7 +21,9 @@
                  w {:position [1.5e11 0.0 0.0] :velocity [0.0 0.0 0.0]
                     :mass 5.97e24 :radius 6.4e6 :temperature 300.0
                     :matter-state :planet
-                    :composition {:metals 0.40 :silicates 0.45 :volatiles 0.15}})
+                    :composition {:H 0.05 :O 0.25 :Mg 0.15 :Si 0.16 :Fe 0.30
+                                  :Al 0.02 :Ca 0.03 :Na 0.01 :Ni 0.02
+                                  :C 0.005 :N 0.005 :S 0.005}})
         w (ecs/put-component w eid c/pressure 1.0e5)]
     [w eid]))
 

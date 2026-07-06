@@ -394,7 +394,8 @@
                                  (:text menu))
                 volume   (when (:volumetric? cfg true)
                            (render/frame-volume ctx w (:volume-program cfg)
-                                                (:volume-res cfg :medium)))]
+                                                (:volume-res cfg :medium)
+                                                (:volume-config cfg)))]
             (render/render-scene {:body-program (:body-program cfg)
                                   :line-program (:line-program cfg)
                                   :sprite-program (:sprite-program cfg)
@@ -472,6 +473,7 @@
                                       :subdivisions 3}
                                      (select-keys opts [:width :height :subdivisions
                                                         :tick-fn :bodies-fn :volumetric? :volume-res
+                                                        :volume-config
                                                         :sim-frame-interval :on-step])))
          stop-atom      (atom false)
          intent-queue   (java.util.concurrent.ConcurrentLinkedQueue.)

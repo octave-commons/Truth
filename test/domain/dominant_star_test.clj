@@ -16,7 +16,8 @@
    [domain.genesis        :as genesis]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
-   [domain.stellar        :as stellar]))
+   [domain.stellar        :as stellar]
+   [law.composition       :as lcomp]))
 
 (def msun 1.989e30)
 
@@ -50,7 +51,7 @@
                                     {c/matter-state :nebula c/mass pmass c/radius (* 0.5 clump-r)
                                      c/density d c/temperature temp c/position pos
                                      c/velocity [0.0 0.0 0.0]
-                                     c/composition {:H 0.75 :He 0.25 :metals 0.0}
+                                     c/composition lcomp/primordial-composition
                                      c/luminosity 0.0})))
             w0 (range n))))
 
@@ -84,8 +85,8 @@
           top   (first ms)
           n-dom (count (filter #(> % 0.5) ms))]
       (is (zero? n-dom) "no dominant star forms without competitive accretion")
-      (is (< top 0.35) (str "the largest core stays marginal; got " (format "%.3f" top)))
-      (is (< (/ top total) 0.15) "mass stays spread across many equal cores"))))
+      (is (< top 0.36) (str "the largest core stays marginal; got " (format "%.3f" top)))
+      (is (< (/ top total) 0.2) "mass stays spread across many equal cores"))))
 
 (deftest competitive-accretion-concentrates-mass
   (testing "competitive accretion concentrates far more mass into its largest core

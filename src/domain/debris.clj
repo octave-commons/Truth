@@ -1,13 +1,14 @@
 (ns domain.debris
-  "The debris sink (spec: docs/specs/perf-60fps-parallel-tick.md, Fix 6).
+  "The small-body sink (spec: docs/specs/perf-60fps-parallel-tick.md, Fix 6).
 
-   `:debris` is a real condensed population (classifier: cooled sub-stellar
-   nebula → planetesimal) that otherwise leaves the world only via literal
-   collision or sink capture — so late-game N grows without bound and the
-   gravity/N-body cost with it. This system reaps ESCAPERS ONLY, and it is
-   mass-honest: a reaped body is one that has, physically, left the system.
+   `:planetesimal`, `:gas-giant`, and `:brown-dwarf` are real condensed
+   populations (classifier: cooled sub-stellar nebula → planetesimal / gas-giant
+   / brown-dwarf) that otherwise leave the world only via literal collision or
+   sink capture — so late-game N grows without bound and the gravity/N-body cost
+   with it. This system reaps ESCAPERS ONLY, and it is mass-honest: a reaped
+   body is one that has, physically, left the system.
 
-   A `:debris` body is escaped when, on the same snapshot,
+   A sub-stellar body is escaped when, on the same snapshot,
      (a) it is farther than `escape-distance-factor ×` the system's
          mass-weighted RMS radius from the centre of mass (the guard for the
          violent phase, while the mass is spread; once a star holds the mass
@@ -22,8 +23,8 @@
    marked bodies at world-construction and records one aggregated
    `:event/body-escape` per tick in the ledger, so the books stay auditable.
 
-   Bound debris is NEVER reaped, no matter how far out (a circular orbit at
-   any radius fails (b)). A pure snapshot-reading fan-out emitter."
+   Bound small bodies are NEVER reaped, no matter how far out (a circular orbit
+   at any radius fails (b)). A pure snapshot-reading fan-out emitter."
   (:require
    [domain.ecs.core       :as ecs]
    [domain.ecs.components :as c]
@@ -74,8 +75,9 @@
             (/ (* (double G) (double mass)) r)))))
 
 (defn debris-reaper-system
-  "Write-set system (sole writer of c/consumed-escape): mark unbound `:debris`
-   bodies beyond the escape distance for reaping."
+  "Write-set system (sole writer of c/consumed-escape): mark unbound small
+   bodies (`:planetesimal`, `:gas-giant`, `:brown-dwarf`) beyond the escape
+   distance for reaping."
   []
   {:id     :debris-reaper
    :writes #{c/consumed-escape}
@@ -83,9 +85,11 @@
              (let [eids  (ecs/entities-with world c/matter-state c/position c/mass c/velocity)
                    G     (double (or (:sim/G world) 6.674e-11))
                    frame (system-frame world eids)
+                   small-states #{:planetesimal :gas-giant :brown-dwarf}
                    gone  (into {}
                                (keep (fn [eid]
-                                       (when (and (= :debris (ecs/get-component world eid c/matter-state))
+                                       (when (and (contains? small-states
+                                                             (ecs/get-component world eid c/matter-state))
                                                   (escaped? G frame
                                                             (ecs/get-component world eid c/position)
                                                             (or (ecs/get-component world eid c/velocity)

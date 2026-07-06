@@ -21,6 +21,7 @@
    [domain.ecs.event      :as event]
    [domain.ecs.components  :as c]
    [domain.stellar        :as stellar]
+   [law.composition       :as lcomp]
    [law.stellar           :as law]
    [shape.spatial         :as sp]))
 
@@ -40,7 +41,7 @@
                                       {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
                                        :mass M :radius law/solar-radius :temperature 2.0e7
                                        :matter-state :star
-                                       :composition {:H 0.7 :He 0.28 :metals 0.02}})
+                                       :composition lcomp/solar-composition})
         w (-> w
               (ecs/put-component star c/pressure 1.0e13)  ;; fusion sustaining
               (ecs/put-component star c/luminosity law/solar-luminosity)
@@ -61,7 +62,7 @@
                     (let [[w2 eid] (stellar/spawn-clump w
                                                         {:position pos :velocity (circular-velocity M pos)
                                                          :mass body-mass :radius 1.0e7
-                                                         :matter-state :debris})]
+                                                         :matter-state :planetesimal})]
                       (ecs/put-component w2 eid c/disc-tag :disc)))
                   w placements)]
     [w star]))

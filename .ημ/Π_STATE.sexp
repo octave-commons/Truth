@@ -1,21 +1,24 @@
 (Π-state
   :branch "main"
-  :previous-commit "2d732ee5364c9daea53a07beb064f5e56352566b"
-  :previous-tag "Π-20260706000058-2-g2d732ee"
-  :tag "Π-20260706015353"
-  :timestamp "2026-07-06T01:53:53Z"
-  :architecture-test :passing
+  :previous-commit "04050f3e5e932dada11cff8d549674a170e8ab1a"
+  :previous-tag "Π-20260706015353-2-g04050f3"
+  :tag "Π-20260706191332"
+  :timestamp "2026-07-06T19:13:32Z"
+  :architecture-test :failing
 
   :verification
-  (tests "522 tests, 6560 assertions, 0 failures, 0 errors")
-  (architecture-test "passing")
+  (tests "570 tests, 62327 assertions, 3 failures, 24 errors")
+  (architecture-test "failing: single-writer invariant violated for :component/accretion-radius (:classifier :mass-transfer-radius) and :component/mass-flux (:mass-transfer-flux :roche-lobe)")
 
   :summary
-  ("CLAUDE.md refresh: documented receipt river, session mycology, fork tax, and shared memory bridge workflow."
-   "OpenCode Claude memory bridge plugin: .opencode/plugin/index.ts exposes claude_memory_* tools and receipt_append, syncing with ~/.claude/projects/<slug>/memory and receipts.edn."
-   "Session-mycology ledger updated with latest reflection."
-   "Receipt river updated with session records.")
+  ("Phase 0 physics honesty pass: chemistry differentiation, disk regimes, mass transfer, stellar wind plasma state, and radial disk structure."
+   "New specs: core accretion, gradual mass transfer, metal enrichment/seeding, nebular chemistry, protoplanetary disks, radial disk structure, Roche-lobe envelope physics, stellar wind plasma state."
+   "New domain code: domain.mass-transfer (Bondi-Hoyle-Lyttleton + Roche-lobe overflow), law.mass-transfer."
+   "New infra: infra.render/field for rich entity inspection UI field rendering."
+   "Research notebooks added under docs/research/physics/."
+   "ημ actor runtime scripts migrated to OpenCode dispatch model.")
 
   :notes
   ("All repo-relevant working-tree changes were absorbed; .ημ/.env remains gitignored and unstaged."
+   "Architecture single-writer invariant is currently violated and must be resolved before next green fork tax."
    "No unrelated concurrent dirt was detected."))

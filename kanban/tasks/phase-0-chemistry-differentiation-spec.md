@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-chemistry-differentiation-spec"
 title: "Phase 0 Chemistry & Differentiation Spec"
-status: "todo"
+status: "ready"
 priority: "P1"
 labels: ["specs", "phase0", "em", "chemistry"]
 created_at: "2026-07-02T19:35:28.966686229Z"

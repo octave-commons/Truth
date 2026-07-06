@@ -97,11 +97,11 @@
               c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer
               c/accel-warp c/frame-offset
               c/matter-state c/density c/luminosity c/sed-bands c/composition
-              c/heat-intervention c/comp-burn c/comp-depletion
+              c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk
               c/mass-flux-wind c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
               c/dv-wind c/dv-flare c/absorb-merge c/absorb-accrete}
-    :writes #{c/position c/velocity c/temperature c/composition
+    :writes #{c/position c/velocity c/temperature c/composition c/comp-condensed
               c/angular-momentum c/spin c/mass}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
@@ -223,9 +223,30 @@
     :ns     'domain.stellar
     :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
               c/radius c/position c/velocity c/absorb-accrete c/luminosity
-              c/composition c/planets-seeded c/disc-tag c/rotation-axis}
+              c/composition c/planets-seeded c/disc-tag c/rotation-axis
+              c/disk-regime c/disk-fragments-spawned}
     :writes #{c/disk-mass c/disk-angular-mom c/mass-flux-disk c/torque-disk
-              c/spawn-request-disk c/spawn-request-planet c/planets-seeded}}
+              c/spawn-request-disk c/spawn-request-planet c/planets-seeded
+              c/disk-regime c/disk-fragments-spawned}}
+
+   ;; Mass transfer: Bondi–Hoyle–Lyttleton sink accretion and Roche-lobe overflow.
+   ;; Emits c/mass-flux events for the integrator to apply; the integrator remains
+   ;; sole writer of c/mass, c/position, c/velocity. Runs in the parallel fan-out.
+   {:id     :mass-transfer-radius
+    :ns     'domain.mass-transfer
+    :reads  #{c/mass c/position c/velocity c/temperature c/matter-state}
+    :writes #{c/accretion-radius c/accretion-rate}}
+
+   {:id     :mass-transfer-flux
+    :ns     'domain.mass-transfer
+    :reads  #{c/mass c/position c/velocity c/accretion-radius c/accretion-rate
+              c/matter-state c/temperature}
+    :writes #{c/mass-flux}}
+
+   {:id     :roche-lobe
+    :ns     'domain.mass-transfer
+    :reads  #{c/binary-pair c/mass c/radius c/position c/velocity}
+    :writes #{c/roche-lobe c/mass-transfer-rate c/mass-flux}}
 
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
@@ -281,8 +302,9 @@
     :reads  #{c/b-field c/radius c/matter-state c/frozen-flux}
     :writes #{c/b-field c/frozen-flux}}
 
-   ;; Debris sink: marks unbound :debris past the system edge for reaping
-   ;; (consumed at world-construction). Sole writer of consumed.escape.
+   ;; Small-body sink: marks unbound :planetesimal/:gas-giant/:brown-dwarf past
+   ;; the system edge for reaping (consumed at world-construction). Sole writer
+   ;; of consumed.escape.
    {:id     :debris-reaper
     :ns     'domain.debris
     :reads  #{c/matter-state c/position c/velocity c/mass}

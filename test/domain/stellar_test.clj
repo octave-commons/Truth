@@ -139,7 +139,7 @@
 
 (deftest test-mass-loss-demotes-never-dissolves
   (testing "A star whose fusion has CEASED demotes down the BOUND ladder
-            (star→brown-dwarf→debris) by mass and NEVER returns to :nebula —
+            (star→brown-dwarf→gas-giant→planetesimal) by mass and NEVER returns to :nebula —
             collapse is irreversible; only the shed material becomes gas (winds
             spec §2). While fusion is still sustained, ignition HYSTERESIS keeps
             it a star despite a mass dip below the 0.08 M☉ formation threshold."
@@ -155,8 +155,9 @@
       (is (= :star (hot-at 0.05)) "a still-fusing star keeps burning despite mass loss")
       ;; once fusion has ceased, demotion follows the bound mass ladder
       (is (= :star        (cold-at 0.5)))     ;; above hydrogen-burning → stays a star
-      (is (= :brown-dwarf (cold-at 0.05)))    ;; below H, above deuterium → brown dwarf
-      (is (= :debris      (cold-at 0.005)))   ;; below deuterium → stripped core
+      (is (= :brown-dwarf (cold-at 0.05)))    ;; below H, above desert → brown dwarf
+      (is (= :gas-giant   (cold-at 0.005)))   ;; below desert, above opacity → gas giant
+      (is (= :planetesimal (cold-at 0.0005))) ;; below opacity → stripped core
       (is (not-any? #{:nebula} (map cold-at [0.5 0.05 0.005 0.0005]))
           "a collapsed body never re-dissolves to gas"))))
 
@@ -225,13 +226,13 @@
                                               :velocity [0.0 1e4 0.0]
                                               :mass 1e25
                                               :radius 1.0e12
-                                              :matter-state :debris
+                                              :matter-state :planetesimal
                                               :temperature 3000.0})
           [w2 _eb] (stellar/spawn-clump w1   {:position [-5e11 0.0 0.0]
                                               :velocity [0.0 -1e4 0.0]
                                               :mass 1e25
                                               :radius 1.0e12
-                                              :matter-state :debris
+                                              :matter-state :planetesimal
                                               :temperature 3000.0})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
@@ -438,7 +439,7 @@
                                            :velocity [0.0 0.0 0.0]
                                            :mass 5e27
                                            :radius 6e13
-                                           :matter-state :debris})
+                                           :matter-state :planetesimal})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
           w3      (genesis/materialize-lifecycle w3)]
@@ -526,7 +527,7 @@
                  (ecs/put-component eid c/density 1e-9)
                  (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 100.0)))
           w3 (stellar/jeans-collapse-system w2)]
-      (is (= :debris (ecs/get-component w3 eid c/matter-state)))
+      (is (= :planetesimal (ecs/get-component w3 eid c/matter-state)))
       (is (< (ecs/get-component w3 eid c/radius) 1e14) "radius shrinks to resolved-body scale")
       (is (pos? (ecs/get-component w3 eid c/density)))
       (is (nil? (ecs/get-component w3 eid c/hydro-accel)) "gas acceleration removed"))))
@@ -588,7 +589,7 @@
                                                    :radius 1e12
                                                    :temperature 10.0
                                                    :density 1e-6
-                                                   :matter-state :debris})
+                                                   :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
           ;; Create a Jeans-unstable parcel INSIDE the sink's radius
           [w2 parcel-eid] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
@@ -612,7 +613,7 @@
                                                    :radius 1e12
                                                    :temperature 10.0
                                                    :density 1e-6
-                                                   :matter-state :debris})
+                                                   :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 1e11)
           ;; Create a Jeans-unstable parcel OUTSIDE the sink's radius
           [w2 parcel-eid] (stellar/spawn-clump w1 {:position [1e13 0.0 0.0]
@@ -626,18 +627,18 @@
           zones (stellar/sink-exclusion-zones w2)
           region (stellar/entity->region w2 parcel-eid)
           next-state (stellar/classify-next-state region 1e25 zones)]
-      (is (= :debris next-state) "Parcel outside sink radius condenses to :debris"))))
+      (is (= :gas-giant next-state) "Parcel outside sink radius condenses to :gas-giant"))))
 
 (deftest test-sink-formation-absorbs-parcels
   (testing "Newly formed sink absorbs nearby :nebula parcels within accretion radius"
     (let [base (ecs/empty-world)
-          ;; Create a sink that just condensed (:debris with accretion-radius)
+          ;; Create a sink that just condensed (:planetesimal with accretion-radius)
           [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                                    :velocity [0.0 0.0 0.0]
                                                    :mass 2e28
                                                    :radius 1e12
                                                    :temperature 10.0
-                                                   :matter-state :debris})
+                                                   :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
           ;; Create gas parcels within accretion radius
           [w2 p1] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
@@ -682,7 +683,7 @@
           "Sink velocity unchanged (COM blend applied by integrator next tick)"))))
 
 (deftest test-sink-formation-absorbs-debris-onto-protostar
-  (testing "A protostar sink drains nearby small :debris via absorb-accrete"
+  (testing "A protostar sink drains nearby small :planetesimal via absorb-accrete"
     (let [base (ecs/empty-world)
           ;; A forming core (protostar) with a wide feeding zone
           [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
@@ -698,7 +699,7 @@
                                             :mass 1e27
                                             :radius 1e10
                                             :temperature 50.0
-                                            :matter-state :debris})
+                                            :matter-state :planetesimal})
           w3 (stellar/sink-formation-system w2)
           absorbs (ecs/get-component w3 sink-eid c/absorb-accrete)]
       (is (some? (ecs/get-component w3 deb c/consumed-accrete))

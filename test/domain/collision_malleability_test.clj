@@ -1,7 +1,7 @@
 (ns domain.collision-malleability-test
   "μ for malleability-driven collision response: hot/molten bodies merge on
    impact (plastic deformation), cold/brittle bodies struck hard shatter into two
-   :debris fragments — mass and momentum conserved. Makes law.stellar/malleability
+   :planetesimal fragments — mass and momentum conserved. Makes law.stellar/malleability
    load-bearing in the collision path."
   (:require
    [clojure.test :refer [deftest is testing]]
@@ -20,13 +20,13 @@
         w (ecs/put-components w a {c/position (sp/vec3 0.0 0.0 0.0)
                                    c/velocity (sp/vec3 0.0 0.0 0.0)
                                    c/mass 1.0e29 c/radius 1.0e9 c/temperature ta
-                                   c/matter-state :debris
+                                   c/matter-state :planetesimal
                                    c/composition {:H 0.7 :He 0.3}})
         [w b] (ecs/spawn w)
         w (ecs/put-components w b {c/position (sp/vec3 8.0e8 0.0 0.0)
                                    c/velocity vb
                                    c/mass 1.0e28 c/radius 5.0e8 c/temperature tb
-                                   c/matter-state :debris
+                                   c/matter-state :planetesimal
                                    c/composition {:H 0.7 :He 0.3}})]
     [w a b]))
 

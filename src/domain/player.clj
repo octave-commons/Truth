@@ -32,6 +32,12 @@
    ;; (warp/heat/transmute) spend them. Passive observation (looking, hovering,
    ;; moving) costs nothing and earns nothing. Starts empty: you must witness to act.
    :agency          0.0
+   ;; `resonance` is the PROGRESSION currency: the amplitude of the world that is
+   ;; in phase with you. It is awarded the FIRST time a given threshold category
+   ;; is witnessed in this world-line and spent to unlock/intensify ability slots.
+   ;; Distinct from agency (spendable quanta earned every tick).
+   :resonance       0.0
+   :resonance-thresholds #{}
    :focus-position  position
    ;; The focus radius doubles as the halo's Plummer scale radius, so it starts
    ;; genuinely nebula-scale (25% of the default cloud): a wide, diffuse
@@ -83,15 +89,36 @@
    routine phase tick. These are the player's earned capacity to act."
   [event-type]
   (case event-type
-    :nebula-collapse    3.0
-    :protostar-formation 8.0
-    :stellar-ignition   25.0
-    :planet-formation   10.0
-    :phase-transition   5.0
-    :collision          1.0
-    :life-emergence     50.0
-    :gate-discovery     100.0
+    :nebula-collapse       3.0
+    :planetesimal-formation 2.0
+    :gas-giant-formation    4.0
+    :brown-dwarf-formation  8.0
+    :protostar-formation   12.0
+    :stellar-ignition      25.0
+    :planet-formation      10.0
+    :phase-transition       5.0
+    :collision              1.0
+    :life-emergence        50.0
+    :gate-discovery       100.0
     0.0))
+
+(defn resonance-gain-from-event
+  "Resonance awarded the FIRST time a given threshold is crossed in a world-line.
+   Unlike agency (which pays every tick), resonance is legacy — it unlocks and
+   intensifies ability slots."
+  [event-type]
+  (case event-type
+    :nebula-collapse       1
+    :planetesimal-formation 1
+    :gas-giant-formation    1
+    :brown-dwarf-formation  1
+    :protostar-formation    1
+    :stellar-ignition       2
+    :planet-formation       1
+    :phase-transition       1
+    :life-emergence         4
+    :gate-discovery         8
+    0))
 
 (defn accrue-agency
   "Add the quanta earned from a seq of witnessed event categories to `observer`."
@@ -99,6 +126,20 @@
   (update observer :agency
           (fnil + 0.0)
           (reduce + 0.0 (map agency-gain-from-event witnessed-events))))
+
+(defn accrue-resonance
+  "Add resonance for threshold event categories the observer has not yet resonated
+   with in this world-line. Returns updated observer with `:resonance` and
+   `:resonance-thresholds` updated."
+  [observer witnessed-events]
+  (let [seen (:resonance-thresholds observer)
+        new-categories (remove seen (distinct witnessed-events))
+        gain (reduce + 0 (map resonance-gain-from-event new-categories))]
+    (if (pos? gain)
+      (-> observer
+          (update :resonance (fnil + 0.0) gain)
+          (update :resonance-thresholds into new-categories))
+      observer)))
 
 (defn can-afford? [observer cost]
   (>= (double (or (:agency observer) 0.0)) (double cost)))
@@ -342,14 +383,17 @@
 
 (def ^:private event-kind->coherence
   "Map ledger event kinds to the coherence-gain categories."
-  {:event/nebula-collapse    :nebula-collapse
-   :event/protostar-formation :protostar-formation
-   :event/stellar-ignition   :stellar-ignition
-   :event/planet-formation   :planet-formation
-   :event/collision          :collision
-   :event/phase-transition   :phase-transition
-   :event/life-emergence     :life-emergence
-   :event/gate-discovery     :gate-discovery})
+  {:event/nebula-collapse       :nebula-collapse
+   :event/planetesimal-formation :planetesimal-formation
+   :event/gas-giant-formation    :gas-giant-formation
+   :event/brown-dwarf-formation  :brown-dwarf-formation
+   :event/protostar-formation    :protostar-formation
+   :event/stellar-ignition       :stellar-ignition
+   :event/planet-formation       :planet-formation
+   :event/collision              :collision
+   :event/phase-transition       :phase-transition
+   :event/life-emergence         :life-emergence
+   :event/gate-discovery         :gate-discovery})
 
 (defn observer-system
   "ECS system: drains/restores the observer's coherence based on the events that
@@ -369,6 +413,7 @@
                             (keep #(event-kind->coherence (:kind %))))
             obs1 (-> (apply-coherence obs dt complexity new-events)
                      (accrue-agency new-events)
+                     (accrue-resonance new-events)
                      (assoc :last-tick this-tick)
                      (update :time-witnessed + dt))
             obs' (assoc obs1

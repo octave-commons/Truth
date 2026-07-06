@@ -233,10 +233,12 @@
                       (double (or (:max-coherence obs) 1.0)))}
        {:text (format "Agency  %d quanta"
                       (long (math/floor (double (or (:agency obs) 0.0)))))}
+       {:text (format "Resonance  %d"
+                      (long (math/floor (double (or (:resonance obs) 0.0)))))}
        {:text (format "Focus  %.0f%%" (* 100.0 (double (or (:focus-intensity obs) 0.5))))
         :color col-dim}
        {:text "Abilities: Drift · Focus · Influence · Release" :color col-dim}
-       {:text "Resonate — awaiting fusion" :color col-locked}]
+       {:text "Slots locked — witness fusion" :color col-locked}]
       [{:text "No spark present" :color col-dim}])
 
     :phase
@@ -422,9 +424,10 @@
                 kf     (double (or (:genesis/observer-halo-mass-factor world)
                                    player/default-halo-mass-factor))
                 halo   (player/halo-mass obs kf ref-mass)
-                info   [{:text (format "Coherence %.2f    Agency %d"
+                info   [{:text (format "Coherence %.2f    Agency %d    Resonance %d"
                                        (double (or (:coherence obs) 0.0))
-                                       (long (math/floor (double (or (:agency obs) 0.0)))))}
+                                       (long (math/floor (double (or (:agency obs) 0.0))))
+                                       (long (math/floor (double (or (:resonance obs) 0.0)))))}
                         {:text (format "Halo %.2e kg" halo) :color col-dim}
                         {:text (format "Reach %.1e m   dv cap %.0f m/s"
                                        (* player/halo-reach-factor

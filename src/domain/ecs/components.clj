@@ -29,9 +29,10 @@
 (def temperature  :component/temperature)  ;; kelvin
 (def density      :component/density)       ;; kg/m^3
 (def pressure     :component/pressure)      ;; pascal
-(def composition  :component/composition)   ;; {:H 0.75 :He 0.24 ...} mass fractions
+(def composition  :component/composition)   ;; {:H 0.7346 :He 0.2485 ...} mass fractions
+(def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map}
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
-(def matter-state :component/matter-state)  ;; :nebula :protostar :star :planet :debris
+(def matter-state :component/matter-state)  ;; :nebula :planetesimal :gas-giant :brown-dwarf :planet :protostar :star
 ;; `wind-reservoir` accumulates the mass a star has shed-but-not-yet-emitted as a
 ;; discrete wind parcel (kg). When it reaches one wind-parcel mass, the
 ;; stellar-wind system launches a :nebula parcel and drains the reservoir. Lets a
@@ -169,11 +170,22 @@
 (def magnetosphere      :component/magnetosphere)       ;; {:compression :standoff-distance} — planetary magnetosphere state
 (def disk-mass          :component/disk-mass)            ;; kg — protoplanetary disk mass
 (def disk-angular-mom   :component/disk-angular-mom)    ;; [Lx Ly Lz] — disk angular momentum vector
+(def disk-regime        :component/disk.regime)         ;; {:toomre-q :cooling-beta :regime :solid-surface-density :snow-line}
+(def disk-fragments-spawned :component/disk-fragments-spawned) ;; int — direct GI fragments already spawned
 (def planets-seeded     :component/planets-seeded)      ;; bool — a star whose disk has run the one-shot planet sub-grid
 (def planet-type        :component/planet-type)         ;; :terrestrial | :ice-giant | :gas-giant — sub-grid planet class
 
-;; --- Atmosphere -------------------------------------------------------------
-(def atmos-cell  :component/atmos-cell)
+;; --- Mass transfer (gradual accretion) --------------------------------------
+;; Rate-limited, partial debit/credit for sink accretion and Roche-lobe overflow.
+;; See docs/specs/gradual-mass-transfer-realspec.md.
+(def accretion-rate     :component/accretion-rate)     ;; {:sink/dot-m :sink/dot-m-this-tick :sink/efficiency :sink/regime}
+(def sink-identity      :component/sink-identity)      ;; {:sink/softening-length :sink/created-at-tick}
+(def mass-flux          :component/mass-flux)          ;; shared influence: {:mass-flux/kind :delta-m :delta-p :tick ...}
+(def binary-pair        :component/binary-pair)        ;; {:binary-pair/donor :binary-pair/accretor :orbit/semi-major-axis :orbit/eccentricity}
+(def roche-lobe         :component/roche-lobe)         ;; {:roche-lobe/radius :overfilling :overflow?}
+(def mass-transfer-rate :component/mass-transfer-rate) ;; {:mass-transfer/rate :mass-transfer/accreted-fraction}
+(def wind-heating       :component/wind-heating)       ;; {:wind-heating/delta-t :ionization-rate :mass-loss :source-eid}
+(def wind-mass-lost     :component/wind-mass-lost)     ;; kg accumulated ablated mass (ledger)
 
 ;; --- Biome / Ecology --------------------------------------------------------
 (def biome-cell  :component/biome-cell)

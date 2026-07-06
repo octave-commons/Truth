@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-07-01 (Barnes–Hut gravity optimisation notebook added)
+**Last updated:** 2026-07-06 (stellar-wind-plasma-state notebook added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -79,10 +79,15 @@ New ECS component keywords added to `domain.ecs.components`:
 |----------|--------|-------|-------------|---------|
 | mhd-em-lorentz-optimization.md | draft | 0 | Threshold-gated MHD-lite: reuse hydro neighbor/gradient cache, full curl only where β or M_A demands it; pressure-only is not a generic proxy. | Price & Monaghan 2004a,b, 2005; Price 2012; Tricco 2012, 2016, 2023; Wurster et al. 2014, 2021; Mellon & Li 2008, 2009 |
 | phase0-tick-loop-optimization.md | draft | 0 | 60 Hz budget feasible for N=500 with Barnes–Hut + SoA cache; avoid per-system futures | Springel 2005, Quinn+1997, Bagwell 2001 |
+| stellar-wind-plasma-state.md | spec-derivation | 1 | Keep stellar ejecta as :nebula + ionization-fraction continuum; Parker wind speed from corona T; ram pressure/photoionization track wind–nebula coupling | Parker 1958, 1960; Cranmer 2009; Asplund+2009; Castor+1975; Weaver+1977; Krumholz+2006; Henney+2009; Murray-Clay+2009; Owen & Alvarez 2016 |
+| protoplanetary-disks-planet-formation.md | draft | 0 → 1 | Core accretion, GI, and streaming-instability channels grounded; GI fragments resolvable at parcel mass, planetesimals/core-accretion sub-grid; add Toomre+Q/cooling gate. | Pollack+1996, Boss 1997, Gammie 2001, Johansen+2007/2014, Youdin & Goodman 2005, Lodders 2003, Oberg+2011, Andrews & Williams 2007 |
 | phase1-radiation-plasma-truth.md | spec-derivation | 1 | Panchromatic SEDs, 4-layer atmospheres, Parker winds, XUV escape | PDG 2025, Parker 1958 |
 | stellar-sed-template-grid.md | validated | 1 | 12 minimum templates, key band ratios 10²–10⁴× variation | Pickles 1998, CK04, Husser+ 2013 |
 | barnes-hut-gravity-optimization.md | validated | 0 | 500-particle BH target ~5 ms achievable; θ=0.5 gives ~1% RMS error; promotion path to `domain.gravity`/`domain.orbital` | Barnes & Hut 1986, Salmon & Warren 1994, Dehnen 2002, Springel 2005, OpenJDK JEP 448 |
 | sph-neighbor-kernel-optimization.md | validated | 0 | Uniform grid for radius queries + octree for nearest neighbor; cubic-spline kernel; r²-first cutoff; Verlet layer optional | Price 2010, Springel 2010/2005, Yao 2004 |
+| stellar-nebula-mass-hierarchy.md | draft | 0 | Replace coarse `:debris` with mass ladder grounded in opacity limit, deuterium/hydrogen limits, brown-dwarf desert; promotion path to classifier + player economy | Krumholz 2014, Hennebelle & Chabrier 2008/2009, Spiegel+2010, Johansen+2014, Pearson & McCaughrean 2023, Cui+2026, Krumholz+2016, Whitworth 2018, De Furio+2024 |
+| nebular-chemistry-metal-enrichment.md | draft | 0 | Metal origins, primordial vs. Population I composition, element/molecule/bulk tracking, dust condensation sequence; promotion path to chemistry/stellar/integrator/law | Fields & Sarkar 2025, Yeh+2026, Asplund+2009, Lodders 2003, Nomoto+2013, Woosley & Weaver 1995, Johansen+2014 |
+| rate-limited-accretion-mass-transfer.md | draft | 0 | BHL sink accretion + Roche-lobe overflow + sink-particle gradual debit schemes; caps and conservation for ECS | Bondi 1952, Edgar 2004, Federrath+2010, Krumholz+2004, Hubber+2013, Eggleton 1983, Ritter 1988, Kolb & Ritter 1990 |
 
 **Actor:** truth-research-physics
 **Schedule:** Every 48h
@@ -103,6 +108,7 @@ New ECS component keywords added to `domain.ecs.components`:
 | Notebook | Status | Domains | Key Finding | Sources |
 |----------|--------|---------|-------------|---------|
 | phase1-radiation-plasma-truth.md | spec-derivation | physics, atmosphere, cosmology | SED→winds→escape→LOD pipeline; replaces scalar luminosity with panchromatic bands | Parker 1958, PDG 2025 |
+| stellar-wind-plasma-state.md | spec-derivation | physics, atmosphere | Plasma ejecta as :nebula+ionization continuum; wind–nebula ram pressure and photoionization | Parker 1958, 1960; Cranmer 2009; Weaver+1977; Henney+2009 |
 
 **Actor:** truth-research-coordinator
 **Schedule:** Every 72h

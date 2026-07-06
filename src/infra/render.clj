@@ -13,12 +13,15 @@
    [domain.player :as player]
    [domain.intervention :as intervention]
    [domain.stellar :as stellar]
+   [domain.chemistry :as chemistry]
    [domain.ecology :as ecology]
    [domain.em :as em]
+   [domain.hydro :as hydro]
    [law.stellar :as law]
    [shape.spatial :as sp]
    [infra.camera :as cam]
    [infra.input :as input]
+   [infra.render.field :as rfield]
    [infra.render.shader :as sh]
    [infra.render.units :as units])
   (:import
@@ -812,21 +815,28 @@
     0.3))
 
 (defn composition->material-color
-  "Base material colour from bulk composition (mass fractions): hydrogen/helium
-   gas reads pale tan, metal/rock-rich matter warm grey-brown, and an icy/volatile
-   fraction cold blue-white. Primordial gas is mostly tan; differentiated rocky or
-   icy worlds shift toward rock/ice as their composition diverges."
-  [compose]
-  (let [c      (or compose {})
-        metals (double (get c :metals 0.0))
-        ice    (double (+ (double (get c :ice 0.0))
-                          (double (get c :H2O 0.0))
-                          (double (get c :volatiles 0.0))))
-        gas    (max 0.0 (- 1.0 metals ice))
-        rock-c [0.62 0.50 0.40]
-        ice-c  [0.75 0.85 0.95]
-        gas-c  [0.85 0.80 0.62]]
-    (mapv (fn [i] (+ (* gas (nth gas-c i)) (* metals (nth rock-c i)) (* ice (nth ice-c i))))
+  "Base material colour from the element-resolved composition at temperature
+   `temp` (K). Derives the {:gas :rock :metal :ice} bulk categories via
+   `domain.chemistry/bulk-categories` (the condensation partition) and blends
+   category colours: H/He gas reads pale tan, rock warm grey-brown, metal dark
+   grey, ice cold blue-white. Uncategorised condensate (frozen H/He/Ne) reads as
+   pale gas so the fractions always sum to 1. A cold Fe/Si world reads rock; a
+   primordial parcel reads tan; an ice-rich world shifts blue-white."
+  [compose temp]
+  (let [{:keys [gas rock metal ice]} (chemistry/bulk-categories (or compose {})
+                                                                (double (or temp 10.0)))
+        ;; frozen gas-formers (H/He/Ne) belong to no solid category; fold the
+        ;; unaccounted remainder into gas so pale material never renders black.
+        gas     (+ (double gas) (max 0.0 (- 1.0 (+ (double gas) (double rock)
+                                                   (double metal) (double ice)))))
+        rock-c  [0.62 0.50 0.40]
+        metal-c [0.42 0.40 0.40]
+        ice-c   [0.75 0.85 0.95]
+        gas-c   [0.85 0.80 0.62]]
+    (mapv (fn [i] (+ (* gas (nth gas-c i))
+                     (* (double rock) (nth rock-c i))
+                     (* (double metal) (nth metal-c i))
+                     (* (double ice) (nth ice-c i))))
           [0 1 2])))
 
 (defn body-render-color
@@ -834,7 +844,7 @@
    cold, crossfading to its thermal blackbody colour as it heats past ~1000 K.
    A cold rocky world shows rock; an incandescent one glows by temperature."
   [temp compose]
-  (let [mat (composition->material-color compose)
+  (let [mat (composition->material-color compose temp)
         th  (temp-color temp)
         t   (double (or temp 10.0))
         f   (max 0.0 (min 1.0 (/ (- (Math/log10 (max 1.0 t)) 2.7) 2.3)))]
@@ -891,9 +901,11 @@
                             :seed seed}
                      (and (>= t t-lo) (<= t t-hi))
                      (assoc :base [0.10 0.28 0.52])))
-      :debris    (if molten?
-                   {:surface surface-molten :accent [1.0 0.5 0.15] :seed seed}
-                   {:surface surface-rocky :accent [0.5 0.45 0.4] :seed seed})
+      :gas-giant {:surface surface-gas-giant :accent [0.80 0.63 0.44] :seed seed}
+      :brown-dwarf {:surface surface-molten :accent [1.0 0.55 0.2] :seed seed}
+      :planetesimal (if molten?
+                      {:surface surface-molten :accent [1.0 0.5 0.15] :seed seed}
+                      {:surface surface-rocky :accent [0.5 0.45 0.4] :seed seed})
       {:surface surface-flat :accent [0.0 0.0 0.0] :seed seed})))
 
 (defn stellar-spectral-color
@@ -939,17 +951,6 @@
 
 (defn- fog-sample-count [extent focus]
   (int (* 120 (+ 0.3 focus) (Math/log10 (+ 10.0 (double extent))))))
-
-(defn- nebula-density-norm
-  "Map a physical density (kg/m³) to a [0,1] visual factor with a wide log
-   dynamic range. The nebula spans roughly 1e-21 … 1e-12 kg/m³; this mapping
-   makes a factor-of-1000 density contrast readable instead of clamping
-   everything to the same narrow band."
-  [rho]
-  (let [log-rho (Math/log10 (max 1e-30 (double (or rho 1e-18))))
-        lo -21.0
-        hi -12.0]
-    (max 0.0 (min 1.0 (/ (- log-rho lo) (- hi lo))))))
 
 (defn- fog-particle-size
   "Screen-space particle size for a fog sample. Lower-density samples represent
@@ -1297,6 +1298,7 @@
   [world width height]
   (if-let [obs (player/get-observer world)]
     (let [agency   (long (Math/floor (double (or (:agency obs) 0.0))))
+          resonance (long (Math/floor (double (or (:resonance obs) 0.0))))
           state    (player/decoherence-state obs)
           scol     (conj (coherence-color state) 1.0)
           note     (:arc/observation-note world)
@@ -1305,19 +1307,21 @@
           w        (double width)
           h        (double height)
           cx       (* w 0.5)  ;; horizontal center
-          ;; notification: show for ~200 ticks after the event
+           ;; notification: show for ~200 ticks after the event
           notif-age (when notif (- (long (or (:tick world) 0)) (long (:tick notif))))
           notif-alpha (when notif (max 0.0 (- 1.0 (/ (double (or notif-age 0)) 200.0))))
           notif-show? (and notif notif-alpha (> ^double notif-alpha 0.05))
           notif-text (when notif-show? (:text notif))]
       (cond->
-       ;; bottom-left: quanta + spark state + focus intensity
+        ;; bottom-left: quanta + resonance + spark state + focus intensity
        [{:text (format "%d quanta" agency)
          :x 16.0 :y (- h 96.0) :scale 2.4 :color [0.78 0.92 1.0 0.98]}
+        {:text (format "%d resonance" resonance)
+         :x 16.0 :y (- h 72.0) :scale 1.5 :color [0.85 0.78 1.0 0.85]}
         {:text (format "spark: %s" (name state))
-         :x 16.0 :y (- h 70.0) :scale 1.7 :color scol}
+         :x 16.0 :y (- h 48.0) :scale 1.7 :color scol}
         {:text (format "focus: %.0f%%" (* 100.0 (double (or (:focus-intensity obs) 0.5))))
-         :x 16.0 :y (- h 48.0) :scale 1.5 :color [0.65 0.80 0.95 0.85]}]
+         :x 16.0 :y (- h 26.0) :scale 1.5 :color [0.65 0.80 0.95 0.85]}]
 
        ;; bottom-center: observation note
         note
@@ -1563,9 +1567,9 @@
                                     :cnt      70
                                     :seed      eid})))))
 
-            ;; :planet :debris → shaded body sized by physical radius, coloured
-            ;; by composition crossfading to thermal glow, surfaced by type
-            ;; (ocean/land/ice, giant bands, rock, molten crust).
+             ;; substellar / planet → shaded body sized by physical radius,
+             ;; coloured by composition crossfading to thermal glow, surfaced by
+             ;; type (ocean/land/ice, giant bands, rock, molten crust).
             (let [render-r (units/phys->body-render-radius ctx r-phys)
                   ptype    (ecs/get-component world eid c/planet-type)
                   eco      (ecs/get-component world eid c/ecology)
@@ -1591,7 +1595,8 @@
    coloured by TEMPERATURE so the thermal field is visible:
      :nebula    → one soft fog puff (the diffuse cloud)
      :protostar → a compact bright cloud + a magnetic field line (contracting core)
-     :star/:planet/:debris → a shaded body
+     :star and resolved substellar bodies (:planetesimal / :gas-giant /
+   :brown-dwarf) → a shaded body
    Per-entity jitter is deterministic, so nothing shimmers between frames.
 
    This is the ONLY Phase 0 render projection — one ECS world behind it.
@@ -1735,44 +1740,37 @@
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo}))
 
-(defn- gas-points
-  "Volumetric gas samples in RENDER space: position, render-space smoothing
-   radius, density-driven opacity, and temperature-tinted emission colour.
-   Only diffuse/contracting matter (:nebula, :protostar) is part of the medium —
-   solid bodies and stars are drawn separately."
-  [ctx world]
-  (->> (ecs/entities-with world c/position c/matter-state c/density c/radius)
-       (keep (fn [eid]
-               (let [st (ecs/get-component world eid c/matter-state)]
-                 (when (#{:nebula :protostar} st)
-                   (let [[x y z] (ecs/get-component world eid c/position)
-                         rho   (double (or (ecs/get-component world eid c/density) 1e-18))
-                         temp  (ecs/get-component world eid c/temperature)
-                         ion   (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))
-                         rphys (double (or (ecs/get-component world eid c/radius) 3.0e13))
-                         ;; Base color from temperature
-                         t-col (temp-color temp)
-                         ;; Ionization tint: high ionization shifts toward blue-white (hot plasma)
-                         col   (if (pos? ion)
-                                 (let [f (min 1.0 (* ion 0.6))]
-                                   [(+ (* (- 1.0 f) (nth t-col 0)) (* f 0.7))
-                                    (+ (* (- 1.0 f) (nth t-col 1)) (* f 0.8))
-                                    (+ (* (- 1.0 f) (nth t-col 2)) (* f 1.0))])
-                                 t-col)]
-                     {:p   (units/world->render ctx [x y z])
-                      ;; VISUAL smoothing: deliberately wider than the physical SPH
-                      ;; h so adjacent parcels' footprints overlap into a continuous
-                      ;; medium (≳ inter-parcel spacing) instead of discrete blobs.
-                      :h   (max 1.5 (* 4.0 (units/phys->render-radius ctx rphys)))
-                      :col col
-                      :dens (max 0.0 (nebula-density-norm rho))})))))
-       vec))
+(defn- render-samples
+  "Volumetric gas samples in RENDER space, projected from the domain SPH gas
+   field (`domain.hydro/gas-samples`): position, render-space smoothing
+   support, temperature+ionization emission colour, and density-driven
+   opacity. `:visual-h-scale`/`:visual-h-min` in `cfg` inflate the physical
+   support so adjacent parcels' footprints overlap into a continuous medium
+   (≳ inter-parcel spacing) instead of discrete blobs."
+  [ctx world cfg]
+  (->> (hydro/gas-samples world)
+       (mapv (fn [{:keys [position smoothing-h density temperature ionization]}]
+               {:p    (units/world->render ctx position)
+                :h    (max (double (:visual-h-min cfg))
+                           (* (double (:visual-h-scale cfg))
+                              (units/phys->render-radius ctx (* 0.5 (double smoothing-h)))))
+                :col  (rfield/ionization-tint (temp-color temperature) ionization)
+                :dens (max 0.0 (rfield/density-norm density))}))))
 
 ;; Persistent froxel texture + scratch buffers, reused every frame. Reallocating
 ;; an R³ RGBA16F texture and two R³ host arrays per frame is the dominant render
 ;; cost once the scene is busy; we allocate once per resolution and update in
 ;; place with glTexSubImage3D. GL is single-threaded, so a plain atom is safe.
 (defonce ^:private volume-cache (atom nil)) ; {:res R :tex id :data ^floats :buf FloatBuffer}
+
+(defn reset-volume-cache!
+  "Drop the cached froxel texture. MUST be called when rendering in a fresh GL
+   context (offscreen screenshots): the cached texture id belongs to the
+   context that created it, and binding it elsewhere yields an incomplete
+   texture that samples as constant black — the fog silently vanishes from
+   screenshots while the live window looks fine."
+  []
+  (reset! volume-cache nil))
 
 (defn- volume-storage!
   "Get-or-create the persistent 3D texture + host arrays for resolution `res`."
@@ -1796,104 +1794,22 @@
         (GL11/glBindTexture GL12/GL_TEXTURE_3D 0)
         (reset! volume-cache {:res R :tex tex :data data :buf buf})))))
 
-(defn- quantile
-  "Value at fraction `q` (0..1) of `xs` via linear interpolation on the sorted
-   order. Returns nil for an empty collection."
-  [xs q]
-  (let [v (vec (sort xs))
-        n (count v)]
-    (when (pos? n)
-      (let [pos (* (double q) (dec n))
-            lo  (int (Math/floor pos))
-            hi  (min (dec n) (inc lo))
-            f   (- pos lo)]
-        (+ (* (- 1.0 f) (double (v lo))) (* f (double (v hi))))))))
-
-(defn- cull-gas-outliers
-  "Drop gas parcels flung far outside the bulk of the medium. The froxel texture
-   is a fixed-resolution grid over the AABB of all parcels, so a single parcel
-   thrown into deep space balloons the box and collapses the whole nebula into a
-   handful of voxels (the LOD 'behaves very poorly'). We measure distance from a
-   component-wise median centre (robust to outliers) and keep parcels within a
-   generous multiple of the 95th-percentile radius, so real structure survives
-   but escapees can't stretch the bounds. Culled parcels simply don't contribute
-   to the fog — they're negligible visually anyway. No-op below a floor count."
-  [pts]
-  (if (< (count pts) 8)
-    pts
-    (let [ps     (mapv :p pts)
-          centre (mapv (fn [axis] (quantile (map #(nth % axis) ps) 0.5)) [0 1 2])
-          dists  (mapv #(sp/dist centre %) ps)
-          scale  (or (quantile dists 0.95) 0.0)
-          thresh (* 4.0 scale)]
-      (if (pos? thresh)
-        (filterv #(<= (sp/dist centre (:p %)) thresh) pts)
-        pts))))
-
 (defn build-volume-texture
-  "Bake the gas field into the persistent RxRxR RGBA16F 3D texture (rgb=emission,
-   a=density) covering the gas bounding box in render space. Returns
-   {:tex :box-min :box-max} or nil when there is no gas. Splats each SPH sample
-   with a smooth radial kernel — the same field the simulation integrates, sampled
-   onto a grid the GPU trilinearly interpolates during the march. Updates the
-   texture in place (glTexSubImage3D) — no per-frame allocation."
-  [ctx world res]
-  (let [pts (cull-gas-outliers (gas-points ctx world))]
-    (when (seq pts)
-      (let [R    (int res)
+  "Bake render-space gas samples into the persistent RxRxR RGBA16F 3D texture
+   (rgb=emission, a=density) covering their bounding box. Returns
+   {:tex :box-min :box-max} or nil when there is no gas. The splat itself is
+   pure and lives in `infra.render.field` — each sample is weighted by the
+   simulation's own M4 kernel profile, so the texture shows the same field the
+   physics integrates. This wrapper owns culling, the GL storage, and the
+   in-place upload (glTexSubImage3D — no per-frame allocation)."
+  [pts res cfg]
+  (let [pts (rfield/cull-gas-outliers pts)]
+    (when-let [[bmn bmx] (rfield/splat-bounds pts)]
+      (let [R     (int res)
             store (volume-storage! R)
-            ^floats data (:data store)
-            _    (java.util.Arrays/fill data (float 0.0))
-            ;; bounding box over p ± h, padded
-            ext  (reduce (fn [[mn mx] {:keys [p h]}]
-                           [(mapv #(min %1 (- %2 h)) mn p)
-                            (mapv #(max %1 (+ %2 h)) mx p)])
-                         [[1e30 1e30 1e30] [-1e30 -1e30 -1e30]] pts)
-            [bmn0 bmx0] ext
-            pad  (mapv #(max 0.5 (* 0.06 (- %1 %2))) bmx0 bmn0)
-            bmn  (mapv - bmn0 pad)
-            bmx  (mapv + bmx0 pad)
-            span (mapv - bmx bmn)
-            cs   (mapv #(/ (double %) R) span)
-            idx  (fn [x y z] (* 4 (+ x (* R (+ y (* R z))))))]
-        (doseq [{:keys [p h col dens]} pts]
-          (when (pos? dens)
-            (let [[px py pz] p
-                  [csx csy csz] cs
-                  [r g b] col
-                  vidx (fn [coord mn cs] (int (Math/floor (/ (- coord mn) cs))))
-                  lox (max 0 (vidx (- px h) (bmn 0) csx))
-                  hix (min (dec R) (vidx (+ px h) (bmn 0) csx))
-                  loy (max 0 (vidx (- py h) (bmn 1) csy))
-                  hiy (min (dec R) (vidx (+ py h) (bmn 1) csy))
-                  loz (max 0 (vidx (- pz h) (bmn 2) csz))
-                  hiz (min (dec R) (vidx (+ pz h) (bmn 2) csz))
-                  ih2 (/ 1.0 (* h h))]
-              (loop [z loz]
-                (when (<= z hiz)
-                  (let [vcz (+ (nth bmn 2) (* (+ z 0.5) csz))
-                        dz (- vcz pz)]
-                    (loop [y loy]
-                      (when (<= y hiy)
-                        (let [vcy (+ (nth bmn 1) (* (+ y 0.5) csy))
-                              dy (- vcy py)]
-                          (loop [x lox]
-                            (when (<= x hix)
-                              (let [vcx (+ (nth bmn 0) (* (+ x 0.5) csx))
-                                    dx (- vcx px)
-                                    d2 (+ (* dx dx) (* dy dy) (* dz dz))
-                                    q  (* d2 ih2)]
-                                (when (< q 1.0)
-                                  (let [w  (let [u (- 1.0 q)] (* u u))
-                                        wd (* w dens)
-                                        i  (idx x y z)]
-                                    (aset data i        (float (+ (aget data i)        (* wd r))))
-                                    (aset data (+ i 1)  (float (+ (aget data (+ i 1))  (* wd g))))
-                                    (aset data (+ i 2)  (float (+ (aget data (+ i 2))  (* wd b))))
-                                    (aset data (+ i 3)  (float (+ (aget data (+ i 3))  wd)))))
-                                (recur (inc x)))))
-                          (recur (inc y)))))
-                    (recur (inc z))))))))
+            ^floats data (:data store)]
+        (java.util.Arrays/fill data (float 0.0))
+        (rfield/splat! data R pts bmn bmx (:splat-gain cfg))
         (let [^java.nio.FloatBuffer buf (:buf store)]
           (.clear buf) (.put buf data) (.flip buf)
           (GL13/glActiveTexture GL13/GL_TEXTURE0)
@@ -1923,10 +1839,15 @@
 (defn render-volume
   "Ray-march pass: composite the baked gas volume over the current scene with
    premultiplied-alpha blending. `volume` is {:program :tex :box-min :box-max
-   :lights [...]}; camera basis is derived from the camera position/target."
-  [{:keys [program tex box-min box-max lights]} quad-vao camera width height]
+   :lights [...] :config {...}}; camera basis is derived from the camera
+   position/target. Shader tuning (kappa, emission/scatter scale, jitter)
+   comes from the descriptor's :config, defaulting to
+   `infra.render.field/default-volume-config`."
+  [{:keys [program tex box-min box-max lights config]} quad-vao camera width height]
   (when (and program tex)
-    (let [fwd   (cam/normalize (sp/v- (:target camera) (:position camera)))
+    (let [{:keys [kappa emission-scale scatter-scale jitter]}
+          (merge rfield/default-volume-config config)
+          fwd   (cam/normalize (sp/v- (:target camera) (:position camera)))
           right (cam/normalize (cam/cross fwd [0.0 0.0 1.0]))
           up    (cam/cross right fwd)
           fov   60.0
@@ -1940,10 +1861,10 @@
       (GL20/glUniform1f (loc "tanHalfFov") (float thf))
       (GL20/glUniform1f (loc "aspect") (float aspect))
       (set3 "boxMin" box-min) (set3 "boxMax" box-max)
-      (GL20/glUniform1f (loc "kappa") (float 1.2))
-      (GL20/glUniform1f (loc "emissionScale") (float 1.1))
-      (GL20/glUniform1f (loc "scatterScale") (float 3.8))
-      (GL20/glUniform1f (loc "jitter") (float 1.0))
+      (GL20/glUniform1f (loc "kappa") (float kappa))
+      (GL20/glUniform1f (loc "emissionScale") (float emission-scale))
+      (GL20/glUniform1f (loc "scatterScale") (float scatter-scale))
+      (GL20/glUniform1f (loc "jitter") (float jitter))
       (GL20/glUniform1i (loc "numLights") (int (count lights)))
       (dotimes [i (count lights)]
         (let [{:keys [pos col intensity]} (nth lights i)]
@@ -1962,22 +1883,14 @@
       (GL11/glDepthMask true)
       (GL11/glBindTexture GL12/GL_TEXTURE_3D 0))))
 
-(defn- gas-points-count
-  "Number of :nebula / :protostar gas samples that will be splatted into the
-   froxel texture. Used by the LOD selector to scale resolution with scene
-   complexity."
-  [world]
-  (count (filter #(#{:nebula :protostar} (ecs/get-component world % c/matter-state))
-                 (ecs/entities-with world c/matter-state))))
-
 (defn froxel-resolution-for
-  "Choose an adaptive froxel grid resolution based on scene complexity and a
-   user quality target. Higher gas particle counts need a coarser grid to stay
-   inside the frame budget; low-count scenes can afford a sharper grid. The
-   returned resolution is one of the canonical cube sizes supported by the
+  "Choose an adaptive froxel grid resolution from the gas sample count `n` and
+   a user quality target. Higher gas particle counts need a coarser grid to
+   stay inside the frame budget; low-count scenes can afford a sharper grid.
+   The returned resolution is one of the canonical cube sizes supported by the
    volume pipeline."
-  [world quality]
-  (let [n (max 1 (gas-points-count world))
+  [n quality]
+  (let [n (max 1 (int n))
         q (condp = quality :low 0.5 :high 1.5 :ultra 2.0 1.0)
         base (cond
                (<= n 100)  64
@@ -1987,20 +1900,29 @@
     (int (max 16 (min 128 (* base q))))))
 
 (defn frame-volume
-  "Build the per-frame volume map (3D texture + lights) for the ray-march pass
-   from the live world, or nil when there is no gas. The caller MUST
-   `delete-volume` the result after rendering, since it owns a GPU texture
-   allocated this frame.
+  "Build the per-frame volume descriptor (3D texture + lights + config) for
+   the ray-march pass from the live world, or nil when there is no gas or no
+   program (render-scene then skips the pass). The caller should
+   `delete-volume` the result after rendering (currently a no-op — the froxel
+   texture is persistent).
 
-   `res` may be an integer for a fixed resolution or one of {:low :medium :high
-   :ultra} to use the LOD-aware selector (default :medium)."
-  [ctx world program res]
-  (when program
-    (let [R (if (keyword? res)
-              (froxel-resolution-for world res)
-              (int (or res 32)))]
-      (when-let [vt (build-volume-texture ctx world R)]
-        (assoc vt :program program :lights (volume-lights ctx world))))))
+   `res` may be an integer for a fixed resolution or one of {:low :medium
+   :high :ultra} to use the LOD-aware selector. `cfg` is a partial
+   law.render/volume-config map merged over
+   `infra.render.field/default-volume-config`."
+  ([ctx world program res]
+   (frame-volume ctx world program res nil))
+  ([ctx world program res cfg]
+   (when program
+     (let [cfg     (merge rfield/default-volume-config cfg)
+           samples (render-samples ctx world cfg)
+           R       (if (keyword? res)
+                     (froxel-resolution-for (count samples) res)
+                     (int (or res 32)))]
+       (when-let [vt (build-volume-texture samples R cfg)]
+         (assoc vt :program program
+                :lights (volume-lights ctx world)
+                :config cfg))))))
 
 (defn delete-volume [_volume]
   ;; The froxel texture is persistent (reused across frames via volume-cache);
@@ -2167,7 +2089,7 @@
   ([world-atom path]
    (render-to-file world-atom path {}))
   ([world-atom path {:keys [tick-fn bodies-fn camera camera-mode volumetric? volume-res
-                            sprite-lod-threshold]}]
+                            volume-config sprite-lod-threshold]}]
    (println "Rendering offscreen frame to" path)
    (init-glfw)
    (let [width   1280
@@ -2176,8 +2098,10 @@
          ;; This context is created and destroyed per call: any cached program
          ;; ids belong to a dead context (or none, in a fresh headless
          ;; process — the historical all-black-screenshot bug). Compile fresh.
+         ;; The froxel texture cache is context-bound for the same reason.
          _ (sh/invalidate-all!)
          _ (sh/ensure-builtins!)
+         _ (reset-volume-cache!)
          body-program     (create-program)
          particle-program (create-particle-program)
          sprite-program   (create-sprite-program)
@@ -2211,7 +2135,7 @@
            bodies (bodies-fn w)
            hud      (when phase0? (hud-rects-from-world w))
            hud-text (when phase0? (hud-text-from-world w))
-           volume   (frame-volume ctx w volume-program (or volume-res :medium))]
+           volume   (frame-volume ctx w volume-program (or volume-res :medium) volume-config)]
        (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
        (render-scene {:body-program body-program
                       :line-program line-program :hud-program hud-program
@@ -2224,6 +2148,10 @@
            flipped (flip-rgba-vertical pixels width height)]
        (STBImageWrite/stbi_write_png path width height 4 flipped (* width 4)))
      (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)
+     ;; The froxel texture allocated above dies with this context; drop it so
+     ;; the live window doesn't inherit a dead texture id (the same
+     ;; wrong-context bug in the other direction).
+     (reset-volume-cache!)
      (GLFW/glfwDestroyWindow window)
      (GLFW/glfwTerminate)
      (GLFW/glfwSetErrorCallback nil)

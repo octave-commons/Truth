@@ -20,7 +20,7 @@
                                     c/mass      1.0
                                     c/radius    1.0
                                     c/accretion-radius 1.0
-                                    c/matter-state :debris
+                                    c/matter-state :planetesimal
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position (if overlap?
                                                  [1.5 0.0 0.0]
@@ -29,7 +29,7 @@
                                     c/mass      1.0
                                     c/radius    1.0
                                     c/accretion-radius 1.0
-                                    c/matter-state :debris
+                                    c/matter-state :planetesimal
                                     c/body-kind :body/test})
         w (spatial/spatial-index w)]
     [w e1 e2]))
@@ -69,14 +69,14 @@
                                     c/mass      10.0
                                     c/radius    2.0
                                     c/accretion-radius 2.0
-                                    c/matter-state :debris
+                                    c/matter-state :planetesimal
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position [2.5 0.0 0.0]
                                     c/velocity  [0.0 0.0 0.0]
                                     c/mass      1.0
                                     c/radius    0.5
                                     c/accretion-radius 0.5
-                                    c/matter-state :debris
+                                    c/matter-state :planetesimal
                                     c/body-kind :body/test})
         w (event/register-handler w :event/collision
                                   response/inelastic-merge-handler)
@@ -104,14 +104,14 @@
                                     c/mass      1.0
                                     c/radius    1.0
                                     c/accretion-radius 1.0
-                                    c/matter-state :debris
+                                    c/matter-state :planetesimal
                                     c/body-kind :body/test})
         w (ecs/put-components w e2 {c/position [5.0 0.0 0.0]
                                     c/velocity  [-3.0 0.0 0.0]
                                     c/mass      1.0
                                     c/radius    1.0
                                     c/accretion-radius 1.0
-                                    c/matter-state :debris
+                                    c/matter-state :planetesimal
                                     c/body-kind :body/test})
         w (spatial/spatial-index w)
         w' (col/collision-detection-system w)]
@@ -159,13 +159,13 @@
                                       c/mass      1e28
                                       c/radius    1e12
                                       c/accretion-radius 1e12
-                                      c/matter-state :debris})
+                                      c/matter-state :planetesimal})
           w (ecs/put-components w e2 {c/position [1.0e12 0.0 0.0]
                                       c/velocity  [0.0 0.0 0.0]
                                       c/mass      1e28
                                       c/radius    1e12
                                       c/accretion-radius 1e12
-                                      c/matter-state :debris})
+                                      c/matter-state :planetesimal})
           w (spatial/spatial-index w)
           w' (col/collision-detection-system w)]
       (is (seq (event/events-of-kind w' :event/collision))

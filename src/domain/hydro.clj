@@ -46,6 +46,22 @@
                    (* 2.0 omq omq omq))
       :else      0.0)))
 
+(defn kernel-shape
+  "Dimensionless M4 cubic-spline falloff w(r², h) ∈ [0, 1].
+
+   The SHAPE of the SPH kernel without the 8/(π h³) volume normalization:
+   kernel-r2(r², h) = 8/(π h³) · kernel-shape(r², h). Peak is exactly 1 at
+   r = 0; zero for r ≥ h or h ≤ 0. For consumers (e.g. the renderer's froxel
+   splat) that need the physical falloff profile at a caller-chosen
+   amplitude."
+  [r2 h]
+  (let [r2  (double r2)
+        hh  (double h)
+        hh2 (* hh hh)]
+    (if (or (<= hh 0.0) (>= r2 hh2))
+      0.0
+      (cubic-spline-w (math/sqrt (/ r2 hh2))))))
+
 (defn kernel-r2
   "Cubic-spline SPH kernel W(r²,h) in 3D. `r2` is the squared distance.
    Units 1/volume; zero outside r > h and at h = 0. Integrates to 1 over a
@@ -267,11 +283,11 @@
   "Compute the pressure-gradient acceleration a = −∇p/ρ for every hydro-active
    clump and store it on `c/hydro-accel`. This acceleration is consumed by
    `domain.orbital.system` during the same tick.
+    Any entity that currently carries `c/hydro-accel` but is no longer
+   hydro-active (e.g. a merged clump that became a planetesimal or planet)
+   has its acceleration removed, so stale pressure forces do not leak into
+   resolved bodies."
 
-   Any entity that currently carries `c/hydro-accel` but is no longer
-   hydro-active (e.g. a merged clump that became :debris or :planet) has its
-   acceleration removed, so stale pressure forces do not leak into resolved
-   bodies."
   [_dt]
 
   (fn [world]
@@ -375,9 +391,10 @@
    the current positions, then recompute pressure and the particle's adaptive
    radius from the ideal gas law. Runs before `hydro-system` so the
    pressure-gradient force sees a real, varying field rather than the fixed seed
-   density. Resolved bodies (`:debris`, `:planet`, `:star`) keep their existing
-   body-density; contracting `:protostar` neighbors still contribute mass to the
-   SPH sums of nearby gas parcels.
+   density. Resolved bodies (`:planetesimal`, `:gas-giant`, `:brown-dwarf`,
+   `:planet`, `:star`) keep their existing body-density; contracting
+   `:protostar` neighbors still contribute mass to the SPH sums of nearby gas
+   parcels.
 
    Reads the shared spatial tree from :genesis/spatial-tree and filters query
    results to hydro-active neighbors (`:nebula` and `:protostar`)."
@@ -441,6 +458,32 @@
                rho  (sph-density (assoc data :radius (* 0.5 h)) nbrs)]
            [(:eid data) rho (* 0.5 h)])))
      gas)))
+
+(defn gas-samples
+  "Pure render-facing projection of the SPH gas field.
+
+   For every hydro-active entity (`law.field/hydro-em-active?`: :nebula and
+   :protostar) returns {:eid :position :smoothing-h :density :temperature
+   :ionization :matter-state} in SI units — the shape
+   `law.field/gas-sample-schema` describes. Reads the components the tick's
+   density pass maintains: :smoothing-h is 2 × c/radius per the SPH
+   convention (the density pass stores radius = h/2), :density is the SPH
+   density it wrote. Performs no SPH sums, tree queries, or neighbor-cache
+   reads, so it is cheap and safe to call from the render thread every
+   frame."
+  [world]
+  (->> (ecs/entities-with world c/position c/matter-state)
+       (keep (fn [eid]
+               (let [state (ecs/get-component world eid c/matter-state)]
+                 (when (lf/hydro-em-active? state)
+                   {:eid eid
+                    :position (ecs/get-component world eid c/position)
+                    :smoothing-h (* 2.0 (double (or (ecs/get-component world eid c/radius) 3.0e13)))
+                    :density (double (or (ecs/get-component world eid c/density) 1e-18))
+                    :temperature (ecs/get-component world eid c/temperature)
+                    :ionization (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))
+                    :matter-state state}))))
+       vec))
 
 (defn sound-speed
   "Adiabatic sound speed c_s = √(γ P / ρ) for an ideal gas. m/s."

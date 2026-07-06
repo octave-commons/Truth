@@ -205,8 +205,8 @@
    :move-speed 3.0e15
    ;; Mouse look degrees-per-pixel and scroll-zoom render-units-per-notch.
    ;; Adjustable live from the View panel (infra.menu) or the REPL.
-   :look-sensitivity 0.02
-   :zoom-sensitivity 10.0})
+   :look-sensitivity 0.01
+   :zoom-sensitivity 5.0})
 
 (defn cycle-camera-mode
   "Advance to the next camera mode."

@@ -1,2 +1,2 @@
-# Cron for truth-research-geology (eta-mu dispatch)
-# 0 2 */2 * * /home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor-eta-mu.sh truth-research-geology "Start a deep research session."
+# Cron for truth-research-geology (OpenCode dispatch)
+# 0 2 */2 * * /home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh truth-research-geology "Start a deep research session."

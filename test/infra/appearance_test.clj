@@ -19,8 +19,8 @@
     (is (= render/surface-terrestrial
            (:surface (render/body-appearance :planet :terrestrial 290.0 false 4)))))
   (testing "debris is rocky when cold, molten when hot"
-    (is (= render/surface-rocky (:surface (render/body-appearance :debris nil 200.0 false 5))))
-    (is (= render/surface-molten (:surface (render/body-appearance :debris nil 2000.0 false 5)))))
+    (is (= render/surface-rocky (:surface (render/body-appearance :planetesimal nil 200.0 false 5))))
+    (is (= render/surface-molten (:surface (render/body-appearance :planetesimal nil 2000.0 false 5)))))
   (testing "unknown states render flat"
     (is (= render/surface-flat (:surface (render/body-appearance :nebula nil 10.0 false 6))))))
 

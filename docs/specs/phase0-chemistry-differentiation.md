@@ -1,8 +1,13 @@
 # Phase 0 Chemistry & Differentiation Spec
 
-**Status:** draft  
-**Goal:** Make composition a first-class simulation driver in Phase 0: it should determine material class, collision outcome, and the rough volatile budget a planet carries to Phase 1.  
+**Status:** ready for implementation
+**Milestone:** M4 in `docs/specs/epic-phase0-physics-honesty.md`
+**Goal:** Make composition a first-class simulation driver in Phase 0: it should determine material class, collision outcome, and the rough volatile budget a planet carries to Phase 1.
 **Principle:** Chemistry is not decorative. The same mass fractions that describe a nebula clump must also describe a finished planet, and the transition between them is governed by temperature and gravity.
+
+> **Model update (2026-07-06):** This spec predates the element-resolved composition model. The `:metals` lump referenced below is **retired** (`law/composition.clj:9`); composition is now an explicit element map (`:H :He :O :C :Fe :Si …`), and material groups (`:rock :metal :ice :gas`) are **derived on demand** via `domain.chemistry/bulk-categories` — see `nebular-chemistry-realspec.md`. Read §2 in that light: "metals" means the derived metal category, not a stored key.
+
+> **Already wired (do not rebuild):** malleability (`law.stellar/malleability`) and the merge/shatter branch (`stellar-merge-handler`, `stellar.clj:2254` → `shatter-bodies`, `stellar.clj:2215`) exist and are load-bearing; merges apply mass-weighted composition blend + impact heating (`integrator.clj:181`). M4 adds the **missing** pieces: the differentiation system, the volatile budget, volatile loss on hot merges, and density-biased fragment composition. Bounce/graze is deferred (D7).
 
 ---
 
@@ -97,16 +102,15 @@ Actions:
 - Fragments inherit composition biased by density: metal/silicate enriched toward larger fragments; volatiles prefer smaller fragments.
 - Emit `:event/fragmentation` to ledger.
 
-### 4.3 Bounce / graze
+### 4.3 Bounce / graze — DEFERRED (D7)
 
-Conditions:
-- `malleability` low but kinetic energy below fragmentation threshold.
-- Impact parameter large (grazing collision).
+**Status:** deferred, capability-gated. The current model is merge-or-shatter only; a grazing elastic outcome is a third branch.
 
-Actions:
-- Apply elastic-ish impulse conserving momentum and angular momentum.
-- Convert a fraction of relative kinetic energy into thermal energy.
-- Do not merge.
+**Trigger (activate when):** brittle, high-speed **grazing** impacts (large impact parameter, low bound energy) are demonstrably mishandled by the merge-or-shatter binary — measured as an unphysically high merger rate for high-impact-parameter cold collisions in a standard run. Until that is observed, merge-or-shatter is an acceptable simplification.
+
+When promoted:
+- Condition: `malleability` low, kinetic energy below fragmentation threshold, impact parameter large.
+- Apply an elastic-ish impulse conserving momentum and angular momentum; convert a fraction of relative KE to heat; do not merge.
 
 ---
 

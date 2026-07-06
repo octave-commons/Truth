@@ -20,6 +20,7 @@
    [domain.player           :as player]
    [domain.intervention     :as intervention]
    [domain.pacing           :as pacing]
+   [domain.mass-transfer    :as mt]
    [law.stellar             :as law]
    [law.composition         :as lcomp]
    [law.registry            :as lreg]
@@ -43,7 +44,7 @@
    rotation (sub-virial, so the cloud collapses) plus turbulence and a bias toward
    `seeds` (overdensity centres) give the cloud the structure it needs to
    fragment and accrete into clumps, planets, and a star-forming core."
-  [^java.util.Random rng extent pmass prad v-vir omega seeds n-seeds seed-r turb]
+  [^java.util.Random rng extent pmass prad v-vir omega seeds n-seeds seed-r turb composition]
   (let [to-seed? (and (seq seeds) (< (.nextDouble rng) 0.40))
         [px py pz]
         (if to-seed?
@@ -67,7 +68,7 @@
      :radius      prad
      :temperature 12.0
      :body-kind   :body/gas
-     :composition lcomp/primordial-composition}))
+     :composition composition}))
 
 (defn seed-nebula
   "Seed a cold, rotating, turbulent, self-gravitating gas cloud on the single ECS
@@ -76,7 +77,7 @@
    Gaussian overdensity seeds give the cloud something to fragment around.
    Deterministic (seeded RNG) so runs and tests reproduce."
   ([world total-mass extent] (seed-nebula world total-mass extent {}))
-  ([world total-mass extent {:keys [gas-count n-seeds seed-r spin turb seed]
+  ([world total-mass extent {:keys [gas-count n-seeds seed-r spin turb seed metallicity]
                              ;; `seed-r` widened (0.12→0.18 of extent) so the
                              ;; overdensity clumps are diffuse, not pinpoints: at
                              ;; 0.12 each seed's local free-fall time was far
@@ -84,8 +85,15 @@
                              ;; couple of ticks ("collapses awfully fast"). Wider,
                              ;; sparser seeds resolve the collapse over many ticks.
                              :or   {gas-count 1000 n-seeds 5 seed-r 0.18
-                                    spin 0.55 turb 0.08 seed 42}}]
+                                    spin 0.55 turb 0.08 seed 42
+                                    metallicity :population-i}}]
    (let [rng    (java.util.Random. (long seed))
+         ;; Cloud-floor composition. Default Population-I (solar): a present-day
+         ;; cloud is already enriched, so metals exist from tick 0 — without them
+         ;; the star's Z≈0, solid surface density is ~0, and NO planets can seed
+         ;; (see domain.planet-formation/planet-seeds). `:primordial` models a
+         ;; first-generation, metal-free cloud.
+         floor  (lcomp/metallicity-preset->composition metallicity)
          pmass  (/ (double total-mass) gas-count)
          ;; Render/visual radius for diffuse gas puffs; collision radius is kept
          ;; small so the cloud is transparent and many particles fit in the volume.
@@ -103,7 +111,7 @@
                                                  (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
                                                  (* extent 0.25 (- (* 2.0 (.nextDouble rng)) 1.0))))))
          specs  (mapv (fn [_] (gas-particle-spec rng extent pmass prad
-                                                 v-vir omega seeds n-seeds seed-r turb))
+                                                 v-vir omega seeds n-seeds seed-r turb floor))
                       (range gas-count))
          ;; anchor the centre of mass: subtract the net momentum (equal masses,
          ;; so just the mean velocity) so the whole system doesn't drift away.
@@ -241,7 +249,7 @@
   "Bootstrap a Phase 0 world ready to tick."
   ([] (create-world {}))
   ([{:keys [G theta dt softening nebula-mass nebula-radius collapse-fraction
-            contraction-time gas-count spin turb wind-rate-scale]
+            contraction-time gas-count spin turb wind-rate-scale metallicity]
       ;; `dt`/`softening` default to the cold-cloud pacing values (`pacing-for`
       ;; at complexity 0); pass them only to override. Softening is matched to the
       ;; timestep: the dynamical time at the Plummer length must exceed dt or
@@ -267,7 +275,7 @@
      :or   {G law/G theta 0.5
             nebula-mass 4e30 nebula-radius 2.0e16 collapse-fraction 0.5
             contraction-time 9.5e14 gas-count 1000 spin 0.6 turb 0.15
-            wind-rate-scale 1.5}}]
+            wind-rate-scale 1.5 metallicity :population-i}}]
    (let [neb     (pacing/pacing-for (pacing/dynamical-time nebula-radius nebula-mass)
                                     nebula-radius)
          pmass   (/ (double nebula-mass) gas-count)
@@ -306,6 +314,10 @@
                             ;; speed (see player/influence-reference).
                             :genesis/nebula-mass       nebula-mass
                             :genesis/nebula-radius     nebula-radius
+                            ;; Cloud metallicity preset (:population-i default,
+                            ;; :primordial opt-in). Governs whether solids — and
+                            ;; therefore planets — can form. See law.composition.
+                            :genesis/metallicity       metallicity
                             ;; Player-influence knobs, adjustable live from the
                             ;; Spark menu panel (infra.menu/spark-rows).
                             :genesis/observer-halo-mass-factor player/default-halo-mass-factor
@@ -317,7 +329,8 @@
                             :genesis/feeding-zone-factor
                             (stellar/resolution-feeding-zone-factor gas-count)))
          seeded (seed-nebula base nebula-mass nebula-radius
-                             {:gas-count gas-count :spin spin :turb turb})
+                             {:gas-count gas-count :spin spin :turb turb
+                              :metallicity metallicity})
          ;; Store the gas smoothing radius so the classifier can compute
          ;; accretion radii from it (before KH contraction shrinks bodies).
          seeded (assoc seeded :genesis/gas-smoothing-radius (* nebula-radius 0.003))
@@ -383,6 +396,50 @@
                                   :entities #{}
                                   :payload  {:data data}})))
 
+(defn- promotion-event-kind
+  "Map a matter-state transition to the agency-paying event kind. Returns nil
+   for downward, unchanged, or already-emitted transitions."
+  [old-state new-state]
+  (case new-state
+    :star             (when (= old-state :protostar)     :event/stellar-ignition)
+    :protostar        (when (= old-state :nebula)        :event/protostar-formation)
+    :brown-dwarf      (when (= old-state :nebula)        :event/brown-dwarf-formation)
+    :gas-giant        (when (= old-state :nebula)        :event/gas-giant-formation)
+    :planetesimal     (when (= old-state :nebula)        :event/planetesimal-formation)
+    :planet           (when (= old-state :nebula)        :event/planet-formation)
+    nil))
+
+(defn- emit-promotion-event
+  "Emit a single promotion event for `eid` transitioning from `old-state` to
+   `new-state`. Newly spawned entities (planets from disk fragmentation, etc.)
+   are treated as promotions from `:nebula` because the player witnesses matter
+   condensing into a new form, even though the entity did not exist before."
+  [world eid old-state new-state]
+  (let [old-state' (or old-state :nebula)
+        kind       (promotion-event-kind old-state' new-state)]
+    (if kind
+      (emit-threshold world kind {:eid eid :from old-state' :to new-state})
+      world)))
+
+(defn emit-promotion-events
+  "Emit per-body matter-state promotion events between `before` (pre-physics
+   snapshot) and `after` (post-physics world). Every body that becomes a star,
+   protostar, planet, or resolves from nebula pays agency when witnessed."
+  [after before]
+  (let [tick (:tick after)
+        before-eids (set (ecs/entities-with before c/matter-state))
+        before-states (reduce (fn [m eid]
+                                (assoc m eid (ecs/get-component before eid c/matter-state)))
+                              {}
+                              before-eids)]
+    (reduce
+     (fn [w eid]
+       (let [new-state (ecs/get-component after eid c/matter-state)
+             old-state (get before-states eid)]
+         (emit-promotion-event w eid old-state new-state)))
+     after
+     (ecs/entities-with after c/matter-state))))
+
 (defn center-of-mass
   "Mass-weighted centre of mass of every positioned body, or [0 0 0] when empty.
    A global reduction over the snapshot — the recenter frame-offset (spec §6, §8)."
@@ -416,55 +473,61 @@
    EXCLUDES `recenter`, which is not a system at all any more: the integrator
    subtracts the one-tick-stale COM frame-offset (a world scalar set in
    tick-world) from every new position (spec §6)."
-  [{:keys [sim/G sim/theta sim/dt sim/softening sim/cutoff]}]
-  [;; force emitters + integrator
-   (orbital/gravity-acceleration G theta (or softening 1e14) (or cutoff (* 0.1 (or softening 1e14))))
-   (hydro/pressure-acceleration)
-   (em/lorentz-acceleration-system dt)
-   (intervention/warp-acceleration-system)
-   (player/observer-acceleration-system)
-   (intervention/thermal-intervention-system)
-   (integ/integrator-system dt)
-   ;; transform systems
-   (stellar/structure-system)
-   (stellar/eos-system)
-   (stellar/classifier-system)
-   (em/field-system dt)
-   (stellar/fusion-system)
-   (stellar/stellar-sed-system)
-   (stellar/atmosphere-shells-system)
-   (chemistry/nucleosynthesis-system dt)
-   (stellar/deuterium-depletion-system)
-   (stellar/stellar-wind-system)
-   (stellar/stellar-flare-system)
-   (atmosphere/xuv-atmospheric-escape-system)
-   (stellar/disc-identification-system)
-   (regime/regime-system)
-   ;; Collision detection: a fan-out emitter (B3). Its handler emits
-   ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
-   ;; single-writer. Runs in parallel, not serially at the barrier.
-   (collision/collision-detection-system)
-   ;; Former serial barriers — now fan-out emitters (Part C):
-   ;; Fusion promotion: emits c/promotion-signal (single-writer).
-   (stellar/fusion-promotion-system)
-   ;; Sink formation: emits c/absorb-accrete, c/consumed-accrete (single-writer).
-   (stellar/sink-formation-system)
-   ;; Disk evolution: emits c/disk-mass, c/disk-angular-mom, c/mass-flux-disk,
-   ;; c/torque-disk, c/spawn-request-disk (all single-writer).
-   (stellar/disk-evolution-system)
-   ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
-   (lod/lod-scheduler)
-   ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
-   ;; cargo-cult barrier).
-   (em/magnetosphere-coupling-system)
-   ;; Toy biosphere: habitable planets adopt + tick an ecology (single-writer
-   ;; of c/ecology; throttled internally to its own slower cadence). Phase
-   ;; events are emitted post-physics by ecology/emit-phase-events.
-   (ecology/ecology-system)
-   ;; Debris sink: unbound debris past the system edge is marked consumed
-   ;; (single-writer of c/consumed-escape) and reaped at world-construction.
-   ;; Without it late-game N grows without bound (spec Fix 6).
-   (debris/debris-reaper-system)])
+  [{:keys [sim/G sim/theta sim/dt sim/softening sim/cutoff] :as params}]
+  (let [world (when (map? params) params)]
+    [;; force emitters + integrator
+     (orbital/gravity-acceleration G theta (or softening 1e14) (or cutoff (* 0.1 (or softening 1e14))))
+     (hydro/pressure-acceleration)
+     (em/lorentz-acceleration-system dt)
+     (intervention/warp-acceleration-system)
+     (player/observer-acceleration-system)
+     (intervention/thermal-intervention-system)
+     (integ/integrator-system dt)
+     ;; transform systems
+     (stellar/structure-system)
+     (stellar/eos-system)
+     (stellar/classifier-system)
+     (em/field-system dt)
+     (stellar/fusion-system)
+     (stellar/stellar-sed-system)
+     (stellar/atmosphere-shells-system)
+     (chemistry/nucleosynthesis-system dt)
+     (stellar/deuterium-depletion-system)
+     (stellar/stellar-wind-system)
+     (stellar/stellar-flare-system)
+     (atmosphere/xuv-atmospheric-escape-system)
+     (stellar/disc-identification-system)
+     (regime/regime-system)
+     ;; Collision detection: a fan-out emitter (B3). Its handler emits
+     ;; c/absorb-merge, c/consumed-merge, c/spawn-request-shatter — all
+     ;; single-writer. Runs in parallel, not serially at the barrier.
+     (collision/collision-detection-system)
+     ;; Former serial barriers — now fan-out emitters (Part C):
+     ;; Fusion promotion: emits c/promotion-signal (single-writer).
+     (stellar/fusion-promotion-system)
+     ;; Sink formation: emits c/absorb-accrete, c/consumed-accrete (single-writer).
+     (stellar/sink-formation-system)
+     ;; Disk evolution: emits c/disk-mass, c/disk-angular-mom, c/mass-flux-disk,
+     ;; c/torque-disk, c/spawn-request-disk (all single-writer).
+     (stellar/disk-evolution-system)
+     ;; Mass transfer: rate-limited gradual accretion and Roche-lobe overflow.
+     ;; Emits c/mass-flux influences for the integrator.
+     (mt/accretion-radius-system)
+     (mt/sink-accretion-flux-system)
+     (mt/roche-lobe-system)
+     ;; LOD scheduler: assigns c/lod-level (single-writer, was cargo-cult barrier).
+     (lod/lod-scheduler)
+     ;; Magnetosphere coupling: computes c/magnetosphere (single-writer, was
+     ;; cargo-cult barrier).
+     (em/magnetosphere-coupling-system)
+     ;; Toy biosphere: habitable planets adopt + tick an ecology (single-writer
+     ;; of c/ecology; throttled internally to its own slower cadence). Phase
+     ;; events are emitted post-physics by ecology/emit-phase-events.
+     (ecology/ecology-system)
+     ;; Debris sink: unbound debris past the system edge is marked consumed
+     ;; (single-writer of c/consumed-escape) and reaped at world-construction.
+     ;; Without it late-game N grows without bound (spec Fix 6).
+     (debris/debris-reaper-system)]))
 
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
@@ -577,7 +640,8 @@
                          spatial/spatial-index)
           world2     (-> (step-physics world1)
                          (intervention/expire-interventions)
-                         materialize-lifecycle)
+                         materialize-lifecycle
+                         (emit-promotion-events world1))
           summ       (system-summary world2)
           complexity (stellar/complexity-score summ)
           stats      (stats-of world2 summ)
@@ -604,21 +668,17 @@
           pacing         (when-not (false? (:genesis/adaptive-pacing? world))
                            (-> (pacing/pace world2 complexity)
                                (pacing/with-time-slip (boolean slipping?))))
-        ;; Emit PHYSICAL threshold events only. The arc-transition event
-        ;; (:event/phase-transition) is emitted by `domain.arc/advance-arc` when
-        ;; the story arc advances — the genesis loop stays arc-agnostic.
-          world3     (-> (cond-> world2
-                           (and (:star? summ) (not (:star? prev)))
-                           (-> (emit-threshold :event/stellar-ignition (first (:stars summ)))
-                               (assoc :genesis/star-ignition-time (:genesis/sim-time world2)))
+         ;; Emit PHYSICAL threshold events only. Per-body matter-state promotions
+         ;; (resolved/protostar/star/planet) are emitted by `emit-promotion-events`
+         ;; above. The arc-transition event (:event/phase-transition) is emitted by
+         ;; `domain.arc/advance-arc` when the story arc advances.
+          world3     (cond-> world2
+                       (and (:star? summ) (zero? (:genesis/star-ignition-time world2)))
+                       (assoc :genesis/star-ignition-time (:genesis/sim-time world2))
 
-                           (> (:planet-count summ) (:planet-count prev))
-                           (emit-threshold :event/planet-formation (first (:planets summ))))
-                          ;; Biosphere phase transitions (life emergence,
-                          ;; ecology advances, extinctions) — diffed against the
-                          ;; pre-physics snapshot.
-                         (ecology/emit-phase-events world1))
-        ;; `dt` here is the step this tick actually integrated (captured above);
+                       :always
+                       (ecology/emit-phase-events world1))
+         ;; `dt` here is the step this tick actually integrated (captured above);
         ;; advance the clock by it. When adaptive, arm the NEXT tick with the
         ;; complexity-refined dt/softening and report the derived wall-clock rate
         ;; for the player's clock; otherwise leave the fixed step in place.

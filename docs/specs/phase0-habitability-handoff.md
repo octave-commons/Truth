@@ -1,8 +1,13 @@
 # Phase 0 Habitability Handoff Spec
 
-**Status:** draft  
-**Goal:** Define when Phase 0 ends and what information a surviving planet carries into Phase 1 (planetary cooling, atmosphere formation, prebiotic chemistry).  
+**Status:** ready for implementation
+**Milestone:** M5 in `docs/specs/epic-phase0-physics-honesty.md`
+**Goal:** Define when Phase 0 ends and what information a surviving planet carries into Phase 1 (planetary cooling, atmosphere formation, prebiotic chemistry).
 **Principle:** Phase 0 does not generate life; it produces physically grounded planet candidates from which life can plausibly emerge. The handoff is a data contract, not a cinematic.
+
+> **Decision (2026-07-06):** The full `:planet-candidate` record (§5) is **built now** as Phase 0's canonical *output*, even though no Phase-1 consumer exists yet. It is fed by material class (M3/M5), thermal band (M5), and the volatile budget (M4). Only the downstream **consumer** is capability-gated (**D-consumer**, triggered when Phase 1 begins). Building the contract now makes Phase 0's deliverable concrete and testable rather than a vague scalar.
+
+> **Model update:** references to `domain.phase0` are stale — physics is `domain.genesis`, narrative is `domain.arc` (see `genesis-arc-separation.md`). Composition is the element-resolved map; "metals + silicates" below means the derived `:metal`+`:rock` categories from `domain.chemistry/bulk-categories`, not a stored `:metals` key. The interim handoff that exists today is the scalar path (`arc/ready-to-narrow?` + `habitability/habitable-worlds`); M5 replaces it with the structured record.
 
 ---
 
@@ -183,8 +188,9 @@ This record is appended to the ledger as a `:phase0-handoff` event.
 - `sterile-ending-does-not-emit-handoff`: `:sterile` or `:dispersal` endings produce no candidate records.
 
 **Implementation:**
-- Add `domain.phase0/handoff-system` that runs after `classify-system`.
+- Add `domain.genesis/handoff-system` (not `domain.phase0` — renamed) that runs after `classify-system`, wired into the parallel tick as a fan-out emitter (one writer for the handoff/candidate components).
 - Update `world-ending` to distinguish `:success` (handoff emitted) from `:sterile`/`:dispersal`/`:fadeout`.
+- **Orbit-stability (§3.3):** start with an analytic proxy (periapsis vs. star radius, apoapsis bound, Hill-radius separation) rather than a full 10-Myr two-body integration; the integration is a refinement gated on the proxy proving too coarse. This keeps M5 affordable inside the fixed-60Hz tick.
 
 ---
 

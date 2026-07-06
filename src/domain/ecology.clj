@@ -381,11 +381,15 @@
   (max 0.0 (min 1.0 (/ (- (double (or t-kelvin 150.0)) 150.0) 300.0))))
 
 (defn- moisture-from-composition
-  "Initial moisture from a body's volatile inventory."
+  "Initial moisture from a body's volatile inventory.
+   With explicit element composition, H + O proxy water/ice; legacy keys
+   (:H2O, :volatiles, :ices) are still counted if present."
   [composition]
   (let [w (+ (double (get composition :H2O 0.0))
              (double (get composition :volatiles 0.0))
-             (double (get composition :ices 0.0)))]
+             (double (get composition :ices 0.0))
+             (double (get composition :H 0.0))
+             (double (get composition :O 0.0)))]
     (max 0.0 (min 1.0 (+ 0.05 (* 2.5 w))))))
 
 (defn adopt-ecology
@@ -397,15 +401,17 @@
                (or (ecs/get-component world eid c/composition) {}))}))
 
 (defn- planet-habitable?
-  "Chemistry-model habitability gate for adopting an ecology, from the body's
-   own components (kept independent of domain.habitability to avoid a require
-   cycle through domain.genesis)."
+  "Gate for adopting an ecology: the body sits in the ecology's own habitable
+   temperature band (225–375 K via `temp->01`) AND carries enough water to seed
+   prebiotic chemistry. Uses the SAME band the ecology dynamics run on, so a
+   world that would sustain life can also start it — the previous gate keyed on
+   `chemistry/habitability-score > 0.2`, which required 273–373 K plus a surface
+   pressure and so excluded temperate, pressureless seed worlds. Kept independent
+   of domain.habitability to avoid a require cycle through domain.genesis."
   [world eid]
-  (> (chemistry/habitability-score
-      {:temperature (double (or (ecs/get-component world eid c/temperature) 0.0))
-       :pressure    (double (or (ecs/get-component world eid c/pressure) 0.0))
-       :composition (or (ecs/get-component world eid c/composition) {})})
-     0.2))
+  (and (habitable? {:temp (temp->01 (ecs/get-component world eid c/temperature))})
+       (> (moisture-from-composition (or (ecs/get-component world eid c/composition) {}))
+          0.1)))
 
 (def ^:const ecology-interval-ticks
   "Physics ticks between ecology updates — the biosphere breathes on a slower

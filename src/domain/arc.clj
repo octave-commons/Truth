@@ -38,17 +38,18 @@
    the awe of a god collapsing, world by world, toward a single being."
   ([summ sim-time] (detect-arc summ sim-time false))
   ([{:keys [star? planet-count body-count regions]} sim-time life?]
-   (let [nebula?    (some #(= :nebula (:matter-state %)) regions)
-         protostar? (some #(= :protostar (:matter-state %)) regions)
-         planet?    (some #(= :planet (:matter-state %)) regions)
-         debris?    (some #(= :debris (:matter-state %)) regions)]
+   (let [nebula?        (some #(= :nebula (:matter-state %)) regions)
+         protostar?     (some #(= :protostar (:matter-state %)) regions)
+         planet?        (some #(= :planet (:matter-state %)) regions)
+         substellar?    (some #(#{:planetesimal :gas-giant :brown-dwarf}
+                                (:matter-state %)) regions)]
      (cond
        (and life? (pos? planet-count)) :arc/life-emergence
        (and star? (pos? planet-count)) :arc/genesis-planets-formed
        (and star? (>= body-count 3))   :arc/genesis-accretion
        star?                           :arc/genesis-ignition
        protostar?                      :arc/genesis-protostar
-       (or planet? debris?)            :arc/genesis-accretion
+       (or planet? substellar?)        :arc/genesis-accretion
        (zero? body-count)              :arc/genesis-dispersed
        (and nebula? (< sim-time 1e18)) :arc/genesis-nebula-collapse
        :else                           :arc/genesis-dispersed))))
@@ -116,26 +117,32 @@
   "Short text for a witnessed event category, or nil."
   [event-category]
   (case event-category
-    :nebula-collapse    "The nebula collapses. +3 quanta"
-    :protostar-formation "A protostar forms. +8 quanta"
-    :stellar-ignition   "A star ignites! +25 quanta"
-    :planet-formation   "A planet forms! +10 quanta"
-    :collision          "A collision! +1 quanta"
-    :phase-transition   "The phase shifts. +5 quanta"
-    :life-emergence     "Life emerges! +50 quanta"
-    :gate-discovery     "A gate is discovered! +100 quanta"
+    :nebula-collapse        "The nebula collapses. +3 quanta"
+    :planetesimal-formation "A planetesimal condenses. +2 quanta"
+    :gas-giant-formation    "A giant planet embryo forms. +4 quanta"
+    :brown-dwarf-formation  "A brown dwarf glows. +8 quanta"
+    :protostar-formation    "A protostar forms. +12 quanta"
+    :stellar-ignition       "A star ignites! +25 quanta"
+    :planet-formation       "A planet forms! +10 quanta"
+    :collision              "A collision! +1 quanta"
+    :phase-transition       "The phase shifts. +5 quanta"
+    :life-emergence         "Life emerges! +50 quanta"
+    :gate-discovery         "A gate is discovered! +100 quanta"
     nil))
 
 (def ^:private event-kind->category
   "Map ledger event kinds to the player-facing notification categories."
-  {:event/nebula-collapse    :nebula-collapse
-   :event/protostar-formation :protostar-formation
-   :event/stellar-ignition   :stellar-ignition
-   :event/planet-formation   :planet-formation
-   :event/collision          :collision
-   :event/phase-transition   :phase-transition
-   :event/life-emergence     :life-emergence
-   :event/gate-discovery     :gate-discovery})
+  {:event/nebula-collapse       :nebula-collapse
+   :event/planetesimal-formation :planetesimal-formation
+   :event/gas-giant-formation    :gas-giant-formation
+   :event/brown-dwarf-formation  :brown-dwarf-formation
+   :event/protostar-formation    :protostar-formation
+   :event/stellar-ignition       :stellar-ignition
+   :event/planet-formation       :planet-formation
+   :event/collision              :collision
+   :event/phase-transition       :phase-transition
+   :event/life-emergence         :life-emergence
+   :event/gate-discovery         :gate-discovery})
 
 ;; --- Handoff / endings ------------------------------------------------------
 
@@ -195,14 +202,13 @@
         ;; Emit physical threshold events tied to entering an arc. These are
         ;; distinct from :event/phase-transition (the generic arc change) so the
         ;; observer can be paid for witnessing each specific transition.
+        ;; Per-body protostar/star/planet formation events are emitted by
+        ;; `domain.genesis/tick-world`; only the system-wide nebula-collapse
+        ;; milestone is emitted here.
         world0    (cond-> world
                     (and prev (not= prev :arc/genesis-nebula-collapse)
                          (= cur :arc/genesis-nebula-collapse))
-                    (genesis/emit-threshold :event/nebula-collapse {:arc cur})
-
-                    (and prev (not= prev :arc/genesis-protostar)
-                         (= cur :arc/genesis-protostar))
-                    (genesis/emit-threshold :event/protostar-formation {:arc cur}))
+                    (genesis/emit-threshold :event/nebula-collapse {:arc cur}))
         new-cats  (->> (event/events-since world0 this-tick)
                        (filter #(= (:tick %) this-tick))
                        (keep #(event-kind->category (:kind %))))

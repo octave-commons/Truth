@@ -244,19 +244,23 @@
 (defn state-label [state]
   (case state
     :nebula "Nebula gas"
+    :planetesimal "Planetesimal"
+    :gas-giant "Gas giant"
+    :brown-dwarf "Brown dwarf"
     :protostar "Protostar"
     :star "Star"
     :planet "Planet"
-    :debris "Debris"
     (some-> state name)))
 
 (defn- state-color [state]
   (case state
-    :star      [1.0 0.92 0.55 1.0]
-    :protostar [1.0 0.72 0.45 1.0]
-    :planet    [0.55 0.78 1.0 1.0]
-    :debris    [0.75 0.75 0.8 1.0]
-    :nebula    [0.7 0.6 0.9 1.0]
+    :star          [1.0 0.92 0.55 1.0]
+    :protostar     [1.0 0.72 0.45 1.0]
+    :planet        [0.55 0.78 1.0 1.0]
+    :brown-dwarf   [0.85 0.55 0.35 1.0]
+    :gas-giant     [0.55 0.65 0.85 1.0]
+    :planetesimal  [0.75 0.75 0.8 1.0]
+    :nebula        [0.7 0.6 0.9 1.0]
     [0.85 0.9 1.0 1.0]))
 
 (defn body-facts

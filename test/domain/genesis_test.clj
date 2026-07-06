@@ -4,11 +4,13 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.genesis           :as genesis]
+   [domain.arc              :as arc]
    [domain.pacing           :as pacing]
    [domain.stellar          :as stellar]
    [domain.chemistry        :as chemistry]
    [domain.player           :as player]
    [law.stellar             :as law]
+   [law.composition         :as lcomp]
    [domain.ecs.core         :as ecs]
    [domain.ecs.event        :as event]
    [domain.ecs.components    :as c]
@@ -26,6 +28,30 @@
   (testing "A small dense warm region is stable against collapse"
     (let [region {:density 5500 :temperature 300 :radius 1e5}]
       (is (not (stellar/jeans-unstable? region))))))
+
+(defn- first-parcel-composition
+  "Composition of the first matter parcel in a freshly seeded world."
+  [world]
+  (let [eid (first (ecs/entities-with world c/matter-state c/composition))]
+    (ecs/get-component world eid c/composition)))
+
+(deftest test-metallicity-seeding
+  (testing "Default world seeds the Population-I floor so metals exist from tick 0"
+    ;; This is the unlock for planet formation: planet-seeds derives solid
+    ;; surface density from Z = metallicity(star composition); a metal-free
+    ;; nebula gives Z≈0, sigma-solid≈0, and NO planets ever seed.
+    (let [w (genesis/create-world {:gas-count 20})
+          comp (first-parcel-composition w)]
+      (is (= :population-i (:genesis/metallicity w)))
+      (is (> (lcomp/metallicity comp) 0.01) "cloud carries solar metals (Z≈0.0167)")
+      (is (> (double (get comp :Fe 0.0)) 0.0) "iron is present for rocky cores")
+      (is (> (double (get comp :Si 0.0)) 0.0) "silicon is present for silicates")
+      (is (lcomp/composition-sums-to-unity? comp))))
+  (testing ":primordial preset seeds a metal-free first-generation cloud"
+    (let [w (genesis/create-world {:gas-count 20 :metallicity :primordial})
+          comp (first-parcel-composition w)]
+      (is (< (lcomp/metallicity comp) 1e-4) "no metals in a primordial cloud")
+      (is (lcomp/composition-sums-to-unity? comp)))))
 
 (deftest test-virial-collapse-drives-ignition
   (testing "Virial temperature and self-gravity pressure rise as a core contracts"
@@ -119,7 +145,7 @@
                   (ecs/put-component eid c/position pos)
                   (ecs/put-component eid c/mass (double m))
                   (ecs/put-component eid c/radius (double r))
-                  (ecs/put-component eid c/matter-state :debris))))
+                  (ecs/put-component eid c/matter-state :planetesimal))))
           (ecs/empty-world)
           bodies))
 
@@ -234,6 +260,58 @@
       (is (= 1 (count (ecs/entities-with w c/observer))))
       (is (some? (player/get-observer w)))
       (is (true? (:genesis/active w))))))
+
+(deftest per-body-promotion-events-fire-for-each-transition
+  (testing "Every body that promotes out of nebula or ignites emits its own event"
+    (let [before (ecs/empty-world)
+          [before gas0] (stellar/spawn-clump before {:position [0 0 0] :mass 1e29 :radius 1e14
+                                                     :matter-state :nebula})
+          [before gas1] (stellar/spawn-clump before {:position [1e15 0 0] :mass 1e29 :radius 1e14
+                                                     :matter-state :nebula})
+          [before debris] (stellar/spawn-clump before {:position [2e15 0 0] :mass 1e25 :radius 1e10
+                                                       :matter-state :nebula})
+          after  (-> before
+                     (ecs/put-component gas0 c/matter-state :protostar)
+                     (ecs/put-component gas1 c/matter-state :planetesimal)
+                     (ecs/put-component debris c/matter-state :planetesimal)
+                     (assoc :tick 7)
+                     (genesis/emit-promotion-events before))
+          kinds (->> (event/events-since after 7)
+                     (filter #(= (:tick %) 7))
+                     (map :kind)
+                     frequencies)]
+      (is (= 1 (get kinds :event/protostar-formation 0))
+          "nebula->protostar emits exactly one protostar-formation event")
+      (is (= 2 (get kinds :event/planetesimal-formation 0))
+          "nebula->debris emits one body-resolved event per resolved parcel"))))
+
+(deftest per-body-promotion-events-pay-agency-for-every-body
+  (testing "Each promotion event pays agency; resonance only pays the first time per category"
+    (let [w0     (genesis/create-world {:gas-count 30 :nebula-radius 1.2e16
+                                        :contraction-time 2e12 :spin 0.55})
+          w0     (assoc w0 :genesis/adaptive-pacing? false :sim/dt 1.0e12)
+          obs0   (player/get-observer w0)
+          ;; Tick through the full genesis+arc+observer pipeline until multiple
+          ;; bodies have condensed.
+          final  (loop [w w0 i 0]
+                   (if (or (>= i 120) (>= (:resolved-count (genesis/system-summary w)) 2)
+                           (not (:genesis/active w)))
+                     w
+                     (recur (arc/tick-genesis w) (inc i))))
+          events (->> (event/events-since final 0) (map :kind) frequencies)
+          promotions (+ (get events :event/planetesimal-formation 0)
+                        (get events :event/gas-giant-formation 0)
+                        (get events :event/brown-dwarf-formation 0)
+                        (get events :event/protostar-formation 0)
+                        (get events :event/stellar-ignition 0)
+                        (get events :event/planet-formation 0))
+          obs    (player/get-observer final)]
+      (is (>= promotions 2)
+          "at least two distinct per-body promotions should fire")
+      (is (> (:agency obs) (:agency obs0))
+          "observer gains agency from the per-body promotions")
+      (is (>= (:resonance obs) 0.0)
+          "resonance is non-negative"))))
 
 ;; --- Accretion / merge handler ----------------------------------------------
 

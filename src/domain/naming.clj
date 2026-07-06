@@ -38,12 +38,13 @@
 
 (def state-titles
   "Display title per matter-state — what a body IS, for lists and cards."
-  {:nebula      "gas"
-   :protostar   "protostar"
-   :star        "star"
-   :brown-dwarf "brown dwarf"
-   :planet      "planet"
-   :debris      "planetesimal"})
+  {:nebula       "gas"
+   :planetesimal "planetesimal"
+   :gas-giant    "gas giant"
+   :brown-dwarf  "brown dwarf"
+   :planet       "planet"
+   :protostar    "protostar"
+   :star         "star"})
 
 (defn display-label
   "\"Name — title\" line for a body, e.g. \"Vetharion — star\"."

@@ -12,6 +12,17 @@
    [shape.spatial         :as sp]))
 
 (def ^:const snow-line-temperature 170.0)
+(def ^:const planet-bond-albedo
+  "Coarse Bond albedo for a seeded planet's equilibrium temperature. A tunable
+   proxy (Earth≈0.3); a composition-derived albedo is a later refinement."
+  0.3)
+(def ^:const planet-greenhouse-warming
+  "Greenhouse offset (K) added to a planet's equilibrium temperature to estimate
+   its surface temperature. Earth's is ~33 K; without it, an Earth-analog reads
+   its 255 K equilibrium value — below the liquid-water band — and no world is
+   ever warm enough to host life. Tunable proxy for a real atmosphere/pressure
+   greenhouse model (deferred)."
+  35.0)
 (def ^:const proto-solar-metal-frac 0.015)
 (def ^:const ice-enhancement-factor 3.5)
 (def ^:const min-planet-orbit-radius-au 0.1)
@@ -29,6 +40,31 @@
   (if (pos? (double temperature))
     (Math/sqrt (/ (* 1.6666667 law/k-B (double temperature)) law/m-H))
     0.0))
+
+(defn equilibrium-temperature
+  "Blackbody equilibrium temperature (K) at orbital radius `r` for a star of
+   luminosity `L`, with Bond albedo `A`:  T = (L(1-A) / (16 π σ r²))^(1/4).
+
+   This is a planet's seed temperature — it replaces a fixed literal so a world's
+   habitability follows its orbit. (A sun-luminosity star gives ~255 K at 1 AU;
+   the liquid-water band 273–373 K sits at ~0.47–0.87 AU.) Falls back to 250 K
+   when L or r is non-positive."
+  [luminosity r albedo]
+  (let [L (double (or luminosity 0.0))
+        r (double (or r 0.0))
+        A (double albedo)]
+    (if (and (pos? L) (pos? r))
+      (Math/pow (/ (* L (- 1.0 A))
+                   (* 16.0 Math/PI law/stefan-boltzmann r r))
+                0.25)
+      250.0)))
+
+(defn surface-temperature
+  "A seeded planet's surface temperature: blackbody equilibrium at radius `r`
+   plus a greenhouse offset (see `planet-greenhouse-warming`). This is the
+   temperature habitability and rendering read."
+  [luminosity r albedo]
+  (+ (equilibrium-temperature luminosity r albedo) planet-greenhouse-warming))
 
 (defn snow-line-radius
   "Radius where equilibrium T = 170 K for a blackbody at luminosity L:
@@ -71,13 +107,20 @@
       :else                            :terrestrial)))
 
 (defn planet-composition
-  "Return a plausible composition map for a planet type."
+  "Return a plausible explicit-element composition map for a planet type.
+   Mass fractions are normalized to sum to 1.0."
   [ptype]
-  (case ptype
-    :terrestrial {:H 0.0 :He 0.0 :metals 0.40 :silicates 0.45 :volatiles 0.15}
-    :ice-giant   {:H 0.15 :He 0.05 :metals 0.10 :silicates 0.20 :ices 0.50}
-    :gas-giant   {:H 0.70 :He 0.28 :metals 0.02 :silicates 0.0 :ices 0.0}
-    {:H lcomp/primordial-H :He lcomp/primordial-He :metals 0.0}))
+  (lcomp/normalize
+   (case ptype
+     :terrestrial {:H 0.05 :He 0.001 :O 0.25 :C 0.005 :N 0.005
+                   :Mg 0.15 :Si 0.16 :Al 0.02 :Ca 0.03 :Na 0.01
+                   :S 0.005 :Fe 0.30 :Ni 0.02}
+     :ice-giant   {:H 0.15 :He 0.05 :O 0.40 :C 0.05 :N 0.05
+                   :Mg 0.06 :Si 0.08 :Al 0.01 :Ca 0.01 :Na 0.005
+                   :S 0.005 :Fe 0.05 :Ni 0.005}
+     :gas-giant   {:H 0.70 :He 0.28 :O 0.005 :C 0.005
+                   :Fe 0.005 :Ni 0.005}
+     lcomp/primordial-composition)))
 
 (defn planet-material-density-by-type
   "Mean material density (kg/m³) for a planet type."
@@ -131,18 +174,14 @@
                (> disk-age maturity)
                (pos? M-star)
                (pos? disk-m))
-      (let [disc-bodies (filterv
-                         #(= :disc (ecs/get-component world % c/disc-tag))
-                         (ecs/entities-with world c/disc-tag c/position c/mass))
-            snow-line   (snow-line-radius L-star)
+      (let [disk-regime (or (ecs/get-component world star c/disk-regime)
+                            {:solid-surface-density 0.0 :snow-line (snow-line-radius L-star)})
+            snow-line   (double (:snow-line disk-regime))
+            Z           (lcomp/metallicity (or (ecs/get-component world star c/composition)
+                                               lcomp/solar-composition))
             r-in        (max (* min-planet-orbit-radius-au law/au)
                              (* 3.0 (double (or (ecs/get-component world star c/radius) 1.0e9))))
-            r-out       (if (seq disc-bodies)
-                          (max (* 1.5 r-in)
-                               (reduce max 0.0
-                                       (map #(sp/dist star-pos (ecs/get-component world % c/position))
-                                            disc-bodies)))
-                          (* 5.0 law/au))
+            r-out       (* 5.0 law/au)
             log-min     (Math/log10 r-in)
             log-max     (Math/log10 (max r-in r-out))
             annuli      (vec (for [i (range planet-seeding-annuli)]
@@ -150,9 +189,7 @@
                                      a1 (Math/pow 10.0 (+ log-min (* (inc i) (/ (- log-max log-min) planet-seeding-annuli))))
                                      mid (* 0.5 (+ a0 a1))]
                                  {:r-inner a0 :r-outer a1 :r mid})))
-            in-annulus? (fn [pos ann]
-                          (let [d (sp/dist star-pos pos)]
-                            (and (>= d (:r-inner ann)) (< d (:r-outer ann)))))]
+            ann-mass    (/ disk-m planet-seeding-annuli)]
         (loop [anns annuli
                spawns []
                disk-m' disk-m
@@ -161,12 +198,10 @@
           (if (empty? anns)
             {:spawns spawns :disk-m disk-m' :disk-L disk-L'}
             (let [ann       (first anns)
-                  bodies    (filterv #(in-annulus? (ecs/get-component world % c/position) ann) disc-bodies)
-                  ann-mass  (reduce + 0.0 (map #(double (or (ecs/get-component world % c/mass) 0.0)) bodies))
                   area      (* Math/PI (- (* (:r-outer ann) (:r-outer ann))
                                           (* (:r-inner ann) (:r-inner ann))))
                   sigma-gas (if (pos? area) (/ ann-mass area) 0.0)
-                  sigma-solid (solid-surface-density sigma-gas (:r ann) snow-line proto-solar-metal-frac)
+                  sigma-solid (solid-surface-density sigma-gas (:r ann) snow-line Z)
                   tau       (core-accretion-timescale (:r ann) sigma-solid M-star)
                   min-core-m (* 1.0e24 (Math/pow (max 0.1 sigma-solid) 1.5))
                   enough?   (and (pos? sigma-solid)
@@ -206,7 +241,7 @@
                                :body-kind :body/planet
                                :planet-type ptype
                                :composition (planet-composition ptype)
-                               :temperature 250.0
+                               :temperature (surface-temperature L-star (:r ann) planet-bond-albedo)
                                :extra-components {c/planet-type ptype
                                                   c/angular-momentum
                                                   (orbital-angular-momentum mass-kg

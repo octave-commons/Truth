@@ -27,6 +27,7 @@
    (§9 non-goal). This namespace owns only the fields that were contended or
    accumulated across multiple writers."
   (:require
+   [domain.chemistry      :as chemistry]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.parallel    :as par]
@@ -48,22 +49,23 @@
 ;; spin) are derived by the per-field updaters below and documented in :derived.
 (def influence-registry
   {:velocity         {:accumulate [c/accel-gravity c/accel-pressure c/accel-lorentz
-                                   c/accel-observer c/accel-warp]
-                      :compose :sum :scale :dt}
-   :angular-momentum {:accumulate [c/torque-em c/torque-disk]
-                      :compose :sum :scale :dt}
-   :mass             {:accumulate [c/mass-flux-wind c/mass-flux-flare
-                                   c/mass-flux-xuv c/mass-flux-disk]
-                      :compose :sum :scale :raw}
-   :velocity-delta   {:accumulate [c/dv-wind c/dv-flare]
-                      :compose :sum :scale :raw}
-   :temperature      {:influences [c/heat-intervention]
-                      :derived "virial (cores) / radiative (worlds) + intervention ease"}
-   :composition      {:influences [c/comp-burn c/comp-depletion]
-                      :derived "comp.burn replaces, comp.depletion zeroes"}
-   :position         {:influences [c/frame-offset]
-                      :derived "x + v·dt − frame-offset (COM Galilean shift)"}
-   :spin             {:derived "L / I (moment of inertia)"}})
+                                    c/accel-observer c/accel-warp]
+                       :compose :sum :scale :dt}
+    :angular-momentum {:accumulate [c/torque-em c/torque-disk]
+                       :compose :sum :scale :dt}
+    :mass             {:accumulate [c/mass-flux-wind c/mass-flux-flare
+                                    c/mass-flux-xuv c/mass-flux-disk
+                                    c/mass-flux]
+                       :compose :sum :scale :raw}
+    :velocity-delta   {:accumulate [c/dv-wind c/dv-flare]
+                       :compose :sum :scale :raw}
+    :temperature      {:influences [c/heat-intervention]
+                       :derived "virial (cores) / radiative (worlds) + intervention ease"}
+    :composition      {:influences [c/comp-burn c/comp-depletion]
+                       :derived "comp.burn replaces, comp.depletion zeroes"}
+    :position         {:influences [c/frame-offset]
+                       :derived "x + v·dt − frame-offset (COM Galilean shift)"}
+    :spin             {:derived "L / I (moment of inertia)"}})
 
 (defn- sum-vec-influences
   "Σ of the vector influence components `ctypes` on `eid` (missing ⇒ zero)."
@@ -95,6 +97,56 @@
 ;; — the absorbed parcels' state. The integrator blends it into the survivor's
 ;; fields (spec §5). c/absorb-merge is the same shape for collision merges.
 ;; Each per-field updater below reads the same data and applies its field.
+
+(defn- mass-flux-events
+  "All c/mass-flux events in the world, flattened from their emitting entities."
+  [world]
+  (mapcat (fn [[_eid events]]
+            (if (sequential? events) events []))
+          (get-in world [:components c/mass-flux] {})))
+
+(defn- mass-flux-deltas
+  "Return {eid delta-m} from all c/mass-flux events. Positive = gain."
+  [world]
+  (let [events (mass-flux-events world)]
+    (reduce (fn [m event]
+              (let [dm (double (:mass-flux/delta-m event 0.0))
+                    ids (filterv some?
+                                 [(when (:mass-flux/sink-id event) (:mass-flux/sink-id event))
+                                  (:mass-flux/donor-id event)
+                                  (:mass-flux/donor-eid event)
+                                  (:mass-flux/accretor-eid event)])]
+                (reduce (fn [m id] (update m id (fnil + 0.0) dm)) m ids)))
+            {}
+            events)))
+
+(defn- mass-flux-momentum-deltas
+  "Return {eid delta-p} from all c/mass-flux events."
+  [world]
+  (let [events (mass-flux-events world)]
+    (reduce (fn [m event]
+              (let [dp (vec (:mass-flux/delta-p event [0.0 0.0 0.0]))
+                    ids (filterv some?
+                                 [(when (:mass-flux/sink-id event) (:mass-flux/sink-id event))
+                                  (:mass-flux/donor-id event)
+                                  (:mass-flux/donor-eid event)
+                                  (:mass-flux/accretor-eid event)])]
+                (reduce (fn [m id] (update m id (fnil sp/v+ zero3) dp)) m ids)))
+            {}
+            events)))
+
+(defn- depleted-donors
+  "Return {eid true} for donors whose new mass would be below floor."
+  [world deltas floor-mass]
+  (let [floor (double (or floor-mass 0.0))]
+    (reduce-kv (fn [acc eid dm]
+                 (let [m0 (double (or (ecs/get-component world eid c/mass) 0.0))
+                       m1 (+ m0 dm)]
+                   (if (and (< m1 floor) (pos? m0))
+                     (assoc acc eid true)
+                     acc)))
+               {}
+               deltas)))
 
 (defn- absorb-mass-delta
   "Sum of absorbed bulk mass for `eid` from absorb-accrete and absorb-merge
@@ -234,13 +286,15 @@
   "Position + velocity. v' = v + (Σ accel.*)·dt + Σ dv.*; x' = x + v'·dt
    (symplectic Euler), then the one-tick-stale COM frame-offset is subtracted from
    position (a pure Galilean shift, §6). Absorb-accrete/merge packets are blended
-   for COM preservation — the absorbed mass's momentum shifts the survivor."
+   for COM preservation — the absorbed mass's momentum shifts the survivor.
+   c/mass-flux momentum deltas are also applied."
   [world dt]
   (let [foff (or (:genesis/frame-offset world) zero3)
         eids (ecs/entities-with world c/position c/velocity
                                 c/mass c/radius c/body-kind)
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
+        mf-dp (mass-flux-momentum-deltas world)
         profiling? (:genesis/profile-subsystems? world)
         ;; Phase 1: accumulate accelerations from all influence cells.
         force-fn #(into {} (par/par-mapv
@@ -257,13 +311,17 @@
                              {}
                              (par/par-mapv
                               (fn [eid]
-                                (let [a   (get forces eid zero3)
-                                      dv  (sum-vec-influences world eid dv-sources)
-                                      v   (ecs/get-component world eid c/velocity)
-                                      x   (ecs/get-component world eid c/position)
-                                      m0  (double (or (ecs/get-component world eid c/mass) 0.0))
-                                      v1  (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
-                                      x1  (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
+                                (let [a    (get forces eid zero3)
+                                      dv   (sum-vec-influences world eid dv-sources)
+                                      dp-m (get mf-dp eid zero3)
+                                      v    (ecs/get-component world eid c/velocity)
+                                      x    (ecs/get-component world eid c/position)
+                                      m0   (double (or (ecs/get-component world eid c/mass) 0.0))
+                                      v0   (sp/v+ (sp/v+ v (sp/v* a dt)) dv)
+                                      v1   (if (pos? m0)
+                                             (sp/v+ v0 (sp/v* dp-m (/ 1.0 m0)))
+                                             v0)
+                                      x1   (sp/v- (sp/v+ x (sp/v* v1 dt)) foff)]
                                   (if-let [pkts (get absorbs eid)]
                                     (let [[v-blend x-blend _] (com-blend v1 x1 m0 pkts)]
                                       [eid v-blend x-blend])
@@ -360,29 +418,35 @@
    the accretion/merge mass from absorb-accrete/merge packets are summed and
    applied. Only bodies with a flux or absorb packet this tick are rewritten."
   [world]
-  (let [eids     (ecs/entities-with world c/mass)
-        absorbs  (merge (get-in world [:components c/absorb-accrete] {})
-                        (get-in world [:components c/absorb-merge] {}))
-        cell     (into {}
-                       (keep (fn [eid]
-                               (let [dm   (sum-scalar-influences world eid mass-flux-sources)
-                                     dm-a (absorb-mass-delta world eid)
-                                     dm-t (+ dm dm-a)]
-                                 (when-not (zero? dm-t)
-                                   [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))]))))
-                       eids)
-        ;; Absorb packets may target entities that lacked mass-flux but still
-        ;; gained mass from accretion. Ensure they are included even if not in
-        ;; the entities-with-mass loop above (though they will be, since
-        ;; the survivor always carries c/mass).
-        extra (into {}
-                    (keep (fn [eid]
-                            (when-not (contains? (into #{} (keys cell)) eid)
-                              (let [dm-a (absorb-mass-delta world eid)]
-                                (when-not (zero? dm-a)
-                                  [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-a))])))))
-                    (keys absorbs))]
-    (if (empty? (merge cell extra)) {} {c/mass (merge cell extra)})))
+  (let [eids      (ecs/entities-with world c/mass)
+        absorbs   (merge (get-in world [:components c/absorb-accrete] {})
+                         (get-in world [:components c/absorb-merge] {}))
+        mf-deltas (mass-flux-deltas world)
+        cell      (into {}
+                        (keep (fn [eid]
+                                (let [dm   (sum-scalar-influences world eid mass-flux-sources)
+                                      dm-a (absorb-mass-delta world eid)
+                                      dm-m (get mf-deltas eid 0.0)
+                                      dm-t (+ dm dm-a dm-m)]
+                                  (when-not (zero? dm-t)
+                                    [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))]))))
+                        eids)
+        ;; Absorb packets and mass-flux events may target entities that lacked
+        ;; a mass-flux scalar influence but still gained mass. Ensure included.
+        extra     (into {}
+                        (keep (fn [eid]
+                                (when-not (contains? (into #{} (keys cell)) eid)
+                                  (let [dm-a (absorb-mass-delta world eid)
+                                        dm-m (get mf-deltas eid 0.0)
+                                        dm-t (+ dm-a dm-m)]
+                                    (when-not (zero? dm-t)
+                                      [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))])))))
+                        (concat (keys absorbs) (keys mf-deltas)))
+        depleted  (depleted-donors world mf-deltas 0.0)
+        mass-ws   (if (empty? (merge cell extra)) {} {c/mass (merge cell extra)})]
+    (if (empty? depleted)
+      mass-ws
+      (assoc mass-ws c/consumed-accrete depleted))))
 
 (defn temperature-ws
   "Temperature. The base value is the virial/radiative derivation owned by
@@ -481,6 +545,22 @@
                                       (get deps eid #{}))]))))
              all-eids)})))
 
+(defn comp-condensed-ws
+  "Derived partition of each body's composition into solid and gas phases at
+   its current temperature. Writes :component/comp.condensed for every entity
+   that has both composition and temperature."
+  [world]
+  (let [eids (ecs/entities-with world c/composition c/temperature)]
+    (if (seq eids)
+      {c/comp-condensed
+       (into {}
+             (map (fn [eid]
+                    (let [comp (ecs/get-component world eid c/composition)
+                          temp (double (or (ecs/get-component world eid c/temperature) 0.0))]
+                      [eid (chemistry/partition-solids comp temp)])))
+             eids)}
+      {})))
+
 (def ^:private torque-sources
   (get-in influence-registry [:angular-momentum :accumulate]))
 
@@ -523,7 +603,7 @@
    benchmark harness can report subsystem timings."
   [dt]
   {:id     :integrator
-   :writes #{c/position c/velocity c/mass c/temperature c/composition
+   :writes #{c/position c/velocity c/mass c/temperature c/composition c/comp-condensed
              c/angular-momentum c/spin}
    :run    (fn [world]
              (let [kin  (if-let [soa (:genesis/physics-soa world)]
@@ -538,10 +618,13 @@
                    comp (profile/profile-section
                          world :integrator/composition
                          (fn [_world] (composition-ws world)))
+                   cond (profile/profile-section
+                         world :integrator/comp-condensed
+                         (fn [_world] (comp-condensed-ws world)))
                    rot  (profile/profile-section
                          world :integrator/rotation
                          (fn [_world] (rotation-ws world)))
                    profile (apply merge-with +
-                                  (map #(or (:genesis/_profile %) {}) [kin mass temp comp rot]))]
-               (cond-> (merge kin mass temp comp rot)
+                                  (map #(or (:genesis/_profile %) {}) [kin mass temp comp cond rot]))]
+               (cond-> (merge kin mass temp comp cond rot)
                  (seq profile) (assoc :genesis/_profile profile))))})

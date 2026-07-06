@@ -181,10 +181,11 @@
 (def ^:private thermal-kinds #{:heat/source :heat/sink})
 
 ;; States whose temperature PERSISTS tick-to-tick, so an ease actually sticks:
-;; nebula (temperature-system skips it) and debris/planet (incremental). Stars and
-;; protostars re-derive T from the virial relation every tick, so a thermal push
-;; on them would be washed out — heat acts on gas and worlds, not on stellar cores.
-(def ^:private thermal-states #{:nebula :debris :planet})
+;; nebula (temperature-system skips it) and substellar bodies / planets
+;; (incremental). Stars and protostars re-derive T from the virial relation every
+;; tick, so a thermal push on them would be washed out — heat acts on gas and
+;; worlds, not on stellar cores.
+(def ^:private thermal-states #{:nebula :planetesimal :gas-giant :brown-dwarf :planet})
 
 (defn thermal-step
   "New temperature for a body at `body-pos`/`temp` after one tick of every active
