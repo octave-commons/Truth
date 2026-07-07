@@ -106,3 +106,12 @@
   spore: none
   receipt-refs: none
   note: Pattern: add dedicated influence component, register in integrator registry, materialize via spawn-request.*; gate by local density max + one-shot + cap
+- ts: 2026-07-07T01:13:07.709107841Z
+  session: ses_0c5e433f6ffefyu2iBNZviTijo
+  task: Π fork tax: seed-and-grow condensation handoff
+  p-efficiency: 0.75
+  p-friction: 0.4
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: none
+  note: Manifest generation needed Python + core.quotepath=false to handle .ημ unicode paths; pre-existing malformed receipt entry at receipts.edn:58 flagged by LSP but left untouched as historical record.
