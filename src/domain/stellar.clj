@@ -21,6 +21,7 @@
    [domain.ecs.components  :as c]
    [domain.planet-formation :as pf]
    [domain.profile         :as profile]
+   [domain.spatial.index   :as spatial]
    [shape.spatial         :as sp]))
 
 ;; Forward declarations: the stellar-wind system (an accretion-region barrier
@@ -28,6 +29,8 @@
 ;; helpers, which are defined further down the file.
 (declare spawn-clump default-composition entity->region
          sphere-radius debris-material-density planet-material-density)
+
+(def ^:private zero3 [0.0 0.0 0.0])
 
 ;; --- Pure thermodynamics ----------------------------------------------------
 
@@ -1074,11 +1077,12 @@
 
 (defn classifier-system
   "Double-buffer write-set system: SOLE writer of matter-state AND accretion-radius.
-    Reads each body's physics from the frozen snapshot and applies `classify-next-state`.
-    Throttled: at most ONE new condensation per tick (the densest Jeans-unstable parcel),
-    and only on a `condense-tick?` so the formation is paced by sim-time, not tick rate.
-    The accretion-radius is set on the throttled condensation candidate so that
-    `sink-formation-system` can absorb nearby parcels on the same tick."
+   Applies `classify-next-state` to every body. :nebula → :planetesimal
+   condensation is deferred to `condensation-seeder-system` (seed-and-grow). All
+   other condense transitions (:gas-giant, :brown-dwarf, :protostar) still promote
+   the whole gas parcel and latch an accretion-radius so the big sink can feed.
+   Non-condense transitions (up/down the substellar ladder, ignition) are applied
+   directly. Condensation pacing lives in the seeder."
   []
   {:id     :classifier
    :writes #{c/matter-state c/accretion-radius}
@@ -1092,12 +1096,9 @@
           {:gas-mass      (:genesis/gas-particle-mass w)
            :eids          (ecs/entities-with w c/matter-state c/mass)
            :zones         (sink-exclusion-zones w)
-           :promotions    (get-in w [:components c/promotion-signal] {})
-           :may-condense? (condense-tick? w)
-           :factor        (double (:genesis/feeding-zone-factor w feeding-zone-factor))
-           :gas-r         (double (or (:genesis/gas-smoothing-radius w) 0.0))})]
+           :promotions    (get-in w [:components c/promotion-signal] {})})]
        [:classifier/transitions
-        (fn [{:keys [gas-mass eids zones promotions may-condense? factor gas-r] :as state}]
+        (fn [{:keys [gas-mass eids zones promotions] :as state}]
           (let [transitions
                 (into {}
                       (keep (fn [eid]
@@ -1109,44 +1110,118 @@
                                              (classify-next-state region gas-mass zones))]
                                 (when (not= cur nxt) [eid {:old cur :new nxt :region region}]))))
                       eids)
-                condense-candidates
-                (if-not may-condense?
-                  []
-                  (filterv (fn [[_ {:keys [old new]}]]
-                             (and (= old :nebula) (not= new :nebula)))
-                           transitions))
-
-                best-condense
-                (when (seq condense-candidates)
+                ;; Seed-and-grow: only :planetesimal condensations become small
+                ;; seeds. Bigger gas-collapse outcomes still promote whole parcels.
+                planetesimal-condenses
+                (filterv (fn [[_ {:keys [old new]}]]
+                           (and (= old :nebula) (= new :planetesimal)))
+                         transitions)
+                big-condenses
+                (filterv (fn [[_ {:keys [old new]}]]
+                           (and (= old :nebula) (not= new :nebula) (not= new :planetesimal)))
+                         transitions)
+                best-big-condense
+                (when (seq big-condenses)
                   (key (apply max-key
                               (fn [[eid]]
                                 (double (or (:density (:region (get transitions eid))) 0.0)))
-                              condense-candidates)))
+                              big-condenses)))
                 applied
                 (into {}
                       (keep (fn [[eid {:keys [old new]}]]
-                              (let [is-condense? (and (= old :nebula)
-                                                      (not= new :nebula))]
-                                (when (or (not is-condense?) (= eid best-condense))
-                                  [eid new]))))
-
+                              (cond
+                                ;; Small-body seed-and-grow: parent parcel stays nebula.
+                                (and (= old :nebula) (= new :planetesimal)) nil
+                                ;; Big gas-collapse: whole-parcel promotion.
+                                (and (= old :nebula) (not= new :nebula))
+                                (when (= eid best-big-condense) [eid new])
+                                ;; Non-condense transitions.
+                                :else [eid new])))
                       transitions)
-                acc-radius
-                (when best-condense
-                  ;; Use the GAS smoothing radius (stored at world creation), not the
-                  ;; post-condensation body radius. The gas radius is the smoothing
-                  ;; length BEFORE KH contraction shrinks the photosphere, so the
-                  ;; feeding zone is wide enough for the core to sweep up neighbors.
-                  (when (pos? gas-r) (* factor gas-r)))]
+                acc-radius-map
+                (when best-big-condense
+                  (let [gas-r (double (or (:genesis/gas-smoothing-radius world) 0.0))
+                        factor (double (:genesis/feeding-zone-factor world feeding-zone-factor))]
+                    (when (pos? gas-r)
+                      {best-big-condense (* factor gas-r)})))]
             (assoc state
                    :transitions transitions
-                   :best-condense best-condense
+                   :best-big-condense best-big-condense
                    :applied applied
-                   :acc-radius acc-radius)))]
+                   :acc-radius-map acc-radius-map)))]
        [:classifier/write-set
-        (fn [{:keys [applied acc-radius best-condense]}]
+        (fn [{:keys [applied acc-radius-map]}]
           (cond-> {c/matter-state applied}
-            acc-radius (assoc c/accretion-radius {best-condense acc-radius})))]]))})
+            acc-radius-map (assoc c/accretion-radius acc-radius-map)))]]))})
+
+(defn condensation-seeder-system
+  "Fan-out emitter: when a :nebula parcel would condense to :planetesimal,
+   instead spawn a small physical seed and debit that mass from the parent parcel.
+   Gated by `condense-tick?`, a one-shot `c/condensation-seeded` marker per parcel,
+   a local-density-maximum filter, and a per-tick seed cap. The parent parcel stays
+   :nebula; the seed materializes next tick and becomes a resolved sink. Growth
+   after seeding is collisional / rare BHL capture, not a runaway channel."
+  []
+  {:id     :condensation-seeder
+   :ns     'domain.stellar
+   :reads  #{c/matter-state c/mass c/density c/position c/velocity
+             c/radius c/composition c/temperature c/condensation-seeded}
+   :writes #{c/spawn-request-condense c/mass-flux-condense c/condensation-seeded}
+   :run
+   (fn [world]
+     (when (condense-tick? world)
+       (let [gas-mass      (:genesis/gas-particle-mass world)
+             zones         (sink-exclusion-zones world)
+             gas-r         (double (or (:genesis/gas-smoothing-radius world) 0.0))
+             radius-factor (double (or (:genesis/condensation-local-radius-factor world) 2.0))
+             max-seeds     (long (or (:genesis/max-condensation-seeds-per-tick world) 1))
+             seed-mass     (pf/condensation-seed-mass world)
+             seed-r        (sphere-radius seed-mass debris-material-density)
+             candidates    (->> (ecs/entities-with world c/matter-state c/mass c/density
+                                                   c/position c/velocity c/radius c/composition c/temperature)
+                                (filter (fn [eid]
+                                          (and (= :nebula (ecs/get-component world eid c/matter-state))
+                                               (not (ecs/get-component world eid c/condensation-seeded))
+                                               (let [region (entity->region world eid)]
+                                                 (= :planetesimal (classify-next-state region gas-mass zones))))))
+                                (filterv (fn [eid]
+                                           (let [rho   (double (or (ecs/get-component world eid c/density) 0.0))
+                                                 pos   (ecs/get-component world eid c/position)
+                                                 r     (* radius-factor gas-r)
+                                                 nbrs  (spatial/query-within-radius world pos r
+                                                                                    #(= :nebula (:matter-state %)))]
+                                             (every? #(>= rho (double (or (:density %) 0.0)))
+                                                     (remove #(= (:id %) eid) nbrs))))))
+             selected      (->> (sort-by #(double (or (ecs/get-component world % c/density) 0.0)) > candidates)
+                                (take max-seeds))]
+         (reduce (fn [ws eid]
+                   (let [pos      (or (ecs/get-component world eid c/position) zero3)
+                         v        (or (ecs/get-component world eid c/velocity) zero3)
+                         parent-r (double (or (ecs/get-component world eid c/radius) 0.0))
+                         comp     (or (ecs/get-component world eid c/composition) default-composition)
+                         temp     (double (or (ecs/get-component world eid c/temperature) 10.0))
+                         ;; Deterministic offset direction from eid.
+                         dir-raw  [(double (mod (* (long eid) 2654435761) 1000003))
+                                   (double (mod (* (long eid) 2654435761 7) 1000003))
+                                   (double (mod (* (long eid) 2654435761 13) 1000003))]
+                         dir      (let [l (sp/len dir-raw)]
+                                    (if (pos? l) (sp/v* dir-raw (/ 1.0 l)) [1.0 0.0 0.0]))
+                         offset   (* 1.1 (+ parent-r seed-r))
+                         seed-pos (sp/v+ pos (sp/v* dir offset))
+                         spec     {:position     seed-pos
+                                   :velocity     v
+                                   :mass         seed-mass
+                                   :radius       seed-r
+                                   :matter-state :planetesimal
+                                   :body-kind    :body/rocky
+                                   :composition  comp
+                                   :temperature  temp}]
+                     (-> ws
+                         (update-in [c/spawn-request-condense eid] (fnil conj []) spec)
+                         (assoc-in [c/mass-flux-condense eid] (- (double seed-mass)))
+                         (assoc-in [c/condensation-seeded eid] true))))
+                 {}
+                 selected))))})
 
 (defn resolution-feeding-zone-factor
   "Feeding-zone factor scaled to the cloud's resolution: a core must bridge the
@@ -1157,37 +1232,6 @@
   [gas-count]
   (let [n (double (max 1 (or gas-count 1000)))]
     (max feeding-zone-factor (/ 500.0 (Math/pow n (/ 1.0 3.0))))))
-
-(defn accretion-zone-system
-  "Double-buffer write-set system: SOLE writer of accretion-radius (the
-   gravitational feeding zone of a star-forming body). It latches the zone at the
-   exact instant of condensation by reusing the classifier's own decision:
-   for every diffuse :nebula parcel that `classify-next-state` will promote out of
-   the gas THIS tick, it writes a feeding zone of `feeding-zone-factor` × the
-   parcel's current gas smoothing radius. Both systems read the same frozen
-   snapshot and the same predicate, so the feeding zone and the matter-state flip
-   land on the same tick — closing the race in which a parcel condensed (via the
-   density gate) one tick before the old jeans-collapse gate (Jeans length with γ)
-   would have fired, leaving it resolved but with no feeding zone, hence never
-   collidable and unable to assemble a core. Bodies already resolved keep their
-   zone (it is never removed and never shrinks)."
-  []
-  {:id     :jeans-collapse
-   :writes #{c/accretion-radius}
-   :run    (fn [world]
-             (let [gas-mass (:genesis/gas-particle-mass world)
-                   factor   (double (:genesis/feeding-zone-factor world feeding-zone-factor))
-                   eids     (ecs/entities-with world c/matter-state c/mass c/radius)]
-               {c/accretion-radius
-                (into {}
-                      (keep (fn [eid]
-                              (let [region (entity->region world eid)
-                                    r      (double (or (:radius region) 0.0))]
-                                (when (and (= :nebula (:matter-state region))
-                                           (pos? r)
-                                           (not= :nebula (classify-next-state region gas-mass)))
-                                  [eid (* factor r)]))))
-                      eids)}))})
 
 (defn- absorb-packets
   "Build the absorb-accrete packet vector for the parcels a sink swallows this

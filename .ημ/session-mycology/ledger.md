@@ -97,3 +97,12 @@
   spore: none
   receipt-refs: none
   note: Two requested fixes (special-case, perf) surfaced a latent mass-conservation conflict (mass_transfer BHL + stellar absorb both draining gas). Big friction: ad-hoc test running was slow + cascaded (orphaned timeout'd JVMs piled up load→more timeouts). Lesson: pause pm2 dev + reap orphaned test JVMs before iterating; a perf 'fix' that activates a dormant duplicate channel can break conservation — always run a conservation trace, not just pass/fail.
+- ts: 2026-07-07T01:00:52.466501171Z
+  session: ses_0c62648feffeHiJD4Cv61Hieaz
+  task: Implemented seed-and-grow condensation with dedicated mass-flux influence channel
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.8
+  spore: none
+  receipt-refs: none
+  note: Pattern: add dedicated influence component, register in integrator registry, materialize via spawn-request.*; gate by local density max + one-shot + cap

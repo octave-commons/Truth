@@ -1,24 +1,24 @@
 (Π-state
   :branch "main"
-  :previous-commit "04050f3e5e932dada11cff8d549674a170e8ab1a"
-  :previous-tag "Π-20260706015353-2-g04050f3"
-  :tag "Π-20260706191332"
-  :timestamp "2026-07-06T19:13:32Z"
-  :architecture-test :failing
+  :previous-commit "8e099475ef4402bece6661219660675fc860d95b"
+  :previous-tag "Π-20260706191332"
+  :tag "Π-20260707010913"
+  :timestamp "2026-07-07T01:09:13Z"
+  :architecture-test :passing
 
   :verification
-  (tests "570 tests, 62327 assertions, 3 failures, 24 errors")
-  (architecture-test "failing: single-writer invariant violated for :component/accretion-radius (:classifier :mass-transfer-radius) and :component/mass-flux (:mass-transfer-flux :roche-lobe)")
+  (tests "590 tests, 65571 assertions, 0 failures, 0 errors")
+  (architecture-test "passing: single-writer invariant restored; no duplicate component writers detected")
 
   :summary
-  ("Phase 0 physics honesty pass: chemistry differentiation, disk regimes, mass transfer, stellar wind plasma state, and radial disk structure."
-   "New specs: core accretion, gradual mass transfer, metal enrichment/seeding, nebular chemistry, protoplanetary disks, radial disk structure, Roche-lobe envelope physics, stellar wind plasma state."
-   "New domain code: domain.mass-transfer (Bondi-Hoyle-Lyttleton + Roche-lobe overflow), law.mass-transfer."
-   "New infra: infra.render/field for rich entity inspection UI field rendering."
-   "Research notebooks added under docs/research/physics/."
-   "ημ actor runtime scripts migrated to OpenCode dispatch model.")
+  ("Seed-and-grow condensation: :nebula parcels now seed :planetesimal cores via a dedicated one-shot condensation-seeder system rather than promoting the whole parcel."
+   "New components: :component/spawn-request.condense, :component/condensation.seeded, :component/mass-flux.condense."
+   "Integrator folds mass-flux.condense into the uniform mass influence channel; no special-case routing."
+   "Registry updated: :condensation-seeder declared with explicit reads/writes; :classifier regains sole ownership of matter-state and accretion-radius."
+   "Research reports moved from docs/reports/research/ to docs/research/ to match current structure."
+   "Receipts and session-mycology ledger updated for this fork-tax turn.")
 
   :notes
-  ("All repo-relevant working-tree changes were absorbed; .ημ/.env remains gitignored and unstaged."
-   "Architecture single-writer invariant is currently violated and must be resolved before next green fork tax."
+  ("All repo-relevant working-tree changes were absorbed, including the report relocation."
+   "Architecture single-writer invariant is green again."
    "No unrelated concurrent dirt was detected."))

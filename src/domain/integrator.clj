@@ -55,7 +55,7 @@
                       :compose :sum :scale :dt}
    :mass             {:accumulate [c/mass-flux-wind c/mass-flux-flare
                                    c/mass-flux-xuv c/mass-flux-disk
-                                   c/mass-flux-transfer]
+                                   c/mass-flux-transfer c/mass-flux-condense]
                       :compose :sum :scale :raw}
    :velocity-delta   {:accumulate [c/dv-wind c/dv-flare c/dv-transfer]
                       :compose :sum :scale :raw}

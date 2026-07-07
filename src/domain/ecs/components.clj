@@ -140,6 +140,7 @@
 (def spawn-request-shatter   :component/spawn-request.shatter)
 (def spawn-request-disk      :component/spawn-request.disk)   ;; disk fragment spawns (binary/planet)
 (def spawn-request-planet    :component/spawn-request.planet) ;; sub-grid planet seeder (Part 4)
+(def spawn-request-condense  :component/spawn-request.condense) ;; small-body seed from gas condensation
 ;; Lifecycle markers, reaped/materialized at world-construction (spec §5). Each
 ;; consumed marker has a single owner so single-writer holds; the reaper removes
 ;; any entity carrying ANY consumed.* marker.
@@ -148,6 +149,11 @@
 (def consumed-wind  :component/consumed.wind)   ;; star ablated below floor, reaped (wind)
 (def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
 (def consumed-transfer :component/consumed.transfer) ;; donor drained below floor by gradual mass transfer, reaped (integrator)
+
+;; Condensation seeding: one-shot marker per gas parcel so it does not seed
+;; repeatedly, and the dedicated mass-flux influence the integrator folds.
+(def condensation-seeded :component/condensation.seeded)
+(def mass-flux-condense  :component/mass-flux.condense)  ;; kg debited from parent parcel at seeding
 
 ;; Fusion promotion signal: post-fold barrier emits this; classifier and
 ;; fusion-system read it on the next tick's snapshot (spec §7). Single writer.

@@ -1,7 +1,7 @@
 # Spec: Seed-and-Grow Condensation — decouple resolved-body mass from parcel mass
 
-**Status:** draft (decided 2026-07-06; ready for implementation)
-**Owner handoff:** Claude Code → OpenCode (kimi)
+**Status:** implemented (2026-07-06; kimi)
+**Owner handoff:** OpenCode (kimi) → runtime / next agent
 **Depends on:** M3 gradual mass transfer (`domain.mass-transfer`, committed `0d03d0f`) — the "grow" half is DONE.
 **Relates to:** `docs/specs/epic-phase0-physics-honesty.md` (M3 core-accretion, sub-grid planetesimal timescale), `docs/designs/resolution-regimes-and-scale-coupling.md`.
 
@@ -44,98 +44,128 @@ unusable. Refining the global parcel set is a dead end.
 
 ## 2. Decision
 
-Condensation **seeds a small physical body and grows it**, instead of promoting a
-whole parcel:
+Condensation **seeds a small physical body** for the lowest rung of the
+substellar ladder (`:nebula → :planetesimal`) instead of promoting a whole
+parcel. Larger gas-collapse outcomes (`:gas-giant`, `:brown-dwarf`,
+`:protostar`) still promote the whole parcel — stars and giant embryos form by
+gas collapse, not by growing asteroid seeds.
 
-1. When a gas parcel reaches condensation conditions, spawn a **small solid seed**
-   entity whose mass is set by **condensation physics** (a streaming-instability
-   clump, ~1e15–1e18 kg — NOT the parcel mass), and **debit that seed mass from
-   the parent gas parcel** (the parcel stays `:nebula`, slightly lighter).
-   Mass is conserved.
-2. The seed then grows — or doesn't — via the **existing M3 gradual BHL**
-   (`domain.mass-transfer`). That half is built and cheap (0.58 ms, ~2% of tick).
+1. When a `:nebula` parcel would condense to `:planetesimal`, spawn a **small
+   solid seed** entity whose mass is set by condensation physics
+   (~1e15–1e18 kg — NOT the parcel mass), and **debit that seed mass from the
+   parent gas parcel** via the dedicated influence `c/mass-flux-condense`. The
+   parent parcel stays `:nebula`, slightly lighter. Mass is conserved.
+2. The seed persists as a small resolved body. Growth is **collisional
+   consolidation** and rare BHL capture, not a runaway channel — a 1e16 kg seed
+   has a microscopic Bondi radius and will not accrete meaningfully from the
+   gas. It populates the small-body belt (Chicxulub-scale impactors → asteroids
+   → planetesimals), not the planet-builder path.
 
-This decouples resolved-body mass from parcel mass, is *more* physical than
-whole-parcel promotion (real planetesimals are ~100 km seeds out of a reservoir),
-and makes Chicxulub / Moon / Earth-scale bodies expressible.
-
-Precedent: the disk planet seeder (`domain.planet-formation/planet-seeds`)
-already spawns sub-parcel cores (0.01–0.1 M⊕). This spec generalizes that
-seed-and-grow pattern to the classifier/condensation path.
+Planets continue to form via the existing disk planet-seeder
+(`domain.planet-formation/planet-seeds`). Stars and brown dwarfs continue to
+form via direct gas collapse of massive parcels. Seed-and-grow decouples the
+*smallest* resolved body mass from the parcel grain.
 
 ## 3. Contract / invariants
 
 - **Conservation:** seed mass is debited from the parent parcel in the same tick
-  it is credited to the seed (Jacobi-consistent). Total mass (gas + bodies)
-  unchanged by seeding.
-- **Seeding is gated, not universal:** one seed per genuine condensation site per
-  epoch (a one-shot marker per site), so entity count (N) does not explode — the
-  tick is super-linear in N (§1), so uncapped seeding would wreck framerate.
-  Consolidation is by accretion + collision, not by seeding every parcel.
+  the spawn request is emitted. Because the seed materializes next tick
+  (`materialize-lifecycle`), the debit folds through the integrator's `:mass`
+  accumulate one tick before the seed appears — a one-tick Jacobi blip that is
+  documented and tested.
+- **Seeding is gated, not universal:**
+  - One seed per parcel (one-shot `c/condensation-seeded` marker).
+  - Local-density-maximum gate: a parcel only seeds if it is denser than its
+    `:nebula` neighbours within a small radius.
+  - Per-tick cap (`:genesis/max-condensation-seeds-per-tick`, default 1).
+  - Only on `condense-tick?` (sim-time paced, not tick paced).
+  These gates prevent an unbounded seed swarm; the tick is super-linear in N.
+- **Parent/child separation:** the seed is offset from the parent parcel by
+  ~parent-radius + seed-radius so the two do not immediately remerge.
 - **Float-precision boundary (hard):** a 4e27 kg parcel cannot register a change
   below ~1e12 kg (its double ULP). Seeds ≥ ~1e15 kg (asteroid) are safe (~12
   orders down, at the edge); anything finer (crust voxels 1e12, organisms 1e0)
   must NOT be bookkept as a parcel debit — that is the nested-regime problem
-  (see `resolution-regimes-and-scale-coupling.md`). Where the ratio is extreme,
-  track body mass and gas mass in *separate* accumulators, never subtract tiny
-  from huge.
-- **Single ECS substrate:** seed via a `spawn-request.*` lifecycle marker
-  (materialized by `materialize-lifecycle`, one-tick Jacobi delay); debit via a
-  single-writer influence channel (reuse `c/mass-flux-transfer`, owned by
-  mass-transfer, or a dedicated `c/mass-flux-condense`). No serial post-fold pass.
+  (see `resolution-regimes-and-scale-coupling.md`).
+- **Single ECS substrate:** seed via `c/spawn-request-condense` (materialized by
+  `materialize-lifecycle`); debit via the dedicated single-writer influence
+  `c/mass-flux-condense`, folded by the integrator through its generic `:mass`
+  accumulate. No serial post-fold pass.
+- **Single-writer:** `c/spawn-request-condense`, `c/mass-flux-condense`, and
+  `c/condensation-seeded` are owned exclusively by
+  `domain.stellar/condensation-seeder-system`.
 
-## 4. Seed-mass model (options — pick in implementation)
+## 4. Seed-mass model
 
-- **(a) Streaming-instability clump (preferred):** seed mass from local solid
-  surface density Σ_solid + Stokes number + metallicity gate — the sub-grid
-  planetesimal-formation timescale already specced in the epic (M3 core-accretion
-  realspec). Physically grounded; ties condensation to composition.
-- **(b) Fixed physical seed:** a constant seed mass (e.g. ~1e16 kg) as a
-  `law.planet-formation` constant. Simplest; good first cut to validate the
-  mechanism before wiring (a).
-- Reject: seed = fraction of parcel (re-introduces parcel-mass coupling).
+Implemented: **(b) Fixed physical seed.**
+
+- `law.planet-formation/condensation-seed-mass-kg` = 1.0e16 kg (~10× Chicxulub).
+- Overridable via `:genesis/condensation-seed-mass-kg` on the world.
+- Radius derived from `debris-material-density` (~2e3 kg/m³).
+
+Rejected: seed = fraction of parcel (re-introduces parcel-mass coupling).
+
+Future: **(a) Streaming-instability clump** can replace the constant once the
+sub-grid solid surface density / Stokes-number model is wired.
 
 ## 5. Classifier / vocabulary
 
 Keep the physical ladder thresholds (`law.stellar` opacity-limit / deuterium /
 brown-dwarf-desert / hydrogen-burning) — they are real. With seed-and-grow,
 `:planetesimal` bodies become *actually* small, so the label stops being a
-misnomer. If seeds can be sub-planetesimal (asteroid scale), consider whether the
-`:planetesimal` bucket needs a finer floor label; do NOT rename the physical
-ladder.
+misnomer. `:gas-giant` and above still form by whole-parcel gas collapse; do
+not rename the ladder.
 
 ## 6. Implementation sketch
 
-1. `law.planet-formation` (or `law.stellar`): a `condensation-seed-mass` fn
-   (model §4) + constants.
-2. Classifier / condensation site detection (`domain.stellar` classify path):
-   where a parcel currently promotes `:nebula → :planetesimal`, instead emit a
-   `spawn-request.condense` (seed spec at seed-mass) + a parcel mass debit, guarded
-   by a one-shot per-site marker.
-3. `materialize-lifecycle`: materialize condensation seeds (already generic over
-   spawn-request.*; add the new marker to the list).
-4. Grow: no new code — the seed is a resolved sink; M3 BHL grows it.
-5. Registry: single-writer for the new spawn-request + debit channels; update
-   `test/architecture_test.clj` expectations.
+1. `law.planet-formation`: `condensation-seed-mass-kg` constant and
+   `condensation-seed-mass` accessor.
+2. `domain.ecs.components`: add `c/spawn-request-condense`,
+   `c/mass-flux-condense`, `c/condensation-seeded`.
+3. `domain.integrator/influence-registry`: add `c/mass-flux-condense` to the
+   `:mass` accumulate.
+4. `domain.stellar/classifier-system`: skip `:nebula → :planetesimal`
+   transitions. Continue whole-parcel promotion for `:gas-giant`,
+   `:brown-dwarf`, `:protostar`.
+5. `domain.stellar/condensation-seeder-system`: new fan-out emitter that finds
+   `:planetesimal` condense candidates, applies the density/cap gates, and emits
+   spawn requests + debit + one-shot marker.
+6. `domain.genesis/materialize-lifecycle`: add `c/spawn-request-condense` to the
+   spawn-request list.
+7. `domain.genesis/physics-systems-parallel`: register the seeder.
+8. `domain.ecs.registry`: declare the seeder's reads/writes.
+9. Tests: conservation, seed-mass-below-parcel, parent-seed separation,
+   one-shot, big-condense still whole-parcel, bounded seed count.
 
 ## 7. Tests (epistemic contracts)
 
-- `condensation-conserves-mass`: seed mass debited exactly from parent parcel.
-- `seed-mass-below-parcel`: a condensed seed is « one parcel (e.g. < 1 M⊕).
-- `seed-grows-by-accretion`: a seed in a gas-rich zone grows over N ticks via M3
-  (mass increases; conservation holds).
-- `seeding-is-bounded`: N does not blow up — seeding gated to condensation sites,
-  bounded seed count over a standard collapse run.
+- `condensation-conserves-mass`: seed mass debited exactly from parent parcel
+  via `c/mass-flux-condense`; integrator folds the debit.
+- `seed-mass-below-parcel`: a condensed seed is ≪ one parcel (e.g. < 1 M⊕).
+- `seed-is-offset-from-parent`: seed position is displaced by ≥ parent radius +
+  seed radius so it does not immediately remerge.
+- `seeding-is-one-shot`: a parcel carrying `c/condensation-seeded` never emits a
+  second spawn request.
+- `seeding-skips-big-condensations`: `:nebula` parcels that classify to
+  `:gas-giant`/`:brown-dwarf`/`:protostar` are not seeded.
+- `classifier-still-promotes-big-condensations`: classifier-system flips massive
+  gas parcels to `:protostar` and latches `c/accretion-radius`.
+- `seeding-is-bounded`: N does not blow up — seeding gated by local-density
+  maximum, per-tick cap, and one-shot marker; bounded seed count over a standard
+  collapse run.
 - Formation pipeline stays green: `dominant_star`, `formation_integration`,
   biogenesis path still produce a star + Earth-scale worlds (re-tune thresholds
   if the emergent scale shifts — the *intent* is unchanged).
 
 ## 8. Open questions
 
-- Seed-mass model (a) vs (b) for the first landing — recommend (b) to validate,
-  then (a).
+- Seed-mass model (a) vs (b): currently (b); swap to streaming-instability when
+  the sub-grid solid budget is available.
 - Should sub-planetesimal seeds (asteroid belt) persist indefinitely, or be
   consolidated/reaped below some count? (Physically they should persist and cause
   impacts — ties to Phase-1 mass-extinction modelling.)
 - Exact float-precision guard: where to draw the "separate accumulator" line vs
-  parcel-debit (§3) — measure ULP behaviour in a conservation test.
+  parcel-debit — measure ULP behaviour in a conservation test.
+- Collisional growth: the current literal-overlap collision path does not model
+  gravitational focusing. Oligarchic growth from seeds to planets is future work;
+  for now planets come from the disk seeder.

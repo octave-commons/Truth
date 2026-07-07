@@ -31,6 +31,21 @@
 (def ^:const max-seed-mass-solar 13.0)
 (def ^:const disk-maturity-seconds 3.156e13) ;; 1 Myr default
 
+;; --- Condensation seed mass (seed-and-grow small bodies) ---------------------
+;; Real planetesimal-formation models (streaming instability) produce clumps of
+;; ~100-km bodies, ~1e15–1e18 kg. We fix a toy-scale seed at the high end of that
+;; range (~10× Chicxulub) so it is safely above the parcel ULP and numerically
+;; stable as a parcel debit, while staying far below a gas parcel (4e27 kg).
+;; Growth after seeding is collisional / rare BHL capture, not rapid runaway.
+(def ^:const condensation-seed-mass-kg 1.0e16)
+
+(defn condensation-seed-mass
+  "Return the fixed physical seed mass for a condensation event. Overridable via
+   `:genesis/condensation-seed-mass-kg` on the world."
+  [world]
+  (double (or (:genesis/condensation-seed-mass-kg world)
+              condensation-seed-mass-kg)))
+
 (defn- unit [v]
   (let [l (sp/len v)] (if (pos? l) (sp/v* v (/ 1.0 l)) v)))
 

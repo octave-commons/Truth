@@ -483,10 +483,16 @@
      (player/observer-acceleration-system)
      (intervention/thermal-intervention-system)
      (integ/integrator-system dt)
-     ;; transform systems
+      ;; transform systems
      (stellar/structure-system)
      (stellar/eos-system)
+      ;; Classifier: matter-state transitions and accretion-radius latching for
+      ;; non-planetesimal condensations (stars/giant embryos still whole-parcel).
      (stellar/classifier-system)
+      ;; Seed-and-grow: :nebula → :planetesimal condensations spawn a small solid
+      ;; seed instead of promoting the whole parcel, decoupling body mass from
+      ;; the Lagrangian parcel grain.
+     (stellar/condensation-seeder-system)
      (em/field-system dt)
      (stellar/fusion-system)
      (stellar/stellar-sed-system)
@@ -539,7 +545,7 @@
    entities at world-construction."
   [c/spawn-request-wind c/spawn-request-flare
    c/spawn-request-accretion c/spawn-request-shatter
-   c/spawn-request-disk c/spawn-request-planet])
+   c/spawn-request-disk c/spawn-request-planet c/spawn-request-condense])
 
 (defn materialize-lifecycle
   "World-construction step (spec §5): spawn the entities requested by the fan-out

@@ -62,16 +62,26 @@
    ;; Jeans-collapse was removed from the pipeline; accretion-radius is now
    ;; written by the classifier (sole writer of both matter-state and accretion-radius).
 
-   ;; The classifier is the SOLE writer of matter-state AND accretion-radius:
-   ;; the authentic formation state machine (Jeans+mass+ignition) with throttled
-   ;; condensation. Subsumes the old classify system, jeans-collapse, and fusion.
+    ;; The classifier is the SOLE writer of matter-state AND accretion-radius:
+    ;; the authentic formation state machine (Jeans+mass+ignition) with throttled
+    ;; condensation. Subsumes the old classify system, jeans-collapse, and fusion.
    {:id     :classifier
     :ns     'domain.stellar
     :reads  #{c/matter-state c/mass c/radius c/density c/temperature
               c/pressure c/composition c/promotion-signal}
     :writes #{c/matter-state c/accretion-radius}}
 
-   ;; Gravity is split out of the old orbital system: the Barnes–Hut tree-walk
+    ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
+    ;; small physical seed instead of promoting the whole parcel. Emits the spawn
+    ;; request, the parent parcel's mass-flux-condense debit, and a one-shot
+    ;; condensation-seeded marker. The integrator folds the debit.
+   {:id     :condensation-seeder
+    :ns     'domain.stellar
+    :reads  #{c/matter-state c/mass c/density c/position c/velocity
+              c/radius c/composition c/temperature c/condensation-seeded}
+    :writes #{c/spawn-request-condense c/mass-flux-condense c/condensation-seeded}}
+
+    ;; Gravity is split out of the old orbital system: the Barnes–Hut tree-walk
    ;; emits the accel.gravity contribution on its own thread, and the thin motion
    ;; integrator sums all accel.* contributions and advances position/velocity.
    {:id     :gravity
@@ -100,7 +110,7 @@
               c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk
               c/mass-flux-wind c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
-              c/mass-flux-transfer c/dv-wind c/dv-flare c/dv-transfer
+              c/mass-flux-transfer c/mass-flux-condense c/dv-wind c/dv-flare c/dv-transfer
               c/absorb-merge c/absorb-accrete}
     :writes #{c/position c/velocity c/temperature c/composition c/comp-condensed
               c/angular-momentum c/spin c/mass c/consumed-transfer}}

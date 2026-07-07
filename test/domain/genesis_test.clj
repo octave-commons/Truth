@@ -366,18 +366,17 @@
       (is (:star? summ) "a star should ignite on the parallel path too")
       (is (>= (:resolved-count summ) 1)
           "bodies should condense and assemble rather than stall as gas")
-      ;; the fix's mechanism: condensed bodies carry a feeding zone
+      ;; Big gas-collapse condensations still latch a feeding zone in the classifier.
       (is (seq (ecs/entities-with final c/accretion-radius))
           "condensed bodies must latch a gravitational feeding zone"))))
 
-(deftest test-accretion-zone-tracks-condensation
-  (testing "The feeding zone is latched exactly when the classifier condenses"
-    ;; A dense, Jeans-unstable, star-forming parcel: the classifier promotes it
-    ;; out of :nebula, and accretion-zone-system must write its feeding zone on
-    ;; the same frozen snapshot — keyed off the same classify-next-state decision.
+(deftest test-classifier-latches-feeding-zone-for-big-condensations
+  (testing "The feeding zone is latched when the classifier whole-parcel promotes"
+    ;; A dense, Jeans-unstable parcel above the planetesimal floor: the classifier
+    ;; promotes it out of :nebula and writes c/accretion-radius on the same tick.
     (let [gas-mass law/deuterium-burning-mass
           ;; a fat, dense gas parcel above the deuterium limit, larger than its
-          ;; Jeans length so it is unstable and will condense to a protostar
+          ;; Jeans length so it is unstable and will condense to a brown dwarf
           region {:matter-state :nebula
                   :mass    (* 4.0 law/deuterium-burning-mass)
                   :radius  1.0e14
@@ -393,11 +392,15 @@
                                    {c/matter-state :nebula c/mass (:mass region)
                                     c/radius (:radius region) c/density (:density region)
                                     c/temperature (:temperature region) c/position [0.0 0.0 0.0]})
-            ws ((:run (stellar/accretion-zone-system)) w)
-            zone (get-in ws [c/accretion-radius eid])]
+            ws ((:run (stellar/classifier-system)) w)
+            new-state (get-in ws [c/matter-state eid])
+            zone (get-in ws [c/accretion-radius eid])
+            expected-zone (* stellar/feeding-zone-factor
+                             (:genesis/gas-smoothing-radius base))]
+        (is (not= :nebula new-state) "a big condensing parcel is promoted out of nebula")
         (is (some? zone) "a condensing parcel is given a feeding zone")
-        (is (= zone (* stellar/feeding-zone-factor (:radius region)))
-            "the zone is feeding-zone-factor × the GAS smoothing radius")))))
+        (is (= zone expected-zone)
+            "the zone is feeding-zone-factor × the global gas smoothing radius")))))
 
 ;; Endings moved to domain.arc/genesis-ending — see test/domain/arc_test.clj.
 
