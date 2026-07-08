@@ -196,3 +196,12 @@
   spore: none
   receipt-refs: 2026-07-08T21:09:37Z
   note: Followed fork-tax skill end-to-end: detected 4 significant files, regenerated handoff artifacts, committed, tagged, pushed, and recorded receipt. Manifest generation with unicode paths required -c core.quotepath=off; otherwise smooth.
+- ts: 2026-07-08T22:15:42.967057810Z
+  session: ses_0bc38856effezD9zGZ99tmJvH9
+  task: fork-tax-tender: pay fork tax on Gates of Truth significant changes
+  p-efficiency: 0.7
+  p-friction: 0.4
+  p-skill-candidate: 0.5
+  spore: none
+  receipt-refs: none
+  note: Manifest generation via bash while-read mangled Unicode paths; fell back to Python. Self-referential manifest hash remains circular and stale. Snapshot pushed successfully as Π-20260708221336.
