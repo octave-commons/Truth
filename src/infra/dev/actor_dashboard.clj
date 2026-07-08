@@ -268,6 +268,7 @@
                            notebooks))
          "</ul></div>"
          "<div class='section'><h2>Quick Commands</h2><pre>"
+         "actor-status fork-tax-tender\n"
          "actor-status truth-research-physics\n"
          "actor-status truth-research-cosmology\n"
          "actor-status truth-research-peer-reviewer\n"

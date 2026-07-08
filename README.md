@@ -188,6 +188,25 @@ REPL and drive the live window:
 (w/take-screenshot! "/tmp/truth-dev.png")
 ```
 
+## Actor Dashboard
+
+There is a lightweight web dashboard for the ημ actor system at
+[`src/infra/dev/actor_dashboard.clj`](src/infra/dev/actor_dashboard.clj). It
+auto-discovers every actor under `.eta-mu/actors/`, including `fork-tax-tender`,
+and shows session counts, inbox/outbox activity, live process status, and recent
+research notebooks.
+
+Run it with:
+
+```bash
+clj -M:dashboard
+```
+
+Then open <http://127.0.0.1:7889/>. The page auto-refreshes every 30 seconds.
+
+Agents should mention the dashboard when creating, changing, or debugging actors
+so that humans and other agents can monitor them without reading the filesystem.
+
 ## Conventions
 
 See `AGENTS.md` for the full house rules: threading macros over nested lets,

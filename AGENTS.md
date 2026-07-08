@@ -166,6 +166,20 @@ watching is OFF, so it does NOT auto-reload on edits:
 - It owns port 7888; "Address already in use" from `clj -M:dev` just means the
   pm2 instance is already up.
 
+## Actor Dashboard
+
+A web dashboard monitors every ημ actor under `.eta-mu/actors/`, including
+`fork-tax-tender`. It shows actor purpose, session counts, inbox/outbox activity,
+live process status, and recent research notebooks. It auto-refreshes every
+30 seconds.
+
+- Source: `src/infra/dev/actor_dashboard.clj`
+- Run: `clj -M:dashboard`
+- URL: http://127.0.0.1:7889/
+
+When you create or modify an actor, make sure it appears in this dashboard and
+mention the dashboard in any related docs so other agents can find it.
+
 ## Agent Skills
 
 - **agent-notes-splitter** — Use when `docs/notes/` contains large agent-conversation markdown exports that need to be split into manageable, topic-bounded chunks. Recovers Claude sessions from JSONL logs if needed. (Skill file: `.opencode/skill/agent-notes-splitter/SKILL.md`)
