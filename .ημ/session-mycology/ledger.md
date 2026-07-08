@@ -169,3 +169,21 @@
   spore: none
   receipt-refs: none
   note: Split itself was straightforward; friction came from unrelated repo drift (syntax errors in untracked domain/em/lorentz.clj and stale infra tests) blocking full test suite.
+- ts: 2026-07-08T20:13:41.291991399Z
+  session: ses_0bca81203ffecQchj9Ym6sE3q6
+  task: Pay fork tax for stellar domain work snapshot
+  p-efficiency: 0.8
+  p-friction: 0.3
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: 2026-07-08T20:07:41Z
+  note: Standard fork-tax execution. Regenerated manifest after fixing self-inflicted previous-commit hash typo; manifest self-hash fixed-point remains awkward. Recorded test failure in domain.genesis-test verification. No concurrent dirt; actor bookkeeping ignored.
+- ts: 2026-07-08T20:16:36.058559008Z
+  session: ses_0c0f9f161ffegZK7S36nqvx4Zs
+  task: Recovered lost two-channel formation from receipts.edn
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.75
+  spore: receipt-driven-regression-recovery
+  receipt-refs: receipt 96
+  note: Receipt 96 held the intended design; regression triage should tail receipts before writing replacement code

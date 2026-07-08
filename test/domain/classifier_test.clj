@@ -33,16 +33,16 @@
     (is (= :nebula (next-state (apply region pm (mapcat identity unstable))))))
   (testing "Jeans-unstable AND accreted past one parcel, sub-stellar ⇒ condensed core"
     (is (= :condensed-core (next-state (apply region (* 1.2 pm)
-                                                (concat (mapcat identity unstable)
-                                                        [:density classifier/core-condensation-density]))))))
+                                              (concat (mapcat identity unstable)
+                                                      [:density classifier/core-condensation-density]))))))
   (testing "Jeans-unstable AND accreted to gas-giant mass ⇒ condensed core"
     (is (= :condensed-core (next-state (apply region (* 5.0 pm)
-                                                (concat (mapcat identity unstable)
-                                                        [:density classifier/core-condensation-density]))))))
+                                              (concat (mapcat identity unstable)
+                                                      [:density classifier/core-condensation-density]))))))
   (testing "Jeans-unstable AND accreted to brown-dwarf mass ⇒ condensed core"
     (is (= :condensed-core (next-state (apply region law/deuterium-burning-mass
-                                                (concat (mapcat identity unstable)
-                                                        [:density classifier/core-condensation-density]))))))
+                                              (concat (mapcat identity unstable)
+                                                      [:density classifier/core-condensation-density]))))))
   (testing "Jeans-unstable AND accreted to stellar-forming mass ⇒ condensed core"
     (is (= :condensed-core (next-state (apply region law/hydrogen-burning-mass
                                               (concat (mapcat identity unstable)

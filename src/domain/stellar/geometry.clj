@@ -87,9 +87,9 @@
         rad-map (get-in world [:components c/radius] {})]
     (persistent!
      (reduce-kv (fn [acc eid st]
-                   (if (and (#{:planetesimal :gas-giant :brown-dwarf :planet :condensed-core :protostar :star} st)
-                            (contains? mass-map eid)
-                            (contains? rad-map eid))
+                  (if (and (#{:planetesimal :gas-giant :brown-dwarf :planet :condensed-core :protostar :star} st)
+                           (contains? mass-map eid)
+                           (contains? rad-map eid))
                     (conj! acc eid)
                     acc))
                 (transient [])

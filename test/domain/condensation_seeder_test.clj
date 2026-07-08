@@ -36,7 +36,7 @@
   (assoc w :genesis/sim-time (- classifier/condense-interval (double dt))
          :sim/dt (double dt)))
 
-  (deftest seeder-emits-seed-for-planetesimal-condensation
+(deftest seeder-emits-seed-for-planetesimal-condensation
   (testing "a :nebula parcel in the disk gets a planetesimal spawn request"
     (let [w (ecs/empty-world)
           [w eid] (ecs/spawn w)
