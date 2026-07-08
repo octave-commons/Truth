@@ -40,9 +40,10 @@ EOF
 cp "$PAYLOAD_MSG_FILE" "$ACTOR_DIR/inbox/$TS-$SESSION_UUID.md"
 
 # Initial session metadata.
+CREATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 cat > "$SESSION_DIR/session.edn" <<EOF
 {:session/id "$SESSION_UUID"
- :session/created-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+ :session/created-at "$CREATED_AT"
  :session/actor-id "$ACTOR_ID"
  :session/status :running
  :session/opencode-session-id nil
@@ -76,7 +77,7 @@ OC_SESSION_ID="${OC_SESSION_ID:-unknown}"
 # Update session metadata.
 cat > "$SESSION_DIR/session.edn" <<EOF
 {:session/id "$SESSION_UUID"
- :session/created-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+ :session/created-at "$CREATED_AT"
  :session/actor-id "$ACTOR_ID"
  :session/status :completed
  :session/opencode-session-id "$OC_SESSION_ID"

@@ -2,9 +2,15 @@
   "Lightweight web dashboard for the ημ actor system.
 
     Serves a single auto-refreshing HTML page that shows every actor under
-    `.eta-mu/actors/`, its sessions, inbox/outbox activity, and recent research
-    notebook output. The dashboard itself uses only the JDK built-in HttpServer;
-    research notebooks are rendered to HTML with CommonMark.
+    `.eta-mu/actors/`, its sessions (with timestamps and clickable log links),
+    inbox/outbox activity, live process status, and recent research notebook
+    output. The dashboard itself uses only the JDK built-in HttpServer; research
+    notebooks are rendered to HTML with CommonMark.
+
+    Sessions are clickable: each session row links to `/session?actor=...&session=...`
+    which shows the session log (opencode-run.log / eta-mu-run.log) or session.edn.
+    The status column combines the declared `:session/status` with the actual process
+    state, so a `:running` session whose PID is dead shows as \"running (dead)\".
 
     Run:
       clj -M:dashboard
@@ -71,24 +77,29 @@
          (map #(vector (.getName ^File %) (file-mtime ^File %))))
     []))
 
-(defn- session-status
-  "Read :session/status from session.edn, defaulting to :unknown."
-  [^File session-dir]
-  (let [f (io/file session-dir "session.edn")]
-    (if (.exists f)
-      (try
-        (get (edn/read-string (slurp f :encoding "UTF-8")) :session/status :unknown)
-        (catch Exception _ :unknown))
-      :unknown)))
-
-(defn- session-pid
-  "Read :session/dispatch-pid from session.edn, or nil."
+(defn- session-metadata
+  "Read session.edn as a map, or nil if missing/unreadable."
   [^File session-dir]
   (let [f (io/file session-dir "session.edn")]
     (when (.exists f)
       (try
-        (get (edn/read-string (slurp f :encoding "UTF-8")) :session/dispatch-pid)
+        (edn/read-string (slurp f :encoding "UTF-8"))
         (catch Exception _ nil)))))
+
+(defn- session-status
+  "Read :session/status from session.edn, defaulting to :unknown."
+  [^File session-dir]
+  (or (:session/status (session-metadata session-dir)) :unknown))
+
+(defn- session-pid
+  "Read :session/dispatch-pid from session.edn, or nil."
+  [^File session-dir]
+  (:session/dispatch-pid (session-metadata session-dir)))
+
+(defn- session-created-at
+  "Read :session/created-at from session.edn, or nil."
+  [^File session-dir]
+  (:session/created-at (session-metadata session-dir)))
 
 (defn- process-alive?
   "Return true if a process with pid is currently running."
@@ -108,6 +119,20 @@
         (.format dt (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss")))
       (catch Exception _ (str ms)))))
 
+(defn- parse-iso
+  "Parse an ISO-8601 instant string to epoch millis, or nil."
+  [^String s]
+  (when s
+    (try
+      (.toEpochMilli (Instant/parse s))
+      (catch Exception _ nil))))
+
+(defn- strip-ansi
+  "Remove ANSI escape sequences from a string."
+  [^String s]
+  (when s
+    (str/replace s #"\u001B\[[0-9;?]*[A-Za-z]" "")))
+
 (defn- actor-state
   "Build a state map for a single actor directory."
   [^File dir]
@@ -116,11 +141,17 @@
         inbox (io/file dir "inbox")
         outbox (io/file dir "outbox")
         sessions-with-status (map (fn [s]
-                                    {:id (.getName s)
-                                     :status (session-status s)
-                                     :pid (session-pid s)
-                                     :alive? (process-alive? (session-pid s))
-                                     :log "session.edn"})
+                                    (let [pid (session-pid s)
+                                          alive? (process-alive? pid)]
+                                      {:id (.getName s)
+                                       :status (session-status s)
+                                       :pid pid
+                                       :alive? alive?
+                                       :created-at (session-created-at s)
+                                       :mtime (file-mtime s)
+                                       :log (or (some #(when (.exists (io/file s %)) %)
+                                                      ["opencode-run.log" "eta-mu-run.log"])
+                                              "session.edn")}))
                                   sessions)]
     {:id (name (:actor/id edn (keyword (.getName dir))))
      :name (or (:actor/name edn) (name (:actor/id edn)))
@@ -194,21 +225,32 @@
        "<td>" outbox-count "</td>"
        "</tr>"))
 
+(defn- effective-status
+  "Return a display string and color that combines declared status and process state."
+  [{:keys [status alive?]}]
+  (cond
+    (and (= status :running) alive?)   {:text "running"     :color "#4caf50"}
+    (and (= status :running) (not alive?)) {:text "running (dead)" :color "#ff9800"}
+    (= status :completed)              {:text "completed" :color "#2196f3"}
+    (= status :failed)                 {:text "failed"    :color "#f44336"}
+    (= status :unknown)                {:text "unknown"   :color "#9e9e9e"}
+    :else                              {:text (str status) :color "#9e9e9e"}))
+
 (defn- session-row
-  "Render a session detail row."
-  [{:keys [id status alive?]} actor-id]
-  (let [status-color (case status
-                       :running "#4caf50"
-                       :completed "#2196f3"
-                       :failed "#f44336"
-                       :unknown "#9e9e9e"
-                       "#9e9e9e")
-        alive-text (if alive? "alive" "dead")]
+  "Render a session detail row with clickable link and timestamps."
+  [{:keys [id alive? created-at mtime log] :as session} actor-id]
+  (let [{:keys [text color]} (effective-status session)
+        link (str "/session?actor=" (java.net.URLEncoder/encode actor-id "UTF-8")
+                  "&session=" (java.net.URLEncoder/encode id "UTF-8"))
+        created-ms (parse-iso created-at)]
     (str "<tr>"
          "<td>" (html-escape actor-id) "</td>"
-         "<td>" (html-escape id) "</td>"
-         "<td><span style='color:" status-color "'>" (html-escape (str status)) "</span></td>"
-         "<td>" alive-text "</td>"
+         "<td><a href='" link "'><code>" (html-escape id) "</code></a></td>"
+         "<td><span style='color:" color "'>" (html-escape text) "</span></td>"
+         "<td>" (if alive? "alive" "dead") "</td>"
+         "<td>" (or (format-epoch created-ms) "—") "</td>"
+         "<td>" (or (format-epoch mtime) "—") "</td>"
+         "<td><code>" (html-escape log) "</code></td>"
          "</tr>")))
 
 (defn- file-list
@@ -238,10 +280,12 @@
          "th,td{padding:0.6rem 1rem;text-align:left;border-bottom:1px solid #334155}"
          "th{background:#0f172a;color:#94a3b8}"
          "tr:hover{background:#334155}"
+         "a{color:#38bdf8;text-decoration:none}"
+         "a:hover{text-decoration:underline}"
          "code{background:#0f172a;padding:0.1rem 0.4rem;border-radius:0.25rem}"
          "ul{line-height:1.6}"
          ".section{margin:2rem 0;padding:1rem;background:#1e293b;border-radius:0.5rem}"
-         ".status-green{color:#4caf50}.status-red{color:#f44336}.status-blue{color:#2196f3}"
+         ".status-green{color:#4caf50}.status-red{color:#f44336}.status-blue{color:#2196f3}.status-orange{color:#ff9800}"
          "</style></head><body>"
          "<h1>ημ Actor Dashboard</h1>"
          "<p>Auto-refreshes every 30 seconds. Last update: " (format-epoch (System/currentTimeMillis)) "</p>"
@@ -250,7 +294,7 @@
          (str/join "" (map actor-row actors))
          "</table></div>"
          "<div class='section'><h2>Sessions</h2><table>"
-         "<tr><th>Actor</th><th>Session</th><th>Status</th><th>Process</th></tr>"
+         "<tr><th>Actor</th><th>Session</th><th>Status</th><th>Process</th><th>Created</th><th>Updated</th><th>Log</th></tr>"
          (str/join "" (mapcat (fn [a] (map #(session-row % (:id a)) (:sessions a))) actors))
          "</table></div>"
          "<div class='section'><h2>Recent Outbox</h2>"
@@ -330,6 +374,63 @@
         (finally
           (.close exchange))))))
 
+(defn- query-params
+  "Parse a query string into a map of keyword keys to decoded string values."
+  [^String query]
+  (when query
+    (into {}
+          (for [pair (str/split query #"&")
+                :let [kv (str/split pair #"=" 2)]
+                :when (= 2 (count kv))]
+            [(keyword (java.net.URLDecoder/decode (first kv) "UTF-8"))
+             (java.net.URLDecoder/decode (second kv) "UTF-8")]))))
+
+(defn- session-handler
+  "HttpHandler to serve a session log or session.edn by actor + session id."
+  []
+  (reify HttpHandler
+    (handle [_ exchange]
+      (try
+        (let [params (query-params (some-> exchange .getRequestURI .getQuery))
+              actor-id (:actor params)
+              session-id (:session params)
+              session-dir (io/file (actor-dir) actor-id "sessions" session-id)
+              log-file (some #(when (.exists (io/file session-dir %)) (io/file session-dir %))
+                             ["opencode-run.log" "eta-mu-run.log"])
+              edn-file (io/file session-dir "session.edn")]
+          (cond
+            (and log-file (.exists log-file))
+            (let [body (slurp log-file :encoding "UTF-8")
+                  html (str "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
+                            "body{font-family:system-ui,-apple-system,sans-serif;max-width:80rem;margin:2rem auto;line-height:1.6;background:#0f172a;color:#e2e8f0;padding:0 1rem}"
+                            "a{color:#38bdf8}"
+                            "pre{background:#1e293b;padding:1rem;overflow:auto;border-radius:.5rem;white-space:pre-wrap}"
+                            "code{background:#0f172a;padding:.1rem .3rem;border-radius:.25rem}"
+                            "</style></head><body><a href='/'>← Dashboard</a><hr>"
+                            "<h2>Session log: " (html-escape actor-id) " / " (html-escape session-id) "</h2>"
+                            "<pre><code>" (html-escape (strip-ansi body)) "</code></pre>"
+                            "</body></html>")]
+              (send-html exchange 200 html))
+
+            (.exists edn-file)
+            (let [body (slurp edn-file :encoding "UTF-8")
+                  html (str "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
+                            "body{font-family:system-ui,-apple-system,sans-serif;max-width:60rem;margin:2rem auto;line-height:1.6;background:#0f172a;color:#e2e8f0;padding:0 1rem}"
+                            "a{color:#38bdf8}"
+                            "pre{background:#1e293b;padding:1rem;overflow:auto;border-radius:.5rem}"
+                            "</style></head><body><a href='/'>← Dashboard</a><hr>"
+                            "<h2>Session metadata: " (html-escape actor-id) " / " (html-escape session-id) "</h2>"
+                            "<pre><code>" (html-escape body) "</code></pre>"
+                            "</body></html>")]
+              (send-html exchange 200 html))
+
+            :else
+            (send-html exchange 404 "<h1>Session not found</h1>")))
+        (catch Exception e
+          (send-html exchange 500 (str "<pre>" (html-escape (pr-str e)) "</pre>")))
+        (finally
+          (.close exchange))))))
+
 (defn start!
   "Start the dashboard HTTP server on the given port and block."
   ([] (start! 7889))
@@ -337,6 +438,7 @@
    (let [server (HttpServer/create (InetSocketAddress. "127.0.0.1" port) 0)]
      (.createContext server "/" (dashboard-handler))
      (.createContext server "/notebook" (notebook-handler))
+     (.createContext server "/session" (session-handler))
      (.setExecutor server nil)
      (.start server)
      (println (str "Actor dashboard listening on http://127.0.0.1:" port "/"))

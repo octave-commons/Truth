@@ -273,7 +273,7 @@
     :run    accretion-radius-system})
   ([world]
    (let [sinks (find-sink-eids world)
-         dt    (double (or (:genesis/dt world) 1.0))
+         dt    (double (or (:sim/dt world) 1.0))
          c-s   stellar/capture-velocity-dispersion]
      {c/accretion-rate
       (->> sinks
@@ -310,7 +310,7 @@
     :writes #{c/mass-flux-transfer c/dv-transfer c/disk-mass-flux c/disk-l-flux}
     :run    sink-accretion-flux-system})
   ([world]
-   (let [dt        (double (or (:genesis/dt world) 1.0))
+   (let [dt        (double (or (:sim/dt world) 1.0))
          tick      (long (or (:tick world) 0))
          cap       (double (or (:genesis/accretion-fraction-cap world) lmt/default-accretion-fraction-cap))
          donor-cap (double (or (:genesis/donor-fraction-cap world) lmt/default-donor-fraction-cap))
@@ -340,7 +340,7 @@
     :writes #{c/roche-lobe c/mass-transfer-rate c/mass-flux-transfer c/dv-transfer}
     :run    roche-lobe-system})
   ([world]
-   (let [dt (double (or (:genesis/dt world) 1.0))]
+   (let [dt (double (or (:sim/dt world) 1.0))]
      (reduce (fn [ws pair-eid] (roche-pair-write-set world pair-eid dt ws))
              {}
              (ecs/entities-with world c/binary-pair)))))

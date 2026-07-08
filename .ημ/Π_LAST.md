@@ -1,23 +1,24 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260708210937`
-- **Timestamp:** 2026-07-08T21:09:37Z
+- **Π tag:** `Π-20260708221336`
+- **Timestamp:** 2026-07-08T22:13:36Z
 - **Branch:** `main`
-- **Parent head:** `248f014`
+- **Parent head:** `47e73f7de4071fce94d31288fa227d8b89f09976`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `AGENTS.md`
-- `README.md`
+- `.ημ/actors/fork-tax-tender/runtime/systemd-runner.sh`
+- `.ημ/Π_LAST.md`
+- `.ημ/Π_MANIFEST.sexp`
+- `.ημ/Π_STATE.sexp`
 - `receipts.edn`
+- `src/domain/mass_transfer.clj`
 - `src/infra/dev/actor_dashboard.clj`
-- `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`
 
 ## Verification
 
-- `clj-kondo --lint src/infra/dev/actor_dashboard.clj` — 0 errors, 0 warnings.
-- `.eta-mu/actors/fork-tax-tender/runtime/significant-changes.sh` — `SIGNIFICANT_CHANGES`: 4 tracked/project files, 2 unpushed commits.
+- `clj -M:test` — 617 tests, 0 failures, 0 errors.
 
 ## Concurrent / Ephemeral
 
