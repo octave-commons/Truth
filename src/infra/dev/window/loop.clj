@@ -284,7 +284,7 @@
                           (swap! world-atom sync-observer-focus-to-camera cam ctx (:mode cam-settings)))
               _         (when-let [ar (:action-request cfg)]
                           (when-let [obs (player/get-observer @world-atom)]
-                            (swap! world-atom intervention/place (:kind ar) (:position obs)))
+                            (swap! world-atom intervention/place (:kind ar) (:focus-position obs)))
                           (swap! config-atom dissoc :action-request))
               _         (when-let [prn-val (:pick-request cfg)]
                           (let [winw (int-array 1) winh (int-array 1)
@@ -374,7 +374,11 @@
           ks         (atom {})]
       (swap! service-state assoc :window window)
       (GLFW/glfwSetInputMode window GLFW/GLFW_CURSOR GLFW/GLFW_CURSOR_DISABLED)
-      (render/setup-input window camera-atom ks config-atom world-intents)
+      (render/setup-input {:window window
+                           :camera-atom camera-atom
+                           :keys-atom ks
+                           :config-atom config-atom
+                           :world-atom world-intents})
       (loop []
         (when (and (not @stop-atom)
                    (render-frame-once {:window window

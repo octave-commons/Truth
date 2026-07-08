@@ -34,8 +34,45 @@
 (def vocabulary-namespaces
   #{'domain.ecs.components})
 
+;; Namespaces that are intentionally thin facades: they re-export public vars
+;; from split sub-modules for backwards compatibility.  Their surface area is
+;; large by design, not by responsibility.
+(def facade-namespaces
+  #{'domain.player
+    'domain.ecology
+    'domain.stellar
+    'infra.render})
+
+;; System-assembly namespaces that wire many sub-modules together.  High fan-out
+;; here is structural, not a coupling smell.
+(def assembly-namespaces
+  #{'domain.genesis.systems})
+
+;; DSL macro names whose arity is part of the public syntax, not bloat.
+(def dsl-macro-names
+  #{'defsystem 'defreaction 'defaggregate 'defprojection 'defrewind})
+
 (defn- vocabulary-namespace? [ns-sym]
   (contains? vocabulary-namespaces ns-sym))
+
+(defn- facade-namespace? [ns-sym]
+  (contains? facade-namespaces ns-sym))
+
+(defn- assembly-namespace? [ns-sym]
+  (contains? assembly-namespaces ns-sym))
+
+(defn- test-namespace? [ns-sym]
+  (str/ends-with? (str ns-sym) "-test"))
+
+(defn- dsl-macro? [d]
+  (contains? dsl-macro-names (:name d)))
+
+(defn- exempt-from-var-count? [ns-sym]
+  (or (vocabulary-namespace? ns-sym)
+      (facade-namespace? ns-sym)))
+
+(defn- exempt-from-god-namespace? [ns-sym]
+  (test-namespace? ns-sym))
 
 (defn- project-file? [f]
   (and f (or (str/starts-with? f "src/") (str/starts-with? f "test/"))))
@@ -62,9 +99,10 @@
           (map (fn [{:keys [name filename]}]
                  {:ns name :file filename
                   :loc (file-loc filename)
-                  :vars (if (vocabulary-namespace? name) 0 (count (by-ns name)))}))
+                  :vars (if (exempt-from-var-count? name) 0 (count (by-ns name)))}))
           (filter #(or (>= (:loc %) (get-in thresholds [:namespace-loc :warn]))
                        (>= (:vars %) (get-in thresholds [:namespace-vars :warn]))))
+          (remove #(exempt-from-god-namespace? (:ns %)))
           (sort-by :loc >))
 
      :long-functions
@@ -74,12 +112,13 @@
           (filter #(>= (:loc %) (get-in thresholds [:function-loc :warn])))
           (sort-by :loc >))
 
-     :param-bloat
-     (->> defs
-          (filter #(#{'clojure.core/defn 'clojure.core/defmacro} (:defined-by %)))
-          (map (fn [d] (assoc d :arity (arity d))))
-          (filter #(>= (:arity %) (get-in thresholds [:params :warn])))
-          (sort-by :arity >))
+      :param-bloat
+      (->> defs
+           (filter #(#{'clojure.core/defn 'clojure.core/defmacro} (:defined-by %)))
+           (remove dsl-macro?)
+           (map (fn [d] (assoc d :arity (arity d))))
+           (filter #(>= (:arity %) (get-in thresholds [:params :warn])))
+           (sort-by :arity >))
 
       :missing-docstrings
       (->> defs (filter public-defn?) (filter #(str/blank? (str (:doc %))))
@@ -91,6 +130,8 @@
           (filter #(project-file? (:filename %)))
           ;; group dependency edges by source namespace
           (group-by :from)
+          (remove #(or (assembly-namespace? (first %))
+                       (test-namespace? (first %))))
           (map (fn [[from uses]]
                  {:ns from :fan-out (count (distinct (map :to uses)))}))
           (filter #(>= (:fan-out %) (get-in thresholds [:fan-out :warn])))

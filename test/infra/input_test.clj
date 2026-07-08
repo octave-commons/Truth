@@ -8,7 +8,7 @@
 
 (deftest test-input-handling
   (testing "Controls operate on the observer in the world"
-    (let [w        (genesis/create-world)
+    (let [w        (genesis/create-world {:gas-count 4})
           before   (:focus-radius (player/get-observer w))
           narrowed (input/handle-input w :narrow-focus)
           moved    (input/handle-input w :move-focus [1e15 1e15 0])]

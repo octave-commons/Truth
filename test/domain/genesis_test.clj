@@ -122,7 +122,7 @@
     (is (<= 0.0 (genesis/thermal-progress 5.0) (genesis/thermal-progress 1.0e8) 1.0)))
 
   (testing "A fresh world starts at the bulk-cloud step derived from its dynamical time"
-    (let [w        (genesis/create-world)
+    (let [w        (genesis/create-world {:gas-count 20})
           ;; default nebula: radius 2.0e16, mass 4e30
           t-dyn    (math/sqrt (/ (math/pow 2.0e16 3) (* law/G 4.0e30)))
           expected (:dt (pacing/pacing-for t-dyn 2.0e16))]
@@ -135,7 +135,7 @@
           "time-scale is the derived wall-clock rate: dt × ticks-per-second")))
 
   (testing "Parallel physics pipeline is a non-empty set of write-set systems"
-    (let [systems (genesis/physics-systems-parallel (genesis/create-world))]
+    (let [systems (genesis/physics-systems-parallel (genesis/create-world {:gas-count 4}))]
       (is (pos? (count systems)))
       (is (every? :writes systems)))))
 
@@ -193,7 +193,7 @@
 
 (deftest test-orbital-motion-advances
   (testing "Ring clumps move when the world ticks"
-    (let [w0 (genesis/create-world)
+    (let [w0 (genesis/create-world {:gas-count 50})
           eids (ecs/entities-with w0 c/matter-state c/position)
           before (into {} (map (juxt identity #(ecs/get-component w0 % c/position))) eids)
           w1 (genesis/tick-world w0)
