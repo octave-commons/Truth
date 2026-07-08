@@ -14,7 +14,7 @@
   (testing "scales with the square of the field magnitude"
     (let [p1 (em/magnetic-pressure [0.0 0.0 1.0e-9])
           p2 (em/magnetic-pressure [0.0 0.0 2.0e-9])]
-      (is (< (Math/abs (- (/ p2 p1) 4.0)) 1e-6) "doubling B quadruples P_B"))))
+      (is (< (abs (- (/ p2 p1) 4.0)) 1e-6) "doubling B quadruples P_B"))))
 
 (deftest test-alfven-speed
   (testing "Alfvén speed is positive with a field and zero without"
@@ -26,7 +26,7 @@
   (testing "Compression amplifies the frozen-in field by (ρ'/ρ)^(2/3)"
     (let [b   [0.0 0.0 1.0e-9]
           b'  (em/flux-freeze b 1.0 8.0)] ;; density ×8 → field ×8^(2/3)=4
-      (is (< (Math/abs (- (sp/len b') (* 4.0 (sp/len b)))) 1e-15))
+      (is (< (abs (- (sp/len b') (* 4.0 (sp/len b)))) 1e-15))
       (is (zero? (first b')) "direction is preserved")
       (is (zero? (second b')))))
   (testing "Expansion weakens the field"
@@ -51,8 +51,8 @@
 (deftest test-resistive-decay
   (testing "Diffuse gas (huge radius) keeps its field; dense cores shed flux"
     (let [b [0.0 0.0 1.0e-9]]
-      (is (< (Math/abs (- (sp/len (em/resistive-decay b 1.0e17 1.0e9))
-                          (sp/len b)))
+      (is (< (abs (- (sp/len (em/resistive-decay b 1.0e17 1.0e9))
+                     (sp/len b)))
              1e-20) "negligible decay in the diffuse nebula")
       (is (< (sp/len (em/resistive-decay b 1.0e3 1.0e9))
              (sp/len b)) "real decay in a compact core")))

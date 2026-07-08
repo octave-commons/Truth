@@ -57,7 +57,7 @@
         obs' (assoc obs :coherence (* 0.5 (:coherence obs)))]
     (is (pos? m))
     (testing "half the coherence ⇒ half the gravitating mass"
-      (is (< (Math/abs (- (player/halo-mass obs' 2.0 4.0e30) (* 0.5 m)))
+      (is (< (abs (- (player/halo-mass obs' 2.0 4.0e30) (* 0.5 m)))
              (* 1e-12 m))))
     (testing "zero coherence ⇒ no halo at all"
       (is (zero? (player/halo-mass (assoc obs :coherence 0.0) 2.0 4.0e30))))))
@@ -68,8 +68,8 @@
     (is (some? a) "a body within reach receives observer accel")
     (testing "and the pull points toward the focus (−x here)"
       (is (neg? (first a)))
-      (is (< (Math/abs (double (second a))) 1.0e-30))
-      (is (< (Math/abs (double (nth a 2))) 1.0e-30)))))
+      (is (< (abs (double (second a))) 1.0e-30))
+      (is (< (abs (double (nth a 2))) 1.0e-30)))))
 
 (deftest pull-is-the-plummer-field
   (testing "inside the cap, accel magnitude IS plummer-acceleration(halo-mass)"
@@ -80,7 +80,7 @@
           a    (player/observer-acceleration obs pos dt halo-ctx)
           M    (player/halo-mass obs (:mass-factor halo-ctx) (:ref-mass halo-ctx))
           g    (law/plummer-acceleration M focus-radius 4.0e14)]
-      (is (< (Math/abs (- (sp/len a) g)) (* 1e-9 g))))))
+      (is (< (abs (- (sp/len a) g)) (* 1e-9 g))))))
 
 (deftest zero-force-at-the-exact-centre
   (let [[w b] (world-with-body focus)]                     ;; body AT the focus
@@ -122,10 +122,10 @@
 
 (deftest cap-defaults-to-the-cloud-virial-speed
   (let [{:keys [dv-cap ref-mass]} (player/influence-reference {})]
-    (is (< (Math/abs (- dv-cap (law/virial-speed 4.0e30 2.0e16))) 1e-9))
+    (is (< (abs (- dv-cap (law/virial-speed 4.0e30 2.0e16))) 1e-9))
     (is (= 4.0e30 ref-mass))
     (testing "and follows the knob"
-      (is (< (Math/abs (- (:dv-cap (player/influence-reference
-                                    {:genesis/influence-dv-cap 2.0}))
-                          (* 2.0 dv-cap)))
+      (is (< (abs (- (:dv-cap (player/influence-reference
+                               {:genesis/influence-dv-cap 2.0}))
+                     (* 2.0 dv-cap)))
              1e-9)))))

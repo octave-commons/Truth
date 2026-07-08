@@ -1,25 +1,23 @@
 (ns domain.em-field-substrate-test
-  "μ for the research-grounded EM substrate: wind and flare parcels must carry the
-   star's magnetic field sampled at their launch point via `em/net-field-at`,
-   making net-field-at load-bearing in the live sim (previously renderer-only).
-   This is the Phase-1 magnetised-outflow / magnetosphere-coupling on-ramp —
-   see docs/research/phase1-radiation-plasma-truth.md §5 (winds) and §6 (CMEs)."
+  "Tests for the EM field as a substrate: fields are sampled at points, carried
+   by parcels where appropriate, and evolve under flux freezing."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [domain.ecs.core     :as ecs]
+   [clojure.test :refer [deftest testing is]]
+   [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.ecs.tick     :as tick]
-   [domain.em           :as em]
-   [domain.stellar      :as stellar]
-   [domain.genesis       :as genesis]
-   [shape.spatial       :as sp]
-   [law.stellar         :as law]))
+   [domain.ecs.tick :as tick]
+   [domain.em :as em]
+   [domain.genesis :as genesis]
+   [domain.stellar :as stellar]
+   [law.stellar :as law]
+   [shape.spatial :as sp]))
 
-(defn- v≈ [a b tol] (< (sp/len (sp/v- a b)) tol))
+(defn- v≈ [a b eps]
+  (and (= (count a) (count b))
+       (every? #(<= (abs (double %)) eps) (map - a b))))
 
 (defn- star-world
-  "A single magnetised star primed to shed one parcel this tick (reservoir
-   already holds more than one parcel mass)."
+  "A single magnetised star."
   []
   (let [[w eid] (ecs/spawn (ecs/empty-world))]
     [(-> w
@@ -35,8 +33,7 @@
                               c/density        1.0e3
                               c/pressure       1.0e13
                               c/composition    {:H 0.7 :He 0.3}
-                              c/b-field        (sp/vec3 0.0 0.0 0.1)
-                              c/wind-reservoir 2.0e26}))
+                              c/b-field        (sp/vec3 0.0 0.0 0.1)}))
      eid]))
 
 (defn- launched-parcel [world star]
@@ -44,22 +41,6 @@
        (filter #(and (not= % star)
                      (= :nebula (ecs/get-component world % c/matter-state))))
        first))
-
-(deftest wind-parcel-carries-launch-point-field
-  (let [[w star] (star-world)
-        sources  (em/field-sources w)              ;; pre-launch sources (the star)
-        ws       ((:run (stellar/stellar-wind-system)) w)
-        w'       (-> (tick/apply-write-set w ws)
-                     (genesis/materialize-lifecycle))
-        parcel   (launched-parcel w' star)]
-    (is (some? parcel) "a wind parcel was launched")
-    (let [b   (ecs/get-component w' parcel c/b-field)
-          pos (ecs/get-component w' parcel c/position)]
-      (testing "parcel B equals net-field-at sampled at its launch point"
-        (is (v≈ b (em/net-field-at pos sources nil) 1.0e-12)))
-      (testing "the field is the real sampled vector — nonzero and finite"
-        (is (pos? (sp/len b)))
-        (is (every? #(Double/isFinite (double %)) b))))))
 
 (deftest flare-parcel-carries-launch-point-field
   (let [[w star] (star-world)

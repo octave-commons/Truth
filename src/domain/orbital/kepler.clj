@@ -1,12 +1,13 @@
 (ns domain.orbital.kepler
-  "Two-body Kepler orbit utilities.")
+  "Two-body Kepler orbit utilities."
+  (:require [clojure.math :as math]))
 
-(def ^:const two-pi (* 2.0 Math/PI))
+(def ^:const two-pi (* 2.0 math/PI))
 
 (defn kepler-period
   "Orbital period T = 2π √(a³/GM)."
   [^double a ^double GM]
-  (* two-pi (Math/sqrt (/ (* a a a) GM))))
+  (* two-pi (math/sqrt (/ (* a a a) GM))))
 
 (defn mean-anomaly
   "Mean anomaly M(t) = 2π(t - t0)/T, wrapped to [0, 2π)."
@@ -19,10 +20,10 @@
    (eccentric-anomaly M e 1e-10 50))
   ([^double M ^double e ^double tol ^long max-iter]
    (loop [E M, i 0]
-     (let [dE (/ (- E (* e (Math/sin E)) M)
-                 (- 1.0 (* e (Math/cos E))))]
+     (let [dE (/ (- E (* e (math/sin E)) M)
+                 (- 1.0 (* e (math/cos E))))]
        (cond
-         (< (Math/abs dE) tol) E
+         (< (abs dE) tol) E
          (>= i max-iter)
          (throw (ex-info "eccentric-anomaly: no convergence"
                          {:M M :e e :E E :i i}))
@@ -31,9 +32,9 @@
 (defn true-anomaly
   "True anomaly ν from eccentric anomaly E and eccentricity e."
   [^double E ^double e]
-  (* 2.0 (Math/atan2
-          (* (Math/sqrt (+ 1.0 e)) (Math/sin (* E 0.5)))
-          (* (Math/sqrt (- 1.0 e)) (Math/cos (* E 0.5))))))
+  (* 2.0 (math/atan2
+          (* (math/sqrt (+ 1.0 e)) (math/sin (* E 0.5)))
+          (* (math/sqrt (- 1.0 e)) (math/cos (* E 0.5))))))
 
 (defn orbital-state
   "Compute position and velocity in the orbital plane from classic elements."
@@ -45,15 +46,15 @@
         E   (eccentric-anomaly M e)
         ν   (true-anomaly E e)
         r   (/ (* a (- 1.0 (* e e)))
-               (+ 1.0 (* e (Math/cos ν))))
-        px  (* r (Math/cos ν))
-        py  (* r (Math/sin ν))
-        h   (Math/sqrt (* GM a (- 1.0 (* e e))))
-        vx  (/ (* (- (Math/sin ν)) GM) h)
-        vy  (/ (* (+ e (Math/cos ν)) GM) h)
-        cΩ  (Math/cos Ω) sΩ (Math/sin Ω)
-        cω  (Math/cos ω) sω (Math/sin ω)
-        ci  (Math/cos i)  si (Math/sin i)
+               (+ 1.0 (* e (math/cos ν))))
+        px  (* r (math/cos ν))
+        py  (* r (math/sin ν))
+        h   (math/sqrt (* GM a (- 1.0 (* e e))))
+        vx  (/ (* (- (math/sin ν)) GM) h)
+        vy  (/ (* (+ e (math/cos ν)) GM) h)
+        cΩ  (math/cos Ω) sΩ (math/sin Ω)
+        cω  (math/cos ω) sω (math/sin ω)
+        ci  (math/cos i)  si (math/sin i)
         Rxx (- (* cΩ cω) (* sΩ sω ci))
         Rxy (- (- (* cΩ sω)) (* sΩ cω ci))
         Ryx (+ (* sΩ cω) (* cΩ sω ci))

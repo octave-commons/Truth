@@ -12,7 +12,7 @@
               :name        "position"
               :description "2D integer position in world space"})]
       (is (= :state (:kind s)))
-      (is (= "position" (:name s)))
+      (is (= "position" (:nm s)))
       (is (map? (:form s)))
       (is (nil? (:valid? s))))))
 

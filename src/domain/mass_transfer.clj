@@ -27,6 +27,10 @@
 (def ^:private sink-states
   #{:planetesimal :gas-giant :brown-dwarf :protostar :star :planet})
 
+(def ^:private gas-pred
+  "Predicate matching nebula gas parcels."
+  #(= :nebula (:matter-state %)))
+
 ;; ---------------------------------------------------------------------------
 ;; Helpers
 ;; ---------------------------------------------------------------------------
@@ -83,15 +87,170 @@
 (defn- zone-average
   "Mass-weighted average of a scalar quantity over donor eids."
   [donors value-fn]
-  (let [{:keys [num den]}
-        (reduce (fn [{:keys [num den]} donor]
+  (let [{:keys [total den]}
+        (reduce (fn [{:keys [total den]} donor]
                   (let [m (:mass donor 0.0)
                         v (value-fn donor)]
-                    {:num (+ num (* m v))
+                    {:total (+ total (* m v))
                      :den (+ den m)}))
-                {:num 0.0 :den 0.0}
+                {:total 0.0 :den 0.0}
                 donors)]
-    (if (pos? den) (/ num den) 0.0)))
+    (if (pos? den) (/ total den) 0.0)))
+
+(defn- find-sink-eids
+  "Return all resolved-body eids that can act as BHL accretion sinks."
+  [world]
+  (->> (ecs/entities-with world c/mass c/position c/velocity c/matter-state)
+       (filterv #(contains? sink-states (ecs/get-component world % c/matter-state)))))
+
+(defn- sink-accretion-rate
+  "Compute the c/accretion-rate map for a single sink eid."
+  [world sink-eid dt c-s]
+  (let [M       (double (or (ecs/get-component world sink-eid c/mass) 0.0))
+        pos     (or (ecs/get-component world sink-eid c/position) zero3)
+        r-acc   (stellar/effective-accretion-radius world sink-eid)
+        zone    (spatial/query-within-radius world pos r-acc gas-pred)
+        rho-inf (zone-average zone #(donor-density world (:id %)))
+        v-rel   (zone-average zone #(relative-velocity world sink-eid (:id %)))
+        dot-m   (lmt/bhl-accretion-rate M rho-inf c-s v-rel)]
+    {:sink/r-acc r-acc
+     :sink/r-bondi (lmt/bondi-radius M c-s)
+     :sink/dot-m dot-m
+     :sink/dot-m-this-tick (* dot-m dt)
+     :sink/efficiency 1.0
+     :sink/regime (lmt/accretion-regime c-s v-rel)
+     :sink/ambient-density rho-inf
+     :sink/ambient-cs c-s
+     :sink/relative-velocity v-rel}))
+
+(defn- star-feedback-data
+  "Return [{:pos :lum}] for all luminous :star bodies; used for UV heating cut."
+  [world]
+  (->> (ecs/entities-with world c/matter-state c/position c/luminosity)
+       (filterv #(= :star (ecs/get-component world % c/matter-state)))
+       (mapv (fn [eid]
+               {:pos (ecs/get-component world eid c/position)
+                :lum (double (or (ecs/get-component world eid c/luminosity) 0.0))}))))
+
+(defn- sink-accretion-context
+  "Return per-sink scalar values needed for BHL flux computation."
+  [world sink-eid]
+  (let [M      (double (or (ecs/get-component world sink-eid c/mass) 0.0))
+        pos    (or (ecs/get-component world sink-eid c/position) zero3)
+        v-sink (or (ecs/get-component world sink-eid c/velocity) zero3)
+        sstate (ecs/get-component world sink-eid c/matter-state)
+        disk?  (contains? #{:protostar :star} sstate)
+        rate   (or (ecs/get-component world sink-eid c/accretion-rate) {})
+        r-acc  (double (:sink/r-acc rate 0.0))
+        dot-m  (double (:sink/dot-m rate 0.0))
+        bias   (stellar/imf-accretion-bias M)]
+    {:M M :pos pos :v-sink v-sink :disk? disk?
+     :r-acc r-acc :dot-m dot-m :bias bias}))
+
+(defn- accretion-zone
+  "Return gas donors within r-acc of sink that pass feedback and IMF bias cuts."
+  [world sink-eid pos r-acc bias star-data tick]
+  (->> (spatial/query-within-radius world pos r-acc gas-pred)
+       (remove #(= (:id %) sink-eid))
+       (filterv #(and (< (stellar/stellar-feedback-temperature
+                          (:position %) star-data stellar/feedback-radius)
+                         1.0e4)
+                      (< (hash01 (hash [(:id %) sink-eid tick])) bias)))))
+
+(defn- donor-flux
+  "Add flux for one donor parcel to the running write-set. If disk? is true,
+   gas is routed to the disk; otherwise it is merged into the sink core."
+  [world sink-eid pos M v-sink disk? donor dm ws]
+  (let [donor-eid (:id donor)
+        dpos      (or (:position donor) zero3)
+        v-donor   (or (ecs/get-component world donor-eid c/velocity) zero3)]
+    (if disk?
+      (-> ws
+          (add-disk! sink-eid dm
+                     (stellar/orbital-angular-momentum
+                      dm (sp/v- dpos pos) (sp/v- v-donor v-sink)))
+          (add-flux! donor-eid (- dm) zero3))
+      (-> ws
+          (add-flux! sink-eid dm (if (pos? M) (sp/v* v-donor (/ dm M)) zero3))
+          (add-flux! donor-eid (- dm) zero3)))))
+
+(defn- accrete-donors
+  "Drain up to `remaining` mass from `donors` (sorted), returning updated ws."
+  [world sink-eid pos M v-sink disk? donor-cap remaining donors ws]
+  (if (or (empty? donors) (<= remaining 0.0))
+    ws
+    (let [donor    (first donors)
+          donor-m  (double (:mass donor))
+          dm-avail (* donor-cap donor-m)
+          dm       (min remaining dm-avail)]
+      (recur world sink-eid pos M v-sink disk? donor-cap
+             (- remaining dm)
+             (rest donors)
+             (donor-flux world sink-eid pos M v-sink disk? donor dm ws)))))
+
+(defn- sink-accretion-flux
+  "Process one sink's BHL accretion and return the updated write-set."
+  [world sink-eid dt tick cap donor-cap star-data ws]
+  (let [{:keys [M pos v-sink disk? r-acc dot-m bias]}
+        (sink-accretion-context world sink-eid)
+        zone     (accretion-zone world sink-eid pos r-acc bias star-data tick)
+        zone-mass (reduce + 0.0 (map :mass zone))
+        proposed (lmt/capped-delta-mass
+                  {:dot-m dot-m :dt dt
+                   :gas-mass zone-mass
+                   :donor-mass zone-mass
+                   :accretion-fraction-cap cap
+                   :donor-fraction-cap donor-cap})]
+    (if (or (<= proposed 0.0) (empty? zone))
+      ws
+      (accrete-donors world sink-eid pos M v-sink disk? donor-cap
+                      proposed (sort-by :mass > zone) ws))))
+
+(defn- roche-pair-state
+  "Compute Roche geometry and overflow rate for a binary pair."
+  [world pair-eid]
+  (let [pair   (or (ecs/get-component world pair-eid c/binary-pair) {})
+        donor  (long (:binary-pair/donor pair))
+        accr   (long (:binary-pair/accretor pair))
+        a      (double (:orbit/semi-major-axis pair 0.0))
+        M-d    (donor-mass world donor)
+        M-a    (donor-mass world accr)
+        R-d    (double (or (ecs/get-component world donor c/radius) 0.0))
+        R-L    (lmt/roche-lobe-radius a M-d M-a)
+        delta  (lmt/roche-overfilling R-d R-L)
+        overflow? (pos? delta)
+        rate   (if overflow? (lmt/ritter-isothermal-rate M-d a R-d R-L) 0.0)]
+    {:donor donor :accr accr :M-d M-d :M-a M-a :R-d R-d
+     :R-L R-L :delta delta :overflow? overflow? :rate rate}))
+
+(defn- add-roche-fluxes
+  "Emit conservative mass/dv transfer for an overflowing binary pair."
+  [world donor accr M-d M-a dm ws]
+  (let [v-d      (or (ecs/get-component world donor c/velocity) zero3)
+        v-a      (or (ecs/get-component world accr c/velocity) zero3)
+        dv-donor (if (pos? M-d) (sp/v* v-d (/ (- dm) M-d)) zero3)
+        dv-accr  (if (pos? M-a) (sp/v* v-a (/ dm M-a)) zero3)]
+    (-> ws
+        (add-flux! donor (- dm) dv-donor)
+        (add-flux! accr dm dv-accr))))
+
+(defn- roche-pair-write-set
+  "Write-set for one binary pair, including roche-lobe and any overflow flux."
+  [world pair-eid dt ws]
+  (let [{:keys [donor accr M-d M-a R-L delta overflow? rate]}
+        (roche-pair-state world pair-eid)
+        rate-map {:mass-transfer/rate rate
+                  :mass-transfer/accreted-fraction lmt/default-accreted-fraction}
+        ws'      (-> ws
+                     (assoc-in [c/roche-lobe pair-eid]
+                               {:roche-lobe/radius R-L
+                                :roche-lobe/overfilling delta
+                                :roche-lobe/overflow? overflow?})
+                     (assoc-in [c/mass-transfer-rate pair-eid] rate-map))
+        dm       (max 0.0 (min (* (- rate) dt) (* 0.25 M-d)))]
+    (if (zero? dm)
+      ws'
+      (add-roche-fluxes world donor accr M-d M-a dm ws'))))
 
 ;; ---------------------------------------------------------------------------
 ;; Accretion radius system
@@ -113,39 +272,13 @@
     :writes #{c/accretion-rate}
     :run    accretion-radius-system})
   ([world]
-   (let [sinks (filterv #(contains? sink-states (ecs/get-component world % c/matter-state))
-                        (ecs/entities-with world c/mass c/position c/velocity c/matter-state))
+   (let [sinks (find-sink-eids world)
          dt    (double (or (:genesis/dt world) 1.0))
-         gas-pred (fn [item] (= :nebula (:matter-state item)))
-          ;; The capture zone and denominator are the AMBIENT GAS dispersion
-          ;; (cold nebular sound speed + turbulence), NOT the hot sink's own
-          ;; temperature — it is the gas whose thermal energy resists capture.
-          ;; Reuse stellar/effective-accretion-radius so gas accretion is
-          ;; competitive (Bondi ∝ M, gated by :genesis/competitive-accretion?)
-          ;; exactly as the removed whole-parcel path was (spec Part 1a / M3).
-         c-s   stellar/capture-velocity-dispersion
-         results
-         (par/par-mapv
-          (fn [sink-eid]
-            (let [M       (double (or (ecs/get-component world sink-eid c/mass) 0.0))
-                  pos     (or (ecs/get-component world sink-eid c/position) zero3)
-                  r-acc   (stellar/effective-accretion-radius world sink-eid)
-                  zone    (spatial/query-within-radius world pos r-acc gas-pred)
-                  rho-inf (zone-average zone #(donor-density world (:id %)))
-                  v-rel   (zone-average zone #(relative-velocity world sink-eid (:id %)))
-                  dot-m   (lmt/bhl-accretion-rate M rho-inf c-s v-rel)
-                  rate    {:sink/r-acc r-acc
-                           :sink/r-bondi (lmt/bondi-radius M c-s)
-                           :sink/dot-m dot-m
-                           :sink/dot-m-this-tick (* dot-m dt)
-                           :sink/efficiency 1.0
-                           :sink/regime (lmt/accretion-regime c-s v-rel)
-                           :sink/ambient-density rho-inf
-                           :sink/ambient-cs c-s
-                           :sink/relative-velocity v-rel}]
-              [sink-eid rate]))
-          sinks)]
-     {c/accretion-rate (into {} results)})))
+         c-s   stellar/capture-velocity-dispersion]
+     {c/accretion-rate
+      (->> sinks
+           (par/par-mapv #(vector % (sink-accretion-rate world % dt c-s)))
+           (into {}))})))
 
 ;; ---------------------------------------------------------------------------
 ;; Sink accretion flux system
@@ -160,7 +293,7 @@
 
    Routing mirrors the old absorb-packets: gas captured by a protostar/star is
    disk-routed (c/disk-mass-flux / c/disk-l-flux → the disk grows, then feeds the
-   core viscously); gas captured by a small sink (planetesimal/gas-giant/brown-
+   star viscously); gas captured by a small sink (planetesimal/gas-giant/brown-
    dwarf) is merged directly into its core (c/mass-flux-transfer). Donors lose
    mass at their own velocity (c/mass-flux-transfer debit).
 
@@ -177,77 +310,20 @@
     :writes #{c/mass-flux-transfer c/dv-transfer c/disk-mass-flux c/disk-l-flux}
     :run    sink-accretion-flux-system})
   ([world]
-   (let [sinks (ecs/entities-with world c/mass c/position c/velocity c/accretion-rate)
-         dt    (double (or (:genesis/dt world) 1.0))
-         tick  (long (or (:tick world) 0))
-         cap   (double (or (:genesis/accretion-fraction-cap world)
-                           lmt/default-accretion-fraction-cap))
-         donor-cap (double (or (:genesis/donor-fraction-cap world)
-                               lmt/default-donor-fraction-cap))
-         gas-pred (fn [item] (= :nebula (:matter-state item)))
-          ;; Stars, for UV feedback that suppresses capture of Jeans-heated gas.
-         star-data (mapv (fn [eid]
-                           {:pos (ecs/get-component world eid c/position)
-                            :lum (double (or (ecs/get-component world eid c/luminosity) 0.0))})
-                         (filterv #(= :star (ecs/get-component world % c/matter-state))
-                                  (ecs/entities-with world c/matter-state c/position c/luminosity)))]
+   (let [dt        (double (or (:genesis/dt world) 1.0))
+         tick      (long (or (:tick world) 0))
+         cap       (double (or (:genesis/accretion-fraction-cap world) lmt/default-accretion-fraction-cap))
+         donor-cap (double (or (:genesis/donor-fraction-cap world) lmt/default-donor-fraction-cap))
+         star-data (star-feedback-data world)]
      (reduce
-      (fn [ws sink-eid]
-        (let [M       (double (or (ecs/get-component world sink-eid c/mass) 0.0))
-              pos     (or (ecs/get-component world sink-eid c/position) zero3)
-              v-sink  (or (ecs/get-component world sink-eid c/velocity) zero3)
-              sstate  (ecs/get-component world sink-eid c/matter-state)
-              disk?   (contains? #{:protostar :star} sstate)
-              rate    (or (ecs/get-component world sink-eid c/accretion-rate) {})
-              r-acc   (double (:sink/r-acc rate 0.0))
-              dot-m   (double (:sink/dot-m rate 0.0))
-              bias    (stellar/imf-accretion-bias M)
-               ;; Competitive feeding zone, then IMF-bias + UV-feedback acceptance.
-              zone    (->> (spatial/query-within-radius world pos r-acc gas-pred)
-                           (remove #(= (:id %) sink-eid))
-                           (filterv (fn [item]
-                                      (and (< (stellar/stellar-feedback-temperature
-                                               (:position item) star-data stellar/feedback-radius)
-                                              1.0e4)
-                                           (< (hash01 (hash [(:id item) sink-eid tick])) bias)))))
-              zone-mass (reduce + 0.0 (map :mass zone))
-              proposed  (lmt/capped-delta-mass
-                         {:dot-m dot-m :dt dt
-                          :gas-mass zone-mass
-                          :donor-mass zone-mass
-                          :accretion-fraction-cap cap
-                          :donor-fraction-cap donor-cap})]
-          (if (or (<= proposed 0.0) (empty? zone))
-            ws
-            (loop [remaining proposed
-                   donors    (sort-by :mass > zone)
-                   ws        ws]
-              (if (or (empty? donors) (<= remaining 0.0))
-                ws
-                (let [donor     (first donors)
-                      donor-eid (:id donor)
-                      donor-m   (double (:mass donor))
-                      dpos      (or (:position donor) zero3)
-                      dm-avail  (* donor-cap donor-m)
-                      dm        (min remaining dm-avail)
-                      v-donor   (or (ecs/get-component world donor-eid c/velocity) zero3)]
-                  (recur (- remaining dm)
-                         (rest donors)
-                         (if disk?
-                            ;; gas → protoplanetary disk (mass + orbital L); the
-                            ;; donor loses co-moving mass (velocity unchanged).
-                           (-> ws
-                               (add-disk! sink-eid dm
-                                          (stellar/orbital-angular-momentum
-                                           dm (sp/v- dpos pos) (sp/v- v-donor v-sink)))
-                               (add-flux! donor-eid (- dm) zero3))
-                            ;; gas → small sink core (momentum-conserving accretion).
-                           (-> ws
-                               (add-flux! sink-eid dm
-                                          (if (pos? M) (sp/v* v-donor (/ dm M)) zero3))
-                               (add-flux! donor-eid (- dm) zero3))))))))))
+      (fn [ws sink-eid] (sink-accretion-flux world sink-eid dt tick cap donor-cap star-data ws))
       {}
-      sinks))))
+      (ecs/entities-with world c/mass c/position c/velocity c/accretion-rate)))))
+
+;; ---------------------------------------------------------------------------
+;; Roche-lobe system
+;; ---------------------------------------------------------------------------
+
 (defn roche-lobe-system
   "Compute c/roche-lobe and c/mass-transfer-rate for binary-pair entities, and
    emit conservative-overflow influences.
@@ -264,47 +340,10 @@
     :writes #{c/roche-lobe c/mass-transfer-rate c/mass-flux-transfer c/dv-transfer}
     :run    roche-lobe-system})
   ([world]
-   (let [pairs (ecs/entities-with world c/binary-pair)
-         dt    (double (or (:genesis/dt world) 1.0))]
-     (reduce
-      (fn [ws pair-eid]
-        (let [pair   (or (ecs/get-component world pair-eid c/binary-pair) {})
-              donor  (long (:binary-pair/donor pair))
-              accr   (long (:binary-pair/accretor pair))
-              a      (double (:orbit/semi-major-axis pair 0.0))
-              M-d    (donor-mass world donor)
-              M-a    (donor-mass world accr)
-              R-d    (double (or (ecs/get-component world donor c/radius) 0.0))
-              R-L    (lmt/roche-lobe-radius a M-d M-a)
-              delta  (lmt/roche-overfilling R-d R-L)
-              overflow? (pos? delta)
-              rate   (if overflow?
-                       (lmt/ritter-isothermal-rate M-d a R-d R-L)
-                       0.0)
-              rate-map {:mass-transfer/rate rate
-                        :mass-transfer/accreted-fraction lmt/default-accreted-fraction}
-              ws'    (-> ws
-                         (assoc-in [c/roche-lobe pair-eid]
-                                   {:roche-lobe/radius R-L
-                                    :roche-lobe/overfilling delta
-                                    :roche-lobe/overflow? overflow?})
-                         (assoc-in [c/mass-transfer-rate pair-eid] rate-map))
-              dm     (max 0.0 (min (* (- rate) dt) (* 0.25 M-d)))]
-          (if (zero? dm)
-            ws'
-            ;; Conservative overflow: the donor loses dm, the accretor gains dm.
-            ;; Emit self-owned influences on each body (same generic accumulate as
-            ;; BHL), preserving the prior momentum semantics (donor recoils at its
-            ;; own velocity, accretor gains at its own velocity).
-            (let [v-d      (or (ecs/get-component world donor c/velocity) zero3)
-                  v-a      (or (ecs/get-component world accr c/velocity) zero3)
-                  dv-donor (if (pos? M-d) (sp/v* v-d (/ (- dm) M-d)) zero3)
-                  dv-accr  (if (pos? M-a) (sp/v* v-a (/ dm M-a)) zero3)]
-              (-> ws'
-                  (add-flux! donor (- dm) dv-donor)
-                  (add-flux! accr dm dv-accr))))))
-      {}
-      pairs))))
+   (let [dt (double (or (:genesis/dt world) 1.0))]
+     (reduce (fn [ws pair-eid] (roche-pair-write-set world pair-eid dt ws))
+             {}
+             (ecs/entities-with world c/binary-pair)))))
 
 ;; ---------------------------------------------------------------------------
 ;; Public system map

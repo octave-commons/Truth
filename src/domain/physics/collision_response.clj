@@ -6,7 +6,7 @@
    - elastic-bounce-handler: conserves momentum + KE
    - inelastic-merge-handler: merges two bodies into one"
   (:require
-   [domain.ecs.core       :as ecs]
+   [clojure.math :as math] [domain.ecs.core       :as ecs]
    [domain.ecs.components :as c]
    [shape.spatial         :as sp]))
 
@@ -77,7 +77,7 @@
         v'         (sp/v* p (/ 1.0 total-mass))
         rl         (double (ecs/get-component world eid-large c/radius))
         rs         (double (ecs/get-component world eid-small c/radius))
-        r'         (Math/cbrt (+ (* rl rl rl) (* rs rs rs)))]
+        r'         (math/cbrt (+ (* rl rl rl) (* rs rs rs)))]
     (-> world
         (ecs/put-component eid-large c/mass   total-mass)
         (ecs/put-component eid-large c/radius r')

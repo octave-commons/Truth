@@ -111,22 +111,23 @@
   (let [camera (camera-for-world world)
         ctx    (units/make-context camera {:width (:width rs) :height (:height rs)})
         bodies (render/phase0-bodies-from-world world)
-        volume (when volume?
-                 (render/frame-volume ctx world (:volume-program rs) :medium))]
+         volume (when volume?
+                  (render/frame-volume {:ctx ctx :world world :program (:volume-program rs) :res :medium}))]
     (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo (:fbo rs)))
-    (render/render-scene {:body-program (:body-program rs)
-                          :line-program (:line-program rs)
-                          :sprite-program (:sprite-program rs)
-                          :hud-program (:hud-program rs)
-                          :hud (render/hud-rects-from-world world)
-                          :hud-text (concat (render/hud-text-from-world world)
-                                            (render/observer-hud-text world (:width rs) (:height rs)))
-                          :volume volume}
-                         (:mesh rs)
-                         camera
-                         (:width rs) (:height rs)
-                         bodies
-                         0.0)
+     (render/render-scene {:body-program (:body-program rs)
+                           :line-program (:line-program rs)
+                           :sprite-program (:sprite-program rs)
+                           :hud-program (:hud-program rs)
+                           :hud (render/hud-rects-from-world world)
+                           :hud-text (concat (render/hud-text-from-world world)
+                                             (render/observer-hud-text world (:width rs) (:height rs)))
+                           :volume volume
+                           :mesh-world (:mesh rs)
+                           :camera camera
+                           :width (:width rs)
+                           :height (:height rs)
+                           :bodies bodies
+                           :t 0.0})
     (render/delete-volume volume)
     (GL11/glFlush)
     (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)
@@ -180,20 +181,21 @@
                  (fn [] (let [camera (camera-for-world w500)
                               ctx    (units/make-context camera {:width (:width rs) :height (:height rs)})
                               bodies (render/phase0-bodies-from-world w500)
-                              volume (render/frame-volume ctx w500 (:volume-program rs) res)]
+                               volume (render/frame-volume {:ctx ctx :world w500 :program (:volume-program rs) :res res})]
                  (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo (:fbo rs)))
-                 (render/render-scene {:body-program (:body-program rs)
-                                        :line-program (:line-program rs)
-                                        :sprite-program (:sprite-program rs)
-                                        :hud-program (:hud-program rs)
-                                        :hud []
-                                        :hud-text []
-                                        :volume volume}
-                                       (:mesh rs)
-                                       camera
-                                       (:width rs) (:height rs)
-                                       bodies
-                                       0.0)
+                  (render/render-scene {:body-program (:body-program rs)
+                                         :line-program (:line-program rs)
+                                         :sprite-program (:sprite-program rs)
+                                         :hud-program (:hud-program rs)
+                                         :hud []
+                                         :hud-text []
+                                         :volume volume
+                                         :mesh-world (:mesh rs)
+                                         :camera camera
+                                         :width (:width rs)
+                                         :height (:height rs)
+                                         :bodies bodies
+                                         :t 0.0})
                  (render/delete-volume volume)
                  (GL11/glFlush)
                  (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)

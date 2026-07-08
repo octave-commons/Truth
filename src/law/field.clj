@@ -9,20 +9,35 @@
    √(μ₀ρ), NOT √(4πρ). This single convention is what keeps the numbers right."
   (:require
    [clojure.math :as math]
-   [malli.core :as m]
-   [law.contract :as contract]))
+   [law.field.schema :as schema]))
+
+;; --- Re-exports from schema -------------------------------------------------
+
+(def max-b-field schema/max-b-field)
+(def finite-number? schema/finite-number?)
+(def finite-vec3? schema/finite-vec3?)
+(def bounded-b-field? schema/bounded-b-field?)
+(def regime-tags schema/regime-tags)
+(def disc-regime-tags schema/disc-regime-tags)
+(def regime-tag? schema/regime-tag?)
+(def hydro-em-active? schema/hydro-em-active?)
+(def field-cell-schema schema/field-cell-schema)
+(def hydro-accel-schema schema/hydro-accel-schema)
+(def magnetic-torque-schema schema/magnetic-torque-schema)
+(def neighbor-cache-entry-schema schema/neighbor-cache-entry-schema)
+(def neighbor-cache-entry? schema/neighbor-cache-entry?)
+(def physics-soa-schema schema/physics-soa-schema)
+(def physics-soa? schema/physics-soa?)
+(def toomre-q-schema schema/toomre-q-schema)
+(def cool-dyn-ratio-schema schema/cool-dyn-ratio-schema)
+(def gas-sample-schema schema/gas-sample-schema)
+(def gas-sample? schema/gas-sample?)
+(def field-cell-contract schema/field-cell-contract)
 
 ;; --- Physical constants -----------------------------------------------------
 
 (def ^:const mu-0 1.25663706212e-6) ;; vacuum permeability, T·m/A (SI)
 (def ^:const gamma 1.6666666666666667) ;; adiabatic index, 5/3 monatomic gas
-
-;; --- Numerical bounds -------------------------------------------------------
-
-(def ^:const max-b-field 1.0e3)
-;; Tesla. Far above any nebular/stellar-core field; a value past this is a
-;; numerical blow-up (the "no unbounded amplification per tick" contract), not
-;; physics. Interstellar fields are ~1e-9 T; even amplified cores stay ≪ 1 T.
 
 ;; --- Regime thresholds ------------------------------------------------------
 ;; The dimensionless boundaries the classifier uses. Tunable for play; asserted
@@ -40,53 +55,13 @@
 (def ^:const jeans-unstable 1.0)
 ;; L/λ_J at or above this → gravitationally unstable, tends to collapse.
 
-;; --- Predicates -------------------------------------------------------------
-
-(defn finite-number?
-  [x]
-  (and (number? x) (Double/isFinite (double x))))
-
-(defn finite-vec3?
-  "A 3-vector of finite numbers — the shape every field vector must satisfy."
-  [v]
-  (and (sequential? v)
-       (= 3 (count v))
-       (every? finite-number? v)))
-
-(defn bounded-b-field?
-  "True if every component is finite and the magnitude is within bounds — the
-   invariant that no induction/flux-freezing step has run the field away."
-  [v]
-  (and (finite-vec3? v)
-       (let [[x y z] (map double v)]
-         (<= (math/sqrt (+ (* x x) (* y y) (* z z))) max-b-field))))
+;; --- Plasma / MHD helpers ---------------------------------------------------
 
 (defn- vec3-len2
   "Squared magnitude of a 3-vector of doubles."
   [v]
   (let [[x y z] (map double v)]
     (+ (* x x) (* y y) (* z z))))
-
-(def regime-tags
-  "The closed set of regime tags the classifier may emit for Phase 0."
-  #{:gravity-hydro :mhd-dominated :gravitationally-unstable
-    :radiation-dominated :convective :stable-disc :unstable-no-fragment :tectonically-dead})
-
-(def disc-regime-tags
-  "Regime tags specific to rotationally-supported discs (Part 3)."
-  #{:stable-disc :gravitationally-unstable :unstable-no-fragment})
-
-(defn regime-tag? [k] (contains? regime-tags k))
-
-;; --- Physics participation predicates ----------------------------------------
-
-(defn hydro-em-active?
-  "Matter states that participate in SPH hydro and MHD-lite EM pair loops:
-   diffuse nebular gas and contracting protostars."
-  [state]
-  (contains? #{:nebula :protostar} state))
-
-;; --- Plasma / MHD helpers ---------------------------------------------------
 
 (defn magnetic-pressure
   "Magnetic pressure P_B = |B|² / (2μ₀)  (SI). Pascals."
@@ -150,109 +125,3 @@
 (def ^:const cooling-dynamical-ratio-fast 3.0)
 ;; Gammie (2001): fragmentation requires t_cool < 3 Ω⁻¹. If cooling is slower,
 ;; the disc heats up and stabilizes even when Q < 1.
-
-;; --- Schemas ----------------------------------------------------------------
-
-(def field-cell-schema
-  "Field state carried by a resolved cell/clump alongside its matter state."
-  {:b-field bounded-b-field?
-   :regime  regime-tag?})
-
-(def hydro-accel-schema
-  "Pressure-gradient acceleration vector a = -∇p/ρ in m/s²."
-  finite-vec3?)
-
-(def magnetic-torque-schema
-  "Torque density vector τ = r × f from the Lorentz force, in N/m²."
-  finite-vec3?)
-
-(def neighbor-cache-entry-schema
-  "Malli schema for one entry of the persistent :genesis/neighbor-cache shared
-   by SPH hydro and MHD-lite EM. Neighbor maps must include :r2, the squared
-   distance from the central particle, so consumers can filter without
-   recomputing distance. :anchor-position is where the neighbor set was last
-   actually queried and :query-r the radius that query covered — the reuse
-   skin is measured against them. :nn-id (optional) remembers the nearest
-   neighbor's identity so the refresh path can rederive the smoothing length
-   without a tree descent."
-  [:map
-   [:position [:tuple :double :double :double]]
-   [:anchor-position [:tuple :double :double :double]]
-   [:query-r [:and :double [:> 0]]]
-   [:h [:and :double [:> 0]]]
-   [:neighbors [:vector [:map]]]
-   [:gradients [:vector [:tuple :double :double :double]]]
-   [:curl-gradients [:vector [:tuple :double :double :double]]]])
-
-(def neighbor-cache-entry?
-  "Predicate: does `value` satisfy the neighbor-cache entry schema?"
-  (m/validator neighbor-cache-entry-schema))
-
-(defn- double-array?
-  "True if `x` is a primitive double array."
-  [x]
-  (= (class x) (class (double-array 0))))
-
-(def physics-soa-schema
-  "Malli schema for the transient `:genesis/physics-soa` Structure-of-Arrays
-   cache. The cache holds only the fields the gravity and kinematics hot paths
-   read: entity ids, count, and primitive double arrays for mass, radius,
-   position, and velocity. Missing optional values are stored as 0.0."
-  [:map
-   [:eids [:vector :int]]
-   [:n :int]
-   [:mass [:fn double-array?]]
-   [:radius [:fn double-array?]]
-   [:px [:fn double-array?]]
-   [:py [:fn double-array?]]
-   [:pz [:fn double-array?]]
-   [:vx [:fn double-array?]]
-   [:vy [:fn double-array?]]
-   [:vz [:fn double-array?]]
-   ;; Drift-predicted positions x̂ = x + (v + Σa·dt + Σdv)·dt — where the force
-   ;; emitted this tick will actually land next tick (Jacobi force alignment).
-   [:px-pred {:optional true} [:fn double-array?]]
-   [:py-pred {:optional true} [:fn double-array?]]
-   [:pz-pred {:optional true} [:fn double-array?]]])
-
-(def physics-soa?
-  "Predicate: does `value` satisfy `law.field/physics-soa-schema`?"
-  (m/validator physics-soa-schema))
-
-(def toomre-q-schema
-  "Toomre Q parameter for a disc annulus: a positive finite number."
-  finite-number?)
-
-(def cool-dyn-ratio-schema
-  "Cooling-time to dynamical-time ratio t_cool / Ω⁻¹: a positive finite number."
-  finite-number?)
-
-(def gas-sample-schema
-  "Malli schema for one render-facing SPH gas sample as produced by
-   domain.hydro/gas-samples (SI units). :smoothing-h is the full kernel
-   support h (= 2 × particle radius, the SPH convention used throughout
-   domain.hydro); :density is the SPH density the tick's density pass wrote,
-   in kg/m³. :temperature may be absent for entities that never received one."
-  [:map
-   [:eid :int]
-   [:position [:tuple :double :double :double]]
-   [:smoothing-h [:and :double [:> 0]]]
-   [:density [:and :double [:> 0]]]
-   [:temperature {:optional true} [:maybe :double]]
-   [:ionization [:and :double [:>= 0.0] [:<= 1.0]]]
-   [:matter-state [:fn hydro-em-active?]]])
-
-(def gas-sample?
-  "Predicate: does `value` satisfy `law.field/gas-sample-schema`?"
-  (m/validator gas-sample-schema))
-
-;; --- Contracts --------------------------------------------------------------
-
-(def field-cell-contract
-  (contract/->contract
-   {:id          ::field-cell
-    :shape-id    ::field-cell
-    :kind        :quality
-    :schema      field-cell-schema
-    :name        "Field Cell"
-    :description "Magnetic field and dominant-physics regime of a resolved cell."}))

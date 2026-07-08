@@ -63,7 +63,7 @@
 (defn phys->render-radius
   "Physical radius [m] → render-unit radius, log-compressed. Keeps a ~5-order
    span legible while preserving monotonicity."
-  [ctx r-phys]
+  [_ctx r-phys]
   (let [r (double (or r-phys 0.0))]
     (if (pos? r)
       (let [linear (/ r render-radius-ref)
@@ -74,7 +74,7 @@
 (defn render->phys-radius
   "Approximate inverse of `phys->render-radius` for debug/tooling only. Not for
    physics."
-  [ctx r-render]
+  [_ctx r-render]
   (let [r (double (or r-render 0.001))]
     (* r render-radius-ref)))
 

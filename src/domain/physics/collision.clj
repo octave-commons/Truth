@@ -148,53 +148,57 @@
   [id]
   (some #(when (= id (:id %)) (:writes %)) reg/systems))
 
+(defn- collision-pairs
+  "Detect all overlapping collidable body pairs in `world`."
+  [world]
+  (detect-pairs (collidable-bodies world) (:genesis/spatial-tree world)))
+
+(defn- pair-eids
+  "Collect all entity ids involved in `pairs`."
+  [pairs]
+  (into #{} (mapcat (fn [{:keys [eid-a eid-b]}] [eid-a eid-b])) pairs))
+
+(defn- changed-cell
+  "Return the changed component cells for `eids` between `before-col` and `after-col`."
+  [before-col after-col eids]
+  (if (identical? before-col after-col)
+    {}
+    (reduce (fn [m eid]
+              (let [v (get after-col eid ::absent)]
+                (if (or (identical? v ::absent)
+                        (= v (get before-col eid ::absent)))
+                  m
+                  (assoc m eid v))))
+            {} eids)))
+
+(defn- dispatch-write-set
+  "Build the write-set from the world state after dispatching collision events."
+  [world after pairs]
+  (let [eids (pair-eids pairs)]
+    (reduce (fn [ws ctype]
+              (let [cell (changed-cell (get-in world [:components ctype] {})
+                                       (get-in after [:components ctype] {})
+                                       eids)]
+                (cond-> ws (seq cell) (assoc ctype cell))))
+            {}
+            (registry-writes :collision-detection))))
+
 (defn collision-detection-system
   "ECS system: detects literal sphere overlaps and dispatches :event/collision
-   for each pair; the response is whatever handler is registered for the kind
-   (the genesis world registers stellar/stellar-merge-handler, which emits
-   c/absorb-merge, c/consumed-merge, and c/spawn-request-shatter).
-
-   Reads the shared spatial tree from :genesis/spatial-tree (built once per tick
-   by domain.spatial.index) instead of building its own.
+   for each pair; the response is whatever handler is registered for the kind.
 
    0-arity returns the native write-set system for the fan-out: the event
-   dispatch (ledger append + handler) runs on an internal working copy of the
-   frozen snapshot, and only the handler's writes to the registry-declared
-   component types are emitted. The ledger events stay internal — exactly what
-   the legacy bridge's ownership mask did, so no event-observable behavior
-   changes. 1-arity is the direct form (world → world'), keeping the dispatched
-   events on the returned world's ledger — used by tests, benches, and the
-   bootstrap pipeline."
-  ([world]
-   (dispatch-pairs world (detect-pairs (collidable-bodies world)
-                                       (:genesis/spatial-tree world))))
+   dispatch runs on an internal working copy of the frozen snapshot, and only
+   the handler's writes to the registry-declared component types are emitted.
+   1-arity is the direct form (world → world')."
   ([]
    {:id     :collision-detection
     :writes (registry-writes :collision-detection)
     :run
     (fn [world]
-      (let [pairs (detect-pairs (collidable-bodies world)
-                                (:genesis/spatial-tree world))]
+      (let [pairs (collision-pairs world)]
         (if (empty? pairs)
           {}
-          (let [after (dispatch-pairs world pairs)
-                eids  (into #{} (mapcat (fn [{:keys [eid-a eid-b]}] [eid-a eid-b]))
-                            pairs)]
-            ;; Handlers write only onto the colliding entities, so extracting
-            ;; the changed cells is O(pairs) — no column diff.
-            (reduce
-             (fn [ws ctype]
-               (let [before-col (get-in world [:components ctype] {})
-                     after-col  (get-in after [:components ctype] {})
-                     cell (if (identical? before-col after-col)
-                            {}
-                            (reduce (fn [m eid]
-                                      (let [v (get after-col eid ::absent)]
-                                        (if (or (identical? v ::absent)
-                                                (= v (get before-col eid ::absent)))
-                                          m
-                                          (assoc m eid v))))
-                                    {} eids))]
-                 (cond-> ws (seq cell) (assoc ctype cell))))
-             {}
-             (registry-writes :collision-detection))))))}))
+          (dispatch-write-set world (dispatch-pairs world pairs) pairs))))})
+  ([world]
+   (dispatch-pairs world (collision-pairs world))))

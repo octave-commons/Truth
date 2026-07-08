@@ -33,7 +33,7 @@
   "Gravitational acceleration from the Barnes–Hut tree plus any pre-computed
    hydrodynamic pressure-gradient acceleration stored on `c/hydro-accel`."
   [G theta softening world tree body]
-  (let [grav (bh/acceleration G theta softening tree body)
+  (let [grav (bh/acceleration {:G G :theta theta :softening softening :tree tree :body body})
         hydro (or (ecs/get-component world (:id body) c/hydro-accel)
                   [0.0 0.0 0.0])]
     (sp/v+ grav hydro)))
@@ -79,34 +79,25 @@
 (def ^:private accel-sources
   [c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer c/accel-warp])
 
+(defn- gravity-from-bodies
+  "Compute per-body gravity from the spatial tree and body/items."
+  [G theta softening cutoff tree bodies]
+  {c/accel-gravity
+   (into {}
+         (par/par-mapv
+          (fn [body]
+            [(:id body) (bh/acceleration {:G G :theta theta :softening softening :cutoff cutoff :tree tree :body body})])
+          bodies))})
+
 (defn gravity-acceleration
-  "Write-set system: per-body Barnes–Hut self-gravity → `accel.gravity`.
+  "Write-set system: per-body Barnes-Hut self-gravity -> `accel.gravity`.
 
    Reads the shared spatial tree from :genesis/spatial-tree (built once per tick
-   by domain.spatial.index/spatial-index) instead of constructing its own.
-   The tree contains ALL entities; gravity computes acceleration for every body
-   in the tree. Self-gravity is skipped by the Barnes–Hut walker at leaf nodes
-   via the body's `:id`.
-
-   When `:genesis/physics-soa` is present, gravity builds an index-leaf
-   Barnes–Hut tree directly from the SoA arrays and walks it reading source
-   positions/masses straight from those arrays (`bh/acceleration-for-soa`) —
-   no per-tick body-map projection.
-
-   With the integrator in the fan-out (spec Fix 5), the kick this system emits
-   is applied NEXT tick — to the post-drift positions. So when the SoA carries
-   drift-predicted arrays (:px-pred …, see pcache/build-physics-soa), gravity
-   evaluates at those AND builds its own tree from them (on this system's own
-   thread, overlapped with the rest of the fan-out): structure, multipole
-   centroids, leaf sources, and targets all sit at x̂, so the emitted force is
-   exactly the force the position will feel when the kick lands. Force and
-   position stay aligned; the leapfrog stays symplectic with zero ordering.
-   The shared :genesis/spatial-tree (snapshot positions) still serves
-   collision/sink/neighbor queries unchanged.
-
-   `cutoff` is a gravitational dead-zone radius: any pair closer than this
-   contributes zero acceleration, preventing close-encounter numerical flings.
-   Pass 0.0 to disable the dead zone."
+   by domain.spatial.index/spatial-index). When :genesis/physics-soa is present,
+   gravity builds an index-leaf Barnes-Hut tree directly from the SoA arrays and
+   walks it reading source positions/masses straight from those arrays. The
+   shared :genesis/spatial-tree (snapshot positions) still serves collision/sink/
+   neighbor queries unchanged. `cutoff` is a gravitational dead-zone radius."
   ([G theta softening]
    (gravity-acceleration G theta softening 0.0))
   ([G theta softening cutoff]
@@ -114,15 +105,10 @@
     :writes #{c/accel-gravity}
     :run    (fn [world]
               (if-let [soa (:genesis/physics-soa world)]
-                {c/accel-gravity (bh/acceleration-for-soa G theta softening cutoff soa nil)}
-                (let [tree   (:genesis/spatial-tree world)
+                {c/accel-gravity (bh/acceleration-for-soa {:G G :theta theta :softening softening :cutoff cutoff :soa soa :self-id nil})}
+                (let [tree (:genesis/spatial-tree world)
                       bodies (:genesis/spatial-items world (world->bodies world))]
-                  {c/accel-gravity
-                   (into {}
-                         (par/par-mapv
-                          (fn [body]
-                            [(:id body) (bh/acceleration G theta softening cutoff tree body)])
-                          bodies))})))}))
+                  (gravity-from-bodies G theta softening cutoff tree bodies))))}))
 
 (defn motion-integration
   "Write-set system: sum all acceleration contributions and advance the body by

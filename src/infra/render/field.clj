@@ -5,7 +5,7 @@
    so the baked volume shows the structure the physics sees. No GL here —
    `infra.render` owns texture upload."
   (:require
-   [domain.hydro :as hydro]
+   [clojure.math :as math] [domain.hydro :as hydro]
    [shape.spatial :as sp]))
 
 (def default-volume-config
@@ -16,14 +16,14 @@
    medium (support must exceed the ~4 ru inter-parcel spacing or the cloud
    reads as separate spheres); :splat-gain scales the splat weight.
 
-   Eye-tuned 2026-07-05: the historical kappa 1.2 made the cloud optically
-   thick within ~2 voxels, so the march only ever showed the skin of an
-   opaque surface — the 'floating spheres of gas' look. At kappa 0.07 the
-   medium is translucent, emission integrates through the whole depth, and
-   the nebula reads as continuous glowing gas."
-  {:kappa 0.07
-   :emission-scale 1.0
-   :scatter-scale 3.8
+    Eye-tuned 2026-07-07: lower kappa (0.045) keeps the cloud translucent
+    rather than turning into an opaque skin, while a higher emissionScale
+    (2.2) preserves the baked colour brightness. Scatter is multiplied by
+    the cloud's own colour in the shader so stars tint the fog rather than
+    bleaching it to white."
+  {:kappa 0.045
+   :emission-scale 2.2
+   :scatter-scale 2.5
    :jitter 1.0
    :visual-h-scale 10.0
    :visual-h-min 4.0
@@ -35,19 +35,20 @@
    makes a factor-of-1000 density contrast readable instead of clamping
    everything to the same narrow band."
   [rho]
-  (let [log-rho (Math/log10 (max 1e-30 (double (or rho 1e-18))))
+  (let [log-rho (math/log10 (max 1e-30 (double (or rho 1e-18))))
         lo -21.0
         hi -12.0]
     (max 0.0 (min 1.0 (/ (- log-rho lo) (- hi lo))))))
 
 (defn ionization-tint
   "Shift a temperature-derived RGB color toward blue-white plasma as the
-   ionization fraction rises: fully neutral gas keeps its blackbody tint, hot
-   plasma reads as [0.7 0.8 1.0]."
+    ionization fraction rises.  The shift is deliberately weak (max 10% at
+    full ionization) so the cloud keeps its underlying colour rather than
+    being bleached white.  Disk parcels skip this entirely in `gas-samples`."
   [[r g b] ion]
   (let [ion (double (or ion 0.0))]
     (if (pos? ion)
-      (let [f (min 1.0 (* ion 0.6))]
+      (let [f (min 0.10 (* ion 0.10))]
         [(+ (* (- 1.0 f) r) (* f 0.7))
          (+ (* (- 1.0 f) g) (* f 0.8))
          (+ (* (- 1.0 f) b) (* f 1.0))])
@@ -61,7 +62,7 @@
         n (count v)]
     (when (pos? n)
       (let [pos (* (double q) (dec n))
-            lo  (int (Math/floor pos))
+            lo  (int (math/floor pos))
             hi  (min (dec n) (inc lo))
             f   (- pos lo)]
         (+ (* (- 1.0 f) (double (v lo))) (* f (double (v hi))))))))
@@ -100,57 +101,67 @@
           pad (mapv #(max 0.5 (* 0.06 (- %1 %2))) bmx0 bmn0)]
       [(mapv - bmn0 pad) (mapv + bmx0 pad)])))
 
+(defn- sample-voxel-range
+  "Clamp the per-axis index range [lox hix loy hiy loz hiz] for one sample."
+  [R bmn cs p h]
+  (let [vidx (fn [coord mn c]
+               (int (math/floor (/ (- (double coord) (double mn))
+                                   (double c)))))
+        [px py pz] p
+        [csx csy csz] cs]
+    [(max 0 (vidx (- px h) (bmn 0) csx))
+     (min (dec R) (vidx (+ px h) (bmn 0) csx))
+     (max 0 (vidx (- py h) (bmn 1) csy))
+     (min (dec R) (vidx (+ py h) (bmn 1) csy))
+     (max 0 (vidx (- pz h) (bmn 2) csz))
+     (min (dec R) (vidx (+ pz h) (bmn 2) csz))]))
+
+(defn- splat-sample!
+  "Accumulate one gas sample into `data` over its local voxel footprint."
+  [^floats data R idx bmn cs gain {:keys [p h col dens]}]
+  (when (pos? (double dens))
+    (let [[px py pz] p
+          h    (double h)
+          hh2  (* h h)
+          dens (double dens)
+          [r g b] col
+          [csx csy csz] cs
+          [lox hix loy hiy loz hiz] (sample-voxel-range R bmn cs p h)]
+      (doseq [z (range loz (inc hiz))
+              y (range loy (inc hiy))
+              x (range lox (inc hix))
+              :let [vcz (+ (double (bmn 2)) (* (+ z 0.5) csz))
+                    vcy (+ (double (bmn 1)) (* (+ y 0.5) csy))
+                    vcx (+ (double (bmn 0)) (* (+ x 0.5) csx))
+                    dx  (- vcx px)
+                    dy  (- vcy py)
+                    dz  (- vcz pz)
+                    d2  (+ (* dx dx) (* dy dy) (* dz dz))]
+              :when (< d2 hh2)]
+        (let [w  (* gain (hydro/kernel-shape d2 h))
+              wd (* w dens)
+              i  (idx x y z)]
+          (aset data i       (float (+ (aget data i)       (* wd (double r)))))
+          (aset data (inc i) (float (+ (aget data (inc i)) (* wd (double g)))))
+          (aset data (+ i 2) (float (+ (aget data (+ i 2)) (* wd (double b)))))
+          (aset data (+ i 3) (float (+ (aget data (+ i 3)) wd))))))))
+
 (defn splat!
   "Accumulate every gas sample into the RGBA host array `data` (rgb = emission,
    a = density) over an R³ voxel grid spanning [bmn, bmx]. Each sample is
    weighted by `gain · kernel-shape(r², h) · dens` at the voxel center — the
    simulation's own M4 falloff at a caller-chosen amplitude. Mutates and
-   returns `data`."
-  [^floats data res pts bmn bmx gain]
+   returns `data`.
+
+   Accepts a single options map: {:data :res :pts :bmn :bmx :gain}."
+  [{:keys [^floats data res pts bmn bmx gain]}]
   (let [R    (int res)
         gain (double gain)
         span (mapv - bmx bmn)
         cs   (mapv #(/ (double %) R) span)
         idx  (fn [x y z] (* 4 (+ x (* R (+ y (* R z))))))]
-    (doseq [{:keys [p h col dens]} pts]
-      (when (pos? (double dens))
-        (let [[px py pz] p
-              h    (double h)
-              hh2  (* h h)
-              dens (double dens)
-              [csx csy csz] cs
-              [r g b] col
-              vidx (fn [coord mn cs] (int (Math/floor (/ (- (double coord) (double mn)) (double cs)))))
-              lox (max 0 (vidx (- px h) (bmn 0) csx))
-              hix (min (dec R) (vidx (+ px h) (bmn 0) csx))
-              loy (max 0 (vidx (- py h) (bmn 1) csy))
-              hiy (min (dec R) (vidx (+ py h) (bmn 1) csy))
-              loz (max 0 (vidx (- pz h) (bmn 2) csz))
-              hiz (min (dec R) (vidx (+ pz h) (bmn 2) csz))]
-          (loop [z loz]
-            (when (<= z hiz)
-              (let [vcz (+ (double (bmn 2)) (* (+ z 0.5) csz))
-                    dz (- vcz pz)]
-                (loop [y loy]
-                  (when (<= y hiy)
-                    (let [vcy (+ (double (bmn 1)) (* (+ y 0.5) csy))
-                          dy (- vcy py)]
-                      (loop [x lox]
-                        (when (<= x hix)
-                          (let [vcx (+ (double (bmn 0)) (* (+ x 0.5) csx))
-                                dx (- vcx px)
-                                d2 (+ (* dx dx) (* dy dy) (* dz dz))]
-                            (when (< d2 hh2)
-                              (let [w  (* gain (hydro/kernel-shape d2 h))
-                                    wd (* w dens)
-                                    i  (idx x y z)]
-                                (aset data i        (float (+ (aget data i)        (* wd (double r)))))
-                                (aset data (+ i 1)  (float (+ (aget data (+ i 1))  (* wd (double g)))))
-                                (aset data (+ i 2)  (float (+ (aget data (+ i 2))  (* wd (double b)))))
-                                (aset data (+ i 3)  (float (+ (aget data (+ i 3))  wd)))))
-                            (recur (inc x)))))
-                      (recur (inc y)))))
-                (recur (inc z))))))))
+    (doseq [pt pts]
+      (splat-sample! data R idx bmn cs gain pt))
     data))
 
 (defn splat-field
@@ -162,5 +173,5 @@
   (when-let [[bmn bmx] (splat-bounds pts)]
     (let [R (int res)
           data (float-array (* 4 R R R))]
-      (splat! data R pts bmn bmx gain)
+      (splat! {:data data :res R :pts pts :bmn bmn :bmx bmx :gain gain})
       {:data data :res R :box-min bmn :box-max bmx})))

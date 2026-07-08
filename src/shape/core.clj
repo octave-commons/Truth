@@ -26,15 +26,15 @@
 ;; --- Records ----------------------------------------------------------------
 
 (defrecord Shape
-           [id kind form name description])
+           [id kind form nm description])
 
 (defn ->shape
   "Construct a Shape from a map. Required keys: :id, :kind, :form."
-  [{:keys [id kind form name description] :as m}]
+  [{:keys [id kind form description] nm :name :as m}]
   (when-not (and id kind form)
     (throw (ex-info "Shape requires :id, :kind, and :form"
                     {:kind ::invalid-shape :shape m})))
-  (->Shape id kind form name description))
+  (->Shape id kind form nm description))
 
 (defrecord Claim
            [id shape-id value context asserted-by])

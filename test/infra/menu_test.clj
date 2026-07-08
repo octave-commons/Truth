@@ -4,7 +4,6 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core :as ecs]
-   [domain.ecs.components :as c]
    [domain.player :as player]
    [domain.stellar :as stellar]
    [infra.camera :as cam]

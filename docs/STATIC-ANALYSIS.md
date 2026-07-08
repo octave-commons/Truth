@@ -46,6 +46,14 @@ file:
 Current HARD offenders: `infra.render` (2038 loc), `domain.stellar` (1351 loc).
 These are known and tracked — tighten thresholds as namespaces are split.
 
+### Vocabulary namespace exception
+
+`domain.ecs.components` is a pure vocabulary namespace: it defines the canonical
+`:component/*` keywords used by every ECS system. It is exempt from the
+`namespace-vars` and `missing-docstrings` thresholds because splitting it would
+fragment the shared vocabulary and create import noise across every system. The
+exemption is explicit in `dev/smell_report.clj` (`vocabulary-namespaces`).
+
 ## The DSL hooks
 
 `domain.ecs.dsl` defines `defcomponent`/`defevent`/`defsystem`/etc. clj-kondo

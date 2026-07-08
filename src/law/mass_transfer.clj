@@ -7,11 +7,32 @@
 
    Sources:
    - docs/research/physics/rate-limited-accretion-mass-transfer.md
-   - docs/specs/gradual-mass-transfer-realspec.md",
+   - kanban/tasks/gradual-mass-transfer-spec.md",
   (:require
-   [law.contract :as contract]
+   [clojure.math :as math]
    [law.stellar  :as law]
-   [malli.core   :as m]))
+   [law.mass-transfer.schema :as schema]
+   [law.mass-transfer.validate :as validate]))
+
+;; --- Schemas / contracts / validators (re-exported) -------------------------
+
+(def accretion-radius-schema schema/accretion-radius-schema)
+(def accretion-rate-schema   schema/accretion-rate-schema)
+(def binary-pair-schema      schema/binary-pair-schema)
+(def roche-lobe-schema       schema/roche-lobe-schema)
+(def mass-transfer-rate-schema schema/mass-transfer-rate-schema)
+
+(def accretion-radius-contract schema/accretion-radius-contract)
+(def accretion-rate-contract   schema/accretion-rate-contract)
+(def binary-pair-contract      schema/binary-pair-contract)
+(def roche-lobe-contract       schema/roche-lobe-contract)
+(def mass-transfer-rate-contract schema/mass-transfer-rate-contract)
+
+(def validate-accretion-radius validate/validate-accretion-radius)
+(def validate-accretion-rate   validate/validate-accretion-rate)
+(def validate-binary-pair      validate/validate-binary-pair)
+(def validate-roche-lobe       validate/validate-roche-lobe)
+(def validate-mass-transfer-rate validate/validate-mass-transfer-rate)
 
 ;; --- Physical constants -------------------------------------------------------
 
@@ -58,7 +79,7 @@
 
 (def ^:const ritter-isothermal-prefactor
   "Scaled prefactor for the Ritter (1988) isothermal overflow rate."
-  (* 2.0 Math/PI (Math/sqrt Math/E)))
+  (* 2.0 math/PI (math/sqrt math/E)))
 
 (def ^:const default-accreted-fraction
   "Fraction of Roche-lobe overflow mass that is accreted by the companion in
@@ -98,9 +119,9 @@
         rho-inf (double (or rho-inf 0.0))
         c-s     (double (or c-s 0.0))
         v-rel   (double (or v-rel 0.0))
-        denom   (Math/pow (+ (* c-s c-s) (* v-rel v-rel)) 1.5)]
+        denom   (math/pow (+ (* c-s c-s) (* v-rel v-rel)) 1.5)]
     (if (and (pos? M) (pos? rho-inf) (pos? denom))
-      (/ (* 4.0 Math/PI law/G law/G M M rho-inf) denom)
+      (/ (* 4.0 math/PI law/G law/G M M rho-inf) denom)
       0.0)))
 
 (defn accretion-regime
@@ -164,10 +185,10 @@
         M-accretor (double (or M-accretor 0.0))]
     (if (and (pos? a) (pos? M-donor) (pos? M-accretor))
       (let [q     (/ M-donor M-accretor)
-            q13   (Math/pow q (/ 1.0 3.0))
+            q13   (math/pow q (/ 1.0 3.0))
             q23   (* q13 q13)
             frac  (/ (* 0.49 q23)
-                     (+ (* 0.6 q23) (Math/log1p q13)))]
+                     (+ (* 0.6 q23) (math/log1p q13)))]
         (* a frac))
       0.0)))
 
@@ -188,7 +209,7 @@
         M-accretor (double (or M-accretor 0.0))
         M-total    (+ M-donor M-accretor)]
     (if (and (pos? a) (pos? M-total))
-      (* 2.0 Math/PI (Math/sqrt (/ (* a a a) (* law/G M-total))))
+      (* 2.0 math/PI (math/sqrt (/ (* a a a) (* law/G M-total))))
       0.0)))
 
 (defn ritter-isothermal-rate
@@ -201,7 +222,7 @@
    where A ~ 10, P is the orbital period, and δ is the fractional overfilling.
 
    This is the default Phase 0 branch; the full Ritter integral with donor
-   envelope structure is deferred to docs/specs/roche-lobe-envelope-physics.
+   envelope structure is deferred to kanban/tasks/roche-lobe-envelope-physics-realspec-deferred-capability.md.
 
    Returns a non-positive number (donor loses mass)."
   [M-donor a R-donor R-L]
@@ -212,7 +233,7 @@
         delta    (roche-overfilling R-donor R-L)]
     (if (and (pos? M-donor) (pos? a) (pos? delta))
       (- (* rlof-pols-A (/ M-donor (orbital-period a M-donor 1.0))
-            (* delta delta delta)))
+            delta delta delta))
       0.0)))
 
 ;; --- Conservation helpers -----------------------------------------------------
@@ -232,89 +253,3 @@
   "Scale a momentum vector by scalar s."
   [s p]
   (mapv #(* (double s) (double %)) p))
-
-;; --- Schemas ------------------------------------------------------------------
-
-(def accretion-radius-schema
-  "Capture radius and ambient conditions for a sink."
-  [:map
-   [:sink/r-acc number?]
-   [:sink/r-bondi number?]
-   [:sink/ambient-density number?]
-   [:sink/ambient-cs number?]
-   [:sink/relative-velocity number?]])
-
-(def accretion-rate-schema
-  "Mass flux and regime for a sink."
-  [:map
-   [:sink/dot-m number?]
-   [:sink/dot-m-this-tick number?]
-   [:sink/efficiency number?]
-   [:sink/regime keyword?]])
-
-(def binary-pair-schema
-  "A relation entity linking a donor and an accretor."
-  [:map
-   [:binary-pair/donor int?]
-   [:binary-pair/accretor int?]
-   [:orbit/semi-major-axis number?]
-   [:orbit/eccentricity number?]])
-
-(def roche-lobe-schema
-  "Roche-lobe geometry and overflow state."
-  [:map
-   [:roche-lobe/radius number?]
-   [:roche-lobe/overfilling number?]
-   [:roche-lobe/overflow? boolean?]])
-
-(def mass-transfer-rate-schema
-  "Signed rate and accreted fraction for RLOF."
-  [:map
-   [:mass-transfer/rate number?]
-   [:mass-transfer/accreted-fraction number?]])
-
-(def accretion-radius-contract
-  "Capture radius and ambient conditions for a sink."
-  (contract/->contract
-   {:id       ::accretion-radius
-    :shape-id ::accretion-radius
-    :kind     :type
-    :schema   accretion-radius-schema}))
-
-(def accretion-rate-contract
-  "Mass flux and regime for a sink."
-  (contract/->contract
-   {:id       ::accretion-rate
-    :shape-id ::accretion-rate
-    :kind     :type
-    :schema   accretion-rate-schema}))
-
-(def binary-pair-contract
-  "A relation entity linking a donor and an accretor."
-  (contract/->contract
-   {:id       ::binary-pair
-    :shape-id ::binary-pair
-    :kind     :type
-    :schema   binary-pair-schema}))
-
-(def roche-lobe-contract
-  "Roche-lobe geometry and overflow state."
-  (contract/->contract
-   {:id       ::roche-lobe
-    :shape-id ::roche-lobe
-    :kind     :type
-    :schema   roche-lobe-schema}))
-
-(def mass-transfer-rate-contract
-  "Signed rate and accreted fraction for RLOF."
-  (contract/->contract
-   {:id       ::mass-transfer-rate
-    :shape-id ::mass-transfer-rate
-    :kind     :type
-    :schema   mass-transfer-rate-schema}))
-
-(defn validate-accretion-radius [x] (contract/validate accretion-radius-contract x))
-(defn validate-accretion-rate   [x] (contract/validate accretion-rate-contract   x))
-(defn validate-binary-pair      [x] (contract/validate binary-pair-contract      x))
-(defn validate-roche-lobe       [x] (contract/validate roche-lobe-contract       x))
-(defn validate-mass-transfer-rate [x] (contract/validate mass-transfer-rate-contract x))

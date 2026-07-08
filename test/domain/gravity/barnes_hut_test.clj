@@ -44,7 +44,7 @@
     (is (= :internal (:type tree)))
     (is (= 5.0 (double (:mass tree))))
     (let [[cx _ _] (:com tree)]
-      (is (< (Math/abs (- cx 0.6)) 1e-9)))))
+      (is (< (abs (- cx 0.6)) 1e-9)))))
 
 (deftest single-body-force
   (testing "With one other body, BH force matches direct Newtonian force"
@@ -58,7 +58,7 @@
                   :velocity (spatial/vec3 0.0 0.0 0.0)})
           tree  (bh/build-tree [sun earth])
           θ     0.1
-          acc   (bh/acceleration G θ tree earth)
+          acc   (bh/acceleration {:G G :theta θ :tree tree :body earth})
           r     10.0
           a-mag (/ (* G (:mass sun)) (* r r))
           expected (spatial/vec3 (- a-mag) 0.0 0.0)]
@@ -77,7 +77,7 @@
                                   :velocity (spatial/vec3 0.0 0.0 0.0)})
           tree (bh/build-tree [b1 b2 center])
           θ   0.5
-          acc (bh/acceleration G θ tree center)]
+          acc (bh/acceleration {:G G :theta θ :tree tree :body center})]
       (is (<= (spatial/len acc) 1.0e-6)))))
 
 (deftest test-soa-acceleration-matches-body-path
@@ -96,9 +96,9 @@
           tree (bh/build-tree bodies)
           soa (bodies->soa bodies)
           θ 0.5
-          soa-result (bh/acceleration-for-soa G θ 1.0e-4 soa nil)]
+          soa-result (bh/acceleration-for-soa {:G G :theta θ :softening 1.0e-4 :soa soa :self-id nil})]
       (doseq [body bodies]
-        (let [expected (bh/acceleration G θ 1.0e-4 tree body)
+        (let [expected (bh/acceleration {:G G :theta θ :softening 1.0e-4 :tree tree :body body})
               actual (get soa-result (:id body))]
           (is (< (spatial/dist actual expected) 1.0e-9)
               (str "eid " (:id body) " diverges: expected " expected ", got " actual)))))))
@@ -107,16 +107,16 @@
   (testing "Single isolated body in SoA returns zero acceleration"
     (let [b {:id :only :mass 1.0 :radius 1.0 :kind :body/gas
              :position [1.0 2.0 3.0] :velocity [0.0 0.0 0.0]}
-          tree (bh/build-tree [b])
+          _tree (bh/build-tree [b])
           soa (bodies->soa [b])]
-      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 soa nil) :only))))))
+      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta 0.5 :softening 1.0e-4 :soa soa :self-id nil}) :only))))))
 
 (deftest test-soa-empty-tree
   (testing "Empty tree returns zero acceleration for all SoA eids"
     (let [b {:id :lonely :mass 1.0 :radius 1.0 :kind :body/gas
              :position [1.0 2.0 3.0] :velocity [0.0 0.0 0.0]}
           soa (bodies->soa [b])]
-      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G 0.5 1.0e-4 soa nil) :lonely))))))
+      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta 0.5 :softening 1.0e-4 :soa soa :self-id nil}) :lonely))))))
 
 (deftest test-body-map-gravity-cutoff
   (testing "Pairs inside the cutoff radius contribute zero acceleration"
@@ -132,9 +132,9 @@
           theta 0.5
           soft 1.0e8
           cutoff 2.0e10]
-      (is (= [0.0 0.0 0.0] (bh/acceleration G theta soft cutoff tree probe))
+      (is (= [0.0 0.0 0.0] (bh/acceleration {:G G :theta theta :softening soft :cutoff cutoff :tree tree :body probe}))
           "probe inside dead zone feels no gravity")
-      (is (not= [0.0 0.0 0.0] (bh/acceleration G theta soft 0.0 tree probe))
+      (is (not= [0.0 0.0 0.0] (bh/acceleration {:G G :theta theta :softening soft :cutoff 0.0 :tree tree :body probe}))
           "probe without cutoff feels gravity"))))
 
 (deftest test-soa-gravity-cutoff
@@ -147,10 +147,76 @@
           theta 0.5
           soft 1.0e8
           cutoff 1.0e10]
-      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G theta soft cutoff soa nil) :probe))
+      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta theta :softening soft :cutoff cutoff :soa soa :self-id nil}) :probe))
           "SoA probe inside dead zone feels no gravity")
-      (is (not= [0.0 0.0 0.0] (get (bh/acceleration-for-soa G theta soft 0.0 soa nil) :probe))
+      (is (not= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta theta :softening soft :cutoff 0.0 :soa soa :self-id nil}) :probe))
           "SoA probe without cutoff feels gravity"))))
+
+(deftest test-non-finite-position-throws-not-stack-overflow
+  (testing "A NaN or Infinite body position throws a descriptive ex-info from
+            build-tree instead of blowing the stack in insert-body-into-node"
+    (let [ok  (spatial/->body {:id 1 :mass 1.0 :radius 1.0 :kind :body/test
+                               :position (spatial/vec3 0.0 0.0 0.0)
+                               :velocity (spatial/vec3 0.0 0.0 0.0)})
+          bad (spatial/->body {:id 2 :mass 1.0 :radius 1.0 :kind :body/test
+                               :position [Double/NaN 0.0 0.0]
+                               :velocity (spatial/vec3 0.0 0.0 0.0)})]
+      (try
+        (bh/build-tree [ok bad])
+        (is false "expected an ex-info to be thrown")
+        (catch clojure.lang.ExceptionInfo e
+          (is (= 2 (:id (ex-data e))))
+          (is (= ::bh/non-finite-position (:kind (ex-data e)))))))))
+
+(deftest test-non-finite-soa-position-throws-not-stack-overflow
+  (testing "A NaN or Infinite SoA position throws a descriptive ex-info from
+            build-tree-from-soa instead of blowing the stack in
+            insert-idx-into-node"
+    (let [ok  {:id :ok :mass 1.0 :radius 1.0 :kind :body/gas
+               :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          bad {:id :bad :mass 1.0 :radius 1.0 :kind :body/gas
+               :position [0.0 Double/POSITIVE_INFINITY 0.0] :velocity [0.0 0.0 0.0]}
+          soa (bodies->soa [ok bad])]
+      (try
+        (bh/build-tree-from-soa soa)
+        (is false "expected an ex-info to be thrown")
+        (catch clojure.lang.ExceptionInfo e
+          (is (= :bad (:eid (ex-data e))))
+          (is (= ::bh/non-finite-position (:kind (ex-data e)))))))))
+
+(deftest test-subnormal-mass-leaf-com-finite
+  (testing "A leaf with only sub-Double/MIN_NORMAL mass returns a finite COM"
+    (let [tiny (spatial/->body {:id 1 :mass 1.0e-309 :radius 1.0 :kind :body/gas
+                                :position (spatial/vec3 1.0 2.0 3.0)
+                                :velocity (spatial/vec3 0.0 0.0 0.0)})
+          tree (bh/build-tree [tiny])]
+      (is (= :leaf (:type tree)))
+      (is (every? #(Double/isFinite (double %)) (:com tree)))
+      (is (= 1.0e-309 (:mass tree))))))
+
+(deftest test-subnormal-mass-does-not-poison-internal-com
+  (testing "A subnormal-mass leaf does not make the internal node COM infinite"
+    (let [tiny  (spatial/->body {:id 1 :mass 1.0e-309 :radius 1.0 :kind :body/gas
+                                 :position (spatial/vec3 1.0 1.0 1.0)
+                                 :velocity (spatial/vec3 0.0 0.0 0.0)})
+          heavy (spatial/->body {:id 2 :mass 1.0e28 :radius 1.0e9 :kind :body/star
+                                 :position (spatial/vec3 0.0 0.0 0.0)
+                                 :velocity (spatial/vec3 0.0 0.0 0.0)})
+          tree  (bh/build-tree [heavy tiny])
+          acc   (bh/acceleration {:G G :theta 0.5 :softening 1.0e-4 :tree tree :body tiny})]
+      (is (= :internal (:type tree)))
+      (is (every? #(Double/isFinite (double %)) (:com tree)))
+      (is (every? #(Double/isFinite (double %)) acc)))))
+
+(deftest test-subnormal-mass-soa-com-finite
+  (testing "SoA path with sub-Double/MIN_NORMAL mass returns finite COM and acceleration"
+    (let [tiny  {:id :tiny :mass 1.0e-309 :radius 1.0 :kind :body/gas
+                 :position [1.0 1.0 1.0] :velocity [0.0 0.0 0.0]}
+          heavy {:id :heavy :mass 1.0e28 :radius 1.0e9 :kind :body/star
+                 :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          soa   (bodies->soa [heavy tiny])
+          accs  (bh/acceleration-for-soa {:G G :theta 0.5 :softening 1.0e-4 :soa soa :self-id nil})]
+      (is (every? #(Double/isFinite (double %)) (get accs :tiny))))))
 
 (deftest test-cutoff-preserves-distant-gravity
   (testing "Cutoff does not affect bodies separated by more than the dead zone"
@@ -166,7 +232,7 @@
           theta 0.1
           soft  1.0e-4
           cutoff 1.0]
-      (is (< (spatial/dist (bh/acceleration G theta soft 0.0 tree earth)
-                           (bh/acceleration G theta soft cutoff tree earth))
+      (is (< (spatial/dist (bh/acceleration {:G G :theta theta :softening soft :cutoff 0.0 :tree tree :body earth})
+                           (bh/acceleration {:G G :theta theta :softening soft :cutoff cutoff :tree tree :body earth}))
              1.0e-9)
           "distant bodies are unaffected by a cutoff smaller than their separation"))))

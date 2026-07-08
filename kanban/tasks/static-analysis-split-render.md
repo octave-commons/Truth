@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-split-render"
 title: "Split infra.render into Layered Sub-Modules"
-status: "in_progress"
+status: "done"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"

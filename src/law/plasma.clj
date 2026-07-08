@@ -9,7 +9,7 @@
 
    All units: SI."
   (:require
-   [law.contract :as contract]))
+   [clojure.math :as math] [law.contract :as contract]))
 
 ;; --- Physical constants ---
 
@@ -92,9 +92,13 @@
 (def wind-profile-schema
   "Characteristics of a star's steady stellar wind.
    Derived from coronal temperature and SED XUV/EUV bands."
-  {:base-speed       positive-si?    ;; m/s — terminal wind speed v_∞
-   :mass-loss-rate   positive-si?    ;; kg/s — Ṁ
-   :alfven-radius    positive-si?})  ;; m — r_A where magnetic control ends
+  {:wind/dot-m          positive-si?    ;; kg/s — mass-loss rate Ṁ
+   :wind/v-escape       positive-si?    ;; m/s — launch speed v_w (Parker terminal)
+   :wind/ram-pressure   positive-si?    ;; Pa — reference ram pressure at reference-r
+   :wind/reference-r    positive-si?    ;; m — radius where ram-pressure is defined
+   :wind/luminosity-xuv non-negative-si? ;; W — XUV luminosity driving the wind
+   :wind/ionization     ionization-fraction?  ;; 0..1 — wind ionization state
+   :wind/corona-t       positive-si?})  ;; K — coronal temperature
 
 (def plasma-wind-schema
   "Schema for a stellar wind parcel treated as ionized plasma.
@@ -156,7 +160,7 @@
     :kind     :type
     :schema   wind-profile-schema
     :name     "Wind Profile"
-    :description "Stellar wind characteristics derived from coronal properties."}))
+    :description "Stellar wind characteristics (mass-loss rate, launch speed, ram pressure, ionization, coronal temperature) derived from coronal properties."}))
 
 (def plasma-wind-contract
   (contract/->contract
@@ -208,7 +212,7 @@
         v    (double (or wind-speed 0.0))
         r    (double (or distance 0.0))]
     (if (and (pos? mdot) (pos? v) (pos? r))
-      (/ (* mdot v) (* 4.0 Math/PI r r))
+      (/ (* mdot v) (* 4.0 math/PI r r))
       0.0)))
 
 (defn xuv-flux-at
@@ -218,7 +222,7 @@
   (let [L (double (or xuv-luminosity 0.0))
         r (double (or distance 0.0))]
     (if (and (pos? L) (pos? r))
-      (/ L (* 4.0 Math/PI r r))
+      (/ L (* 4.0 math/PI r r))
       0.0)))
 
 (defn energy-limited-escape
@@ -232,7 +236,7 @@
         eps (double (or heating-efficiency 0.15))
         G   6.674e-11]
     (if (and (pos? F) (pos? Rp) (pos? Mp))
-      (/ (* eps Math/PI (Math/pow Rp 3) F) (* G Mp))
+      (/ (* eps math/PI (math/pow Rp 3) F) (* G Mp))
       0.0)))
 
 ;; --- Regime selector ---
@@ -281,6 +285,9 @@
        (let [t-r (recombination-timescale n-electron)
              t-f (flow-timescale Rp)
              R   (if (pos? t-f) (/ t-r t-f) 0.0)]
+          ;; Intentional: both the strong (R≥10) and marginal (R≥1) energy-limited
+          ;; regimes return the same classification; the split is documentary.
+         #_{:splint/disable [lint/identical-branches]}
          (cond
            (>= R 10.0)  :energy-limited      ;; recombination ≪ advection
            (>= R 1.0)   :energy-limited      ;; marginally energy-limited

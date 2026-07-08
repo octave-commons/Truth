@@ -56,7 +56,7 @@
         p1-after  (momentum e1)
         p2-after  (momentum e2)
         p-after   (mapv + p1-after p2-after)]
-    (is (every? #(< (Math/abs %) 1e-9) p-after)
+    (is (every? #(< (abs %) 1e-9) p-after)
         (str "Momentum not conserved: " p-after))))
 
 (deftest inelastic-merge-despawns-smaller

@@ -27,13 +27,13 @@
   "Deterministic syllabic name for entity `eid`. Two or three syllables chosen
    by the eid's hash; same eid always yields the same name."
   [eid]
-  (let [h  (Math/abs (long (hash [:body-name eid])))
+  (let [h  (abs (long (hash [:body-name eid])))
         n  (+ 2 (mod h 2))
         syl (fn [i]
               (str (pick onsets h (* i 7))
                    (pick nuclei h (+ 3 (* i 7)))
                    (if (= i (dec n)) (pick codas h (+ 5 (* i 7))) "")))
-        raw (apply str (map syl (range n)))]
+        raw (str/join (map syl (range n)))]
     (str/capitalize raw)))
 
 (def state-titles

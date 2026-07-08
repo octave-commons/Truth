@@ -17,10 +17,10 @@
      :gravitationally-unstable — Q ≤ 1 and fast cooling (fragments)
      :unstable-no-fragment     — Q ≤ 1 but slow cooling"
   (:require
-   [law.field             :as lf]
+   [clojure.math :as math] [law.field             :as lf]
    [law.stellar           :as ls]
    [domain.em             :as em]
-   [domain.stellar        :as stellar]
+   [domain.stellar.disc     :as disc]
    [shape.spatial         :as sp]
    [domain.ecs.core       :as ecs]
    [domain.ecs.parallel   :as par]
@@ -35,7 +35,7 @@
   "Adiabatic sound speed c_s = √(γp/ρ)  (SI). m/s."
   [{:keys [pressure density]}]
   (if (and pressure density (pos? (double density)) (pos? (double pressure)))
-    (Math/sqrt (/ (* lf/gamma (double pressure)) (double density)))
+    (math/sqrt (/ (* lf/gamma (double pressure)) (double density)))
     0.0))
 
 (defn plasma-beta
@@ -73,8 +73,8 @@
   [{:keys [density temperature radius]}]
   (if (and density temperature radius
            (pos? (double density)) (pos? (double temperature)))
-    (let [c-s          (Math/sqrt (/ (* ls/k-B (double temperature)) ls/m-H))
-          jeans-length (* c-s (Math/sqrt (/ Math/PI (* ls/G (double density)))))]
+    (let [c-s          (math/sqrt (/ (* ls/k-B (double temperature)) ls/m-H))
+          jeans-length (* c-s (math/sqrt (/ math/PI (* ls/G (double density)))))]
       (if (pos? jeans-length)
         (/ (double radius) jeans-length)
         0.0))
@@ -90,6 +90,40 @@
    :alfven-mach (alfven-mach cell)
    :jeans-ratio (jeans-ratio cell)})
 
+(def ^:private valid-disc-regimes
+  "Disc regimes that can override the base :gravity-hydro tag."
+  #{:stable-disc :gravitationally-unstable :unstable-no-fragment})
+
+(defn- base-regime
+  "Classify the dominant physics regime from dimensionless numbers."
+  [n]
+  (let [b (:beta n)
+        ma (:alfven-mach n)
+        jr (:jeans-ratio n)]
+    (cond
+      (>= jr lf/jeans-unstable) :gravitationally-unstable
+      (and (< b lf/beta-magnetized)
+           (<= ma lf/alfven-mach-magnetized)) :mhd-dominated
+      :else :gravity-hydro)))
+
+(defn- disc-override
+  "If `disc-context` is a valid disc, return the disc regime; else fall back to `base`."
+  [base disc-context]
+  (if (and (= base :gravity-hydro)
+           disc-context
+           (= (:disc-tag disc-context) :disc)
+           (pos? (double (:star-mass disc-context 0.0)))
+           (pos? (double (:radius disc-context 0.0)))
+           (pos? (double (:temperature disc-context 0.0))))
+    (let [Q-regime (disc/disc-regime (:star-mass disc-context)
+                                     (:mass disc-context)
+                                     (:radius disc-context)
+                                     (:temperature disc-context))]
+      (if (valid-disc-regimes Q-regime)
+        Q-regime
+        base))
+    base))
+
 (defn classify
   "Return {:regime <tag> :numbers {...}} for a cell. The dominant-physics tag:
 
@@ -98,42 +132,16 @@
      :gravity-hydro            otherwise           (gas pressure + gravity)
 
    If `disc-context` is provided and the cell is tagged :disc, the disc is
-   further classified by Toomre Q and cooling time:
-     :stable-disc              — Q > 1
-     :gravitationally-unstable — Q ≤ 1 AND fast cooling (fragments)
-     :unstable-no-fragment     — Q ≤ 1 AND slow cooling
-
-   Gravitational instability is checked first: β compares the field to *thermal*
-   pressure, but a Jeans-unstable clump's decisive fact is that it tends to
-   collapse, so that tag wins even when the field is locally strong. (Whether
-   the field actually halts that collapse is the separate magnetic-support /
-   mass-to-flux test in domain.em, which the collapse system applies.)"
+   further classified by Toomre Q and cooling time. Gravitational instability is
+   checked first: β compares the field to *thermal* pressure, but a Jeans-unstable
+   clump's decisive fact is that it tends to collapse, so that tag wins even when
+   the field is locally strong."
   ([cell]
    (classify cell nil))
   ([cell disc-context]
-   (let [n  (numbers cell)
-         b  (:beta n)
-         ma (:alfven-mach n)
-         jr (:jeans-ratio n)
-         base (cond
-                (>= jr lf/jeans-unstable)               :gravitationally-unstable
-                (and (< b lf/beta-magnetized)
-                     (<= ma lf/alfven-mach-magnetized)) :mhd-dominated
-                :else                                   :gravity-hydro)
-         tag (if (and (= base :gravity-hydro)
-                      disc-context
-                      (= (:disc-tag disc-context) :disc)
-                      (pos? (double (:star-mass disc-context 0.0)))
-                      (pos? (double (:radius disc-context 0.0)))
-                      (pos? (double (:temperature disc-context 0.0))))
-               (let [Q-regime (stellar/disc-regime (:star-mass disc-context)
-                                                   (:mass disc-context)
-                                                   (:radius disc-context)
-                                                   (:temperature disc-context))]
-                 (if (#{:stable-disc :gravitationally-unstable :unstable-no-fragment} Q-regime)
-                   Q-regime
-                   base))
-               base)]
+   (let [n (numbers cell)
+         base (base-regime n)
+         tag (disc-override base disc-context)]
      {:regime tag :numbers n})))
 
 ;; --- ECS projection + system ------------------------------------------------
@@ -168,19 +176,47 @@
   [id]
   (some #(when (= id (:id %)) (:writes %)) reg/systems))
 
+(defn- disc-context-for
+  "Build the disc context for `eid` when it is tagged as a disc."
+  [w disc-context eid cell]
+  (when (= :disc (ecs/get-component w eid c/disc-tag))
+    (assoc disc-context
+           :disc-tag :disc
+           :mass (double (or (ecs/get-component w eid c/mass) 0.0))
+           :radius (double (or (:radius cell) 0.0))
+           :temperature (double (or (:temperature cell) 0.0)))))
+
+(defn- classify-entity
+  "Classify `eid` and return `[eid tag]` if it changed, else nil."
+  [w disc-context eid]
+  (let [cell (entity->cell w eid)
+        ctx (disc-context-for w disc-context eid cell)
+        tag (:regime (classify cell ctx))]
+    (when (not= tag (ecs/get-component w eid c/regime))
+      [eid tag])))
+
+(defn- classify-tags
+  "Return a vector of changed `[eid tag]` pairs for all matter entities."
+  [w]
+  (let [star (central-star w)
+        disc-context (when star
+                       {:star-mass (:star-m star)
+                        :star-pos (:star-pos star)
+                        :star-v (:star-v star)})
+        eids (ecs/entities-with w c/matter-state c/density c/temperature)]
+    (par/par-mapv #(classify-entity w disc-context %) eids)))
+
 (defn regime-system
   "Double-buffer write-set system: SOLE writer of c/regime. Tags every matter
-   entity with its dominant-physics regime, reading the frozen snapshot's
-   one-tick-stale pressure, b-field, and disc-tag channels.
+   entity with its dominant-physics regime, reading the frozen snapshot's one-
+   tick-stale pressure, b-field, and disc-tag channels.
 
    Per-entity classification is pure, so it is computed in parallel; the emitted
-   cell carries only the tags that CHANGED (an unchanged regime writes nothing).
-   The classify phase is profiled when `:genesis/profile-subsystems?` is enabled.
+   cell carries only the tags that CHANGED. The classify phase is profiled when
+   `:genesis/profile-subsystems?` is enabled.
 
    0-arity returns the native write-set system for the fan-out; 1-arity applies
-   the emitted write-set to `world` and returns the updated world — a
-   convenience for benches, tests, and REPL use."
-  ([world] (tick/apply-write-set world ((:run (regime-system)) world)))
+   the emitted write-set to `world` and returns the updated world."
   ([]
    {:id     :regime
     :writes (registry-writes :regime)
@@ -188,26 +224,8 @@
     (fn [world]
       (profile/profile-sections
        world
-       [[:regime/classify
-         (fn [w]
-           (let [star (central-star w)
-                 disc-context (when star
-                                {:star-mass (:star-m star)
-                                 :star-pos  (:star-pos star)
-                                 :star-v    (:star-v star)})
-                 eids (ecs/entities-with w c/matter-state c/density c/temperature)]
-             (par/par-mapv
-              (fn [eid]
-                (let [cell (entity->cell w eid)
-                      ctx (when (= :disc (ecs/get-component w eid c/disc-tag))
-                            (assoc disc-context
-                                   :disc-tag :disc
-                                   :mass (double (or (ecs/get-component w eid c/mass) 0.0))
-                                   :radius (double (or (:radius cell) 0.0))
-                                   :temperature (double (or (:temperature cell) 0.0))))
-                      tag (:regime (classify cell ctx))]
-                  (when (not= tag (ecs/get-component w eid c/regime))
-                    [eid tag])))
-              eids)))]
+       [[:regime/classify classify-tags]
         [:regime/write-set
-         (fn [tags] {c/regime (into {} (keep identity) tags)})]]))}))
+         (fn [tags] {c/regime (into {} (keep identity) tags)})]]))})
+  ([world]
+   (tick/apply-write-set world ((:run (regime-system)) world))))

@@ -9,6 +9,7 @@
             cursor])  ;; integer: index of next unread position (monotone)
 
 (defn empty-ledger
+  "Return a fresh empty ledger with cursor at zero."
   []
   (->Ledger [] 0))
 

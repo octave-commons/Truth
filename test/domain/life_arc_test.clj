@@ -6,7 +6,6 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecology :as ecology]
    [domain.arc :as arc]
-   [domain.genesis :as genesis]
    [domain.ecs.core :as ecs]
    [domain.ecs.event :as event]
    [domain.ecs.components :as c]

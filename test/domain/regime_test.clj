@@ -6,7 +6,7 @@
    arithmetic, so a mutated operator (e.g. * -> / in c_s = √(γp/ρ)) is caught,
    not just an accidental sign flip."
   (:require
-   [clojure.test :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.regime :as regime]
    [domain.em :as em]
    [shape.spatial :as sp]
@@ -33,13 +33,13 @@
   ([a b] (approx= a b 1e-9))
   ([a b rel]
    (let [a (double a) b (double b)]
-     (<= (Math/abs (- a b))
-         (* rel (max 1.0 (Math/abs a) (Math/abs b)))))))
+     (<= (abs (- a b))
+         (* rel (max 1.0 (abs a) (abs b)))))))
 
 (deftest test-sound-speed
   (testing "Sound speed equals the analytic c_s = √(γ p / ρ)"
     (is (approx= (regime/sound-speed dense-warm)
-                 (Math/sqrt (/ (* lf/gamma (double (:pressure dense-warm)))
+                 (math/sqrt (/ (* lf/gamma (double (:pressure dense-warm)))
                                (double (:density dense-warm)))))))
   (testing "Non-positive pressure or density yields zero"
     (is (zero? (regime/sound-speed {:pressure 0.0 :density 1.0})))
@@ -90,8 +90,8 @@
 (deftest test-jeans-ratio
   (testing "Jeans ratio equals radius / λ_J with λ_J = c_s √(π / (G ρ))"
     (let [{:keys [density temperature radius]} diffuse-cloud
-          c-s (Math/sqrt (/ (* ls/k-B (double temperature)) ls/m-H))
-          lam (* c-s (Math/sqrt (/ Math/PI (* ls/G (double density)))))]
+          c-s (math/sqrt (/ (* ls/k-B (double temperature)) ls/m-H))
+          lam (* c-s (math/sqrt (/ math/PI (* ls/G (double density)))))]
       (is (approx= (regime/jeans-ratio diffuse-cloud)
                    (/ (double radius) lam)))))
   (testing "Diffuse massive cold gas is Jeans-unstable (ratio ≥ 1)"
@@ -112,8 +112,8 @@
   ;; `<`↔`<=` flip changes the tag, so it is what kills those mutants.
   (testing "jeans ratio exactly 1 ⇒ gravitationally unstable (≥, not >)"
     (let [density 1e-18 temperature 10.0
-          c-s (Math/sqrt (/ (* ls/k-B (double temperature)) ls/m-H))
-          lam (* c-s (Math/sqrt (/ Math/PI (* ls/G (double density)))))
+          c-s (math/sqrt (/ (* ls/k-B (double temperature)) ls/m-H))
+          lam (* c-s (math/sqrt (/ math/PI (* ls/G (double density)))))
           cell {:density density :temperature temperature :radius lam
                 :pressure 1e-13 :velocity [0.0 0.0 0.0] :b-field [0.0 0.0 1e-9]}]
       (is (== 1.0 (regime/jeans-ratio cell)) "radius = λ_J ⇒ ratio is exactly 1")
@@ -128,7 +128,7 @@
       (is (= :gravity-hydro (:regime (regime/classify cell))))))
   (testing "Alfvén-Mach exactly 1 IS magnetized (M_A ≤ 1 is inclusive) ⇒ mhd"
     (let [density 2.0
-          bfield [0.0 0.0 (Math/sqrt (* lf/mu-0 density))] ; ⇒ v_A = 1
+          bfield [0.0 0.0 (math/sqrt (* lf/mu-0 density))] ; ⇒ v_A = 1
           va (em/alfven-speed bfield density)
           cell {:density density :temperature 10.0 :radius 1.0
                 :pressure 1e-3 :velocity [va 0.0 0.0] :b-field bfield}]

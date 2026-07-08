@@ -5,7 +5,7 @@
    [law.contract :as contract]
    [law.registry :as registry]))
 
-(defn demo-resource-contract []
+(defn- demo-resource-contract []
   (let [shape (shape/->shape
                {:id          (shape/new-shape-id)
                 :kind        :state

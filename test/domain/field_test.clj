@@ -21,7 +21,7 @@
       (is (= #{c/b-field c/frozen-flux} (:writes sys))))
     (testing "capture tick: Φ stored, B ≈ unchanged (radius steady, decay negligible)"
       (is (some? (get-in ws1 [c/frozen-flux e])))
-      (is (< (Math/abs (- (first (get-in ws1 [c/b-field e])) 1.0e-6)) 1.0e-7)))
+      (is (< (abs (- (first (get-in ws1 [c/b-field e])) 1.0e-6)) 1.0e-7)))
     (testing "halving the radius amplifies B ~4× (B ∝ 1/R²)"
       (let [flux (get-in ws1 [c/frozen-flux e])
             w2   (-> w (ecs/put-component e c/radius 5.0e11)

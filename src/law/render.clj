@@ -109,17 +109,27 @@
 (def ^:private composite-registry
   (mr/composite-registry (mr/registry (m/default-schemas)) registry))
 
-(defn valid-program-def? [x]
+(defn valid-program-def?
+  "True if x is a valid shader program definition."
+  [x]
   (m/validate program-def x {:registry composite-registry}))
 
-(defn valid-render-context? [x]
+(defn valid-render-context?
+  "True if x is a valid render-context value."
+  [x]
   (m/validate render-context x {:registry composite-registry}))
 
-(defn valid-render-shape? [x]
+(defn valid-render-shape?
+  "True if x is a valid render-shape value."
+  [x]
   (m/validate render-shape x {:registry composite-registry}))
 
-(defn valid-volume-config? [x]
+(defn valid-volume-config?
+  "True if x is a valid volume-config value."
+  [x]
   (m/validate volume-config x {:registry composite-registry}))
 
-(defn valid-volume-descriptor? [x]
+(defn valid-volume-descriptor?
+  "True if x is a valid volume-descriptor value."
+  [x]
   (m/validate volume-descriptor x {:registry composite-registry}))

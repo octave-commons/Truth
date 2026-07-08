@@ -33,44 +33,26 @@ Architecture and vision explorations:
 
 ---
 
-## research/ (25 files)
+## research/ (6 topics, 45 raw chunks + 6 synthesis READMEs)
 
-Physics implementation, investigations, debugging sessions:
+Physics implementation, investigations, debugging sessions, and nebula-to-life architecture. The raw conversational chunks are now grouped into topic subdirectories; each subdirectory has a `README.md` formalizing the topic without conversational fragments.
 
-### claude-physics-merge (12 files)
-- `claude-physics-merge-001-*.md` — MHD equations, regime diagnostics
-- `claude-physics-merge-002-*.md` — Planet interior + atmosphere physics
-- `claude-physics-merge-003-*.md` — N-body substrate understanding
-- `claude-physics-merge-004-*.md` — Test validation (88 pass)
-- `claude-physics-merge-005-*.md` — Dev window code divergence discovery
-- `claude-physics-merge-006-*.md` — Three parallel pieces mapping
-- `claude-physics-merge-007-*.md` — ECS path cleanup, renderer test
-- `claude-physics-merge-008-*.md` — ECS nebula enrichment
-- `claude-physics-merge-009-*.md` — Nebula completion, star system emergence
-- `claude-physics-merge-010-*.md` — Parallelism tasks, domain.phase0 rework
-- `claude-physics-merge-011-*.md` — Harness emergence monitoring
-- `claude-physics-merge-012-*.md` — Malleability constant to law.stellar
+### Topic subdirectories
+- `deep-research-brief/` — 8-section physics research program (3 raw chunks)
+- `ecs-physics-substrate/` — unifying physics under one ECS substrate (12 raw chunks)
+- `stellar-mergers-accretion/` — star mergers, shell feeding, binary mass transfer (7 raw chunks)
+- `formation-rendering/` — physics-coupled visuals and observer-centric rendering (6 raw chunks)
+- `phase0-nebula/` — Phase 0 stellar nebula collapse and two-path divergence (7 raw chunks)
+- `hops315-fsm/` — HOPS-315 case study and nebula-to-life FSM architecture (10 raw chunks)
 
-### formation-rendering-investigation (6 files)
-- `formation-rendering-investigation-001-*.md` — Planet/sun formation jumps
-- `formation-rendering-investigation-002-*.md` — Collision detection + renderer
-- `formation-rendering-investigation-003-*.md` — Physics-coupled visuals
-- `formation-rendering-investigation-004-*.md` — Complete fix picture
-- `formation-rendering-investigation-005-*.md` — All four issues fixed (134 tests green)
-- `formation-rendering-investigation-006-*.md` — Player/observer model, spark HUD
-
-### phase-0 implementation (7 files)
-- `phase-0-001-*.md` — Two simulation paths problem
-- `phase-0-002-*.md` — Path A vs Path B split diagnosis
-- `phase-0-003-*.md` — Full picture of both paths
-- `phase-0-004-*.md` — Convergence plan
-- `phase-0-005-*.md` — Renderer retargeting to ECS
-- `phase-0-006-*.md` — PM2 dev server divergence
-- `phase-0-007-*.md` — Exit 143 timeout debugging
+### Archived research topics (already in docs/research/)
+- `claude-physics-merge` → see `ecs-physics-substrate/`; formal notebooks in `docs/research/physics/`
+- `formation-rendering-investigation` → see `formation-rendering/`; no formal notebook yet
+- `phase-0` → see `phase0-nebula/`; formal notebooks in `docs/research/physics/`
 
 ---
 
-## specs/ (21 files)
+## specs/ (33 files)
 
 Technical specifications, schemas, contracts:
 
@@ -97,6 +79,22 @@ Technical specifications, schemas, contracts:
 
 ### ECS Double Buffer & Recent
 - `2026.06.26-ecs-double-buffer-single-writer-spec.md` — Double buffer single-writer spec
+- `2026.06.29-unified-physical-state-integrator-spec.md` — Unified physical-state integrator spec
+- `2026.06.30-retire-step-physics-implementation-plan.md` — Retire `:step/physics` implementation plan
 - `2026.06.26.14.15.03.md` — Session notes
 - `2026.06.27.00.24.01.md` — Session notes
 - `2026.06.27.17.56.01.md` — Session notes
+
+### Planetary specs (from claude-identify-missing-planetary-specs-in-code)
+- `claude-identify-missing-planetary-specs-in-code-001-*.md` — Review docs and identify missing specs/research
+- `claude-identify-missing-planetary-specs-in-code-002-*.md` — Retired `:metals` vs current model
+- `claude-identify-missing-planetary-specs-in-code-003-*.md` — Metal enrichment & seeding (M1)
+- `claude-identify-missing-planetary-specs-in-code-004-*.md` — Differentiation (M4) alignment
+- `claude-identify-missing-planetary-specs-in-code-005-*.md` — Priority: planet generation & biogenesis
+- `claude-identify-missing-planetary-specs-in-code-006-*.md` — Render tests to element-resolved model
+- `claude-identify-missing-planetary-specs-in-code-007-*.md` — Full test suite background run
+- `claude-identify-missing-planetary-specs-in-code-008-*.md` — Inner planet temperature update
+- `claude-identify-missing-planetary-specs-in-code-009-*.md` — Converged review verdict
+
+### 2026.07.06.22.04.23 plan
+- `2026.07.06.22.04.23-plan-001-*.md` — Context and plan

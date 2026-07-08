@@ -12,6 +12,7 @@
 
    Snapshots store a materialized world state at a given tick,
    keyed by tick number, for O(1) seek anchoring."
+  (:require [clojure.string :as str])
   (:import
    (java.security MessageDigest)
    (java.nio.charset StandardCharsets)))
@@ -28,7 +29,7 @@
   [^String s]
   (let [md     (MessageDigest/getInstance "SHA-256")
         b  (.digest md (.getBytes s StandardCharsets/UTF_8))]
-    (apply str (map #(format "%02x" (bit-and % 0xff)) b))))
+    (str/join (map #(format "%02x" (bit-and % 0xff)) b))))
 
 (defn- canonical
   "Deterministic string representation of an event for hashing.

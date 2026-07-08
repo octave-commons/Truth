@@ -4,17 +4,27 @@
    [clojure.string :as str]
    [malli.core :as m]))
 
+;; Intentional: Malli schema definitions in this namespace use PascalCase to
+;; mirror the domain-model convention for schema/type names; renaming them
+;; would break every spec and consumer that references them.
+#_{:splint/disable [naming/lisp-case]}
 (def SimpleName
   [:fn {:error/message "Expected a simple symbol"}
    simple-symbol?])
 
+;; Intentional: PascalCase Malli schema name.
+#_{:splint/disable [naming/lisp-case]}
 (def DocString
   [:and string? [:fn {:error/message "Docstring must be non-blank"}
                  #(not (clojure.string/blank? %))]])
 
+;; Intentional: PascalCase Malli schema name.
+#_{:splint/disable [naming/lisp-case]}
 (def ComponentRef
   [:or keyword? SimpleName])
 
+;; Intentional: PascalCase Malli schema name.
+#_{:splint/disable [naming/lisp-case]}
 (def ComponentDef
   [:map
    [:name SimpleName]
@@ -22,11 +32,15 @@
    [:schema any?]
    [:key keyword?]])
 
+;; Intentional: PascalCase Malli schema name.
+#_{:splint/disable [naming/lisp-case]}
 (def EventOptions
   [:map
    [:entity-count {:optional true} pos-int?]
    [:reversible? {:optional true} boolean?]])
 
+;; Intentional: PascalCase Malli schema name.
+#_{:splint/disable [naming/lisp-case]}
 (def EventDef
   [:map
    [:name SimpleName]
@@ -35,6 +49,8 @@
    [:key keyword?]
    [:options EventOptions]])
 
+;; Intentional: PascalCase Malli schema name.
+#_{:splint/disable [naming/lisp-case]}
 (def SystemDef
   [:map
    [:name SimpleName]

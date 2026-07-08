@@ -5,7 +5,7 @@
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.structure :as structure]
    [law.stellar :as law]))
 
 (deftest eos-derives-ideal-gas-pressure
@@ -13,7 +13,7 @@
         [w e1] (ecs/spawn w)
         w   (-> (ecs/put-components w e0 {c/density 1.0e-16 c/temperature 50.0})
                 (ecs/put-components e1 {c/density 1.0e3  c/temperature 1.0e6}))
-        sys (stellar/eos-system)
+        sys (structure/eos-system)
         ws  ((:run sys) w)
         p   (get ws c/pressure)]
     (testing "system contract: sole writer of pressure"
@@ -29,7 +29,7 @@
         [w e1] (ecs/spawn w)
         w  (-> (ecs/put-components w e0 {c/density 1.0e-16 c/temperature 50.0})
                (ecs/put-component e1 c/density 1.0e-16))   ;; no temperature
-        ws ((:run (stellar/eos-system)) w)]
+        ws ((:run (structure/eos-system)) w)]
     (is (contains? (get ws c/pressure) e0))
     (is (not (contains? (get ws c/pressure) e1))
         "a body without temperature gets no pressure")))

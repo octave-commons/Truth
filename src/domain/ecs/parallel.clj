@@ -5,7 +5,8 @@
    results back into the world. The per-entity computation is embarrassingly
    parallel; only the fold is sequential. `par-mapv` runs `f` over a collection
    in chunked futures across cores and returns results in original order, so the
-   outcome is independent of scheduling — same contract as `mapv`.")
+   outcome is independent of scheduling — same contract as `mapv`."
+  (:require [clojure.math :as math]))
 
 (def ^:private n-cores
   (max 1 (.availableProcessors (Runtime/getRuntime))))
@@ -15,7 +16,7 @@
    fall back to a plain sequential mapv. Kept low (with `min-chunk-size` as the
    real granularity guard) so late-game per-state populations — a few hundred
    resolved bodies — still fan out instead of running serially
-   (docs/specs/perf-60fps-parallel-tick.md, Fix 4)."
+   (kanban/tasks/perf-60fps-parallel-tick.md, Fix 4)."
   64)
 
 (def ^:private min-chunk-size
@@ -32,7 +33,7 @@
     (if (< n parallel-threshold)
       (mapv f items)
       (let [chunks (max 1 (min n-cores (quot n min-chunk-size)))
-            size   (long (Math/ceil (/ (double n) chunks)))
+            size   (long (math/ceil (/ (double n) chunks)))
             futs   (mapv (fn [part] (future (mapv f part)))
                          (partition-all size items))]
         (into [] (mapcat deref) futs)))))

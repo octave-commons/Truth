@@ -65,7 +65,7 @@
         F2 (plasma/xuv-flux-at 1.0e22 2.0e10)]
     (is (> F1 0.0))
     (is (> F1 F2))
-    (is (< (Math/abs (- F2 (/ F1 4.0))) 1e-6))))
+    (is (< (abs (- F2 (/ F1 4.0))) 1e-6))))
 
 (deftest energy-limited-escape-is-positive
   (let [mdot (plasma/energy-limited-escape 0.1 6.371e6 5.972e24 0.15)]

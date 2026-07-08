@@ -1,5 +1,5 @@
 (ns domain.debris
-  "The small-body sink (spec: docs/specs/perf-60fps-parallel-tick.md, Fix 6).
+  "The small-body sink (spec: kanban/tasks/perf-60fps-parallel-tick.md, Fix 6).
 
    `:planetesimal`, `:gas-giant`, and `:brown-dwarf` are real condensed
    populations (classifier: cooled sub-stellar nebula → planetesimal / gas-giant
@@ -26,7 +26,7 @@
    Bound small bodies are NEVER reaped, no matter how far out (a circular orbit
    at any radius fails (b)). A pure snapshot-reading fan-out emitter."
   (:require
-   [domain.ecs.core       :as ecs]
+   [clojure.math :as math] [domain.ecs.core       :as ecs]
    [domain.ecs.components :as c]
    [shape.spatial         :as sp]))
 
@@ -58,7 +58,7 @@
                                  d  (sp/dist (ecs/get-component world eid c/position) com)]
                              (+ acc (* em d d))))
                          0.0 eids)]
-        {:mass m :com com :vcom vcom :rms (Math/sqrt (/ r2 m))})
+        {:mass m :com com :vcom vcom :rms (math/sqrt (/ r2 m))})
       {:mass 0.0 :com [0.0 0.0 0.0] :vcom [0.0 0.0 0.0] :rms 0.0})))
 
 (defn escaped?

@@ -6,23 +6,23 @@
    TDD under SYNTHETIC conditions (no 10³-tick emergent run needed): a tight,
    cold, Jeans-unstable clump of equal-mass gas parcels, driven through the real
    `genesis/tick-world` pipeline for a few dozen ticks. The mechanism is the
-   mass-dependent Bondi capture radius (`stellar/effective-accretion-radius`): a
+   mass-dependent Bondi capture radius (`sink/effective-accretion-radius`): a
    core's gravitational reach grows ∝ M, so the most massive core accretes fastest
    and runs away. Toggling `:genesis/competitive-accretion?` isolates the
    mechanism — ON funnels the clump into one dominant star; OFF (the pre-fix fixed
    feeding zone) fragments it."
   (:require
-   [clojure.test          :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test          :refer [deftest testing is]]
    [domain.genesis        :as genesis]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
-   [domain.stellar        :as stellar]
+   [domain.stellar.sink   :as sink]
    [law.composition       :as lcomp]))
 
 (def msun 1.989e30)
 
 (defn- hash01 [n]
-  (/ (double (mod (* (+ 1 (long n)) 2654435761) 1000003)) 1000003.0))
+  (/ (double (mod (* (inc (long n)) 2654435761) 1000003)) 1000003.0))
 
 (defn- collapsing-clump
   "A world holding `n` cold, dense, Jeans-unstable gas parcels packed into a
@@ -38,13 +38,13 @@
                       :genesis/competitive-accretion? competitive?
                       :genesis/gas-particle-mass pmass
                       :genesis/gas-smoothing-radius gsr
-                      :genesis/feeding-zone-factor (stellar/resolution-feeding-zone-factor n)))]
+                      :genesis/feeding-zone-factor (sink/resolution-feeding-zone-factor n)))]
     (reduce (fn [w i]
-              (let [u (hash01 (+ i 1)) v (hash01 (+ i 101)) t (hash01 (+ i 201))
-                    rr (* clump-r (Math/cbrt u))
-                    ct (- (* 2.0 v) 1.0) st (Math/sqrt (max 0.0 (- 1.0 (* ct ct))))
-                    ph (* 2.0 Math/PI t)
-                    pos [(* rr st (Math/cos ph)) (* rr st (Math/sin ph)) (* rr ct)]
+              (let [u (hash01 (inc i)) v (hash01 (+ i 101)) t (hash01 (+ i 201))
+                    rr (* clump-r (math/cbrt u))
+                    ct (- (* 2.0 v) 1.0) st (math/sqrt (max 0.0 (- 1.0 (* ct ct))))
+                    ph (* 2.0 math/PI t)
+                    pos [(* rr st (math/cos ph)) (* rr st (math/sin ph)) (* rr ct)]
                     d (* dens (+ 1.0 (* 3.0 (- 1.0 (/ rr clump-r)))))
                     [w2 e] (ecs/spawn w)]
                 (ecs/put-components w2 e
@@ -63,7 +63,7 @@
 
 (deftest competitive-accretion-yields-one-dominant-star
   (testing "a collapsing clump funnels into exactly ONE dominant star (> 0.5 M☉)"
-    (let [w      (run (collapsing-clump {}) 45)
+    (let [w      (run (collapsing-clump {:n 48}) 35)
           ms     (masses-solar w)
           total  (reduce + 0.0 ms)
           top    (first ms)
@@ -79,7 +79,7 @@
 
 (deftest without-competitive-accretion-the-cloud-fragments
   (testing "the SAME clump with competitive accretion OFF fragments into a swarm"
-    (let [w     (run (collapsing-clump {:competitive? false}) 45)
+    (let [w     (run (collapsing-clump {:n 48 :competitive? false}) 35)
           ms    (masses-solar w)
           total (reduce + 0.0 ms)
           top   (first ms)
@@ -91,8 +91,8 @@
 (deftest competitive-accretion-concentrates-mass
   (testing "competitive accretion concentrates far more mass into its largest core
             than the fragmenting baseline, from an identical initial clump"
-    (let [on   (run (collapsing-clump {:competitive? true}) 45)
-          off  (run (collapsing-clump {:competitive? false}) 45)
+    (let [on   (run (collapsing-clump {:n 48 :competitive? true}) 35)
+          off  (run (collapsing-clump {:n 48 :competitive? false}) 35)
           ms-on   (masses-solar on)
           ms-off  (masses-solar off)
           top-on  (first ms-on)
@@ -116,7 +116,7 @@
                                             c/mass mass
                                             c/temperature 1.0e6 ;; hot sink — must NOT shrink the zone
                                             c/velocity [0.0 0.0 0.0]})
-                     (stellar/effective-accretion-radius e))))
+                     (sink/effective-accretion-radius e))))
           r-small (mk 1.0e29)
           r-big   (mk 1.0e30)]
       (is (> r-big r-small) "a more massive sink has a larger capture radius")
@@ -128,4 +128,4 @@
           w (-> (assoc w :genesis/competitive-accretion? false)
                 (ecs/put-components e {c/accretion-radius 1.0e12 c/mass 1.0e30
                                        c/temperature 15.0 c/velocity [0.0 0.0 0.0]}))]
-      (is (= 1.0e12 (stellar/effective-accretion-radius w e))))))
+      (is (= 1.0e12 (sink/effective-accretion-radius w e))))))

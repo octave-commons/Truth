@@ -8,8 +8,6 @@
    Run: clj -M:bench
    Run specific group: clj -M:bench :ecs
    Run with profile: clj -M:bench :profile"
-  (:require
-   [criterium.core :as crit])
   (:import [java.lang.management ManagementFactory]))
 
 ;; ---------------------------------------------------------------------------
@@ -63,7 +61,8 @@
   "Run a criterium quick-bench (fewer samples, faster feedback)."
   [label f]
   (println (format "\n--- %s ---" label))
-  (let [result (crit/quick-benchmark* f {})
+  (require 'criterium.core)
+  (let [result ((resolve 'criterium.core/quick-benchmark*) f {})
         mean (:mean result)
         std (:std result)
         lq (:lower-q result)
@@ -80,7 +79,8 @@
   "Run a criterium full benchmark (rigorous, slower)."
   [label f]
   (println (format "\n--- %s ---" label))
-  (let [result (crit/benchmark* f {})
+  (require 'criterium.core)
+  (let [result ((resolve 'criterium.core/benchmark*) f {})
         mean (:mean result)
         std (:std result)
         lq (:lower-q result)
@@ -106,16 +106,41 @@
     (ns-resolve (the-ns ns-sym) 'run)))
 
 (def benchmark-groups
-  "Map of group keyword → {:label fn :bench-fn var}."
-   {:ecs       {:label "ECS Core Operations"      :ns 'gates-of-truth.bench.ecs}
-    :gravity   {:label "Barnes-Hut Gravity"        :ns 'gates-of-truth.bench.gravity}
-    :collision {:label "Collision Detection"       :ns 'gates-of-truth.bench.collision}
-    :hydro     {:label "SPH Hydrodynamics"         :ns 'gates-of-truth.bench.hydro}
-    :em        {:label "Electromagnetic Fields"    :ns 'gates-of-truth.bench.em}
-    :tick      {:label "Double-Buffer Tick"        :ns 'gates-of-truth.bench.tick}
-    :spatial   {:label "Spatial Index Queries"     :ns 'gates-of-truth.bench.spatial}
-    :render    {:label "Renderer / Graphics"       :ns 'gates-of-truth.bench.render}
-    :phase0    {:label "Full Phase 0 Tick"         :ns 'gates-of-truth.bench.phase0}})
+  "Map of group keyword → {:label String :ns Symbol :covers #{Symbol}}.
+   :covers declares the source namespaces this group is primarily intended to
+   benchmark; used by gates-of-truth.bench.coverage to report benchmark coverage."
+   {:ecs       {:label  "ECS Core Operations"
+                :ns     'gates-of-truth.bench.ecs
+                :covers #{'domain.ecs.core 'domain.ecs.components}}
+    :gravity   {:label  "Barnes-Hut Gravity"
+                :ns     'gates-of-truth.bench.gravity
+                :covers #{'domain.gravity.barnes-hut 'shape.spatial}}
+    :collision {:label  "Collision Detection"
+                :ns     'gates-of-truth.bench.collision
+                :covers #{'domain.physics.collision}}
+    :hydro     {:label  "SPH Hydrodynamics"
+                :ns     'gates-of-truth.bench.hydro
+                :covers #{'domain.hydro}}
+    :em        {:label  "Electromagnetic Fields"
+                :ns     'gates-of-truth.bench.em
+                :covers #{'domain.em}}
+    :tick      {:label  "Double-Buffer Tick"
+                :ns     'gates-of-truth.bench.tick
+                :covers #{'domain.ecs.tick 'domain.ecs.parallel}}
+    :spatial   {:label  "Spatial Index Queries"
+                :ns     'gates-of-truth.bench.spatial
+                :covers #{'domain.spatial.index 'shape.spatial}}
+    :render    {:label  "Renderer / Graphics"
+                :ns     'gates-of-truth.bench.render
+                :covers #{'infra.render 'infra.render.units 'infra.camera}}
+    :phase0    {:label  "Full Phase 0 Tick"
+                :ns     'gates-of-truth.bench.phase0
+                :covers #{'domain.genesis 'domain.arc 'domain.ecs.core
+                          'domain.ecs.tick 'domain.ecs.components
+                          'domain.stellar 'domain.orbital.system 'domain.hydro
+                          'domain.em 'domain.physics.collision 'domain.regime
+                          'domain.intervention 'domain.player 'domain.pacing
+                          'domain.spatial.index 'domain.chemistry}}})
 
 (def group-order
   "Execution order: ECS first (foundational), then physics, then integration."

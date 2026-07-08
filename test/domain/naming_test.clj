@@ -1,6 +1,7 @@
 (ns domain.naming-test
   (:require
    [clojure.test :refer [deftest testing is]]
+   [clojure.string :as str]
    [domain.naming :as naming]))
 
 (deftest body-names-are-deterministic-and-distinct
@@ -21,6 +22,6 @@
 (deftest display-label-shows-name-and-kind
   (is (= (str (naming/body-name 7) " — star")
          (naming/display-label 7 :star)))
-  (is (.endsWith ^String (naming/display-label 7 :planet) "planet"))
+  (is (str/ends-with? ^String (naming/display-label 7 :planet) "planet"))
   (testing "unknown states fall back to their keyword name"
-    (is (.endsWith ^String (naming/display-label 7 :weird) "weird"))))
+    (is (str/ends-with? ^String (naming/display-label 7 :weird) "weird"))))

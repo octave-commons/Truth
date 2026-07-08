@@ -6,8 +6,8 @@
    :source string. This gives us named slots for validation and hot-reload
    without taking on a Clojure-to-GLSL compiler dependency."
   (:require
-   [clojure.string :as str]
-   [law.render :as law])
+   [law.render :as law]
+   [malli.core])
   (:import
    (org.lwjgl.opengl GL20)))
 
@@ -74,40 +74,40 @@
   "Compile `program-def` and cache it by name + source hash. Returns the
    cached entry `{id program-id hash source-hash}`."
   [program-def]
-  (let [name  (:name program-def)
+  (let [program-name  (:name program-def)
         h     (source-hash program-def)
         cache @program-cache]
-    (if-let [entry (get cache name)]
+    (if-let [entry (get cache program-name)]
       (if (= h (:hash entry))
         entry
         (let [id (compile-program program-def)]
-          (swap! program-cache assoc name {:id id :hash h})
+          (swap! program-cache assoc program-name {:id id :hash h})
           {:id id :hash h}))
       (let [id (compile-program program-def)]
-        (swap! program-cache assoc name {:id id :hash h})
+        (swap! program-cache assoc program-name {:id id :hash h})
         {:id id :hash h}))))
 
 (defn program-id
   "Return the cached GL program id for `name`, or nil if not compiled."
-  [name]
-  (some-> (get @program-cache name) :id))
+  [program-name]
+  (some-> (get @program-cache program-name) :id))
 
 (defn program-hash
   "Return the cached source hash for `name`, or nil."
-  [name]
-  (some-> (get @program-cache name) :hash))
+  [program-name]
+  (some-> (get @program-cache program-name) :hash))
 
 (defn invalidate-program!
   "Delete and remove a cached program. Safe if it does not exist."
-  [name]
-  (when-let [id (program-id name)]
+  [program-name]
+  (when-let [id (program-id program-name)]
     (GL20/glDeleteProgram id))
-  (swap! program-cache dissoc name))
+  (swap! program-cache dissoc program-name))
 
 (defn invalidate-all!
   "Delete every cached program and clear the cache."
   []
-  (doseq [[name entry] @program-cache]
+  (doseq [[_program-name entry] @program-cache]
     (GL20/glDeleteProgram (:id entry)))
   (reset! program-cache {}))
 

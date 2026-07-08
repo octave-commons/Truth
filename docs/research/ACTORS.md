@@ -13,8 +13,27 @@ only write to `docs/research/` and never modify source code.
 | `truth-research-physics` | Physics | 48h | SPH, N-body, MHD, orbital mechanics, numerical methods |
 | `truth-research-culture` | Culture | 48h | Agent-based social models, mythogenesis, civilization dynamics |
 | `truth-research-coordinator` | Cross-domain | 72h | Index maintenance, topic assignment, gap analysis, synthesis |
+| `truth-research-peer-reviewer` | Quality | on-demand | Run notebooks, review text/figures/code/citations, suggest future topics |
+| `truth-research-gap-analyst` | Cross-domain | on-demand | Compare coverage to simulation needs, identify missing research and cross-links |
 
-### Dispatching Research
+#### Quality & Analysis Actors
+
+| Actor | Domain | Schedule | Topics |
+|-------|--------|----------|--------|
+| `truth-research-peer-reviewer` | Quality | on-demand | Run notebooks, review text/figures/code/citations, suggest future topics |
+| `truth-research-gap-analyst` | Cross-domain | on-demand | Compare coverage to simulation needs, identify missing research and cross-links |
+
+These actors do not produce primary research notebooks. They read the existing research, write structured reports to their own outboxes, and feed recommendations back to the coordinator or domain actors.
+
+### Research Output Quality Loop
+
+1. Domain actors produce notebooks in `docs/research/<domain>/`.
+2. `truth-research-peer-reviewer` runs executable artifacts, checks citations and figures, and writes review reports.
+3. `truth-research-gap-analyst` periodically compares the full index to the simulation phase map and user notes, then identifies missing topics.
+4. Both can send messages to `truth-research-coordinator` with recommended next dispatches.
+5. The coordinator updates `docs/research/INDEX.md` and assigns new topics to domain actors.
+
+## Dispatching Research
 
 ```bash
 # Manual dispatch (uses eta-mu CLI)

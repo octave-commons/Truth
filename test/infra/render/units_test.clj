@@ -41,18 +41,18 @@
   (testing "Bodies project at TRUE scale: render radius = physical radius / scale"
     (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
           s   (double (:scale ctx))]
-      (is (< (Math/abs (- (units/phys->body-render-radius ctx 6.957e8)
-                          (/ 6.957e8 s)))
+      (is (< (abs (- (units/phys->body-render-radius ctx 6.957e8)
+                     (/ 6.957e8 s)))
              1e-15)
           "solar radius maps linearly — viewed size IS physical size")
       (is (< (units/phys->body-render-radius ctx 6.371e6)
              (units/phys->body-render-radius ctx 6.957e8))
           "Earth is smaller than the Sun")
-      (is (= (/ (units/phys->body-render-radius ctx 6.957e8)
-                (units/phys->body-render-radius ctx 6.957e7))
-             10.0)
+      (is (= 10.0
+             (/ (units/phys->body-render-radius ctx 6.957e8)
+                (units/phys->body-render-radius ctx 6.957e7)))
           "relative sizes are honest: 10× the radius reads 10× as large")
-      (is (= units/body-radius-floor-ru (units/phys->body-render-radius ctx 0.0))
+      (is (= (units/phys->body-render-radius ctx 0.0) units/body-radius-floor-ru)
           "non-positive radius clamps to the degenerate floor"))))
 
 (deftest test-screen-render-ray-normalized
@@ -60,7 +60,7 @@
     (let [ctx (units/make-context (cam/make-camera) {:width 1280 :height 720})
           {:keys [rd]} (units/screen->render-ray ctx 640.0 360.0)]
       (is (number? (sp/len rd)))
-      (is (< (Math/abs (- (sp/len rd) 1.0)) 1e-6) "ray direction is unit length"))))
+      (is (< (abs (- (sp/len rd) 1.0)) 1e-6) "ray direction is unit length"))))
 
 (deftest test-render-screen-identity
   (testing "A point on the screen's center ray projects back through the ray"
@@ -68,16 +68,16 @@
           {:keys [ro rd]} (units/screen->render-ray ctx 640.0 360.0)
           p   (sp/v+ ro (sp/v* rd 10.0))
           [sx sy _depth] (units/render->screen ctx p)]
-      (is (< (Math/abs (- sx 640.0)) 0.1) "center ray projects to center x")
-      (is (< (Math/abs (- sy 360.0)) 0.1) "center ray projects to center y"))))
+      (is (< (abs (- sx 640.0)) 0.1) "center ray projects to center x")
+      (is (< (abs (- sy 360.0)) 0.1) "center ray projects to center y"))))
 
 (deftest test-camera-basis
   (testing "camera-basis yields an orthonormal right-handed frame"
     (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
           {:keys [fwd right up]} (units/camera-basis ctx)]
-      (is (< (Math/abs (- (sp/len fwd) 1.0)) 1e-6))
-      (is (< (Math/abs (- (sp/len right) 1.0)) 1e-6))
-      (is (< (Math/abs (- (sp/len up) 1.0)) 1e-6))
-      (is (< (Math/abs (sp/dot fwd right)) 1e-6) "fwd ⟂ right")
-      (is (< (Math/abs (sp/dot fwd up)) 1e-6) "fwd ⟂ up")
+      (is (< (abs (- (sp/len fwd) 1.0)) 1e-6))
+      (is (< (abs (- (sp/len right) 1.0)) 1e-6))
+      (is (< (abs (- (sp/len up) 1.0)) 1e-6))
+      (is (< (abs (sp/dot fwd right)) 1e-6) "fwd ⟂ right")
+      (is (< (abs (sp/dot fwd up)) 1e-6) "fwd ⟂ up")
       (is (pos? (sp/dot (sp/cross right fwd) up)) "right × fwd ≈ up"))))

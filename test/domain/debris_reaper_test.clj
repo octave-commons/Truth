@@ -1,9 +1,9 @@
 (ns domain.debris-reaper-test
-  "Fix 6 (docs/specs/perf-60fps-parallel-tick.md): the debris sink reaps ONLY
+  "Fix 6 (kanban/tasks/perf-60fps-parallel-tick.md): the debris sink reaps ONLY
    escapers — unbound debris beyond the escape distance — never bound bodies,
    however far out they orbit."
   (:require
-   [clojure.test           :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test           :refer [deftest testing is]]
    [domain.debris          :as debris]
    [domain.genesis         :as genesis]
    [domain.ecs.core        :as ecs]
@@ -37,8 +37,8 @@
 (deftest bound-debris-survives-unbound-escaper-reaped
   (testing "circular-orbit debris far out is NOT reaped; a hyperbolic escaper is"
     (let [r-far  2.0e13                       ;; ~130 AU: >10× the RMS radius of a star-dominated system
-          v-circ (Math/sqrt (/ (* G msun) r-far))
-          v-esc  (Math/sqrt (/ (* 2.0 G msun) r-far))
+          v-circ (math/sqrt (/ (* G msun) r-far))
+          v-esc  (math/sqrt (/ (* 2.0 G msun) r-far))
           [w [_ bound esc]] (star-world
                              [{:state :planetesimal :mass 1.0e22
                                :pos [r-far 0.0 0.0] :vel [0.0 v-circ 0.0]}
@@ -62,17 +62,17 @@
 (deftest non-debris-never-reaped
   (testing "only :planetesimal is eligible — a runaway planet or star is not reaped"
     (let [r-far 2.0e13
-          v-esc (Math/sqrt (/ (* 2.0 G msun) r-far))
-          [w [_ planet]] (star-world
-                          [{:state :planet :mass 6.0e24
-                            :pos [r-far 0.0 0.0] :vel [0.0 (* 2.0 v-esc) 0.0]}])
+          v-esc (math/sqrt (/ (* 2.0 G msun) r-far))
+          [w [_ _planet]] (star-world
+                           [{:state :planet :mass 6.0e24
+                             :pos [r-far 0.0 0.0] :vel [0.0 (* 2.0 v-esc) 0.0]}])
           ws ((:run (debris/debris-reaper-system)) w)]
       (is (empty? (get ws c/consumed-escape {}))))))
 
 (deftest materialize-reaps-marked-escapers-and-logs-the-event
   (testing "world-construction despawns marked escapers and records :event/body-escape"
     (let [r-far 2.0e13
-          v-esc (Math/sqrt (/ (* 2.0 G msun) r-far))
+          v-esc (math/sqrt (/ (* 2.0 G msun) r-far))
           [w [_ esc]] (star-world
                        [{:state :planetesimal :mass 1.0e22
                          :pos [r-far 0.0 0.0] :vel [(* 1.5 v-esc) 0.0 0.0]}])

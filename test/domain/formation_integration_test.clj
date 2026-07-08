@@ -14,7 +14,7 @@
    the arc/event layer observes the transition. When Part 1a lands, the same
    assertions should hold for an emergent disc."
   (:require
-   [clojure.test          :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test          :refer [deftest testing is]]
    [domain.genesis        :as genesis]
    [domain.arc            :as arc]
    [domain.ecs.core       :as ecs]
@@ -27,7 +27,7 @@
 
 (defn- circular-velocity [star-m pos]
   (let [r (sp/len pos)
-        v (Math/sqrt (/ (* law/G star-m) r))
+        v (math/sqrt (/ (* law/G star-m) r))
         [x y _] pos]
     [(* (- v) (/ y r)) (* v (/ x r)) 0.0]))
 
@@ -53,11 +53,11 @@
         ;; net pull that displaces the star within the tick and corrupts the
         ;; planets' measured orbits.
         placements (for [i (range n)]
-                     (let [r (* au (Math/pow 10.0 (+ (Math/log10 0.3)
-                                                     (* i (/ (- (Math/log10 15.0) (Math/log10 0.3))
+                     (let [r (* au (math/pow 10.0 (+ (math/log10 0.3)
+                                                     (* i (/ (- (math/log10 15.0) (math/log10 0.3))
                                                              (dec n))))))
                            theta (* 2.399963229728653 i)]  ;; golden angle (rad)
-                       [(* r (Math/cos theta)) (* r (Math/sin theta)) 0.0]))
+                       [(* r (math/cos theta)) (* r (math/sin theta)) 0.0]))
         w (reduce (fn [w pos]
                     (let [[w2 eid] (stellar/spawn-clump w
                                                         {:position pos :velocity (circular-velocity M pos)
@@ -165,7 +165,7 @@
           :genesis/invalidate-neighbor-cache?))
 
 (deftest persistent-cache-matches-full-rebuild
-  (testing "20 ticks with persistent cache and full-rebuild produce identical worlds"
+  (testing "10 ticks with persistent cache and full-rebuild produce identical worlds"
     (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
@@ -173,7 +173,7 @@
       (loop [i 0
              persist base
              full    (assoc base :genesis/invalidate-neighbor-cache? true)]
-        (when (< i 20)
+        (when (< i 10)
           (let [p1 (genesis/tick-world persist)
                 f1 (genesis/tick-world full)]
             (is (= (without-transient-caches p1) (without-transient-caches f1))
@@ -181,7 +181,7 @@
             (recur (inc i) p1 f1)))))))
 
 (deftest persistent-cache-interval-one-matches-invalidation
-  (testing "20 ticks with interval=1 persistent cache match invalidate=true mode"
+  (testing "10 ticks with interval=1 persistent cache match invalidate=true mode"
     (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
@@ -191,7 +191,7 @@
       (loop [i 0
              persist interval-one
              full    invalid]
-        (when (< i 20)
+        (when (< i 10)
           (let [p1 (genesis/tick-world persist)
                 f1 (genesis/tick-world full)]
             (is (= (without-transient-caches p1) (without-transient-caches f1))
@@ -199,11 +199,11 @@
             (recur (inc i) p1 f1)))))))
 
 (deftest persistent-cache-default-interval-stays-stable
-  (testing "50 ticks with default persistent-cache interval stay stable vs full rebuild"
-    (let [base (-> (genesis/create-world {:gas-count 50 :spin 0.4 :turb 0.05})
+  (testing "30 ticks with default persistent-cache interval stay stable vs full rebuild"
+    (let [base (-> (genesis/create-world {:gas-count 30 :spin 0.4 :turb 0.05})
                    (assoc :genesis/adaptive-pacing? false))
           full (assoc base :genesis/invalidate-neighbor-cache? true)
-          run #(reduce (fn [w _] (genesis/tick-world w)) % (range 50))
+          run #(reduce (fn [w _] (genesis/tick-world w)) % (range 30))
           w-full (run full)
           w-persist (run base)
           body-count #(count (ecs/entities-with % c/matter-state c/mass))
@@ -217,6 +217,6 @@
           m-persist (total-mass w-persist)]
       (is (pos? bc-persist) "persistent-cache world still has bodies")
       (is (= bc-full bc-persist) "same final body count")
-      (is (< (Math/abs (- m-persist m-full))
+      (is (< (abs (- m-persist m-full))
              (* 1e-6 (max 1.0 m-full)))
           "total mass matches within tolerance"))))

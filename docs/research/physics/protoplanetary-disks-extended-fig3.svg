@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" font-family="sans-serif">
+<text x="365.00" y="20.00" text-anchor="middle" font-size="14" font-weight="bold">Disk temperature profile and condensation thresholds</text>
+<line x1="70" y1="50" x2="70" y2="360" stroke="black" stroke-width="1"/>
+<line x1="70" y1="360" x2="660" y2="360" stroke="black" stroke-width="1"/>
+<line x1="237.44" y1="360" x2="237.44" y2="364" stroke="black"/>
+<text x="237.44" y="378.00" text-anchor="middle" font-size="11">1</text>
+<line x1="440.68" y1="360" x2="440.68" y2="364" stroke="black"/>
+<text x="440.68" y="378.00" text-anchor="middle" font-size="11">10</text>
+<line x1="643.91" y1="360" x2="643.91" y2="364" stroke="black"/>
+<text x="643.91" y="378.00" text-anchor="middle" font-size="11">100</text>
+<line x1="66" y1="278.95" x2="70" y2="278.95" stroke="black"/>
+<text x="62.00" y="282.95" text-anchor="end" font-size="11">100</text>
+<line x1="66" y1="123.95" x2="70" y2="123.95" stroke="black"/>
+<text x="62.00" y="127.95" text-anchor="end" font-size="11">1000</text>
+<text x="365.00" y="395.00" text-anchor="middle" font-size="12">Radius r (AU)</text>
+<text x="20.00" y="205.00" text-anchor="middle" font-size="12" transform="rotate(-90,20,205.00)">Temperature (K)</text>
+<line x1="237.44" y1="50" x2="237.44" y2="360" stroke="#e5e7eb"/>
+<line x1="440.68" y1="50" x2="440.68" y2="360" stroke="#e5e7eb"/>
+<line x1="643.91" y1="50" x2="643.91" y2="360" stroke="#e5e7eb"/>
+<line x1="70" y1="278.95" x2="660" y2="278.95" stroke="#e5e7eb"/>
+<line x1="70" y1="232.29" x2="660" y2="232.29" stroke="#e5e7eb"/>
+<line x1="70" y1="170.61" x2="660" y2="170.61" stroke="#e5e7eb"/>
+<line x1="70" y1="123.95" x2="660" y2="123.95" stroke="#e5e7eb"/>
+<line x1="70" y1="77.29" x2="660" y2="77.29" stroke="#e5e7eb"/>
+<polyline points="95.39,197.49 131.18,211.14 176.27,228.33 205.96,239.65 237.44,251.66 273.23,265.31 298.62,274.99 334.41,288.64 379.50,305.83 409.20,317.15 440.68,329.16 501.85,352.49 537.64,366.14 582.73,383.33 612.43,394.65 643.91,406.66" fill="none" stroke="#2563eb" stroke-width="2"/>
+<line x1="70" y1="96.66" x2="660" y2="96.66" stroke="#7f1d1d" stroke-dasharray="5,3" stroke-width="1.5"/>
+<text x="530" y="92.66" font-size="10" fill="#7f1d1d">olivine/pyroxene/iron (1500 K)</text>
+<line x1="70" y1="149.91" x2="660" y2="149.91" stroke="#9a3412" stroke-dasharray="5,3" stroke-width="1.5"/>
+<text x="530" y="145.91" font-size="10" fill="#9a3412">troilite (FeS) (680 K)</text>
+<line x1="70" y1="181.55" x2="660" y2="181.55" stroke="#ca8a04" stroke-dasharray="5,3" stroke-width="1.5"/>
+<text x="530" y="177.55" font-size="10" fill="#ca8a04">refractory organics (425 K)</text>
+<line x1="70" y1="210.86" x2="660" y2="210.86" stroke="#65a30d" stroke-dasharray="5,3" stroke-width="1.5"/>
+<text x="530" y="206.86" font-size="10" fill="#65a30d">volatile organics (275 K)</text>
+<line x1="70" y1="243.23" x2="660" y2="243.23" stroke="#2563eb" stroke-dasharray="5,3" stroke-width="1.5"/>
+<text x="530" y="239.23" font-size="10" fill="#2563eb">water ice snow line (170 K)</text>
+<line x1="215.35" y1="50" x2="215.35" y2="360" stroke="#2563eb" stroke-dasharray="2,2"/>
+<text x="220.35" y="65.00" font-size="10" fill="#2563eb">r_snow ~ 0.8 AU</text>
+</svg>

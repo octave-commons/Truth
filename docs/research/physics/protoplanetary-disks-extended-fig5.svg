@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" font-family="sans-serif">
+<text x="365.00" y="20.00" text-anchor="middle" font-size="14" font-weight="bold">Compositional gradients: ice fraction and C/O proxy</text>
+<line x1="70" y1="50" x2="70" y2="360" stroke="black" stroke-width="1"/>
+<line x1="70" y1="360" x2="660" y2="360" stroke="black" stroke-width="1"/>
+<line x1="237.44" y1="360" x2="237.44" y2="364" stroke="black"/>
+<text x="237.44" y="378.00" text-anchor="middle" font-size="11">1</text>
+<line x1="440.68" y1="360" x2="440.68" y2="364" stroke="black"/>
+<text x="440.68" y="378.00" text-anchor="middle" font-size="11">10</text>
+<line x1="643.91" y1="360" x2="643.91" y2="364" stroke="black"/>
+<text x="643.91" y="378.00" text-anchor="middle" font-size="11">100</text>
+<line x1="66" y1="360.00" x2="70" y2="360.00" stroke="black"/>
+<text x="62.00" y="364.00" text-anchor="end" font-size="11">0.0</text>
+<line x1="66" y1="298.00" x2="70" y2="298.00" stroke="black"/>
+<text x="62.00" y="302.00" text-anchor="end" font-size="11">0.2</text>
+<line x1="66" y1="236.00" x2="70" y2="236.00" stroke="black"/>
+<text x="62.00" y="240.00" text-anchor="end" font-size="11">0.5</text>
+<line x1="66" y1="174.00" x2="70" y2="174.00" stroke="black"/>
+<text x="62.00" y="178.00" text-anchor="end" font-size="11">0.7</text>
+<line x1="66" y1="112.00" x2="70" y2="112.00" stroke="black"/>
+<text x="62.00" y="116.00" text-anchor="end" font-size="11">1.0</text>
+<line x1="66" y1="50.00" x2="70" y2="50.00" stroke="black"/>
+<text x="62.00" y="54.00" text-anchor="end" font-size="11">1.2</text>
+<text x="365.00" y="395.00" text-anchor="middle" font-size="12">Radius r (AU)</text>
+<text x="20.00" y="205.00" text-anchor="middle" font-size="12" transform="rotate(-90,20,205.00)">Fraction / C/O ratio</text>
+<line x1="237.44" y1="50" x2="237.44" y2="360" stroke="#e5e7eb"/>
+<line x1="440.68" y1="50" x2="440.68" y2="360" stroke="#e5e7eb"/>
+<line x1="643.91" y1="50" x2="643.91" y2="360" stroke="#e5e7eb"/>
+<line x1="70" y1="360.00" x2="660" y2="360.00" stroke="#e5e7eb"/>
+<line x1="70" y1="298.00" x2="660" y2="298.00" stroke="#e5e7eb"/>
+<line x1="70" y1="236.00" x2="660" y2="236.00" stroke="#e5e7eb"/>
+<line x1="70" y1="174.00" x2="660" y2="174.00" stroke="#e5e7eb"/>
+<line x1="70" y1="112.00" x2="660" y2="112.00" stroke="#e5e7eb"/>
+<line x1="70" y1="50.00" x2="660" y2="50.00" stroke="#e5e7eb"/>
+<polyline points="95.39,360.00 131.18,360.00 176.27,360.00 205.96,360.00 237.44,192.08 273.23,192.08 298.62,192.08 334.41,192.08 379.50,192.08 409.20,192.08 440.68,192.08 501.85,192.08 537.64,192.08 582.73,192.08 612.43,192.08 643.91,192.08" fill="none" stroke="#2563eb" stroke-width="2"/>
+<polyline points="95.39,217.92 131.18,217.92 176.27,217.92 205.96,217.92 237.44,140.42 273.23,140.42 298.62,140.42 334.41,140.42 379.50,179.17 409.20,179.17 440.68,179.17 501.85,179.17 537.64,217.92 582.73,217.92 612.43,217.92 643.91,217.92" fill="none" stroke="#dc2626" stroke-width="2"/>
+<line x1="215.35" y1="50" x2="215.35" y2="360" stroke="#2563eb" stroke-dasharray="2,2"/>
+<line x1="359.80" y1="50" x2="359.80" y2="360" stroke="#65a30d" stroke-dasharray="2,2"/>
+<text x="364.80" y="65.00" font-size="10" fill="#65a30d">CO2 snow line</text>
+<line x1="537.64" y1="50" x2="537.64" y2="360" stroke="#ca8a04" stroke-dasharray="2,2"/>
+<text x="542.64" y="65.00" font-size="10" fill="#ca8a04">CO snow line</text>
+<text x="500" y="75" font-size="11" fill="#2563eb">ice mass fraction</text>
+<text x="500" y="90" font-size="11" fill="#dc2626">C/O proxy</text>
+</svg>

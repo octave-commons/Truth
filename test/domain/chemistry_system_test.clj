@@ -1,7 +1,7 @@
 (ns domain.chemistry-system-test
   "μ for the live nucleosynthesis system: composition must actually evolve in the
    tick (stars burn H→He), conserve mass-fraction, and stay bounded under the
-   Myr-scale dilating timestep. See docs/specs/phase0-chemistry-differentiation.md
+   Myr-scale dilating timestep. See kanban/tasks/phase-0-chemistry-differentiation-spec.md
    and docs/research/cosmology/primordial-nucleosynthesis-yields.md."
   (:require
    [clojure.test :refer [deftest is testing]]
@@ -67,15 +67,15 @@
         w'      (burn-tick 1.0e14 w)
         before  (comp-of w eid)
         after   (comp-of w' eid)]
-    (is (< (Math/abs (+ (- (:He after) (:He before))
-                        (- (:H after) (:H before))))
+    (is (< (abs (+ (- (:He after) (:He before))
+                   (- (:H after) (:H before))))
            1.0e-12)
         "ΔHe == −ΔH")))
 
 (deftest composition-stays-normalized
   (let [[w eid] (spawn-body (ecs/empty-world) {})]
     (doseq [world (take 10 (iterate #(burn-tick 1.0e14 %) w))]
-      (is (< (Math/abs (- 1.0 (sum (comp-of world eid)))) 1.0e-9)))))
+      (is (< (abs (- 1.0 (sum (comp-of world eid)))) 1.0e-9)))))
 
 (deftest metals-unchanged-by-fusion
   (let [[w eid] (spawn-body (ecs/empty-world) {})
@@ -108,5 +108,5 @@
   (let [[w eid] (spawn-body (ecs/empty-world) {:mass (* 30 solar)}) ;; fast burner
         final   (nth (iterate #(burn-tick 1.0e16 %) w) 500)]
     (is (>= (:H (comp-of final eid)) 0.0) "H stays non-negative across 500 ticks")
-    (is (< (Math/abs (- 1.0 (sum (comp-of final eid)))) 1.0e-9)
+    (is (< (abs (- 1.0 (sum (comp-of final eid)))) 1.0e-9)
         "composition still normalized after heavy burning")))

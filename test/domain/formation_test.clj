@@ -3,8 +3,9 @@
    spec Parts 2, 3, 4). Disc identification and Toomre-Q stability live in
    domain.stellar; the sub-grid planet seeder lives in domain.planet-formation."
   (:require
-   [clojure.test          :refer [deftest testing is]]
-   [domain.stellar        :as stellar]
+   [clojure.math :as math] [clojure.test          :refer [deftest testing is]]
+   [domain.stellar :as stellar]
+   [domain.stellar.structure :as structure]
    [domain.planet-formation :as pf]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
@@ -23,7 +24,7 @@
   "Tangential (in the xy-plane) circular-orbit velocity at position `pos`."
   [star-m pos]
   (let [r (sp/len pos)
-        v (Math/sqrt (/ (* law/G star-m) r))
+        v (math/sqrt (/ (* law/G star-m) r))
         ;; tangential direction: rotate the radial unit vector 90° in xy
         [x y _] pos]
     [(* (- v) (/ y r)) (* v (/ x r)) 0.0]))
@@ -41,7 +42,7 @@
   (testing "a body falling straight in (bound, no tangential motion) → :envelope"
     (let [M   solar-mass
           pos [au 0.0 0.0]
-          v-in (* 0.3 (Math/sqrt (/ (* law/G M) au)))  ;; slow inward, stays bound
+          v-in (* 0.3 (math/sqrt (/ (* law/G M) au)))  ;; slow inward, stays bound
           region {:position pos :velocity [(- v-in) 0.0 0.0] :mass 1.0e25
                   :matter-state :planetesimal :oblateness 1.0}]
       (is (= :envelope (stellar/disc-classify region (central M)))))))
@@ -50,7 +51,7 @@
   (testing "an unbound (super-escape) body → :outflow (component doc: unbound/hyperbolic)"
     (let [M   solar-mass
           pos [au 0.0 0.0]
-          v-esc (Math/sqrt (/ (* 2.0 law/G M) au))
+          v-esc (math/sqrt (/ (* 2.0 law/G M) au))
           region {:position pos :velocity [(* 2.0 v-esc) 0.0 0.0] :mass 1.0e25
                   :matter-state :planetesimal :oblateness 1.0}]
       (is (= :outflow (stellar/disc-classify region (central M)))))))
@@ -74,27 +75,27 @@
 
 (deftest toomre-q-hot-thin-disc-is-stable
   (testing "a hot, low-mass disc has Q > 1 (stable against fragmentation)"
-    (let [Q (stellar/toomre-q solar-mass 1.0e25 au 1000.0)]
+    (let [Q (structure/toomre-q solar-mass 1.0e25 au 1000.0)]
       (is (> Q 1.0) (str "expected Q>1, got " Q)))))
 
 (deftest toomre-q-cold-massive-disc-is-unstable
   (testing "a cold, massive disc has Q < 1 (gravitationally unstable)"
-    (let [Q (stellar/toomre-q solar-mass 5.0e29 au 20.0)]
+    (let [Q (structure/toomre-q solar-mass 5.0e29 au 20.0)]
       (is (< Q 1.0) (str "expected Q<1, got " Q)))))
 
 (deftest disc-regime-stable-when-Q-above-one
   (testing "Q > 1 classifies as :stable-disc"
-    (is (= :stable-disc (stellar/disc-regime solar-mass 1.0e25 au 1000.0)))))
+    (is (= :stable-disc (structure/disc-regime solar-mass 1.0e25 au 1000.0)))))
 
 (deftest disc-regime-fragments-when-cold-and-fast-cooling
   (testing "Q < 1 with fast cooling (t_cool < 3 Ω⁻¹) → :gravitationally-unstable"
     ;; A cold, massive disc far out: small Ω keeps the cooling-time ratio low.
-    (let [regime (stellar/disc-regime solar-mass 5.0e30 (* 50.0 au) 100.0)]
+    (let [regime (structure/disc-regime solar-mass 5.0e30 (* 50.0 au) 100.0)]
       (is (= :gravitationally-unstable regime) (str "got " regime)))))
 
 (deftest disc-regime-no-fragment-when-cold-and-slow-cooling
   (testing "Q < 1 with slow cooling → :unstable-no-fragment"
-    (let [regime (stellar/disc-regime solar-mass 5.0e29 au 20.0)]
+    (let [regime (structure/disc-regime solar-mass 5.0e29 au 20.0)]
       (is (= :unstable-no-fragment regime) (str "got " regime)))))
 
 ;; --- Part 4: planet sub-grid seeder pure functions -------------------------
@@ -110,7 +111,7 @@
     (let [snow (* 2.7 au)
           inside  (pf/solid-surface-density 100.0 (* 2.0 au) snow 0.015)
           outside (pf/solid-surface-density 100.0 (* 3.5 au) snow 0.015)]
-      (is (< (Math/abs (- (/ outside inside) 3.5)) 1.0e-6)))))
+      (is (< (abs (- (/ outside inside) 3.5)) 1.0e-6)))))
 
 (deftest terrestrial-inside-snow-line
   (testing "a low-mass body inside the snow line is :terrestrial"
@@ -123,6 +124,49 @@
 (deftest ice-giant-beyond-snow-line-moderate-mass
   (testing "a moderate-mass body beyond the snow line is an :ice-giant"
     (is (= :ice-giant (pf/planet-type (* 5.0 au) 5000.0 (* 2.7 au) 0.05)))))
+
+;; --- Part 4: isolation mass caps runaway growth ----------------------------
+
+(deftest hill-radius-scales-with-mass-and-distance
+  (testing "Hill radius grows with orbital distance; Earth's is ~0.01 AU"
+    (let [rh1 (law/hill-radius law/earth-mass law/solar-mass au)
+          rh5 (law/hill-radius law/earth-mass law/solar-mass (* 5.0 au))]
+      (is (pos? rh1))
+      (is (> rh5 rh1) "farther orbit → larger Hill radius")
+      (is (< 0.005 (/ rh1 au) 0.02) (str "Earth R_H " (/ rh1 au) " AU")))))
+
+(deftest isolation-mass-sub-earth-at-1-au
+  (testing "MMSN-like solids (~7 g/cm²) at 1 AU give a sub-Earth isolation mass"
+    (let [m (law/isolation-mass au 70.0 law/solar-mass)]
+      (is (pos? m))
+      (is (< (/ m law/earth-mass) 1.0) (str "M_iso " (/ m law/earth-mass) " M⊕")))))
+
+(deftest isolation-mass-monotonic
+  (testing "isolation mass rises with surface density and with orbital radius"
+    (is (> (law/isolation-mass au 140.0 law/solar-mass)
+           (law/isolation-mass au 70.0 law/solar-mass)))
+    (is (> (law/isolation-mass (* 5.0 au) 70.0 law/solar-mass)
+           (law/isolation-mass au 70.0 law/solar-mass)))))
+
+(deftest isolation-mass-zero-on-degenerate
+  (testing "degenerate inputs give zero, never NaN"
+    (is (zero? (law/isolation-mass 0.0 70.0 law/solar-mass)))
+    (is (zero? (law/isolation-mass au 0.0 law/solar-mass)))
+    (is (zero? (law/isolation-mass au 70.0 0.0)))))
+
+(deftest mmsn-profile-conserves-disk-mass
+  (testing "∫Σ(r)·2πr dr over the disk returns the total disk mass"
+    (let [disk-m 1.0e28 r-in (* 0.1 au) r-out (* 30.0 au)
+          s0 (pf/mmsn-sigma0 disk-m r-in r-out)
+          ;; numerically integrate the profile
+          n 4000
+          dr (/ (- r-out r-in) n)
+          total (reduce + 0.0
+                        (for [i (range n)]
+                          (let [r (+ r-in (* (+ i 0.5) dr))]
+                            (* (pf/mmsn-sigma s0 r) 2.0 math/PI r dr))))]
+      (is (< (abs (- (/ total disk-m) 1.0)) 0.01)
+          (str "integrated mass ratio " (/ total disk-m))))))
 
 ;; --- Part 4: the seeder over a built disc ----------------------------------
 
@@ -145,8 +189,8 @@
               (ecs/put-component star c/disk-angular-mom [0.0 0.0 1.0e42])
               (ecs/put-component star c/rotation-axis [0.0 0.0 1.0]))
         radii (for [i (range n)]
-                (* au (Math/pow 10.0 (+ (Math/log10 0.3)
-                                        (* i (/ (- (Math/log10 15.0) (Math/log10 0.3))
+                (* au (math/pow 10.0 (+ (math/log10 0.3)
+                                        (* i (/ (- (math/log10 15.0) (math/log10 0.3))
                                                 (dec n)))))))
         w (reduce (fn [w r]
                     (let [pos [r 0.0 0.0]
@@ -221,3 +265,34 @@
                 (str "beyond snow line → giant, got " (:planet-type spec)))
             (is (= :terrestrial (:planet-type spec))
                 (str "inside snow line → terrestrial, got " (:planet-type spec)))))))))
+
+(deftest terrestrials-stay-small-on-a-massive-disk
+  (testing "isolation mass caps inner rocky planets — a massive (0.05 M☉) disk
+            must NOT produce a hundreds-of-Earth-mass terrestrial (the reported bug)"
+    (let [[w star] (build-disk-world {:disk-mass 1.0e29})  ;; ~0.05 M☉, ~1.7e4 M⊕
+          res (pf/planet-seeds w star)
+          snow (pf/snow-line-radius law/solar-luminosity)
+          star-pos (ecs/get-component w star c/position)]
+      (is (seq (:spawns res)))
+      (doseq [[_ spec] (:spawns res)]
+        (let [r (sp/dist (:position spec) star-pos)
+              m-earth (/ (:mass spec) law/earth-mass)]
+          (when (<= r snow)
+            (is (< m-earth 10.0)
+                (str "terrestrial at " (/ r au) " AU is " m-earth
+                     " M⊕ — isolation mass must cap it far below the old ~400 M⊕"))))))))
+
+(deftest giant-cores-can-still-form-beyond-ice-line
+  (testing "beyond the ice line, runaway gas accretion still builds a real giant
+            (isolation mass must not strangle giant formation)"
+    (let [[w star] (build-disk-world {:disk-mass 1.0e29})
+          res (pf/planet-seeds w star)
+          snow (pf/snow-line-radius law/solar-luminosity)
+          star-pos (ecs/get-component w star c/position)
+          giants (for [[_ spec] (:spawns res)
+                       :let [r (sp/dist (:position spec) star-pos)]
+                       :when (> r snow)]
+                   spec)]
+      (is (seq giants) "at least one body seeds beyond the ice line")
+      (is (some #(> (/ (:mass %) law/earth-mass) 10.0) giants)
+          "at least one giant grows past ~10 M⊕ via runaway gas accretion"))))

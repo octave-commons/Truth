@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" font-family="sans-serif">
+<text x="365.00" y="20.00" text-anchor="middle" font-size="14" font-weight="bold">Pebble stopping and radial-drift timescales (1 cm silicate pebble)</text>
+<line x1="70" y1="50" x2="70" y2="360" stroke="black" stroke-width="1"/>
+<line x1="70" y1="360" x2="660" y2="360" stroke="black" stroke-width="1"/>
+<line x1="237.44" y1="360" x2="237.44" y2="364" stroke="black"/>
+<text x="237.44" y="378.00" text-anchor="middle" font-size="11">1</text>
+<line x1="440.68" y1="360" x2="440.68" y2="364" stroke="black"/>
+<text x="440.68" y="378.00" text-anchor="middle" font-size="11">10</text>
+<line x1="643.91" y1="360" x2="643.91" y2="364" stroke="black"/>
+<text x="643.91" y="378.00" text-anchor="middle" font-size="11">100</text>
+<line x1="66" y1="360.00" x2="70" y2="360.00" stroke="black"/>
+<text x="62.00" y="364.00" text-anchor="end" font-size="11">0.01</text>
+<line x1="66" y1="325.56" x2="70" y2="325.56" stroke="black"/>
+<text x="62.00" y="329.56" text-anchor="end" font-size="11">0.1</text>
+<line x1="66" y1="291.11" x2="70" y2="291.11" stroke="black"/>
+<text x="62.00" y="295.11" text-anchor="end" font-size="11">1</text>
+<line x1="66" y1="256.67" x2="70" y2="256.67" stroke="black"/>
+<text x="62.00" y="260.67" text-anchor="end" font-size="11">10</text>
+<line x1="66" y1="222.22" x2="70" y2="222.22" stroke="black"/>
+<text x="62.00" y="226.22" text-anchor="end" font-size="11">100</text>
+<line x1="66" y1="187.78" x2="70" y2="187.78" stroke="black"/>
+<text x="62.00" y="191.78" text-anchor="end" font-size="11">1000</text>
+<line x1="66" y1="153.33" x2="70" y2="153.33" stroke="black"/>
+<text x="62.00" y="157.33" text-anchor="end" font-size="11">10000</text>
+<line x1="66" y1="118.89" x2="70" y2="118.89" stroke="black"/>
+<text x="62.00" y="122.89" text-anchor="end" font-size="11">100000</text>
+<line x1="66" y1="84.44" x2="70" y2="84.44" stroke="black"/>
+<text x="62.00" y="88.44" text-anchor="end" font-size="11">1e+06</text>
+<line x1="66" y1="50.00" x2="70" y2="50.00" stroke="black"/>
+<text x="62.00" y="54.00" text-anchor="end" font-size="11">1e+07</text>
+<text x="365.00" y="395.00" text-anchor="middle" font-size="12">Radius r (AU)</text>
+<text x="20.00" y="205.00" text-anchor="middle" font-size="12" transform="rotate(-90,20,205.00)">Timescale (years)</text>
+<line x1="70" y1="360.00" x2="660" y2="360.00" stroke="#e5e7eb"/>
+<line x1="70" y1="325.56" x2="660" y2="325.56" stroke="#e5e7eb"/>
+<line x1="70" y1="291.11" x2="660" y2="291.11" stroke="#e5e7eb"/>
+<line x1="70" y1="256.67" x2="660" y2="256.67" stroke="#e5e7eb"/>
+<line x1="70" y1="222.22" x2="660" y2="222.22" stroke="#e5e7eb"/>
+<line x1="70" y1="187.78" x2="660" y2="187.78" stroke="#e5e7eb"/>
+<line x1="70" y1="153.33" x2="660" y2="153.33" stroke="#e5e7eb"/>
+<line x1="70" y1="118.89" x2="660" y2="118.89" stroke="#e5e7eb"/>
+<line x1="70" y1="84.44" x2="660" y2="84.44" stroke="#e5e7eb"/>
+<line x1="70" y1="50.00" x2="660" y2="50.00" stroke="#e5e7eb"/>
+<line x1="237.44" y1="50" x2="237.44" y2="360" stroke="#e5e7eb"/>
+<line x1="440.68" y1="50" x2="440.68" y2="360" stroke="#e5e7eb"/>
+<line x1="643.91" y1="50" x2="643.91" y2="360" stroke="#e5e7eb"/>
+<polyline points="95.39,394.44 131.18,394.44 176.27,394.44 205.96,394.44 237.44,394.44 273.23,394.44 298.62,390.39 334.41,372.20 379.50,349.27 409.20,334.17 440.68,318.17 501.85,287.06 537.64,268.87 582.73,245.94 612.43,230.84 643.91,214.83" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+<polyline points="95.39,118.16 131.18,121.19 176.27,125.01 205.96,127.53 237.44,130.19 273.23,133.23 298.62,135.38 334.41,138.41 379.50,142.23 409.20,144.74 440.68,147.40 501.85,152.47 537.64,155.21 582.73,157.59 612.43,157.33 643.91,153.83" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+<text x="510" y="75" font-size="11" fill="#2563eb">t_stop (stopping time)</text>
+<text x="510" y="90" font-size="11" fill="#dc2626">r / |v_r| (drift time)</text>
+</svg>

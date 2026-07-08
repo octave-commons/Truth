@@ -16,17 +16,17 @@
 (deftest test-curl-estimate-zero-for-uniform-field
   (testing "A uniform B-field has zero curl"
     (let [b [0.0 0.0 1.0e-9]
-          _data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
+          __data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
           data-b {:position [0.5 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
-          curl (em/curl-estimate b 1.0 [0.0 0.0 0.0] [data-b])]
-      (is (every? #(< (Math/abs %) 1e-20) curl)))))
+          curl (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :neighbors [data-b]})]
+      (is (every? #(< (abs %) 1e-20) curl)))))
 
 (deftest test-lorentz-force-perpendicular-to-b
   (testing "f · B = 0"
     (let [curl-b [1.0e-12 0.0 0.0]
           b      [0.0 0.0 1.0e-9]
           f      (em/lorentz-force-density b curl-b)]
-      (is (< (Math/abs (sp/dot f b)) 1e-30)
+      (is (< (abs (sp/dot f b)) 1e-30)
           "Lorentz force is perpendicular to B"))))
 
 (deftest test-lorentz-acceleration-positive
@@ -126,11 +126,11 @@
 (deftest test-curl-estimate-matches-with-cache
   (testing "Cached curl equals on-the-fly curl for the same neighbors"
     (let [b [0.0 0.0 1.0]
-          data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
+          _data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
           data-b {:position [0.5 0.0 0.0] :b-field [0.0 0.0 0.5] :mass 1.0 :density 1.0 :radius 1.0}
-          curl-uncached (em/curl-estimate b 1.0 [0.0 0.0 0.0] [data-b])
+          curl-uncached (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :neighbors [data-b]})
           grads [(:gradient-curl (pcache/neighbor-with-gradients [0.0 0.0 0.0] 1.0 data-b))]
-          curl-cached (em/curl-estimate b 1.0 [0.0 0.0 0.0] [data-b] grads)]
+          curl-cached (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :neighbors [data-b] :gradients grads})]
       (is (< (sp/dist curl-uncached curl-cached)
              (* 1e-12 (max 1.0 (sp/len curl-uncached))))
           "cached curl matches on-the-fly curl"))))
@@ -147,15 +147,15 @@
                                              :pressure 1.0
                                              :b-field [0.0 0.0 1.0]
                                              :angular-momentum [0.0 0.0 1e30]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 0.5]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                              :velocity [0.0 0.0 0.0]
+                                              :mass 1e28
+                                              :radius 2e14
+                                              :matter-state :nebula
+                                              :density 1.0
+                                              :pressure 1.0
+                                              :b-field [0.0 0.0 0.5]
+                                              :angular-momentum [0.0 0.0 0.0]})
           w2 (spatial/spatial-index w2)
           a-uncached (ecs/get-component ((em/em-system 1e10) w2) ea c/hydro-accel)
           cached (pcache/build-neighbor-cache w2)
@@ -241,39 +241,39 @@
       (is (> (sp/len a-b) 1e-20)))))
 
 (deftest test-neutral-parcel-feels-no-lorentz-force
-  "A parcel with ionization-fraction zero experiences zero Lorentz acceleration."
-  (let [base (ecs/empty-world)
-        [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                           :velocity [0.0 0.0 0.0]
-                                           :mass 1e28
-                                           :radius 2e14
-                                           :matter-state :nebula
-                                           :density 1.0
-                                           :pressure 1.0
-                                           :b-field [0.0 0.0 1.0]
-                                           :angular-momentum [0.0 0.0 1e30]})
-        [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                           :velocity [0.0 0.0 0.0]
-                                           :mass 1e28
-                                           :radius 2e14
-                                           :matter-state :nebula
-                                           :density 1.0
-                                           :pressure 1.0
-                                           :b-field [0.0 0.0 0.5]
-                                           :angular-momentum [0.0 0.0 0.0]})
-        w2 (-> w2
-               (ecs/put-component ea c/ionization-fraction 0.0)
-               (ecs/put-component eb c/ionization-fraction 0.0)
-               (spatial/spatial-index))
-        ws ((:run (em/lorentz-acceleration-system 1e10)) w2)
-        w3 (tick/apply-write-set w2 ws)]
-    (is (zero? (sp/len (ecs/get-component w3 ea c/accel-lorentz))))
-    (is (zero? (sp/len (ecs/get-component w3 eb c/accel-lorentz))))))
+  (testing "A parcel with ionization-fraction zero experiences zero Lorentz acceleration."
+    (let [base (ecs/empty-world)
+          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 2e14
+                                             :matter-state :nebula
+                                             :density 1.0
+                                             :pressure 1.0
+                                             :b-field [0.0 0.0 1.0]
+                                             :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 2e14
+                                             :matter-state :nebula
+                                             :density 1.0
+                                             :pressure 1.0
+                                             :b-field [0.0 0.0 0.5]
+                                             :angular-momentum [0.0 0.0 0.0]})
+          w2 (-> w2
+                 (ecs/put-component ea c/ionization-fraction 0.0)
+                 (ecs/put-component eb c/ionization-fraction 0.0)
+                 (spatial/spatial-index))
+          ws ((:run (em/lorentz-acceleration-system 1e10)) w2)
+          w3 (tick/apply-write-set w2 ws)]
+      (is (zero? (sp/len (ecs/get-component w3 ea c/accel-lorentz))))
+      (is (zero? (sp/len (ecs/get-component w3 eb c/accel-lorentz)))))))
 
 (deftest test-curl-estimate-skips-nil-b-field
   (testing "curl-estimate ignores neighbors with missing or nil b-field"
     (let [b [0.0 0.0 1.0]
-          data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
+          _data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
           data-b {:position [0.5 0.0 0.0] :b-field nil :mass 1.0 :density 1.0 :radius 1.0}
-          curl (em/curl-estimate b 1.0 [0.0 0.0 0.0] [data-b])]
+          curl (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :neighbors [data-b]})]
       (is (every? zero? curl)))))

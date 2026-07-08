@@ -16,7 +16,9 @@
             payload  ;; map — event-specific data
             cause])  ;; nil | event-id — causal chain
 
-(defn new-event-id [] (java.util.UUID/randomUUID))
+(defn new-event-id
+  "Generate a fresh UUID for an event."
+  [] (java.util.UUID/randomUUID))
 
 (defn ->event
   "Construct a raw event map. Required keys: :tick :kind :entities.

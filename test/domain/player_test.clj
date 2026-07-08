@@ -53,7 +53,7 @@
 
 (deftest observer-system-accrues-agency-from-ledger-events
   (testing "A nebula-collapse + protostar-formation tick pays the observer"
-    (let [[w eid] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+    (let [[w _eid] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
           w       (-> w
                       (event/with-ledger)
                       (assoc :tick 7
@@ -67,7 +67,7 @@
 
 (deftest observer-system-pays-agency-for-every-event-occurrence
   (testing "Multiple threshold events on the same tick each award agency"
-    (let [[w eid] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+    (let [[w _eid] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
           w       (-> w
                       (event/with-ledger)
                       (assoc :tick 3 :genesis/complexity 1)

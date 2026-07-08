@@ -146,6 +146,9 @@
 
 ;; --- Handoff / endings ------------------------------------------------------
 
+;; Suppressed: `ready-to-narrow?` is a public narrative predicate used by callers
+;; and tests; renaming to `ready->narrow?` would break public API.
+#_{:splint/disable [naming/conversion-functions]}
 (defn ready-to-narrow?
   "True when the arc has reached planet formation and at least one habitable
    candidate world exists — the soft handoff from cosmic witness toward a
@@ -183,48 +186,68 @@
 
 ;; --- Tick integration -------------------------------------------------------
 
+(defn- detect-current-arc
+  "Detect the current arc from `world`."
+  [world]
+  (let [summ (or (:genesis/_prev-summary world) (genesis/system-summary world))
+        sim-time (:genesis/sim-time world 0.0)
+        life? (boolean (seq (living-worlds world)))]
+    (detect-arc summ sim-time life?)))
+
+(defn- emit-nebula-collapse
+  "Emit a nebula-collapse threshold when entering that arc."
+  [world prev cur]
+  (cond-> world
+    (and prev (not= prev :arc/genesis-nebula-collapse)
+         (= cur :arc/genesis-nebula-collapse))
+    (genesis/emit-threshold :event/nebula-collapse {:arc cur})))
+
+(defn- recent-event-categories
+  "Return categories for events emitted on `tick`."
+  [world tick]
+  (->> (event/events-since world tick)
+       (filter #(= (:tick %) tick))
+       (keep #(event-kind->category (:kind %)))))
+
+(defn- arc-notification
+  "Build the notification for the most recent event category on `tick`."
+  [cats tick]
+  (when-let [category (last (vec cats))]
+    {:text (event-notification category) :tick tick}))
+
+(defn- emit-phase-transition
+  "Emit a phase-transition threshold when the arc changes."
+  [world prev cur]
+  (cond-> world
+    (and prev (not= cur prev))
+    (genesis/emit-threshold :event/phase-transition {:from prev :to cur})))
+
 (defn advance-arc
   "Read the post-physics world and this tick's threshold events, then update the
    `:arc/*` story state: current/previous arc, quest + description text, the
-   observer-coloured observation note, and the most recent event notification
-   (kept until it ages out). Emits an `:event/phase-transition` when the arc
-   advances. Pure: world -> world'. Run AFTER `genesis/tick-world`.
+   observer-coloured observation note, and the most recent event notification.
+   Emits an `:event/phase-transition` when the arc advances. Pure: world ->
+   world'. Run AFTER `genesis/tick-world`.
 
    Reuses the post-physics summary `genesis/tick-world` already cached on
    `:genesis/_prev-summary`, so it adds no extra entity walk."
   [world]
-  (let [summ      (or (:genesis/_prev-summary world) (genesis/system-summary world))
-        sim-time  (:genesis/sim-time world 0.0)
-        prev      (:arc/current world)
-        cur       (detect-arc summ sim-time (boolean (seq (living-worlds world))))
-        obs       (player/get-observer world)
+  (let [prev (:arc/current world)
+        cur (detect-current-arc world)
         this-tick (:tick world)
-        ;; Emit physical threshold events tied to entering an arc. These are
-        ;; distinct from :event/phase-transition (the generic arc change) so the
-        ;; observer can be paid for witnessing each specific transition.
-        ;; Per-body protostar/star/planet formation events are emitted by
-        ;; `domain.genesis/tick-world`; only the system-wide nebula-collapse
-        ;; milestone is emitted here.
-        world0    (cond-> world
-                    (and prev (not= prev :arc/genesis-nebula-collapse)
-                         (= cur :arc/genesis-nebula-collapse))
-                    (genesis/emit-threshold :event/nebula-collapse {:arc cur}))
-        new-cats  (->> (event/events-since world0 this-tick)
-                       (filter #(= (:tick %) this-tick))
-                       (keep #(event-kind->category (:kind %))))
-        last-cat  (last (vec new-cats))
-        notif     (when last-cat {:text (event-notification last-cat) :tick this-tick})
-        world1    (cond-> world0
-                    (and prev (not= cur prev))
-                    (genesis/emit-threshold :event/phase-transition {:from prev :to cur}))]
+        world0 (emit-nebula-collapse world prev cur)
+        new-cats (recent-event-categories world0 this-tick)
+        notif (arc-notification new-cats this-tick)
+        world1 (emit-phase-transition world0 prev cur)
+        obs (player/get-observer world)]
     (assoc world1
-           :arc/previous         prev
-           :arc/current          cur
-           :arc/quest            (quest-for cur)
-           :arc/description      (description-for cur)
+           :arc/previous prev
+           :arc/current cur
+           :arc/quest (quest-for cur)
+           :arc/description (description-for cur)
            :arc/observation-note (when obs (observation-note obs cur))
-           :arc/notification     (or notif (:arc/notification world))
-           :arc/recent-events    (vec new-cats))))
+           :arc/notification (or notif (:arc/notification world))
+           :arc/recent-events (vec new-cats))))
 
 (defn tick-genesis
   "One combined tick: advance the physical world (`genesis/tick-world`), then the

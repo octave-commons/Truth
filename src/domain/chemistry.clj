@@ -5,7 +5,7 @@
    Composition is an explicit element map (see `law.composition/element-set`).
    Molecules and bulk categories (gas, rock, ice, metal) are derived on demand.",
   (:require
-   [clojure.set]
+   [clojure.math :as math] [clojure.set]
    [domain.ecs.core        :as ecs]
    [domain.ecs.components   :as c]
    [law.composition         :as lcomp]
@@ -57,12 +57,12 @@
         total (+ m1 m2)]
     (if (pos? total)
       (let [inv (/ 1.0 total)
-            keys (into (set (keys c1)) (keys c2))]
+            ks (into (set (keys c1)) (keys c2))]
         (reduce (fn [m k]
                   (let [v (+ (* m1 (double (get c1 k 0.0)))
                              (* m2 (double (get c2 k 0.0))))]
                     (assoc m k (* v inv))))
-                {} keys))
+                {} ks))
       {})))
 
 (defn burn-composition
@@ -136,11 +136,11 @@
         classify (fn [k]
                    (let [tc (double (get lcomp/condensation-temperatures k 50.0))]
                      (if (< temp tc)
-                       (cond
-                         (contains? lcomp/ice-formers k)  :ice
-                         (contains? #{:Fe :Ni} k)         :metal
-                         (contains? lcomp/rock-formers k) :rock
-                         :else                            :gas) ;; frozen gas-former
+                       (condp contains? k
+                         lcomp/ice-formers :ice
+                         #{:Fe :Ni} :metal
+                         lcomp/rock-formers :rock
+                         :gas) ;; frozen gas-former
                        :gas)))
         sums (reduce-kv (fn [m k v] (update m (classify k) + (double v)))
                         {:gas 0.0 :rock 0.0 :metal 0.0 :ice 0.0}
@@ -169,10 +169,10 @@
   (let [props (get element-properties element)
         mp (:melting-point props)
         bp (:boiling-point props)
-        pressure-factor (Math/log10 (max 1 (/ pressure 101325)))]
+        pressure-factor (math/log10 (max 1 (/ pressure 101325)))]
     (cond
-      (< temperature (* mp (+ 1 (* 0.1 pressure-factor)))) :solid
-      (> temperature (* bp (+ 1 (* 0.1 pressure-factor)))) :gas
+      (< temperature (* mp (inc (* 0.1 pressure-factor)))) :solid
+      (> temperature (* bp (inc (* 0.1 pressure-factor)))) :gas
       :else :liquid)))
 
 ;; --- Molecular formation (derived) ------------------------------------------
@@ -226,14 +226,14 @@
 (defn escape-velocity
   "Calculate escape velocity for a body."
   [mass radius]
-  (Math/sqrt (/ (* 2 6.674e-11 mass) radius)))
+  (math/sqrt (/ (* 2 6.674e-11 mass) radius)))
 
 (defn can-retain-gas?
   "Check if body can retain a gas based on temperature and escape velocity."
   [body-mass body-radius gas-element temperature]
   (let [v-escape (escape-velocity body-mass body-radius)
         molecular-mass (get-in element-properties [gas-element :mass] 1.0)
-        v-thermal (Math/sqrt (/ (* 3 1.38e-23 temperature)
+        v-thermal (math/sqrt (/ (* 3 1.38e-23 temperature)
                                 (* molecular-mass 1.66e-27)))
         jeans-parameter (/ v-escape v-thermal)]
     (> jeans-parameter 6)))
@@ -296,10 +296,10 @@
 (defn supernova-enrichment
   "Model heavy element enrichment from stellar death."
   [composition stellar-mass]
-  (let [metal-factor (Math/log10 (/ stellar-mass 1.989e30))]
+  (let [metal-factor (math/log10 (/ stellar-mass 1.989e30))]
     (reduce (fn [c el]
-              (if (not (#{:H :He} el))
-                (update c el #(* % (+ 1 metal-factor)))
+              (if-not (#{:H :He} el)
+                (update c el #(* % (inc metal-factor)))
                 c))
             composition
             (keys composition))))
@@ -320,7 +320,7 @@
   (let [h (double (get composition :H 0.0))]
     (if (pos? h)
       (let [tau-ms (* main-sequence-lifetime-sun
-                      (Math/pow (/ (double mass) law/solar-mass) -2.5))
+                      (math/pow (/ (double mass) law/solar-mass) -2.5))
             f-burn (min max-burn-fraction-per-tick (/ (double dt) tau-ms))
             dH     (* h f-burn)]
         (-> composition
@@ -339,12 +339,12 @@
            cell (into {}
                       (keep (fn [eid]
                               (let [state (ecs/get-component world eid c/matter-state)
-                                    comp  (ecs/get-component world eid c/composition)
+                                    composition  (ecs/get-component world eid c/composition)
                                     mass  (ecs/get-component world eid c/mass)
                                     temp  (double (or (ecs/get-component world eid c/temperature) 0.0))]
-                                (when (and comp mass
+                                (when (and composition mass
                                            (contains? #{:star :protostar} state)
                                            (>= temp law/fusion-temp-threshold))
-                                  [eid (burn-step comp mass dt)]))))
+                                  [eid (burn-step composition mass dt)]))))
                       eids)]
        {c/comp-burn cell}))})

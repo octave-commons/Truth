@@ -1,7 +1,7 @@
 (ns domain.profile-test
   "Coverage tests for the benchmark profiling helpers."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is]]
    [domain.profile :as profile]))
 
 (deftest profile-key-builds-keyword

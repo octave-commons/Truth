@@ -1,0 +1,9 @@
+{:actor/id "truth-research-gap-analyst"
+ :actor/name "truth-research-gap-analyst"
+ :actor/purpose "Compare docs/research coverage against the simulation phase map and user intent, identify missing domains and cross-links, and recommend the next research topics to dispatch."
+ :actor/created-at "2026-07-07T21:56:47Z"
+ :actor/runtime {:type :one-shot
+                 :command "/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh truth-research-gap-analyst"}
+ :actor/inbox-path ".eta-mu/actors/truth-research-gap-analyst/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-gap-analyst/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-gap-analyst/sessions"}

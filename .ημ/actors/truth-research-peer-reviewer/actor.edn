@@ -1,0 +1,9 @@
+{:actor/id "truth-research-peer-reviewer"
+ :actor/name "truth-research-peer-reviewer"
+ :actor/purpose "Peer-review research notebooks: run notebooks, evaluate text, figures, code outputs, and citations, then write structured feedback and suggest future research topics."
+ :actor/created-at "2026-07-07T21:56:46Z"
+ :actor/runtime {:type :one-shot
+                 :command "/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh truth-research-peer-reviewer"}
+ :actor/inbox-path ".eta-mu/actors/truth-research-peer-reviewer/inbox"
+ :actor/outbox-path ".eta-mu/actors/truth-research-peer-reviewer/outbox"
+ :actor/sessions-path ".eta-mu/actors/truth-research-peer-reviewer/sessions"}

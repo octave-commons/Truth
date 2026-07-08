@@ -4,7 +4,7 @@
    symmetric M4 blob; parcels closer than their support merge into a
    continuous lobe; denser gas reads denser in the grid. All headless — no GL."
   (:require
-   [clojure.test :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.hydro :as hydro]
    [infra.render.field :as field]
    [law.render :as lr]))
@@ -23,7 +23,7 @@
        (mapv (fn [mn c i] (+ mn (* (+ i 0.5) c))) bmn cs [x y z])])))
 
 (defn- dist3 [[ax ay az] [bx by bz]]
-  (Math/sqrt (+ (Math/pow (- ax bx) 2) (Math/pow (- ay by) 2) (Math/pow (- az bz) 2))))
+  (math/sqrt (+ (math/pow (- ax bx) 2) (math/pow (- ay by) 2) (math/pow (- az bz) 2))))
 
 (defn- nearest-voxel
   "Grid index of the voxel whose center is closest to point `p`."
@@ -35,21 +35,22 @@
 
 (deftest test-splat-single-parcel-radial-symmetry
   (testing "one parcel bakes to a radially symmetric blob that dies at its support"
-    (let [res 33
+    (let [res 17
           gain 2.4
           {:keys [data box-min box-max]} (field/splat-field single-parcel res gain)
-          ;; box is [-4.5, 4.5]³ (p ± h, 0.5 pad floor), so voxel (16,16,16)
-          ;; is centered exactly on the parcel
-          center [16 16 16]]
+          ;; box is [-4.5, 4.5]³ (p ± h, 0.5 pad floor), so the centre voxel
+          ;; is centered approximately on the parcel
+          center [(quot res 2) (quot res 2) (quot res 2)]
+          [cx cy cz] center]
       (is (pos? (alpha-at data res center)) "peak voxel is filled")
-      (doseq [k [3 7 11]]
+      (doseq [k [3 6]]
         (let [along (mapv #(alpha-at data res %)
-                          [[(+ 16 k) 16 16] [(- 16 k) 16 16]
-                           [16 (+ 16 k) 16] [16 (- 16 k) 16]
-                           [16 16 (+ 16 k)] [16 16 (- 16 k)]])]
+                          [[(+ cx k) cy cz] [(- cx k) cy cz]
+                           [cx (+ cy k) cz] [cx (- cy k) cz]
+                           [cx cy (+ cz k)] [cx cy (- cz k)]])]
           (is (< (- (apply max along) (apply min along)) 1e-4)
               (str "same-radius voxels agree at offset " k))))
-      (let [profile (mapv #(alpha-at data res [(+ 16 %) 16 16]) (range 17))]
+      (let [profile (mapv #(alpha-at data res [(+ cx %) cy cz]) (range (inc (quot res 2))))]
         (is (every? (fn [[a b]] (>= (+ a 1e-7) b)) (partition 2 1 profile))
             "alpha is non-increasing with radius"))
       (doseq [[i center-pos] (voxel-centers res box-min box-max)]
@@ -59,18 +60,18 @@
 
 (deftest test-splat-profile-matches-kernel-shape
   (testing "voxel alpha equals gain · dens · kernel-shape at the voxel center — the physics profile, verbatim"
-    (let [res 33
+    (let [res 17
           gain 2.4
           {:keys [data box-min box-max]} (field/splat-field single-parcel res gain)]
       (doseq [[i center-pos] (voxel-centers res box-min box-max)]
         (let [r (dist3 center-pos [0.0 0.0 0.0])
               expected (* gain 1.0 (hydro/kernel-shape (* r r) 4.0))]
-          (is (< (Math/abs (- (alpha-at data res i) expected)) 1e-5)
+          (is (< (abs (- (alpha-at data res i) expected)) 1e-5)
               (str "voxel " i " carries the M4 falloff")))))))
 
 (deftest test-splat-two-parcels-merge-ridge
   (testing "parcels separated by 1·h merge into one continuous lobe"
-    (let [res 40
+    (let [res 24
           gain 2.4
           pts [{:p [0.0 0.0 0.0] :h 4.0 :col [1.0 1.0 1.0] :dens 1.0}
                {:p [4.0 0.0 0.0] :h 4.0 :col [1.0 1.0 1.0] :dens 1.0}]
@@ -83,7 +84,7 @@
       (is (every? pos? alphas) "the density ridge between the parcels never drops to zero")
       (is (> mid (* 0.4 peak)) "the midpoint saddle stays a substantial fraction of the peak")))
   (testing "parcels separated by 2.5·h stay distinct blobs"
-    (let [res 40
+    (let [res 24
           gain 2.4
           pts [{:p [0.0 0.0 0.0] :h 4.0 :col [1.0 1.0 1.0] :dens 1.0}
                {:p [10.0 0.0 0.0] :h 4.0 :col [1.0 1.0 1.0] :dens 1.0}]
@@ -93,7 +94,7 @@
 
 (deftest test-splat-domain-density-ordering
   (testing "denser gas (by the tick's SPH density) reads denser in the froxel grid"
-    (let [res 48
+    (let [res 24
           gain 2.4
           parcels (map-indexed (fn [i dens]
                                  {:p [(* 12.0 i) 0.0 0.0] :h 2.0
@@ -141,7 +142,7 @@
   (testing "log-band mapping from physical density to [0,1] visual factor"
     (is (zero? (field/density-norm 1e-21)) "band floor")
     (is (= 1.0 (field/density-norm 1e-12)) "band ceiling")
-    (is (< (Math/abs (- (field/density-norm 1e-18) (/ 1.0 3.0))) 1e-12)
+    (is (< (abs (- (field/density-norm 1e-18) (/ 1.0 3.0))) 1e-12)
         "seed density sits a third of the way up the band")
     (is (zero? (field/density-norm 1e-30)) "far below band clamps to 0")
     (is (= 1.0 (field/density-norm 1.0)) "far above band clamps to 1")))

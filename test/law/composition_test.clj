@@ -1,19 +1,19 @@
 (ns law.composition-test
   "Coverage tests for explicit element composition contracts."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is]]
    [law.composition :as comp]))
 
 (deftest primordial-fractions-sum-to-one
-  (is (< (Math/abs (- (+ comp/primordial-H comp/primordial-He
-                         comp/primordial-D comp/primordial-He3
-                         comp/primordial-Li7)
-                      1.0))
+  (is (< (abs (- (+ comp/primordial-H comp/primordial-He
+                    comp/primordial-D comp/primordial-He3
+                    comp/primordial-Li7)
+                 1.0))
          0.01)))
 
 (deftest solar-composition-sums-to-one
   (is (comp/composition-sums-to-unity? comp/solar-composition))
-  (is (< (Math/abs (- (comp/metallicity comp/solar-composition) comp/solar-metallicity))
+  (is (< (abs (- (comp/metallicity comp/solar-composition) comp/solar-metallicity))
          1e-4)))
 
 (deftest mass-fraction?-accepts-valid
@@ -47,14 +47,14 @@
   (is (not (comp/primordial-composition? comp/solar-composition))))
 
 (deftest metallicity-computes-z
-  (is (< (Math/abs (- (comp/metallicity comp/primordial-composition) 0.0)) 1e-3))
-  (is (< (Math/abs (- (comp/metallicity comp/solar-composition) comp/solar-metallicity)) 1e-4))
-  (is (< (Math/abs (- (comp/metallicity {:H 0.7 :He 0.1}) 0.2)) 1e-12)))
+  (is (< (abs (- (comp/metallicity comp/primordial-composition) 0.0)) 1e-3))
+  (is (< (abs (- (comp/metallicity comp/solar-composition) comp/solar-metallicity)) 1e-4))
+  (is (< (abs (- (comp/metallicity {:H 0.7 :He 0.1}) 0.2)) 1e-12)))
 
 (deftest normalize-preserves-ratios
   (let [n (comp/normalize {:H 1.0 :He 0.25})]
     (is (comp/composition-sums-to-unity? n))
-    (is (< (Math/abs (- (:H n) 0.8)) 1e-12))))
+    (is (< (abs (- (:H n) 0.8)) 1e-12))))
 
 (deftest contracts-are-constructs
   (is (= ::comp/composition (:id comp/composition-contract)))

@@ -1,9 +1,8 @@
 (ns domain.ecs.timeline-test
   "Coverage tests for the rewindable Timeline implementation."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is]]
    [domain.ecs.core :as ecs]
-   [domain.ecs.components :as c]
    [domain.ecs.event :as event]
    [domain.ecs.rewindable :refer [current-tick restore seek step-backward step-forward]]
    [domain.ecs.timeline :as timeline]
@@ -30,7 +29,7 @@
 
 (defn- make-test-timeline
   ([]
-   (let [[w e] (counter-world)]
+   (let [[w _e] (counter-world)]
      (timeline/->timeline w [inc-system] [dec-system])))
   ([world]
    (timeline/->timeline world [inc-system] [dec-system])))

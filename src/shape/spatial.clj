@@ -1,14 +1,16 @@
 (ns shape.spatial
   "Domain-agnostic 3D spatial primitives..."
+  (:require [clojure.math :as math])
   (:refer-clojure :exclude [contains?]))
 
 ;; --- vec3 -------------------------------------------------------------------
 
 (defn vec3
-  (^clojure.lang.IPersistentVector [x y z] [(double x) (double y) (double z)])
-  (^clojure.lang.IPersistentVector [x y] [(double x) (double y) 0.0])
+  "Construct a 3-vector of doubles, defaulting omitted components to 0.0."
+  (^clojure.lang.IPersistentVector [] [0.0 0.0 0.0])
   (^clojure.lang.IPersistentVector [x] [(double x) 0.0 0.0])
-  (^clojure.lang.IPersistentVector [] [0.0 0.0 0.0]))
+  (^clojure.lang.IPersistentVector [x y] [(double x) (double y) 0.0])
+  (^clojure.lang.IPersistentVector [x y z] [(double x) (double y) (double z)]))
 
 (defn v+
   "Componentwise addition of two vec3s."
@@ -45,7 +47,7 @@
 (defn len
   "Euclidean length of vec3."
   [v]
-  (Math/sqrt (len2 v)))
+  (math/sqrt (len2 v)))
 
 (defn dist
   "Distance between two vec3s."
@@ -61,6 +63,10 @@
 
 ;; --- AABB -------------------------------------------------------------------
 
+;; Intentional: AABB is the conventional acronym for axis-aligned bounding box
+;; used throughout graphics and spatial code; renaming to Aabb would break
+;; references and read against domain convention.
+#_{:splint/disable [naming/record-name]}
 (defrecord AABB [aabb-min aabb-max])
 
 (defn aabb
@@ -130,9 +136,9 @@
   "Largest side length of the AABB, used as size s in Barnes–Hut criterion."
   [^AABB bb]
   (let [[sx sy sz] (extent bb)]
-    (max (Math/abs (double sx))
-         (Math/abs (double sy))
-         (Math/abs (double sz)))))
+    (max (abs (double sx))
+         (abs (double sy))
+         (abs (double sz)))))
 
 ;; --- Octants ----------------------------------------------------------------
 

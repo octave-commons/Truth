@@ -90,35 +90,35 @@
           test-body (first bodies-1000)]
 
       (quick-bench "acceleration (1 body from 100, θ=0.5)"
-        (fn [] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-100 test-body)))
+        (fn [] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-100 :body test-body})))
 
       (quick-bench "acceleration (1 body from 500, θ=0.5)"
-        (fn [] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-500 test-body)))
+        (fn [] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-500 :body test-body})))
 
       (quick-bench "acceleration (1 body from 1000, θ=0.5)"
-        (fn [] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-1000 test-body)))
+        (fn [] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-1000 :body test-body})))
 
       (quick-bench "acceleration (1 body from 2000, θ=0.5)"
-        (fn [] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-2000 test-body)))
+        (fn [] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-2000 :body test-body})))
 
       (quick-bench "acceleration (1 body from 1000 clustered, θ=0.5)"
-        (fn [] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-cl test-body)))
+        (fn [] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-cl :body test-body})))
 
       ;; --- θ sensitivity ---
       (println "\n  θ Sensitivity (1000 bodies, one acceleration):")
       (doseq [theta [0.3 0.5 0.7 1.0]]
         (quick-bench (format "  θ=%.1f" theta)
-          (fn [] (bh/acceleration 6.674e-11 theta 1.0e14 tree-1000 test-body))))
+          (fn [] (bh/acceleration {:G 6.674e-11 :theta theta :softening 1.0e14 :tree tree-1000 :body test-body}))))
 
       ;; --- All-body acceleration (the real hot path) ---
       (quick-bench "all-body acceleration (100 bodies)"
         (fn []
-          (mapv (fn [b] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-100 b))
+          (mapv (fn [b] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-100 :body b}))
                 bodies-100)))
 
       (quick-bench "all-body acceleration (1000 bodies)"
         (fn []
-          (mapv (fn [b] (bh/acceleration 6.674e-11 0.5 1.0e14 tree-1000 b))
+          (mapv (fn [b] (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree-1000 :body b}))
                 bodies-1000)))
 
       ;; --- Cost breakdown ---
@@ -132,4 +132,4 @@
   (let [bodies (make-bodies 1000 2.0e16)
         tree   (bh/build-tree bodies)]
     (doseq [b bodies]
-      (bh/acceleration 6.674e-11 0.5 1.0e14 tree b))))
+      (bh/acceleration {:G 6.674e-11 :theta 0.5 :softening 1.0e14 :tree tree :body b}))))

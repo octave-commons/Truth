@@ -3,8 +3,13 @@
    These are epistemic contracts: every physical invariant asserted here must
    hold before downstream systems (disc formation, EM, regime) can be trusted."
   (:require
-   [clojure.test :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.stellar :as stellar]
+   [domain.stellar.thermodynamics :as thermo]
+   [domain.stellar.collapse :as collapse]
+   [domain.stellar.classifier :as classifier]
+   [domain.stellar.sink :as sink]
+   [domain.stellar.structure :as structure]
    [domain.em      :as em]
    [domain.ecs.core :as ecs]
    [domain.ecs.event :as event]
@@ -23,26 +28,26 @@
     (let [m 1e30
           r [1e15 0.0 0.0]
           v [0.0 2e3 0.0]
-          L (stellar/orbital-angular-momentum m r v)]
+          L (thermo/orbital-angular-momentum m r v)]
       (is (= 0.0 (first L)))
       (is (= 0.0 (second L)))
       (is (pos? (nth L 2)))
-      (is (< (Math/abs (- (nth L 2) (* m 1e15 2e3))) 1e20)))))
+      (is (< (abs (- (nth L 2) (* m 1e15 2e3))) 1e20)))))
 
 (deftest test-moment-of-inertia-sphere
   (testing "I = (2/5) M R² for a uniform sphere"
-    (is (< (Math/abs (- (stellar/moment-of-inertia 1.0 1.0) 0.4)) 1e-12))
-    (is (< (Math/abs (- (stellar/moment-of-inertia 2e30 1e9) (* 0.4 2e30 1e18))) 1e20))))
+    (is (< (abs (- (thermo/moment-of-inertia 1.0 1.0) 0.4)) 1e-12))
+    (is (< (abs (- (thermo/moment-of-inertia 2e30 1e9) (* 0.4 2e30 1e18))) 1e20))))
 
 (deftest test-spin-from-angular-momentum
   (testing "ω = L/I about the rotation axis"
     (let [_L [0.0 0.0 1e40]
-          I (stellar/moment-of-inertia 2e30 1e9)
-          w (stellar/spin-from-angular-momentum [0.0 0.0 1e40] 2e30 1e9)]
+          I (thermo/moment-of-inertia 2e30 1e9)
+          w (thermo/spin-from-angular-momentum [0.0 0.0 1e40] 2e30 1e9)]
       (is (= 0.0 (first w)))
       (is (= 0.0 (second w)))
       (is (pos? (nth w 2)))
-      (is (< (Math/abs (- (nth w 2) (/ 1e40 I))) 1e-10)))))
+      (is (< (abs (- (nth w 2) (/ 1e40 I))) 1e-10)))))
 
 ;; --- Seeding -----------------------------------------------------------------
 
@@ -55,7 +60,7 @@
       (is (some? (get cm c/angular-momentum)))
       (is (pos? (nth (get cm c/angular-momentum) 2)))
       (is (some? (get cm c/spin)))
-      (is (< (Math/abs (- (get cm c/oblateness) 1.0)) 1e-12)
+      (is (< (abs (- (get cm c/oblateness) 1.0)) 1e-12)
           "non-rotating seed starts spherical"))))
 
 ;; --- Merge conservation ------------------------------------------------------
@@ -65,7 +70,7 @@
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
-                                              stellar/stellar-merge-handler))
+                                              structure/stellar-merge-handler))
           [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 2e30
@@ -89,10 +94,10 @@
       (testing "absorb-merge packet carries the small body's angular momentum"
         (let [pkts (ecs/get-component w3 survivor c/absorb-merge)]
           (is (some? pkts))
-          (let [L-absorbed (reduce sp/v+ (map :angular-momentum pkts))
+          (let [L-absorbed (reduce sp/v+ [0.0 0.0 0.0] (map :angular-momentum pkts))
                 ;; total L after merge = survivor snapshot L + absorbed L
                 final-L (sp/v+ La L-absorbed)]
-            (is (every? (fn [[a b]] (< (Math/abs (- a b)) 1e30))
+            (is (every? (fn [[a b]] (< (abs (- a b)) 1e30))
                         (map vector final-L total-L))
                 "total angular momentum conserved through the packet")))))))
 
@@ -108,7 +113,7 @@
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
-                                              stellar/stellar-merge-handler))
+                                              structure/stellar-merge-handler))
           ;; compact star: ~main-sequence radius, high density
           [w1 _star] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                                 :velocity [0.0 0.0 0.0]
@@ -149,8 +154,8 @@
           hot      (assoc cold :temperature 2.0e7)         ;; still fusing
           gas-mass 1.0e28
           msun     1.989e30
-          cold-at  (fn [f] (stellar/classify-next-state (assoc cold :mass (* f msun)) gas-mass))
-          hot-at   (fn [f] (stellar/classify-next-state (assoc hot  :mass (* f msun)) gas-mass))]
+          cold-at  (fn [f] (classifier/classify-next-state (assoc cold :mass (* f msun)) gas-mass))
+          hot-at   (fn [f] (classifier/classify-next-state (assoc hot  :mass (* f msun)) gas-mass))]
       ;; hysteresis: a still-fusing star does NOT demote on mass alone
       (is (= :star (hot-at 0.05)) "a still-fusing star keeps burning despite mass loss")
       ;; once fusion has ceased, demotion follows the bound mass ladder
@@ -161,33 +166,56 @@
       (is (not-any? #{:nebula} (map cold-at [0.5 0.05 0.005 0.0005]))
           "a collapsed body never re-dissolves to gas"))))
 
-(deftest test-stellar-wind-conserves-mass-and-sheds
-  (testing "stellar-wind-system sheds a :nebula parcel and conserves total mass
-            (bodies + wind reservoir)."
+(deftest test-stellar-wind-emits-profile
+  (testing "stellar-wind-system emits a c/wind-profile for a luminous star; no
+            ballistic parcels are spawned."
     (let [[w star] (stellar/spawn-clump (ecs/empty-world)
                                         {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
                                          :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
                                          :matter-state :star
                                          :composition {:H 0.7 :He 0.28 :metals 0.02}})
           w     (-> w
-                    (ecs/put-component star c/pressure 1.0e13) ;; → fusion-possible → L>0
-                    (assoc :sim/dt 1.0e14 :genesis/wind-rate-scale 1.0e3
-                           :genesis/wind-parcel-mass 5.0e27
-                           :genesis/gas-smoothing-radius 6.0e13))
-          total (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
-                                          (ecs/entities-with w c/mass)))
-                           (reduce + (map #(double (or (ecs/get-component w % c/wind-reservoir) 0.0))
-                                          (ecs/entities-with w c/wind-reservoir)))
-                           (reduce + (map #(double (or (ecs/get-component w % c/mass-flux-wind) 0.0))
-                                          (ecs/entities-with w c/mass-flux-wind)))))
-          m0    (total w)
+                    (ecs/put-component star c/pressure 1.0e13) ;; -> fusion-possible -> L>0
+                    (ecs/put-component star c/luminosity 1.0e26)
+                    (assoc :sim/dt 1.0e14 :genesis/wind-rate-scale 1.0e3))
           ws    ((:run (stellar/stellar-wind-system)) w)
-          w1    (-> (tick/apply-write-set w ws)
-                    (genesis/materialize-lifecycle))]
-      (is (< (Math/abs (/ (- (total w1) m0) m0)) 1.0e-12) "total mass conserved")
-      (is (some #(= :nebula (ecs/get-component w1 % c/matter-state))
-                (ecs/entities-with w1 c/matter-state))
-          "a wind parcel was shed as gas"))))
+          w1    (tick/apply-write-set w ws)
+          profile (ecs/get-component w1 star c/wind-profile)]
+      (is (some? profile) "star received a wind profile")
+      (is (pos? (:wind/dot-m profile)) "profile has positive mass-loss rate")
+      (is (pos? (:wind/v-escape profile)) "profile has positive launch speed")
+      (is (>= (:wind/ionization profile) 0.3) "profile is ionized")
+      (is (>= (:wind/corona-t profile) 1.0e6) "profile corona temperature is hot"))))
+
+(deftest test-wind-ablation-heats-nearby-gas
+  (testing "wind-ablation-system emits c/wind-heating on a nebula parcel within
+            the interaction radius of a star."
+    (let [[w star] (stellar/spawn-clump (ecs/empty-world)
+                                        {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                         :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
+                                         :matter-state :star
+                                         :composition {:H 0.7 :He 0.28 :metals 0.02}})
+          gas-pos [1.0e14 0.0 0.0]
+          [w gas] (stellar/spawn-clump w {:position gas-pos :velocity [0.0 0.0 0.0]
+                                          :mass 1.0e28 :radius 6.0e13
+                                          :matter-state :nebula
+                                          :density 1.0e-16
+                                          :temperature 10.0})
+          w     (-> w
+                    (ecs/put-component star c/pressure 1.0e13)
+                    (ecs/put-component star c/luminosity 1.0e28)
+                    (assoc :sim/dt 1.0e14
+                           :genesis/wind-rate-scale 1.0e6
+                           :genesis/wind-interaction-factor 10.0
+                           :genesis/gas-smoothing-radius 6.0e13))
+          w1    (tick/apply-write-set w ((:run (stellar/stellar-wind-system)) w))
+          ws    ((:run (stellar/wind-ablation-system)) w1)
+          heating (get-in ws [c/wind-heating gas])]
+      (is (some? heating) "parcel received wind-heating influence")
+      (is (pos? (:wind-heating/delta-t heating)) "heating is positive")
+      (is (pos? (:wind-heating/ionization-rate heating)) "ionization rate is positive")
+      (is (pos? (:wind-heating/mass-loss heating)) "mass loss is positive")
+      (is (= star (:wind-heating/source-eid heating)) "source is the star"))))
 
 (deftest test-stellar-flare-conserves-and-ejects-hot
   (testing "stellar-flare-system ejects a hot parcel, conserving mass (winds spec
@@ -210,7 +238,7 @@
           hot   (filter #(and (= :nebula (ecs/get-component w1 % c/matter-state))
                               (> (double (or (ecs/get-component w1 % c/temperature) 0.0)) 1.0e6))
                         (ecs/entities-with w1 c/matter-state))]
-      (is (< (Math/abs (/ (- (tmass w1) m0) m0)) 1.0e-12) "mass conserved")
+      (is (< (abs (/ (- (tmass w1) m0) m0)) 1.0e-12) "mass conserved")
       (is (seq hot) "a hot flare parcel was ejected"))))
 
 (deftest test-merge-conserves-orbital-angular-momentum
@@ -218,7 +246,7 @@
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
-                                              stellar/stellar-merge-handler))
+                                              structure/stellar-merge-handler))
           ;; two equal masses orbiting each other — close enough to overlap
           ;; (distance 1e12 < 2×radius 2e12)
           ;; High temperature (malleable/molten) to avoid shatter path
@@ -240,32 +268,32 @@
           survivor (first (ecs/entities-with w3 c/mass))
           pkts    (ecs/get-component w3 survivor c/absorb-merge)]
       (is (some? pkts) "collision must fire (bodies overlap)")
-      (let [L-absorbed (reduce sp/v+ (map :angular-momentum pkts))]
+      (let [L-absorbed (reduce sp/v+ [0.0 0.0 0.0] (map :angular-momentum pkts))]
         (is (pos? (nth L-absorbed 2)))
         (is (>= (nth L-absorbed 2) 1e41))))))
 
 (deftest test-equivalent-radius
   (testing "r_eq of a sphere equals its radius"
-    (is (< (Math/abs (- (stellar/equivalent-radius 5.0 5.0) 5.0)) 1e-12)))
+    (is (< (abs (- (thermo/equivalent-radius 5.0 5.0) 5.0)) 1e-12)))
   (testing "Flattening at fixed volume increases equatorial radius"
     (let [r 5.0
           c 3.0
-          a (Math/sqrt (/ (* r r r) c))]
-      (is (< (Math/abs (- (stellar/equivalent-radius a c) r)) 1e-12)
+          a (math/sqrt (/ (* r r r) c))]
+      (is (< (abs (- (thermo/equivalent-radius a c) r)) 1e-12)
           "oblate spheroid with same volume as sphere r=5"))))
 
 (deftest test-oblate-density-conserves-mass
   (testing "Mass = density × oblate volume"
     (let [m 2e30 a 1e15 c 5e14
-          rho (stellar/oblate-density m a c)
-          v (* (/ 4.0 3.0) Math/PI a a c)]
-      (is (< (Math/abs (- (* rho v) m)) 1e10)))))
+          rho (thermo/oblate-density m a c)
+          v (* (/ 4.0 3.0) math/PI a a c)]
+      (is (< (abs (- (* rho v) m)) 1e10)))))
 
 (deftest test-rotation-axis
   (testing "Unit vector along L; defaults to z when L is zero"
-    (is (= [0.0 0.0 1.0] (stellar/rotation-axis [0.0 0.0 0.0])))
-    (let [n (stellar/rotation-axis [0.0 0.0 1e40])]
-      (is (< (Math/abs (- (sp/len n) 1.0)) 1e-12))
+    (is (= [0.0 0.0 1.0] (thermo/rotation-axis [0.0 0.0 0.0])))
+    (let [n (thermo/rotation-axis [0.0 0.0 1e40])]
+      (is (< (abs (- (sp/len n) 1.0)) 1e-12))
       (is (= [0.0 0.0 1.0] n)))))
 
 (deftest test-collapse-flattens-rotating-clump
@@ -279,7 +307,7 @@
                                              :angular-momentum [0.0 0.0 1e45]})
           _a0 (ecs/get-component w eid c/radius)
           ob0  (ecs/get-component w eid c/oblateness)
-          w2   (stellar/collapse-system w)
+          w2   (collapse/collapse-system w)
           a1   (ecs/get-component w2 eid c/radius)
           c1   (* a1 (ecs/get-component w2 eid c/oblateness))
           m    (ecs/get-component w2 eid c/mass)
@@ -287,7 +315,7 @@
       (is (< (ecs/get-component w2 eid c/oblateness) ob0)
           "oblateness drops below spherical")
       (is (< c1 a1) "polar radius is smaller than equatorial radius")
-      (is (< (Math/abs (- (stellar/oblate-density m a1 c1) rho1)) 1e-6)
+      (is (< (abs (- (thermo/oblate-density m a1 c1) rho1)) 1e-6)
           "density matches oblate spheroid volume"))))
 
 (deftest test-collapse-mass-conserved
@@ -300,7 +328,7 @@
                                              :matter-state :protostar
                                              :angular-momentum [0.0 0.0 1e45]})
           m0   (ecs/get-component w eid c/mass)
-          w2   (stellar/collapse-system w)
+          w2   (collapse/collapse-system w)
           m1   (ecs/get-component w2 eid c/mass)]
       (is (= m0 m1)))))
 
@@ -312,7 +340,7 @@
           b-ani (em/flux-freeze b0 rho0 rho1 1.0)]
       (is (> (sp/len b-ani) (sp/len b-iso))
           "field-stretching collapse amplifies B more")
-      (is (< (Math/abs (- (sp/len b-iso) (* 4.0 (sp/len b0)))) 1e-15)
+      (is (< (abs (- (sp/len b-iso) (* 4.0 (sp/len b0)))) 1e-15)
           "isotropic still scales as ρ^(2/3)"))))
 
 ;; --- Collapse conservation ---------------------------------------------------
@@ -328,11 +356,11 @@
                                              :angular-momentum [0.0 0.0 1e45]})
           L0   (ecs/get-component w eid c/angular-momentum)
           spin0 (ecs/get-component w eid c/spin)
-          w2   (stellar/collapse-system w)
+          w2   (collapse/collapse-system w)
           L1   (ecs/get-component w2 eid c/angular-momentum)
           spin1 (ecs/get-component w2 eid c/spin)
           r1   (ecs/get-component w2 eid c/radius)]
-      (is (every? (fn [[a b]] (< (Math/abs (- a b)) 1e30))
+      (is (every? (fn [[a b]] (< (abs (- a b)) 1e30))
                   (map vector L1 L0))
           "angular momentum is conserved")
       (is (> (sp/len spin1) (sp/len spin0)) "spin increases as radius shrinks")
@@ -343,7 +371,7 @@
 (deftest test-main-sequence-radius
   (testing "Main-sequence radius is ~R_sun at 1 M_sun and grows with mass"
     (let [law-ns (requiring-resolve 'law.stellar/main-sequence-radius)]
-      (is (< (Math/abs (- (law-ns 1.989e30) 6.957e8)) 1e7)
+      (is (< (abs (- (law-ns 1.989e30) 6.957e8)) 1e7)
           "≈ solar radius at one solar mass")
       (is (< (law-ns 5e29) (law-ns 1.989e30))
           "a lower-mass star is smaller")
@@ -366,12 +394,12 @@
                                              :matter-state :protostar
                                              :angular-momentum [0.0 0.0 0.0]})
           ;; many contraction steps — old code would halve to a point each tick
-          w'      (nth (iterate stellar/collapse-system w) 80)
+          w'      (nth (iterate collapse/collapse-system w) 80)
           r       (ecs/get-component w' eid c/radius)]
       (is (>= r (* 0.999 floor)) "radius does not collapse below the floor")
-      (is (< (Math/abs (- r floor)) (* 0.01 floor)) "radius settles AT the floor")
+      (is (< (abs (- r floor)) (* 0.01 floor)) "radius settles AT the floor")
           ;; one more step does not shrink it further
-      (is (< (Math/abs (- r (ecs/get-component (stellar/collapse-system w') eid c/radius)))
+      (is (< (abs (- r (ecs/get-component (collapse/collapse-system w') eid c/radius)))
              (* 1e-6 floor))
           "contraction has stopped"))))
 
@@ -390,7 +418,7 @@
           w' (loop [wi w n 0]
                (if (>= n 2000)
                  wi
-                 (let [w-next (stellar/collapse-system wi)
+                 (let [w-next (collapse/collapse-system wi)
                        t (ecs/get-component w-next eid c/temperature)
                        p (ecs/get-component w-next eid c/pressure)]
                    (if (law.stellar/fusion-possible? {:temperature t
@@ -415,7 +443,7 @@
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1.1e30   ;; above star-mass-threshold
                                              :radius 1e14})
-          w2      (stellar/classify-system w)]
+          w2      (classifier/classify-system w)]
       (is (= :protostar (ecs/get-component w2 eid c/matter-state)))
       (is (= 1e14 (ecs/get-component w2 eid c/accretion-radius))
           "feeding zone is the pre-contraction radius"))))
@@ -425,7 +453,7 @@
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
-                                              stellar/stellar-merge-handler))
+                                              structure/stellar-merge-handler))
           ;; star with a tiny photosphere but a large feeding zone
           [w1 _]  (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
@@ -451,7 +479,7 @@
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
-                                              stellar/stellar-merge-handler))
+                                              structure/stellar-merge-handler))
           [w1 _]  (stellar/spawn-clump base {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
                                              :mass 1.5e30 :radius 1e9 :matter-state :star})
           star    (first (ecs/entities-with w1 c/mass))
@@ -476,24 +504,24 @@
                                              :radius 1e15
                                              :matter-state :protostar
                                              :angular-momentum [0.0 0.0 0.0]})
-          w2   (stellar/collapse-system w)
+          w2   (collapse/collapse-system w)
           ob   (ecs/get-component w2 eid c/oblateness)]
-      (is (< (Math/abs (- ob 1.0)) 1e-12)))))
+      (is (< (abs (- ob 1.0)) 1e-12)))))
 
 ;; --- Jeans-driven formation -------------------------------------------------
 
 (deftest test-sound-speed
   (testing "Sound speed increases with temperature"
-    (let [cs-cold (stellar/sound-speed 10.0)
-          cs-hot  (stellar/sound-speed 1000.0)]
+    (let [cs-cold (thermo/sound-speed 10.0)
+          cs-hot  (thermo/sound-speed 1000.0)]
       (is (pos? cs-cold))
       (is (> cs-hot cs-cold)))))
 
 (deftest test-jeans-length
   (testing "Jeans length falls with density and rises with temperature"
-    (let [lj1 (stellar/jeans-length 1e-9 100.0)
-          lj2 (stellar/jeans-length 1e-6 100.0)
-          lj3 (stellar/jeans-length 1e-9 1000.0)]
+    (let [lj1 (collapse/jeans-length 1e-9 100.0)
+          lj2 (collapse/jeans-length 1e-6 100.0)
+          lj3 (collapse/jeans-length 1e-9 1000.0)]
       (is (pos? lj1))
       (is (< lj2 lj1) "higher density -> shorter Jeans length")
       (is (> lj3 lj1) "higher temperature -> longer Jeans length"))))
@@ -510,7 +538,7 @@
           w2 (-> w
                  (ecs/put-component eid c/density 1e-9)
                  (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 1000.0)))
-          w3 (stellar/jeans-collapse-system w2)]
+          w3 (collapse/jeans-collapse-system w2)]
       (is (= :nebula (ecs/get-component w3 eid c/matter-state)))
       (is (= 1e10 (ecs/get-component w3 eid c/radius))))))
 
@@ -526,7 +554,7 @@
           w2 (-> w
                  (ecs/put-component eid c/density 1e-9)
                  (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 100.0)))
-          w3 (stellar/jeans-collapse-system w2)]
+          w3 (collapse/jeans-collapse-system w2)]
       (is (= :planetesimal (ecs/get-component w3 eid c/matter-state)))
       (is (< (ecs/get-component w3 eid c/radius) 1e14) "radius shrinks to resolved-body scale")
       (is (pos? (ecs/get-component w3 eid c/density)))
@@ -544,7 +572,7 @@
           w2 (-> w
                  (ecs/put-component eid c/density 1e-9)
                  (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 100.0)))
-          w3 (stellar/jeans-collapse-system w2)]
+          w3 (collapse/jeans-collapse-system w2)]
       (is (= :planet (ecs/get-component w3 eid c/matter-state)))
       (is (= 1e14 (ecs/get-component w3 eid c/radius))))))
 
@@ -554,30 +582,30 @@
   (testing "A parcel inside a sink's accretion radius is detected"
     (let [pos [1e10 0.0 0.0]
           zones [{:position [0.0 0.0 0.0] :radius 2e10}]]
-      (is (stellar/within-existing-sink? pos zones))))
+      (is (sink/within-existing-sink? pos zones))))
   (testing "A parcel outside all sinks is not detected"
     (let [pos [1e11 0.0 0.0]
           zones [{:position [0.0 0.0 0.0] :radius 2e10}]]
-      (is (not (stellar/within-existing-sink? pos zones)))))
+      (is (not (sink/within-existing-sink? pos zones)))))
   (testing "nil sink-zones returns nil (no sinks exist)"
-    (is (nil? (stellar/within-existing-sink? [1e10 0.0 0.0] nil))))
+    (is (nil? (sink/within-existing-sink? [1e10 0.0 0.0] nil))))
   (testing "nil position returns nil"
-    (is (nil? (stellar/within-existing-sink? nil [{:position [0 0 0] :radius 1e10}])))))
+    (is (nil? (sink/within-existing-sink? nil [{:position [0 0 0] :radius 1e10}])))))
 
 (deftest test-bondi-radius
   (testing "Bondi radius grows with mass"
-    (let [r1 (stellar/bondi-radius 1e28 500.0)
-          r2 (stellar/bondi-radius 2e28 500.0)]
+    (let [r1 (sink/bondi-radius 1e28 500.0)
+          r2 (sink/bondi-radius 2e28 500.0)]
       (is (pos? r1))
       (is (= (* 2.0 r1) r2))))
   (testing "Bondi radius shrinks with sound speed"
-    (let [r1 (stellar/bondi-radius 1e28 500.0)
-          r2 (stellar/bondi-radius 1e28 1000.0)]
+    (let [r1 (sink/bondi-radius 1e28 500.0)
+          r2 (sink/bondi-radius 1e28 1000.0)]
       (is (= (* 0.25 r1) r2))))
   (testing "Zero mass returns zero"
-    (is (= 0.0 (stellar/bondi-radius 0.0 500.0))))
+    (is (= 0.0 (sink/bondi-radius 0.0 500.0))))
   (testing "Zero sound speed returns zero"
-    (is (= 0.0 (stellar/bondi-radius 1e28 0.0)))))
+    (is (= 0.0 (sink/bondi-radius 1e28 0.0)))))
 
 (deftest test-isolation-criterion-blocks-condensation
   (testing "A Jeans-unstable parcel inside a sink's radius does NOT condense"
@@ -601,9 +629,9 @@
                  (ecs/put-component parcel-eid c/density 1e-6)
                  (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
           ;; Compute sink zones and classify with isolation check
-          zones (stellar/sink-exclusion-zones w2)
-          region (stellar/entity->region w2 parcel-eid)
-          next-state (stellar/classify-next-state region 1e25 zones)]
+          zones (sink/sink-exclusion-zones w2)
+          region (thermo/entity->region w2 parcel-eid)
+          next-state (classifier/classify-next-state region 1e25 zones)]
       (is (= :nebula next-state) "Parcel inside sink radius stays :nebula")))
   (testing "A Jeans-unstable parcel OUTSIDE sinks condenses normally"
     (let [base (ecs/empty-world)
@@ -624,9 +652,9 @@
           w2 (-> w2
                  (ecs/put-component parcel-eid c/density 1e-6)
                  (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
-          zones (stellar/sink-exclusion-zones w2)
-          region (stellar/entity->region w2 parcel-eid)
-          next-state (stellar/classify-next-state region 1e25 zones)]
+          zones (sink/sink-exclusion-zones w2)
+          region (thermo/entity->region w2 parcel-eid)
+          next-state (classifier/classify-next-state region 1e25 zones)]
       (is (= :gas-giant next-state) "Parcel outside sink radius condenses to :gas-giant"))))
 
 (deftest test-sink-formation-does-not-absorb-gas
@@ -663,7 +691,7 @@
                                            :temperature 10.0
                                            :matter-state :nebula})
           ;; Run sink formation
-          w5 (stellar/sink-formation-system w4)
+          w5 (sink/sink-formation-system w4)
           sink-mass (ecs/get-component w5 sink-eid c/mass)
           absorbs (ecs/get-component w5 sink-eid c/absorb-accrete)]
       ;; Gas within the feeding zone is NOT consumed by sink-formation any more —
@@ -674,7 +702,7 @@
       (is (nil? (ecs/get-component w5 p3 c/consumed-accrete)) "Gas outside radius not consumed")
       ;; No gas absorb-accrete emitted (only solid bodies are captured here).
       (is (or (nil? absorbs) (empty? absorbs)) "No gas absorbed by sink-formation")
-      (is (= (double sink-mass) 2e28) "Sink bulk mass unchanged")
+      (is (= 2e28 (double sink-mass)) "Sink bulk mass unchanged")
       (is (zero? (double (or (ecs/get-component w5 sink-eid c/disk-mass) 0.0)))
           "Debris sink forms no disk from gas"))))
 
@@ -696,7 +724,7 @@
                                             :radius 1e10
                                             :temperature 50.0
                                             :matter-state :planetesimal})
-          w3 (stellar/sink-formation-system w2)
+          w3 (sink/sink-formation-system w2)
           absorbs (ecs/get-component w3 sink-eid c/absorb-accrete)]
       (is (some? (ecs/get-component w3 deb c/consumed-accrete))
           "Debris within the feeding zone is consumed (swarm drained)")
@@ -710,7 +738,7 @@
       (is (true? (:disk-route (first absorbs)))
           "Disk-route set for protostar sink (mass goes to disk)")
       ;; Bulk mass unchanged (disk-route → disk-evolution handles it next tick)
-      (is (= (double (ecs/get-component w3 sink-eid c/mass)) 5e28)
+      (is (= 5e28 (double (ecs/get-component w3 sink-eid c/mass)))
           "Protostar bulk mass unchanged")
       ;; Disk-mass is NOT updated here (disk-evolution reads absorb-accrete
       ;; and adds to disk-mass; it runs after sink-formation in the barrier chain)
@@ -728,8 +756,8 @@
     ;; that the classifier and fusion-system pick up on the NEXT tick (spec §7).
     (let [mass   (* 1.5 law/solar-mass)
           r-ms   (law/main-sequence-radius mass)
-          rho    (/ mass (* 4/3 Math/PI (Math/pow r-ms 3)))
-          t-vir  (stellar/virial-temperature mass r-ms)
+          rho    (/ mass (* 4/3 math/PI (math/pow r-ms 3)))
+          t-vir  (thermo/virial-temperature mass r-ms)
           press  (law/ideal-gas-pressure rho t-vir)
           c   {:H 0.74 :He 0.24 :metals 0.02}
           [w eid] (stellar/spawn-clump (ecs/empty-world)
@@ -752,8 +780,8 @@
   (testing "An existing star with zero luminosity gets promotion-signal"
     (let [mass   (* 1.5 law/solar-mass)
           r-ms   (law/main-sequence-radius mass)
-          rho    (/ mass (* 4/3 Math/PI (Math/pow r-ms 3)))
-          t-vir  (stellar/virial-temperature mass r-ms)
+          rho    (/ mass (* 4/3 math/PI (math/pow r-ms 3)))
+          t-vir  (thermo/virial-temperature mass r-ms)
           press  (law/ideal-gas-pressure rho t-vir)
           c   {:H 0.74 :He 0.24 :metals 0.02}
           [w eid] (stellar/spawn-clump (ecs/empty-world)

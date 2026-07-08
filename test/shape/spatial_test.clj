@@ -1,6 +1,6 @@
 (ns shape.spatial-test
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.math :as math] [clojure.test :refer [deftest is testing]]
    [shape.spatial :as spatial]))
 
 (deftest vec3-ops
@@ -10,8 +10,8 @@
       (is (= [1.0 2.0 3.0] a))
       (is (= [0.0 2.0 7.0] (spatial/v+ a b)))
       (is (= [2.0 4.0 6.0] (spatial/v* a 2.0)))
-      (is (<= (Math/abs (- (spatial/len a)
-                           (Math/sqrt 14.0)))
+      (is (<= (abs (- (spatial/len a)
+                      (math/sqrt 14.0)))
               1.0e-9))
       (is (= 0.0 (spatial/len (spatial/vec3 0.0 0.0 0.0)))))))
 

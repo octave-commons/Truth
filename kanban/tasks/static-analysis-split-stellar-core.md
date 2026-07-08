@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-split-stellar-core"
 title: "Split domain.stellar Core Lifecycle Modules"
-status: "accepted"
+status: "done"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"

@@ -8,11 +8,16 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.stellar :as stellar]
+   [domain.stellar.collapse :as collapse]
    [domain.genesis :as genesis]
    [domain.player :as player]
+   [domain.hydro :as hydro]
    [infra.camera :as cam]
    [infra.input :as input]
    [infra.render :as r]
+   [infra.render.math :as rmath]
+   [infra.render.scene.bodies :as rbodies]
+   [infra.render.volume :as rvolume]
    [infra.render.field :as rfield]
    [infra.render.units :as units]))
 
@@ -37,6 +42,19 @@
       (is (> (nth (:color (first strong)) 2) (nth (:color (first weak)) 2)))))
   (testing "No field means no line"
     (is (nil? (r/field-line [0.0 0.0 0.0] 1.0 [0.0 0.0 0.0])))))
+
+(deftest test-scene-far-plane
+  (testing "Far plane scales with camera distance and stays bounded"
+    (is (= 100.0 (r/scene-far-plane (cam/make-camera 0.01)))
+        "very close cameras get the 100.0 floor")
+    (is (= 1000.0 (r/scene-far-plane (cam/make-camera 1.0)))
+        "mid-range distance scales linearly")
+    (is (= 10000.0 (r/scene-far-plane (cam/make-camera 20.0)))
+        "caps at the legacy 10000.0 ceiling")
+    (is (= 10000.0 (r/scene-far-plane (cam/make-camera 2000.0)))
+        "wide views keep the legacy ceiling")
+    (is (< 100.0 (r/scene-far-plane (cam/make-camera 0.5)) 10000.0)
+        "moderate close-up lies between floor and ceiling")))
 
 (deftest test-nebula-fog
   (testing "Fog puffs are tagged :particle and lie within the extent"
@@ -70,7 +88,7 @@
                                       {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
                                        :matter-state :nebula :density 1e-18 :temperature 12.0})
           ctx  (units/make-context (cam/make-camera) {:width 1 :height 1})
-          pts  (#'r/render-samples ctx w1 rfield/default-volume-config)]
+          pts  (#'rvolume/render-samples ctx w1 rfield/default-volume-config)]
       (is (seq pts) "nebula produces gas samples for the froxel texture")
       (is (every? #(number? (:dens %)) pts)
           "every gas sample carries a density value")))
@@ -81,12 +99,81 @@
                                 :color [1.0 1.0 1.0] :count 50 :seed 7 :density 0.9})
           mean (fn [xs] (/ (reduce + xs) (count xs)))]
       (is (> (mean (map :size sparse)) (mean (map :size dense)))
-          "low-density fog puffs are larger than high-density puffs")))
+          "low-density fog puffs are larger than high-density fog puffs")))
   (testing "Temperature colour varies with temperature"
     (let [cold (r/temp-color 10.0)
           hot  (r/temp-color 1e4)]
       (is (< (first cold) (first hot)) "hot gas reads redder/warmer than cold gas")
       (is (not= cold hot) "different temperatures produce different colours"))))
+
+(deftest test-disk-temp-color-warm-ramp
+  (testing "Disk colour is warm: green at the cool outer edge, shifting to orange and red inward"
+    (let [outer (r/disk-temp-color 100.0)
+          mid   (r/disk-temp-color 500.0)
+          inner (r/disk-temp-color 1000.0)]
+      (is (> (second outer) (first outer)) "cool outer disk is greenish (g > r)")
+      (is (> (first mid) (second mid)) "mid disk is orange (r > g)")
+      (is (> (first inner) (second inner)) "hot inner disk is reddish (r > g)")
+      (is (not= outer mid inner) "temperature changes disk colour"))))
+
+(deftest test-dust-parcels-render-warmer
+  (testing "Dust-rich (solid-fraction > 0.5) disc parcels use the warm disk colour ramp and a density boost"
+    (let [base (ecs/empty-world)
+          [w1 disc-eid] (stellar/spawn-clump base
+                                             {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                              :matter-state :nebula :density 1e-15 :temperature 300.0
+                                              :composition {:Fe 0.35 :Si 0.35 :O 0.15 :H 0.075 :He 0.075}})
+          w1 (ecs/put-component w1 disc-eid c/disc-tag :disc)
+          [w2 _neb-eid] (stellar/spawn-clump w1
+                                             {:position [3e15 0.0 0.0] :mass 1e28 :radius 1e14
+                                              :matter-state :nebula :density 1e-15 :temperature 300.0
+                                              :composition {:H 0.75 :He 0.25}})
+          ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
+          pts (#'rvolume/render-samples ctx w2 rfield/default-volume-config)
+          disc-pt (first (filter #(= (units/world->render ctx [0.0 0.0 0.0]) (:p %)) pts))
+          neb-pt  (first (filter #(= (units/world->render ctx [3e15 0.0 0.0]) (:p %)) pts))]
+      (is (some? disc-pt) "dust disc parcel produces a sample")
+      (is (some? neb-pt) "nebula parcel produces a sample")
+      (is (> (:dens disc-pt) (:dens neb-pt)) "dust disc parcel gets a density boost")
+      (is (> (first (:col disc-pt)) (nth (:col disc-pt) 2))
+          "dust disc parcel reads warm at 300 K (red > blue)")
+      (is (not= (:col disc-pt) (:col neb-pt))
+          "dust and nebula parcels use distinct colour ramps"))))
+
+(deftest test-solid-fraction-selects-dust-or-gas
+  (testing "Composition-driven solid fraction decides dust vs gas rendering"
+    (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
+          [base _dust-eid] (stellar/spawn-clump (ecs/empty-world)
+                                                {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                                 :matter-state :nebula :density 1e-15 :temperature 300.0
+                                                 :composition {:Fe 0.35 :Si 0.35 :H 0.15 :He 0.15}})
+          [w _gas-eid] (stellar/spawn-clump base
+                                            {:position [3e15 0.0 0.0] :mass 1e28 :radius 1e14
+                                             :matter-state :nebula :density 1e-15 :temperature 300.0
+                                             :composition {:H 0.8 :He 0.2}})
+          pts (#'rvolume/render-samples ctx w rfield/default-volume-config)
+          dust-pt (first (filter #(= (units/world->render ctx [0.0 0.0 0.0]) (:p %)) pts))
+          gas-pt  (first (filter #(= (units/world->render ctx [3e15 0.0 0.0]) (:p %)) pts))]
+      (is (some? dust-pt) "dust parcel produces a sample")
+      (is (some? gas-pt) "gas parcel produces a sample")
+      (is (> (first (:col dust-pt)) (nth (:col dust-pt) 2))
+          "dust reads warm (red > blue)")
+      (is (> (nth (:col gas-pt) 2) (first (:col gas-pt)))
+          "gas at 300 K reads violet/magenta (blue > red)")
+      (is (> (:dens dust-pt) (:dens gas-pt))
+          "dust parcel gets a density boost"))))
+
+(deftest test-gas-samples-include-solid-fraction
+  (testing "gas-samples exposes composition and derived solid-fraction"
+    (let [base (ecs/empty-world)
+          [w eid] (stellar/spawn-clump base
+                                       {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                        :matter-state :nebula :density 1e-15 :temperature 300.0
+                                        :composition {:Fe 0.35 :Si 0.35 :H 0.15 :He 0.15}})
+          sample (first (filter #(= eid (:eid %)) (hydro/gas-samples w)))]
+      (is (some? sample))
+      (is (map? (:composition sample)))
+      (is (> (:solid-fraction sample) 0.5) "Fe/Si parcel is mostly solid"))))
 
 ;; --- Physics-coupled size and colour -----------------------------------------
 
@@ -196,7 +283,7 @@
                                          :radius 1e15
                                          :matter-state :protostar
                                          :angular-momentum [0.0 0.0 1e45]})
-          w2 (stellar/collapse-system w)
+          w2 (collapse/collapse-system w)
           shapes (r/phase0-bodies-from-world w2)
           bodies (filter #(= :body (:render-mode %)) shapes)]
       (is (seq bodies) "protostar produces a shaded body")
@@ -206,7 +293,7 @@
 
 (deftest test-model-matrix-oblate
   (testing "Oblate model matrix scales z differently than x/y"
-    (let [m (var-get (resolve 'infra.render/model-matrix))
+    (let [m (var-get #'infra.render.math/model-matrix)
           mat-sph (m [0.0 0.0 0.0] 2.0)
           mat-obl (m [0.0 0.0 0.0] 2.0 0.5 [0.0 0.0 1.0])
           ;; Frobenius norm of upper-left 3x3: for axis z, z-scale is 1, x/y are 2
@@ -215,11 +302,11 @@
           obl-scale-sum (reduce + (for [i [0 1 2 4 5 6 8 9 10]]
                                     (* (aget mat-obl i) (aget mat-obl i))))]
       ;; spherical has equal scales: 2² + 2² + 2² = 12
-      (is (< (Math/abs (- sph-scale-sum 12.0)) 1e-6))
+      (is (< (abs (- sph-scale-sum 12.0)) 1e-6))
       ;; oblate has two scales of 2 and one of 1: 4 + 4 + 1 = 9
-      (is (< (Math/abs (- obl-scale-sum 9.0)) 1e-6))
+      (is (< (abs (- obl-scale-sum 9.0)) 1e-6))
       ;; z-aligned body leaves z-scale at index 10 as the polar scale
-      (is (< (Math/abs (- (aget mat-obl 10) 1.0)) 1e-6)))))
+      (is (< (abs (- (aget mat-obl 10) 1.0)) 1e-6)))))
 
 ;; --- Sprite LOD -------------------------------------------------------------
 
@@ -228,7 +315,7 @@
     (let [camera (cam/make-camera 50.0)
           near   {:render-mode :body :position [0.0 0.0 0.0] :radius 10.0}
           far    {:render-mode :body :position [0.0 0.0 500.0] :radius 1.0}
-          [solids sprites] (#'r/classify-body-lod [near far] camera 1280 720 nil)]
+          [solids sprites] (#'infra.render.scene.bodies/classify-body-lod [near far] camera 720 nil)]
       (is (= 1 (count solids)))
       (is (= 1 (count sprites)))
       (is (= :body (:render-mode (first solids))))
@@ -237,21 +324,21 @@
   (testing "Non-body shapes pass through unchanged"
     (let [camera (cam/make-camera 50.0)
           line   {:render-mode :line :position [0.0 0.0 0.0]}
-          [solids sprites] (#'r/classify-body-lod [line] camera 1280 720 nil)]
+          [solids sprites] (#'infra.render.scene.bodies/classify-body-lod [line] camera 720 nil)]
       (is (= 1 (count solids)))
       (is (zero? (count sprites)))))
   (testing "A body large enough on screen stays solid even at distance"
     (let [camera (cam/make-camera 50.0)
           huge   {:render-mode :body :position [0.0 0.0 200.0] :radius 50.0}
-          [solids sprites] (#'r/classify-body-lod [huge] camera 1280 720 nil)]
+          [solids sprites] (#'infra.render.scene.bodies/classify-body-lod [huge] camera 720 nil)]
       (is (= 1 (count solids)))
       (is (zero? (count sprites)))))
   (testing "Bright stars produce larger sprites than dim bodies at the same distance"
     (let [camera (cam/make-camera 50.0)
           dim    {:render-mode :body :kind :planet :position [0.0 0.0 500.0] :radius 1.0 :brightness 0.3}
           bright {:render-mode :body :kind :star   :position [0.0 0.0 500.0] :radius 1.0 :brightness 3.0}
-          [_ dim-sprites]    (#'r/classify-body-lod [dim]    camera 1280 720 nil)
-          [_ star-sprites]   (#'r/classify-body-lod [bright] camera 1280 720 nil)]
+          [_ dim-sprites]    (#'infra.render.scene.bodies/classify-body-lod [dim]    camera 720 nil)
+          [_ star-sprites]   (#'infra.render.scene.bodies/classify-body-lod [bright] camera 720 nil)]
       (is (= 1 (count dim-sprites)))
       (is (= 1 (count star-sprites)))
       (is (> (:size (first star-sprites)) (:size (first dim-sprites)))

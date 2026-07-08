@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Benchmark coverage report for Gates of Truth.
+#
+#   bin/bench-coverage              # full namespace-level coverage report
+#   bin/bench-coverage --threshold 40   # exit non-zero if coverage < 40%
+#
+# Coverage is declared per benchmark group in bench/gates_of_truth/bench.clj
+# via the :covers set. This is a static report: no benchmarks are executed.
+# See docs/specs/benchmark-coverage.md for the model.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+exec clojure -M:bench-coverage "$@"

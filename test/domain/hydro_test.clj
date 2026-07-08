@@ -3,7 +3,7 @@
    These assert the SPH formulation is momentum-conserving and points the right
    way: high pressure pushes outward, low pressure is compressed."
   (:require
-   [clojure.test :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.hydro :as hydro]
    [domain.stellar :as stellar]
    [domain.physics.cache :as pcache]
@@ -31,7 +31,7 @@
   (testing "Symmetric pressure term is positive for positive pressures"
     (let [t (hydro/pressure-term 1.0 1.0 2.0 8.0)]
       (is (pos? t))
-      (is (< (Math/abs (- t 3.0)) 1e-12) "1/1 + 8/4 = 3"))))
+      (is (< (abs (- t 3.0)) 1e-12) "1/1 + 8/4 = 3"))))
 
 (deftest test-uniform-pressure-zero-accel
   (testing "A uniform pressure field produces no net acceleration"
@@ -46,7 +46,7 @@
                      {:position [0.0 -0.5 0.0] :density 1.0 :pressure 1.0
                       :mass 1.0 :radius 1.0}]
           a (hydro/pressure-gradient-acceleration data neighbors)]
-      (is (every? #(< (Math/abs %) 1e-12) a)))))
+      (is (every? #(< (abs %) 1e-12) a)))))
 
 (deftest test-high-pressure-pushes-outward
   (testing "A central high-pressure particle accelerates away from neighbors"
@@ -59,7 +59,7 @@
           a (hydro/pressure-gradient-acceleration data neighbors)]
       ;; central pressure is high, so it pushes outward: net x should be small
       ;; due to symmetry, but each neighbor feels inward force
-      (is (< (Math/abs (first a)) 1e-6)))))
+      (is (< (abs (first a)) 1e-6)))))
 
 (deftest test-low-pressure-compressed
   (testing "A low-pressure particle between two high-pressure neighbors is compressed"
@@ -71,7 +71,7 @@
                       :mass 1.0 :radius 1.0}]
           a (hydro/pressure-gradient-acceleration data neighbors)]
       ;; net acceleration should be near zero by symmetry
-      (is (< (Math/abs (first a)) 1e-6)))))
+      (is (< (abs (first a)) 1e-6)))))
 
 (deftest test-momentum-conservation-pair
   (testing "The pairwise SPH force is antisymmetric"
@@ -84,13 +84,13 @@
       ;; left has higher pressure, so it pushes left; right is pushed right
       (is (neg? (first a-left)) "high-pressure left pushes toward -x")
       (is (pos? (first a-right)) "low-pressure right is pushed toward +x")
-      (is (< (Math/abs (+ (first a-left) (first a-right))) 1e-12)
+      (is (< (abs (+ (first a-left) (first a-right))) 1e-12)
           "action and reaction are equal and opposite"))))
 
 (deftest test-sound-speed
   (testing "Sound speed c_s = √(γ P / ρ)"
     (let [cs (hydro/sound-speed 1.0 1.0)]
-      (is (< (Math/abs (- cs (Math/sqrt lfield/gamma))) 1e-12))
+      (is (< (abs (- cs (math/sqrt lfield/gamma))) 1e-12))
       (is (zero? (hydro/sound-speed 0.0 1.0)))
       (is (zero? (hydro/sound-speed 1.0 0.0))))))
 
@@ -118,8 +118,8 @@
       (is (some? a-a))
       (is (some? a-b))
       ;; uniform pressure → zero acceleration
-      (is (every? #(< (Math/abs %) 1e-20) a-a))
-      (is (every? #(< (Math/abs %) 1e-20) a-b)))))
+      (is (every? #(< (abs %) 1e-20) a-a))
+      (is (every? #(< (abs %) 1e-20) a-b)))))
 
 (deftest test-hydro-system-pressure-gradient
   (testing "A pressure gradient produces acceleration pointing downhill"
@@ -157,7 +157,7 @@
       ;; bug the kernel support would be 1.0 and the force would vanish.
       (is (neg? (first a-left)) "high-pressure left pushes away from right")
       (is (pos? (first a-right)) "low-pressure right is pushed away")
-      (is (< (Math/abs (+ (first a-left) (first a-right))) 1e-12)
+      (is (< (abs (+ (first a-left) (first a-right))) 1e-12)
           "action and reaction remain antisymmetric"))))
 
 (deftest test-hydro-accel-cleared-for-resolved-bodies
@@ -193,7 +193,7 @@
         (let [r2 (* r r)
               w-r (hydro/kernel r h)
               w-r2 (hydro/kernel-r2 r2 h)]
-          (is (< (Math/abs (- w-r w-r2)) 1e-15)
+          (is (< (abs (- w-r w-r2)) 1e-15)
               (str "r=" r " kernel arities match")))))))
 
 (deftest test-kernel-gradient-r2-arity-matches-r-arity
@@ -225,14 +225,14 @@
           ;; Simpson's rule on [0,h] for W(r,h) 4π r² dr
           n 1000
           dr (/ h n)
-          integral (* 4.0 Math/PI
+          integral (* 4.0 math/PI
                       (reduce (fn [acc i]
                                 (let [r (* i dr)
                                       w (hydro/kernel r h)]
                                   (+ acc (* w r r dr))))
                               0.0
                               (range 1 (inc n))))]
-      (is (< (Math/abs (- integral 1.0)) 1e-4)))))
+      (is (< (abs (- integral 1.0)) 1e-4)))))
 
 (deftest test-self-density
   (testing "An isolated particle has finite SPH density from its self-contribution"
@@ -241,7 +241,7 @@
           data {:position [0.0 0.0 0.0] :mass m :radius r :density 0.0 :pressure 0.0}
           rho (hydro/sph-density data [data])]
       (is (pos? rho))
-      (is (< (Math/abs (- rho (/ m Math/PI))) 1e-12)
+      (is (< (abs (- rho (/ m math/PI))) 1e-12)
           "self-density equals m W(0,2r) = m/(π r³)"))))
 
 (deftest test-density-rises-with-crowding
@@ -319,7 +319,7 @@
           rho (ecs/get-component w3 ea c/density)
           press (ecs/get-component w3 ea c/pressure)
           expected (ls/ideal-gas-pressure rho 12.0)]
-      (is (< (Math/abs (- press expected)) (* 1e-12 (max 1.0 (Math/abs expected))))
+      (is (< (abs (- press expected)) (* 1e-12 (max 1.0 (abs expected))))
           "pressure is recomputed from the new density and temperature"))))
 
 (deftest test-density-system-updates-radius
@@ -372,8 +372,8 @@
           rho-isolated (ecs/get-component w4 ec c/density)]
             ;; same mass → r³ × ρ should be similar; dense particle has smaller r
       (is (< r-crowded r-isolated) "crowded particle is smaller than isolated particle")
-      (is (< (Math/abs (- (* r-crowded r-crowded r-crowded rho-crowded)
-                          (* r-isolated r-isolated r-isolated rho-isolated)))
+      (is (< (abs (- (* r-crowded r-crowded r-crowded rho-crowded)
+                     (* r-isolated r-isolated r-isolated rho-isolated)))
              1e30)
           "r³ × ρ is approximately conserved for equal-mass particles"))))
 
@@ -396,8 +396,8 @@
           rho-uncached (ecs/get-component ((hydro/density-system 1e10) w2) ea c/density)
           cached (pcache/build-neighbor-cache w2)
           rho-cached (ecs/get-component ((hydro/density-system 1e10) cached) ea c/density)]
-      (is (< (Math/abs (- rho-uncached rho-cached))
-             (* 1e-12 (max 1.0 (Math/abs rho-uncached))))
+      (is (< (abs (- rho-uncached rho-cached))
+             (* 1e-12 (max 1.0 (abs rho-uncached))))
           "cached density equals uncached density"))))
 
 (deftest test-hydro-system-matches-with-cache
@@ -410,13 +410,13 @@
                                              :matter-state :nebula
                                              :density 1.0
                                              :pressure 100.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0})
+          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                              :velocity [0.0 0.0 0.0]
+                                              :mass 1e28
+                                              :radius 2e14
+                                              :matter-state :nebula
+                                              :density 1.0
+                                              :pressure 1.0})
           w2 (spatial/spatial-index w2)
           a-uncached (ecs/get-component ((hydro/hydro-system 1e10) w2) ea c/hydro-accel)
           cached (pcache/build-neighbor-cache w2)
@@ -434,14 +434,14 @@
       (is (= 0.0 (hydro/kernel-shape 1.0 0.0)) "zero smoothing length yields zero")))
   (testing "pinned interior values kill coefficient mutants"
     (let [h 2.0
-          at-q (fn [q] (hydro/kernel-shape (Math/pow (* q h) 2) h))]
-      (is (< (Math/abs (- (at-q 0.25) 0.71875)) 1e-12) "W(1/4) = 1 - 6/16 + 6/64")
-      (is (< (Math/abs (- (at-q 0.5) 0.25)) 1e-12) "W(1/2) = 1 - 3/2 + 3/4")
-      (is (< (Math/abs (- (at-q 0.75) 0.03125)) 1e-12) "W(3/4) = 2 (1/4)³")))
+          at-q (fn [q] (hydro/kernel-shape (math/pow (* q h) 2) h))]
+      (is (< (abs (- (at-q 0.25) 0.71875)) 1e-12) "W(1/4) = 1 - 6/16 + 6/64")
+      (is (< (abs (- (at-q 0.5) 0.25)) 1e-12) "W(1/2) = 1 - 3/2 + 3/4")
+      (is (< (abs (- (at-q 0.75) 0.03125)) 1e-12) "W(3/4) = 2 (1/4)³")))
   (testing "monotone non-increasing over the support"
     (let [h 3.0
           qs (map #(/ % 40.0) (range 41))
-          ws (map #(hydro/kernel-shape (Math/pow (* % h) 2) h) qs)]
+          ws (map #(hydro/kernel-shape (math/pow (* % h) 2) h) qs)]
       (is (every? (fn [[a b]] (>= a b)) (partition 2 1 ws))))))
 
 (deftest test-kernel-shape-matches-kernel-r2
@@ -450,10 +450,10 @@
             frac [0.0 0.3 0.6 0.9 0.999 1.0 1.2]]
       (let [r  (* frac h)
             r2 (* r r)
-            expected (* (/ 8.0 (* Math/PI h h h)) (hydro/kernel-shape r2 h))
+            expected (* (/ 8.0 (* math/PI h h h)) (hydro/kernel-shape r2 h))
             actual   (hydro/kernel-r2 r2 h)]
-        (is (< (Math/abs (- actual expected))
-               (* 1e-12 (max 1e-30 (Math/abs expected))))
+        (is (< (abs (- actual expected))
+               (* 1e-12 (max 1e-30 (abs expected))))
             (str "identity holds at q=" frac " h=" h))))))
 
 (deftest test-gas-samples-schema-and-coverage
@@ -536,8 +536,8 @@
           w3 (spatial/spatial-index w3)
           w4 ((hydro/density-system 1e10) w3)
           structure (into {} (map (fn [[eid rho r]] [eid [rho r]])) (hydro/gas-structure w4))
-          close? (fn [a b] (< (Math/abs (- (double a) (double b)))
-                              (* 1e-9 (max 1e-30 (Math/abs (double b))))))]
+          close? (fn [a b] (< (abs (- (double a) (double b)))
+                              (* 1e-9 (max 1e-30 (abs (double b))))))]
       (doseq [{:keys [eid density smoothing-h]} (hydro/gas-samples w4)]
         (let [[rho r] (get structure eid)]
           (is (some? rho) "every gas sample has a structure row")
@@ -547,12 +547,12 @@
 (deftest test-gas-structure-matches-with-cache
   (testing "gas-structure returns identical [eid density radius] with cache"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 1e14
-                                             :matter-state :nebula
-                                             :temperature 12.0})
+          [w1 _ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+                                              :velocity [0.0 0.0 0.0]
+                                              :mass 1e28
+                                              :radius 1e14
+                                              :matter-state :nebula
+                                              :temperature 12.0})
           [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
                                               :velocity [0.0 0.0 0.0]
                                               :mass 1e28
@@ -629,13 +629,13 @@
                                              :matter-state :nebula
                                              :density 1.0
                                              :pressure 1.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e29
-                                             :radius 2e13
-                                             :matter-state :protostar
-                                             :density 1.0
-                                             :pressure 100.0})
+          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                              :velocity [0.0 0.0 0.0]
+                                              :mass 2e29
+                                              :radius 2e13
+                                              :matter-state :protostar
+                                              :density 1.0
+                                              :pressure 100.0})
           w2 (spatial/spatial-index w2)
           a-a (ecs/get-component ((hydro/hydro-system 1e10) w2) ea c/hydro-accel)]
       (is (some? a-a))

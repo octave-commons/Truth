@@ -56,8 +56,19 @@ if [ -n "$dead" ]; then echo "$dead"; else echo "  none"; fi
 
 # 5 ── jscpd: copy-paste duplication. Advisory.
 sec "jscpd  (copy-paste duplication)"
-npx --yes jscpd@4 2>/dev/null | grep -E 'Clone found|clones|Duplicated' \
-  || echo "  jscpd unavailable (needs node/npx)"
+jscpd_err=$(mktemp)
+jscpd_out=$(npx --yes jscpd@4 2>"$jscpd_err")
+if [ -z "$jscpd_out" ]; then
+  echo "  jscpd unavailable (needs node/npx)"
+  if [ -s "$jscpd_err" ]; then
+    sed 's/^/  /' "$jscpd_err"
+  fi
+else
+  echo "$jscpd_out" | grep -E '^(Clone found|\s+.*\[.*\])'
+  echo "$jscpd_out" | grep -E 'Found [0-9]+ clones'
+  echo "$jscpd_out" | grep 'Total:' | awk -F '│' '{gsub(/^[ \t]+|[ \t]+$/, "", $7); gsub(/^[ \t]+|[ \t]+$/, "", $8); print "duplicated lines: " $7 ", duplicated tokens: " $8}'
+fi
+rm -f "$jscpd_err"
 
 # 6 ── cljfmt: formatting consistency. Advisory (use --fix to apply).
 sec "cljfmt  (formatting)"

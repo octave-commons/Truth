@@ -142,3 +142,30 @@
   spore: none
   receipt-refs: none
   note: Baseline extraction from bin/analyze output via saved tool file and rg; spec structure follows epic pattern. Friction was validating the exact 404 count against regex misses (lint/not-empty? had question mark).
+- ts: 2026-07-08T12:10:44.413672935Z
+  session: ses_0be778d60ffeZZ1nsP7kgQgjGU
+  task: Decompose infra warn-level mega-functions in Gates of Truth
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.65
+  spore: none
+  receipt-refs: none
+  note: Splitting GL/render helpers is mechanical; the main friction was matching exact paren balance in nested field splat! and avoiding kondo unused-binding/shadow warnings.
+- ts: 2026-07-08T18:27:49.948760676Z
+  session: ses_0bd0b34afffeifp59hPgptJtvQ
+  task: Split infra.camera.navigation into input/tracking/facade namespaces
+  p-efficiency: 0.85
+  p-friction: 0.2
+  p-skill-candidate: 0.5
+  spore: none
+  receipt-refs: none
+  note: Camera record + local motion moved to input, world tracking to tracking, navigation remains a facade. All public names/signatures preserved. Verified with clj-kondo, camera-test, architecture-test, and full suite.
+- ts: 2026-07-08T18:32:34.146243830Z
+  session: ses_0bd0b2cb7ffeXKvTVPawZ9jHAj
+  task: Split law.stellar.orbital into constants/dynamics/facade
+  p-efficiency: 0.75
+  p-friction: 0.5
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: none
+  note: Split itself was straightforward; friction came from unrelated repo drift (syntax errors in untracked domain/em/lorentz.clj and stale infra tests) blocking full test suite.

@@ -53,8 +53,8 @@
    Uses a cursor difference so it does not depend on event tick tagging."
   [world-before world-after]
   (let [old (count (world-events world-before))
-        new (count (world-events world-after))]
-    (subvec (world-events world-after) old new)))
+        new-count (count (world-events world-after))]
+    (subvec (world-events world-after) old new-count)))
 
 ;; ---------------------------------------------------------------------------
 ;; Event un-application (for rewind)

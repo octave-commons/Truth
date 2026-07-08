@@ -23,15 +23,15 @@
    This namespace is write-set-native. `legacy-system` adapts an existing
    `(fn [world] world')` system into this contract by diffing its output against
    the frozen snapshot and masking to its owned component types — the migration
-   bridge until each system is rewritten to emit a write-set directly."
-  (:require
-   [domain.ecs.core :as ecs]))
+   bridge until each system is rewritten to emit a write-set directly.")
 
 ;; Sentinel: an owner declares this entity no longer has the component.
 ;; A distinct object so it can never collide with a legitimate component value.
 (def removed (Object.))
 
-(defn removed? [v] (identical? v removed))
+(defn removed?
+  "True if a write-set value is the `removed` sentinel."
+  [v] (identical? v removed))
 
 ;; ---------------------------------------------------------------------------
 ;; Folding write-sets

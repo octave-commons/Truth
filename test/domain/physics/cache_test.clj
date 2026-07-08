@@ -7,8 +7,7 @@
    [domain.physics.cache :as cache]
    [domain.spatial.index :as spatial]
    [domain.stellar :as stellar]
-   [law.field :as lfield]
-   [shape.spatial :as sp]))
+   [law.field :as lfield]))
 
 (defn- seeded-world
   ([] (seeded-world 20))

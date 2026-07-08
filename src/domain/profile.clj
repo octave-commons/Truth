@@ -33,12 +33,12 @@
    Returns the result of `f` unchanged. When `f` returns a map, the elapsed
    time is merged into that map's `:genesis/_profile` so the benchmark harness
    can report subsystem breakdowns."
-  [world key f]
+  [world k f]
   (if (:genesis/profile-subsystems? world)
     (let [[result dt] (timing #(f world))]
       (if (map? result)
         (assoc result :genesis/_profile
-               (merge-with + (or (:genesis/_profile result) {}) {key (double dt)}))
+               (merge-with + (or (:genesis/_profile result) {}) {k (double dt)}))
         result))
     (f world)))
 
@@ -49,9 +49,9 @@
    discarded rather than throwing."
   [world sections]
   (if (:genesis/profile-subsystems? world)
-    (let [[w' prof] (reduce (fn [[w prof] [key f]]
+    (let [[w' prof] (reduce (fn [[w prof] [k f]]
                               (let [[w' dt] (timing #(f w))]
-                                [w' (merge-with + prof {key (double dt)})]))
+                                [w' (merge-with + prof {k (double dt)})]))
                             [world {}]
                             sections)]
       (if (map? w')

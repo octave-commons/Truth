@@ -57,7 +57,7 @@
 ;; --- Handoff / endings ------------------------------------------------------
 
 (defn- world-with-habitable-planet []
-  (let [base    (genesis/create-world)
+  (let [base    (genesis/create-world {:gas-count 20})
         [w eid] (ecs/spawn base)]
     (-> (ecs/put-components w eid
                             {c/mass 6e24 c/radius 6.4e6 c/position [1e16 0 0]
@@ -73,17 +73,17 @@
     (is (arc/ready-to-narrow? (world-with-habitable-planet))))
   (testing "planets-formed arc with no habitable candidate ⇒ not ready"
     (is (not (arc/ready-to-narrow?
-              (assoc (genesis/create-world) :arc/current :arc/genesis-planets-formed))))))
+              (assoc (genesis/create-world {:gas-count 20}) :arc/current :arc/genesis-planets-formed))))))
 
 (deftest genesis-ending-outcomes
   (testing "A habitable planet at planets-formed yields :ready-to-narrow"
     (is (= :ready-to-narrow (:type (arc/genesis-ending (world-with-habitable-planet))))))
   (testing "Exhausted coherence yields a graceful :fadeout"
-    (let [w (-> (genesis/create-world)
+    (let [w (-> (genesis/create-world {:gas-count 20})
                 (player/update-observer #(assoc % :coherence 0.01)))]
       (is (= :fadeout (:type (arc/genesis-ending w))))))
   (testing "A planets-formed arc with no habitable world is :sterile"
-    (let [w (assoc (genesis/create-world) :arc/current :arc/genesis-planets-formed)]
+    (let [w (assoc (genesis/create-world {:gas-count 20}) :arc/current :arc/genesis-planets-formed)]
       (is (= :sterile (:type (arc/genesis-ending w)))))))
 
 ;; --- Tick integration -------------------------------------------------------
@@ -93,7 +93,7 @@
     (let [w (arc/tick-genesis (genesis/create-world {:gas-count 20}))]
       (is (contains? w :arc/current))
       (is (keyword? (:arc/current w)))
-      (is (= (namespace (:arc/current w)) "arc")))))
+      (is (= "arc" (namespace (:arc/current w)))))))
 
 (deftest genesis-active-ignores-arc
   (testing "genesis/tick-world advances physics without touching arc state"

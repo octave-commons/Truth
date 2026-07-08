@@ -4,6 +4,7 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [domain.stellar :as stellar]
    [infra.camera :as cam]
    [shape.spatial :as sp]))
@@ -34,6 +35,44 @@
     (let [cluster (cam/largest-mass-cluster [] 2.0)]
       (is (= 0.0 (:mass cluster) (:radius cluster)))
       (is (= [0.0 0.0 0.0] (:center cluster))))))
+
+(deftest test-follow-selection-tracks-exactly-when-close
+  (testing "At planetary zoom the camera target snaps to and tracks the selected body"
+    (let [[w body-eid] (stellar/spawn-clump (ecs/empty-world)
+                                            {:position [1e15 0.0 0.0]
+                                             :mass 1e24
+                                             :radius 6e8
+                                             :matter-state :planet})
+          cam0 (assoc (cam/make-camera 10.0) :target [0.0 0.0 0.0])
+          settings (assoc (cam/default-camera-settings)
+                          :mode :follow-selection
+                          :follow-eid body-eid)
+          cam1 (cam/update-camera-for-world cam0 w settings)
+          w' (ecs/put-component w body-eid c/position [1.01e15 0.0 0.0])
+          cam2 (cam/update-camera-for-world cam1 w' settings)]
+      (is (= [1.0 0.0 0.0] (:target cam1))
+          "camera snaps to selected body when already close")
+      (is (= [1.01 0.0 0.0] (:target cam2))
+          "camera tracks body exactly after it moves while close"))))
+
+(deftest test-follow-selection-lerps-when-far
+  (testing "Far from the selected body the camera still smoothly approaches"
+    (let [[w body-eid] (stellar/spawn-clump (ecs/empty-world)
+                                            {:position [1e18 0.0 0.0]
+                                             :mass 1e24
+                                             :radius 6e14
+                                             :matter-state :planet})
+          cam0 (assoc (cam/make-camera 2000.0) :target [0.0 0.0 0.0])
+          settings (assoc (cam/default-camera-settings)
+                          :mode :follow-selection
+                          :follow-eid body-eid)
+          cam1 (cam/update-camera-for-world cam0 w settings)]
+      ;; Body is at 1000 ru; camera orbit distance is 2000 ru, so it is well
+      ;; outside the close-tracking snap radius. The target should not jump
+      ;; all the way to the body on the first frame.
+      (is (not= [1000.0 0.0 0.0] (:target cam1)))
+      (is (< 0.0 (first (:target cam1)) 1000.0)
+          "camera lerps toward a far body"))))
 
 (deftest test-fit-all-bounds
   (testing "Bounding sphere contains the requested percentile of bodies"
@@ -86,7 +125,7 @@
   (testing "Forward vector points from camera toward target"
     (let [c (cam/make-camera 10.0)
           f (cam/camera-forward c)]
-      (is (< (Math/abs (- (sp/len f) 1.0)) 1e-6) "forward is a unit vector")
+      (is (< (abs (- (sp/len f) 1.0)) 1e-6) "forward is a unit vector")
       (is (pos? (reduce + (map * f f))) "forward is non-zero"))))
 
 (deftest test-camera-move-basis
@@ -94,9 +133,9 @@
     (let [c (cam/make-camera 10.0)
           {:keys [forward right]} (cam/camera-move-basis c)
           f (cam/camera-forward c)]
-      (is (< (Math/abs (- (sp/len forward) 1.0)) 1e-6) "forward is a unit vector")
-      (is (< (Math/abs (- (sp/len right) 1.0)) 1e-6) "right is a unit vector")
-      (is (< (Math/abs (sp/dot forward right)) 1e-6) "right ⟂ forward")
+      (is (< (abs (- (sp/len forward) 1.0)) 1e-6) "forward is a unit vector")
+      (is (< (abs (- (sp/len right) 1.0)) 1e-6) "right is a unit vector")
+      (is (< (abs (sp/dot forward right)) 1e-6) "right ⟂ forward")
       ;; forward is the FULL camera look direction, including the pitch (z) tilt.
       (is (> (sp/dot forward (cam/normalize f)) 0.999) "forward tracks camera look direction")
       (is (not (zero? (nth forward 2))) "pitched forward carries a vertical (z) component")
@@ -142,9 +181,9 @@
           {:keys [forward right]} (cam/camera-move-basis c)
           speed (:move-speed settings)]
       (is (= [0.0 0.0 0.0] v-none))
-      (is (< (Math/abs (- (first v-fwd) (* speed (first forward)))) 1.0)
+      (is (< (abs (- (first v-fwd) (* speed (first forward)))) 1.0)
           "forward velocity matches camera forward direction scaled by move speed")
-      (is (< (Math/abs (- (first v-rgt) (* speed (first right)))) 1.0)
+      (is (< (abs (- (first v-rgt) (* speed (first right)))) 1.0)
           "strafe velocity matches camera right direction scaled by move speed")
       (is (not (zero? (nth v-fwd 2))) "forward velocity follows the pitched look direction (has z)")
       (is (zero? (nth v-rgt 2)) "strafe velocity stays horizontal (no vertical z)"))))

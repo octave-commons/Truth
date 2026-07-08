@@ -161,6 +161,8 @@ watching is OFF, so it does NOT auto-reload on edits:
 
 - Load code changes: `pm2 restart gates-of-truth-dev` (starts a fresh nebula),
   or hot-reload via the nREPL on `localhost:7888` to keep the live world.
+- Check logs without blocking: `pm2 logs gates-of-truth-dev --lines 30 --nostream`
+  (omit `--nostream` only if you intend to tail forever).
 - It owns port 7888; "Address already in use" from `clj -M:dev` just means the
   pm2 instance is already up.
 

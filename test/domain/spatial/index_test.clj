@@ -1,7 +1,7 @@
 (ns domain.spatial.index-test
   "Coverage tests for the spatial neighbour index."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.gravity.barnes-hut :as bh]
@@ -46,7 +46,7 @@
   (let [items [(item 0 [0 0 0]) (item 1 [3 0 0]) (item 2 [10 0 0])]
         tree (spi/build items)
         d (spi/nearest-dist tree [0 0 0] 0)]
-    (is (< (Math/abs (- d 3.0)) 1e-9))))
+    (is (< (abs (- d 3.0)) 1e-9))))
 
 (deftest nearest-dist-inf-when-alone
   (let [tree (spi/build [(item 0 [0 0 0])])]
@@ -86,13 +86,13 @@
   (let [items [(item 0 [0 0 0]) (item 1 [3 0 0])]
         w {:genesis/spatial-tree (spi/build items)}
         d (spi/query-nearest-dist w [0 0 0] 0)]
-    (is (< (Math/abs (- d 3.0)) 1e-9))))
+    (is (< (abs (- d 3.0)) 1e-9))))
 
 (deftest query-nearest-dist-uses-grid-when-no-tree
   (let [grid (spi/build-grid [(item 0 [0 0 0]) (item 1 [4 0 0])] 2.0)
         w {:genesis/spatial-grid grid}
         d (spi/query-nearest-dist w [0 0 0] 0)]
-    (is (< (Math/abs (- d 4.0)) 1e-9))))
+    (is (< (abs (- d 4.0)) 1e-9))))
 
 (deftest query-nearest-dist-inf-when-no-index
   (is (= Double/POSITIVE_INFINITY (spi/query-nearest-dist {} [0 0 0] 0))))

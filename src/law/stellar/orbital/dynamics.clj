@@ -1,0 +1,121 @@
+(ns law.stellar.orbital.dynamics
+  "Orbital-dynamics computations: Plummer gravity, circular and virial speeds,
+   Hill radius, isolation mass, and orbital-clearing predicates."
+  (:require
+   [clojure.math :as math]
+   [law.stellar.orbital.constants :as constants]))
+
+(defn softened-circular-speed
+  "Circular-orbit speed (m/s) around mass `M` at radius `r` in the Plummer-
+   softened gravity the integrator actually applies:
+
+       v_c² = G M r² / (r² + ε²)^{3/2}
+
+   Reduces to Kepler √(GM/r) for r ≫ ε and to the harmonic-core speed Ω·r
+   (Ω = √(GM/ε³)) for r ≪ ε — a circular orbit is exact in BOTH regimes, so a
+   body launched with this speed is bound and orbits at ANY radius. The
+   unsoftened √(GM/r), by contrast, overshoots the softened field's grip by
+   ~(ε/r)^{3/2} inside the softening length: a fragment placed at r ≪ ε with
+   Keplerian speed feels almost no pull and leaves the system ballistically."
+  [M r softening]
+  (let [M (double (or M 0.0))
+        r (double (or r 0.0))
+        e (double (or softening 0.0))
+        d2 (+ (* r r) (* e e))]
+    (if (and (pos? M) (pos? r) (pos? d2))
+      (math/sqrt (/ (* constants/G M r r) (math/pow d2 1.5)))
+      0.0)))
+
+(defn hill-radius
+  "Hill (Roche) radius of a body of mass `m` orbiting mass `M-star` at radius `a`:
+   R_H = a·(m / 3 M_star)^(1/3) — the reach of the body's gravity against the
+   star's tide, and the natural width unit of its feeding zone. Metres."
+  [m M-star a]
+  (let [m (double (or m 0.0))
+        M (double (or M-star 0.0))
+        a (double (or a 0.0))]
+    (if (and (pos? m) (pos? M) (pos? a))
+      (* a (math/pow (/ m (* 3.0 M)) (/ 1.0 3.0)))
+      0.0)))
+
+(defn isolation-mass
+  "Planetesimal isolation mass (kg): the mass a growing body reaches once it has
+   swept up all the solids in its feeding zone and can grow no further from local
+   material. This is the physical cap that prevents runaway growth from producing
+   an arbitrarily large planet out of one annulus.
+
+   Solving M_iso = 2π·a·(2·B·R_H)·Σ_solid self-consistently with
+   R_H = a·(M_iso/3M_star)^(1/3) gives (Lissauer 1993):
+
+       M_iso = [4π·B·a²·Σ_solid]^(3/2) / (3·M_star)^(1/2)
+
+   where B = `feeding-zone-hill-factor`. M_iso ∝ Σ_solid^(3/2)·a³·M_star^(−1/2):
+   ~0.05–0.15 M⊕ at 1 AU (sub-Mars), rising to several–10 M⊕ at ~5 AU beyond the
+   ice line where Σ_solid jumps ~3–4×. A body may exceed this ONLY via runaway
+   gas accretion after reaching pebble-isolation mass beyond the ice line.
+
+   `a` in metres, `sigma-solid` in kg/m², `M-star` in kg. 0 for degenerate input."
+  [a sigma-solid M-star]
+  (let [a  (double (or a 0.0))
+        s  (double (or sigma-solid 0.0))
+        M  (double (or M-star 0.0))]
+    (if (and (pos? a) (pos? s) (pos? M))
+      (/ (math/pow (* 4.0 math/PI constants/feeding-zone-hill-factor a a s) 1.5)
+         (math/sqrt (* 3.0 M)))
+      0.0)))
+
+(defn virial-speed
+  "Characteristic gravitational speed √(G·M/R) (m/s) of a self-gravitating cloud
+   of mass `M` and radius `R` — the velocity scale that balances self-gravity.
+
+   The natural yardstick for any external influence on the cloud: velocity
+   kicks well below it shepherd matter, kicks well above it unbind matter
+   (escape speed from the edge is only √2 × this). 0 for a degenerate scale."
+  [M R]
+  (let [M (double (or M 0.0))
+        R (double (or R 0.0))]
+    (if (and (pos? M) (pos? R))
+      (math/sqrt (/ (* constants/G M) R))
+      0.0)))
+
+(defn plummer-acceleration
+  "Gravitational acceleration magnitude (m/s²) at distance `r` from the centre
+   of a Plummer sphere of mass `M` and scale radius `a`:
+
+       g(r) = G·M·r / (r² + a²)^{3/2}
+
+   The field of a LARGE, DIFFUSE body of mass — a dark-matter-halo-like
+   presence: zero at the centre (the enclosed mass vanishes), peak pull
+   2·G·M/(3√3·a²) at r = a/√2, Keplerian G·M/r² far outside. It is the same
+   softened field family `softened-circular-speed` orbits (v_c²/r = g).
+
+   Because the field is conservative, a STATIC halo can only deepen the local
+   potential well — it binds and gathers matter and can never pump a body past
+   escape speed. Only moving or re-concentrating the halo does work on the
+   system. `M` must be the mass MAGNITUDE (≥ 0); callers flip the direction for
+   repulsive fields."
+  [M a r]
+  (let [M  (double (or M 0.0))
+        a  (double (or a 0.0))
+        r  (double (or r 0.0))
+        d2 (+ (* r r) (* a a))]
+    (if (and (pos? M) (pos? r) (pos? d2))
+      (/ (* constants/G M r) (math/pow d2 1.5))
+      0.0)))
+
+(defn orbital-cleared?
+  "Test if a body has cleared its orbital neighborhood."
+  [{:keys [mass orbital-radius]} other-bodies]
+  ;; Simplified Stern-Levison parameter
+  (let [hill-r (* orbital-radius (math/pow (/ mass (* 3 constants/solar-mass)) 0.333))
+        nearby (filter #(< (- (:orbital-radius %) orbital-radius) (* 2 hill-r))
+                       other-bodies)
+        nearby-mass (reduce + 0 (map :mass nearby))]
+    (> mass (* 100 nearby-mass)))) ;; dominates by factor of 100
+
+(defn planet?
+  "Full astronomical definition of a planet."
+  [body other-bodies]
+  (and (constants/hydrostatic-equilibrium? body)
+       (orbital-cleared? body other-bodies)
+       (not (constants/fusion-possible? body))))

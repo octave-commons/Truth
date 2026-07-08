@@ -6,7 +6,6 @@
    [domain.ecs.components :as c]
    [domain.ecs.event :as event]
    [domain.ecs.rewindable :refer [current-tick]]
-   [domain.ecs.timeline :as timeline]
    [domain.world-bootstrap :as boot]
    [shape.spatial :as sp]))
 
@@ -66,8 +65,8 @@
         va (ecs/get-component w' a c/velocity)
         vb (ecs/get-component w' b c/velocity)]
     (testing "equal-mass elastic collision swaps velocities along normal"
-      (is (< (Math/abs (- (first va) -1.0)) 1e-9))
-      (is (< (Math/abs (- (first vb) 1.0)) 1e-9)))))
+      (is (< (abs (- (first va) -1.0)) 1e-9))
+      (is (< (abs (- (first vb) 1.0)) 1e-9)))))
 
 (deftest bootstrapped-handler-resolves-merge-collision
   (let [w (boot/bootstrap {:merge? true})
@@ -88,6 +87,6 @@
       (is (ecs/alive? w' a))
       (is (not (ecs/alive? w' b)))
       (is (= 15.0 (ecs/get-component w' a c/mass)))
-      (is (< (Math/abs (- (first (ecs/get-component w' a c/velocity))
-                          (/ 10.0 15.0)))
+      (is (< (abs (- (first (ecs/get-component w' a c/velocity))
+                     (/ 10.0 15.0)))
              1e-9)))))

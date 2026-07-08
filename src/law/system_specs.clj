@@ -173,39 +173,39 @@
 ;; ============================================================================
 
 (def stellar-wind-system-plasma-spec
-  "System: stellar-wind-system (Phase 1 revision)
-   Phase: 1 (serial barrier, runs after sink-formation-system)
+  "System: stellar-wind-system
+   Phase: 1 (fan-out emitter)
    Namespace: domain.stellar
 
-   READS:  c/matter-state, c/mass, c/radius, c/position, c/velocity,
-           c/atmosphere-shells, c/sed-bands, c/b-field, c/wind-reservoir
-    WRITES: c/mass, c/velocity, c/wind-reservoir (on star)
-            c/position, c/velocity, c/mass, c/density, c/temperature,
-            c/ionization-fraction, c/b-field, c/ram-pressure (on wind parcels)
+   READS:  c/matter-state, c/mass, c/radius, c/luminosity,
+           c/atmosphere-shells, c/sed-bands, c/b-field
+    WRITES: c/wind-profile (on star)
 
     Precondition:
-      - Entity is :star with valid atmosphere-shells (corona layer exists)
+      - Entity is :star (or :protostar / :brown-dwarf) with valid mass and radius
+      - Fusion has produced c/luminosity > 0
       - SED bands computed (for XUV/EUV contribution to wind driving)
-      - Note: c/ionization-fraction and c/ram-pressure are Phase 1 component
-        keywords added to domain.ecs.components
+      - Note: c/wind-profile is a Phase 1 component keyword added to
+        domain.ecs.components
 
    Postcondition:
-     - Wind parcels are spawned as :nebula with ionization-fraction > 0.5
-     - Each parcel carries :ram-pressure derived from Ṁ and v_wind
-     - Each parcel carries the star's B-field at the launch point
-     - Mass is conserved: star mass decreases by parcel mass
-     - Momentum is conserved: star recoils opposite to ejection
-     - Parcels NOT within the star's accretion radius (no emit→absorb flicker)
+      - c/wind-profile carries the star's mass-loss rate, launch speed,
+        reference ram pressure, XUV luminosity, ionization fraction, and
+        coronal temperature
+      - No discrete wind parcels are spawned
+      - The star's mass is NOT directly debited (mass loss is represented
+        indirectly via the wind profile's ram-pressure field)
 
    Test (kaocha):
-     (deftest stellar-wind-system-produces-plasma-parcels
-       (let [world  (seed-test-star-with-atmosphere-and-sed)
+     (deftest stellar-wind-system-produces-wind-profile
+       (let [world  (seed-test-star-with-luminosity)
              world' (stellar-wind-system world)
-             parcels (ecs/entities-with world' c/matter-state c/ionization-fraction)]
-         (is (seq parcels))
-         (let [eid (first parcels)]
-           (is (> (ecs/get-component world' eid c/ionization-fraction) 0.5))
-           (is (> (ecs/get-component world' eid c/ram-pressure) 0.0)))))")
+             profile (ecs/get-component world' star c/wind-profile)]
+         (is (some? profile))
+         (is (> (:wind/ionization profile) 0.0))
+         (is (> (:wind/dot-m profile) 0.0))
+         (is (> (:wind/v-escape profile) 0.0))
+         (is (nil? (get-in world' [:components c/spawn-request-wind])))))")
 
 ;; ============================================================================
 ;; Phase 1: XUV Atmospheric Escape
@@ -282,7 +282,7 @@
 (def lod-scheduler-spec
   "System: lod-scheduler
    Phase: 1 (runs every tick, before radiation systems)
-   Namespace: domain.genesis
+   Namespace: domain.lod
 
    READS:  c/position (player observer), c/position (all stars/planets),
            c/lod-level (if set)

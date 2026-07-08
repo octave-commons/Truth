@@ -10,8 +10,7 @@
    [domain.physics.cache :as cache]
    [domain.spatial.index :as spatial]
    [domain.stellar :as stellar]
-   [law.field :as lfield]
-   [shape.spatial :as sp]))
+   [law.field :as lfield]))
 
 (defn- seeded-world
   "A small deterministic world of gas particles for cache/parity tests."
@@ -117,7 +116,7 @@
   [a b tol]
   (let [a (mapv double a)
         b (mapv double b)]
-    (every? #(< (Math/abs (double %)) tol)
+    (every? #(< (abs (double %)) tol)
             (map - a b))))
 
 (deftest test-gravity-integrator-parity
@@ -138,7 +137,7 @@
               (str "position mismatch for eid " eid))
           (is (close-vec-absolute? vel-soa vel-ref 1e-6)
               (str "velocity mismatch for eid " eid))
-          (is (< (Math/abs (- (double m-soa) (double m-ref))) 1e-6)
+          (is (< (abs (- (double m-soa) (double m-ref))) 1e-6)
               (str "mass mismatch for eid " eid)))))))
 
 (deftest test-multi-tick-parity
@@ -213,8 +212,8 @@
       (is (close-vec-absolute? (ecs/get-component w-soa eid-a c/position)
                                (ecs/get-component w-no-soa eid-a c/position)
                                1e-6))
-      (is (< (Math/abs (- (double (ecs/get-component w-soa eid-a c/mass))
-                          (double (ecs/get-component w-no-soa eid-a c/mass))))
+      (is (< (abs (- (double (ecs/get-component w-soa eid-a c/mass))
+                     (double (ecs/get-component w-no-soa eid-a c/mass))))
              1e-6)))))
 
 (deftest test-soa-validation-rejects-malformed-cache

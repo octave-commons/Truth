@@ -7,26 +7,26 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.spatial.index :as spatial]
-   [domain.stellar :as stellar]))
+   [domain.stellar.structure :as structure]))
 
 (defn- finite? [x] (and (number? x) (Double/isFinite (double x))))
 
 (deftest resolved-shape-solids-use-material-density
   (testing "debris: fixed rocky density, radius derived from mass"
-    (let [s (stellar/resolved-shape {:matter-state :planetesimal :mass 1.0e22} 0.5 9.5e14 1.0e12)]
-      (is (= stellar/debris-material-density (:density s)))
-      (is (= (stellar/sphere-radius 1.0e22 stellar/debris-material-density) (:radius s)))
+    (let [s (structure/resolved-shape {:matter-state :planetesimal :mass 1.0e22} 0.5 9.5e14 1.0e12)]
+      (is (= structure/debris-material-density (:density s)))
+      (is (= (structure/sphere-radius 1.0e22 structure/debris-material-density) (:radius s)))
       (is (nil? (:oblateness s)) "solids carry no oblate shape")))
   (testing "planet: lower mixed density"
-    (is (= stellar/planet-material-density
-           (:density (stellar/resolved-shape {:matter-state :planet :mass 1.0e25}
-                                             0.5 9.5e14 1.0e12))))))
+    (is (= structure/planet-material-density
+           (:density (structure/resolved-shape {:matter-state :planet :mass 1.0e25}
+                                               0.5 9.5e14 1.0e12))))))
 
 (deftest resolved-shape-protostar-contracts-and-flattens
   (let [m 2.0e30
-        s (stellar/resolved-shape {:matter-state :protostar :mass m :radius 1.0e13
-                                   :oblateness 1.0 :angular-momentum [0.0 0.0 1.0e42]}
-                                  0.5 9.5e14 1.0e12)]
+        s (structure/resolved-shape {:matter-state :protostar :mass m :radius 1.0e13
+                                     :oblateness 1.0 :angular-momentum [0.0 0.0 1.0e42]}
+                                    0.5 9.5e14 1.0e12)]
     (testing "produces a full shape: finite radius, density, oblateness, axis"
       (is (every? finite? [(:radius s) (:density s) (:oblateness s)]))
       (is (= 3 (count (:rotation-axis s)))))
@@ -45,7 +45,7 @@
                                        c/density 1.0e3 c/pressure 0.0
                                        c/mass 1.0e23 c/radius 1.0e6 c/temperature 100.0}))
         w (spatial/spatial-index w)
-        sys (stellar/structure-system)
+        sys (structure/structure-system)
         ws  ((:run sys) w)]
     (testing "sole writer of shape components"
       (is (= :structure (:id sys)))
@@ -55,6 +55,6 @@
       (is (pos? (get-in ws [c/density gas])))
       (is (pos? (get-in ws [c/radius gas]))))
     (testing "debris body gets its material density and a mass-derived radius"
-      (is (= stellar/debris-material-density (get-in ws [c/density deb])))
-      (is (= (stellar/sphere-radius 1.0e23 stellar/debris-material-density)
+      (is (= structure/debris-material-density (get-in ws [c/density deb])))
+      (is (= (structure/sphere-radius 1.0e23 structure/debris-material-density)
              (get-in ws [c/radius deb]))))))

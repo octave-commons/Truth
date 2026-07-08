@@ -1,3 +1,7 @@
+;; Intentional: this test is intentionally a single-segment namespace because it
+;; guards the project's top-level architectural invariants and is referenced as
+;; such in CI and AGENTS.md.
+#_{:splint/disable [naming/single-segment-namespace]}
 (ns architecture-test
   "Structural guardrails that enforce the project's load-bearing invariants at
    test time, so an architectural regression fails CI rather than silently
@@ -66,7 +70,7 @@
   (testing "assert-single-writer! passes (the boot-time guard)"
     (is (= reg/systems (reg/assert-single-writer! reg/systems)))))
 
-;; --- Genesis / arc separation (docs/specs/genesis-arc-separation.md) --------
+;; --- Genesis / arc separation (kanban/tasks/genesis-arc-separation-physics-substrate-vs-player-arc.md) --------
 ;; The physical genesis loop (domain.genesis) is portable and arc-agnostic; the
 ;; narrative arc (domain.arc) is a separate story-state layer; ongoing physics
 ;; that is not formation-specific lives with its proper owner.

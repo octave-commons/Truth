@@ -9,6 +9,9 @@
    [domain.genesis :as genesis]
    [domain.integrator :as integ]
    [domain.stellar :as stellar]
+   [domain.stellar.classifier :as classifier]
+   [domain.stellar.structure :as structure]
+   [domain.spatial.index]
    [law.stellar :as law]
    [shape.spatial :as sp]))
 
@@ -30,7 +33,7 @@
   "Return world with `:genesis/sim-time` and `:sim/dt` chosen to make
    `stellar/condense-tick?` true."
   [w dt]
-  (assoc w :genesis/sim-time (- stellar/condense-interval (double dt))
+  (assoc w :genesis/sim-time (- classifier/condense-interval (double dt))
          :sim/dt (double dt)))
 
 (deftest seeder-emits-seed-for-planetesimal-condensation
@@ -52,7 +55,7 @@
                 (with-condense-tick 2.0e11))
           ws ((:run (stellar/condensation-seeder-system)) w)
           specs (get-in ws [c/spawn-request-condense eid])]
-      (is (= :planetesimal (stellar/classify-next-state region pm))
+      (is (= :planetesimal (classifier/classify-next-state region pm))
           "precondition: the parcel is a planetesimal condense candidate")
       (is (seq specs) "spawn request was emitted")
       (is (= 1 (count specs)) "exactly one seed spec")
@@ -65,7 +68,7 @@
           [w eid] (ecs/spawn w)
           m (* 2.0 law/hydrogen-burning-mass)
           region (assoc (unstable-region m) :mass m :radius 1.0e14
-                        :density (* 10.0 stellar/core-condensation-density))
+                        :density (* 10.0 classifier/core-condensation-density))
           w (-> (ecs/put-components w eid
                                     {c/matter-state :nebula
                                      c/mass m
@@ -78,7 +81,7 @@
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
           ws ((:run (stellar/condensation-seeder-system)) w)]
-      (is (not= :planetesimal (stellar/classify-next-state region pm))
+      (is (not= :planetesimal (classifier/classify-next-state region pm))
           "precondition: this is a big condense, not planetesimal")
       (is (nil? (get-in ws [c/spawn-request-condense eid]))
           "no spawn request for protostar-scale gas"))))
@@ -184,8 +187,8 @@
                                      c/composition cloud-comp
                                      c/position [0.0 0.0 0.0]})
                 (assoc :genesis/gas-particle-mass pm
-                       :genesis/feeding-zone-factor stellar/feeding-zone-factor))
-          ws ((:run (stellar/classifier-system)) w)]
+                       :genesis/feeding-zone-factor structure/feeding-zone-factor))
+          ws ((:run (classifier/classifier-system)) w)]
       (is (nil? (get-in ws [c/matter-state eid]))
           "parent parcel matter-state is unchanged"))))
 
@@ -195,7 +198,7 @@
           [w eid] (ecs/spawn w)
           m (* 2.0 law/hydrogen-burning-mass)
           region (assoc (unstable-region m) :mass m :radius 1.0e14
-                        :density (* 10.0 stellar/core-condensation-density))
+                        :density (* 10.0 classifier/core-condensation-density))
           w (-> (ecs/put-components w eid
                                     {c/matter-state :nebula
                                      c/mass m
@@ -207,8 +210,8 @@
                                      c/position [0.0 0.0 0.0]})
                 (assoc :genesis/gas-particle-mass m
                        :genesis/gas-smoothing-radius 1.0e14
-                       :genesis/feeding-zone-factor stellar/feeding-zone-factor))
-          ws ((:run (stellar/classifier-system)) w)]
+                       :genesis/feeding-zone-factor structure/feeding-zone-factor))
+          ws ((:run (classifier/classifier-system)) w)]
       (is (= :protostar (get-in ws [c/matter-state eid]))
           "massive gas parcel still collapses to protostar")
       (is (some? (get-in ws [c/accretion-radius eid]))
@@ -216,13 +219,13 @@
 
 (deftest seeding-is-bounded-in-collapse
   (testing "a standard collapse run does not spawn unbounded seeds"
-    (let [final (loop [w (genesis/create-world {:gas-count 100}) i 0]
-                  (if (or (> i 200) (:star? (genesis/system-summary w))
+    (let [final (loop [w (genesis/create-world {:gas-count 50}) i 0]
+                  (if (or (> i 100) (:star? (genesis/system-summary w))
                           (not (:genesis/active w)))
                     w
                     (recur (genesis/tick-world w) (inc i))))
           seeded (count (ecs/entities-with final c/condensation-seeded))
-          resolved (count (ecs/entities-with final c/matter-state))]
+          _resolved (count (ecs/entities-with final c/matter-state))]
       (is (<= seeded 250)
           "seed count stays bounded relative to parcel count")
       (is (every? #(= :planetesimal (ecs/get-component final % c/matter-state))

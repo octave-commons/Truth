@@ -32,12 +32,7 @@
 (def composition  :component/composition)   ;; {:H 0.7346 :He 0.2485 ...} mass fractions
 (def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map}
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
-(def matter-state :component/matter-state)  ;; :nebula :planetesimal :gas-giant :brown-dwarf :planet :protostar :star
-;; `wind-reservoir` accumulates the mass a star has shed-but-not-yet-emitted as a
-;; discrete wind parcel (kg). When it reaches one wind-parcel mass, the
-;; stellar-wind system launches a :nebula parcel and drains the reservoir. Lets a
-;; star lose mass smoothly while emitting a bounded number of gas entities.
-(def wind-reservoir :component/wind-reservoir) ;; kg accumulated for the next wind parcel
+(def matter-state :component/matter-state)  ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :planet :protostar :star
 
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
@@ -108,7 +103,6 @@
 (def comp-burn      :component/comp.burn)      ;; replacement composition after H→He burn (nucleosynthesis)
 (def comp-depletion :component/comp.depletion) ;; #{element-keys} to zero (deuterium-depletion)
 ;; Mass-flux contributions → mass (summed Δm; one per source, all single-writer):
-(def mass-flux-wind :component/mass-flux.wind) ;; kg Δm from stellar wind loss (negative)
 (def mass-flux-flare :component/mass-flux.flare) ;; kg Δm from flare ejection (negative)
 (def mass-flux-xuv  :component/mass-flux.xuv)  ;; kg Δm from XUV atmospheric escape (negative)
 (def mass-flux-disk :component/mass-flux.disk) ;; kg Δm from disk→star viscous transfer (positive)
@@ -120,8 +114,7 @@
 (def absorb-merge   :component/absorb.merge)   ;; [{:mass :velocity :position :composition :temperature :angular-momentum :radius :accretion-radius} ...] (collision)
 (def absorb-accrete :component/absorb.accrete) ;; [{:mass :velocity :position :angular-momentum} ...] (sink gas accretion)
 ;; Velocity-delta contributions → velocity (a per-tick Δv, applied after accel;
-;; recoil from ejecting a wind/flare parcel, momentum-conserving). One per source.
-(def dv-wind  :component/dv.wind)  ;; [dvx dvy dvz] wind ejection recoil
+;; recoil from ejecting a flare parcel, momentum-conserving). One per source.
 (def dv-flare :component/dv.flare) ;; [dvx dvy dvz] flare ejection recoil
 (def dv-transfer :component/dv.transfer) ;; [dvx dvy dvz] recoil/gain from gradual mass transfer (Δp/m, momentum-conserving); written on both donor and sink/accretor
 ;; Frame-offset → position (recenter as a one-tick-stale COM Galilean shift):
@@ -134,7 +127,6 @@
 ;; vector of seed-spec maps (as `stellar/spawn-clump` expects); an optional
 ;; :extra-components map on a spec is applied to the new entity after spawning.
 ;; One request component per spawning source so single-writer holds.
-(def spawn-request-wind      :component/spawn-request.wind)
 (def spawn-request-flare     :component/spawn-request.flare)
 (def spawn-request-accretion :component/spawn-request.accretion)
 (def spawn-request-shatter   :component/spawn-request.shatter)
@@ -146,7 +138,6 @@
 ;; any entity carrying ANY consumed.* marker.
 (def consumed-merge :component/consumed.merge)  ;; absorbed body, reaped (collision)
 (def consumed-accrete :component/consumed.accrete) ;; absorbed gas parcel, reaped (sink)
-(def consumed-wind  :component/consumed.wind)   ;; star ablated below floor, reaped (wind)
 (def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
 (def consumed-transfer :component/consumed.transfer) ;; donor drained below floor by gradual mass transfer, reaped (integrator)
 
@@ -169,7 +160,7 @@
 ;; Derived from: docs/research/phase1-radiation-plasma-truth.md §2-3
 (def sed-bands          :component/sed-bands)          ;; {:gamma W :xray W :euv W ...} per-band luminosity
 (def atmosphere-shells  :component/atmosphere-shells)  ;; [{:layer/id :temperature :electron-density ...} ...]
-(def wind-profile       :component/wind-profile)       ;; {:base-speed :mass-loss-rate :alfven-radius}
+(def wind-profile       :component/wind-profile)       ;; {:wind/dot-m :wind/v-escape :wind/ram-pressure :wind/reference-r :wind/luminosity-xuv :wind/ionization :wind/corona-t}
 (def atmosphere-escape  :component/atmosphere-escape)   ;; {:regime :xuv-flux :mass-loss-rate}
 (def event-source       :component/event-source)       ;; {:kind :payload} — flare/CME event
 (def lod-level          :component/lod-level)           ;; :galaxy :system :local — observer-centric fidelity
@@ -186,7 +177,7 @@
 
 ;; --- Mass transfer (gradual accretion) --------------------------------------
 ;; Rate-limited, partial debit/credit for sink accretion and Roche-lobe overflow.
-;; See docs/specs/gradual-mass-transfer-realspec.md.
+;; See kanban/tasks/gradual-mass-transfer-spec.md.
 (def accretion-rate     :component/accretion-rate)     ;; {:sink/dot-m :sink/dot-m-this-tick :sink/efficiency :sink/regime}
 (def sink-identity      :component/sink-identity)      ;; {:sink/softening-length :sink/created-at-tick}
 (def binary-pair        :component/binary-pair)        ;; {:binary-pair/donor :binary-pair/accretor :orbit/semi-major-axis :orbit/eccentricity}

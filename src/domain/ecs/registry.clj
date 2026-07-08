@@ -41,21 +41,21 @@
    ;; gas SPH / solid material density / KH oblate contraction). Subsumes the
    ;; radius+density writes of the old density-system, jeans-collapse, collapse.
    {:id     :structure
-    :ns     'domain.stellar
+    :ns     'domain.stellar.geometry
     :reads  #{c/matter-state c/mass c/radius c/density c/position c/temperature
               c/pressure c/oblateness c/angular-momentum}
     :writes #{c/radius c/density c/oblateness c/rotation-axis}}
 
-   ;; Pressure is a pure equation of state P = ρ k_B T / m_H — every former
+    ;; Pressure is a pure equation of state P = ρ k_B T / m_H — every former
    ;; writer recomputed the identical ideal-gas pressure, so one EOS system owns
    ;; it and derives it from density + temperature (spec §4 derivations).
    {:id     :eos
-    :ns     'domain.stellar
+    :ns     'domain.stellar.geometry
     :reads  #{c/density c/temperature}
     :writes #{c/pressure}}
 
    {:id     :hydro
-    :ns     'domain.hydro
+    :ns     'domain.hydro.pressure
     :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius}
     :writes #{c/accel-pressure}}
 
@@ -66,19 +66,19 @@
     ;; the authentic formation state machine (Jeans+mass+ignition) with throttled
     ;; condensation. Subsumes the old classify system, jeans-collapse, and fusion.
    {:id     :classifier
-    :ns     'domain.stellar
+    :ns     'domain.stellar.classifier
     :reads  #{c/matter-state c/mass c/radius c/density c/temperature
-              c/pressure c/composition c/promotion-signal}
+              c/pressure c/composition c/promotion-signal c/disc-tag}
     :writes #{c/matter-state c/accretion-radius}}
 
-    ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
-    ;; small physical seed instead of promoting the whole parcel. Emits the spawn
-    ;; request, the parent parcel's mass-flux-condense debit, and a one-shot
-    ;; condensation-seeded marker. The integrator folds the debit.
+     ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
+     ;; small physical seed instead of promoting the whole parcel. Emits the spawn
+     ;; request, the parent parcel's mass-flux-condense debit, and a one-shot
+     ;; condensation-seeded marker. The integrator folds the debit.
    {:id     :condensation-seeder
-    :ns     'domain.stellar
+    :ns     'domain.stellar.seeder
     :reads  #{c/matter-state c/mass c/density c/position c/velocity
-              c/radius c/composition c/temperature c/condensation-seeded}
+              c/radius c/composition c/temperature c/condensation-seeded c/disc-tag}
     :writes #{c/spawn-request-condense c/mass-flux-condense c/condensation-seeded}}
 
     ;; Gravity is split out of the old orbital system: the Barnes–Hut tree-walk
@@ -109,11 +109,11 @@
               c/matter-state c/density c/luminosity c/sed-bands c/composition
               c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk
-              c/mass-flux-wind c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
-              c/mass-flux-transfer c/mass-flux-condense c/dv-wind c/dv-flare c/dv-transfer
-              c/absorb-merge c/absorb-accrete}
-    :writes #{c/position c/velocity c/temperature c/composition c/comp-condensed
-              c/angular-momentum c/spin c/mass c/consumed-transfer}}
+              c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
+              c/mass-flux-transfer c/mass-flux-condense
+              c/absorb-merge c/absorb-accrete c/wind-heating}
+    :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
+              c/angular-momentum c/spin c/consumed-transfer}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
    ;; tick-world). Sole writer of accel.observer; the integrator sums it.
@@ -148,7 +148,7 @@
    ;; fusion conditions. Runs in the parallel fan-out (was a post-fold barrier).
    ;; One-tick Jacobi delay — classifier + fusion read the signal next tick.
    {:id            :fusion-promotion
-    :ns            'domain.stellar
+    :ns            'domain.stellar.fusion
     :reads         #{c/matter-state c/temperature c/pressure c/composition
                      c/density c/radius c/mass c/luminosity}
     :writes        #{c/promotion-signal}}
@@ -159,7 +159,7 @@
    ;; grow disk-mass (one-tick Jacobi delay, spec §5). Runs in the parallel
    ;; fan-out (was a post-fold barrier).
    {:id            :sink-formation
-    :ns            'domain.stellar
+    :ns            'domain.stellar.sink
     :reads         #{c/matter-state c/accretion-radius c/position c/mass
                      c/velocity c/disk-mass c/disk-angular-mom c/luminosity
                      c/temperature c/consumed-accrete}
@@ -169,7 +169,7 @@
    ;; :thermal (virial temperature), :em (spin), and :field (b-field).
 
    {:id     :fusion
-    :ns     'domain.stellar
+    :ns     'domain.stellar.fusion
     :reads  #{c/matter-state c/temperature c/pressure c/composition
               c/promotion-signal}
     :writes #{c/luminosity}}
@@ -178,14 +178,14 @@
    ;; Reads fusion's one-tick-stale luminosity and structure's one-tick-stale
    ;; radius — ordinary Jacobi lag, NOT an ordering requirement.
    {:id     :stellar-sed
-    :ns     'domain.stellar
+    :ns     'domain.stellar.fusion
     :reads  #{c/matter-state c/luminosity c/radius c/mass}
     :writes #{c/sed-bands}}
 
    ;; Stellar atmosphere shells: 4-layer profile (photosphere → corona).
    ;; Reads one-tick-stale luminosity/radius/b-field — Jacobi lag, no ordering.
    {:id     :atmosphere-shells
-    :ns     'domain.stellar
+    :ns     'domain.stellar.fusion
     :reads  #{c/matter-state c/luminosity c/radius c/mass c/b-field}
     :writes #{c/atmosphere-shells}}
 
@@ -193,7 +193,7 @@
    ;; hot bodies (T > 1e6 K). One-way gate. A plain fan-out emitter now; the
    ;; integrator owns composition and applies the gate (spec §7.5).
    {:id     :deuterium-depletion
-    :ns     'domain.stellar
+    :ns     'domain.stellar.fusion
     :reads  #{c/matter-state c/temperature c/composition}
     :writes #{c/comp-depletion}}
 
@@ -201,25 +201,35 @@
    ;; emitter — mass loss → mass-flux.xuv (integrator owns mass), plus the
    ;; diagnostic atmosphere-escape (its own column).
    {:id     :xuv-atmospheric-escape
-    :ns     'domain.genesis
+    :ns     'domain.atmosphere
     :reads  #{c/matter-state c/mass c/radius c/position c/sed-bands c/luminosity}
     :writes #{c/mass-flux-xuv c/atmosphere-escape}}
 
-   ;; Stellar wind: stars shed mass as plasma. Owns its reservoir; emits the loss
-   ;; (mass-flux.wind), recoil (dv.wind), the parcel (spawn-request.wind) and the
-   ;; ablation reap (consumed.wind). A fan-out emitter (was a serial barrier).
+    ;; Stellar wind: each luminous body carries a radial wind profile (mass-loss
+    ;; rate, launch speed, ram pressure, ionization, coronal temperature). The
+    ;; profile drives the wind-ablation system, which heats/ionizes/ablates nearby
+    ;; gas instead of spawning ballistic parcels. Sole writer of c/wind-profile.
    {:id     :stellar-wind
-    :ns     'domain.stellar
-    :reads  #{c/matter-state c/mass c/radius c/position c/velocity c/wind-reservoir
-              c/atmosphere-shells c/sed-bands c/accretion-radius c/composition c/b-field}
-    :writes #{c/wind-reservoir c/mass-flux-wind c/dv-wind
-              c/spawn-request-wind c/consumed-wind}}
+    :ns     'domain.stellar.wind
+    :reads  #{c/matter-state c/mass c/radius c/luminosity
+              c/atmosphere-shells c/sed-bands c/b-field}
+    :writes #{c/wind-profile}}
 
-   ;; Stellar flares: episodic CMEs. Emits the loss (mass-flux.flare), recoil
-   ;; (dv.flare), the CME parcel (spawn-request.flare) and the XUV boost
+    ;; Wind ablation: stellar wind ram pressure heats, ionizes, and ablates nearby
+    ;; :nebula parcels. Emits c/wind-heating (temperature delta, ionization rate,
+    ;; mass loss) on affected parcels and updates c/wind-mass-lost on the source
+    ;; star as a diagnostic ledger. No ballistic parcels are spawned.
+   {:id     :wind-ablation
+    :ns     'domain.stellar.wind
+    :reads  #{c/wind-profile c/matter-state c/position c/velocity c/mass c/radius
+              c/density c/temperature c/ionization-fraction c/b-field}
+    :writes #{c/wind-heating c/wind-mass-lost}}
+
+    ;; Stellar flares: episodic CMEs. Emits the loss (mass-flux.flare), recoil
+    ;; (dv.flare), the CME parcel (spawn-request.flare) and the XUV boost
    ;; (flare-boost). A fan-out emitter (was a serial barrier).
    {:id     :stellar-flare
-    :ns     'domain.stellar
+    :ns     'domain.stellar.wind
     :reads  #{c/matter-state c/mass c/radius c/position c/velocity
               c/rotation-axis c/accretion-radius c/composition c/b-field}
     :writes #{c/mass-flux-flare c/dv-flare c/spawn-request-flare c/flare-boost}}
@@ -231,7 +241,7 @@
    ;; Reads c/absorb-accrete from sink-formation (one-tick Jacobi delay).
    ;; Runs in the parallel fan-out (was a post-fold barrier).
    {:id     :disk-evolution
-    :ns     'domain.stellar
+    :ns     'domain.stellar.disc-evolution
     :reads  #{c/matter-state c/mass c/disk-mass c/disk-angular-mom
               c/radius c/position c/velocity c/absorb-accrete c/luminosity
               c/disk-mass-flux c/disk-l-flux
@@ -260,14 +270,14 @@
    ;; LOD scheduler: assigns observer-centric detail levels to stars/planets.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
    {:id     :lod-scheduler
-    :ns     'domain.genesis
+    :ns     'domain.lod
     :reads  #{c/matter-state c/position c/observer}
     :writes #{c/lod-level}}
 
    ;; Magnetosphere coupling: computes magnetopause standoff from wind ram pressure.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
    {:id     :magnetosphere-coupling
-    :ns     'domain.genesis
+    :ns     'domain.em.magnetosphere
     :reads  #{c/matter-state c/position c/radius c/b-field c/ram-pressure c/ionization-fraction c/mass}
     :writes #{c/magnetosphere}}
 
@@ -291,7 +301,7 @@
     ;; Disc identification: tags non-star bodies relative to the central star as
     ;; :disc, :envelope, :outflow, or nil. Sole writer of c/disc-tag (Part 2).
    {:id     :disc-identification
-    :ns     'domain.stellar
+    :ns     'domain.stellar.disc
     :reads  #{c/matter-state c/position c/velocity c/mass c/oblateness}
     :writes #{c/disc-tag}}
 
@@ -299,15 +309,15 @@
     ;; in one pass over EM-active entities; the integrator owns angular-momentum/
     ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
    {:id     :em-lorentz
-    :ns     'domain.em
+    :ns     'domain.em.lorentz
     :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
     :writes #{c/accel-lorentz c/torque-em}}
 
     ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
-   ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
-   ;; flux-freezing and em's b-field decay.
+    ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
+    ;; flux-freezing and em's b-field decay.
    {:id     :field
-    :ns     'domain.em
+    :ns     'domain.em.field
     :reads  #{c/b-field c/radius c/matter-state c/frozen-flux}
     :writes #{c/b-field c/frozen-flux}}
 
@@ -340,6 +350,13 @@
 ;; ---------------------------------------------------------------------------
 ;; Validation
 ;; ---------------------------------------------------------------------------
+
+(defn registry-writes
+  "Return the declared :writes set for a system :id from the registry.
+   Sourcing the emitter's :writes from the registry keeps the emitter and the
+   single-writer declaration from drifting."
+  [id]
+  (some #(when (= id (:id %)) (:writes %)) systems))
 
 (defn writers-by-component
   "Return {component-type [system-id ...]} across the registry — every system

@@ -23,6 +23,7 @@ bin/analyze --strict                         # CI mode — also fails on HARD st
 bin/analyze --fix                            # auto-format with cljfmt
 
 bin/coverage --text                          # cloverage text summary (fast)
+bin/bench-coverage                          # namespace-level benchmark coverage report
 bin/bench :ecs :gravity                      # criterium benchmarks (:ecs :gravity :hydro :phase0 :profile)
 bin/mutate                                   # mutation testing (Heretic, local-only, domain/law/shape)
 

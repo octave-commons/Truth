@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-07-06 (stellar-wind-plasma-state notebook added)
+**Last updated:** 2026-07-07 (HOPS-315 + nebula-to-life FSM research dispatched)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -38,6 +38,7 @@ New ECS component keywords added to `domain.ecs.components`:
 | bbn_yields.ipynb | validated | 0 | Clojure BBN calculator with ASCII charts, 4/4 validation PASS | PDG 2025 |
 | stellar-sed-template-grid.md | validated | 1 | 12 minimum templates, key band ratios 10²–10⁴× variation | Pickles 1998, CK04, Husser+ 2013 |
 | stellar-sed-template-grid.md | draft | 0 | 12-template minimum SED grid for band-integrated luminosities (gamma→radio). 450-point full grid with interpolation. Clojure EDN format. | Pickles 1998, CK04, Husser 2013, Bohlin 2017 |
+| hops315-protostar-case-study.md | draft (dispatched) | 0 | Protostar case study: JWST+ALMA observations of inner-disk refractory condensation, gas ladder, and mapping to Truth's FSM | Nature 2025, ALMA, JWST |
 
 **Actor:** truth-research-cosmology
 **Schedule:** Every 48h
@@ -88,6 +89,12 @@ New ECS component keywords added to `domain.ecs.components`:
 | stellar-nebula-mass-hierarchy.md | draft | 0 | Replace coarse `:debris` with mass ladder grounded in opacity limit, deuterium/hydrogen limits, brown-dwarf desert; promotion path to classifier + player economy | Krumholz 2014, Hennebelle & Chabrier 2008/2009, Spiegel+2010, Johansen+2014, Pearson & McCaughrean 2023, Cui+2026, Krumholz+2016, Whitworth 2018, De Furio+2024 |
 | nebular-chemistry-metal-enrichment.md | draft | 0 | Metal origins, primordial vs. Population I composition, element/molecule/bulk tracking, dust condensation sequence; promotion path to chemistry/stellar/integrator/law | Fields & Sarkar 2025, Yeh+2026, Asplund+2009, Lodders 2003, Nomoto+2013, Woosley & Weaver 1995, Johansen+2014 |
 | rate-limited-accretion-mass-transfer.md | draft | 0 | BHL sink accretion + Roche-lobe overflow + sink-particle gradual debit schemes; caps and conservation for ECS | Bondi 1952, Edgar 2004, Federrath+2010, Krumholz+2004, Hubber+2013, Eggleton 1983, Ritter 1988, Kolb & Ritter 1990 |
+| ecs-physics-substrate.md | validated | 0 | Single-ECS-world architecture documented: single-writer discipline, influence registry, four component shapes, and forbidden patterns. Cross-references all physics notebooks. | Truth architecture invariants, Monaghan 1992, Springel 2005 |
+| stellar-mergers-accretion.md | draft | 0 | Star-star merger regimes (coalescence/grazing/CE), entropy sorting + PyMMAMS shock heating, shell-feeding entrainment, RLOF stability, promotion path to ECS influence registry | Heller+2025, Gaburov+2008, Rizzuti+2024, Schneider+2019, Eggleton 1983, Ritter 1988, Kolb & Ritter 1990, Webbink 1984, Ivanova+2013 |
+| protoplanetary-disks-extended.md | draft | 0 → 1 | Pebble-to-planetesimal bridge: streaming-instability thresholds, dust coagulation, condensation/snow line, compositional gradients; maps to Matter FSM and super-particle spawn. | Johansen+2007/2014, Li+2021, Lodders 2003, Oberg+2011, HOPS-315 Nature 2025 |
+| formation-rendering-coupling.md | draft | 0 | ECS-to-renderer pure projection; physics-coupled size/color/luminosity; observer-centric LOD (voxel→sprite→point); real-time volumetric ray-marching/photon-mapping literature; promotion path to `law/render-projection` and `infra.render` tests | Gislason 2013; Leria & Neyret 2020; Nadeau+2000; Krieger+2025; Sagrista 2024; Lawlor & Genetti 2011; Kajiya & Von Herzen 1984; Max 1995; Protoplanet Express 2023; Unity Entities Graphics 2024; Bevy VisibilityRange 2024; UntoldEngine LOD 2024 |
+| nebula-to-life-fsm.md | draft (dispatched) | 0 → 5 | Coupled FSM stack (Matter, Role, Environment, Atmosphere/EM, Biosphere), guard precedence, modifier catalog | Planetary science taxonomy, exoplanet characterization |
+| phase0-handoff-projection.md | draft (dispatched) | 0 | Projection functions from rich FSM state to compact :planet-candidate record; domain.genesis/handoff-system design | Kopparapu HZ, Seager taxonomy, XUV escape regimes |
 
 **Actor:** truth-research-physics
 **Schedule:** Every 48h
@@ -109,6 +116,7 @@ New ECS component keywords added to `domain.ecs.components`:
 |----------|--------|---------|-------------|---------|
 | phase1-radiation-plasma-truth.md | spec-derivation | physics, atmosphere, cosmology | SED→winds→escape→LOD pipeline; replaces scalar luminosity with panchromatic bands | Parker 1958, PDG 2025 |
 | stellar-wind-plasma-state.md | spec-derivation | physics, atmosphere | Plasma ejecta as :nebula+ionization continuum; wind–nebula ram pressure and photoionization | Parker 1958, 1960; Cranmer 2009; Weaver+1977; Henney+2009 |
+| phase0-handoff-projection.md | draft (dispatched) | physics, atmosphere | Rich FSM state → compact :planet-candidate record; atmosphere-class and retained-species derived from XUV escape regimes | Kopparapu+2013, Seager+2010, Murray-Clay+2009 |
 
 **Actor:** truth-research-coordinator
 **Schedule:** Every 72h
@@ -119,9 +127,9 @@ New ECS component keywords added to `domain.ecs.components`:
 
 | Phase | Description | Primary Domains | Coverage |
 |-------|-------------|-----------------|----------|
-| 0 | Stellar Nebula → Solar System | cosmology, physics | BBN composition specs derived |
+| 0 | Stellar Nebula → Solar System | cosmology, physics | BBN composition specs derived; HOPS-315, FSM, handoff, and disk microphysics research in progress |
 | 1 | Radiation & Plasma | atmosphere, physics | SED/atmosphere/wind/escape specs derived |
-| 2 | Rocky Body Formation | geology, physics | — |
+| 2 | Rocky Body Formation | geology, physics | Handoff projection and FSM foundation in progress; geology notebooks not yet started |
 | 3 | Tectonics & Atmosphere | geology, atmosphere | — |
 | 4 | Ocean & Climate | atmosphere, biology | — |
 | 5 | Biosphere | biology, atmosphere | — |

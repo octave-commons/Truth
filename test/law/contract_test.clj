@@ -4,7 +4,7 @@
    [shape.core :as shape]
    [law.contract :as contract]))
 
-(defn demo-position-shape []
+(defn- demo-position-shape []
   (shape/->shape
    {:id          (shape/new-shape-id)
     :kind        :state

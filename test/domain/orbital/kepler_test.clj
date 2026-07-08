@@ -1,7 +1,7 @@
 (ns domain.orbital.kepler-test
   "Coverage tests for two-body Kepler utilities."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.math :as math] [clojure.test :refer [deftest is testing]]
    [domain.orbital.kepler :as kepler]
    [shape.spatial :as sp]))
 
@@ -11,32 +11,32 @@
 
 (deftest kepler-period-matches-earth-year
   (let [T (kepler/kepler-period AU GM)]
-    (is (< (Math/abs (- T earth-year-seconds)) 1e6)
+    (is (< (abs (- T earth-year-seconds)) 1e6)
         (str "Expected ~" earth-year-seconds " s, got " T))))
 
 (deftest mean-anomaly-wraps-and-scales
   (testing "at t0 the mean anomaly is zero"
-    (is (< (Math/abs (kepler/mean-anomaly 0.0 0.0 earth-year-seconds)) 1e-12)))
+    (is (< (abs (kepler/mean-anomaly 0.0 0.0 earth-year-seconds)) 1e-12)))
   (testing "after one full period the anomaly wraps to zero"
-    (is (< (Math/abs (kepler/mean-anomaly earth-year-seconds 0.0 earth-year-seconds)) 1e-12)))
+    (is (< (abs (kepler/mean-anomaly earth-year-seconds 0.0 earth-year-seconds)) 1e-12)))
   (testing "half a period yields pi"
-    (is (< (Math/abs (- (kepler/mean-anomaly (/ earth-year-seconds 2.0) 0.0 earth-year-seconds)
-                        Math/PI))
+    (is (< (abs (- (kepler/mean-anomaly (/ earth-year-seconds 2.0) 0.0 earth-year-seconds)
+                   math/PI))
            1e-12))))
 
 (deftest eccentric-anomaly-converges
   (testing "circular orbit solves to mean anomaly"
-    (is (< (Math/abs (- (kepler/eccentric-anomaly 1.23 0.0) 1.23)) 1e-12)))
+    (is (< (abs (- (kepler/eccentric-anomaly 1.23 0.0) 1.23)) 1e-12)))
   (testing "modest eccentricity converges"
     (let [M 0.5
           e 0.3
           E (kepler/eccentric-anomaly M e)]
-      (is (< (Math/abs (- E (* e (Math/sin E)) M)) 1e-10))))
+      (is (< (abs (- E (* e (math/sin E)) M)) 1e-10))))
   (testing "high eccentricity still converges"
     (let [M 2.5
           e 0.9
           E (kepler/eccentric-anomaly M e)]
-      (is (< (Math/abs (- E (* e (Math/sin E)) M)) 1e-10)))))
+      (is (< (abs (- E (* e (math/sin E)) M)) 1e-10)))))
 
 (deftest eccentric-anomaly-throws-on-no-convergence
   (testing "exceeding max iterations throws a clear exception"
@@ -47,7 +47,7 @@
 (deftest true-anomaly-at-circular-orbit
   (testing "for e=0 true anomaly equals eccentric anomaly"
     (doseq [E [0.0 0.5 1.0 2.0 3.0]]
-      (is (< (Math/abs (- (kepler/true-anomaly E 0.0) E)) 1e-12)))))
+      (is (< (abs (- (kepler/true-anomaly E 0.0) E)) 1e-12)))))
 
 (deftest orbital-state-is-periodic
   (testing "after one orbital period the body returns to its starting state"
@@ -66,7 +66,7 @@
           v        (sp/len (:velocity state))
           energy   (- (* 0.5 v v) (/ GM r))
           expected (- (/ GM (* 2.0 AU)))]
-      (is (< (Math/abs (- energy expected)) 1e3)
+      (is (< (abs (- energy expected)) 1e3)
           (str "Energy " energy " diverges from expected " expected)))))
 
 (deftest orbital-state-handles-inclination-and-argument-of-periapsis

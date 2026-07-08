@@ -11,7 +11,7 @@
    The SED is parameterized as fractional band luminosities in a fixed set of
    broad bands, pre-tabulated per spectral type and scaled by L_bol."
   (:require
-   [law.contract :as contract]
+   [clojure.math :as math] [law.contract :as contract]
    [law.composition :as comp]))
 
 ;; --- SED band definitions ---
@@ -250,7 +250,7 @@
   (let [L-bol (double (:luminosity profile 0.0))
         L-sum (bolometric-luminosity (:bands profile {}))]
     (if (pos? L-bol)
-      (< (Math/abs (- L-sum L-bol)) (* 0.01 L-bol))
+      (< (abs (- L-sum L-bol)) (* 0.01 L-bol))
       (zero? L-sum))))
 
 ;; --- SED template selection ---
@@ -267,7 +267,7 @@
         dist (fn [[t g]]
                (let [dt (- (first target) t)
                      dg (- (second target) g)]
-                 (Math/sqrt (+ (* dt dt) (* dg dg)))))]
+                 (math/sqrt (+ (* dt dt) (* dg dg)))))]
     (key (apply min-key (fn [[_ v]] (dist [(/ (:teff v) 1000.0) (:logg v)]))
                 spectral-templates))))
 

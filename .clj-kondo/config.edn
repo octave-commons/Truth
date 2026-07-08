@@ -58,6 +58,9 @@
           domain.ecs.dsl/defreaction   hooks.ecs-dsl/defreaction
           domain.ecs.dsl/defprojection hooks.ecs-dsl/defprojection
           domain.ecs.dsl/defaggregate  hooks.ecs-dsl/defaggregate
-          domain.ecs.dsl/defrewind     hooks.ecs-dsl/defrewind}}
+          domain.ecs.dsl/defrewind     hooks.ecs-dsl/defrewind
+          ;; domain.em re-exports public vars via a private macro; register the
+          ;; generated names so call sites resolve without false positives.
+          domain.em/re-export          hooks.re-export/re-export}}
 
  :output {:exclude-files ["dev/smell_report.clj"]}}

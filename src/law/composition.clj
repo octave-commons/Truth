@@ -144,7 +144,7 @@
    trace/metal fields. Mass fractions must sum to ≈ 1.0 (validator below)."
   (into {:H  positive-mass-fraction?
          :He positive-mass-fraction?}
-        (map #(vector % mass-fraction?) element-set)))
+        (for [e element-set] [e mass-fraction?])))
 
 (def primordial-composition-schema
   "Composition schema for primordial gas: no heavy elements beyond Li7."
@@ -153,7 +153,8 @@
          :D   trace-mass-fraction?
          :He3 trace-mass-fraction?
          :Li7 trace-mass-fraction?}
-        (map #(vector % trace-mass-fraction?) (disj element-set :H :He :D :He3 :Li7))))
+        (for [e (disj element-set :H :He :D :He3 :Li7)]
+          [e trace-mass-fraction?])))
 
 ;; --- Derived composition helpers --------------------------------------------
 
@@ -179,14 +180,14 @@
    Allows 1% tolerance for floating-point accumulation."
   [c]
   (let [sum (double (reduce + 0.0 (vals c)))]
-    (< (Math/abs (- sum 1.0)) 0.01)))
+    (< (abs (- sum 1.0)) 0.01)))
 
 (defn primordial-composition?
   "True if comp matches primordial BBN values within 10% tolerance for H/He
    and has no significant metals (Z < 1e-4)."
   [c]
-  (and (< (Math/abs (- (double (:H c 0.0)) primordial-H)) (* 0.1 primordial-H))
-       (< (Math/abs (- (double (:He c 0.0)) primordial-He)) (* 0.1 primordial-He))
+  (and (< (abs (- (double (:H c 0.0)) primordial-H)) (* 0.1 primordial-H))
+       (< (abs (- (double (:He c 0.0)) primordial-He)) (* 0.1 primordial-He))
        (< (double (metallicity c)) 1e-4)))
 
 ;; --- Condensation sequence (Lodders 2003) -----------------------------------

@@ -7,7 +7,7 @@
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.classifier :as classifier]
    [law.stellar :as law]))
 
 (def ^:private pm 4.0e27)          ;; one gas parcel ≈ 2 M_Jupiter
@@ -19,7 +19,7 @@
   {:matter-state state :mass m :radius radius :density density
    :temperature temperature :pressure pressure :composition cloud-comp})
 
-(defn- next-state [r] (stellar/classify-next-state r pm))
+(defn- next-state [r] (classifier/classify-next-state r pm))
 
 ;; A condensing clump is Jeans-unstable because GRAVITY HAS COMPRESSED IT: density
 ;; is elevated (which shrinks the Jeans length below the clump's radius). Diffuse
@@ -87,7 +87,7 @@
                                         c/temperature 15.0 c/density 1.0e-16
                                         c/radius 1.0e10 c/composition cloud-comp}))
         w   (assoc w :genesis/gas-particle-mass pm)
-        sys (stellar/classifier-system)
+        sys (classifier/classifier-system)
         ws  ((:run sys) w)]
     (testing "sole writer of matter-state and accretion-radius"
       (is (= :classifier (:id sys)))

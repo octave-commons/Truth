@@ -3,8 +3,7 @@
    and player ability effects."
   (:require
    [clojure.test :refer [deftest is testing]]
-   [domain.ecology :as eco]
-   [law.ecology :as le]))
+   [domain.ecology :as eco]))
 
 (deftest make-ecology-defaults
   (let [e (eco/make-ecology)]
@@ -144,8 +143,8 @@
     (is (false? (:seeded e)))))
 
 (deftest apply-seed-requires-abiotic
-  (let [[e ok? reason] (eco/apply-seed
-                        (eco/make-ecology {:moisture 0.3 :phase :prebiotic}))]
+  (let [[_e ok? reason] (eco/apply-seed
+                         (eco/make-ecology {:moisture 0.3 :phase :prebiotic}))]
     (is (false? ok?))
     (is (= :seed-failed-not-abiotic reason))))
 

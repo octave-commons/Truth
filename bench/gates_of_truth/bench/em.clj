@@ -93,11 +93,17 @@
           nbrs      (idx/within-radius tree-100 (:position q) h)]
 
       (quick-bench "curl-estimate (1 particle, ~20 neighbors)"
-                   (fn [] (em/curl-estimate (:b-field q) (:density q) (:position q) nbrs)))
+                   (fn [] (em/curl-estimate {:b-field (:b-field q)
+                                             :density (:density q)
+                                             :position (:position q)
+                                             :neighbors nbrs})))
 
       (quick-bench "lorentz-acceleration (1 particle)"
                    (fn []
-                     (let [curl-b (em/curl-estimate (:b-field q) (:density q) (:position q) nbrs)]
+                     (let [curl-b (em/curl-estimate {:b-field (:b-field q)
+                                                     :density (:density q)
+                                                     :position (:position q)
+                                                     :neighbors nbrs})]
                        (em/lorentz-acceleration (:b-field q) curl-b (:density q)))))
 
       (quick-bench "magnetic-braking-torque (1 particle)"

@@ -21,7 +21,7 @@
    the scans they replace), so swapping the index in changes performance only,
    not results."
   (:require
-   [domain.ecs.core          :as ecs]
+   [clojure.math :as math] [domain.ecs.core          :as ecs]
    [domain.ecs.components    :as c]
    [domain.ecs.parallel      :as par]
    [domain.gravity.barnes-hut :as bh]
@@ -54,49 +54,42 @@
       (if (pos? sm) [(/ sx sm) (/ sy sm) (/ sz sm)] [0.0 0.0 0.0]))
     [0.0 0.0 0.0]))
 
+(defn- build-spatial-item
+  "Project one entity into a spatial-index item."
+  [world eid]
+  (when (some? (ecs/get-component world eid c/radius))
+    {:id           eid
+     :position     (ecs/get-component world eid c/position)
+     :mass         (ecs/get-component world eid c/mass)
+     :radius       (ecs/get-component world eid c/radius)
+     :matter-state (ecs/get-component world eid c/matter-state)
+     :density      (ecs/get-component world eid c/density)
+     :pressure     (ecs/get-component world eid c/pressure)
+     :b-field      (ecs/get-component world eid c/b-field)}))
+
+(defn- build-grid-from-items
+  "Build a uniform grid from `items` when non-empty."
+  [items]
+  (when (seq items)
+    (let [aabb (sp/aabb-from-points (map :position items))
+          side (max (sp/max-side aabb) 1.0)
+          n (count items)
+          cell-size (/ side (math/pow n (/ 1.0 3.0)))]
+      (build-grid items cell-size))))
+
 (defn spatial-index
-  "Build one Barnes–Hut octree from ALL entities with position+mass and store it
-   on the world at :genesis/spatial-tree. Runs before the parallel fan-out so
-   every consumer (gravity, SPH, EM, collision) reads the same tree.
-
-   Also computes the snapshot's centre of mass and stores it as
-   :genesis/frame-offset, folding the formerly serial COM scan into the same
-   projection so tick-world no longer pays for a separate pass
-   (docs/specs/perf-60fps-parallel-tick.md).
-
-   Consumers filter query results by :matter-state as needed:
-     - gravity: all bodies (no filter needed)
-     - hydro: only :nebula
-     - em: only entities with :b-field
-     - collision: only non-:nebula (resolved bodies)"
+  "Build one Barnes-Hut octree from ALL entities with position+mass and store it
+   on the world at :genesis/spatial-tree. Also computes the snapshot's centre
+   of mass and builds a uniform grid at :genesis/spatial-grid. Consumers filter
+   query results by :matter-state as needed."
   [world]
   (let [items (->> (ecs/entities-with world c/position c/mass c/radius)
-                  ;; per-entity projection (7 component reads) fans out in
-                  ;; parallel; par-mapv preserves eid order so the item vector
-                  ;; is identical to the serial walk's.
-                   (par/par-mapv
-                    (fn [eid]
-                      (when (some? (ecs/get-component world eid c/radius))
-                        {:id           eid
-                         :position     (ecs/get-component world eid c/position)
-                         :mass         (ecs/get-component world eid c/mass)
-                         :radius       (ecs/get-component world eid c/radius)
-                         :matter-state (ecs/get-component world eid c/matter-state)
-                         :density      (ecs/get-component world eid c/density)
-                         :pressure     (ecs/get-component world eid c/pressure)
-                         :b-field      (ecs/get-component world eid c/b-field)})))
+                   (par/par-mapv #(build-spatial-item world %))
                    (filterv some?))
-        com  (com-from-items items)
-        ;; tree and grid are independent projections of the same items — build
-        ;; the octree in a future while the grid is bucketed on this thread.
+        com (com-from-items items)
         treef (future (bh/build-tree items))
-        grid  (when (seq items)
-                (let [aabb    (sp/aabb-from-points (map :position items))
-                      side    (max (sp/max-side aabb) 1.0)
-                      n       (count items)
-                      cell-size (/ side (Math/pow n (/ 1.0 3.0)))]
-                  (build-grid items cell-size)))
-        tree  @treef]
+        grid (build-grid-from-items items)
+        tree @treef]
     (assoc world
            :genesis/spatial-tree tree
            :genesis/spatial-grid grid
@@ -170,7 +163,7 @@
                   (doseq [c (:children node)]
                     (walk c)))))]
       (walk tree)
-      [(Math/sqrt (double @best)) @best-id])))
+      [(math/sqrt (double @best)) @best-id])))
 
 (defn nearest-dist
   "Distance from `pos` to the nearest item whose `:id` differs from `self-eid`.
@@ -215,7 +208,7 @@
   "Grid cell coordinates for `pos` given cell size `cs`."
   [cs pos]
   (let [[x y z] pos
-        f (fn [v] (long (Math/floor (/ (double v) cs))))]
+        f (fn [v] (long (math/floor (/ (double v) cs))))]
     [(f x) (f y) (f z)]))
 
 (defn build-grid
@@ -247,17 +240,35 @@
                   (apply max (map #(nth % 1) ks))
                   (apply max (map #(nth % 2) ks))])}))
 
+(defn- item-within-radius?
+  "True when `item` is within distance squared `r2` of `[px py pz]`."
+  [r2 [px py pz] item]
+  (let [bp (:position item)
+        x (- px (double (nth bp 0)))
+        y (- py (double (nth bp 1)))
+        z (- pz (double (nth bp 2)))]
+    (<= (+ (* x x) (* y y) (* z z)) r2)))
+
+(defn- grid-clamp-range
+  "Clamp the integer range [i-k, i+k] to the grid bounds [mn, mx]."
+  [i k mn mx]
+  [(max (- i k) mn) (min (+ i k) mx)])
+
+(defn- collect-grid-range
+  "Collect items in the clamped grid range within radius squared `r2` of `pos`."
+  [cells r2 pos pred xlo xhi ylo yhi zlo zhi]
+  (vec
+   (for [x (range xlo (inc xhi))
+         y (range ylo (inc yhi))
+         z (range zlo (inc zhi))
+         item (get cells [x y z])
+         :when (and (pred item) (item-within-radius? r2 pos item))]
+     item)))
+
 (defn grid-within-radius
   "Every item within distance `r` of `pos` (inclusive) from a uniform `grid`.
    `pred` optionally filters items before the distance check. Includes self if
-   self is within the radius; callers exclude by `:id` as needed.
-
-   Walks the cell cube [pos−k, pos+k] (k = ⌈r/cell-size⌉) but clamps each axis to
-   the grid's occupied cell-index range (`:cell-min`/`:cell-max`). Cells outside
-   that range are empty and contribute nothing, so clamping is bit-identical to an
-   unbounded walk — same cells visited in the same order — while making the cost
-   O(occupied bounding box) instead of O(r³). Without the clamp a huge `r` (e.g. a
-   cold, massive sink's Bondi radius) would iterate empty space without end."
+   self is within the radius; callers exclude by `:id` as needed."
   ([grid pos r]
    (grid-within-radius grid pos r (constantly true)))
   ([grid pos r pred]
@@ -268,41 +279,38 @@
      (if (or (nil? cmin) (empty? cells))
        []
        (let [r2 (* (double r) (double r))
-             [px py pz] pos
-             within? (fn [a b]
-                       (if (pred b)
-                         (let [bp (:position b)
-                               x (- px (double (nth bp 0)))
-                               y (- py (double (nth bp 1)))
-                               z (- pz (double (nth bp 2)))]
-                           (if (<= (+ (* x x) (* y y) (* z z)) r2)
-                             (conj a b)
-                             a))
-                         a))
              [ix iy iz] (item-key cs pos)
-             k  (max 0 (long (Math/ceil (/ (double r) cs))))
-             ;; clamp the ±k cube to the occupied index range on each axis; the
-             ;; skipped cells are guaranteed empty, so order over non-empty cells
-             ;; (hence the float reduction) is preserved exactly.
-             [xmn ymn zmn] cmin
-             [xmx ymx zmx] cmax
-             xlo (max (- ix k) xmn) xhi (min (+ ix k) xmx)
-             ylo (max (- iy k) ymn) yhi (min (+ iy k) ymx)
-             zlo (max (- iz k) zmn) zhi (min (+ iz k) zmx)]
-         (loop [x xlo acc []]
-           (if (> x xhi)
-             acc
-             (recur (inc x)
-                    (loop [y ylo acc acc]
-                      (if (> y yhi)
-                        acc
-                        (recur (inc y)
-                               (loop [z zlo acc acc]
-                                 (if (> z zhi)
-                                   acc
-                                   (recur (inc z)
-                                          (reduce within? acc
-                                                  (get cells [x y z]))))))))))))))))
+             k (max 0 (long (math/ceil (/ (double r) cs))))
+             [xlo xhi] (grid-clamp-range ix k (nth cmin 0) (nth cmax 0))
+             [ylo yhi] (grid-clamp-range iy k (nth cmin 1) (nth cmax 1))
+             [zlo zhi] (grid-clamp-range iz k (nth cmin 2) (nth cmax 2))]
+         (collect-grid-range cells r2 pos pred xlo xhi ylo yhi zlo zhi))))))
+
+(defn- shell-indices
+  "Generate cell indices on the Chebyshev shell of radius `k` around `[ix iy iz]`
+   that fall inside the grid bounds `[xlo xhi] [ylo yhi] [zlo zhi]`."
+  [ix iy iz k xlo xhi ylo yhi zlo zhi]
+  (for [dx (range (- k) (inc k))
+        dy (range (- k) (inc k))
+        dz (range (- k) (inc k))
+        :when (or (zero? k) (== k (max (abs dx) (abs dy) (abs dz))))
+        :let [x (+ ix dx) y (+ iy dy) z (+ iz dz)]
+        :when (and (<= xlo x xhi) (<= ylo y yhi) (<= zlo z zhi))]
+    [x y z]))
+
+(defn- update-nearest!
+  "Update `best` and `best-id` volatiles if `body` is closer than the current best."
+  [best best-id pos self-eid body]
+  (when (not= (:id body) self-eid)
+    (let [[px py pz] pos
+          bp (:position body)
+          dx (- px (double (nth bp 0)))
+          dy (- py (double (nth bp 1)))
+          dz (- pz (double (nth bp 2)))
+          d2 (+ (* dx dx) (* dy dy) (* dz dz))]
+      (when (< d2 (double @best))
+        (vreset! best d2)
+        (vreset! best-id (:id body))))))
 
 (defn grid-nearest
   "`[distance id]` of the nearest item whose `:id` differs from `self-eid`
@@ -310,36 +318,35 @@
    or the grid is exhausted; returns `[##Inf nil]` when no other item exists."
   [grid pos self-eid]
   (let [cs (:cell-size grid)
-        [px py pz] pos
+        cells (:cells grid)
+        [cmin-x cmin-y cmin-z] (:cell-min grid)
+        [cmax-x cmax-y cmax-z] (:cell-max grid)
         [ix iy iz] (item-key cs pos)
         best (volatile! Double/POSITIVE_INFINITY)
-        best-id (volatile! nil)]
+        best-id (volatile! nil)
+        max-k (max 0
+                   (- ix cmin-x) (- cmax-x ix)
+                   (- iy cmin-y) (- cmax-y iy)
+                   (- iz cmin-z) (- cmax-z iz))]
     (loop [k 0]
-      (when (<= k 50)
+      (when (<= k max-k)
         (let [min-dist-at-k (if (zero? k) 0.0 (* (dec k) cs))]
-          (when (or (zero? k) (< min-dist-at-k (Math/sqrt (double @best))))
-            ;; enumerate shell at Chebyshev distance k
-            (doseq [dx (range (- k) (inc k))
-                    dy (range (- k) (inc k))
-                    dz (range (- k) (inc k))
-                    :when (or (zero? k)
-                              (== k (max (Math/abs dx) (Math/abs dy) (Math/abs dz))))]
-              (doseq [b (get-in grid [:cells [(+ ix dx) (+ iy dy) (+ iz dz)]])]
-                (when (not= (:id b) self-eid)
-                  (let [bp (:position b)
-                        x (- px (double (nth bp 0)))
-                        y (- py (double (nth bp 1)))
-                        z (- pz (double (nth bp 2)))
-                        d2 (+ (* x x) (* y y) (* z z))]
-                    (when (< d2 (double @best))
-                      (vreset! best d2)
-                      (vreset! best-id (:id b)))))))
-            (recur (inc k))))))
-    [(Math/sqrt (double @best)) @best-id]))
+          (when (or (zero? k) (< min-dist-at-k (math/sqrt (double @best))))
+            (let [xlo (max (- ix k) cmin-x) xhi (min (+ ix k) cmax-x)
+                  ylo (max (- iy k) cmin-y) yhi (min (+ iy k) cmax-y)
+                  zlo (max (- iz k) cmin-z) zhi (min (+ iz k) cmax-z)
+                  covered? (and (== xlo cmin-x) (== xhi cmax-x)
+                                (== ylo cmin-y) (== yhi cmax-y)
+                                (== zlo cmin-z) (== zhi cmax-z))]
+              (doseq [idx (shell-indices ix iy iz k xlo xhi ylo yhi zlo zhi)
+                      body (get cells idx)]
+                (update-nearest! best best-id pos self-eid body))
+              (when-not (and covered? (nil? @best-id))
+                (recur (inc k))))))))
+    [(math/sqrt (double @best)) @best-id]))
 
 (defn grid-nearest-dist
   "Distance from `pos` to the nearest item whose `:id` differs from `self-eid`
    in a uniform `grid`. See `grid-nearest`."
   [grid pos self-eid]
   (first (grid-nearest grid pos self-eid)))
-

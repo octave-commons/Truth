@@ -34,7 +34,9 @@
    affordable after a couple of witnessed transitions (a stellar ignition is 25)."
   {:warp/well 15.0 :warp/repulsor 15.0 :heat/source 15.0 :heat/sink 15.0})
 
-(defn cost-of [kind] (double (get action-cost kind 15.0)))
+(defn cost-of
+  "Return the agency cost to place an intervention of `kind`."
+  [kind] (double (get action-cost kind 15.0)))
 
 (def default-radius
   "m — a placed well's Plummer scale radius (~4 render units): where its pull
@@ -191,20 +193,20 @@
   "New temperature for a body at `body-pos`/`temp` after one tick of every active
    thermal intervention: ease toward each source/sink's target, shaped by
    proximity² and decay, clamped to [min-temp, max-temp]."
-  ([ivs body-pos temp tick] (thermal-step ivs body-pos temp tick default-heat-approach))
-  ([ivs body-pos temp tick approach]
-   (let [t' (reduce
-             (fn [t {:keys [position radius target-temp strength] :as iv}]
-               (let [d (sp/dist body-pos position)
-                     R (double radius)]
-                 (if (< d R)
-                   (let [prox (let [u (- 1.0 (/ d R))] (* u u))
-                         ease (* (double approach) (double (or strength 1.0))
-                                 prox (decay-fraction iv tick))]
-                     (+ t (* (- (double target-temp) t) ease)))
-                   t)))
-             (double temp) ivs)]
-     (max min-temp (min max-temp t')))))
+  [{:keys [ivs body-pos temp tick approach]}]
+  (let [approach (or approach default-heat-approach)
+        t' (reduce
+            (fn [t {:keys [position radius target-temp strength] :as iv}]
+              (let [d (sp/dist body-pos position)
+                    R (double radius)]
+                (if (< d R)
+                  (let [prox (let [u (- 1.0 (/ d R))] (* u u))
+                        ease (* (double approach) (double (or strength 1.0))
+                                prox (decay-fraction iv tick))]
+                    (+ t (* (- (double target-temp) t) ease)))
+                  t)))
+            (double temp) ivs)]
+    (max min-temp (min max-temp t'))))
 
 (defn thermal-contributions
   "The list of {:target-temp :ease} eases an in-range body at `body-pos` receives

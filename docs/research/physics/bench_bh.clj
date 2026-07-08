@@ -27,7 +27,7 @@
 (defn bench-accel
   [G theta softening tree body]
   (let [t0 (System/nanoTime)
-        acc (bh/acceleration G theta softening tree body)
+        acc (bh/acceleration {:G G :theta theta :softening softening :tree tree :body body})
         t1 (System/nanoTime)]
     [acc (/ (- t1 t0) 1e6)]))
 
@@ -40,7 +40,7 @@
         _ (dotimes [_ 10]
             (bh/build-tree bodies)
             (let [tree (bh/build-tree bodies)]
-              (doseq [b bodies] (bh/acceleration 1.0 0.5 1e-3 tree b))))
+              (doseq [b bodies] (bh/acceleration {:G 1.0 :theta 0.5 :softening 1e-3 :tree tree :body b}))))
         [tree t-build] (bench-tree-build bodies)]
     (println (format "N=%d" n))
     (println (format "Tree build: %.3f ms" t-build))

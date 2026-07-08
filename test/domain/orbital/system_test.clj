@@ -1,6 +1,6 @@
 (ns domain.orbital.system-test
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.math :as math] [clojure.test :refer [deftest is testing]]
    [domain.ecs.core        :as ecs]
    [domain.ecs.components  :as c]
    [domain.gravity.barnes-hut :as bh]
@@ -15,19 +15,19 @@
         GM   1.327124e20
         T    (kepler/kepler-period AU GM)
         days (/ T 86400.0)]
-    (is (< (Math/abs (- days 365.25)) 0.1)
+    (is (< (abs (- days 365.25)) 0.1)
         (str "Expected ~365.25 days, got " days))))
 
 (deftest leapfrog-energy-conservation
   (let [GM   1.327124e20
         r    1.495978707e11
-        v_c  (Math/sqrt (/ GM r))
+        v_c  (math/sqrt (/ GM r))
         body {:id :earth :mass 5.972e24 :radius 6.371e6 :kind :planet
               :position [r 0.0 0.0] :velocity [0.0 v_c 0.0]}
         accel (fn [b]
                 (let [pos (:position b)
                       r2  (sp/len2 pos)
-                      r3  (* r2 (Math/sqrt r2))]
+                      r3  (* r2 (math/sqrt r2))]
                   (sp/v* pos (/ (- GM) r3))))
         T     (* 365.25 86400.0)
         dt    (/ T 1000.0)
@@ -42,7 +42,7 @@
                   b
                   (recur (integrator/leapfrog-step b accel dt) (inc n))))
         ef    (energy final)
-        rel   (Math/abs (/ (- ef e0) (Math/abs e0)))]
+        rel   (abs (/ (- ef e0) (abs e0)))]
     (is (< rel 1e-4)
         (str "Energy drift " rel " exceeds threshold 1e-4"))))
 

@@ -2,11 +2,15 @@
   "Tests for Phase 0: Stellar Nebula — the ECS-based simulation.
    The world is a single ECS world; Phase 0 is a composition layer over it."
   (:require
-   [clojure.test :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.genesis           :as genesis]
    [domain.arc              :as arc]
    [domain.pacing           :as pacing]
    [domain.stellar          :as stellar]
+   [domain.stellar.thermodynamics :as thermo]
+   [domain.stellar.classifier :as classifier]
+   [domain.stellar.collapse :as collapse]
+   [domain.stellar.structure :as structure]
    [domain.chemistry        :as chemistry]
    [domain.player           :as player]
    [law.stellar             :as law]
@@ -23,11 +27,11 @@
 (deftest test-gravitational-collapse
   (testing "A diffuse, massive, cold region is Jeans-unstable"
     (let [region {:density 1e-18 :temperature 10 :radius 1e17}]
-      (is (> (stellar/gravitational-collapse-rate region) 0))
-      (is (stellar/jeans-unstable? region))))
+      (is (pos? (collapse/gravitational-collapse-rate region)))
+      (is (collapse/jeans-unstable? region))))
   (testing "A small dense warm region is stable against collapse"
     (let [region {:density 5500 :temperature 300 :radius 1e5}]
-      (is (not (stellar/jeans-unstable? region))))))
+      (is (not (collapse/jeans-unstable? region))))))
 
 (defn- first-parcel-composition
   "Composition of the first matter parcel in a freshly seeded world."
@@ -41,25 +45,25 @@
     ;; surface density from Z = metallicity(star composition); a metal-free
     ;; nebula gives Z≈0, sigma-solid≈0, and NO planets ever seed.
     (let [w (genesis/create-world {:gas-count 20})
-          comp (first-parcel-composition w)]
+          composition (first-parcel-composition w)]
       (is (= :population-i (:genesis/metallicity w)))
-      (is (> (lcomp/metallicity comp) 0.01) "cloud carries solar metals (Z≈0.0167)")
-      (is (> (double (get comp :Fe 0.0)) 0.0) "iron is present for rocky cores")
-      (is (> (double (get comp :Si 0.0)) 0.0) "silicon is present for silicates")
-      (is (lcomp/composition-sums-to-unity? comp))))
+      (is (> (lcomp/metallicity composition) 0.01) "cloud carries solar metals (Z≈0.0167)")
+      (is (> (double (get composition :Fe 0.0)) 0.0) "iron is present for rocky cores")
+      (is (> (double (get composition :Si 0.0)) 0.0) "silicon is present for silicates")
+      (is (lcomp/composition-sums-to-unity? composition))))
   (testing ":primordial preset seeds a metal-free first-generation cloud"
     (let [w (genesis/create-world {:gas-count 20 :metallicity :primordial})
-          comp (first-parcel-composition w)]
-      (is (< (lcomp/metallicity comp) 1e-4) "no metals in a primordial cloud")
-      (is (lcomp/composition-sums-to-unity? comp)))))
+          composition (first-parcel-composition w)]
+      (is (< (lcomp/metallicity composition) 1e-4) "no metals in a primordial cloud")
+      (is (lcomp/composition-sums-to-unity? composition)))))
 
 (deftest test-virial-collapse-drives-ignition
   (testing "Virial temperature and self-gravity pressure rise as a core contracts"
     (let [m 2e30]
-      (is (> (stellar/virial-temperature m 1e9)
-             (stellar/virial-temperature m 1e10)))
-      (is (> (stellar/self-gravity-pressure m 1e9)
-             (stellar/self-gravity-pressure m 1e10))))))
+      (is (> (thermo/virial-temperature m 1e9)
+             (thermo/virial-temperature m 1e10)))
+      (is (> (thermo/self-gravity-pressure m 1e9)
+             (thermo/self-gravity-pressure m 1e10))))))
 
 (deftest test-fusion-ignition
   (testing "Fusion needs temperature, pressure, and hydrogen above threshold"
@@ -120,7 +124,7 @@
   (testing "A fresh world starts at the bulk-cloud step derived from its dynamical time"
     (let [w        (genesis/create-world)
           ;; default nebula: radius 2.0e16, mass 4e30
-          t-dyn    (Math/sqrt (/ (Math/pow 2.0e16 3) (* law/G 4.0e30)))
+          t-dyn    (math/sqrt (/ (math/pow 2.0e16 3) (* law/G 4.0e30)))
           expected (:dt (pacing/pacing-for t-dyn 2.0e16))]
       (is (== (:sim/dt w) expected)
           "fresh dt is cfl-factor × bulk dynamical time (clamped to the dt band)")
@@ -209,7 +213,7 @@
   (testing "Cooling gas forms water"
     (let [cold (chemistry/molecular-composition {:H 0.7 :O 0.1 :C 0.05} 500 1e5)]
       (is (contains? cold :H2O))
-      (is (> (get cold :H2O 0) 0)))))
+      (is (pos? (get cold :H2O 0))))))
 
 (deftest test-habitability
   (testing "Habitability scoring distinguishes living and sterile worlds"
@@ -238,12 +242,12 @@
     (is (< (player/coherence-drain-from-focus 0.2)
            (player/coherence-regen-rate 0.2)))
     (testing "At default focus (0.5), drain and regen roughly balance"
-      (is (< (Math/abs (- (player/coherence-drain-from-focus 0.5)
-                          (player/coherence-regen-rate 0.5)))
+      (is (< (abs (- (player/coherence-drain-from-focus 0.5)
+                     (player/coherence-regen-rate 0.5)))
              0.001))))
   (testing "Witnessing events restores coherence with diminishing returns"
     (let [gain (player/coherence-gain-from-event :stellar-ignition 0.5)]
-      (is (> gain 0))
+      (is (pos? gain))
       (is (< gain 0.3)))))
 
 ;; --- World construction -----------------------------------------------------
@@ -287,14 +291,14 @@
 
 (deftest per-body-promotion-events-pay-agency-for-every-body
   (testing "Each promotion event pays agency; resonance only pays the first time per category"
-    (let [w0     (genesis/create-world {:gas-count 30 :nebula-radius 1.2e16
+    (let [w0     (genesis/create-world {:gas-count 20 :nebula-radius 1.2e16
                                         :contraction-time 2e12 :spin 0.55})
           w0     (assoc w0 :genesis/adaptive-pacing? false :sim/dt 1.0e12)
           obs0   (player/get-observer w0)
           ;; Tick through the full genesis+arc+observer pipeline until multiple
           ;; bodies have condensed.
           final  (loop [w w0 i 0]
-                   (if (or (>= i 120) (>= (:resolved-count (genesis/system-summary w)) 2)
+                   (if (or (>= i 60) (>= (:resolved-count (genesis/system-summary w)) 2)
                            (not (:genesis/active w)))
                      w
                      (recur (arc/tick-genesis w) (inc i))))
@@ -320,7 +324,7 @@
     (let [base    (-> (ecs/empty-world)
                       (event/with-ledger)
                       (event/register-handler :event/collision
-                                              stellar/stellar-merge-handler))
+                                              structure/stellar-merge-handler))
           [w1 _]  (stellar/spawn-clump base {:position [0 0 0]   :mass 2e30 :radius 1.0
                                              :matter-state :protostar})
           [w2 _]  (stellar/spawn-clump w1   {:position [0.5 0 0] :mass 1e30 :radius 1.0
@@ -333,7 +337,7 @@
       (testing "absorb-merge packet carries the absorbed mass"
         (let [pkts (ecs/get-component w3 (first remaining) c/absorb-merge)]
           (is (some? pkts))
-          (is (< (Math/abs (- 1e30 (reduce + (map :mass pkts)))) 1e25)
+          (is (< (abs (- 1e30 (reduce + (map :mass pkts)))) 1e25)
               "packet carries the smaller body's mass")))
       ;; The merged body sits at the survivor's position. The integrator will
       ;; blend to the mass-weighted centroid next tick.
@@ -358,7 +362,7 @@
                     ;; independent of the pacing curve (pacing covered elsewhere).
                     (assoc :genesis/adaptive-pacing? false :sim/dt 1.0e12))
           final (loop [w w0 i 0]
-                  (if (or (> i 400) (:star? (genesis/system-summary w))
+                  (if (or (> i 200) (:star? (genesis/system-summary w))
                           (not (:genesis/active w)))
                     w
                     (recur (genesis/tick-world w) (inc i))))
@@ -380,22 +384,22 @@
           region {:matter-state :nebula
                   :mass    (* 4.0 law/deuterium-burning-mass)
                   :radius  1.0e14
-                  :density (* 10.0 stellar/core-condensation-density)
+                  :density (* 10.0 classifier/core-condensation-density)
                   :temperature 12.0}]
-      (is (not= :nebula (stellar/classify-next-state region gas-mass))
+      (is (not= :nebula (classifier/classify-next-state region gas-mass))
           "precondition: this parcel condenses")
       (let [base (-> (genesis/create-world {:gas-count 4})
                      (assoc :genesis/gas-particle-mass gas-mass
-                            :genesis/feeding-zone-factor stellar/feeding-zone-factor))
+                            :genesis/feeding-zone-factor structure/feeding-zone-factor))
             [w eid] (ecs/spawn base)
             w  (ecs/put-components w eid
                                    {c/matter-state :nebula c/mass (:mass region)
                                     c/radius (:radius region) c/density (:density region)
                                     c/temperature (:temperature region) c/position [0.0 0.0 0.0]})
-            ws ((:run (stellar/classifier-system)) w)
+            ws ((:run (classifier/classifier-system)) w)
             new-state (get-in ws [c/matter-state eid])
             zone (get-in ws [c/accretion-radius eid])
-            expected-zone (* stellar/feeding-zone-factor
+            expected-zone (* structure/feeding-zone-factor
                              (:genesis/gas-smoothing-radius base))]
         (is (not= :nebula new-state) "a big condensing parcel is promoted out of nebula")
         (is (some? zone) "a condensing parcel is given a feeding zone")

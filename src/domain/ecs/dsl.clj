@@ -38,6 +38,7 @@
   (keyword "event" (name sym)))
 
 (defmacro defcomponent
+  "Define a component key, its schema, validator, and predicate var."
   [nm doc schema]
   (let [k             (component-key nm)
         schema-sym    (symbol (str nm "-schema"))
@@ -63,6 +64,7 @@
          (~validator-sym value#)))))
 
 (defmacro defevent
+  "Define an event kind, payload schema, constructor, and emitter."
   [nm doc payload-schema options]
   (let [k             (event-key nm)
         schema-sym    (symbol (str nm "-payload-schema"))
@@ -125,6 +127,7 @@
                                    cause#)))))))
 
 (defmacro defsystem
+  "Define an ECS query system with its read-only query and body."
   [nm doc {:keys [query]} [world-sym rows-sym] & body]
   (law/assert-system-def!
    {:name nm
@@ -139,6 +142,7 @@
        ~@body)))
 
 (defmacro defreaction
+  "Define an event reaction handler for `event-kind`."
   [nm doc event-kind [world-sym event-sym] & body]
   `(defn ~nm
      {:doc ~doc
@@ -148,6 +152,7 @@
      ~@body))
 
 (defmacro defprojection
+  "Define a ledger projection over events of `event-kind`, starting from `init`."
   [nm doc event-kind {:keys [init]} [acc-sym event-sym] & body]
   (let [event-k (when (resolve event-kind)
                   (-> event-kind resolve deref))]
@@ -160,6 +165,7 @@
        ~@body)))
 
 (defmacro defaggregate
+  "Define a ledger aggregate tracking a set of event kinds from `init`."
   [nm doc {:keys [tracked init]} [acc-sym event-sym] & body]
   (let [tracked-ks (mapv #(when (resolve %)
                             (-> % resolve deref))
@@ -173,6 +179,7 @@
        ~@body)))
 
 (defmacro defrewind
+  "Define a rewind handler for events of `event-kind`."
   [nm doc event-kind [world-sym event-sym] & body]
   `(defn ~nm
      {:doc ~doc

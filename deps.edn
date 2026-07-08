@@ -13,16 +13,23 @@
   {:bench {:extra-paths ["bench"]
           :extra-deps {criterium/criterium {:mvn/version "0.4.6"}}
           :main-opts ["-m" "gates-of-truth.bench"]}
-   :test {:extra-paths ["test"]
+   :bench-coverage {:extra-paths ["bench"]
+                    :extra-deps {criterium/criterium {:mvn/version "0.4.6"}}
+                    :main-opts ["-m" "gates-of-truth.bench.coverage"]}
+   :test {:extra-paths ["test" "bench"]
           :extra-deps {io.github.cognitect-labs/test-runner
-                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}
+                       criterium/criterium {:mvn/version "0.4.6"}}
           :main-opts ["-m" "cognitect.test-runner"]
           :exec-fn cognitect.test-runner.api/test}
    :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
           :main-opts ["-m" "nrepl.cmdline"]}
-   :dev  {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
-          :main-opts ["-m" "infra.dev.server"]}
-   :run {:main-opts ["-m" "infra.main"]}
+    :dev  {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
+           :main-opts ["-m" "infra.dev.server"]}
+     :dashboard {:extra-deps {org.commonmark/commonmark {:mvn/version "0.21.0"}
+                               org.commonmark/commonmark-ext-gfm-tables {:mvn/version "0.21.0"}}
+                 :main-opts ["-m" "infra.dev.actor-dashboard"]}
+    :run {:main-opts ["-m" "infra.main"]}
    ;; --- Static analysis (see bin/analyze + docs/STATIC-ANALYSIS.md) ---------
    ;; Splint: idiomatic-style / anti-pattern linter (maintained kibit successor).
    :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.24.0"}}
@@ -30,9 +37,10 @@
    ;; --- Test coverage (cloverage; see bin/coverage + docs/TESTING.md) ---------
    ;; Instruments src, runs the test suite, reports line/form coverage. bin/coverage
    ;; supplies -p/-s/report flags. Whole tree is measured (all tests pass headless).
-    :coverage {:extra-paths ["test"]
+    :coverage {:extra-paths ["test" "bench"]
                :extra-deps {cloverage/cloverage {:mvn/version "1.2.4"}
-                            nrepl/nrepl {:mvn/version "1.0.0"}}
+                            nrepl/nrepl {:mvn/version "1.0.0"}
+                            criterium/criterium {:mvn/version "0.4.6"}}
                :main-opts ["-m" "cloverage.coverage"]}
    ;; --- Mutation testing (Heretic; EXPERIMENTAL) -----------------------------
    ;; Heretic (github.com/parenstech/heretic) maps tests→code via ClojureStorm,

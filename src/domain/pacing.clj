@@ -18,7 +18,7 @@
 
    Pure data: no IO, no ECS mutation. Reads positions/masses to size the cloud."
   (:require
-   [law.stellar     :as law]
+   [clojure.math :as math] [law.stellar     :as law]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [shape.spatial   :as sp]))
@@ -95,7 +95,7 @@
   [radius mass]
   (let [r (double radius) m (double mass)]
     (if (and (pos? r) (pos? m))
-      (Math/sqrt (/ (* r r r) (* law/G m)))
+      (math/sqrt (/ (* r r r) (* law/G m)))
       0.0)))
 
 (defn bulk-dynamical-time

@@ -4,7 +4,6 @@
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.ecs.tick :as tick]
    [domain.intervention :as iv]
    [domain.player :as player]
    [shape.spatial :as sp]))
@@ -49,7 +48,7 @@
 (deftest decay-fraction-fades-linearly
   (let [iv (iv/make-intervention :warp/well [0 0 0] 0 {})]
     (is (= 1.0 (iv/decay-fraction iv 0)))
-    (is (< (Math/abs (- (iv/decay-fraction iv (/ iv/default-ttl 2)) 0.5)) 1e-9))
+    (is (< (abs (- (iv/decay-fraction iv (/ iv/default-ttl 2)) 0.5)) 1e-9))
     (is (zero? (iv/decay-fraction iv iv/default-ttl)))
     (is (zero? (iv/decay-fraction iv (+ iv/default-ttl 10))))))
 
@@ -62,7 +61,7 @@
         a (iv/warp-accel-on iv [5.0 0 0] 0 warp-ctx)]
     (is (some? a))
     (is (neg? (first a)))
-    (is (< (Math/abs (- (last a) 0.0)) 1e-12))))
+    (is (< (abs (- (last a) 0.0)) 1e-12))))
 
 (deftest warp-accel-on-repulsor-pushes-away
   (let [iv (iv/make-intervention :warp/repulsor [0 0 0] 0 {:radius 10})
@@ -110,7 +109,7 @@
     (is (some? (get-in ws [c/accel-warp e])))))
 
 (deftest warp-acceleration-system-clears-when-empty
-  (let [[w e] (world-with-body [5.0 0 0] 1.0)
+  (let [[w _e] (world-with-body [5.0 0 0] 1.0)
         sys (iv/warp-acceleration-system)
         ws ((:run sys) w)]
     (is (= {} (get ws c/accel-warp)))))
@@ -127,7 +126,7 @@
         w' (iv/place w :warp/well [1.0 0 0])]
     (is (= 1 (count (:genesis/interventions w'))))
     (is (= :warp/well (:kind (first (:genesis/interventions w')))))
-    (is (< (Math/abs (- (:agency (player/get-observer w')) 5.0)) 1e-9))))
+    (is (< (abs (- (:agency (player/get-observer w')) 5.0)) 1e-9))))
 
 (deftest place-uses-the-world-well-knobs
   (let [w (-> (world-with-observer 20.0)
@@ -152,13 +151,13 @@
 
 (deftest thermal-step-eases-toward-target
   (let [iv (iv/make-intervention :heat/source [0 0 0] 0 {})
-        t' (iv/thermal-step [iv] [0 0 0] 100.0 0)]
+        t' (iv/thermal-step {:ivs [iv] :body-pos [0 0 0] :temp 100.0 :tick 0})]
     (is (> t' 100.0))
     (is (<= t' iv/max-temp))))
 
 (deftest thermal-step-clamps-to-max
   (let [iv (iv/make-intervention :heat/source [0 0 0] 0 {:target-temp 1.0e8 :strength 100.0})
-        t' (iv/thermal-step [iv] [0 0 0] 100.0 0)]
+        t' (iv/thermal-step {:ivs [iv] :body-pos [0 0 0] :temp 100.0 :tick 0})]
     (is (= iv/max-temp t'))))
 
 (deftest thermal-contributions-lists-in-range-eases

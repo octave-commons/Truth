@@ -27,6 +27,16 @@
    :params       {:warn 5     :hard 8}      ; argument bloat
    :fan-out      {:warn 18    :hard 30}})   ; efferent coupling
 
+;; Namespaces whose entire purpose is to define a shared vocabulary of keywords.
+;; They are exempt from the public-var and missing-docstring thresholds because
+;; splitting them into tiny sub-modules would fragment the vocabulary, multiply
+;; imports across every consumer, and create a duplicate-keyword hazard.
+(def vocabulary-namespaces
+  #{'domain.ecs.components})
+
+(defn- vocabulary-namespace? [ns-sym]
+  (contains? vocabulary-namespaces ns-sym))
+
 (defn- project-file? [f]
   (and f (or (str/starts-with? f "src/") (str/starts-with? f "test/"))))
 
@@ -52,7 +62,7 @@
           (map (fn [{:keys [name filename]}]
                  {:ns name :file filename
                   :loc (file-loc filename)
-                  :vars (count (by-ns name))}))
+                  :vars (if (vocabulary-namespace? name) 0 (count (by-ns name)))}))
           (filter #(or (>= (:loc %) (get-in thresholds [:namespace-loc :warn]))
                        (>= (:vars %) (get-in thresholds [:namespace-vars :warn]))))
           (sort-by :loc >))
@@ -71,9 +81,10 @@
           (filter #(>= (:arity %) (get-in thresholds [:params :warn])))
           (sort-by :arity >))
 
-     :missing-docstrings
-     (->> defs (filter public-defn?) (filter #(str/blank? (str (:doc %))))
-          (sort-by (juxt :filename :row)))
+      :missing-docstrings
+      (->> defs (filter public-defn?) (filter #(str/blank? (str (:doc %))))
+           (filter #(not (vocabulary-namespace? (:ns %))))
+           (sort-by (juxt :filename :row)))
 
      :high-fan-out
      (->> namespace-usages
@@ -145,6 +156,7 @@
         (println "  none"))
 
       (println "\n● UNDOCUMENTED PUBLIC FNS  (AGENTS.md: docstrings mandatory)")
+      (println "  (vocabulary namespaces exempt; see dev/smell_report.clj vocabulary-namespaces)")
       (if (seq missing-docstrings)
         (doseq [{:keys [name filename row]} missing-docstrings]
           (println (format "  [warn] %-30s %s" name (loc->str filename row))))

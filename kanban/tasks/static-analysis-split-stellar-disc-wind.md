@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-split-stellar-disc-wind"
 title: "Split domain.stellar Disc, Wind, and Seeder Modules"
-status: "accepted"
+status: "in_progress"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"

@@ -1,8 +1,9 @@
 (ns domain.disk-evolution-test
   "Tests for protoplanetary disk regime and restricted GI fragmentation."
   (:require
-   [clojure.test :refer [deftest testing is]]
+   [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.stellar :as stellar]
+   [domain.stellar.structure :as structure]
    [domain.planet-formation :as pf]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
@@ -15,7 +16,7 @@
    specific angular momentum chosen so the disk radius is ~`radius-m`."
   [disk-mass radius-m]
   (let [M law/solar-mass
-        j (Math/sqrt (* law/G M radius-m))
+        j (math/sqrt (* law/G M radius-m))
         disk-L [0.0 0.0 (* disk-mass j)]
         [w eid] (stellar/spawn-clump
                  (ecs/empty-world)
@@ -38,11 +39,11 @@
 
 (deftest disk-regime-map-contains-all-keys
   (testing "disk-regime-map returns the scalar regime shape"
-    (let [regime (stellar/disk-regime-map law/solar-mass
-                                          (* 0.1 law/solar-mass)
-                                          1.5e11
-                                          law/solar-luminosity
-                                          lcomp/solar-composition)]
+    (let [regime (structure/disk-regime-map {:star-mass law/solar-mass
+                                             :disk-mass (* 0.1 law/solar-mass)
+                                             :disk-radius 1.5e11
+                                             :luminosity law/solar-luminosity
+                                             :composition lcomp/solar-composition})]
       (is (contains? regime :toomre-q))
       (is (contains? regime :cooling-beta))
       (is (contains? regime :regime))
@@ -53,16 +54,16 @@
 (deftest snow-line-jumps-solid-surface-density
   (testing "solid surface density is enhanced beyond the snow line"
     (let [snow-line (pf/snow-line-radius law/solar-luminosity)
-          inside (stellar/disk-regime-map law/solar-mass
-                                          (* 0.1 law/solar-mass)
-                                          (* 0.9 snow-line)
-                                          law/solar-luminosity
-                                          lcomp/solar-composition)
-          outside (stellar/disk-regime-map law/solar-mass
-                                           (* 0.1 law/solar-mass)
-                                           (* 1.1 snow-line)
-                                           law/solar-luminosity
-                                           lcomp/solar-composition)]
+          inside (structure/disk-regime-map {:star-mass law/solar-mass
+                                             :disk-mass (* 0.1 law/solar-mass)
+                                             :disk-radius (* 0.9 snow-line)
+                                             :luminosity law/solar-luminosity
+                                             :composition lcomp/solar-composition})
+          outside (structure/disk-regime-map {:star-mass law/solar-mass
+                                              :disk-mass (* 0.1 law/solar-mass)
+                                              :disk-radius (* 1.1 snow-line)
+                                              :luminosity law/solar-luminosity
+                                              :composition lcomp/solar-composition})]
       (is (< (* 0.9 snow-line) snow-line (* 1.1 snow-line)))
       (is (> (:solid-surface-density outside) (* 2.0 (:solid-surface-density inside)))
           "beyond snow line solids are ice-enhanced"))))
@@ -130,10 +131,10 @@
           mass-flux (double (get-in ws [:components c/mass-flux-disk star] 0.0))
           spawn (first (get-in ws [:components c/spawn-request-disk star]))]
       (is (< disk-m1 m0) "disk mass decreased")
-      (is (< (Math/abs (- (- m0 disk-m1) (+ (:mass spawn) mass-flux)))
+      (is (< (abs (- (- m0 disk-m1) (+ (:mass spawn) mass-flux)))
              (* 1.0e-9 (+ m0 disk-m1)))
           "disk mass debit equals fragment mass plus viscous accretion")
-      (is (< (Math/abs (- L1 (* L0 (/ disk-m1 m0)))) (* 1.0e-9 L0))
+      (is (< (abs (- L1 (* L0 (/ disk-m1 m0)))) (* 1.0e-9 L0))
           "specific angular momentum is conserved"))))
 
 (deftest disk-regime-is-written

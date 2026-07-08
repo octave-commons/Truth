@@ -7,331 +7,143 @@
    renderer draws a camera-facing halo + a velocity arrow around it and a HUD card
    reading its live ECS state.
 
+   This namespace is a thin facade over infra.inspect.picking, infra.inspect.overlay,
+   infra.inspect.format, and infra.inspect.card. New code may require the
+   sub-namespace directly; this facade preserves the legacy public API.
+
    Everything here uses `infra.render.units` for coordinate transforms so that
    picking, projection, and rendering share one transform chain and cannot drift."
   (:require
-   [clojure.string :as str]
-   [domain.ecs.core :as ecs]
-   [domain.ecs.components :as c]
-   [domain.naming :as naming]
-   [shape.spatial :as sp]
-   [infra.render.units :as units]))
-
-;; Physical reference scales for human-readable readouts.
-(def ^:const solar-mass   1.989e30)  ;; kg
-(def ^:const solar-radius 6.957e8)   ;; m
-(def ^:const solar-lum    3.828e26)  ;; W
-(def ^:const earth-mass   5.972e24)  ;; kg
-(def ^:const earth-radius 6.371e6)   ;; m
-(def ^:const au           1.496e11)  ;; m
+   [infra.inspect.card :as card]
+   [infra.inspect.format :as fmt]
+   [infra.inspect.overlay :as overlay]
+   [infra.inspect.picking :as picking]))
 
 ;; ---------------------------------------------------------------------------
-;; Screen → ray and render → screen (mutual inverses through units).
+;; Picking and projection
 ;; ---------------------------------------------------------------------------
 
 (defn screen->ray
   "Render-space pick ray {:ro :rd} through pixel (px,py)."
   [ctx px py]
-  (units/screen->render-ray ctx px py))
+  (picking/screen->ray ctx px py))
 
 (defn project-point
   "Project render-space point `p` to framebuffer pixels [sx sy depth], or nil
-   when behind the camera. Delegates to `infra.render.units/render->screen`."
+   when behind the camera."
   [ctx p]
-  (units/render->screen ctx p))
-
-;; ---------------------------------------------------------------------------
-;; Picking — forgiving ray-vs-body test.
-;; ---------------------------------------------------------------------------
-
-(defn- body-shapes
-  "The selectable render shapes: drawn spheres that carry an :entity id."
-  [bodies]
-  (filter #(and (= :body (:render-mode % :body)) (:entity %)) bodies))
+  (picking/project-point ctx p))
 
 (defn selected-shape
   "The already-projected render shape for entity `eid`, or nil."
   [bodies eid]
-  (first (filter #(= eid (:entity %)) (body-shapes bodies))))
+  (picking/selected-shape bodies eid))
 
 (defn pick-entity
-  "Entity id of the body the ray through (px,py) hits, nearest-first, or nil.
-
-   Forgiving: a body counts as hit when the ray passes within its (slightly
-   inflated) render radius OR within a constant screen-space tolerance, so tiny
-   distant bodies stay clickable without precise aim. Picks against the SAME
-   shapes the renderer drew this frame, so it can't drift from the visuals."
+  "Entity id of the body the ray through (px,py) hits, nearest-first, or nil."
   [ctx bodies px py]
-  (let [{:keys [ro rd] tan-half :tan-half} (assoc (units/screen->render-ray ctx px py)
-                                                  :tan-half (:tan-half (units/camera-basis ctx)))]
-    (->> (body-shapes bodies)
-         (keep (fn [{:keys [entity position radius]}]
-                 (let [center (vec position)
-                       rad    (double (or radius 0.5))
-                       t*     (sp/dot (sp/v- center ro) rd)]
-                   (when (pos? t*)
-                     (let [closest (sp/v+ ro (sp/v* rd t*))
-                           perp    (sp/len (sp/v- closest center))
-                           ;; screen-space slack: ≥ this many render units at depth t*
-                           slack   (* 0.018 t* tan-half)
-                           thresh  (max (* rad 1.25) slack)]
-                       (when (<= perp thresh)
-                         [entity t*]))))))
-         (sort-by second)
-         ffirst)))
+  (picking/pick-entity ctx bodies px py))
 
 (defn cursor->world
   "World-metre point under pixel (px,py), placed on the depth plane through the
-   camera target (so the spark's attention rides the cluster the camera frames)."
+   camera target."
   [ctx px py]
-  (let [{:keys [ro rd]} (units/screen->render-ray ctx px py)
-        t  (max 0.0 (sp/dot (sp/v- (vec (:target (:camera ctx))) ro) rd))
-        pt (sp/v+ ro (sp/v* rd t))]
-    (units/render->world ctx pt)))
+  (picking/cursor->world ctx px py))
 
 ;; ---------------------------------------------------------------------------
-;; Selection overlay — camera-facing halo + velocity arrow (as :line shapes).
+;; Overlay shapes
 ;; ---------------------------------------------------------------------------
-
-(defn- line-seg [a b color]
-  [{:position (vec a) :color color :size 1.0 :render-mode :line}
-   {:position (vec b) :color color :size 1.0 :render-mode :line}])
-
-(defn- normalize [v]
-  (let [l (sp/len v)] (if (pos? l) (sp/v* v (/ 1.0 l)) [0.0 0.0 1.0])))
 
 (defn halo-shapes
-  "A camera-facing ring of render radius `r` around `center`, as :line segments —
-   the selection marker. Lives in the camera's right/up plane so it reads as a
-   ring from any angle."
-  [center r ctx color n]
-  (let [{:keys [right up]} (units/camera-basis ctx)
-        pt (fn [a]
-             (sp/v+ (vec center)
-                    (sp/v+ (sp/v* right (* r (Math/cos a)))
-                           (sp/v* up    (* r (Math/sin a))))))]
-    (vec (mapcat (fn [i]
-                   (let [a0 (* 2.0 Math/PI (/ (double i) n))
-                         a1 (* 2.0 Math/PI (/ (double (inc i)) n))]
-                     (line-seg (pt a0) (pt a1) color)))
-                 (range n)))))
-
-(defn- speed-color
-  "Cool→hot ramp by speed (km/s): slow teal → fast amber."
-  [kms]
-  (let [f (max 0.0 (min 1.0 (/ (Math/log10 (+ 1.0 (double kms))) 2.6)))]
-    [(+ 0.30 (* 0.70 f)) (+ 0.85 (* -0.20 f)) (- 1.0 (* 0.7 f))]))
+  "A camera-facing ring of render radius `r` around `center`, as :line segments."
+  [{:keys [center r ctx color n]}]
+  (overlay/halo-shapes {:center center :r r :ctx ctx :color color :n n}))
 
 (defn velocity-arrow-shapes
-  "An arrow from `center` along the body's world velocity, as :line segments.
-   Direction is scale-invariant (render space is a uniform shrink of world), so we
-   reuse the world velocity vector directly. Length scales with the passed
-   `body-r` (the caller supplies a screen-floored radius, so the arrow stays
-   proportionate whether framing the nebula or hovering over a true-scale
-   planet) and stretches with log speed; colour ramps with speed. nil for a
-   motionless body."
+  "An arrow from `center` along the body's world velocity, as :line segments."
   [center vel-world body-r ctx]
-  (when (and vel-world (pos? (sp/len vel-world)))
-    (let [speed-ms (sp/len vel-world)
-          kms      (/ speed-ms 1000.0)
-          dir      (normalize vel-world)
-          len      (* (double body-r)
-                      (+ 1.5 (min 4.0 (* 1.1 (Math/log10 (+ 1.0 kms))))))
-          tip      (sp/v+ (vec center) (sp/v* dir len))
-          col      (speed-color kms)
-          {:keys [fwd]} (units/camera-basis ctx)
-          ;; arrowhead in the plane facing the camera
-          perp     (let [p (sp/cross dir fwd)]
-                     (if (pos? (sp/len p)) (normalize p)
-                         (normalize (sp/cross dir [0.0 1.0 0.0]))))
-          hl       (* 0.28 len)
-          hw       (* 0.16 len)
-          back     (sp/v- tip (sp/v* dir hl))]
-      (into (line-seg center tip col)
-            (concat (line-seg tip (sp/v+ back (sp/v* perp hw)) col)
-                    (line-seg tip (sp/v- back (sp/v* perp hw)) col))))))
+  (overlay/velocity-arrow-shapes center vel-world body-r ctx))
 
 (defn overlay-radius
-  "Halo radius for a body of render radius `r` at `center`: `k`× the body, but
-   never smaller than `min-frac` of the view height at the body's depth. At true
-   scale most bodies are sub-pixel — the floor is what keeps the selection ring
-   readable; it shrinks naturally as the tethered camera closes in."
-  [ctx center r k min-frac]
-  (let [{:keys [cam-pos tan-half]} (units/camera-basis ctx)
-        dist (sp/len (sp/v- (vec center) cam-pos))]
-    (max (* (double (or r 0.0)) (double k))
-         (* (double min-frac) dist (double tan-half)))))
+  "Halo radius for a body of render radius `r` at `center`."
+  [{:keys [ctx center r k min-frac]}]
+  (overlay/overlay-radius {:ctx ctx :center center :r r :k k :min-frac min-frac}))
 
 (defn hover-overlay-shapes
-  "A faint, thin halo around the body the cursor is over — the passive 'this is
-   resolvable' cue, shown before a click commits to selection. Empty when nothing
-   is hovered or the hovered body is already the selection."
+  "A faint, thin halo around the body the cursor is over."
   [ctx bodies hover-eid sel-eid]
-  (if (and hover-eid (not= hover-eid sel-eid))
-    (if-let [shape (selected-shape bodies hover-eid)]
-      (halo-shapes (:position shape)
-                   (overlay-radius ctx (:position shape)
-                                   (double (or (:radius shape) 0.6)) 1.3 0.014)
-                   ctx [0.35 0.55 0.7] 40)
-      [])
-    []))
+  (overlay/hover-overlay-shapes ctx bodies hover-eid sel-eid))
 
 (defn intervention-overlay-shapes
-  "Camera-facing rings for the player's active warps (`:genesis/interventions`):
-   a well reads cyan, a repulsor warm-orange; the ring sized to the warp's reach
-   and dimmed as it decays, so a placed warp is visible and you watch it fade."
+  "Camera-facing rings for the player's active warps."
   [ctx world]
-  (let [tick (long (or (:tick world) 0))]
-    (vec
-     (mapcat
-      (fn [{:keys [kind position radius born-tick ttl]}]
-        (let [center (units/world->render ctx position)
-              r      (units/world->render ctx [radius 0.0 0.0])
-              age    (- tick (long (or born-tick 0)))
-              fade   (max 0.15 (- 1.0 (/ (double age) (double (or ttl 1)))))
-              col    (case kind
-                       :warp/repulsor [(* 1.0 fade) (* 0.55 fade) (* 0.25 fade)] ;; warm orange
-                       :warp/well     [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)] ;; cyan
-                       :heat/source   [(* 1.0 fade) (* 0.35 fade) (* 0.12 fade)] ;; hot red
-                       :heat/sink     [(* 0.55 fade) (* 0.85 fade) (* 1.0 fade)] ;; cold blue-white
-                       [(* 0.30 fade) (* 0.75 fade) (* 1.0 fade)])]
-          (into (halo-shapes center (first r) ctx col 64)
-                (halo-shapes center (* (first r) 0.62) ctx col 48))))
-      (:genesis/interventions world)))))
+  (overlay/intervention-overlay-shapes ctx world))
 
 (defn selection-overlay-shapes
-  "Halo + velocity arrow for the selected entity, riding on its already-projected
-   render shape so they align with the drawn body. Empty when the entity has no
-   shape this frame (merged/destroyed → caller should clear the selection)."
+  "Halo + velocity arrow for the selected entity."
   [ctx world eid bodies]
-  (if-let [shape (selected-shape bodies eid)]
-    (let [center (:position shape)
-          r      (overlay-radius ctx center (double (or (:radius shape) 0.6)) 1.45 0.02)
-          vel    (ecs/get-component world eid c/velocity)]
-      (into (halo-shapes center r ctx [0.55 0.95 1.0] 56)
-            (or (velocity-arrow-shapes center vel (* 0.7 r) ctx) [])))
-    []))
+  (overlay/selection-overlay-shapes ctx world eid bodies))
 
 ;; ---------------------------------------------------------------------------
-;; Inspector card — live ECS readout, drawn via the HUD text/rect programs.
+;; Formatting helpers
 ;; ---------------------------------------------------------------------------
 
-(defn fmt-mass [kg stellar?]
-  (let [kg (double (or kg 0.0))]
-    (cond
-      (or stellar? (>= kg (* 0.05 solar-mass))) (format "%.3f Msun" (/ kg solar-mass))
-      (>= kg (* 0.05 earth-mass)) (format "%.2f Mearth" (/ kg earth-mass))
-      :else                       (format "%.2e kg" kg))))
+(def solar-mass
+  "Solar mass reference constant [kg]."
+  fmt/solar-mass)
 
-(defn fmt-radius [m star?]
-  (let [m (double (or m 0.0))]
-    (cond
-      star?            (format "%.2f Rsun" (/ m solar-radius))
-      (>= m earth-radius) (format "%.2f Rearth" (/ m earth-radius))
-      (>= m 1.0e3)     (format "%.0f km" (/ m 1.0e3))
-      :else            (format "%.2e m" m))))
+(def solar-radius
+  "Solar radius reference constant [m]."
+  fmt/solar-radius)
 
-(defn- fmt-comp
-  "Top two composition fractions, e.g. \"H 0.74  He 0.24\"."
-  [cm]
-  (when (seq cm)
-    (->> cm
-         (sort-by (fn [[_ v]] (- (double v))))
-         (take 2)
-         (map (fn [[k v]] (format "%s %.2f" (name k) (double v))))
-         (str/join "  "))))
+(def solar-lum
+  "Solar luminosity reference constant [W]."
+  fmt/solar-lum)
 
-(defn state-label [state]
-  (case state
-    :nebula "Nebula gas"
-    :planetesimal "Planetesimal"
-    :gas-giant "Gas giant"
-    :brown-dwarf "Brown dwarf"
-    :protostar "Protostar"
-    :star "Star"
-    :planet "Planet"
-    (some-> state name)))
+(def earth-mass
+  "Earth mass reference constant [kg]."
+  fmt/earth-mass)
 
-(defn- state-color [state]
-  (case state
-    :star          [1.0 0.92 0.55 1.0]
-    :protostar     [1.0 0.72 0.45 1.0]
-    :planet        [0.55 0.78 1.0 1.0]
-    :brown-dwarf   [0.85 0.55 0.35 1.0]
-    :gas-giant     [0.55 0.65 0.85 1.0]
-    :planetesimal  [0.75 0.75 0.8 1.0]
-    :nebula        [0.7 0.6 0.9 1.0]
-    [0.85 0.9 1.0 1.0]))
+(def earth-radius
+  "Earth radius reference constant [m]."
+  fmt/earth-radius)
+
+(def au
+  "Astronomical unit reference constant [m]."
+  fmt/au)
+
+(defn fmt-mass
+  "Format a mass in kg as a human-readable string."
+  [kg stellar?]
+  (fmt/fmt-mass kg stellar?))
+
+(defn fmt-radius
+  "Format a radius in metres as a human-readable string."
+  [m star?]
+  (fmt/fmt-radius m star?))
+
+(defn state-label
+  "Return a human-readable label for a matter state keyword."
+  [state]
+  (fmt/state-label state))
+
+(defn state-color
+  "RGBA colour for a matter-state keyword, used by the inspector card title."
+  [state]
+  (fmt/state-color state))
 
 (defn body-facts
   "Ordered [label value] readout lines for entity `eid` from its live ECS state."
   [world eid]
-  (let [g     (fn [k] (ecs/get-component world eid k))
-        state (g c/matter-state)
-        stellar? (boolean (#{:star :protostar} state))
-        vel   (g c/velocity)
-        speed (when vel (/ (sp/len vel) 1000.0))
-        temp  (g c/temperature)
-        lum   (g c/luminosity)
-        regime (g c/regime)
-        c  (fmt-comp (g c/composition))]
-    (cond-> [["mass"  (fmt-mass (g c/mass) stellar?)]
-             ["radius" (fmt-radius (g c/radius) stellar?)]]
-      temp        (conj ["temp"  (format "%.0f K" (double temp))])
-      speed       (conj ["speed" (format "%.2f km/s" (double speed))])
-      (and lum (pos? (double lum)))
-      (conj ["lum"   (format "%.3g Lsun" (/ (double lum) solar-lum))])
-      c        (conj ["comp"  c])
-      regime      (conj ["regime" (name regime)])
-      true        (conj ["eid"   (str eid)]))))
+  (fmt/body-facts world eid))
+
+;; ---------------------------------------------------------------------------
+;; Inspector card
+;; ---------------------------------------------------------------------------
 
 (defn inspector-card
   "HUD content for the selected body: a titled card of live facts, anchored beside
    the body's screen position (clamped on-screen). Returns
-   {:rects [...] :text [...]} ready for `render/render-hud` and `render/render-text`,
-   or nil when the entity has no render shape this frame."
+   {:rects [...] :text [...]} or nil when the entity has no render shape this frame."
   [ctx world eid bodies]
-  (when-let [shape (selected-shape bodies eid)]
-    (let [state   (ecs/get-component world eid c/matter-state)
-          title   (naming/display-label eid state)
-          tcol    (state-color state)
-          facts   (body-facts world eid)
-          lines   (into [title] (map (fn [[k v]] (format "%-7s%s" k v)) facts))
-          scale   2.0
-          line-h  20.0
-          pad     12.0
-          char-w  (* scale 6.2)
-          card-w  (+ (* 2 pad) (* char-w (double (apply max (map count lines)))))
-          card-h  (+ (* 2 pad) (* line-h (count lines)))
-          w       (:width (:viewport ctx))
-          h       (:height (:viewport ctx))
-          anchor  (units/render->screen ctx (:position shape))
-          [bx by] (if anchor anchor [(* 0.5 w) (* 0.5 h)])
-          ;; place beside the body, clamped on-screen and BELOW the top-left
-          ;; stats panel (its IMF line spans nearly the full width) so the card
-          ;; never collides with the world HUD text drawn in the same pass.
-          stats-floor 252.0
-          ;; sit to the body's right normally, but flip left when the body is in
-          ;; the right third so the card stays clear of the action palette there.
-          x0 (if (> bx (* 0.62 w))
-               (max 12.0 (- bx card-w 28.0))
-               (max 12.0 (min (- w card-w 12.0) (+ bx 28.0))))
-          y0 (max stats-floor (min (- h card-h 12.0) (- by (* 0.5 card-h))))
-          px->ndcx (fn [px] (- (/ (* 2.0 px) w) 1.0))
-          px->ndcy (fn [py] (- 1.0 (/ (* 2.0 py) h)))
-          rects [{:x0 (px->ndcx x0) :y0 (px->ndcy (+ y0 card-h))
-                  :x1 (px->ndcx (+ x0 card-w)) :y1 (px->ndcy y0)
-                  :color [0.04 0.06 0.12 0.82]}
-                 ;; accent bar under the title
-                 {:x0 (px->ndcx x0) :y0 (px->ndcy (+ y0 line-h pad -2.0))
-                  :x1 (px->ndcx (+ x0 card-w)) :y1 (px->ndcy (+ y0 line-h pad))
-                  :color tcol}]
-          text  (map-indexed
-                 (fn [i s]
-                   {:text s
-                    :x (+ x0 pad)
-                    :y (+ y0 pad (* i line-h))
-                    :scale scale
-                    :color (if (zero? i) tcol [0.86 0.94 1.0 0.96])})
-                 lines)]
-      {:rects rects :text text})))
+  (card/inspector-card ctx world eid bodies))

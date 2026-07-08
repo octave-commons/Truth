@@ -16,7 +16,7 @@
           ctx    (units/make-context camera {:width 1280 :height 720})
           {:keys [ro rd]} (inspect/screen->ray ctx 640.0 360.0)]
       (is (= (:position camera) ro) "ray origin is the camera position")
-      (is (< (Math/abs (- (sp/len rd) 1.0)) 1e-6) "ray direction is normalized"))))
+      (is (< (abs (- (sp/len rd) 1.0)) 1e-6) "ray direction is normalized"))))
 
 (deftest test-project-point-round-trip
   (testing "A render point projects to screen and the ray through that pixel lands near it"
@@ -68,7 +68,11 @@
   (testing "Halo is a closed ring of :line segments around the center"
     (let [camera (cam/make-camera 50.0)
           ctx    (units/make-context camera {:width 1280 :height 720})
-          halo   (inspect/halo-shapes [0.0 0.0 0.0] 2.0 ctx [1.0 1.0 1.0] 16)]
+          halo   (inspect/halo-shapes {:center [0.0 0.0 0.0]
+                                       :r 2.0
+                                       :ctx ctx
+                                       :color [1.0 1.0 1.0]
+                                       :n 16})]
       (is (= 32 (count halo)) "16 segments → 32 vertices")
       (is (every? #(= :line (:render-mode %)) halo))
       (is (every? #(= [1.0 1.0 1.0] (:color %)) halo)))))

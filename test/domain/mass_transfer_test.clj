@@ -9,7 +9,7 @@
    [domain.stellar :as stellar]
    [law.mass-transfer :as lmt]
    [law.stellar :as law]
-   [shape.spatial :as sp]))
+   [domain.spatial.index]))
 
 (deftest bondi-capture-radius-is-smaller-than-bondi-radius
   (let [M   1.0e30

@@ -1,0 +1,50 @@
+<svg width="640" height="400" xmlns="http://www.w3.org/2000/svg">
+<rect x="60.00" y="265.00" width="560.00" height="75.00" fill="lightblue" opacity="0.3"/>
+<rect x="60.00" y="215.00" width="560.00" height="50.00" fill="cyan" opacity="0.3"/>
+<rect x="60.00" y="165.00" width="560.00" height="50.00" fill="lightgreen" opacity="0.3"/>
+<rect x="60.00" y="115.00" width="560.00" height="50.00" fill="yellow" opacity="0.3"/>
+<rect x="60.00" y="40.00" width="560.00" height="75.00" fill="salmon" opacity="0.3"/>
+<path d="M 60.00,-62.54 L 62.81,-36.07 L 65.63,-14.22 L 68.44,4.22 L 71.26,20.05 L 74.07,33.83 L 76.88,45.98 L 79.70,56.78 L 82.51,66.48 L 85.33,75.24 L 88.14,83.21 L 90.95,90.50 L 93.77,97.20 L 96.58,103.40 L 99.40,109.14 L 102.21,114.48 L 105.03,119.46 L 107.84,124.14 L 110.65,128.52 L 113.47,132.65 L 116.28,136.55 L 119.10,140.23 L 121.91,143.72 L 124.72,147.04 L 127.54,150.19 L 130.35,153.19 L 133.17,156.05 L 135.98,158.79 L 138.79,161.41 L 141.61,163.92 L 144.42,166.32 L 147.24,168.63 L 150.05,170.85 L 152.86,172.98 L 155.68,175.04 L 158.49,177.02 L 161.31,178.94 L 164.12,180.78 L 166.93,182.57 L 169.75,184.29 L 172.56,185.96 L 175.38,187.58 L 178.19,189.15 L 181.01,190.67 L 183.82,192.14 L 186.63,193.58 L 189.45,194.97 L 192.26,196.32 L 195.08,197.64 L 197.89,198.92 L 200.70,200.16 L 203.52,201.38 L 206.33,202.56 L 209.15,203.71 L 211.96,204.84 L 214.77,205.93 L 217.59,207.00 L 220.40,208.05 L 223.22,209.07 L 226.03,210.07 L 228.84,211.04 L 231.66,212.00 L 234.47,212.93 L 237.29,213.84 L 240.10,214.74 L 242.91,215.61 L 245.73,216.47 L 248.54,217.31 L 251.36,218.13 L 254.17,218.93 L 256.98,219.72 L 259.80,220.50 L 262.61,221.26 L 265.43,222.00 L 268.24,222.74 L 271.06,223.45 L 273.87,224.16 L 276.68,224.85 L 279.50,225.53 L 282.31,226.20 L 285.13,226.86 L 287.94,227.50 L 290.75,228.14 L 293.57,228.76 L 296.38,229.38 L 299.20,229.98 L 302.01,230.57 L 304.82,231.16 L 307.64,231.73 L 310.45,232.30 L 313.27,232.86 L 316.08,233.41 L 318.89,233.95 L 321.71,234.48 L 324.52,235.00 L 327.34,235.52 L 330.15,236.03 L 332.96,236.53 L 335.78,237.03 L 338.59,237.51 L 341.41,237.99 L 344.22,238.47 L 347.04,238.94 L 349.85,239.40 L 352.66,239.85 L 355.48,240.30 L 358.29,240.74 L 361.11,241.18 L 363.92,241.61 L 366.73,242.04 L 369.55,242.46 L 372.36,242.87 L 375.18,243.28 L 377.99,243.68 L 380.80,244.08 L 383.62,244.48 L 386.43,244.87 L 389.25,245.25 L 392.06,245.63 L 394.87,246.01 L 397.69,246.38 L 400.50,246.75 L 403.32,247.11 L 406.13,247.47 L 408.94,247.82 L 411.76,248.17 L 414.57,248.52 L 417.39,248.86 L 420.20,249.20 L 423.02,249.53 L 425.83,249.86 L 428.64,250.19 L 431.46,250.52 L 434.27,250.84 L 437.09,251.15 L 439.90,251.47 L 442.71,251.78 L 445.53,252.09 L 448.34,252.39 L 451.16,252.69 L 453.97,252.99 L 456.78,253.28 L 459.60,253.57 L 462.41,253.86 L 465.23,254.15 L 468.04,254.43 L 470.85,254.71 L 473.67,254.99 L 476.48,255.26 L 479.30,255.54 L 482.11,255.81 L 484.92,256.07 L 487.74,256.34 L 490.55,256.60 L 493.37,256.86 L 496.18,257.12 L 498.99,257.37 L 501.81,257.62 L 504.62,257.87 L 507.44,258.12 L 510.25,258.37 L 513.07,258.61 L 515.88,258.85 L 518.69,259.09 L 521.51,259.33 L 524.32,259.56 L 527.14,259.80 L 529.95,260.03 L 532.76,260.26 L 535.58,260.48 L 538.39,260.71 L 541.21,260.93 L 544.02,261.15 L 546.83,261.37 L 549.65,261.59 L 552.46,261.81 L 555.28,262.02 L 558.09,262.23 L 560.90,262.44 L 563.72,262.65 L 566.53,262.86 L 569.35,263.07 L 572.16,263.27 L 574.97,263.47 L 577.79,263.67 L 580.60,263.87 L 583.42,264.07 L 586.23,264.27 L 589.05,264.46 L 591.86,264.65 L 594.67,264.85 L 597.49,265.04 L 600.30,265.22 L 603.12,265.41 L 605.93,265.60 L 608.74,265.78 L 611.56,265.97 L 614.37,266.15 L 617.19,266.33 L 620.00,266.51" fill="none" stroke="black" stroke-width="2"/>
+<line x1="60.00" y1="340.00" x2="620.00" y2="340.00" stroke="black" stroke-width="2"/>
+<line x1="60.00" y1="340.00" x2="60.00" y2="40.00" stroke="black" stroke-width="2"/>
+<line x1="137.24" y1="340.00" x2="137.24" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="137.24" y="358.00" text-anchor="middle" font-size="10" fill="black">0.5</text>
+<line x1="233.79" y1="340.00" x2="233.79" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="233.79" y="358.00" text-anchor="middle" font-size="10" fill="black">1.0</text>
+<line x1="330.34" y1="340.00" x2="330.34" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="330.34" y="358.00" text-anchor="middle" font-size="10" fill="black">1.5</text>
+<line x1="426.90" y1="340.00" x2="426.90" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="426.90" y="358.00" text-anchor="middle" font-size="10" fill="black">2.0</text>
+<line x1="523.45" y1="340.00" x2="523.45" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="523.45" y="358.00" text-anchor="middle" font-size="10" fill="black">2.5</text>
+<line x1="620.00" y1="340.00" x2="620.00" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="620.00" y="358.00" text-anchor="middle" font-size="10" fill="black">3.0</text>
+<line x1="716.55" y1="340.00" x2="716.55" y2="345.00" stroke="black" stroke-width="1"/>
+<text x="716.55" y="358.00" text-anchor="middle" font-size="10" fill="black">3.5</text>
+<line x1="55.00" y1="340.00" x2="60.00" y2="340.00" stroke="black" stroke-width="1"/>
+<text x="50.00" y="343.00" text-anchor="end" font-size="10" fill="black">0</text>
+<line x1="55.00" y1="265.00" x2="60.00" y2="265.00" stroke="black" stroke-width="1"/>
+<text x="50.00" y="268.00" text-anchor="end" font-size="10" fill="black">150</text>
+<line x1="55.00" y1="215.00" x2="60.00" y2="215.00" stroke="black" stroke-width="1"/>
+<text x="50.00" y="218.00" text-anchor="end" font-size="10" fill="black">250</text>
+<line x1="55.00" y1="165.00" x2="60.00" y2="165.00" stroke="black" stroke-width="1"/>
+<text x="50.00" y="168.00" text-anchor="end" font-size="10" fill="black">350</text>
+<line x1="55.00" y1="115.00" x2="60.00" y2="115.00" stroke="black" stroke-width="1"/>
+<text x="50.00" y="118.00" text-anchor="end" font-size="10" fill="black">450</text>
+<line x1="55.00" y1="40.00" x2="60.00" y2="40.00" stroke="black" stroke-width="1"/>
+<text x="50.00" y="43.00" text-anchor="end" font-size="10" fill="black">600</text>
+<text x="340.00" y="385.00" text-anchor="middle" font-size="12" fill="black">Semi-major axis (AU)</text>
+<text x="15.00" y="190.00" text-anchor="middle" font-size="12" fill="black">T_eff (K)</text>
+<text x="340.00" y="25.00" text-anchor="middle" font-size="14" fill="black">Phase 0 handoff: thermal band vs orbital distance</text>
+<rect x="485.00" y="45.00" width="130.00" height="90.00" fill="white" opacity="0.7"/>
+<rect x="490.00" y="50.00" width="12.00" height="12.00" fill="lightblue" opacity="0.8"/>
+<text x="506.00" y="60.00" text-anchor="start" font-size="9" fill="black">0-150 K</text>
+<rect x="490.00" y="66.00" width="12.00" height="12.00" fill="cyan" opacity="0.8"/>
+<text x="506.00" y="76.00" text-anchor="start" font-size="9" fill="black">150-250 K</text>
+<rect x="490.00" y="82.00" width="12.00" height="12.00" fill="lightgreen" opacity="0.8"/>
+<text x="506.00" y="92.00" text-anchor="start" font-size="9" fill="black">250-350 K</text>
+<rect x="490.00" y="98.00" width="12.00" height="12.00" fill="yellow" opacity="0.8"/>
+<text x="506.00" y="108.00" text-anchor="start" font-size="9" fill="black">350-450 K</text>
+<rect x="490.00" y="114.00" width="12.00" height="12.00" fill="salmon" opacity="0.8"/>
+<text x="506.00" y="124.00" text-anchor="start" font-size="9" fill="black">450-600 K</text>
+</svg>
