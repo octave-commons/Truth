@@ -187,3 +187,12 @@
   spore: receipt-driven-regression-recovery
   receipt-refs: receipt 96
   note: Receipt 96 held the intended design; regression triage should tail receipts before writing replacement code
+- ts: 2026-07-08T21:13:07.197808486Z
+  session: ses_0bc7061ffffeIb49V3HNQNU3n3
+  task: Pay fork tax for Gates of Truth dashboard-awareness changes
+  p-efficiency: 0.9
+  p-friction: 0.1
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: 2026-07-08T21:09:37Z
+  note: Followed fork-tax skill end-to-end: detected 4 significant files, regenerated handoff artifacts, committed, tagged, pushed, and recorded receipt. Manifest generation with unicode paths required -c core.quotepath=off; otherwise smooth.
