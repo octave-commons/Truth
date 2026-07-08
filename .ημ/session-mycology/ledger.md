@@ -214,3 +214,12 @@
   spore: none
   receipt-refs: none
   note: BHL accretion used (:genesis/dt world) defaulting to 1.0 instead of (:sim/dt ~1.7e10 s), making accretion 10^10 too slow. Looked like a missing feature but was a unit bug. Headless sim verified star at 3000 ticks.
+- ts: 2026-07-08T23:11:49Z
+  session: ses_0bc00b06cffeTUmP4FeMRsnr7e
+  task: Pay fork tax for research-actor schedule, README, and mycology changes
+  p-efficiency: 0.85
+  p-friction: 0.2
+  p-skill-candidate: 0.4
+  spore: none
+  receipt-refs: 2026-07-08T23:11:49Z
+  note: Detected 28 significant files (actor schedules, README, receipts, ledger, new spore, handoff artifacts). Regenerated .ημ/Π_* artifacts via bb script with -c core.quotepath=false. No Clojure source changes; verification limited to EDN sanity on actor.edn. Committed, tagged, and pushed main + Π-20260708231149. No concurrent dirt.
