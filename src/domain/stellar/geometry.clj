@@ -37,7 +37,7 @@
       (:gas-giant :brown-dwarf :planet)
       (let [r (sphere-radius m planet-material-density)]
         {:radius r :density planet-material-density})
-      (:protostar :star)
+      (:protostar :star :condensed-core)
       (let [L     (or angular-momentum [0.0 0.0 0.0])
             o     (double (or oblateness 1.0))
             a     (double (or radius (sphere-radius m planet-material-density)))
@@ -87,9 +87,9 @@
         rad-map (get-in world [:components c/radius] {})]
     (persistent!
      (reduce-kv (fn [acc eid st]
-                  (if (and (#{:planetesimal :gas-giant :brown-dwarf :planet :protostar :star} st)
-                           (contains? mass-map eid)
-                           (contains? rad-map eid))
+                   (if (and (#{:planetesimal :gas-giant :brown-dwarf :planet :condensed-core :protostar :star} st)
+                            (contains? mass-map eid)
+                            (contains? rad-map eid))
                     (conj! acc eid)
                     acc))
                 (transient [])

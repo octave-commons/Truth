@@ -79,7 +79,7 @@
   "Temperature for one body given its region and the star heating tables."
   [region state dt star-lums star-poss star-bands]
   (cond
-    (and (#{:protostar :star} state) (:mass region) (:radius region))
+    (and (#{:protostar :star :condensed-core} state) (:mass region) (:radius region))
     (thermo/virial-temperature (:mass region) (:radius region))
 
     (#{:planetesimal :gas-giant :brown-dwarf :planet} state)

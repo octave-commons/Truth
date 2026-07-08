@@ -31,16 +31,22 @@
     (is (= :nebula (next-state (region pm :density 1.0e-16 :radius 1.0e10)))))
   (testing "Jeans-unstable but still a single parcel ⇒ stays nebula (not yet accreted)"
     (is (= :nebula (next-state (apply region pm (mapcat identity unstable))))))
-  (testing "Jeans-unstable AND accreted past one parcel, sub-stellar ⇒ planetesimal"
-    (is (= :planetesimal (next-state (apply region (* 1.2 pm) (mapcat identity unstable))))))
-  (testing "Jeans-unstable AND accreted to gas-giant mass ⇒ gas-giant"
-    (is (= :gas-giant (next-state (apply region (* 5.0 pm) (mapcat identity unstable))))))
-  (testing "Jeans-unstable AND accreted to brown-dwarf mass ⇒ brown dwarf"
-    (is (= :brown-dwarf (next-state (apply region law/deuterium-burning-mass
-                                           (mapcat identity unstable))))))
-  (testing "Jeans-unstable AND accreted to stellar-forming mass ⇒ protostar"
-    (is (= :protostar (next-state (apply region law/hydrogen-burning-mass
-                                         (mapcat identity unstable)))))))
+  (testing "Jeans-unstable AND accreted past one parcel, sub-stellar ⇒ condensed core"
+    (is (= :condensed-core (next-state (apply region (* 1.2 pm)
+                                                (concat (mapcat identity unstable)
+                                                        [:density classifier/core-condensation-density]))))))
+  (testing "Jeans-unstable AND accreted to gas-giant mass ⇒ condensed core"
+    (is (= :condensed-core (next-state (apply region (* 5.0 pm)
+                                                (concat (mapcat identity unstable)
+                                                        [:density classifier/core-condensation-density]))))))
+  (testing "Jeans-unstable AND accreted to brown-dwarf mass ⇒ condensed core"
+    (is (= :condensed-core (next-state (apply region law/deuterium-burning-mass
+                                                (concat (mapcat identity unstable)
+                                                        [:density classifier/core-condensation-density]))))))
+  (testing "Jeans-unstable AND accreted to stellar-forming mass ⇒ condensed core"
+    (is (= :condensed-core (next-state (apply region law/hydrogen-burning-mass
+                                              (concat (mapcat identity unstable)
+                                                      [:density classifier/core-condensation-density])))))))
 
 (deftest planetesimal-promotes-up-the-substellar-ladder
   (testing "planetesimal below the opacity limit keeps accreting as a planetesimal"
@@ -53,6 +59,18 @@
   (testing "brown dwarf that has accreted to the hydrogen-burning limit becomes a protostar"
     (is (= :protostar (next-state (region law/hydrogen-burning-mass
                                           :state :brown-dwarf :radius 1.0e9))))))
+
+(deftest condensed-core-climbs-the-mass-ladder
+  (testing "condensed core below the opacity limit stays a core"
+    (is (= :condensed-core (next-state (region (* 1.2 pm) :state :condensed-core :radius 1.0e9)))))
+  (testing "condensed core past the opacity limit becomes a gas giant"
+    (is (= :gas-giant (next-state (region (* 5.0 pm) :state :condensed-core :radius 1.0e9)))))
+  (testing "condensed core past the deuterium limit becomes a brown dwarf"
+    (is (= :brown-dwarf (next-state (region law/deuterium-burning-mass
+                                            :state :condensed-core :radius 1.0e9)))))
+  (testing "condensed core past the hydrogen-burning limit becomes a protostar"
+    (is (= :protostar (next-state (region law/hydrogen-burning-mass
+                                          :state :condensed-core :radius 1.0e9))))))
 
 (deftest protostar-fate-is-decided-by-mass-and-ignition
   (testing "hot, ≥0.08 M⊙ protostar ignites hydrogen → star"

@@ -25,7 +25,7 @@
 ;; spatial neighbour query per parcel per tick (an O(N) storm). Sinks are the
 ;; handful of condensed bodies (see law.stellar state ladder).
 (def ^:private sink-states
-  #{:planetesimal :gas-giant :brown-dwarf :protostar :star :planet})
+  #{:condensed-core :planetesimal :gas-giant :brown-dwarf :protostar :star :planet})
 
 (def ^:private gas-pred
   "Predicate matching nebula gas parcels."

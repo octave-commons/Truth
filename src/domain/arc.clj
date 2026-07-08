@@ -118,6 +118,7 @@
   [event-category]
   (case event-category
     :nebula-collapse        "The nebula collapses. +3 quanta"
+    :condensed-core-formation "A dense core condenses. +3 quanta"
     :planetesimal-formation "A planetesimal condenses. +2 quanta"
     :gas-giant-formation    "A giant planet embryo forms. +4 quanta"
     :brown-dwarf-formation  "A brown dwarf glows. +8 quanta"
@@ -133,6 +134,7 @@
 (def ^:private event-kind->category
   "Map ledger event kinds to the player-facing notification categories."
   {:event/nebula-collapse       :nebula-collapse
+   :event/condensed-core-formation :condensed-core-formation
    :event/planetesimal-formation :planetesimal-formation
    :event/gas-giant-formation    :gas-giant-formation
    :event/brown-dwarf-formation  :brown-dwarf-formation

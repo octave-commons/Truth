@@ -33,6 +33,7 @@
    for downward, unchanged, or already-emitted transitions."
   [old-state new-state]
   (case new-state
+    :condensed-core (when (= old-state :nebula)        :event/condensed-core-formation)
     :star             (when (= old-state :protostar)     :event/stellar-ignition)
     :protostar        (when (= old-state :nebula)        :event/protostar-formation)
     :brown-dwarf      (when (= old-state :nebula)        :event/brown-dwarf-formation)

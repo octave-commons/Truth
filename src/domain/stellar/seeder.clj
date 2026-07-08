@@ -11,6 +11,7 @@
    [domain.ecs.components         :as c]
    [domain.stellar.thermodynamics :as thermo]
    [domain.stellar.structure      :as structure]
+   [domain.stellar.collapse       :as collapse]
    [domain.stellar.classifier     :as classifier]
    [domain.stellar.sink           :as sink]
    [domain.stellar.disc           :as disc]
@@ -67,16 +68,19 @@
     [(ecs/put-components w eid (seed-clump spec)) eid]))
 
 (defn- condensation-candidate?
-  "True when a :nebula parcel is ready to condense to :planetesimal.
-   Planetesimals must form from rotationally-supported disk material, not from
-   the free-falling envelope or the ambient nebula (see
-   kanban/tasks/seed-and-grow-condensation.md)."
-  [world eid gas-mass zones]
+  "True when a :nebula parcel in the rotationally-supported disk is
+   Jeans-unstable but not dense enough to form a hydrostatic core. These
+   parcels form planetesimals via seed-and-grow instead of collapsing to a
+   :condensed-core."
+  [world eid _gas-mass zones]
   (and (= :nebula (ecs/get-component world eid c/matter-state))
        (not (ecs/get-component world eid c/condensation-seeded))
        (disc/in-disc? world eid)
+       (< (double (or (ecs/get-component world eid c/mass) 0.0)) law/opacity-limit-mass)
        (let [region (thermo/entity->region world eid)]
-         (= :planetesimal (classifier/classify-next-state region gas-mass zones)))))
+         (and (collapse/jeans-unstable? region)
+              (< (double (or (:density region) 0.0)) classifier/core-condensation-density)
+              (not (sink/within-existing-sink? (:position region) zones))))))
 
 (defn- local-density-max?
   "True when `eid` is at least as dense as all other :nebula parcels within

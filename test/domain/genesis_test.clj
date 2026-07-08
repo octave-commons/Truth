@@ -303,7 +303,8 @@
                      w
                      (recur (arc/tick-genesis w) (inc i))))
           events (->> (event/events-since final 0) (map :kind) frequencies)
-          promotions (+ (get events :event/planetesimal-formation 0)
+          promotions (+ (get events :event/condensed-core-formation 0)
+                        (get events :event/planetesimal-formation 0)
                         (get events :event/gas-giant-formation 0)
                         (get events :event/brown-dwarf-formation 0)
                         (get events :event/protostar-formation 0)

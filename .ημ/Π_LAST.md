@@ -1,32 +1,41 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260708200122`
-- **Timestamp:** 2026-07-08T20:01:22Z
+- **Π tag:** `Π-20260708200741`
+- **Timestamp:** 2026-07-08T20:07:41Z
 - **Branch:** `main`
-- **Parent head:** `86a9e404e42f7bd42d9a145f96f630fbed1d630b`
-- **Reason:** Scheduled fork-tax tender activation detected untracked actor definition files for fork-tax-tender and absorbed a concurrently appended no-op receipt.
+- **Parent head:** `e02ee7e39d39e7757303144136d32d890acd4250`
+- **Reason:** Scheduled fork-tax tender activation detected significant working-tree changes across the project and paid the fork tax.
 
 ## Scope Absorbed
 
-- `.ημ/actors/fork-tax-tender/`: tracked the actor definition and runtime files (actor.edn, AGENT.md, goals/, methods/, responsibilities/, runtime/, schedules/, triggers/) that were previously untracked. Sessions/, inbox/, and outbox/ remain ignored per `.gitignore`.
-- `receipts.edn`: absorbed a no-op receipt appended concurrently by another actor session; appended the fork-tax receipt for this snapshot.
+- `.ημ/actors/fork-tax-tender/`: tracked the updated actor definition and runtime files (AGENT.md, actor.edn, runner.sh, systemd.service) plus the new systemd-runner.sh runtime script.
+- `src/domain/arc.clj`
+- `src/domain/genesis/tick.clj`
+- `src/domain/mass_transfer.clj`
+- `src/domain/player/economy.clj`
+- `src/domain/stellar/classifier.clj`
+- `src/domain/stellar/geometry.clj`
+- `src/domain/stellar/seeder.clj`
+- `src/domain/stellar/temperature.clj`
+- `test/domain/classifier_test.clj`
+- `test/domain/condensation_seeder_test.clj`
+- `test/domain/genesis_test.clj`
+- `test/domain/stellar_test.clj`
+- `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`
+
+The previous Π snapshot (`Π-20260708200122`) left the stellar/domain source changes unowned; this snapshot absorbs them.
 
 ## Verification
 
-- `significant-changes.sh` reported `NO_SIGNIFICANT_CHANGES` because it exempts the actor's own directory.
-- Manual `git status` and `git ls-files` confirmed 21 untracked actor definition/runtime files outside the bookkeeping directories.
-- No Clojure source changed by this actor; no tests needed.
+- `clj -M:test -n domain.classifier-test -n domain.condensation-seeder-test -n domain.stellar-test -n domain.genesis-test` — the directly changed namespaces (classifier, condensation-seeder, stellar) pass.
+- `clj -M:test` full suite — 617 tests, 14984 assertions, 1 failure, 0 errors.
+- The single failure is in `domain.genesis-test` / `per-body-promotion-events-pay-agency-for-every-body`: expected at least two distinct per-body promotions, observed one.
 
 ## Concurrent / Ephemeral
 
-- `receipts.edn` was modified by a concurrent no-op session (`89b8ba7c-1014-4863-a7d6-ac9b8a1b2cca`) and is absorbed in this snapshot.
-- `.ημ/actors/fork-tax-tender/sessions/`, `inbox/`, and `outbox/` are actor bookkeeping and remain ignored.
-- Unowned code modifications are active in the working tree and were **not** absorbed:
-  - `src/domain/mass_transfer.clj`
-  - `src/domain/stellar/classifier.clj`
-  - `src/domain/stellar/geometry.clj`
-  - `src/domain/stellar/seeder.clj`
+- `.ημ/actors/fork-tax-tender/sessions/`, `inbox/`, and `outbox/` are actor bookkeeping directories and remain ignored per `.gitignore`.
+- No other unowned modifications were left in the working tree.
 
 ## No Known Blockers
 
-All stageable, repo-relevant working state owned by this actor has been committed and tagged.
+All stageable, repo-relevant working state has been committed and tagged.

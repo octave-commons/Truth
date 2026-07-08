@@ -137,26 +137,35 @@
       :else :protostar)))
 
 (defn- condense-next-state
-  "Diffuse gas condenses when Jeans-unstable and either dense enough or more
-   massive than a single gas parcel, and outside existing sink zones."
-  [{:keys [matter-state density position mass] :as region}
-   gas-particle-mass sink-zones]
+  "Diffuse gas condenses to a :condensed-core when Jeans-unstable and dense
+   enough to be optically thick, and outside existing sink zones. Mass is
+   irrelevant at the moment of condensation; the core climbs the substellar
+   ladder as it accretes."
+  [{:keys [matter-state density position] :as region}
+   _gas-particle-mass sink-zones]
   (if (and (collapse/jeans-unstable? region)
-           (or (>= (double (or density 0.0)) core-condensation-density)
-               (> (double (or mass 0.0)) (double (or gas-particle-mass 0.0))))
+           (>= (double (or density 0.0)) core-condensation-density)
            (not (sink/within-existing-sink? position sink-zones)))
-    (let [m (double (or mass 0.0))]
-      (cond
-        (>= m law/hydrogen-burning-mass) :protostar
-        (>= m law/deuterium-burning-mass) :brown-dwarf
-        :else                            (law/substellar-mass-class m)))
+    :condensed-core
     (or matter-state :nebula)))
+
+(defn- condensed-core-up-ladder
+  "Promote a condensed gas core up the mass ladder. It stays a core until it
+   reaches the opacity limit, then becomes a gas giant, brown dwarf, or
+   protostar."
+  [m]
+  (cond
+    (>= m law/hydrogen-burning-mass)  :protostar
+    (>= m law/deuterium-burning-mass) :brown-dwarf
+    (>= m law/opacity-limit-mass)     :gas-giant
+    :else                             :condensed-core))
 
 (def ^:private substellar-state-map
   "States that climb the substellar mass ladder share the same transition fn."
   {:brown-dwarf substellar-up-ladder
    :gas-giant   substellar-up-ladder
-   :planetesimal substellar-up-ladder})
+   :planetesimal substellar-up-ladder
+   :condensed-core condensed-core-up-ladder})
 
 (defn classify-next-state
   "Pure transition function for one body's matter-state, given its physical

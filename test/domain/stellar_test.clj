@@ -655,7 +655,7 @@
           zones (sink/sink-exclusion-zones w2)
           region (thermo/entity->region w2 parcel-eid)
           next-state (classifier/classify-next-state region 1e25 zones)]
-      (is (= :gas-giant next-state) "Parcel outside sink radius condenses to :gas-giant"))))
+      (is (= :condensed-core next-state) "Parcel outside sink radius condenses to :condensed-core"))))
 
 (deftest test-sink-formation-does-not-absorb-gas
   (testing "sink-formation NO LONGER swallows :nebula gas whole — gas→sink accretion

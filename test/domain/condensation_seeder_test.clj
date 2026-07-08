@@ -36,8 +36,8 @@
   (assoc w :genesis/sim-time (- classifier/condense-interval (double dt))
          :sim/dt (double dt)))
 
-(deftest seeder-emits-seed-for-planetesimal-condensation
-  (testing "a :nebula parcel heading for :planetesimal gets a spawn request"
+  (deftest seeder-emits-seed-for-planetesimal-condensation
+  (testing "a :nebula parcel in the disk gets a planetesimal spawn request"
     (let [w (ecs/empty-world)
           [w eid] (ecs/spawn w)
           region (unstable-region (* 1.2 pm))
@@ -56,8 +56,6 @@
                 (with-condense-tick 2.0e11))
           ws ((:run (stellar/condensation-seeder-system)) w)
           specs (get-in ws [c/spawn-request-condense eid])]
-      (is (= :planetesimal (classifier/classify-next-state region pm))
-          "precondition: the parcel is a planetesimal condense candidate")
       (is (seq specs) "spawn request was emitted")
       (is (= 1 (count specs)) "exactly one seed spec")
       (is (= :planetesimal (:matter-state (first specs))))
@@ -237,8 +235,8 @@
                        :genesis/gas-smoothing-radius 1.0e14
                        :genesis/feeding-zone-factor structure/feeding-zone-factor))
           ws ((:run (classifier/classifier-system)) w)]
-      (is (= :protostar (get-in ws [c/matter-state eid]))
-          "massive gas parcel still collapses to protostar")
+      (is (= :condensed-core (get-in ws [c/matter-state eid]))
+          "massive, dense parcel collapses to condensed-core first")
       (is (some? (get-in ws [c/accretion-radius eid]))
           "big condense still latches a feeding zone"))))
 

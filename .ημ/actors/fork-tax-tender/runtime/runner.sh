@@ -5,6 +5,4 @@ set -euo pipefail
 # Dispatches a one-shot OpenCode session that checks for significant changes
 # and pays the fork tax if needed.
 
-exec "/home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh" \
-  "fork-tax-tender" \
-  "Check for significant changes in the Gates of Truth repository. If significant, pay the fork tax. Otherwise record a no-op receipt and exit."
+exec "/home/err/spaces/Truth/.eta-mu/actors/fork-tax-tender/runtime/systemd-runner.sh"

@@ -9,7 +9,7 @@
                              :service "fork-tax-tender.service"
                              :interval "1h"
                              :install "systemctl --user enable fork-tax-tender.timer && systemctl --user start fork-tax-tender.timer"
-                             :files ["runtime/systemd.service" "runtime/systemd.timer"]}}
+                             :files ["runtime/systemd.service" "runtime/systemd.timer" "runtime/systemd-runner.sh"]}}
  :actor/inbox-path ".eta-mu/actors/fork-tax-tender/inbox"
  :actor/outbox-path ".eta-mu/actors/fork-tax-tender/outbox"
  :actor/sessions-path ".eta-mu/actors/fork-tax-tender/sessions"}
