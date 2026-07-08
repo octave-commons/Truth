@@ -1,0 +1,5 @@
+# Cron fallback for fork-tax-tender (if systemd user timers are unavailable)
+# Add with `crontab -e`.
+
+# Run hourly at the top of the hour
+# 0 * * * * /home/err/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh fork-tax-tender "Check for significant changes in the Gates of Truth repository. If significant, pay the fork tax. Otherwise record a no-op receipt and exit."

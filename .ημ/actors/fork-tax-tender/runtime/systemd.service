@@ -1,0 +1,14 @@
+[Unit]
+Description=Auto fork-tax tender for Gates of Truth
+After=network-online.target opencode-server.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/err/spaces/Truth
+ExecStart=%h/.agents/skills/eta-mu-actor-agent/scripts/dispatch-actor.sh fork-tax-tender "Check for significant changes in the Gates of Truth repository. If significant, pay the fork tax. Otherwise record a no-op receipt and exit."
+Environment="HOME=%h"
+Environment="USER=%u"
+Environment="PATH=%h/.opencode/bin:%h/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=default.target

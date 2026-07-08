@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260708195252"
-  :generated "2026-07-08T19:52:52Z"
-  :previous-tag "Π-20260708194052"
-  :previous-commit "452e5fbb293235c0d632136ec87f60449d72741e"
+  :tag "Π-20260708200122"
+  :generated "2026-07-08T20:01:22Z"
+  :previous-tag "Π-20260708195252"
+  :previous-commit "86a9e404e42f7bd42d9a145f96f630fbed1d630b"
   :files (
     (M ".agents/skills/deep-research/SKILL.md" :sha256 "b1d883bf96a9f015bf6c4b5580b6913fb379651ee9c2225156c850e380820d6f")
     (M ".clj-kondo/config.edn" :sha256 "05b91c851836138cd8a6d7e4fe6a24c87610855dd1f2e2eb032cd6513eab5720")
@@ -17,9 +17,30 @@
     (M ".opencode/opencode.json" :sha256 "b6c736f1410ce6c8ed878f9664b4959bfe284acb2863f0e50812538f7343bc99")
     (M ".opencode/plugin/index.ts" :sha256 "1a56c6b823a51264101f8881cf00d71863a388b5532ba958d85590bd00803fd9")
     (M ".opencode/plugin/package.json" :sha256 "9f082086a9911f555d66bcedf328d4b678d4c795271c43147e6a5cc551f27c61")
-    (M ".opencode/skill/agent-notes-splitter/SKILL.md" :sha256 "5b1f2fd969a712f8d01b154d5fb822c10b79b7c2ef5de51d8c58ff4e3b8a9c41")
+    (M ".opencode/skill/agent-notes-splitter/SKILL.md" :sha256 "e3d085b1bb0cb5173642f5331bd33a3205472867d032d2451bfd32047438a400")
     (M ".opencode/skill/truth-eta-mu-kanban/SKILL.md" :sha256 "37ca07361390d96af60b9ce740521b51270d07e6c0395482ee87c36f724a59aa")
     (M ".ημ/PRINCIPLE.edn" :sha256 "7205cb7c9ae95ee60d10e0cf8e4148c19c2f5afdd13f3bf86c21343f10cdab31")
+    (M ".ημ/actors/fork-tax-tender/AGENT.md" :sha256 "2a99560d95f6c2619b5a4c3036ca7f84f6b21f4a87efd9563e3270ceee20d879")
+    (M ".ημ/actors/fork-tax-tender/actor.edn" :sha256 "32c1d617f21efcf6a0df99b2399af374a1a2f2749640504676adaf0f5c2af818")
+    (M ".ημ/actors/fork-tax-tender/goals/README.md" :sha256 "1f3cecede54e263a720e329378ab711865ab6d76ad8e69a71e2a2e46845f9ec4")
+    (M ".ημ/actors/fork-tax-tender/goals/detect-and-pay.md" :sha256 "939a4f1e8a231b7823b74a104027d5f4460ae68b20dab04d07a9b746aa6c0b0a")
+    (M ".ημ/actors/fork-tax-tender/methods/README.md" :sha256 "566b92f225d9bd98944ec40175494f63bf1aaee4c61a4824baf4cfbf5c4ea3fa")
+    (M ".ημ/actors/fork-tax-tender/methods/check-significant-changes.md" :sha256 "bab11339bb44708150f3b101d16d6c6be7c72250133fe3cb47ed605fba3e6a24")
+    (M ".ημ/actors/fork-tax-tender/methods/fork-tax-workflow.md" :sha256 "cc6f3481190c066b516750794956417cf7cdecf9ef24a6def323c0232e46b8eb")
+    (M ".ημ/actors/fork-tax-tender/responsibilities/README.md" :sha256 "23b3fb3ab672fca33897a06698e547179d9742af44fa2057bb7c4b2f245962e3")
+    (M ".ημ/actors/fork-tax-tender/responsibilities/safety.md" :sha256 "907bb6b2ef4fba42c029fe5d02229c56a7d992a70dff77c73264d3a536caa8ac")
+    (M ".ημ/actors/fork-tax-tender/runtime/cron.example" :sha256 "3af677326340c575a336776ce0e30a2ca88d9353e01decc942af10d9fba9409e")
+    (M ".ημ/actors/fork-tax-tender/runtime/poll-inbox.sh" :sha256 "11cd2d0e8bf54971d7596423f3fac5a9bd26fcb48fd2dee06bb9796ed305f770")
+    (M ".ημ/actors/fork-tax-tender/runtime/runner.sh" :sha256 "6160e5c5b5617399a4d6711064758da4a2ccffacc6b5eca069f358237f144108")
+    (M ".ημ/actors/fork-tax-tender/runtime/significant-changes.sh" :sha256 "7c39a5101f81b10fa3e0251b3402727201a35084bbe41ceae97e590e9162fabb")
+    (M ".ημ/actors/fork-tax-tender/runtime/systemd.service" :sha256 "fc853f5705c0c0308a178697192358a3e63d5728e6314d1c6858b49a0fa027df")
+    (M ".ημ/actors/fork-tax-tender/runtime/systemd.timer" :sha256 "d33545b5b0845a22451df51583a66613ae70717ad58068b6b0ad26a5d3994732")
+    (M ".ημ/actors/fork-tax-tender/runtime/tmux-attach.sh" :sha256 "36131c06369e385f18bac0830622e801f6f24add3251d68abd843f3d3418b048")
+    (M ".ημ/actors/fork-tax-tender/runtime/tmux-start.sh" :sha256 "7353edb990517eb15f100cdbd2af8d3fd2693a4c57a8db49d8d4ccfad231271b")
+    (M ".ημ/actors/fork-tax-tender/schedules/README.md" :sha256 "dbe1c21cca8ba2240a3d5ab6007a89e686681f2f5c4bb4362b7177219cfc4c64")
+    (M ".ημ/actors/fork-tax-tender/schedules/hourly-systemd-timer.md" :sha256 "cedbb96273194dac97e93a49bc3403cbf5f1fd4ff253035fb334276bc04d0594")
+    (M ".ημ/actors/fork-tax-tender/triggers/README.md" :sha256 "350a91483f31f83d858fa2f27737e1bbf4561a1dff5dc3d9fc150db6d3f9d6e9")
+    (M ".ημ/actors/fork-tax-tender/triggers/scheduled.md" :sha256 "848d1d2e5dd25b783e13dc31a3164db848bbd9f539ff1943f72c93983e3f2f3f")
     (M ".ημ/actors/truth-code-reviewer/AGENT.md" :sha256 "b51d003b4669ebd5014317d97cd29e5d3ebaded7e7ad4ef9c2f7dab9e79f7cde")
     (M ".ημ/actors/truth-code-reviewer/actor.edn" :sha256 "cd98535c34b79b190a1b5c65d3811187b9582b5ba9f33dac11e02b5592908597")
     (M ".ημ/actors/truth-code-reviewer/goals/README.md" :sha256 "695d9ad86475b179c061d27775074bbc20ad275b185e5436a73dd20d06cdc515")
@@ -225,8 +246,9 @@
     (M ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "1ee5e7cbdf8e68ad0d1548800d90c697b5bf63dfbf3526baf2a759539eab5204")
     (M ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "d82ff75f909724d9992ad974c9ec3bb4dc4ceba3b742c18c4782395d27945c42")
     (M ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "d9b185021a74e28613f039aef8f2f300e44dfc59bbdf0fa30b709b15ce73956c")
-    (M ".ημ/Π_LAST.md" :sha256 "8c7b7252b16aacfeb5a81f97800a6e529d73ef91b7d7bb2018ae14152b577256")
-    (M ".ημ/Π_STATE.sexp" :sha256 "818e0b0068cd3ed0c930c572acdbc11923533d61b283ef3eb402cbd6642c2267")
+    (M ".ημ/Π_LAST.md" :sha256 "c293b7be3549c1e00d1108247e05bcb6ee225a438f3ed04b2d1837a9137a90a2")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "a52d9a94d5c4c5b7a245afe95bb4be5145392e6b326dfd9c4dd2198ad20cb4fc")
+    (M ".ημ/Π_STATE.sexp" :sha256 "2f50133137c8dbce9ad4c72bb88825a537196a91fa5a811a036f1a102f3e5ea4")
     (M "AGENTS.md" :sha256 "e5e872dec66f8e24b782ae969e3e9431640bb3a52238e2ee1cc0d327e204c0fc")
     (M "CLAUDE.md" :sha256 "5e9b835a5d8690bb9b86a4f066fbc8f1ab2ff24ed16c82a4aa19d0071030ff2f")
     (M "EOF" :sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
@@ -544,7 +566,7 @@
     (M "kanban/tasks/tick-perf-drift-profile.md" :sha256 "a0570225b1245a6214f27866b783275b56262d6e0f6095e4f3de09f670ceec92")
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "c3d745aea1e8b3618fae8d50cec48f09ff28ebf8b49a04b6e347251158528a77")
+    (M "receipts.edn" :sha256 "8a17f768950b355850f9474c57ca60ba88727a3ee4c76a0636733813877b7d68")
     (M "receipts.log" :sha256 "89c463935a49ec884c96bde509dc8526dc16d7ac58a777e97bc540a14ea8735c")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "3ad5a43c33858831fc5d204ccb196c2703952f9831909ff4db00837e8f8a4fa4")
@@ -625,7 +647,7 @@
     (M "src/domain/stellar/fusion.clj" :sha256 "a3ec37fbafc6f531b4b4dffa19f6b8a551646ccd8a80b52172eedc7aa20ea274")
     (M "src/domain/stellar/geometry.clj" :sha256 "18ba05a14d81a19ba470a5f9330b229c24126ff6f7d467a5b5715a1de4d0c483")
     (M "src/domain/stellar/merge.clj" :sha256 "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba")
-    (M "src/domain/stellar/seeder.clj" :sha256 "cf653fb9a71d35f5d2e517efd299f1c13ed9a60f46358c81d641432bad711dcd")
+    (M "src/domain/stellar/seeder.clj" :sha256 "f2935daa9a810ded17f44ab92e0887dfe5e249f250126ffd6fe399ee295bbbcb")
     (M "src/domain/stellar/sink.clj" :sha256 "576220b07b29625a3e83eb166327d359d1ba7762eeca48ee8bb9f79119436191")
     (M "src/domain/stellar/structure.clj" :sha256 "8b58d11a04a106c2baf22498160d0c09068933007bd9cf3752198dd7b3dd5f69")
     (M "src/domain/stellar/temperature.clj" :sha256 "f43e28f62e7c8a01521356c045ec6e7238388e21d89f8a28fbde172000b37af5")
