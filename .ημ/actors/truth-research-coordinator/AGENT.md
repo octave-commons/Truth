@@ -18,7 +18,7 @@ mode: all
                  :automated {:type :systemd-timer
                              :timer "truth-research-coordinator.timer"
                              :service "truth-research-coordinator.service"
-                             :interval "72h"
+                             :interval "24h"
                              :install "systemctl --user enable truth-research-coordinator.timer && systemctl --user start truth-research-coordinator.timer"}}
  :actor/inbox-path ".eta-mu/actors/truth-research-coordinator/inbox"
  :actor/outbox-path ".eta-mu/actors/truth-research-coordinator/outbox"

@@ -8,7 +8,7 @@
                  :automated {:type :systemd-timer
                              :timer "truth-research-geology.timer"
                              :service "truth-research-geology.service"
-                             :interval "48h"
+                             :interval "24h"
                              :install "systemctl --user enable truth-research-geology.timer && systemctl --user start truth-research-geology.timer"}}
  :actor/inbox-path ".eta-mu/actors/truth-research-geology/inbox"
  :actor/outbox-path ".eta-mu/actors/truth-research-geology/outbox"

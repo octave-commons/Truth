@@ -1,9 +1,8 @@
 [Unit]
-Description=Deep research for truth-research-culture (every 48h)
+Description=Deep research for truth-research-culture (daily at 12:00 local time)
 
 [Timer]
-OnBootSec=30min
-OnUnitActiveSec=48h
+OnCalendar=*-*-* 12:00:00
 Persistent=true
 
 [Install]

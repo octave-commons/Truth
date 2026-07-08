@@ -205,3 +205,12 @@
   spore: none
   receipt-refs: none
   note: Manifest generation via bash while-read mangled Unicode paths; fell back to Python. Self-referential manifest hash remains circular and stale. Snapshot pushed successfully as Π-20260708221336.
+- ts: 2026-07-08T22:26:55.332029430Z
+  session: ses_0c0f9f161ffegZK7S36nqvx4Zs
+  task: Fix star-formation regression from dt mismatch in mass-transfer
+  p-efficiency: 0.65
+  p-friction: 0.7
+  p-skill-candidate: 0.8
+  spore: none
+  receipt-refs: none
+  note: BHL accretion used (:genesis/dt world) defaulting to 1.0 instead of (:sim/dt ~1.7e10 s), making accretion 10^10 too slow. Looked like a missing feature but was a unit bug. Headless sim verified star at 3000 ticks.

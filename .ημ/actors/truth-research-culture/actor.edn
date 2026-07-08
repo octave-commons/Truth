@@ -8,7 +8,7 @@
                  :automated {:type :systemd-timer
                              :timer "truth-research-culture.timer"
                              :service "truth-research-culture.service"
-                             :interval "48h"
+                             :interval "24h"
                              :install "systemctl --user enable truth-research-culture.timer && systemctl --user start truth-research-culture.timer"}}
  :actor/inbox-path ".eta-mu/actors/truth-research-culture/inbox"
  :actor/outbox-path ".eta-mu/actors/truth-research-culture/outbox"

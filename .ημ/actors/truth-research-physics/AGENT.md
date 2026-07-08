@@ -18,7 +18,7 @@ mode: all
                  :automated {:type :systemd-timer
                              :timer "truth-research-physics.timer"
                              :service "truth-research-physics.service"
-                             :interval "48h"
+                             :interval "24h"
                              :install "systemctl --user enable truth-research-physics.timer && systemctl --user start truth-research-physics.timer"}}
  :actor/inbox-path ".eta-mu/actors/truth-research-physics/inbox"
  :actor/outbox-path ".eta-mu/actors/truth-research-physics/outbox"

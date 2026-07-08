@@ -98,13 +98,13 @@ New ECS component keywords added: `sed-bands`, `atmosphere-shells`,
 Research is produced by seven periodic ημ actors (see
 [`.eta-mu/actors/`](.eta-mu/actors/)):
 
-- `truth-research-cosmology` (48h) — stellar physics, nucleosynthesis, CMB
-- `truth-research-physics` (48h) — SPH, N-body, MHD, orbital mechanics
-- `truth-research-geology` (48h) — tectonics, mantle convection, cratering
-- `truth-research-biology` (48h) — ecology, evolution, abiogenesis
-- `truth-research-atmosphere` (48h) — radiative transfer, climate, escape
-- `truth-research-culture` (48h) — agent-based social models, mythogenesis
-- `truth-research-coordinator` (72h) — cross-domain index, gap analysis
+- `truth-research-cosmology` (daily 02:00 local) — stellar physics, nucleosynthesis, CMB
+- `truth-research-physics` (daily 04:00 local) — SPH, N-body, MHD, orbital mechanics
+- `truth-research-geology` (daily 06:00 local) — tectonics, mantle convection, cratering
+- `truth-research-biology` (daily 08:00 local) — ecology, evolution, abiogenesis
+- `truth-research-atmosphere` (daily 10:00 local) — radiative transfer, climate, escape
+- `truth-research-culture` (daily 12:00 local) — agent-based social models, mythogenesis
+- `truth-research-coordinator` (daily 22:00 local) — cross-domain index, gap analysis
 
 ## Design docs and specs
 

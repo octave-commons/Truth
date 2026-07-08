@@ -1,9 +1,8 @@
 [Unit]
-Description=Research coordination (every 72h)
+Description=Deep research for truth-research-coordinator (daily at 22:00 local time)
 
 [Timer]
-OnBootSec=1h
-OnUnitActiveSec=72h
+OnCalendar=*-*-* 22:00:00
 Persistent=true
 
 [Install]

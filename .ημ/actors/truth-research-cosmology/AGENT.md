@@ -18,7 +18,7 @@ mode: all
                  :automated {:type :systemd-timer
                              :timer "truth-research-cosmology.timer"
                              :service "truth-research-cosmology.service"
-                             :interval "48h"
+                             :interval "24h"
                              :install "systemctl --user enable truth-research-cosmology.timer && systemctl --user start truth-research-cosmology.timer"}}
  :actor/inbox-path ".eta-mu/actors/truth-research-cosmology/inbox"
  :actor/outbox-path ".eta-mu/actors/truth-research-cosmology/outbox"

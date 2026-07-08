@@ -18,7 +18,7 @@ mode: all
                  :automated {:type :systemd-timer
                              :timer "truth-research-biology.timer"
                              :service "truth-research-biology.service"
-                             :interval "48h"
+                             :interval "24h"
                              :install "systemctl --user enable truth-research-biology.timer && systemctl --user start truth-research-biology.timer"}}
  :actor/inbox-path ".eta-mu/actors/truth-research-biology/inbox"
  :actor/outbox-path ".eta-mu/actors/truth-research-biology/outbox"
