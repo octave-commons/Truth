@@ -119,16 +119,16 @@ Design documents capture architectural decisions and simulation design:
 
 Implementation specs (driven by the Kanban process):
 
-- [Jeans-driven formation](docs/specs/phase0-jeans-driven-formation.md)
-- [SPH density field](docs/specs/phase0-sph-density-field.md)
-- [Protoplanetary disk](docs/specs/phase0-protoplanetary-disk-implementation.md)
-- [Planet formation pipeline](docs/specs/phase0-planet-formation-complete-pipeline.md)
-- [Chemistry & differentiation](docs/specs/phase0-chemistry-differentiation.md)
-- [Stellar winds & mass loss](docs/specs/phase0-stellar-winds-and-mass-loss.md)
-- [Sink formation](docs/specs/stage2-sink-formation.md)
-- [Habitability handoff](docs/specs/phase0-habitability-handoff.md)
-- [Player focus & dual representation](docs/specs/phase0-player-focus-and-dual-representation.md)
-- [Narrator presence](docs/specs/phase0-narrator-presence.md)
+- [Jeans-driven formation](kanban/tasks/phase-0-jeans-driven-formation-spec.md)
+- [SPH density field](kanban/tasks/phase-0-sph-density-field-spec.md)
+- [Protoplanetary disk](kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md)
+- [Planet formation pipeline](kanban/tasks/phase-0-complete-planet-formation-pipeline-spec.md)
+- [Chemistry & differentiation](kanban/tasks/phase-0-chemistry-differentiation-spec.md)
+- [Stellar winds & mass loss](kanban/tasks/phase-0-stellar-winds-mass-transfer-remnants-technical-spec.md)
+- [Sink formation](kanban/tasks/stage-2-sink-formation-technical-spec.md)
+- [Habitability handoff](kanban/tasks/phase-0-habitability-handoff-spec.md)
+- [Player focus & dual representation](kanban/tasks/phase-0-player-focus-dual-representation-spec.md)
+- [Narrator presence](kanban/tasks/phase-0-narrator-presence-spec.md)
 
 ## Current codebase
 

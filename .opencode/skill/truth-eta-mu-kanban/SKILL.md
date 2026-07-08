@@ -30,14 +30,14 @@ Operate the `eta-mu kanban` CLI against the Gates of Truth markdown-backed board
 ## When NOT to Use This Skill
 
 - The user wants deep academic research (use `deep-research`).
-- The user wants to edit spec technical content — point them at the spec file under `docs/specs/` instead.
+- The user wants to create a brand new spec from scratch (use `spec-driven-dev`).
 
 ## Board Layout
 
 ```
 kanban/
   openhax.kanban.json   # config: tasksDir, boardFile, FSM
-  tasks/                # one markdown file per task/spec
+  tasks/                # one markdown file per task/spec (specs live here)
   epics/                # epic-level cards (manually maintained)
 ```
 
@@ -97,7 +97,7 @@ eta-mu kanban content <uuid> --config kanban/openhax.kanban.json
 
 ## Task File Format
 
-Every task is a markdown file with YAML frontmatter:
+Every task is a markdown file with YAML frontmatter. Specs and tasks are stored together in `kanban/tasks/`. The card body holds the full technical detail, while the frontmatter tracks status, priority, and work notes.
 
 ```md
 ---
@@ -107,39 +107,30 @@ status: "done"
 priority: "P0"
 labels: ["specs", "phase0", "sph"]
 created_at: "2026-07-02T19:34:08Z"
-source: "docs/specs/phase0-sph-density-field.md"
+source: "kanban/tasks/phase-0-sph-density-field-spec.md"
 category: "specs"
 ---
 
 # Phase 0 SPH Density Field Spec
 
-> Original spec: `docs/specs/phase0-sph-density-field.md`
-
-This kanban card tracks the spec. Edit the original spec for technical detail; use this card for status, priority, and work notes.
+Full technical detail lives here, in the card body.
 ```
 
 Frontmatter rules:
 - `uuid` must be unique and URL-safe (kebab-case).
 - `status` must be a valid kanban status token.
 - `priority` is `P0`/`P1`/`P2`/`P3`.
-- `source` points back to the spec or design doc.
+- `source` points to the canonical card location.
 - `category` groups cards (`specs`, `tasks`, `epics`, `docs`).
 
-## Adding a New Spec Task
+## Adding a New Spec
 
-1. Create or identify the spec under `docs/specs/<slug>.md`.
-2. Create `kanban/tasks/<slug>.md` with frontmatter and a link back to the spec.
-3. Run `eta-mu kanban list --config kanban/openhax.kanban.json` to verify it appears.
+1. Create `kanban/tasks/<slug>.md` with frontmatter and the full spec content in the body.
+2. Run `eta-mu kanban list --config kanban/openhax.kanban.json` to verify it appears.
 
 ## Converting Existing Specs in Bulk
 
-If the spec directory is out of sync with the board, regenerate task cards from `docs/specs/*.md`:
-
-```bash
-bb kanban/scripts/generate-spec-tasks.clj
-```
-
-This script reads each spec, extracts title/status, and writes a kanban card in `kanban/tasks/`. Review the generated cards before committing; do not blindly overwrite cards that already have comments or manual status updates.
+If the spec directory is out of sync with the board, migrate spec content directly into the corresponding kanban cards and then delete the old spec files. Do not leave cards that only link to a separate spec.
 
 ## Web UI (optional)
 
@@ -154,7 +145,7 @@ Open http://127.0.0.1:8791 for a draggable board view.
 - **Default tasksDir is `docs/agile/tasks`**. Truth overrides this in `kanban/openhax.kanban.json`; always pass `--config` or run from the workspace root where the config lives.
 - **Status must be canonical**. Use `in_progress`, not `doing`; use `review`, not `in_review`.
 - **UUIDs are file-scoped**. Changing a UUID breaks board history; choose them once.
-- **Keep specs and cards separate**. Technical detail lives in `docs/specs/`; status, priority, and progress notes live in `kanban/tasks/`.
+- **Keep technical detail in the card body**. Do not make cards that only link to a separate spec file; the kanban card is the spec.
 
 ## Verification Checklist
 
@@ -171,5 +162,5 @@ eta-mu kanban list --config kanban/openhax.kanban.json
 
 - Canonical example workspace: `~/spaces/eta-mu/kanban/`
 - Legacy kanban package: `~/spaces/eta-mu/packages/legacy/kanban/`
-- Truth specs: `docs/specs/`
+- Truth specs/tasks: `kanban/tasks/`
 - Truth kanban config: `kanban/openhax.kanban.json`

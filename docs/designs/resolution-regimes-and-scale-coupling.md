@@ -2,7 +2,7 @@
 
 **Status:** design (decided 2026-07-06)
 **Owner handoff:** Claude Code → OpenCode (kimi)
-**Relates to:** `docs/specs/seed-and-grow-condensation-realspec.md`, epic M5 habitability
+**Relates to:** `kanban/tasks/seed-and-grow-condensation.md`, epic M5 habitability
 handoff (`:planet-candidate`), `domain.lod`, observer-focus / dual-representation,
 `docs/designs/ux-architecture.md`.
 

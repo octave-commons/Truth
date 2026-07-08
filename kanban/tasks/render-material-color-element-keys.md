@@ -5,13 +5,13 @@ status: "todo"
 priority: "P1"
 labels: ["fix", "phase0", "render", "chemistry"]
 created_at: "2026-07-06T16:21:51.000000000Z"
-source: "docs/specs/nebular-chemistry-realspec.md"
+source: "kanban/tasks/render-material-color-element-keys.md"
 category: "fix"
 ---
 
 # Render material color reads retired composition keys
 
-> Milestone M2. Spec: `docs/specs/nebular-chemistry-realspec.md` §6.5.
+> Milestone M2. Spec: `kanban/tasks/render-material-color-element-keys.md` §6.5.
 
 `infra.render/composition->material-color` (`render.clj:816`) reads `:metals :ice :H2O :volatiles` — none of which exist in the element-resolved composition map (the `:metals` lump was retired, `law/composition.clj:9`). Result: `metals=0`, `ice=0`, `gas=1.0` always → **every body renders gas-tan regardless of actual composition.**
 

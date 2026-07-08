@@ -186,7 +186,7 @@ When focus withdraws:
 2. Demote to `:field-zone :regional`.
 3. Preserve any ledger events it generated.
 
-Promotion and demotion are the same conservation problem as `docs/specs/phase0-player-focus-and-dual-representation.md`. The difference after commitment is that demotion is the default for everything except the committed world.
+Promotion and demotion are the same conservation problem as `kanban/tasks/phase-0-player-focus-dual-representation-spec.md`. The difference after commitment is that demotion is the default for everything except the committed world.
 
 ---
 

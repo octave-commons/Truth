@@ -93,7 +93,7 @@ and emits a write-set for the component types it exclusively owns
 - One writer per component type, enforced by `architecture_test`.
 
 Spec: `docs/notes/2026.06.26-ecs-double-buffer-single-writer-spec.md` and
-`docs/specs/perf-60fps-parallel-tick.md`.
+`kanban/tasks/perf-60fps-parallel-tick.md`.
 
 ### Time model
 
@@ -248,5 +248,5 @@ And update `MEMORY.md`:
   chemistry evolution paths, some player mechanics) — they look dead but are
   incomplete, not abandoned.
 - Kanban process state lives in `kanban/`; design docs in `docs/designs/`,
-  implementation specs in `docs/specs/`, dated engineering notes in
+  implementation specs in `kanban/tasks/`, dated engineering notes in
   `docs/notes/`.

@@ -115,3 +115,30 @@
   spore: none
   receipt-refs: none
   note: Manifest generation needed Python + core.quotepath=false to handle .ημ unicode paths; pre-existing malformed receipt entry at receipts.edn:58 flagged by LSP but left untouched as historical record.
+- ts: 2026-07-07T04:29:58.823294869Z
+  session: ses_0c5304a02ffelcFB41KkldUz4s
+  task: Adjust plan document from surfaced notes/specs/code via parallel subagents
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.65
+  spore: none
+  receipt-refs: none
+  note: Four parallel subagents (notes, specs, code, related materials) surfaced key corrections; plan updated with expedient note, follow-up backlog, and references.
+- ts: 2026-07-07T04:55:40.748097044Z
+  session: ses_0c5304a02ffelcFB41KkldUz4s
+  task: Implement honest two-channel star/planet formation (remove bootstrap core)
+  p-efficiency: 0.8
+  p-friction: 0.3
+  p-skill-candidate: 0.7
+  spore: none
+  receipt-refs: none
+  note: Removed bootstrap-core-eid; classifier now uses c/disc-tag to split envelope (condensed-core) and disc (seed-and-grow) channels; seeder disc-only; tests pass; bin/analyze clean.
+- ts: 2026-07-08T00:10:46.434109623Z
+  session: ses_0c0f6460bffeMH1e98GegCbxlg
+  task: Drafted Splint idiom cleanup spec and kanban card
+  p-efficiency: 0.85
+  p-friction: 0.25
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: none
+  note: Baseline extraction from bin/analyze output via saved tool file and rg; spec structure follows epic pattern. Friction was validating the exact 404 count against regex misses (lint/not-empty? had question mark).

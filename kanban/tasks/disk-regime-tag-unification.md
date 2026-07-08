@@ -5,13 +5,13 @@ status: "todo"
 priority: "P1"
 labels: ["fix", "phase0", "chemistry"]
 created_at: "2026-07-06T16:21:51.000000000Z"
-source: "docs/specs/protoplanetary-disk-planet-formation-realspec.md"
+source: "kanban/tasks/disk-regime-tag-unification.md"
 category: "fix"
 ---
 
 # Unify divergent disk-regime tag vocabularies
 
-> Milestone M3. Spec: `docs/specs/protoplanetary-disk-planet-formation-realspec.md` §10.
+> Milestone M3. Spec: `kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md` §10.
 
 Two sibling functions emit **different** regime tag sets:
 - `disk-regime-map` (`stellar.clj:1568`) → `:core-accretion-zone` / `:fragmenting` / `:gravito-turbulent`.

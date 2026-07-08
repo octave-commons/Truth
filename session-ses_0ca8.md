@@ -738,7 +738,7 @@ Wait, the edit replaced a structure. Let me check the resulting code to make sur
 601:         ;; advance logical tick first so every event this step shares its tick;
 602:         ;; the COM frame-offset is now computed inside spatial/spatial-index,
 603:         ;; folded into the same projection so tick-world does not pay for a
-604:         ;; separate serial pass (docs/specs/perf-60fps-parallel-tick.md).
+604:         ;; separate serial pass (kanban/tasks/perf-60fps-parallel-tick.md).
 605:           world1     (-> (ecs/advance-tick world)
 606:                          spatial/spatial-index)
 607:            world2     (-> (step-physics world1)
@@ -2210,7 +2210,7 @@ src/domain/genesis.clj has incorrect formatting
 --- a/src/domain/genesis.clj
 +++ b/src/domain/genesis.clj
 @@ -604,11 +604,11 @@
-         ;; separate serial pass (docs/specs/perf-60fps-parallel-tick.md).
+         ;; separate serial pass (kanban/tasks/perf-60fps-parallel-tick.md).
            world1     (-> (ecs/advance-tick world)
                           spatial/spatial-index)
 -           world2     (-> (step-physics world1)

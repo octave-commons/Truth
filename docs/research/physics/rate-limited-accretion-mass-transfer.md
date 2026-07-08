@@ -328,8 +328,8 @@ With a 25% donor-mass cap the actual debit is bounded by the local gas reservoir
 ## 9. Cross-References
 
 - `docs/designs/phase0-sink-particle-formation.md` — Stage 2 sink formation and Stage 3 sink accretion; this notebook grounds Stage 3 in rate laws.
-- `docs/specs/phase0-stellar-winds-and-mass-loss.md` — stellar wind mass-loss; BHL accretion is the inverse process (gas → body).
-- `docs/specs/core-accretion-physics-realspec.md` — planet growth by accretion; the capped BHL rate feeds the planet-mass budget.
+- `kanban/tasks/phase-0-stellar-winds-mass-transfer-remnants-technical-spec.md` — stellar wind mass-loss; BHL accretion is the inverse process (gas → body).
+- `kanban/tasks/core-accretion-physics-spec.md` — planet growth by accretion; the capped BHL rate feeds the planet-mass budget.
 - `docs/research/physics/protoplanetary-disks-planet-formation.md` — disk structure and streaming instability; mass transfer governs how solids are delivered to cores.
 
 ---

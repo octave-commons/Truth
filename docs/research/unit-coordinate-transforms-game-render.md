@@ -8,7 +8,7 @@
 
 ## 1. What we looked at
 
-- **Codebase:** `src/infra/render.clj`, `src/infra/camera.clj`, `src/infra/inspect.clj`, `test/infra/render_test.clj`, `docs/specs/phase0-render-asset-organization.md`, `src/shape/spatial.clj`, `test/architecture_test.clj`.
+- **Codebase:** `src/infra/render.clj`, `src/infra/camera.clj`, `src/infra/inspect.clj`, `test/infra/render_test.clj`, `kanban/tasks/phase-0-renderer-asset-organization-spec.md`, `src/shape/spatial.clj`, `test/architecture_test.clj`.
 - **External sources:** LearnOpenGL coordinate-systems tutorial (local → world → view → clip → NDC → screen), Unity/Unreal/Godot docs on units and transforms, Godot vector-math docs, `play-cljc` examples (entity transform composition), `clunk` LWJGL engine (pixel-space sprites), and general gamedev literature on LOD/scale.
 
 ---
@@ -89,7 +89,7 @@ Introduce a small, pure **unit/transform layer** in `infra/` and move all physic
 
 ### 4.2 Why this fits Gates of Truth
 
-- It aligns with the planned `infra.render.projection` split in `docs/specs/phase0-render-asset-organization.md`.
+- It aligns with the planned `infra.render.projection` split in `kanban/tasks/phase-0-renderer-asset-organization-spec.md`.
 - It preserves the single-renderer and domain-purity invariants.
 - It makes the current implicit assumptions testable (e.g. "a solar-radius body at 1 AU is X pixels across").
 - It avoids the heaviness of a unit-type system while still making unit mixing obvious at the function-name level.
@@ -256,7 +256,7 @@ src/law/
 | **Plumbing `ctx` through every projection function** is more verbose than the current inline division. | Keep `ctx` construction in `infra.camera`; most callers already have a camera + viewport. The `->>`/`->` macros keep it readable. |
 | **`phys->render-radius` is non-linear**, so an inverse is approximate. | Document that `render->phys-radius` is debug-only; never use it for physics. Physics stays in `domain/` in physical units. |
 | **Special cases like star sizing** (`body-draw-radius`) leak semantic knowledge into the transform layer. | Keep star sizing in `infra.render.projection` as a *semantic* decision; the transform layer only knows the generic radius mapping. |
-| **Moving `inspect` into `infra.render.inspect`** changes require paths. | Do it as part of the Phase 3/4 refactor in `docs/specs/phase0-render-asset-organization.md`; update tests atomically. |
+| **Moving `inspect` into `infra.render.inspect`** changes require paths. | Do it as part of the Phase 3/4 refactor in `kanban/tasks/phase-0-renderer-asset-organization-spec.md`; update tests atomically. |
 | **Performance** of passing a record vs. a raw scale number. | The JVM will elide the record allocation in hot loops; measure if it becomes an issue. The current per-frame cost is dominated by particle-cloud generation, not unit math. |
 | **Multiple future phases** may need different view scales. | The `RenderContext` pattern scales naturally: each phase defines a constant in `infra.camera` and builds its own context. |
 
@@ -264,7 +264,7 @@ src/law/
 
 ## 8. Immediate next steps (without modifying files)
 
-1. Capture this recommendation in a technical spec that references `docs/specs/phase0-render-asset-organization.md`.
+1. Capture this recommendation in a technical spec that references `kanban/tasks/phase-0-renderer-asset-organization-spec.md`.
 2. Add Malli schemas for `RenderContext` and `RenderShape` to `law.render` first (spec-before-impl).
 3. Extract the transform functions into `infra.render.units` as a behavior-preserving refactor.
 4. Migrate `phase0-bodies-from-world*` and `inspect` to use the new layer, adding tests for:
