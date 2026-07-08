@@ -13,6 +13,7 @@
    [domain.stellar.structure      :as structure]
    [domain.stellar.classifier     :as classifier]
    [domain.stellar.sink           :as sink]
+   [domain.stellar.disc           :as disc]
    [domain.spatial.index          :as spatial]
    [shape.spatial                 :as sp]
    [domain.planet-formation       :as pf]))
@@ -66,10 +67,14 @@
     [(ecs/put-components w eid (seed-clump spec)) eid]))
 
 (defn- condensation-candidate?
-  "True when a :nebula parcel is ready to condense to :planetesimal."
+  "True when a :nebula parcel is ready to condense to :planetesimal.
+   Planetesimals must form from rotationally-supported disk material, not from
+   the free-falling envelope or the ambient nebula (see
+   kanban/tasks/seed-and-grow-condensation.md)."
   [world eid gas-mass zones]
   (and (= :nebula (ecs/get-component world eid c/matter-state))
        (not (ecs/get-component world eid c/condensation-seeded))
+       (disc/in-disc? world eid)
        (let [region (thermo/entity->region world eid)]
          (= :planetesimal (classifier/classify-next-state region gas-mass zones)))))
 

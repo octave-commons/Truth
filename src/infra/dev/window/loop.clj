@@ -330,21 +330,25 @@
                                 (:text view-bar)
                                 (:text menu))
               volume    (when (:volumetric? cfg true)
-                          (render/frame-volume ctx w (:volume-program cfg)
-                                               (:volume-res cfg :medium)
-                                               (:volume-config cfg)))]
+                          (render/frame-volume {:ctx ctx
+                                                :world w
+                                                :program (:volume-program cfg)
+                                                :res (:volume-res cfg :medium)
+                                                :cfg (:volume-config cfg)}))]
           (render/render-scene {:body-program (:body-program cfg)
                                 :line-program (:line-program cfg)
                                 :sprite-program (:sprite-program cfg)
+                                :particle-program (:particle-program cfg)
                                 :hud-program (:hud-program cfg)
                                 :hud hud
                                 :hud-text hud-text
-                                :volume volume}
-                               (:mesh cfg)
-                               cam
-                               fb-w fb-h
-                               bodies
-                               @time-atom)
+                                :volume volume
+                                :mesh-world (:mesh cfg)
+                                :camera cam
+                                :width fb-w
+                                :height fb-h
+                                :bodies bodies
+                                :t @time-atom})
           (render/delete-volume volume))
         (handle-screenshot-request world-atom config-atom)
         (GLFW/glfwSwapBuffers window)

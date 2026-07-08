@@ -49,7 +49,8 @@
                                      c/temperature (:temperature region)
                                      c/position [0.0 0.0 0.0]
                                      c/velocity [0.0 0.0 0.0]
-                                     c/composition cloud-comp})
+                                     c/composition cloud-comp
+                                     c/disc-tag :disc})
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/condensation-seed-mass-kg 1.0e16)
                 (with-condense-tick 2.0e11))
@@ -77,7 +78,8 @@
                                      c/temperature 12.0
                                      c/position [0.0 0.0 0.0]
                                      c/velocity [0.0 0.0 0.0]
-                                     c/composition cloud-comp})
+                                     c/composition cloud-comp
+                                     c/disc-tag :disc})
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
           ws ((:run (stellar/condensation-seeder-system)) w)]
@@ -99,7 +101,8 @@
                                      c/temperature (:temperature region)
                                      c/position [1.0e15 0.0 0.0]
                                      c/velocity [0.0 0.0 0.0]
-                                     c/composition cloud-comp})
+                                     c/composition cloud-comp
+                                     c/disc-tag :disc})
                 (domain.spatial.index/spatial-index)
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/condensation-seed-mass-kg 1.0e16)
@@ -123,7 +126,8 @@
                                      c/temperature (:temperature region)
                                      c/position [1.0e15 0.0 0.0]
                                      c/velocity [0.0 0.0 0.0]
-                                     c/composition cloud-comp})
+                                     c/composition cloud-comp
+                                     c/disc-tag :disc})
                 (domain.spatial.index/spatial-index)
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/condensation-seed-mass-kg 1.0e16)
@@ -148,7 +152,28 @@
                                      c/position [0.0 0.0 0.0]
                                      c/velocity [0.0 0.0 0.0]
                                      c/composition cloud-comp
-                                     c/condensation-seeded true})
+                                     c/condensation-seeded true
+                                     c/disc-tag :disc})
+                (assoc :genesis/gas-particle-mass pm)
+                (with-condense-tick 2.0e11))
+          ws ((:run (stellar/condensation-seeder-system)) w)]
+      (is (nil? (get-in ws [c/spawn-request-condense eid]))))))
+
+(deftest seeder-skips-nebula-outside-disc
+  (testing "a :nebula parcel not in the rotationally-supported disk cannot seed"
+    (let [w (ecs/empty-world)
+          [w eid] (ecs/spawn w)
+          region (unstable-region (* 1.2 pm))
+          w (-> (ecs/put-components w eid
+                                    {c/matter-state :nebula
+                                     c/mass (:mass region)
+                                     c/radius (:radius region)
+                                     c/density (:density region)
+                                     c/temperature (:temperature region)
+                                     c/position [0.0 0.0 0.0]
+                                     c/velocity [0.0 0.0 0.0]
+                                     c/composition cloud-comp
+                                     c/disc-tag :envelope})
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
           ws ((:run (stellar/condensation-seeder-system)) w)]
