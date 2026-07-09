@@ -1,7 +1,7 @@
 ---
 status: promoted
-reviewed: 2026-07-09T01:35:37Z
-reviewer-session: 19b3e756-ddf4-4fbc-a500-e68b33bcdc64
+reviewed: 2026-07-09T07:36:32Z
+reviewer-session: a08310e8-f8fa-47bf-b0c2-f79ac470ef7b
 created: 2026-07-07T01:01:02.861903126Z
 source-session: ses_0c62648feffeHiJD4Cv61Hieaz
 source-task: Implemented seed-and-grow condensation with dedicated mass-flux influence channel
@@ -11,7 +11,7 @@ p-skill-candidate: 0.8
 p-recurrence: 0.9
 p-generalizable: 0.75
 p-worth-promoting: 0.85
-promoted-to: /home/err/spaces/Truth/.agents/skills/dedicated-influence-channel/SKILL.md
+promoted-to: /home/err/.agents/skills/dedicated-influence-channel/SKILL.md
 rejected-reason: ""
 ---
 

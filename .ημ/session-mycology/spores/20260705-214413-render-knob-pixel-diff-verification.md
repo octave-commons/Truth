@@ -1,7 +1,7 @@
 ---
 status: rejected
-reviewed: 2026-07-09T01:35:37Z
-reviewer-session: 19b3e756-ddf4-4fbc-a500-e68b33bcdc64
+reviewed: 2026-07-09T07:36:32Z
+reviewer-session: a08310e8-f8fa-47bf-b0c2-f79ac470ef7b
 created: 2026-07-06T02:44:13.784709815Z
 source-session: /home/err/spaces/Truth
 source-task: SPH froxel bridge: verify :volume-config threading end-to-end

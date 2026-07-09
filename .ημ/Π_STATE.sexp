@@ -1,41 +1,28 @@
 ((pi "0.63.1")
  (repo "/home/err/spaces/Truth")
  (branch "main")
- (head "dbbbf7f107f0149d6a4296e350c874d861989401")
- (tag "Π-20260709052013")
- (ts "2026-07-09T05:20:13Z")
+ (head "aeb7611f3c2addf1389650bde1e656f8f73471c4")
+ (tag "Π-20260709092032")
+ (ts "2026-07-09T09:20:32Z")
  (host "spaces/Truth")
  (origin "fork-tax-tender")
  (dod "pay fork tax on significant changes")
  (manifest [
-   "bench/gates_of_truth/bench/phase0.clj"
-   "kanban/tasks/focus-zoom-lod-ui-spec.md"
-   "kanban/tasks/tick-perf-drift-profile.md"
-   "kanban/tasks/.events/ledger.edn"
+   ".ημ/session-mycology/review-receipts.edn"
+   ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md"
+   ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md"
+   ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md"
+   ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md"
+   ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md"
    "receipts.edn"
-   "receipts.log"
-   "src/domain/arc.clj"
-   "src/domain/ecs/registry.clj"
-   "src/domain/em/lorentz.clj"
-   "src/domain/genesis/systems.clj"
-   "src/domain/integrator/kinematics.clj"
-   "src/domain/mhd/force.clj"
-   "src/infra/inspect/format.clj"
-   "src/infra/menu/panels.clj"
-   "test/domain/arc_test.clj"
-   "test/domain/dominant_star_test.clj"
-   "test/domain/lod_test.clj"
-   "test/domain/mhd_force_test.clj"
-   "test/infra/inspect_test.clj"
-   "test/infra/menu_test.clj"
    ".ημ/Π_STATE.sexp"
    ".ημ/Π_LAST.md"
    ".ημ/Π_MANIFEST.sexp"
  ])
  (owner "fork-tax-tender")
- (note "fork-tax-tender detected significant changes and paid the fork tax: merged hydro/EM MHD force system (src/domain/mhd/force.clj), genesis systems fan-out wiring, ECS registry and arc fixes, EM Lorentz cleanup, integrator kinematics update, render inspect/menu/format adjustments, benchmark phase0 tuning, LOD/dominant-star/inspect/menu tests, new MHD force test, kanban task updates (focus-zoom LOD UI spec, tick-perf drift profile), and kanban event ledger. .ημ/.env is gitignored and contains live API keys; it was not staged.")
+ (note "fork-tax-tender detected significant working-tree changes in the Gates of Truth repository and paid the fork tax. Scope: session-mycology spore reviews (render-knob pixel diff verification, dedicated-influence-channel pattern, reject-honest-fix pivot, receipt-driven regression recovery, physics-dt unit mismatch) plus review-receipts.edn and receipts.edn append-only updates. No source code or simulation changes were present; no test suite was run.")
  (verification
-   (test "bin/test unit")
-   (result "572 tests, 10264 assertions, 0 failures/errors"))
+   (test "git status inspection")
+   (result "7 tracked files changed, 17 insertions(+), 13 deletions(-); no source code changes"))
  (concurrent nil)
  (blockers nil))
