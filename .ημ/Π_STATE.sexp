@@ -1,63 +1,41 @@
 ((pi "0.63.1")
  (repo "/home/err/spaces/Truth")
  (branch "main")
- (head "732204d708690b5b102c6b3d7910611cf708d8ba")
- (tag "Π-20260709041532")
- (ts "2026-07-09T04:15:32Z")
+ (head "dbbbf7f107f0149d6a4296e350c874d861989401")
+ (tag "Π-20260709052013")
+ (ts "2026-07-09T05:20:13Z")
  (host "spaces/Truth")
  (origin "fork-tax-tender")
  (dod "pay fork tax on significant changes")
  (manifest [
-   "AGENTS.md"
-   "README.md"
-   "CLAUDE.md"
-   "CONTRACT.edn"
-   "receipts.edn"
-   ".github/workflows/test.yml"
-   "bin/test"
-   "docs/TESTING.md"
-   "docs/research/INDEX.md"
-   "docs/agile/"
-   "docs/research/physics/phase0-neighbor-cache-curl-optimization.md"
-   "docs/research/physics/phase0_neighbor_cache_curl_toy.py"
-   "docs/research/physics/phase0_neighbor_cache_curl_toy.svg"
-   "docs/research/physics/phase0_neighbor_cache_curl_toy_summary.txt"
-   "kanban/tasks/tick-perf-drift-profile.md"
+   "bench/gates_of_truth/bench/phase0.clj"
    "kanban/tasks/focus-zoom-lod-ui-spec.md"
+   "kanban/tasks/tick-perf-drift-profile.md"
+   "kanban/tasks/.events/ledger.edn"
+   "receipts.edn"
+   "receipts.log"
    "src/domain/arc.clj"
-   "src/domain/ecs/components.clj"
    "src/domain/ecs/registry.clj"
    "src/domain/em/lorentz.clj"
-   "src/domain/hydro/common.clj"
-   "src/domain/hydro/pressure.clj"
-   "src/domain/integrator.clj"
-   "src/domain/integrator/base.clj"
-   "src/domain/integrator/core.clj"
+   "src/domain/genesis/systems.clj"
    "src/domain/integrator/kinematics.clj"
-   "src/domain/integrator/temperature.clj"
-   "src/domain/lod.clj"
-   "src/domain/physics/cache/neighbor.clj"
-   "src/domain/player/system.clj"
-   "src/infra/dev/window/loop.clj"
+   "src/domain/mhd/force.clj"
    "src/infra/inspect/format.clj"
    "src/infra/menu/panels.clj"
-   "src/infra/render.clj"
-   "src/infra/render/hud.clj"
-   "src/infra/render/input.clj"
-   "src/infra/render/mesh.clj"
-   "src/infra/render/scene/setup.clj"
-   "src/law/field.clj"
-   "src/law/field/schema.clj"
-   "test/domain/physics/cache_test.clj"
-   "test/domain/player_test.clj"
+   "test/domain/arc_test.clj"
+   "test/domain/dominant_star_test.clj"
+   "test/domain/lod_test.clj"
+   "test/domain/mhd_force_test.clj"
+   "test/infra/inspect_test.clj"
+   "test/infra/menu_test.clj"
    ".ημ/Π_STATE.sexp"
    ".ημ/Π_LAST.md"
    ".ημ/Π_MANIFEST.sexp"
  ])
  (owner "fork-tax-tender")
- (note "fork-tax-tender detected significant changes and paid the fork tax: ECS integrator refactor (base/core/kinematics/temperature), EM Lorentz cleanup, hydro common/pressure adjustments, neighbor-cache refinements, LOD and player system updates, render HUD/input/mesh/scene fixes, law/field schema additions, README and TESTING docs updated, CI test workflow and bin/test added, research notebook and kanban tasks for neighbor-cache curl optimization and focus-zoom LOD UI spec. .ημ/.env is gitignored and contains live API keys; it was not staged.")
+ (note "fork-tax-tender detected significant changes and paid the fork tax: merged hydro/EM MHD force system (src/domain/mhd/force.clj), genesis systems fan-out wiring, ECS registry and arc fixes, EM Lorentz cleanup, integrator kinematics update, render inspect/menu/format adjustments, benchmark phase0 tuning, LOD/dominant-star/inspect/menu tests, new MHD force test, kanban task updates (focus-zoom LOD UI spec, tick-perf drift profile), and kanban event ledger. .ημ/.env is gitignored and contains live API keys; it was not staged.")
  (verification
    (test "bin/test unit")
-   (result "562 tests, 10215 assertions, 0 failures/errors (infra.dev.window-test intentionally throws an exception that is caught and reported as a non-failure)"))
+   (result "572 tests, 10264 assertions, 0 failures/errors"))
  (concurrent nil)
  (blockers nil))

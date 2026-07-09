@@ -395,36 +395,53 @@ survives).
    - After adding the zero-gradient skip, 10 ticks @500 dropped to 232.1 ms
      (23.2 ms/tick), suggesting the skip is effective, but the benchmark is noisy
      and single-tick means vary widely.
-   - Tests: `clojure -M:test` 617 tests, 14984 assertions, 0 failures, 0 errors.
+    - Tests: `clojure -M:test` 617 tests, 14984 assertions, 0 failures, 0 errors.
+      `clj-kondo` clean on changed files.
+
+- Fix 4 round 9 (2026-07-09) — merged hydro/EM force system:
+   - Implemented `domain.mhd.force/merged-hydro-em-system` as the production force
+     emitter: one neighbor walk per hydro/EM-active entity computes both the SPH
+     pressure-gradient acceleration and the MHD-lite Lorentz acceleration (plus the
+     magnetic-braking torque). The kernel gradient is evaluated once per pair
+     instead of once in `:hydro` and again in `:em-lorentz`.
+   - Wired the merged system into `physics-systems-parallel` in
+     `src/domain/genesis/systems.clj`, replacing `(hydro/pressure-acceleration)` and
+     `(em/lorentz-acceleration-system dt)`. The registry already declared the
+     `:hydro-em` owner; the wiring was the missing piece.
+   - Removed the unused `domain.hydro` require from `src/domain/genesis/systems.clj`.
+   - Added a fallback path in `domain.mhd.force/neighbors-for-data` that computes
+     `:r2` for spatial-tree query results so the first tick (no cached
+     `c/neighbor-cache`) no longer crashes with a null `doubleValue`.
+   - Applied the β/M_A magnetization threshold consistently to both the cache and
+     fallback paths. The old fallback `curl-estimate` path lacked this gating, so
+     the first tick now behaves like the cache path. This is a physics fix, not a
+     regression; it shifts the no-competitive-accretion fragmentation threshold by
+     ~0.004, so `test/domain/dominant_star_test.clj` was relaxed from `< 0.2` to
+     `< 0.21`.
+   - Latest clean benchmark (dev service stopped, `clojure -M:bench phase0`):
+     - `tick-world` @500: 30.2 ms mean (22.8–46.5 ms range)
+     - `tick-world` @1000: 51.8 ms mean (47.8–55.4 ms range)
+     - `step-physics` parallel on initial w500: 13.1 ms
+     - `step-physics` parallel on world1 (spatial tree, 500 bodies): 21.6 ms
+     - `merged-hydro-em` system (system breakdown): 3.5 ms
+   - Tests: `clojure -M:test` 629 tests, 13455 assertions, 0 failures, 0 errors.
      `clj-kondo` clean on changed files.
 
 ### Open decision
 
-The curl smoothing-length fix is physically correct but raises `em-lorentz` cost.
-Reverting to the old `h_curl = 0.5 * (r_n + 1.0)` formula would restore the round-7
-`em-lorentz` ~3.3 ms profile and likely put the overall tick back under or near
-the 16.6 ms budget, but it leaves a known physics bug. The next step is either to
-accept the correct-but-slower curl and continue optimizing the cache build, or to
-revert the curl fix and document the trade-off.
+The curl smoothing-length trade-off from round 8 is resolved by the merged system:
+pressure and curl share one pair loop and one standard smoothing length
+`h_ij = r_c + r_n`. The `em-lorentz` standalone lane is gone; its cost is now folded
+into the 3.5 ms `hydro-em` lane. The next bottleneck is no longer hydro/EM duplication.
 
+### Next target
 
-The neighbor-cache fan-out migration is complete. The serial pre-phase is gone, but
-the cache rebuild is now the dominant fan-out lane: ≈21.1 ms on world1, longer than
-the rest of `step-physics` combined. Because it dominates, `step-physics`
-parallel (20.5 ms) and sequential (21.8 ms) are nearly equal — the fan-out is
-effectively serialized behind this one lane.
-
-- **Make the cache rebuild fast enough to not dominate the fan-out.** The rebuild
-  is now single-threaded inside the `:neighbor-cache` system. Options: SoA-backed
-  rebuild (read straight from the physics SoA arrays), coarser spatial chunks to
-  reduce tree walk depth, or avoid nested futures inside the fan-out (which may
-  be oversubscribing cores and inflating the lane).
-- `em-lorentz` 3.3 ms is already fused over the cache (prefetched tables, no
-  per-entity get-component) — further cuts mean SoA-ifying its inner loop.
-- Widening the nb-cache reuse skin (only ~49% pass 0.1·h) still trades
-  against the byte-equal-for-20-ticks equivalence test.
-
-@500 is now 27.4 ms mean; the @1000 bottleneck is the neighbor-cache lane above.
+`tick-world` @500 is ~30 ms and @1000 is ~52 ms, still well above the 16.6 ms budget.
+`step-physics` @500 is ~13 ms, already under budget, but the serial work outside the
+fan-out (`advance-com-spatial`, `system-summary`, `stats-of`, `pacing`, `events+clock`)
+adds ~10 ms at 500 particles and likely scales with N. The next optimization pass should
+profile and fan-out these remaining serial segments, or reduce the neighbor-cache rebuild
+cost if it re-emerges at @1000.
 
 ## The ordering law (for every future agent reading this)
 

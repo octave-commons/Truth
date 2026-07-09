@@ -134,7 +134,7 @@
                  :name (naming/body-name eid)
                  :state :planet
                  :type-str (str (str/replace (name (or ptype :terrestrial)) "-" " ")
-                                 "  |  " (name (:phase eco)))
+                                "  |  " (name (:phase eco)))
                  :mass-kg mass-kg
                  :mass-str (inspect/fmt-mass mass-kg false)
                  :radius-str (inspect/fmt-radius radius-m false)})))

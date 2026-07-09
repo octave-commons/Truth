@@ -224,4 +224,4 @@
                 (event/emit (event/->event {:tick 7 :kind :event/life-emergence :entities #{eid}})))
           w' (arc/advance-arc w)]
       (is (re-find #"Life emerges on" (get-in w' [:arc/notification :text])))
-      (is (re-find #"a world" (get-in w' [:arc/notification :text]))))))
+      (is (re-find #"! \+50 quanta" (get-in w' [:arc/notification :text]))))))

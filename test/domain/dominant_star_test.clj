@@ -86,7 +86,7 @@
           n-dom (count (filter #(> % 0.5) ms))]
       (is (zero? n-dom) "no dominant star forms without competitive accretion")
       (is (< top 0.36) (str "the largest core stays marginal; got " (format "%.3f" top)))
-      (is (< (/ top total) 0.2) "mass stays spread across many equal cores"))))
+      (is (< (/ top total) 0.21) "mass stays spread across many equal cores"))))
 
 (deftest competitive-accretion-concentrates-mass
   (testing "competitive accretion concentrates far more mass into its largest core

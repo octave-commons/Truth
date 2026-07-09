@@ -1,7 +1,7 @@
 ---
 uuid: "focus-zoom-lod-ui-spec"
 title: "Focus, Zoom, LOD, and Life-Emergence UI"
-status: "in_progress"
+status: "done"
 priority: "P1"
 labels: ["specs", "phase0", "player", "ui", "lod"]
 created_at: "2026-07-08T23:45:00.000000000Z"

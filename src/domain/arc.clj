@@ -130,10 +130,10 @@
     :planet-formation       "A planet forms! +10 quanta"
     :collision              "A collision! +1 quanta"
     :phase-transition       "The phase shifts. +5 quanta"
-     :life-emergence         (let [eid (first (get event :entities))
-                                   label (when eid (naming/display-label eid
-                                                    (ecs/get-component world eid c/matter-state)))]
-                               (format "Life emerges on %s! +50 quanta" (or label "a world")))
+    :life-emergence         (let [eid (first (get event :entities))
+                                  label (when eid (naming/display-label eid
+                                                                        (ecs/get-component world eid c/matter-state)))]
+                              (format "Life emerges on %s! +50 quanta" (or label "a world")))
     :gate-discovery         "A gate is discovered! +100 quanta"
     nil))
 
@@ -215,8 +215,8 @@
   [world tick]
   (->> (event/events-since world tick)
        (filter #(= (:tick %) tick))
-        (keep #(when-let [event-cat (event-kind->category (:kind %))]
-                 [% event-cat]))))
+       (keep #(when-let [event-cat (event-kind->category (:kind %))]
+                [% event-cat]))))
 
 (defn- arc-notification
   "Build the notification for the most recent event on `tick`."

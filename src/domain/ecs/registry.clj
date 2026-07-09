@@ -54,10 +54,16 @@
     :reads  #{c/density c/temperature}
     :writes #{c/pressure}}
 
-   {:id     :hydro
-    :ns     'domain.hydro.pressure
-    :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius c/neighbor-cache}
-    :writes #{c/accel-pressure}}
+    ;; Merged hydro/EM force system: one neighbor walk computes both the SPH
+    ;; pressure-gradient acceleration and the MHD-lite Lorentz acceleration,
+    ;; plus the magnetic-braking torque. Eliminates the duplicate gradient
+    ;; computation of the separate hydro and em-lorentz systems.
+   {:id     :hydro-em
+    :ns     'domain.mhd.force
+    :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius
+              c/b-field c/velocity c/angular-momentum c/rotation-axis
+              c/ionization-fraction c/neighbor-cache}
+    :writes #{c/accel-pressure c/accel-lorentz c/torque-em}}
 
     ;; Neighbor cache: fan-out builder for the SPH kernel + curl/pressure-grad
     ;; values shared by hydro and EM-Lorentz. One-tick-stale Jacobi lag — the
@@ -316,15 +322,7 @@
     :reads  #{c/matter-state c/position c/velocity c/mass c/oblateness}
     :writes #{c/disc-tag}}
 
-     ;; EM is split: the Lorentz force and magnetic braking are computed together
-    ;; in one pass over EM-active entities; the integrator owns angular-momentum/
-    ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
-   {:id     :em-lorentz
-    :ns     'domain.em.lorentz
-    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state c/neighbor-cache}
-    :writes #{c/accel-lorentz c/torque-em}}
-
-;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
+    ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
     ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
     ;; flux-freezing and em's b-field decay.
    {:id     :field

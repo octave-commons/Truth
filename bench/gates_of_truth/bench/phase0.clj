@@ -19,6 +19,7 @@
    [domain.orbital.system :as orbital]
    [domain.hydro          :as hydro]
    [domain.em             :as em]
+   [domain.mhd.force      :as mhd]
    [domain.physics.collision :as collision]
    [domain.regime         :as regime]
    [domain.intervention   :as intervention]
@@ -295,21 +296,15 @@
     (quick-bench "  density-system"
                  (fn [] ((hydro/density-system (:sim/dt w500)) w500)))
 
-    ;; Pressure acceleration
-    (quick-bench "  pressure-acceleration system"
+    ;; Merged hydro/EM force system
+    (quick-bench "  merged-hydro-em system"
                  (fn []
-                   (let [sys (hydro/pressure-acceleration)]
+                   (let [sys (mhd/merged-hydro-em-system (:sim/dt w500))]
                      ((:run sys) w500))))
 
     ;; EM field
     (quick-bench "  field-system"
                  (fn [] ((em/field-system (:sim/dt w500)) w500)))
-
-    ;; Lorentz
-    (quick-bench "  lorentz-acceleration system"
-                 (fn []
-                   (let [sys (em/lorentz-acceleration-system (:sim/dt w500))]
-                     ((:run sys) w500))))
 
     ;; Collision
     (quick-bench "  collision-detection-system"

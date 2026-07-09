@@ -15,17 +15,17 @@
   "A world with a star at the origin, a planet at 1e12 m, and an observer at the
    origin."
   []
-  (let [[w star] (stellar/spawn-clump (ecs/empty-world)
-                                      {:position [0.0 0.0 0.0]
-                                       :mass 2e30 :radius 6.957e8
-                                       :matter-state :star
-                                       :temperature 5800.0})
-        [w planet] (stellar/spawn-clump w
-                                        {:position [1.0e12 0.0 0.0]
-                                         :mass 6e24 :radius 6.4e6
-                                         :matter-state :planet
-                                         :temperature 300.0})
-        [w obs] (player/spawn-observer w [0.0 0.0 0.0])]
+  (let [[w _star] (stellar/spawn-clump (ecs/empty-world)
+                                       {:position [0.0 0.0 0.0]
+                                        :mass 2e30 :radius 6.957e8
+                                        :matter-state :star
+                                        :temperature 5800.0})
+        [w _planet] (stellar/spawn-clump w
+                                         {:position [1.0e12 0.0 0.0]
+                                          :mass 6e24 :radius 6.4e6
+                                          :matter-state :planet
+                                          :temperature 300.0})
+        [w _obs] (player/spawn-observer w [0.0 0.0 0.0])]
     (assoc w :next-id 10 :tick 0)))
 
 (deftest lod-scheduler-writes-tick-phase-on-level-change
@@ -36,7 +36,7 @@
           ws ((:run sys) w)]
       (is (contains? ws c/lod-level))
       (is (contains? ws c/lod-tick-phase))
-      (is (every? (fn [[eid phase]]
+      (is (every? (fn [[_eid phase]]
                     (and (#{:local :system :galaxy} (:level phase))
                          (#{1 2 4} (:period phase))
                          (= 5 (:phase phase))))
@@ -45,7 +45,7 @@
     (let [w (-> (world-with-star-planet-observer)
                 (assoc :tick 5)
                 (ecs/put-component 0 c/lod-level :local)
-                (ecs/put-component 1 c/lod-level :local))
+                (ecs/put-component 1 c/lod-level :galaxy))
           sys (lod/lod-scheduler)
           ws ((:run sys) w)]
       (is (empty? ws))))
@@ -60,6 +60,7 @@
       (is (base/due-entity? w 0 999))))
   (testing "An entity is due exactly when (tick - phase) mod period == 0"
     (let [w (-> (ecs/empty-world)
+                (assoc :lod/throttle-ticks? true)
                 (ecs/put-component 0 c/lod-tick-phase {:level :system :period 2 :phase 3}))]
       (is (base/due-entity? w 3 0))
       (is (base/due-entity? w 5 0))

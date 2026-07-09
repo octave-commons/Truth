@@ -146,8 +146,8 @@
                                      c/density 5500.0 c/pressure 1e5
                                      c/composition {:H2O 0.1 :C 0.01 :N 0.001}
                                      c/ecology (ecology/make-ecology {:phase :prokaryotic
-                                                                       :biomass 0.2
-                                                                       :moisture 0.5})})
+                                                                      :biomass 0.2
+                                                                      :moisture 0.5})})
                 (assoc :next-id 1))
           rows (panels/living-worlds w)]
       (is (= 1 (count rows)))

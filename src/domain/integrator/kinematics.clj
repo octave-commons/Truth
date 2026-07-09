@@ -76,7 +76,7 @@
         eids (base/due-entities
               world
               (ecs/entities-with world c/position c/velocity
-                                      c/mass c/radius c/body-kind))
+                                 c/mass c/radius c/body-kind))
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
         profiling? (:genesis/profile-subsystems? world)

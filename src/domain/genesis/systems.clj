@@ -23,7 +23,7 @@
    [domain.ecology :as ecology]
    [domain.debris :as debris]
    [domain.orbital.system :as orbital]
-   [domain.hydro :as hydro]
+   [domain.mhd.force :as mfd]
    [domain.physics.cache :as cache]))
 
 ;; Ongoing physics that is not specific to formation moved to its proper owner:
@@ -34,8 +34,7 @@
 (defn- ^:private physics-force-systems
   "Secondary force emitters + integrator."
   [dt]
-  [(em/lorentz-acceleration-system dt)
-   (intervention/warp-acceleration-system)
+  [(intervention/warp-acceleration-system)
    (player/observer-acceleration-system)
    (intervention/thermal-intervention-system)
    (integ/integrator-system dt)])
@@ -94,7 +93,7 @@
   (let [soft (or softening 1e14)
         cut  (or cutoff (* 0.1 soft))]
     (into [(orbital/gravity-acceleration G theta soft cut)
-           (hydro/pressure-acceleration)]
+           (mfd/merged-hydro-em-system dt)]
           (concat (physics-force-systems dt)
                   (physics-transform-systems)
                   (physics-formation-systems dt)

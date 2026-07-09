@@ -273,9 +273,8 @@
                   (let [v (sp/len (or velocity [0.0 0.0 0.0]))
                         beta (lf/plasma-beta (double pressure) b-field)
                         ma (lf/alfven-mach v b-field (double density))]
-                    (or (and (>= beta lf/beta-magnetized)
-                             (>= ma lf/alfven-mach-magnetized))
-                        (< (count neighbors) lf/min-neighbors-for-curl))))]
+                    (and (>= beta lf/beta-magnetized)
+                         (>= ma lf/alfven-mach-magnetized))))]
     (if skip?
       [0.0 0.0 0.0]
       (let [[px py pz] position
