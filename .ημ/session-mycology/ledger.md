@@ -250,3 +250,12 @@
   spore: none
   receipt-refs: none
   note: Fork-tax turn completed successfully. Friction: additional tracked files (classifier, stellar_test, exploration notes/PNGs) appeared while tests were running, requiring a scope expansion mid-turn. No spore because fork-tax skill already covers the protocol; the concurrency is a known shared-workspace condition.
+- ts: 2026-07-09T20:37:11.982798758Z
+  session: ses_0b76be2e6ffe5XbU63yu0YAh05
+  task: Pay fork tax on significant Gates of Truth changes
+  p-efficiency: 0.85
+  p-friction: 0.2
+  p-skill-candidate: 0.4
+  spore: none
+  receipt-refs: bff8c76,Π-20260709203132,ses_0b76be2e6ffe5XbU63yu0YAh05
+  note: Routine fork-tax snapshot: significant genesis pacing/time-slip changes absorbed, verified, committed, tagged, and pushed. Receipt recorded. No new reusable skill pattern identified.
