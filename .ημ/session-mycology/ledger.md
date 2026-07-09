@@ -232,3 +232,12 @@
   spore: none
   receipt-refs: none
   note: fill-physics-soa! created a map per entity causing a 20x regression (~25 ms @1000). Direct array writes restored ~1.2 ms. Also benchmark needed namespace repairs and :covers updates.
+- ts: 2026-07-09T01:24:51.043888043Z
+  session: ses_0bb90fa86ffew0bM2gYOVOwBoW
+  task: fork-tax-tender paid Π on Gates of Truth significant changes
+  p-efficiency: 0.85
+  p-friction: 0.2
+  p-skill-candidate: 0.5
+  spore: none
+  receipt-refs: none
+  note: Minor friction from manifest self-hash fixed-point decision (excluded manifest from itself) and a Python bytes-literal syntax error; no spore because fork-tax skill already covers the protocol.
