@@ -109,9 +109,10 @@
   "Maximum per-tick step allowed for a given observable `complexity`. Higher
    complexity slows the clock so that articulated phases (protostars, stars,
    planets) play out longer. `complexity=0` leaves the cap at `pacing-dt-max`;
-   every point of complexity divides that ceiling by one more step. Pure."
+   complexity now uses a sqrt falloff so the clock does not crawl as soon as a
+   handful of bodies form."
   [complexity]
-  (/ pacing-dt-max (max 1.0 (+ 1.0 (double complexity)))))
+  (/ pacing-dt-max (max 1.0 (math/sqrt (max 1.0 (+ 1.0 (double complexity)))))))
 
 (defn pacing-for
   "Pacing from the cloud's bulk dynamical time `t-dyn`, bulk `radius`, and
@@ -157,33 +158,38 @@
 ;; --- Time slip --------------------------------------------------------------
 
 (def time-slip-factor
-  "Multiplier on the per-tick step while time is SLIPPING — the observer's
+  "Maximum multiplier on the per-tick step while time is SLIPPING — the observer's
    attention has lapsed (low coherence) over a near-empty region, so the universe
-   fast-forwards rather than crawling. At 20× a dead, unwatched cloud blinks ahead
-   until something happens (or the player tightens focus) and coherence recovers."
-  20.0)
+   fast-forwards rather than crawling. Reduced from 20× to 5× so the fast-forward
+   is noticeable but does not skip past interesting events."
+  5.0)
 
 (def pacing-dt-slip-max
-  "Ceiling on the per-tick step WHILE time is slipping — well above the normal
+  "Ceiling on the per-tick step WHILE time is slipping — above the normal
    `pacing-dt-max` (so a stalled region can race ahead), but still bounded for
-   numerical sanity. A slipping region is low-complexity by definition (few
-   bodies), so the coarser step integrates safely." 4.0e12)
+   numerical sanity. Reduced from 4e12 to 1e12 so the slip is gentler."
+  1.0e12)
 
 (defn with-time-slip
-  "Rescale a pacing map for a time slip. When `slipping?`, the per-tick step `:dt`
-   is boosted by `time-slip-factor` (capped at `pacing-dt-slip-max`) and the
-   derived `:rate`/`:rate-yr` recomputed; `:softening` is unchanged (it tracks the
-   bulk radius, not the clock). When not slipping, the map passes through. Either
-   way `:time-slipping?` is flagged for the HUD. Pure — the slip DECISION
-   (`player/time-slip-threshold?`) is made by the caller and passed in, so pacing
-   stays free of any observer dependency."
-  [{:keys [dt] :as pacing} slipping?]
-  (if (and slipping? dt)
-    (let [dt'  (min pacing-dt-slip-max (* time-slip-factor (double dt)))
-          rate (* dt' ticks-per-second)]
-      (assoc pacing
-             :dt dt'
-             :rate rate
-             :rate-yr (/ rate seconds-per-year)
-             :time-slipping? true))
-    (assoc pacing :time-slipping? false)))
+  "Rescale a pacing map for a time slip. When coherence is low (below 0.3) and
+   complexity is low, the per-tick step `:dt` is boosted by a factor that grows
+   smoothly as coherence drops: factor = 1 + (0.3 - coherence) * 10, capped at
+   `time-slip-factor` (5×). The derived `:rate`/`:rate-yr` are recomputed;
+   `:softening` is unchanged (it tracks the bulk radius, not the clock).
+   When coherence is nil or >= 0.3, the map passes through. Either way
+   `:time-slipping?` is flagged for the HUD. Pure — the slip DECISION is made by
+   the caller and passed as `coherence` so pacing can scale smoothly."
+  [{:keys [dt] :as pacing} coherence]
+  (let [coherence (double (or coherence 1.0))
+        slipping? (< coherence 0.3)]
+    (if (and slipping? dt)
+      (let [factor (min time-slip-factor
+                        (+ 1.0 (* 10.0 (- 0.3 coherence))))
+            dt'    (min pacing-dt-slip-max (* factor (double dt)))
+            rate   (* dt' ticks-per-second)]
+        (assoc pacing
+               :dt dt'
+               :rate rate
+               :rate-yr (/ rate seconds-per-year)
+               :time-slipping? true))
+      (assoc pacing :time-slipping? false))))

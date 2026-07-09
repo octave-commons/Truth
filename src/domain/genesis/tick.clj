@@ -114,11 +114,11 @@
         summ       (summary/system-summary world2)
         complexity (classifier/complexity-score summ)
         stats      (summary/stats-of world2 summ)
-        slipping?  (when-let [obs (player/get-observer world2)]
-                     (player/time-slip-threshold? obs complexity))
+        obs        (player/get-observer world2)
+        slipping?  (when obs (player/time-slip-threshold? obs complexity))
         pacing     (when-not (false? (:genesis/adaptive-pacing? world2))
                      (-> (pacing/pace world2 complexity)
-                         (pacing/with-time-slip (boolean slipping?))))
+                         (pacing/with-time-slip (when slipping? (:coherence obs)))))
         world3     (cond-> world2
                      (and (:star? summ) (zero? (:genesis/star-ignition-time world2)))
                      (assoc :genesis/star-ignition-time (:genesis/sim-time world2))

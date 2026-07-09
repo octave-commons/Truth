@@ -231,7 +231,13 @@ These values are starting points; the final tuning should be verified visually.
 | `src/infra/render/shader.clj` | Optional density cutoff bump in the volume fragment shader. |
 | `test/domain/disk_evolution_test.clj` | Update disk masses in fragmentation tests from 0.3 M☉ to 0.8 M☉ so they exceed the new 0.7 threshold. |
 | `test/infra/render_test.clj` | Add volume config validation test. |
-| `kanban/tasks/focus-zoom-lod-ui-spec.md` | Update §2 if the volume tuning is considered part of the close-up rendering pass. |
+| `src/domain/genesis/bootstrap.clj` | Default `n-seeds` 1, `nebula-radius` 3.0e16 m, Gaussian central seeds. |
+| `src/domain/player/economy.clj` | Reduce coherence drain/regen 4×. |
+| `src/domain/pacing.clj` | Gentler time-slip, continuous coherence-based factor, sqrt complexity cap. |
+| `src/domain/genesis/tick.clj` | Pass coherence to `with-time-slip`. |
+| `test/domain/time_slip_test.clj` | Update for continuous coherence-based time-slip. |
+| `test/domain/formation_integration_test.clj` | Use explicit old parameters in cache tests. |
+| `test/domain/genesis_test.clj` | Use explicit `:nebula-radius` in pacing test and updated complexity expectations. |
 
 ***
 
@@ -276,7 +282,33 @@ In `src/domain/stellar/disc.clj`, a `disk-radius-max` of 1000 AU is applied insi
 
 ### 14.4 Result
 
-After these fixes, the live simulation produced a star at **0.293 M☉** (tick 12614) with a compact disk of **0.006 M☉** draining at **4.25 × 10⁻⁷ M☉/tick**. The original 0.269 M☉ cap is gone. Further tuning (100× feeding zone, direct star routing, or different initial nebula parameters) can speed up growth if desired.
+After these fixes, the live simulation produced a star at **0.293 M☉** (tick 12614) with a compact disk of **0.006 M☉** draining at **4.25 × 10⁻⁷ M☉/tick**. The original 0.269 M☉ cap is gone.
+
+### 14.5 Diffuse, centrally seeded cloud
+
+A further observation showed that the cloud was still forming cores all over the nebula, not one central core. The cause was the seed-placement function, which distributed overdensity centres uniformly in [-0.8×extent, +0.8×extent]; the single seed therefore sat near the cloud edge, and the 40% of gas seeded around it collapsed there first.
+
+Changes made:
+
+- `src/domain/genesis/bootstrap.clj`: default `n-seeds` reduced to 1, default `nebula-radius` increased to 3.0×10¹⁶ m, and `seed-positions` changed to a Gaussian centred on the cloud (σ ≈ 0.15×extent in x/y, 0.05×extent in z).
+- The `create-world` option map now exposes `:n-seeds` and `:seed-r` so callers can override them.
+- Cache tests in `test/domain/formation_integration_test.clj` and `test/domain/genesis_test.clj` were updated to pass explicit old parameters (`:nebula-radius 2.0e16`, `:n-seeds 5`, `:seed-r 0.18`) so they remain deterministic.
+
+After this, the live simulation produced a single central star with a compact disk and only ~4 other resolved bodies (tick 5693), matching the desired "one dense area, diffuse cloud" picture.
+
+### 14.6 Coherence/time-slip tuning
+
+The user also observed that coherence-based time dilation was too aggressive: the coherence bar drained too fast and the time-slip fast-forwarded too hard, leaving no room for player intervention. Three pacing changes were made:
+
+1. **Slower coherence drain/regen** (`src/domain/player/economy.clj`): reduced by 4× from `0.003` to `0.00075` per frame.
+2. **Gradual, gentler time-slip** (`src/domain/pacing.clj`): `time-slip-factor` dropped from 20× to 5× max, `pacing-dt-slip-max` from 4e12 to 1e12, and `with-time-slip` now takes coherence directly and computes a smooth factor `1 + (0.3 - coherence) × 10`.
+3. **Less aggressive complexity cap** (`src/domain/pacing.clj`): `complexity-dt-cap` now uses `sqrt(1 + complexity)` instead of `1 + complexity`.
+
+`test/domain/time_slip_test.clj` and `test/domain/genesis_test.clj` were updated for the new behaviour.
+
+### 14.7 Result after all fixes
+
+The live simulation now produces a single central star with a compact disk, only a handful of nearby bodies, and a more playable clock: ~18,000 years per real second at tick 3550 with coherence near 1.0, and a much slower drain when the player narrows focus.
 
 ## 15. References
 
@@ -293,17 +325,3 @@ After these fixes, the live simulation produced a star at **0.293 M☉** (tick 1
 11. Project spec: `kanban/tasks/gradual-mass-transfer-spec.md`
 12. Project notes: `docs/notes/improve-planetary-disk-modeling-and-rendering-claude-session-005-now-let-me-verify-renderclj-still-compil.md`
 13. Project notes: `docs/notes/exploration/nrepl-exploration-star-growth-stall.md`
-
-
-1. Kratter, K. M., & Lodato, G. (2016). *Gravitational Instabilities in Circumstellar Disks*. arXiv:1603.01280. https://arxiv.org/abs/1603.01280
-2. Mercer, A., & Stamatellos, D. (2020). *Fragmentation favoured in discs around higher mass stars*. arXiv:2001.06224. https://arxiv.org/abs/2001.06224
-3. Kratter, K. M., Matzner, C. D., & Krumholz, M. R. (2007). *Embedded, Accreting Disks in Massive Star Formation*. arXiv:0712.0853. https://arxiv.org/abs/0712.0853
-4. Project research: `docs/research/physics/protoplanetary-disks-planet-formation.md`
-5. Project research: `docs/research/physics/protoplanetary-disks-extended.md`
-6. Project research: `docs/research/physics/stellar-nebula-mass-hierarchy.md`
-7. Project research: `docs/research/physics/stellar-mergers-accretion.md`
-8. Project research: `docs/research/physics/rate-limited-accretion-mass-transfer.md`
-9. Project spec: `kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md`
-10. Project spec: `kanban/tasks/phase-0-stellar-winds-mass-transfer-remnants-technical-spec.md`
-11. Project spec: `kanban/tasks/gradual-mass-transfer-spec.md`
-12. Project notes: `docs/notes/improve-planetary-disk-modeling-and-rendering-claude-session-005-now-let-me-verify-renderclj-still-compil.md`

@@ -1,9 +1,9 @@
 (ns domain.player.economy
   "Coherence, agency, and resonance economy.")
 
-(defn coherence-drain-from-focus "Per-frame coherence drain based on focus-intensity. At default intensity\n   (0.5), drain roughly equals regen — the bar holds steady. At max (1.0),\n   the bar drains in ~7 seconds. At min (0.1), regen dominates." [focus-intensity] (* 0.003 (double focus-intensity)))
+(defn coherence-drain-from-focus "Per-frame coherence drain based on focus-intensity. At default intensity\n   (0.5), drain roughly equals regen — the bar holds steady. At max (1.0),\n   the bar drains in ~30 seconds. At min (0.1), regen dominates." [focus-intensity] (* 0.00075 (double focus-intensity)))
 
-(defn coherence-regen-rate "Per-frame passive coherence regeneration. At default intensity (0.5), regen\n   roughly equals drain — the bar holds steady. At max focus (1.0), regen is\n   zero. At min focus (0.1), regen refills the bar in ~6 seconds." [focus-intensity] (* 0.003 (- 1.0 (double focus-intensity))))
+(defn coherence-regen-rate "Per-frame passive coherence regeneration. At default intensity (0.5), regen\n   roughly equals drain — the bar holds steady. At max focus (1.0), regen is\n   zero. At min focus (0.1), regen refills the bar in ~24 seconds." [focus-intensity] (* 0.00075 (- 1.0 (double focus-intensity))))
 
 (defn coherence-gain-from-event "Coherence restored by witnessing a threshold event, with diminishing returns\n   as coherence approaches its maximum." [event-type current-coherence]   (let [base (case event-type :nebula-collapse 0.1 :condensed-core-formation 0.1 :protostar-formation 0.15 :stellar-ignition 0.3 :planet-formation 0.2 :collision 0.1 :phase-transition 0.15 :life-emergence 0.5 :gate-discovery 1.0 0.05)] (* base (- 1.0 current-coherence))))
 

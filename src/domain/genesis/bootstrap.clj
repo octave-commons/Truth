@@ -59,12 +59,15 @@
     [v-vir omega]))
 
 (defn- seed-positions
-  "Gaussian overdensity centres seeded inside the cloud volume."
+  "Gaussian overdensity centres seeded near the cloud centre. Keeping the
+   seeds central means the dominant core forms in the middle of the cloud; seeds
+   at the edge (the old 0.8×extent uniform distribution) made outer parcels
+   collapse first and produced cores all over the nebula."
   [rng extent n-seeds]
   (vec (repeatedly n-seeds
-                   (fn [] (sp/vec3 (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
-                                   (* extent 0.8 (- (* 2.0 (.nextDouble rng)) 1.0))
-                                   (* extent 0.25 (- (* 2.0 (.nextDouble rng)) 1.0)))))))
+                   (fn [] (sp/vec3 (* extent 0.15 (.nextGaussian rng))
+                                   (* extent 0.15 (.nextGaussian rng))
+                                   (* extent 0.05 (.nextGaussian rng)))))))
 
 (defn- make-gas-specs
   "Build one gas-particle spec per parcel."

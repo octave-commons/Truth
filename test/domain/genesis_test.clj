@@ -99,11 +99,12 @@
 
   (testing "Observable complexity slows the clock independently of bulk collapse"
     ;; Same bulk dynamical time and radius, chosen so the physics-bound dt is
-    ;; above the complexity cap for the tested complexities.
-    (let [simple       (pacing/pacing-for 1.0e14 1.0e16 0.0)
-          with-star    (pacing/pacing-for 1.0e14 1.0e16 5.0)
-          with-planets (pacing/pacing-for 1.0e14 1.0e16 25.0)]
-      (is (== (:dt simple) (:dt (pacing/pacing-for 1.0e14 1.0e16)))
+    ;; above the complexity cap for all tested complexities (so complexity
+    ;; dominates and the ordering is visible with the new sqrt complexity cap).
+    (let [simple       (pacing/pacing-for 1.0e15 1.0e16 0.0)
+          with-star    (pacing/pacing-for 1.0e15 1.0e16 5.0)
+          with-planets (pacing/pacing-for 1.0e15 1.0e16 25.0)]
+      (is (== (:dt simple) (:dt (pacing/pacing-for 1.0e15 1.0e16)))
           "zero complexity is the default and does not change dt")
       (is (> (:dt simple) (:dt with-star) (:dt with-planets))
           "higher complexity yields smaller per-tick steps")
@@ -111,7 +112,7 @@
           "higher complexity yields a slower wall-clock rate")))
 
   (testing "Complexity cap never breaks the dt floor/ceiling"
-    (let [huge-complexity (pacing/pacing-for 1.0e30 1.0e30 1.0e6)]
+    (let [huge-complexity (pacing/pacing-for 1.0e30 1.0e30 1.0e8)]
       (is (== (:dt huge-complexity) pacing/pacing-dt-min)
           "extreme complexity is clamped to the dt floor")))
 

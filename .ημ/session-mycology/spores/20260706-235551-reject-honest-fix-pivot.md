@@ -1,7 +1,7 @@
 ---
 status: rejected
-reviewed: 2026-07-09T07:36:32Z
-reviewer-session: a08310e8-f8fa-47bf-b0c2-f79ac470ef7b
+reviewed: 2026-07-09T19:37:32Z
+reviewer-session: 98cd14dd-2186-44eb-8e67-5d06dc1161a4
 created: 2026-07-07T04:55:51.875939905Z
 source-session: ses_0c5304a02ffelcFB41KkldUz4s
 source-task: Pivot from a hack/workaround to the honest architecture when the user rejects it

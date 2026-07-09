@@ -1,7 +1,7 @@
 ---
 status: promoted
-reviewed: 2026-07-09T07:36:32Z
-reviewer-session: a08310e8-f8fa-47bf-b0c2-f79ac470ef7b
+reviewed: 2026-07-09T19:37:32Z
+reviewer-session: 98cd14dd-2186-44eb-8e67-5d06dc1161a4
 created: 2026-07-08T22:27:00.912840134Z
 source-session: ses_0c0f9f161ffegZK7S36nqvx4Zs
 source-task: Fix star-formation regression from dt mismatch in mass-transfer

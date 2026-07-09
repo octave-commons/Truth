@@ -95,12 +95,39 @@ Updated `test/domain/stellar_test.clj` to expect the new 10× protostar accretio
   - Star is visible with a small disk halo.
   - Multiple resolved bodies are visible in the cluster.
 
-## Conclusion
+## Why the outer parcels appeared to collapse first
 
-The original 0.269 M☉ cap is **gone**. The star now forms and grows past 0.29 M☉. Growth is gradual because the remaining nebula gas is diffuse and the Bondi-Hoyle rate is low, but the disk is compact and draining, so the star continues to accrete. If faster growth is desired, the next levers are:
-- Increase the protostar radius multiplier further (e.g., 100×).
-- Route a fraction of captured gas directly to the star instead of through the disk.
-- Increase the nebula gas-particle count or reduce nebula radius to keep gas denser near the forming star.
+After switching to a single seed, the first core still formed off-centre (~0.25–0.3 of the nebula radius). The cause was the seed-placement function: `seed-positions` used a **uniform distribution in [-0.8×extent, +0.8×extent]**, so the single seed was almost always near the edge of the cloud. Forty percent of the gas was then placed around that edge seed, making the outer parcels the densest and the first to collapse. This looked like a math bug, but it was an initial-condition bug.
+
+I checked the Jeans math directly:
+
+```clojure
+(collapse/jeans-length rho 12.0)
+```
+
+gives the expected scaling λ_J ∝ ρ^(-1/2) with no overflow or underflow for ρ from 10⁻²⁵ to 10⁰ kg/m³. The collapse criterion `radius > jeans-length` also correctly favours denser regions (r/λ_J ∝ ρ^(1/6)).
+
+## Fix: central Gaussian seeds
+
+Changed `seed-positions` in `src/domain/genesis/bootstrap.clj` to a Gaussian centred on the cloud with σ ≈ 0.15×extent in x/y and 0.05×extent in z. Now the dominant seed is near the centre, so the first core collapses in the middle of the nebula and the rest of the cloud remains diffuse and feeds it.
+
+## Observations after central-seed fix (tick 5693)
+
+- Resolved bodies: **4** (down from 26 before any fix).
+- Star: **1** at ~0.24 M☉.
+- Disk: **0.024 M☉** (ratio 0.10, well below fragmentation threshold).
+- Phase: "Accretion".
+- Visual: `docs/notes/exploration/gates_of_truth_central_seed_tick_5693.png` shows a single star with a compact disk halo and only a few nearby bodies, instead of cores scattered across the nebula.
+
+## Coherence and time-slip tuning
+
+The user also observed that coherence-based time dilation was too aggressive: the coherence bar drained too fast and the time-slip fast-forwarded too hard, leaving no room for player intervention. Three pacing changes were made:
+
+1. **Slower coherence drain/regen** (`src/domain/player/economy.clj`): reduced by 4× from `0.003` to `0.00075` per frame. At max focus, coherence now takes ~30 s to drain instead of ~7 s.
+2. **Gradual, gentler time-slip** (`src/domain/pacing.clj`): `time-slip-factor` dropped from 20× to 5× max, `pacing-dt-slip-max` from 4e12 to 1e12, and `with-time-slip` now takes coherence directly and computes a smooth factor `1 + (0.3 - coherence) × 10`. At coherence 0.2 the boost is only 2×, not an instant 20×.
+3. **Less aggressive complexity cap** (`src/domain/pacing.clj`): `complexity-dt-cap` now uses `sqrt(1 + complexity)` instead of `1 + complexity`. This keeps the simulation from crawling as soon as a handful of bodies form.
+
+Tests updated: `test/domain/time_slip_test.clj` and `test/domain/genesis_test.clj`.
 
 ## Commands used
 

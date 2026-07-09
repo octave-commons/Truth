@@ -1,11 +1,11 @@
 ((pi "0.63.2")
  (repo "/home/err/spaces/Truth")
  (branch "main")
- (head "0d83dcc374033f539b66a4cea39b78df7f01cbd4")
- (tag "Π-20260709193355")
- (ts "2026-07-09T19:33:55Z")
+ (head "187d729bbbe215e3bef8f532ce20ccc7f3f1162c")
+ (tag "Π-20260709203132")
+ (ts "2026-07-09T20:31:32Z")
  (host "spaces/Truth")
- (origin "fork-tax-tender/832c3bbf-f56a-4007-b1b9-6f926a9f7a6f")
+ (origin "fork-tax-tender/b25097b5-f15b-4420-8a00-6f014e5768a5")
  (dod "pay fork tax on significant changes")
  (manifest [
    ".agents/skills/dedicated-influence-channel/CONTRACT.edn"
@@ -291,6 +291,7 @@
    ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md"
    ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md"
    ".ημ/Π_LAST.md"
+   ".ημ/Π_MANIFEST.sexp"
    ".ημ/Π_STATE.sexp"
    "AGENTS.md"
    "CLAUDE.md"
@@ -370,6 +371,7 @@
    "docs/notes/designs/phase-0-design-exploration-003-let-me-also-fix-the-normalize-reference.md"
    "docs/notes/esc-should-not-close-window.md"
    "docs/notes/exploration/gates_of_truth_after_fix_tick_12614.png"
+   "docs/notes/exploration/gates_of_truth_central_seed_tick_5693.png"
    "docs/notes/exploration/gates_of_truth_overview_tick_23202.png"
    "docs/notes/exploration/gates_of_truth_star_context_tick_32372.png"
    "docs/notes/exploration/gates_of_truth_star_follow_tick_35365.png"
@@ -854,15 +856,16 @@
    "test/test_runner.clj"
  ])
  (owner "fork-tax-tender")
- (note "fork-tax-tender detected significant working-tree changes in the Gates of Truth repository and paid the fork tax. Scope: mass-transfer and genesis-bootstrap tuning, plus exploration/spec documentation. Tuned mass-transfer capture radius and sink selection in src/domain/mass_transfer; tuned genesis bootstrap parameters and wind seeding in src/domain/genesis/bootstrap; updated formation integration and genesis tests; refreshed the star-growth disk-fragmentation/nebula-transparency spec and nREPL exploration notes; added an after-fix screenshot. Plus regenerated .ημ handoff artifacts.")
+ (note "fork-tax-tender detected significant working-tree changes in the Gates of Truth repository and paid the fork tax. Scope: genesis pacing and time-slip tuning, player-economy coherence adjustments, central-seed exploration screenshot, and updated session-mycology spores/receipts. Plus regenerated .ημ handoff artifacts.")
   (verification
     (test "bin/test domain")
-    (result "482 tests, 4922 assertions, 0 failures, 0 errors")
+    (result "482 tests, 4920 assertions, 0 failures, 0 errors")
     (test "bin/test infra")
     (result "88 tests, 8315 assertions, 0 failures, 0 errors")
     (test "bin/test architecture")
     (result "6 tests, 23 assertions, 0 failures, 0 errors")
     (test "clj-kondo --lint src test")
-    (result "0 errors, 0 warnings"))
+    (result "0 errors, 0 warnings")
+  )
  (concurrent nil)
  (blockers nil))

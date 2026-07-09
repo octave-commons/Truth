@@ -29,9 +29,10 @@
   {:dt 1.0e9 :rate 6.0e10 :rate-yr 1.0 :softening 5.0e13})
 
 (deftest slip-boosts-dt-and-re-derives-rate
-  (let [p (pacing/with-time-slip base true)]
-    (testing "dt is boosted by the slip factor"
-      (is (= (* pacing/time-slip-factor 1.0e9) (:dt p))))
+  (let [p (pacing/with-time-slip base 0.2)]
+    (testing "dt is boosted smoothly by a factor that grows as coherence drops"
+      (is (< (Math/abs (- (:dt p) 2.0e9)) 1.0e-6)
+          "coherence 0.2 gives factor ≈ 1 + (0.3 - 0.2) * 10 = 2.0"))
     (testing "rate is re-derived from the boosted dt (rate = dt·tps)"
       (is (= (* (:dt p) pacing/ticks-per-second) (:rate p)))
       (is (= (/ (:rate p) pacing/seconds-per-year) (:rate-yr p))))
@@ -42,12 +43,12 @@
 
 (deftest slip-respects-the-ceiling
   (testing "a huge base step is capped at pacing-dt-slip-max while slipping"
-    (let [p (pacing/with-time-slip (assoc base :dt 1.0e15) true)]
+    (let [p (pacing/with-time-slip (assoc base :dt 1.0e15) 0.0)]
       (is (= pacing/pacing-dt-slip-max (:dt p)))
       (is (= (* pacing/pacing-dt-slip-max pacing/ticks-per-second) (:rate p))))))
 
 (deftest no-slip-passes-through-unchanged
-  (let [p (pacing/with-time-slip base false)]
+  (let [p (pacing/with-time-slip base 0.5)]
     (testing "dt/rate/softening are unchanged when not slipping"
       (is (= (:dt base) (:dt p)))
       (is (= (:rate base) (:rate p)))
