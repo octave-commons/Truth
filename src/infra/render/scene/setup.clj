@@ -31,9 +31,11 @@
   (max 100.0 (min 10000.0 (* 1000.0 (double (or (:distance camera) 50.0))))))
 
 (defn- camera-matrices
-  "Projection and view matrices for the current camera."
+  "Projection and view matrices for the current camera. The near plane is a
+   small fraction of the orbit distance so tight approaches to true-scale bodies
+   do not clip the front face; it is floored to avoid a degenerate projection."
   [camera width height]
-  (let [near (max 1.0e-8 (min 0.1 (* 0.2 (double (or (:distance camera) 50.0)))))
+  (let [near (max 1.0e-9 (min 0.05 (* 0.01 (double (or (:distance camera) 50.0)))))
         far  (scene-far-plane camera)]
     {:projection (cam/perspective 60.0 (/ width (float height)) near far)
      :view       (cam/look-at (:position camera) (:target camera) (sp/vec3 0.0 0.0 1.0))}))

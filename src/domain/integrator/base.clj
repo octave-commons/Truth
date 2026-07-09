@@ -66,3 +66,23 @@
   (let [matches (fn [m] (get m eid))]
     (into (or (matches (get-in world [:components c/absorb-accrete] {})) [])
           (or (matches (get-in world [:components c/absorb-merge] {})) []))))
+
+(defn due-entity?
+  "True if `eid` should be advanced this tick according to its LOD tick phase.
+   Entities without a `c/lod-tick-phase` are always due (backward-compatible).
+   Throttling is only active when the world has `:lod/throttle-ticks?` true."
+  [world tick eid]
+  (if (:lod/throttle-ticks? world)
+    (if-let [{:keys [period phase]}
+             (ecs/get-component world eid c/lod-tick-phase)]
+      (zero? (mod (- (long tick) (long phase))
+                  (long (or period 1))))
+      true)
+    true))
+
+(defn due-entities
+  "Filter `eids` to those due this tick. Reads `c/lod-tick-phase` and the
+   world's `:tick` when `:lod/throttle-ticks?` is true."
+  [world eids]
+  (let [tick (long (or (:tick world) 0))]
+    (filterv #(due-entity? world tick %) eids)))

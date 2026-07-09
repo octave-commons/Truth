@@ -90,7 +90,10 @@
    Absorb-merge packets from collision merges are blended AFTER the virial
    derivation: the mass-weighted temperature blend plus impact heating. This is
    a one-tick Jacobi delay — the merged body's radius (used by virial) won't
-   update until structure re-derives it next tick."
+   update until structure re-derives it next tick.
+
+   When `:lod/throttle-ticks?` is true, only due entities are kept in the final
+   temperature cell."
   [world dt]
   (let [base ((:run (temperature/temperature-system dt)) world)
         base-cell (apply-wind-heating (get base c/temperature {}) world)
@@ -113,7 +116,9 @@
                ;; only merge blends
                (seq merged-temps)
                (merge base-cell merged-temps)
-               :else base-cell)]
+               :else base-cell)
+        due (set (base/due-entities world (keys cell)))
+        cell' (into {} (filter (fn [[eid _]] (due eid)) cell))]
     (if (or (seq heats) (seq merged-temps))
-      {c/temperature cell}
-      base)))
+      {c/temperature cell'}
+      (assoc base c/temperature cell'))))

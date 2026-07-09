@@ -54,23 +54,22 @@
     :reads  #{c/density c/temperature}
     :writes #{c/pressure}}
 
-    {:id     :hydro
-     :ns     'domain.hydro.pressure
-     :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius c/neighbor-cache}
-     :writes #{c/accel-pressure}}
+   {:id     :hydro
+    :ns     'domain.hydro.pressure
+    :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius c/neighbor-cache}
+    :writes #{c/accel-pressure}}
 
     ;; Neighbor cache: fan-out builder for the SPH kernel + curl/pressure-grad
     ;; values shared by hydro and EM-Lorentz. One-tick-stale Jacobi lag — the
     ;; cache is built from the frozen input world and read by consumers in the
     ;; same tick's parallel fan-out. Replaces the world-key `:genesis/neighbor-cache`
     ;; and the serial `future` pre-phase in `step-physics`.
-    {:id     :neighbor-cache
-     :ns     'domain.physics.cache.neighbor
-     :reads  #{c/matter-state c/position c/velocity c/density c/pressure c/mass c/radius c/b-field}
-     :writes #{c/neighbor-cache}}
+   {:id     :neighbor-cache
+    :ns     'domain.physics.cache.neighbor
+    :reads  #{c/matter-state c/position c/mass c/radius c/neighbor-cache}
+    :writes #{c/neighbor-cache}}
 
-
-   ;; Jeans-collapse was removed from the pipeline; accretion-radius is now
+;; Jeans-collapse was removed from the pipeline; accretion-radius is now
    ;; written by the classifier (sole writer of both matter-state and accretion-radius).
 
     ;; The classifier is the SOLE writer of matter-state AND accretion-radius:
@@ -122,7 +121,8 @@
               c/angular-momentum c/spin c/torque-em c/torque-disk
               c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
               c/mass-flux-transfer c/mass-flux-condense
-              c/absorb-merge c/absorb-accrete c/wind-heating}
+              c/absorb-merge c/absorb-accrete c/wind-heating
+              c/lod-tick-phase}
     :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
               c/angular-momentum c/spin c/consumed-transfer}}
 
@@ -283,7 +283,7 @@
    {:id     :lod-scheduler
     :ns     'domain.lod
     :reads  #{c/matter-state c/position c/observer}
-    :writes #{c/lod-level}}
+    :writes #{c/lod-level c/lod-tick-phase}}
 
    ;; Magnetosphere coupling: computes magnetopause standoff from wind ram pressure.
     ;; Fan-out emitter (was a cargo-cult barrier — already single-writer).
@@ -319,13 +319,12 @@
      ;; EM is split: the Lorentz force and magnetic braking are computed together
     ;; in one pass over EM-active entities; the integrator owns angular-momentum/
     ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
-    {:id     :em-lorentz
-     :ns     'domain.em.lorentz
-     :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state c/neighbor-cache}
-     :writes #{c/accel-lorentz c/torque-em}}
+   {:id     :em-lorentz
+    :ns     'domain.em.lorentz
+    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state c/neighbor-cache}
+    :writes #{c/accel-lorentz c/torque-em}}
 
-
-    ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
+;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
     ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's
     ;; flux-freezing and em's b-field decay.
    {:id     :field

@@ -88,8 +88,8 @@
    [:query-r [:and :double [:> 0]]]
    [:h [:and :double [:> 0]]]
    [:neighbors [:vector [:map]]]
-   [:gradients [:vector [:tuple :double :double :double]]]
-   [:curl-gradients [:vector [:tuple :double :double :double]]]])
+   [:gradients {:optional true} [:vector [:tuple :double :double :double]]]
+   [:curl-gradients {:optional true} [:vector [:tuple :double :double :double]]]])
 
 (def neighbor-cache-entry?
   "Predicate: does `value` satisfy the neighbor-cache entry schema?"

@@ -29,8 +29,8 @@
             (not (and (:density n) (:pressure n) (:mass n))))
       [0.0 0.0 0.0]
       (let [[gx gy gz] (if gradients
-                       (nth gradients idx)
-                       (kernel/kernel-gradient [rx ry rz] r2 h))
+                         (nth gradients idx)
+                         (kernel/kernel-gradient [rx ry rz] r2 h))
             term (kernel/pressure-term density pressure
                                        (double (:density n)) (double (:pressure n)))
             scale (* (double (:mass n)) term -1.0)]
@@ -64,29 +64,51 @@
 
 (defn- pressure-gradient-acceleration-from-cache
   "SPH pressure-gradient acceleration computed directly from a neighbor-cache
-   entry's neighbor vector, using each neighbor's cached `:r2` (inline range /
-   state filter) and precomputed `:gradient-pressure`. Identical to filtering
-   the entry and calling `pressure-gradient-acceleration` with the matching
-   gradients, without allocating the filtered neighbor and gradient vectors."
-  [data neighbors hh2]
+   entry's neighbor vector. Each neighbor's cached `:r2` is reused, but the kernel
+   gradient is recomputed on demand with the pair smoothing length h_ij = r_i + r_j
+   and accumulated into scalar doubles to avoid vector allocation per neighbor.
+
+   Identical to filtering the entry and calling `pressure-gradient-acceleration`,
+   without allocating the filtered neighbor vector or a separate gradients vector."
+  [data neighbors]
   (let [density  (double (:density data))
         pressure (double (:pressure data))
-        hh2      (double hh2)]
-    (reduce
-     (fn [[ax ay az :as acc] n]
-       (if-not (and (<= (double (:r2 n)) hh2)
-                    (lf/hydro-em-active? (:matter-state n))
-                    (:density n) (:pressure n) (:mass n))
-         acc
-         (let [[gx gy gz] (:gradient-pressure n)
-               term  (kernel/pressure-term density pressure
-                                           (double (:density n)) (double (:pressure n)))
-               scale (* (double (:mass n)) term -1.0)]
-           [(+ (double ax) (* (double gx) scale))
-            (+ (double ay) (* (double gy) scale))
-            (+ (double az) (* (double gz) scale))])))
-     [0.0 0.0 0.0]
-     neighbors)))
+        [px py pz] (:position data)
+        px (double px)
+        py (double py)
+        pz (double pz)
+        r-self (double (or (:radius data) 1.0))]
+    (loop [i 0
+           ax 0.0
+           ay 0.0
+           az 0.0]
+      (if (>= i (count neighbors))
+        [ax ay az]
+        (let [n (nth neighbors i)]
+          (if-not (and (lf/hydro-em-active? (:matter-state n))
+                       (:density n)
+                       (:pressure n)
+                       (:mass n))
+            (recur (inc i) ax ay az)
+            (let [r-n (double (or (:radius n) 1.0))
+                  h   (+ r-self r-n)
+                  h2  (* h h)
+                  r2  (double (:r2 n))]
+              (if (>= r2 h2)
+                (recur (inc i) ax ay az)
+                (let [np  (:position n)
+                      rx  (- px (double (nth np 0)))
+                      ry  (- py (double (nth np 1)))
+                      rz  (- pz (double (nth np 2)))
+                      [gx gy gz] (kernel/kernel-gradient [rx ry rz] r2 h)
+                      term  (kernel/pressure-term density pressure
+                                                  (double (:density n))
+                                                  (double (:pressure n)))
+                      scale (* (double (:mass n)) term -1.0)]
+                  (recur (inc i)
+                         (+ ax (* gx scale))
+                         (+ ay (* gy scale))
+                         (+ az (* gz scale))))))))))))
 
 (defn- clear-stale-hydro-accel
   "Remove c/hydro-accel from entities that are no longer hydro-active."
@@ -106,11 +128,11 @@
   (par/par-mapv
    (fn [data]
      (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
-        [nbrs grads] (common/cache-neighbors-and-gradients
-                      {:world world :data data
-                       :radius-fn radius-fn
-                       :state-pred common/hydro-active?
-                       :gradient-key :gradient-pressure})]
+           [nbrs grads] (common/cache-neighbors-and-gradients
+                         {:world world :data data
+                          :radius-fn radius-fn
+                          :state-pred common/hydro-active?
+                          :gradient-key :gradient-pressure})]
        [(:eid data)
         (pressure-gradient-acceleration data nbrs grads)]))
    active))
@@ -154,17 +176,17 @@
                              world :hydro/compute
                              (fn [_world]
                                (par/par-mapv
-                                 (fn [data]
-                                   (let [h (* 2.0 (double (or (:radius data) 1.0)))]
-                                      (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
+                                (fn [data]
+                                  (let [h (* 2.0 (double (or (:radius data) 1.0)))]
+                                    (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
+                                      [(:eid data)
+                                       (pressure-gradient-acceleration-from-cache
+                                        data (:neighbors entry))]
+                                      (let [nbrs (idx/within-radius
+                                                  (:genesis/spatial-tree world) (:position data) h
+                                                  #(common/hydro-active? (:matter-state %)))]
                                         [(:eid data)
-                                         (pressure-gradient-acceleration-from-cache
-                                          data (:neighbors entry) (* h h))]
-                                        (let [nbrs (idx/within-radius
-                                                   (:genesis/spatial-tree world) (:position data) h
-                                                   #(common/hydro-active? (:matter-state %)))]
-                                         [(:eid data)
-                                          (pressure-gradient-acceleration data nbrs nil)]))))
+                                         (pressure-gradient-acceleration data nbrs nil)]))))
                                 active)))
                    cell     (reduce (fn [m [eid a]]
                                       (if (lf/finite-vec3? a) (assoc m eid a) m))

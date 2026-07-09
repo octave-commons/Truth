@@ -1,0 +1,5 @@
+| model | time (ms) | median rel. error pressure | median rel. error Lorentz | skipped fraction |
+|---|---|---|---|---|
+| baseline dual-cache | 562.280 | — | — | 0.0 |
+| recommended merged | 239.107 | 0.000e+00 | 0.000e+00 | 0.566 |
+| speedup | 2.35x | | | |

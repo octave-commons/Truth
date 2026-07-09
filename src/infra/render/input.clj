@@ -4,6 +4,9 @@
    on-screen legend can never drift."
   (:require
    [clojure.math :as math] [shape.spatial :as sp]
+   [domain.ecology :as ecology]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [infra.camera :as cam]
    [infra.input :as input]
    [domain.player :as player])
@@ -36,6 +39,33 @@
   [glfw-key shift?]
   (some (fn [a] (when (and (= glfw-key (:glfw a)) (= (boolean shift?) (:shift? a))) a))
         action-palette))
+
+(defn- living-worlds
+  "All living planetary entity ids in `world`."
+  [world]
+  (filter #(and (= :planet (ecs/get-component world % c/matter-state))
+                (ecology/living? (ecs/get-component world % c/ecology)))
+          (ecs/entities-with world c/position c/matter-state c/ecology)))
+
+(defn- nearest-living-world
+  "The living world closest to `target-pos` (world metres), or nil."
+  [world target-pos]
+  (when-let [worlds (seq (living-worlds world))]
+    (->> worlds
+         (map (fn [eid] [eid (sp/dist target-pos (ecs/get-component world eid c/position))]))
+         (sort-by second)
+         first
+         first)))
+
+(defn- jump-to-living-world
+  "Set config to follow the nearest living world to the camera target. If no
+   living world exists, leave config unchanged but print a hint."
+  [config-atom world-atom camera]
+  (if-let [eid (nearest-living-world @world-atom
+                                     (mapv #(* (double %) cam/phase0-view-scale)
+                                           (:target camera)))]
+    (swap! config-atom assoc :selection eid :mode :follow-selection :follow-eid eid)
+    (println "No living world yet.")))
 
 (defn- player-key
   "Map a key press to a focus / drift / release action on the world's observer.
@@ -137,6 +167,8 @@
           (println label ":" (fmt @config-atom)))
         (when (= key GLFW/GLFW_KEY_R)
           (reset-camera! camera-atom config-atom))
+        (when (= key GLFW/GLFW_KEY_L)
+          (jump-to-living-world config-atom world-atom @camera-atom))
         (dispatch-palette-action! config-atom key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT))))
       (when world-atom
         (player-key world-atom key)))))

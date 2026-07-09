@@ -11,6 +11,7 @@
    [domain.player :as player]
    [domain.naming :as naming]
    [domain.stellar.disc :as disc]
+   [domain.ecology :as ecology]
    [shape.spatial :as sp]
    [infra.inspect :as inspect]
    [infra.menu.widgets :as w]))
@@ -117,6 +118,28 @@
                                        (format "%.2f AU" (/ disk-r inspect/au)))})))))
        (sort-by :mass-kg >)))
 
+(defn living-worlds
+  "Planets whose ecology is currently living, sorted by mass descending. Returns
+   the same shape as `entity-list` rows so they can share the row renderer."
+  [world]
+  (->> (ecs/entities-with world c/mass c/radius c/matter-state c/ecology)
+       (filter #(= :planet (ecs/get-component world % c/matter-state)))
+       (filter #(ecology/living? (ecs/get-component world % c/ecology)))
+       (map (fn [eid]
+              (let [mass-kg  (double (or (ecs/get-component world eid c/mass) 0.0))
+                    radius-m (double (or (ecs/get-component world eid c/radius) 0.0))
+                    ptype    (ecs/get-component world eid c/planet-type)
+                    eco      (ecs/get-component world eid c/ecology)]
+                {:eid eid
+                 :name (naming/body-name eid)
+                 :state :planet
+                 :type-str (str (str/replace (name (or ptype :terrestrial)) "-" " ")
+                                 "  |  " (name (:phase eco)))
+                 :mass-kg mass-kg
+                 :mass-str (inspect/fmt-mass mass-kg false)
+                 :radius-str (inspect/fmt-radius radius-m false)})))
+       (sort-by :mass-kg >)))
+
 (defn- entity-row-text
   "Single-line label for an entity row, including disk mass/radius when present."
   [{:keys [type-str mass-str radius-str disk-mass-str disk-radius-str] :as row}]
@@ -167,26 +190,46 @@
     (swap! hits conj {:x0 bx :y0 ry :x1 (+ bx bw) :y1 (+ ry bh) :action [:camera/cycle-mode]})))
 
 (defn entities-panel-ctx
-  "Draw the Entities list panel."
+  "Draw the Entities list panel, including a clickable Living Worlds section
+   at the top."
   [{:keys [w pad text hits] :as ctx} py0 world]
-  (let [row-h 22.0 header-h 26.0
+  (let [row-h 22.0 header-h 26.0 sub-h 20.0
         pw 520.0
         px1 (- w 12.0)
         px0 (- px1 pw)
+        living (take 8 (living-worlds world))
         entities (take 40 (entity-list world))
-        ph (+ (* 2.0 pad) header-h (* (count entities) row-h))]
+        living-rows (count living)
+        body-rows (count entities)
+        gap (if (seq living) 8.0 0.0)
+        ph (+ (* 2.0 pad) header-h
+              (* living-rows row-h) (if (seq living) sub-h 0.0)
+              gap
+              (* body-rows row-h))]
     (panel-shell-ctx ctx {:px0 px0 :py0 py0 :px1 px1 :ph ph})
     (panel-header-ctx ctx {:px0 px0 :py0 py0 :label "ENTITIES" :color w/col-active})
-    (swap! text conj {:text "name         kind             mass      radius      disk mass  disk radius"
-                      :x (+ px0 pad) :y (+ py0 pad 18.0)
-                      :scale 1.2 :color w/col-dim})
-    (doseq [[i ent] (map-indexed vector entities)]
-      (let [ry (+ py0 pad header-h (* i row-h))]
-        (swap! text conj {:text (entity-row-text ent)
-                          :x (+ px0 pad) :y ry
-                          :scale 1.3 :color w/col-value})
-        (swap! hits conj {:x0 px0 :y0 ry :x1 px1 :y1 (+ ry row-h)
-                          :action [:ui/select-entity (:eid ent)]})))))
+    (when (seq living)
+      (swap! text conj {:text "LIVING WORLDS — click to follow"
+                        :x (+ px0 pad) :y (+ py0 pad 16.0)
+                        :scale 1.3 :color w/col-accent})
+      (doseq [[i ent] (map-indexed vector living)]
+        (let [ry (+ py0 pad sub-h header-h (* i row-h))]
+          (swap! text conj {:text (str "  " (entity-row-text ent))
+                            :x (+ px0 pad) :y ry
+                            :scale 1.3 :color w/col-value})
+          (swap! hits conj {:x0 px0 :y0 ry :x1 px1 :y1 (+ ry row-h)
+                            :action [:ui/select-entity (:eid ent)]}))))
+    (let [body-y0 (+ py0 pad header-h (if (seq living) (+ sub-h (* living-rows row-h) gap) 0.0))]
+      (swap! text conj {:text "name         kind             mass      radius      disk mass  disk radius"
+                        :x (+ px0 pad) :y (+ body-y0 4.0)
+                        :scale 1.2 :color w/col-dim})
+      (doseq [[i ent] (map-indexed vector entities)]
+        (let [ry (+ body-y0 18.0 (* i row-h))]
+          (swap! text conj {:text (entity-row-text ent)
+                            :x (+ px0 pad) :y ry
+                            :scale 1.3 :color w/col-value})
+          (swap! hits conj {:x0 px0 :y0 ry :x1 px1 :y1 (+ ry row-h)
+                            :action [:ui/select-entity (:eid ent)]}))))))
 
 (defn- spark-info-lines
   "Readout lines for the Spark panel when an observer is present."

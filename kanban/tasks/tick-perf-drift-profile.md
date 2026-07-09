@@ -368,7 +368,45 @@ survives).
     API; `test/domain/hydro_test.clj`, `test/domain/em_lorentz_test.clj`,
     `test/domain/formation_integration_test.clj` updated.
 
-### Remaining bottlenecks after round 7 (clean, dev service stopped; @1000 mean ≈ 62.0 ms)
+- Fix 4 round 8 (2026-07-08) — cache-side gradients retained, curl kernel support fixed:
+   - Attempted to move pressure/curl gradient computation into the hydro and
+     EM-Lorentz consumer lanes to shorten the cache critical path. Benchmarks
+     showed a net regression: the cache saved ~0.5 ms, but duplicating gradient
+     work in both consumers added ~11 ms. Reverted to cache-side gradient
+     computation.
+   - Fixed a long-standing bug in the curl kernel smoothing length:
+     `h_curl = 0.5 * (r_n + 1.0)` used a hard-coded central radius of 1.0 m. It
+     now uses `h_curl = 0.5 * (r_c + r_n)`, matching the intended symmetric pair
+     length. This makes the curl support larger for realistic radii, so more
+     neighbors carry non-zero curl gradients.
+   - Added a zero-gradient skip in `curl-estimate-from-cache`: neighbors whose
+     pre-computed curl gradient is exactly zero are skipped before the cross-product
+     and scaling work. This recovers much of the EM-Lorentz cost introduced by the
+     curl fix without changing the physical result.
+   - Latest clean benchmark (dev service stopped, `clojure -M:bench phase0`):
+     - `tick-world` @500: 32.7 ms mean (noisy; 25.8–45.9 ms range)
+     - `tick-world` @1000: 76.5 ms mean (noisy; 66.1–87.3 ms range)
+     - `step-physics` parallel on world1: 25.5 ms
+     - `step-physics` sequential: 22.9 ms
+     - `neighbor-cache` system on world1: 13.4 ms (down from 21.1 ms in round 7)
+     - `em-lorentz` on world1: 8.0 ms (up from 3.3 ms in round 7 due to curl fix)
+     - `lorentz-acceleration` system (system breakdown): 2.5 ms
+     - 10 ticks @500: 274.8 ms total = 27.5 ms/tick
+   - After adding the zero-gradient skip, 10 ticks @500 dropped to 232.1 ms
+     (23.2 ms/tick), suggesting the skip is effective, but the benchmark is noisy
+     and single-tick means vary widely.
+   - Tests: `clojure -M:test` 617 tests, 14984 assertions, 0 failures, 0 errors.
+     `clj-kondo` clean on changed files.
+
+### Open decision
+
+The curl smoothing-length fix is physically correct but raises `em-lorentz` cost.
+Reverting to the old `h_curl = 0.5 * (r_n + 1.0)` formula would restore the round-7
+`em-lorentz` ~3.3 ms profile and likely put the overall tick back under or near
+the 16.6 ms budget, but it leaves a known physics bug. The next step is either to
+accept the correct-but-slower curl and continue optimizing the cache build, or to
+revert the curl fix and document the trade-off.
+
 
 The neighbor-cache fan-out migration is complete. The serial pre-phase is gone, but
 the cache rebuild is now the dominant fan-out lane: ≈21.1 ms on world1, longer than

@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-07-07 (HOPS-315 + nebula-to-life FSM research dispatched)
+**Last updated:** 2026-07-08 (neighbor-cache + curl optimization notebook added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -79,6 +79,7 @@ New ECS component keywords added to `domain.ecs.components`:
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
 | mhd-em-lorentz-optimization.md | draft | 0 | Threshold-gated MHD-lite: reuse hydro neighbor/gradient cache, full curl only where β or M_A demands it; pressure-only is not a generic proxy. | Price & Monaghan 2004a,b, 2005; Price 2012; Tricco 2012, 2016, 2023; Wurster et al. 2014, 2021; Mellon & Li 2008, 2009 |
+| phase0-neighbor-cache-curl-optimization.md | draft | 0 | Slim neighbor cache + merged hydro/EM pass: store only neighbor identities/r², compute gradients once, scalar-accumulate curl, threshold-gate by β/M_A; 2.35× toy speedup. | Price & Monaghan 2004a,b; Price 2012; Tricco 2023; Springel 2005/2010; Yao 2004 |
 | phase0-tick-loop-optimization.md | draft | 0 | 60 Hz budget feasible for N=500 with Barnes–Hut + SoA cache; avoid per-system futures | Springel 2005, Quinn+1997, Bagwell 2001 |
 | stellar-wind-plasma-state.md | spec-derivation | 1 | Keep stellar ejecta as :nebula + ionization-fraction continuum; Parker wind speed from corona T; ram pressure/photoionization track wind–nebula coupling | Parker 1958, 1960; Cranmer 2009; Asplund+2009; Castor+1975; Weaver+1977; Krumholz+2006; Henney+2009; Murray-Clay+2009; Owen & Alvarez 2016 |
 | protoplanetary-disks-planet-formation.md | draft | 0 → 1 | Core accretion, GI, and streaming-instability channels grounded; GI fragments resolvable at parcel mass, planetesimals/core-accretion sub-grid; add Toomre+Q/cooling gate. | Pollack+1996, Boss 1997, Gammie 2001, Johansen+2007/2014, Youdin & Goodman 2005, Lodders 2003, Oberg+2011, Andrews & Williams 2007 |

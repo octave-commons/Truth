@@ -171,6 +171,7 @@
 (def atmosphere-escape  :component/atmosphere-escape)   ;; {:regime :xuv-flux :mass-loss-rate}
 (def event-source       :component/event-source)       ;; {:kind :payload} — flare/CME event
 (def lod-level          :component/lod-level)           ;; :galaxy :system :local — observer-centric fidelity
+(def lod-tick-phase   :component/lod-tick-phase)     ;; {:level :local|:system|:galaxy :period 1|2|4 :phase tick}
 (def ionization-fraction :component/ionization-fraction) ;; 0..1 — plasma ionization state
 (def ram-pressure       :component/ram-pressure)        ;; Pascals — wind/impact ram pressure
 (def flare-boost        :component/flare-boost)         ;; {:factor :decay-tick} — transient XUV enhancement

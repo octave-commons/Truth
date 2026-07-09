@@ -40,6 +40,7 @@
 
 (def make-sphere-mesh "Build an indexed sphere mesh." mesh/make-sphere-mesh)
 (def upload-mesh "Upload a mesh to GPU buffers." mesh/upload-mesh)
+(def subdivisions-for-screen-size "Adaptive sphere subdivisions from on-screen diameter." mesh/subdivisions-for-screen-size)
 
 ;; ---------------------------------------------------------------------------
 ;; Input

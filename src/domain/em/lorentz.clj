@@ -30,7 +30,7 @@
 (defn- curl-neighbor-contribution
   "Single neighbor contribution to the SPH curl estimate. `state` is the central
    particle state map; `n` is the neighbor map with :b-field, :mass, :density,
-   :position and :radius."
+   :position and :radius. Uses the standard pair smoothing length h_ij = r_i + r_j."
   [state n]
   (let [{[px py pz] :position
          [bx by bz] :b-field
@@ -43,7 +43,7 @@
         ry (- py ny)
         rz (- pz nz)
         r2 (+ (* rx rx) (* ry ry) (* rz rz))
-        h  (* 0.5 (+ (double (or r-c 1.0)) (double (or (:radius n) 1.0))))
+        h  (+ (double (or r-c 1.0)) (double (or (:radius n) 1.0)))
         [gx gy gz] (if (>= r2 (* h h))
                      [0.0 0.0 0.0]
                      (hydro/kernel-gradient [rx ry rz] r2 h))
@@ -225,12 +225,12 @@
   [world]
   (let [required (ecs/all-of world c/b-field c/radius c/position c/density
                              c/angular-momentum c/matter-state)
-         opt-tables {c/velocity      (get-in world [:components c/velocity])
-                     c/mass          (get-in world [:components c/mass])
-                     c/pressure      (get-in world [:components c/pressure])
-                     c/rotation-axis (get-in world [:components c/rotation-axis])
-                     c/ionization-fraction (get-in world [:components c/ionization-fraction])
-                     c/neighbor-cache (get-in world [:components c/neighbor-cache])}]
+        opt-tables {c/velocity      (get-in world [:components c/velocity])
+                    c/mass          (get-in world [:components c/mass])
+                    c/pressure      (get-in world [:components c/pressure])
+                    c/rotation-axis (get-in world [:components c/rotation-axis])
+                    c/ionization-fraction (get-in world [:components c/ionization-fraction])
+                    c/neighbor-cache (get-in world [:components c/neighbor-cache])}]
     (persistent!
      (reduce (fn [acc [eid comps]]
                (if (em-active? (comps c/matter-state))
@@ -240,72 +240,87 @@
              required))))
 
 (defn- em-neighbors-and-curl-gradients
-  "Return [neighbors curl-gradients] for `data`, using the transient neighbor
-   cache when present. `h` is the query radius. gradients is nil on fallback."
+  "Return [neighbors gradients] for `data`, using the transient neighbor cache
+   when present. `h` is the query radius. gradients is always nil because the
+   cache no longer stores precomputed curl gradients; `curl-estimate` recomputes
+   them on demand."
   [world data h]
   (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
     (let [hh2 (* h h)
           nbrs (filterv #(and (em-active? (:matter-state %))
                               (<= (double (:r2 %)) hh2))
                         (:neighbors entry))]
-      [nbrs (mapv :gradient-curl nbrs)])
+      [nbrs nil])
     [(idx/within-radius (:genesis/spatial-tree world) (:position data) h em-active-neighbor?) nil]))
-
-(defn- curl-cached-neighbor-contribution
-  "Single cached-neighbor contribution to the SPH curl estimate. `state` is the
-   central particle state map; `n` is a cached neighbor map with :b-field, :mass,
-   :density, :position, :r2 and :gradient-curl."
-  [state n]
-  (let [[bx by bz] (:b-field state)
-        [gx gy gz] (:gradient-curl n)
-        [bnx bny bnz] (:b-field n)
-        dbx (- bx (double bnx))
-        dby (- by (double bny))
-        dbz (- bz (double bnz))
-        cxj (- (* dby gz) (* dbz gy))
-        cyj (- (* dbz gx) (* dbx gz))
-        czj (- (* dbx gy) (* dby gx))
-        factor (/ (double (:mass n 1.0))
-                  (double (:density n 1.0)))]
-    [(* cxj factor) (* cyj factor) (* czj factor)]))
-
-(defn- gradient-non-zero?
-  "True if `grad` is a non-zero 3-vector. Used to skip neighbors whose
-   pre-computed curl gradient lies outside the kernel support."
-  [grad]
-  (boolean
-   (when-let [[gx gy gz] grad]
-     (or (not (zero? gx)) (not (zero? gy)) (not (zero? gz))))))
 
 (defn curl-estimate-from-cache
   "Estimate (∇ × B) for the Lorentz acceleration system using a pre-built
    neighbor-cache entry. Walks the cached neighbors once, skipping particles
-   that are not EM-active, lie outside the EM smoothing radius `h`, or carry a
-   zero curl gradient (i.e. lie outside the per-neighbor kernel support), and
-   uses the pre-computed `:gradient-curl` for the rest. Avoids allocating a
-   filtered neighbor vector or a separate gradients vector.
+   that are not EM-active, carry a nil/missing b-field, or lie outside the pair
+   smoothing length h_ij = r_i + r_j. The kernel gradient is recomputed on demand
+   and accumulated into scalar doubles.
 
-   `state` is a map with :b-field, :density, :position and :neighbors. `h` is the
-   EM smoothing radius."
-  [{:keys [b-field density position neighbors] :as state} h]
-  (if (or (not (lf/finite-vec3? b-field))
-          (not (pos? (double density))))
-    [0.0 0.0 0.0]
-    (let [state (assoc state
-                       :density (double density)
-                       :position (mapv double position)
-                       :b-field (mapv double b-field))
-          hh2 (* (double h) (double h))]
-      (reduce-kv
-       (fn [acc _idx n]
-         (if-not (and (em-active? (:matter-state n))
-                      (<= (double (:r2 n)) hh2)
-                      (gradient-non-zero? (:gradient-curl n))
-                      (lf/finite-vec3? (:b-field n)))
-           acc
-           (mapv + acc (curl-cached-neighbor-contribution state n))))
-       [0.0 0.0 0.0]
-       neighbors))))
+   The curl is skipped entirely (returns zero) when the local field is not
+   dynamically significant: plasma beta β ≥ `law.field/beta-magnetized` AND
+   Alfvén Mach ℳ_A ≥ `law.field/alfven-mach-magnetized`, or when the active
+   neighbor count is below `law.field/min-neighbors-for-curl`.
+
+   `state` is a map with :b-field, :density, :pressure, :velocity, :position,
+   :radius and :neighbors."
+  [{:keys [b-field density pressure velocity position radius neighbors]}]
+  (let [skip? (or (not (lf/finite-vec3? b-field))
+                  (not (pos? (double density)))
+                  (let [v (sp/len (or velocity [0.0 0.0 0.0]))
+                        beta (lf/plasma-beta (double pressure) b-field)
+                        ma (lf/alfven-mach v b-field (double density))]
+                    (or (and (>= beta lf/beta-magnetized)
+                             (>= ma lf/alfven-mach-magnetized))
+                        (< (count neighbors) lf/min-neighbors-for-curl))))]
+    (if skip?
+      [0.0 0.0 0.0]
+      (let [[px py pz] position
+            px (double px)
+            py (double py)
+            pz (double pz)
+            [bx by bz] b-field
+            bx (double bx)
+            by (double by)
+            bz (double bz)
+            r-self (double (or radius 1.0))
+            nmax (count neighbors)]
+        (loop [i 0
+               cx 0.0
+               cy 0.0
+               cz 0.0]
+          (if (>= i nmax)
+            [cx cy cz]
+            (let [n (nth neighbors i)]
+              (if (or (not (em-active? (:matter-state n)))
+                      (not (lf/finite-vec3? (:b-field n)))
+                      (not (:mass n))
+                      (not (:density n)))
+                (recur (inc i) cx cy cz)
+                (let [r-n (double (or (:radius n) 1.0))
+                      h (+ r-self r-n)
+                      h2 (* h h)
+                      r2 (double (:r2 n))]
+                  (if (>= r2 h2)
+                    (recur (inc i) cx cy cz)
+                    (let [np (:position n)
+                          rx (- px (double (nth np 0)))
+                          ry (- py (double (nth np 1)))
+                          rz (- pz (double (nth np 2)))
+                          [gx gy gz] (hydro/kernel-gradient [rx ry rz] r2 h)
+                          [bnx bny bnz] (:b-field n)
+                          dbx (- bx (double bnx))
+                          dby (- by (double bny))
+                          dbz (- bz (double bnz))
+                          factor (/ (double (:mass n))
+                                    (double (:density n)))]
+                      (recur (inc i)
+                             (+ cx (* factor (- (* dby gz) (* dbz gy))))
+                             (+ cy (* factor (- (* dbz gx) (* dbx gz))))
+                             (+ cz (* factor (- (* dbx gy) (* dby gx))))))))))))))))
 
 ;; --- Legacy in-place system -------------------------------------------------
 
@@ -316,12 +331,12 @@
   (let [eid (:eid data)
         h (* 2.0 (double (or (:radius data) 1.0)))
         [nbrs grads] (em-neighbors-and-curl-gradients world data h)
-         curl-b (curl-estimate {:b-field (:b-field data)
-                                :density (:density data)
-                                :position (:position data)
-                                :radius (:radius data)
-                                :neighbors nbrs
-                                :gradients grads})
+        curl-b (curl-estimate {:b-field (:b-field data)
+                               :density (:density data)
+                               :position (:position data)
+                               :radius (:radius data)
+                               :neighbors nbrs
+                               :gradients grads})
         lorentz (capped-lorentz-acceleration data curl-b)
         torque (magnetic-braking-torque data dt)]
     [eid lorentz torque]))
@@ -396,26 +411,27 @@
   (let [eid    (:eid data)
         radius (double (or (:radius data) 1.0))
         h      (* 2.0 radius)
-         curl-b (if-let [entry (:neighbor-cache data)]
-                  (curl-estimate-from-cache
-                   {:b-field (:b-field data)
-                    :density (:density data)
-                    :position (:position data)
-                    :radius (:radius data)
-                    :neighbors (:neighbors entry)}
-                   h)
-                  (if tree
-                    (let [nbrs (idx/within-radius
-                                tree (:position data) h
-                                em-active-neighbor?)]
-                      (curl-estimate
-                       {:b-field (:b-field data)
-                        :density (:density data)
-                        :position (:position data)
-                        :radius (:radius data)
-                        :neighbors nbrs
-                        :gradients nil}))
-                    [0.0 0.0 0.0]))
+        curl-b (if-let [entry (:neighbor-cache data)]
+                 (curl-estimate-from-cache
+                  {:b-field (:b-field data)
+                   :density (:density data)
+                   :pressure (:pressure data)
+                   :velocity (:velocity data)
+                   :position (:position data)
+                   :radius (:radius data)
+                   :neighbors (:neighbors entry)})
+                 (if tree
+                   (let [nbrs (idx/within-radius
+                               tree (:position data) h
+                               em-active-neighbor?)]
+                     (curl-estimate
+                      {:b-field (:b-field data)
+                       :density (:density data)
+                       :position (:position data)
+                       :radius (:radius data)
+                       :neighbors nbrs
+                       :gradients nil}))
+                   [0.0 0.0 0.0]))
         accel  (let [[cx cy cz] curl-b]
                  (if (and (zero? cx) (zero? cy) (zero? cz))
                    [0.0 0.0 0.0]
@@ -433,13 +449,13 @@
   {:id     :em-lorentz
    :writes #{c/accel-lorentz c/torque-em}
    :run    (fn [world]
-              (let [active    (build-active-lorentz-data world)
-                    tree      (:genesis/spatial-tree world)
-                    [computed dt-compute] (profile/timing
-                                           #(par/par-mapv
-                                             (fn [data]
-                                               (lorentz-acceleration-cell dt data tree))
-                                             active))
+             (let [active    (build-active-lorentz-data world)
+                   tree      (:genesis/spatial-tree world)
+                   [computed dt-compute] (profile/timing
+                                          #(par/par-mapv
+                                            (fn [data]
+                                              (lorentz-acceleration-cell dt data tree))
+                                            active))
                    accel-cell  (transient {})
                    torque-cell (transient {})
                    _           (doseq [[eid a t] computed]

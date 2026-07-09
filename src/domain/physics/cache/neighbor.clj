@@ -33,7 +33,7 @@
    refreshes all field data, the smoothing length, and gradients every tick
    regardless; only the neighbor IDENTITIES are trusted across ticks, so this
    is the classic SPH neighbor-list skin criterion."
-   0.1)
+  0.1)
 
 (defn max-displacement-squared
   "Return the squared displacement threshold for smoothing length `h` and
@@ -86,9 +86,23 @@
      :radius   (:radius item)
      :state    (:matter-state item)}))
 
+(defn- attach-r2
+  "Attach only the squared distance to a spatial-index item in the central
+   particle frame. Used by the cache builder; gradients are computed on demand
+   in the consumer systems to avoid storing two gradient vectors per neighbor."
+  [pos-c item]
+  (let [pos-n (:position item)
+        rx    (- (double (nth pos-c 0)) (double (nth pos-n 0)))
+        ry    (- (double (nth pos-c 1)) (double (nth pos-n 1)))
+        rz    (- (double (nth pos-c 2)) (double (nth pos-n 2)))
+        r2    (+ (* rx rx) (* ry ry) (* rz rz))]
+    (assoc item :r2 r2)))
+
 (defn neighbor-with-gradients
   "Attach pressure and curl gradients to a spatial-index item, both computed in
-   the central-particle frame. Public so tests can construct matching gradients."
+   the central-particle frame. Public so tests can construct matching gradients
+   and legacy callers can build hand-rolled cache entries; the production cache
+   builder no longer stores gradients."
   [pos-c r-c item]
   (let [pos-n (:position item)
         r-n   (double (or (:radius item) 1.0))
@@ -98,7 +112,7 @@
         rz    (- (double (nth pos-c 2)) (double (nth pos-n 2)))
         r2    (+ (* rx rx) (* ry ry) (* rz rz))
         h-pressure (+ r-c r-n)
-        h-curl     (* 0.5 (+ r-c r-n))
+        h-curl     (+ r-c r-n)
         grad-pressure (hydro/kernel-gradient [rx ry rz] r2 h-pressure)
         grad-curl     (hydro/kernel-gradient [rx ry rz] r2 h-curl)]
     (assoc item
@@ -108,7 +122,10 @@
 
 (defn- assemble-cache-entry
   "Assemble a cache entry for `data` from raw spatial-index `items`, computing
-   r2 and both kernel gradients per neighbor in the central-particle frame.
+   r2 per neighbor in the central-particle frame. Kernel gradients are NOT stored
+   here; consumer systems compute them on demand with the standard pair smoothing
+   length h_ij = r_i + r_j.
+
    `anchor` is the position at which the neighbor set was last actually
    queried and `query-r` the radius it covered; displacement and kernel growth
    for reuse are measured against them.
@@ -119,18 +136,15 @@
    never leak into physics."
   [data h anchor query-r items]
   (let [pos  (:position data)
-        r-c  (double (or (:radius data) 1.0))
-        nbrs (mapv #(neighbor-with-gradients pos r-c %)
+        nbrs (mapv #(attach-r2 pos %)
                    (sort-by :id items))]
     {:position         pos
      :anchor-position  anchor
      :query-r          query-r
      :h                h
-     :radius           r-c
+     :radius           (double (or (:radius data) 1.0))
      :state            (:state data)
-     :neighbors        nbrs
-     :gradients        (mapv :gradient-pressure nbrs)
-     :curl-gradients   (mapv :gradient-curl nbrs)}))
+     :neighbors        nbrs}))
 
 (defn- build-cache-entry
   "Build one cache entry for `data` using the uniform grid for radius queries
@@ -230,16 +244,16 @@
 (defn- build-or-refresh-cache-entry
   "Return `[eid entry]` for `eid`, reusing the previous entry when valid.
    `prev-fn` returns the previous cache entry for an eid (or nil)."
-   [world full-rebuild? item-by-id prev-fn eid]
-   (let [prev-entry (prev-fn eid)
-         reusable? (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
-         data (entity->cache-data item-by-id eid)]
-     (when (cache-active? (:state data))
-       (let [entry (or (when reusable? (refresh-cache-entry data prev-entry item-by-id))
-                       (build-cache-entry world data))]
-         (when (or (false? (:genesis/validate-neighbor-cache? world))
-                   (neighbor-cache-entry? entry))
-           [eid entry])))))
+  [world full-rebuild? item-by-id prev-fn eid]
+  (let [prev-entry (prev-fn eid)
+        reusable? (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
+        data (entity->cache-data item-by-id eid)]
+    (when (cache-active? (:state data))
+      (let [entry (or (when reusable? (refresh-cache-entry data prev-entry item-by-id))
+                      (build-cache-entry world data))]
+        (when (or (false? (:genesis/validate-neighbor-cache? world))
+                  (neighbor-cache-entry? entry))
+          [eid entry])))))
 
 (defn rebuild-neighbor-cache
   "Build or refresh per-entity `c/neighbor-cache` entries.
@@ -266,8 +280,8 @@
           new-cache (into {} (keep identity) entries)
           t5 (System/nanoTime)
           removed (into {} (comp (remove #(contains? new-cache (key %)))
-                                (map (fn [[eid _]] [eid tick/removed])))
-                         prior)
+                                 (map (fn [[eid _]] [eid tick/removed])))
+                        prior)
           t6 (System/nanoTime)
           ws {c/neighbor-cache (if (seq removed) (into new-cache removed) new-cache)}]
       (assoc ws :genesis/_profile
@@ -279,19 +293,18 @@
               :neighbor-cache/evict (- t6 t5)
               :neighbor-cache/rebuild (- t6 t0)}))
     (let [full? (cache-full-rebuild? world tick)
-           item-by-id (item-by-id-map world)
-           prev-fn #(ecs/get-component world % c/neighbor-cache)
+          item-by-id (item-by-id-map world)
+          prev-fn #(ecs/get-component world % c/neighbor-cache)
           eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
           entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
           new-cache (into {} (keep identity) entries)
           prior (get-in world [:components c/neighbor-cache])
           removed (into {} (comp (remove #(contains? new-cache (key %)))
-                                (map (fn [[eid _]] [eid tick/removed])))
-                         prior)]
+                                 (map (fn [[eid _]] [eid tick/removed])))
+                        prior)]
       (if (seq removed)
         {c/neighbor-cache (into new-cache removed)}
         {c/neighbor-cache new-cache}))))
-
 
 (defn build-neighbor-cache
   "Build a fresh neighbor cache onto `world` as `c/neighbor-cache` components.

@@ -25,6 +25,19 @@
   "Distance (m) within which entities are at :system LOD. ~5 AU."
   7.5e11)
 
+(def ^:const level->period
+  "Physics-tick period for each LOD level. :local advances every tick,
+   :system every 2 ticks, :galaxy every 4 ticks."
+  {:local 1 :system 2 :galaxy 4})
+
+(defn- tick-phase-for-level
+  "Build a fresh tick-phase schedule for `level` at `tick`. The phase is set to
+   the current tick so the entity is due immediately after a level transition."
+  [level tick]
+  {:level level
+   :period (get level->period level 1)
+   :phase (long tick)})
+
 (defn- registry-writes
   "This system's declared :writes from domain.ecs.registry — sourced from the
    registry so the emitter and the single-writer declaration cannot drift."
@@ -32,10 +45,11 @@
   (some #(when (= id (:id %)) (:writes %)) reg/systems))
 
 (defn lod-scheduler
-  "Double-buffer write-set system: SOLE writer of c/lod-level — assigns :local,
-   :system, or :galaxy to every star and planet based on distance from the
-   player observer's focus position. Emits only the levels that CHANGED (an
-   unchanged level writes nothing); with no observer it emits nothing."
+  "Double-buffer write-set system: SOLE writer of c/lod-level and c/lod-tick-phase
+   — assigns :local, :system, or :galaxy to every star and planet based on
+   distance from the player observer's focus position. Emits only the levels
+   that CHANGED (an unchanged level writes nothing); with no observer it emits
+   nothing."
   []
   {:id     :lod-scheduler
    :writes (registry-writes :lod-scheduler)
@@ -43,20 +57,26 @@
    (fn [world]
      (if-let [obs (player/get-observer world)]
        (let [focus (:focus-position obs [0.0 0.0 0.0])
+             tick  (long (or (:tick world) 0))
              eids (filterv (fn [eid]
                              (let [st (ecs/get-component world eid c/matter-state)]
                                (or (= :star st) (= :planet st))))
                            (ecs/entities-with world c/matter-state c/position))]
-         {c/lod-level
-          (into {}
-                (keep (fn [eid]
-                        (let [pos  (ecs/get-component world eid c/position)
-                              dist (sp/dist focus pos)
-                              level (cond
-                                      (< dist lod-local-radius)  :local
-                                      (< dist lod-system-radius) :system
-                                      :else                       :galaxy)]
-                          (when (not= level (ecs/get-component world eid c/lod-level))
-                            [eid level]))))
-                eids)})
+         (reduce
+          (fn [ws eid]
+            (let [pos  (ecs/get-component world eid c/position)
+                  dist (sp/dist focus pos)
+                  level (cond
+                          (< dist lod-local-radius)  :local
+                          (< dist lod-system-radius) :system
+                          :else                       :galaxy)
+                  prev-level (ecs/get-component world eid c/lod-level)]
+              (if (= level prev-level)
+                ws
+                (-> ws
+                    (assoc-in [c/lod-level eid] level)
+                    (assoc-in [c/lod-tick-phase eid]
+                              (tick-phase-for-level level tick))))))
+          {}
+          eids))
        {}))})

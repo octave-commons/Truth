@@ -49,10 +49,10 @@
                   :arc/genesis-ignition)))))
 
 (deftest event-notification-maps-stellar-ignition
-  (is (= "A star ignites! +25 quanta" (arc/event-notification :stellar-ignition)))
-  (is (= "The nebula collapses. +3 quanta" (arc/event-notification :nebula-collapse)))
-  (is (= "A protostar forms. +12 quanta" (arc/event-notification :protostar-formation)))
-  (is (nil? (arc/event-notification :nonexistent))))
+  (is (= "A star ignites! +25 quanta" (arc/event-notification :stellar-ignition nil nil)))
+  (is (= "The nebula collapses. +3 quanta" (arc/event-notification :nebula-collapse nil nil)))
+  (is (= "A protostar forms. +12 quanta" (arc/event-notification :protostar-formation nil nil)))
+  (is (nil? (arc/event-notification :nonexistent nil nil))))
 
 ;; --- Handoff / endings ------------------------------------------------------
 
@@ -204,3 +204,24 @@
           "a phase-transition event is emitted")
       (is (> (:agency obs1) (:agency obs0))
           "the observer gains agency from the phase-transition in the same tick"))))
+
+(deftest life-emergence-notification-includes-body-name
+  (testing "When life emerges, the notification names the world"
+    (let [[w eid] (ecs/spawn (genesis/create-world {:gas-count 20}))
+          w (-> (ecs/put-components w eid
+                                    {c/mass 6e24 c/radius 6.4e6 c/position [1e16 0 0]
+                                     c/velocity [0 0 0] c/body-kind :body/planet
+                                     c/matter-state :planet c/temperature 300.0
+                                     c/density 5500.0 c/pressure 1e5
+                                     c/composition {:H2O 0.1 :C 0.01 :N 0.001}})
+                (event/with-ledger)
+                (assoc :tick 7
+                       :genesis/sim-time 1e12
+                       :arc/current :arc/genesis-planets-formed
+                       :genesis/_prev-summary
+                       {:star? true :planet-count 1 :body-count 3
+                        :regions [{:matter-state :star}]})
+                (event/emit (event/->event {:tick 7 :kind :event/life-emergence :entities #{eid}})))
+          w' (arc/advance-arc w)]
+      (is (re-find #"Life emerges on" (get-in w' [:arc/notification :text])))
+      (is (re-find #"a world" (get-in w' [:arc/notification :text]))))))

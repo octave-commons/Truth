@@ -67,11 +67,16 @@
    (symplectic Euler), then the one-tick-stale COM frame-offset is subtracted from
    position (a pure Galilean shift, §6). Absorb-accrete/merge packets are blended
    for COM preservation — the absorbed mass's momentum shifts the survivor.
-   Gradual mass-transfer recoil rides the c/dv-transfer velocity-delta channel."
+   Gradual mass-transfer recoil rides the c/dv-transfer velocity-delta channel.
+
+   When `:lod/throttle-ticks?` is true, only entities whose `c/lod-tick-phase`
+   schedule are due this tick are advanced."
   [world dt]
   (let [foff (or (:genesis/frame-offset world) base/zero3)
-        eids (ecs/entities-with world c/position c/velocity
-                                c/mass c/radius c/body-kind)
+        eids (base/due-entities
+              world
+              (ecs/entities-with world c/position c/velocity
+                                      c/mass c/radius c/body-kind))
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
         profiling? (:genesis/profile-subsystems? world)
@@ -143,10 +148,17 @@
   "SoA-aware position + velocity updater. Reads positions/velocities/masses from
    the `:genesis/physics-soa` primitive arrays, sums acceleration contributions
    directly from their component cell maps, and produces the standard write-set
-   for position and velocity. Falls back to the ECS path when the cache is absent."
+   for position and velocity. Falls back to the ECS path when the cache is absent.
+
+   When `:lod/throttle-ticks?` is true, only due entities (by `c/lod-tick-phase`)
+   are advanced."
   [world dt soa]
   (let [foff (or (:genesis/frame-offset world) base/zero3)
         {:keys [eids n]} soa
+        tick (long (or (:tick world) 0))
+        due-idxs (if (:lod/throttle-ticks? world)
+                   (filterv #(base/due-entity? world tick (nth eids %)) (range n))
+                   (range n))
         absorbs (merge (get-in world [:components c/absorb-accrete] {})
                        (get-in world [:components c/absorb-merge] {}))
         dt (double dt)
@@ -155,7 +167,7 @@
         profiling? (:genesis/profile-subsystems? world)
         force-fn #(into {} (par/par-mapv
                             (fn [idx] [(nth eids idx) (sum-vec-soa accel-cells (nth eids idx))])
-                            (range n)))
+                            due-idxs))
         leapfrog-fn #(build-soa-kinematics-ws soa dt foff absorbs % dv-cells)
         [forces dt-force] (if profiling?
                             (profile/timing force-fn)

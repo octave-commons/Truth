@@ -172,19 +172,22 @@ individual tool commands.
 Requires a JDK and the Clojure CLI.
 
 ```bash
-clojure -M:test                 # full suite (incl. architecture guards)
-clojure -M:test:unit-test       # fast tests only — excludes slow integration simulations
-clojure -M:test:integration-test # slow integration simulations only
-clojure -M:test:domain-test     # domain tests only
-clojure -M:test:infra-test      # infra tests only
-clojure -M:test:law-test        # law/contract tests only
-clojure -M:test:shape-test      # shape/geometry tests only
-clojure -M:test:render-test     # render/appearance/window tests only
-clojure -M:test:architecture-test # architecture guards only
-clojure -M:test:test-runner -g domain -g law  # arbitrary groups
-clojure -M:run                  # Phase 0 console simulation
-clojure -M:run demo             # render one Sun/Earth/Moon frame to /tmp/truth-view.png
-clojure -M:dev                  # live GLFW dev window + nREPL on 127.0.0.1:7888
+bin/test                          # full suite (same as clojure -M:test)
+bin/test unit                     # fast tests only
+bin/test integration              # slow integration simulations only
+bin/test domain                   # domain tests only
+bin/test infra                    # infra tests only
+bin/test law                      # law/contract tests only
+bin/test shape                    # shape/geometry tests only
+bin/test render                   # render/appearance/window tests only
+bin/test architecture             # architecture guards only
+
+# Or use the aliases directly:
+clojure -M:test:test-runner -g domain -g law  # arbitrary combinations
+clojure -M:test                           # full suite via cognitect runner (CI)
+clojure -M:run                            # Phase 0 console simulation
+clojure -M:run demo                       # render one Sun/Earth/Moon frame to /tmp/truth-view.png
+clojure -M:dev                            # live GLFW dev window + nREPL on 127.0.0.1:7888
 ```
 
 The grouped runners live in `test/test_runner.clj` and only load the

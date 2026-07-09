@@ -104,4 +104,5 @@
   {:id     :integrator
    :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
              c/angular-momentum c/spin c/consumed-transfer}
+   :reads  #{c/lod-tick-phase}
    :run    (fn [world] (run-integrator-phases world dt))})

@@ -4,19 +4,22 @@
 
 The default runner loads every test namespace, which is correct for CI but slow
 for local feedback. A group-aware runner in `test/test_runner.clj` loads only the
-selected namespaces:
+selected namespaces. You can invoke it through `bin/test` or directly through
+`deps.edn` aliases:
 
 ```bash
-clojure -M:test:unit-test          # fast unit tests (excludes integration simulations)
-clojure -M:test:integration-test     # slow simulation/integration tests only
-clojure -M:test:domain-test          # domain tests only
-clojure -M:test:infra-test           # infra tests only
-clojure -M:test:law-test             # law/contract tests only
-clojure -M:test:shape-test           # shape/geometry tests only
-clojure -M:test:render-test          # render/appearance/window tests only
-clojure -M:test:architecture-test    # architecture guards only
-clojure -M:test:test-runner -g domain -g law  # arbitrary combinations
-clojure -M:test                    # full suite via cognitect runner (CI)
+bin/test unit                        # fast unit tests (excludes integration simulations)
+bin/test integration                 # slow simulation/integration tests only
+bin/test domain                      # domain tests only
+bin/test infra                       # infra tests only
+bin/test law                         # law/contract tests only
+bin/test shape                       # shape/geometry tests only
+bin/test render                      # render/appearance/window tests only
+bin/test architecture                # architecture guards only
+bin/test                             # full suite via cognitect runner
+
+# Arbitrary combinations via the runner directly:
+clojure -M:test:test-runner -g domain -g law
 ```
 
 Group membership is defined in `test/test_runner.clj`. The `integration` group

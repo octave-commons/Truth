@@ -18,6 +18,8 @@
    [domain.habitability :as habitability]
    [domain.ecology      :as ecology]
    [domain.player       :as player]
+   [domain.naming       :as naming]
+   [domain.ecs.core     :as ecs]
    [domain.ecs.components :as c]
    [domain.ecs.event    :as event]))
 
@@ -114,8 +116,9 @@
       "You drift through the forming cosmos, a mote of awareness.")))
 
 (defn event-notification
-  "Short text for a witnessed event category, or nil."
-  [event-category]
+  "Short text for a witnessed event category, or nil. For life-emergence the
+   text includes the world name so the player knows where to look."
+  [event-category event world]
   (case event-category
     :nebula-collapse        "The nebula collapses. +3 quanta"
     :condensed-core-formation "A dense core condenses. +3 quanta"
@@ -127,7 +130,10 @@
     :planet-formation       "A planet forms! +10 quanta"
     :collision              "A collision! +1 quanta"
     :phase-transition       "The phase shifts. +5 quanta"
-    :life-emergence         "Life emerges! +50 quanta"
+     :life-emergence         (let [eid (first (get event :entities))
+                                   label (when eid (naming/display-label eid
+                                                    (ecs/get-component world eid c/matter-state)))]
+                               (format "Life emerges on %s! +50 quanta" (or label "a world")))
     :gate-discovery         "A gate is discovered! +100 quanta"
     nil))
 
@@ -205,17 +211,19 @@
     (genesis/emit-threshold :event/nebula-collapse {:arc cur})))
 
 (defn- recent-event-categories
-  "Return categories for events emitted on `tick`."
+  "Return [event category] pairs for events emitted on `tick`."
   [world tick]
   (->> (event/events-since world tick)
        (filter #(= (:tick %) tick))
-       (keep #(event-kind->category (:kind %)))))
+        (keep #(when-let [event-cat (event-kind->category (:kind %))]
+                 [% event-cat]))))
 
 (defn- arc-notification
-  "Build the notification for the most recent event category on `tick`."
-  [cats tick]
-  (when-let [category (last (vec cats))]
-    {:text (event-notification category) :tick tick}))
+  "Build the notification for the most recent event on `tick`."
+  [world events tick]
+  (when-let [[event category] (last (vec events))]
+    (when-let [text (event-notification category event world)]
+      {:text text :tick tick :entity (first (get event :entities))})))
 
 (defn- emit-phase-transition
   "Emit a phase-transition threshold when the arc changes."
@@ -238,8 +246,9 @@
         cur (detect-current-arc world)
         this-tick (:tick world)
         world0 (emit-nebula-collapse world prev cur)
-        new-cats (recent-event-categories world0 this-tick)
-        notif (arc-notification new-cats this-tick)
+        new-events (recent-event-categories world0 this-tick)
+        new-cats (mapv second new-events)
+        notif (arc-notification world0 new-events this-tick)
         world1 (emit-phase-transition world0 prev cur)
         obs (player/get-observer world)]
     (assoc world1

@@ -4,10 +4,13 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [domain.player :as player]
    [domain.stellar :as stellar]
+   [domain.ecology :as ecology]
    [infra.camera :as cam]
-   [infra.menu :as menu]))
+   [infra.menu :as menu]
+   [infra.menu.panels :as panels]))
 
 (def base (cam/default-camera-settings))
 
@@ -132,3 +135,23 @@
           w      (reduce (fn [w _] (shrink w)) {} (range 20))]
       (is (= 0.0 (:genesis/observer-halo-mass-factor w))
           "stepping down from the default lands on the floor, not below"))))
+
+(deftest living-worlds-list-contains-only-living-planets
+  (testing "living-worlds filters to living planets with ecology metadata"
+    (let [[w eid] (ecs/spawn (ecs/empty-world))
+          w (-> (ecs/put-components w eid
+                                    {c/mass 6e24 c/radius 6.4e6 c/position [1e16 0 0]
+                                     c/velocity [0 0 0] c/body-kind :body/planet
+                                     c/matter-state :planet c/temperature 300.0
+                                     c/density 5500.0 c/pressure 1e5
+                                     c/composition {:H2O 0.1 :C 0.01 :N 0.001}
+                                     c/ecology (ecology/make-ecology {:phase :prokaryotic
+                                                                       :biomass 0.2
+                                                                       :moisture 0.5})})
+                (assoc :next-id 1))
+          rows (panels/living-worlds w)]
+      (is (= 1 (count rows)))
+      (is (= eid (:eid (first rows))))
+      (is (re-find #"prokaryotic" (:type-str (first rows))))
+      (is (not (seq (panels/living-worlds (ecs/empty-world))))
+          "no ecology means no living worlds"))))

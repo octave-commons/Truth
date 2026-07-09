@@ -66,14 +66,12 @@
           entry (ecs/get-component w eid c/neighbor-cache)]
       (is (some #(= (:id %) eid) (:neighbors entry))))))
 
-(deftest test-cache-gradients-are-finite
-  (testing "All cached gradients are finite 3-vectors"
+(deftest test-cache-entry-slim
+  (testing "The cache no longer stores precomputed gradients"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)]
-      (doseq [entry (vals (cache-map w))
-              grad  (concat (:gradients entry) (:curl-gradients entry))]
-        (is (vector? grad))
-        (is (= 3 (count grad)))
-        (is (every? #(and (number? %) (Double/isFinite (double %))) grad))))))
+      (doseq [entry (vals (cache-map w))]
+        (is (not (contains? entry :gradients)))
+        (is (not (contains? entry :curl-gradients)))))))
 
 (deftest test-cache-h-positive
   (testing "Every smoothing length is a positive finite number"

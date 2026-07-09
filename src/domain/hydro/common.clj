@@ -44,19 +44,19 @@
   "Return [neighbors gradients] for `data` using the transient neighbor cache
    when present, otherwise query the spatial index. `radius-fn` produces the
    query radius from the particle data; `state-pred` filters neighbors by
-   matter state. The returned `gradients` is nil when the cache is not used.
+   matter state. The returned `gradients` is always nil because the cache no
+   longer stores precomputed gradients; callers recompute the kernel gradient on
+   demand.
 
    Accepts a single options map:
      {:world :data :radius-fn :state-pred :gradient-key}."
-   [{:keys [world data radius-fn state-pred gradient-key]}]
-   (let [h (double (radius-fn data))]
-     (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
-       (let [hh2 (* h h)
-             nbrs (filterv #(and (state-pred (:matter-state %))
-                                 (<= (double (:r2 %)) hh2))
-                           (:neighbors entry))
-             grads (mapv gradient-key nbrs)]
-         [nbrs grads])
-       [(idx/within-radius (:genesis/spatial-tree world) (:position data) h
-                           #(state-pred (:matter-state %))) nil])))
+  [{:keys [world data radius-fn state-pred]}]
+  (let [h (double (radius-fn data))]
+    (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
+      [(filterv #(and (state-pred (:matter-state %))
+                      (<= (double (:r2 %)) (* h h)))
+                (:neighbors entry))
+       nil]
+      [(idx/within-radius (:genesis/spatial-tree world) (:position data) h
+                          #(state-pred (:matter-state %))) nil])))
 

@@ -1,10 +1,11 @@
 (ns infra.inspect.format
   "Human-readable formatting helpers for inspected ECS bodies.
 
-   Mass, radius, temperature, speed, luminosity, composition, and state labels
+   Mass, radius, temperature, speed, luminosity, composition, and ecology stats
    are rendered into strings and colours for the inspector card."
   (:require
    [clojure.string :as str]
+   [domain.ecology :as ecology]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [shape.spatial :as sp]))
@@ -75,7 +76,9 @@
     [0.85 0.9 1.0 1.0]))
 
 (defn body-facts
-  "Ordered [label value] readout lines for entity `eid` from its live ECS state."
+  "Ordered [label value] readout lines for entity `eid` from its live ECS state.
+   Includes ecology stats when the body is alive and SED/magnetosphere/disk
+   readouts where available."
   [world eid]
   (let [g     (fn [k] (ecs/get-component world eid k))
         state (g c/matter-state)
@@ -85,7 +88,12 @@
         temp  (g c/temperature)
         lum   (g c/luminosity)
         regime (g c/regime)
-        c  (fmt-comp (g c/composition))]
+        c  (fmt-comp (g c/composition))
+        eco (g c/ecology)
+        sed (g c/sed-bands)
+        mag (g c/magnetosphere)
+        disk-m (g c/disk-mass)
+        esc (g c/atmosphere-escape)]
     (cond-> [["mass"  (fmt-mass (g c/mass) stellar?)]]
       true        (conj ["radius" (fmt-radius (g c/radius) stellar?)])
       temp        (conj ["temp"  (format "%.0f K" (double temp))])
@@ -94,4 +102,15 @@
       (conj ["lum"   (format "%.3g Lsun" (/ (double lum) solar-lum))])
       c        (conj ["comp"  c])
       regime      (conj ["regime" (name regime)])
+      eco         (conj ["life"  (name (:phase eco))])
+      (and eco (ecology/living? eco))
+      (-> (conj ["biomass" (format "%.0f%%" (* 100.0 (:biomass eco)))])
+           (conj ["complexity" (format "%.0f%%" (* 100.0 (:complexity eco)))])
+           (conj ["stability" (format "%.0f%%" (* 100.0 (:stability eco)))])
+           (conj ["moisture" (format "%.0f%%" (* 100.0 (:moisture eco)))]))
+      (and disk-m (pos? (double disk-m)))
+      (conj ["disk" (format "%s" (fmt-mass disk-m false))])
+      mag         (conj ["mag" (format "%.2f R" (:standoff-distance mag))])
+      esc         (conj ["escape" (name (:regime esc))])
+      sed         (conj ["sed" (format "%d bands" (count sed))])
       true        (conj ["eid"   (str eid)]))))

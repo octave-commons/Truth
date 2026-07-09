@@ -356,3 +356,12 @@
       (is (>= b 1.0) "a sun-like star is at least unit brightness")
       (is (< (r/body-brightness (ecs/empty-world) 999 :planet) 0.5)
           "planets are dim"))))
+
+(deftest test-adaptive-subdivisions-rise-with-screen-size
+  (testing "Larger on-screen bodies request more icosahedron subdivisions"
+    (is (= 1 (r/subdivisions-for-screen-size 4.0)))
+    (is (= 2 (r/subdivisions-for-screen-size 32.0)))
+    (is (= 3 (r/subdivisions-for-screen-size 128.0)))
+    (is (= 4 (r/subdivisions-for-screen-size 512.0)))
+    (is (= 5 (r/subdivisions-for-screen-size 2048.0)))
+    (is (= 1 (r/subdivisions-for-screen-size nil)) "nil screen diameter defaults to minimum")))

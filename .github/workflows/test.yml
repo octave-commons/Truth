@@ -1,0 +1,56 @@
+name: test
+
+# Run the test suite in two parallel groups:
+#   - unit: fast tests excluding slow integration simulations
+#   - integration: slow simulation/integration tests only
+# Together they cover the full suite; splitting them gives faster CI feedback
+# and isolates failures in the slow simulation tests from the rest of the build.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clojure tooling
+        uses: DeLaGuardo/setup-clojure@13.0
+        with:
+          cli: latest
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+          key: deps-${{ hashFiles('deps.edn') }}
+
+      - name: Run unit tests
+        run: ./bin/test unit
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clojure tooling
+        uses: DeLaGuardo/setup-clojure@13.0
+        with:
+          cli: latest
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.clojure
+          key: deps-${{ hashFiles('deps.edn') }}
+
+      - name: Run integration tests
+        run: ./bin/test integration

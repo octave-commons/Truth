@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Convenience wrapper for the grouped test runners defined in deps.edn.
+#
+# Usage:
+#   bin/test                # full suite (same as clojure -M:test)
+#   bin/test unit           # fast tests only
+#   bin/test integration    # slow integration/simulation tests only
+#   bin/test domain         # domain tests only
+#   bin/test infra          # infra tests only
+#   bin/test law            # law/contract tests only
+#   bin/test shape          # shape/geometry tests only
+#   bin/test render         # render/appearance/window tests only
+#   bin/test architecture   # architecture guards only
+#   bin/test --help         # show this help
+#
+# For arbitrary group combinations, use the runner directly:
+#   clojure -M:test:test-runner -g domain -g law
+
+set -euo pipefail
+
+usage() {
+  cat <<EOF
+Usage: bin/test [group]
+
+Groups:
+  all (default)    full suite via clojure -M:test
+  unit             fast tests excluding slow integration simulations
+  integration      slow integration/simulation tests only
+  domain           domain tests only
+  infra            infra tests only
+  law              law/contract tests only
+  shape            shape/geometry tests only
+  render           render/appearance/window tests only
+  architecture     architecture guards only
+
+EOF
+  exit 0
+}
+
+GROUP="${1:-all}"
+
+case "$GROUP" in
+  all|full)
+    exec clojure -M:test
+    ;;
+  unit|integration|domain|infra|law|shape|render|architecture)
+    exec clojure -M:test:"${GROUP}-test"
+    ;;
+  -h|--help|help)
+    usage
+    ;;
+  *)
+    echo "Unknown group: $GROUP" >&2
+    usage
+    ;;
+esac

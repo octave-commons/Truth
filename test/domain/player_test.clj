@@ -65,6 +65,19 @@
       (is (= 15.0 (:agency obs)) "observer banks 3 + 12 quanta")
       (is (= 2.0 (:resonance obs)) "observer banks 1 + 1 resonance"))))
 
+(deftest observer-system-accrues-agency-from-condensed-core-formation
+  (testing "A nebula -> condensed-core promotion pays quanta like any upgrade event"
+    (let [[w _eid] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+          w       (-> w
+                      (event/with-ledger)
+                      (assoc :tick 7
+                             :genesis/complexity 1)
+                      (event/emit (event/->event {:tick 7 :kind :event/condensed-core-formation :entities #{}})))
+          w'      ((player/observer-system 1.0) w)
+          obs     (player/get-observer w')]
+      (is (= 3.0 (:agency obs)) "condensed core formation awards 3 quanta")
+      (is (== 1.0 (:resonance obs)) "condensed core formation adds 1 resonance"))))
+
 (deftest observer-system-pays-agency-for-every-event-occurrence
   (testing "Multiple threshold events on the same tick each award agency"
     (let [[w _eid] (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])

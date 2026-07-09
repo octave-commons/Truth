@@ -81,9 +81,10 @@
   "Mass. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass) — the per-source mass
    fluxes (stellar wind/flare loss, XUV escape, disk→star viscous transfer) and
    the accretion/merge mass from absorb-accrete/merge packets are summed and
-   applied. Only bodies with a flux or absorb packet this tick are rewritten."
+   applied. Only bodies with a flux or absorb packet this tick are rewritten.
+   When `:lod/throttle-ticks?` is true, only due entities are advanced."
   [world]
-  (let [eids      (ecs/entities-with world c/mass)
+  (let [eids      (base/due-entities world (ecs/entities-with world c/mass))
         absorbs   (merge (get-in world [:components c/absorb-accrete] {})
                          (get-in world [:components c/absorb-merge] {}))
         cell      (into {}
@@ -114,16 +115,19 @@
 
 (defn ionization-ws
   "Ionization-fraction. The integrator applies wind-heating ionization increments
-   on top of the snapshot value, clamped to [0,1]."
+   on top of the snapshot value, clamped to [0,1]. Only due entities are updated
+   when `:lod/throttle-ticks?` is true."
   [world]
   (let [heats (get-in world [:components c/wind-heating] {})
+        due? (set (base/due-entities world (keys heats)))
         updates (into {}
                       (keep (fn [[eid wh]]
-                              (when-let [d (:wind-heating/ionization-rate wh)]
-                                (let [i0 (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))
-                                      i1 (max 0.0 (min 1.0 (+ i0 (double d))))]
-                                  (when (not= i0 i1)
-                                    [eid i1])))))
+                              (when (due? eid)
+                                (when-let [d (:wind-heating/ionization-rate wh)]
+                                  (let [i0 (double (or (ecs/get-component world eid c/ionization-fraction) 0.0))
+                                        i1 (max 0.0 (min 1.0 (+ i0 (double d))))]
+                                    (when (not= i0 i1)
+                                      [eid i1]))))))
                       heats)]
     (when (seq updates)
       {c/ionization-fraction updates})))
@@ -131,9 +135,8 @@
 (defn composition-ws
   "Composition. The integrator owns the blend: start from the snapshot
    composition, apply the H→He burn (comp.burn replaces it for burning cores),
-   then the deuterium gate (comp.depletion zeroes :D for hot bodies). Only bodies
-   carrying an influence this tick are rewritten — every other body's composition
-   is untouched (spec §7.5; burn + depletion no longer co-write composition).
+   then the deuterium gate (comp.depletion zeroes :D for hot bodies). Only due
+   entities are updated when `:lod/throttle-ticks?` is true.
 
    Absorb-merge packets from collision merges are blended BEFORE burn/depletion:
    the mass-weighted composition of the survivor and the absorbed body."
@@ -150,26 +153,28 @@
                                     acc))
                                 (transient {}) merge-eids)))
         ;; then apply burn/depletion on top
-        all-eids (into (into (set (keys burns)) (keys deps)) merge-eids)]
+        all-eids (into (into (set (keys burns)) (keys deps)) merge-eids)
+        due (set (base/due-entities world all-eids))]
     (if (empty? all-eids)
       {}
       {c/composition
        (into {}
              (keep (fn [eid]
-                     (when-let [base (or (get merged-comps eid)
-                                         (get burns eid)
-                                         (ecs/get-component world eid c/composition))]
-                       [eid (reduce (fn [c k] (assoc c k 0.0))
-                                    base
-                                    (get deps eid #{}))])))
+                     (when (due eid)
+                       (when-let [base (or (get merged-comps eid)
+                                           (get burns eid)
+                                           (ecs/get-component world eid c/composition))]
+                         [eid (reduce (fn [c k] (assoc c k 0.0))
+                                      base
+                                      (get deps eid #{}))]))))
              all-eids)})))
 
 (defn comp-condensed-ws
   "Derived partition of each body's composition into solid and gas phases at
-   its current temperature. Writes :component/comp.condensed for every entity
-   that has both composition and temperature."
+   its current temperature. Writes :component/comp.condensed for every due
+   entity that has both composition and temperature."
   [world]
-  (let [eids (ecs/entities-with world c/composition c/temperature)]
+  (let [eids (base/due-entities world (ecs/entities-with world c/composition c/temperature))]
     (if (seq eids)
       {c/comp-condensed
        (into {}
@@ -184,9 +189,9 @@
   "Angular momentum + spin. L' = L + Σ torque.* + Σ absorb-L (the torque
    influences are per-step ΔL — magnetic braking, disk spin-up; the absorb
    packets carry the absorbed parcels' angular momentum). Spin is derived
-   ω = L'/I."
+   ω = L'/I. Only due entities are advanced when `:lod/throttle-ticks?` is true."
   [world]
-  (let [eids    (ecs/entities-with world c/angular-momentum c/mass c/radius)
+  (let [eids    (base/due-entities world (ecs/entities-with world c/angular-momentum c/mass c/radius))
         pairs   (par/par-mapv
                  (fn [eid]
                    (let [L   (or (ecs/get-component world eid c/angular-momentum) base/zero3)

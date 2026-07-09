@@ -49,6 +49,10 @@
 (def ^:const alfven-mach-magnetized 1.0)
 ;; Alfvén-Mach below this → magnetic tension/pressure constrain the flow.
 
+(def ^:const min-neighbors-for-curl 5)
+;; Minimum neighbor count required to attempt an SPH curl estimate. Isolated
+;; particles have too noisy a curl for the Lorentz force to be meaningful.
+
 (def ^:const mach-supersonic 1.0)
 ;; Flow Mach above this → shocks, compressible turbulence.
 

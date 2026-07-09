@@ -306,10 +306,13 @@
               _         (when (and (:selection @config-atom) (nil? sel))
                           (swap! config-atom #(menu/apply-action % [:ui/select-entity nil])))
               _         (if-let [shape (and sel (inspect/selected-shape bodies sel))]
-                          (swap! config-atom assoc :zoom-min
-                                 (cam/min-approach-distance (:radius shape)))
-                          (when (:zoom-min cfg)
-                            (swap! config-atom dissoc :zoom-min)))
+                          (let [screen-diam (render/body-screen-diameter shape cam fb-h 60.0)
+                                requested (render/subdivisions-for-screen-size screen-diam)]
+                            (swap! config-atom assoc
+                                   :zoom-min (cam/min-approach-distance (:radius shape))
+                                   :requested-subdivisions requested))
+                          (when (or (:zoom-min cfg) (:requested-subdivisions cfg))
+                            (swap! config-atom dissoc :zoom-min :requested-subdivisions)))
               hover     (when (and cur-sx (not over-menu?)) (inspect/pick-entity ctx bodies cur-sx cur-sy))
               overlay   (concat (when sel (inspect/selection-overlay-shapes ctx w sel bodies))
                                 (inspect/hover-overlay-shapes ctx bodies hover sel)

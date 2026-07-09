@@ -158,3 +158,16 @@
     (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo :count (:count m)}))
+
+(defn subdivisions-for-screen-size
+  "Adaptive icosahedron subdivisions for a body of `screen-diameter` pixels.
+   More pixels → more triangles so close-up spheres stay smooth. The mesh is
+   only rebuilt when the requested subdivision crosses an integer threshold."
+  [screen-diameter]
+  (let [d (double (or screen-diameter 0.0))]
+    (cond
+      (>= d 1024.0) 5
+      (>= d 256.0)  4
+      (>= d 64.0)   3
+      (>= d 16.0)   2
+      :else         1)))

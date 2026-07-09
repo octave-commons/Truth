@@ -3,6 +3,8 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
+   [domain.ecology :as ecology]
+   [domain.ecs.components :as c]
    [domain.stellar :as stellar]
    [infra.camera :as cam]
    [infra.inspect :as inspect]
@@ -92,3 +94,27 @@
       (is (seq (:rects card)) "card has background rectangles")
       (is (seq (:text card)) "card has text lines")
       (is (some #(re-find #"Msun" (:text %)) (:text card)) "mass is shown in solar units"))))
+
+(deftest test-inspector-shows-ecology-stats
+  (testing "body-facts includes ecology rows when the body is alive"
+    (let [[w eid] (ecs/spawn (ecs/empty-world))
+          w (-> (ecs/put-components w eid
+                                    {c/mass 6e24 c/radius 6.4e6 c/position [1e16 0 0]
+                                     c/velocity [0 0 0] c/body-kind :body/planet
+                                     c/matter-state :planet c/temperature 300.0
+                                     c/density 5500.0 c/pressure 1e5
+                                     c/composition {:H2O 0.1 :C 0.01 :N 0.001}
+                                     c/ecology (ecology/make-ecology {:phase :prokaryotic
+                                                                       :biomass 0.25
+                                                                       :complexity 0.1
+                                                                       :stability 0.6
+                                                                       :moisture 0.5})})
+                (assoc :next-id 1))
+          facts (inspect/body-facts w eid)
+          labels (set (map first facts))]
+      (is (contains? labels "life"))
+      (is (contains? labels "biomass"))
+      (is (contains? labels "complexity"))
+      (is (contains? labels "stability"))
+      (is (contains? labels "moisture"))
+      (is (some #(re-find #"25%" (second %)) facts) "biomass shown as percent"))))
