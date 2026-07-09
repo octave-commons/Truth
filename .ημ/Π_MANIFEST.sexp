@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260709203132"
-  :generated "2026-07-09T20:31:32Z"
-  :previous-tag "Π-20260709193355"
-  :previous-commit "cced69bda5d24cbd93a8c056e57ceb0a585e2e29"
+  :tag "Π-20260709211312"
+  :generated "2026-07-09T21:13:12Z"
+  :previous-tag "Π-20260709211123"
+  :previous-commit "5e7ea0f52abff0a5708ddf00e6e7f17f4770d03b"
   :files (
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
@@ -279,7 +279,7 @@
     (M ".ημ/actors/truth-research-physics/schedules/README.md" :sha256 "e7812c66436dc90be10ede8911e6e7f116f258e471eb168c8e2137c48d821462")
     (M ".ημ/actors/truth-research-physics/triggers/README.md" :sha256 "0a85a8b0bd739018064b5b9e535517d06734ad556dd5e468c7a6e87ddb151112")
     (M ".ημ/run-research.sh" :sha256 "39e07f6a9995290b1dfebbb5101dbccbd0f81ea726ec5b3d8e02dd665c3a7780")
-    (M ".ημ/session-mycology/ledger.md" :sha256 "2ce06c3d4c2105a6098b58aed5f9931eb2d6559a9edb52fccd58859666cc6122")
+    (M ".ημ/session-mycology/ledger.md" :sha256 "d54c1577ebf6887fbb098ccfdb86a09b523037aa62629367c1965932df4c3f17")
     (M ".ημ/session-mycology/review-receipts.edn" :sha256 "f85f8e7d915bc229d12d4af6d0770209081e00891d9cec95fac45205aa6c9eac")
     (M ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "cd64310556b6d8a2dcb581be3e48a791af36f211ad81f5dd71249b349a8107fc")
     (M ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "139b07760205cfb99505bb1f1884ab9d688fe552a4b30ea33d9b30b82271d80b")
@@ -287,8 +287,8 @@
     (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "847ce08400010f66208c0f28a040930d9fc75eda2b83828f53b5ff8ce1214ebd")
     (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "954f499d96ea4ec192f53831e62d0fb202869b182fc18caf9f0a6b46ad2e763d")
     (M ".ημ/Π_LAST.md" :sha256 "5365796443c138796b6e73e612bd1c96c935c825a11e763f19011122ac30da6b")
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "1de96ef2d8353708718386daec9429a044487afce5c94704e0f2890caf3e09f1")
-    (M ".ημ/Π_STATE.sexp" :sha256 "40d960ae97dc9b1c67cf90e96fa2b48f8d333f9efdeb2fa4bd470543a6fbf975")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "e5422755e64d0d6219e354fd48b437d653c81970867753246a04e02cd5f1e66f")
+    (M ".ημ/Π_STATE.sexp" :sha256 "c8371bfe2af7a7b0c097ff0639bbfa8f3b74efdc730ef36145c413192a0d0573")
     (M "AGENTS.md" :sha256 "af109d583578a56569ecaea4f9eda46e9a2e36df8b80567be1601683c3d04aff")
     (M "CLAUDE.md" :sha256 "d3d1aa87156cfbb3ad1ebfd1848a6ee65961041f9b33b4ac7594e64ea78f0f2e")
     (M "CONTRACT.edn" :sha256 "463298dd814c60b3857bc41a23e5d7fc1af1d18d33b52e14151b55db889f7966")
@@ -367,7 +367,7 @@
     (M "docs/notes/designs/phase-0-design-exploration-003-let-me-also-fix-the-normalize-reference.md" :sha256 "d5b991638e88a7d6a5a3f5244bc3da2ac872a829987e13b94949aa8241f08c6c")
     (M "docs/notes/esc-should-not-close-window.md" :sha256 "8dd7f27921741a88f56d1bf4a026de7a45a59f85c74923eded727b1adfa1eaa3")
     (M "docs/notes/exploration/gates_of_truth_after_fix_tick_12614.png" :sha256 "23887419fd54124e34a479f448b30496f97f39e0a5743314706bf193fe09f221")
-    (A "docs/notes/exploration/gates_of_truth_central_seed_tick_5693.png" :sha256 "2498fa06076779775c1ba9508720db5582a319a3572ff5bdc64658eaedbf43e6")
+    (M "docs/notes/exploration/gates_of_truth_central_seed_tick_5693.png" :sha256 "2498fa06076779775c1ba9508720db5582a319a3572ff5bdc64658eaedbf43e6")
     (M "docs/notes/exploration/gates_of_truth_overview_tick_23202.png" :sha256 "f395095a7d4c32a9d153943bec6e4a58e07538ae795c4fb29ba34aec00b93651")
     (M "docs/notes/exploration/gates_of_truth_star_context_tick_32372.png" :sha256 "a79a9d0a3aa9ba65b343d0164e657708c14a9060c868f136b515e1a4b0ba0178")
     (M "docs/notes/exploration/gates_of_truth_star_follow_tick_35365.png" :sha256 "5d8e4479f14665e1c4345cf826be565b5e485a23aef39cbae21457fc01fb1fab")
@@ -555,6 +555,7 @@
     (M "kanban/tasks/disk-regime-tag-unification.md" :sha256 "48ae6e091367ee62dd567ba3dd200f4f05891bd77e91d44979c59a6c93838342")
     (M "kanban/tasks/ecology-water-gate-snowline.md" :sha256 "e59dd70705429490e064fdb5a094ae2d63c29cb358b97919bdf4f20b233c3e64")
     (M "kanban/tasks/epic-static-analysis-cleanup.md" :sha256 "d7a5f629d06a1c159730d5b2841a8e2b376180cedf9705885a12b995814ab047")
+    (M "kanban/tasks/exposed-tunables-and-settings-menu-spec.md" :sha256 "fae239fdce70d4f24826620cd33eb0b9b9e00f8ae8ea09b7495e6c52ec5c32b0")
     (M "kanban/tasks/focus-zoom-lod-ui-spec.md" :sha256 "5503eb127878c3892fd7c9bbd3ae6080339d43e532dedb3c6bd9c43c95fa8d1d")
     (M "kanban/tasks/gammie-alpha-beta-coupling.md" :sha256 "2f7eac97aa662ea3d5b190e3382d862fde9a21815a63665db65023a463122040")
     (M "kanban/tasks/genesis-arc-separation-physics-substrate-vs-player-arc.md" :sha256 "5d3e357e187ee1fcc9061a06065829d60678846f8239a9940319b9abbdbc50b8")
@@ -596,6 +597,7 @@
     (M "kanban/tasks/spec-soa-primitive-array-physics-cache.md" :sha256 "522e12a1e6ef6cc4dad607a38aca8da8aed758d516009d5cd92fab680529cc62")
     (M "kanban/tasks/stage-2-sink-formation-technical-spec.md" :sha256 "cd36e97ffe58345966c77980ec8e14bb8347cc80cf724685c4ea2f744b502c66")
     (M "kanban/tasks/star-growth-disk-fragmentation-nebula-transparency-spec.md" :sha256 "0a0282af401b093fd8ab14b47a6bf614a8a834f226d6930ee5fd6fb3167b1b83")
+    (M "kanban/tasks/start-menu-save-game-spec.md" :sha256 "0779fb7b118281604bffa074e3f34cddb22bbd324072fc9d8ee6b641bbca9fae")
     (M "kanban/tasks/static-analysis-clj-kondo-cleanup.md" :sha256 "7ddbd53bd1daf19eef6acb818ba5e0dca2d8220cb4dc36b45b2e0bf8f737ee5f")
     (M "kanban/tasks/static-analysis-clj-kondo-correctness.md" :sha256 "d837bd9a7acfa6c38e1f64f7ef21d77861aea70621ee279d8479ebc126b5f4cd")
     (M "kanban/tasks/static-analysis-clj-kondo-dead-code.md" :sha256 "66eaa57bb1d55ce087512badd5de1bf6f6f254dad2661636e0eaa1525a74efc7")
@@ -628,7 +630,7 @@
     (M "kanban/tasks/tick-perf-drift-profile.md" :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "de71f5a7b3ac0ff045211ee3b020102bcf351ac9325588a7bbfc5d48fe1a850f")
+    (M "receipts.edn" :sha256 "d183ec6e31b091a1168f7985cebf78cbdbaa40fe1f2f66b317093a1a46341298")
     (M "receipts.log" :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")
@@ -850,4 +852,5 @@
     (M "test/shape/core_test.clj" :sha256 "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43")
     (M "test/shape/spatial_test.clj" :sha256 "d2591674b40e19e782766e51ae829503486c45c1eb300a48c3a2f663ca182f32")
     (M "test/test_runner.clj" :sha256 "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7")
-  ))
+  )
+)

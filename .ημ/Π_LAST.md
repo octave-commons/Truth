@@ -1,33 +1,24 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260709203132`
-- **Timestamp:** 2026-07-09T20:31:32Z
+- **Π tag:** `Π-20260709211312`
+- **Timestamp:** 2026-07-09T21:13:12Z
 - **Branch:** `main`
-- **Parent head:** `187d729bbbe215e3bef8f532ce20ccc7f3f1162c`
+- **Parent head:** `5e7ea0f52abff0a5708ddf00e6e7f17f4770d03b`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-Genesis pacing/time-slip tuning and player-economy coherence adjustments, plus exploration/spec and session-mycology meta-state:
+Two new kanban spec cards were added since the last snapshot:
 
-- `src/domain/genesis/bootstrap.clj` — centralised Gaussian seed positions near the cloud centre so the dominant core forms in the middle rather than at scattered edge parcels.
-- `src/domain/genesis/tick.clj` — passes observer coherence to pacing instead of a boolean slip flag, enabling smooth time-slip scaling.
-- `src/domain/pacing.clj` — changed complexity cap to sqrt falloff, reduced time-slip factor 20→5 and ceiling 4e12→1e12, and added smooth coherence-based slip factor.
-- `src/domain/player/economy.clj` — slowed coherence drain/regen by 4× so the bar dynamics are gentler across focus intensities.
-- `test/domain/genesis_test.clj` — updated pacing test parameters for the new sqrt complexity cap.
-- `test/domain/time_slip_test.clj` — updated assertions for coherence-driven smooth time-slip.
-- `kanban/tasks/star-growth-disk-fragmentation-nebula-transparency-spec.md` — refreshed design spec for disk fragmentation and nebula transparency.
-- `docs/notes/exploration/nrepl-exploration-star-growth-stall.md` — updated nREPL exploration notes.
-- `docs/notes/exploration/gates_of_truth_central_seed_tick_5693.png` — new screenshot documenting central-seed formation at tick 5693.
-- `.ημ/session-mycology/review-receipts.edn` and `spores/*.md` — updated session-mycology ledger and spores from recent work.
-- `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp` — regenerated handoff artifacts.
+- `kanban/tasks/exposed-tunables-and-settings-menu-spec.md` — design spec for moving the simulation's hard-coded magic numbers into a player-facing `domain.defaults` registry and a Settings panel.
+- `kanban/tasks/start-menu-save-game-spec.md` — design spec for the game shell, world-lines, save/load/auto-save, and compatibility-version migration.
+
+These are the only stageable, repo-relevant changes introduced since the previous Π tag.
 
 ## Verification
 
-- `bin/test domain` — 482 tests, 4920 assertions, 0 failures, 0 errors.
-- `bin/test infra` — 88 tests, 8315 assertions, 0 failures, 0 errors.
-- `bin/test architecture` — 6 tests, 23 assertions, 0 failures, 0 errors.
-- `clj-kondo --lint src test` — 0 errors, 0 warnings.
+- No targeted tests exist for draft markdown spec cards.
+- `verification skipped: no targeted tests`.
 
 ## Concurrent / Ephemeral
 

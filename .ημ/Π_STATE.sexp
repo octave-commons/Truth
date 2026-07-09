@@ -1,11 +1,11 @@
 ((pi "0.63.2")
  (repo "/home/err/spaces/Truth")
  (branch "main")
- (head "187d729bbbe215e3bef8f532ce20ccc7f3f1162c")
- (tag "Π-20260709203132")
- (ts "2026-07-09T20:31:32Z")
+ (head "5e7ea0f52abff0a5708ddf00e6e7f17f4770d03b")
+ (tag "Π-20260709211312")
+ (ts "2026-07-09T21:13:12Z")
  (host "spaces/Truth")
- (origin "fork-tax-tender/b25097b5-f15b-4420-8a00-6f014e5768a5")
+ (origin "fork-tax-tender/70dee810-4cd1-4cb3-8fb1-1e9db9b0e548")
  (dod "pay fork tax on significant changes")
  (manifest [
    ".agents/skills/dedicated-influence-channel/CONTRACT.edn"
@@ -559,6 +559,7 @@
    "kanban/tasks/disk-regime-tag-unification.md"
    "kanban/tasks/ecology-water-gate-snowline.md"
    "kanban/tasks/epic-static-analysis-cleanup.md"
+   "kanban/tasks/exposed-tunables-and-settings-menu-spec.md"
    "kanban/tasks/focus-zoom-lod-ui-spec.md"
    "kanban/tasks/gammie-alpha-beta-coupling.md"
    "kanban/tasks/genesis-arc-separation-physics-substrate-vs-player-arc.md"
@@ -600,6 +601,7 @@
    "kanban/tasks/spec-soa-primitive-array-physics-cache.md"
    "kanban/tasks/stage-2-sink-formation-technical-spec.md"
    "kanban/tasks/star-growth-disk-fragmentation-nebula-transparency-spec.md"
+   "kanban/tasks/start-menu-save-game-spec.md"
    "kanban/tasks/static-analysis-clj-kondo-cleanup.md"
    "kanban/tasks/static-analysis-clj-kondo-correctness.md"
    "kanban/tasks/static-analysis-clj-kondo-dead-code.md"
@@ -855,17 +857,4 @@
    "test/shape/spatial_test.clj"
    "test/test_runner.clj"
  ])
- (owner "fork-tax-tender")
- (note "fork-tax-tender detected significant working-tree changes in the Gates of Truth repository and paid the fork tax. Scope: genesis pacing and time-slip tuning, player-economy coherence adjustments, central-seed exploration screenshot, and updated session-mycology spores/receipts. Plus regenerated .ημ handoff artifacts.")
-  (verification
-    (test "bin/test domain")
-    (result "482 tests, 4920 assertions, 0 failures, 0 errors")
-    (test "bin/test infra")
-    (result "88 tests, 8315 assertions, 0 failures, 0 errors")
-    (test "bin/test architecture")
-    (result "6 tests, 23 assertions, 0 failures, 0 errors")
-    (test "clj-kondo --lint src test")
-    (result "0 errors, 0 warnings")
-  )
- (concurrent nil)
- (blockers nil))
+)
