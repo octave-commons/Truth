@@ -1,23 +1,22 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260709224509`
-- **Timestamp:** 2026-07-09T22:45:09Z
+- **Π tag:** `Π-20260709234505`
+- **Timestamp:** 2026-07-09T23:45:05Z
 - **Branch:** `main`
-- **Parent head:** `4ff3ae1eaf73b89a0f20a5f3254e9a08c68525b9`
+- **Parent head:** `adbc704a17d72d188549f789b0583b038a061b58`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `receipts.edn` — appended two new receipts: a `:fork-tax` entry for the prior snapshot and a `:build` receipt from the receipt-river flow.
-- `.ημ/session-mycology/review-receipts.edn` — added two recent spore-review records (2026-07-09T21:20:47Z and 2026-07-09T21:54:05Z) and refined review notes.
-- `.ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md` and four sibling spores — updated `reviewed` timestamp and `reviewer-session` to reflect the latest review cycle.
-- `kanban/openhax.kanban.json` → `openhax.kanban.json` — moved the kanban configuration to the repository root and corrected `tasksDir` from `./tasks` to `./kanban/tasks`.
+- `.ημ/session-mycology/ledger.md` — appended a new session-mycology retrospective entry (2026-07-09T22:51:01Z) capturing a tooling lesson about `core.quotepath` and non-ASCII paths.
+- `receipts.edn` — appended the `:fork-tax` receipt for the prior snapshot (Π-20260709224509) and left it staged for this snapshot.
+- `.ημ/Π_STATE.sexp`, `.ημ/Π_MANIFEST.sexp`, `.ημ/Π_LAST.md` — regenerated as handoff artifacts for this snapshot.
 
-These are all stageable, repo-relevant metadata changes introduced since the previous Π tag.
+These are repo-relevant metadata and handoff artifacts introduced since the previous Π tag.
 
 ## Verification
 
-- No targeted tests exist for metadata, session-mycology, or kanban config files.
+- No targeted tests exist for session-mycology, receipt, or handoff-artifact files.
 - `verification skipped: no targeted tests`.
 
 ## Concurrent / Ephemeral

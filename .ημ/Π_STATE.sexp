@@ -1,11 +1,11 @@
 ((pi "0.63.2")
  (repo "/home/err/spaces/Truth")
  (branch "main")
- (head "4ff3ae1eaf73b89a0f20a5f3254e9a08c68525b9")
- (tag "Π-20260709224509")
- (ts "2026-07-09T22:45:09Z")
+ (head "adbc704a17d72d188549f789b0583b038a061b58")
+ (tag "Π-20260709234505")
+ (ts "2026-07-09T23:45:05Z")
  (host "spaces/Truth")
- (origin "fork-tax-tender/e1c892ac-c047-42c5-9629-fa07c17e831a")
+ (origin "fork-tax-tender/481a6480-6c87-452f-ae31-98c832809a01")
  (dod "pay fork tax on significant changes")
  (manifest [
     ".agents/skills/dedicated-influence-channel/CONTRACT.edn"

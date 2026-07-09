@@ -259,3 +259,12 @@
   spore: none
   receipt-refs: bff8c76,Π-20260709203132,ses_0b76be2e6ffe5XbU63yu0YAh05
   note: Routine fork-tax snapshot: significant genesis pacing/time-slip changes absorbed, verified, committed, tagged, and pushed. Receipt recorded. No new reusable skill pattern identified.
+- ts: 2026-07-09T22:51:01.763072071Z
+  session: ses_0b6f28da4ffeIGig5JhTSr9ft2
+  task: Pay fork tax for session-mycology and kanban config changes
+  p-efficiency: 0.7
+  p-friction: 0.6
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: none
+  note: Manifest generation worked, but git's default core.quotepath escaped non-ASCII paths (.ημ) and caused FileNotFoundError until -c core.quotepath=false was used. Next time, generate manifests from git ls-files with explicit core.quotepath=false.

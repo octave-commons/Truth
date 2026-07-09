@@ -1,9 +1,8 @@
 (Π-manifest
-  :tag "Π-20260709224509"
-  :generated "2026-07-09T22:45:09Z"
-  :previous-tag "Π-20260709211312"
-  :previous-commit "4ff3ae1eaf73b89a0f20a5f3254e9a08c68525b9"
-  :files (
+  :tag "Π-20260709234505"
+  :generated "2026-07-09T23:45:05Z"
+  :previous-tag "Π-20260709224509"
+  :previous-commit "adbc704a17d72d188549f789b0583b038a061b58"
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
     (M ".agents/skills/deep-research/CONTRACT.edn" :sha256 "a2043a4a0bd6ce703d407765bf5f92489482ff32863879b1bb7d089660266714")
@@ -279,7 +278,7 @@
     (M ".ημ/actors/truth-research-physics/schedules/README.md" :sha256 "e7812c66436dc90be10ede8911e6e7f116f258e471eb168c8e2137c48d821462")
     (M ".ημ/actors/truth-research-physics/triggers/README.md" :sha256 "0a85a8b0bd739018064b5b9e535517d06734ad556dd5e468c7a6e87ddb151112")
     (M ".ημ/run-research.sh" :sha256 "39e07f6a9995290b1dfebbb5101dbccbd0f81ea726ec5b3d8e02dd665c3a7780")
-    (M ".ημ/session-mycology/ledger.md" :sha256 "d54c1577ebf6887fbb098ccfdb86a09b523037aa62629367c1965932df4c3f17")
+    (M ".ημ/session-mycology/ledger.md" :sha256 "49364bb05cdd3c7d5949ebb2d7183636fdf14e2f5024fc12628c64da3ca2489e")
     (M ".ημ/session-mycology/review-receipts.edn" :sha256 "31a205a4ffd966d663bd9eb7b39062ce59bcb9ba0de9d449bb2a6c24c9278d49")
     (M ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "af9efb455fab077018c8fc5b5930b4b5f43ba5cc518704a427d12b5c2393f161")
     (M ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "5039f6a894659310a635fe1cbf9fe15274abf8acdb6e70f6f61a2404d32b5eb2")
@@ -287,7 +286,6 @@
     (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "50d52e10e5b8b9a4a34d9a456bf8cfaf2e383a4965a8d3647aaeded3294dbd91")
     (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "d4c7140df91083027cdaf48e5377ca08423ce885488479c3991e880472ac1421")
     (M ".ημ/Π_LAST.md" :sha256 "283137007450c871f25f5c453fc85f4f7d831b077642f592cb3d4a330ec72c88")
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "42f5353bb0c78cf669b1a5f6f988624cbbf5ff26a06d46ee57f838ace067915e")
     (M ".ημ/Π_STATE.sexp" :sha256 "b6e36fc88af76f0f390e20ee6aa6b59a4b9d2831ed7a0da95c883f7cd9fd8412")
     (M "AGENTS.md" :sha256 "af109d583578a56569ecaea4f9eda46e9a2e36df8b80567be1601683c3d04aff")
     (M "CLAUDE.md" :sha256 "d3d1aa87156cfbb3ad1ebfd1848a6ee65961041f9b33b4ac7594e64ea78f0f2e")
@@ -630,7 +628,7 @@
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "openhax.kanban.json" :sha256 "d27b66ffe03adac7b62ac887c01c43003e74e4a24a9d2acfea778cab2d03acc6")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "7e5048596fd8a1f6113478e1461dd0a162d8cce74276db5526f52266041ae80d")
+    (M "receipts.edn" :sha256 "4d134b9d7acf6825adb49ff2c49944a104e33bd82a9bbd72e2f1f8df62b0dfa9")
     (M "receipts.log" :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")
@@ -852,4 +850,5 @@
     (M "test/shape/core_test.clj" :sha256 "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43")
     (M "test/shape/spatial_test.clj" :sha256 "d2591674b40e19e782766e51ae829503486c45c1eb300a48c3a2f663ca182f32")
     (M "test/test_runner.clj" :sha256 "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "ba9967e5164fae7d79573ade2d41ff19af36606a73a2b7044f557d7e948525f7")
   ))
