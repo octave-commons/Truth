@@ -241,3 +241,12 @@
   spore: none
   receipt-refs: none
   note: Minor friction from manifest self-hash fixed-point decision (excluded manifest from itself) and a Python bytes-literal syntax error; no spore because fork-tax skill already covers the protocol.
+- ts: 2026-07-09T18:36:30.816921729Z
+  session: ses_0b7db95ecffepUuEYtcYbu1pmW
+  task: fork-tax-tender paid Π on Gates of Truth star-growth workstream
+  p-efficiency: 0.8
+  p-friction: 0.35
+  p-skill-candidate: 0.45
+  spore: none
+  receipt-refs: none
+  note: Fork-tax turn completed successfully. Friction: additional tracked files (classifier, stellar_test, exploration notes/PNGs) appeared while tests were running, requiring a scope expansion mid-turn. No spore because fork-tax skill already covers the protocol; the concurrency is a known shared-workspace condition.
