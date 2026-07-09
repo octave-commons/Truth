@@ -427,7 +427,7 @@
                               vec3 p = ro + rd*t;
                               vec4 s = texture(volume, uvw(p));
                               float dens = s.a;
-                              if(dens > 0.0008){
+                              if(dens > 0.002){
                                 float sigma = kappa*dens;
                                 float a = 1.0 - exp(-sigma*dt);
                                 vec3 scat = vec3(0.0);

@@ -21,9 +21,9 @@
     (2.2) preserves the baked colour brightness. Scatter is multiplied by
     the cloud's own colour in the shader so stars tint the fog rather than
     bleaching it to white."
-  {:kappa 0.045
-   :emission-scale 2.2
-   :scatter-scale 2.5
+  {:kappa 0.08
+   :emission-scale 0.8
+   :scatter-scale 1.0
    :jitter 1.0
    :visual-h-scale 10.0
    :visual-h-min 4.0

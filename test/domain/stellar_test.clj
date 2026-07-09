@@ -445,8 +445,8 @@
                                              :radius 1e14})
           w2      (classifier/classify-system w)]
       (is (= :protostar (ecs/get-component w2 eid c/matter-state)))
-      (is (= 1e14 (ecs/get-component w2 eid c/accretion-radius))
-          "feeding zone is the pre-contraction radius"))))
+      (is (= 1e15 (ecs/get-component w2 eid c/accretion-radius))
+          "feeding zone is 10× the pre-contraction radius so protostars keep growing"))))
 
 (deftest test-star-accretes-beyond-its-photosphere
   (testing "A contracted star still captures debris inside its feeding zone"

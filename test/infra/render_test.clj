@@ -14,12 +14,13 @@
    [domain.hydro :as hydro]
    [infra.camera :as cam]
    [infra.input :as input]
-   [infra.render :as r]
-   [infra.render.math :as rmath]
-   [infra.render.scene.bodies :as rbodies]
-   [infra.render.volume :as rvolume]
-   [infra.render.field :as rfield]
-   [infra.render.units :as units]))
+  [infra.render :as r]
+  [infra.render.math :as rmath]
+  [infra.render.scene.bodies :as rbodies]
+  [infra.render.scene.setup :as rsetup]
+  [infra.render.field :as rfield]
+  [infra.render.volume :as rvolume]
+  [infra.render.units :as units]))
 
 (deftest test-tint-color
   (testing "Tinting keeps colours in [0,1] and shifts by regime"
@@ -365,3 +366,33 @@
     (is (= 4 (r/subdivisions-for-screen-size 512.0)))
     (is (= 5 (r/subdivisions-for-screen-size 2048.0)))
     (is (= 1 (r/subdivisions-for-screen-size nil)) "nil screen diameter defaults to minimum")))
+
+(deftest test-render-origin-shift
+  (testing "Scene setup shifts camera, bodies, and volume by render-origin"
+    (let [camera {:position [1.0 2.0 3.0] :target [0.5 1.0 1.5]}
+          origin [0.5 1.0 1.5]
+          bodies [{:position [1.0 2.0 3.0] :render-mode :body}]
+          volume {:box-min [0.0 0.0 0.0] :box-max [1.0 1.0 1.0]
+                  :lights [{:pos [0.5 0.5 0.5]}]}
+          shifted-camera (#'rsetup/shift-camera camera origin)
+          shifted-bodies (#'rsetup/shift-bodies bodies origin)
+          shifted-volume (#'rsetup/shift-volume volume origin)]
+      (is (= [0.5 1.0 1.5] (:position shifted-camera)))
+      (is (= [0.0 0.0 0.0] (:target shifted-camera)))
+      (is (= [0.5 1.0 1.5] (:position (first shifted-bodies))))
+      (is (= [-0.5 -1.0 -1.5] (:box-min shifted-volume)))
+      (is (= [0.5 0.0 -0.5] (:box-max shifted-volume)))
+      (is (= [0.0 -0.5 -1.0] (:pos (first (:lights shifted-volume)))))
+      (is (nil? (#'rsetup/shift-volume nil origin)) "nil volume stays nil"))))
+
+(deftest test-volume-config-tuned-for-transparency
+  (testing "default-volume-config has lowered emission/scatter and raised kappa"
+    (let [cfg rfield/default-volume-config]
+      (is (contains? cfg :emission-scale))
+      (is (contains? cfg :scatter-scale))
+      (is (contains? cfg :kappa))
+      (is (< (:emission-scale cfg) 1.5) "emission is reduced from the old 2.2")
+      (is (< (:scatter-scale cfg) 2.0) "scatter is reduced from the old 2.5")
+      (is (> (:kappa cfg) 0.045) "absorption is raised from the old 0.045"))))
+
+

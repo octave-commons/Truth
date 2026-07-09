@@ -70,7 +70,7 @@
 
 (deftest fragmenting-disk-spawns-gas-giant-only
   (testing "when the disk-regime is :fragmenting, a :gas-giant embryo is spawned"
-    (let [disk-m (* 0.3 law/solar-mass)
+    (let [disk-m (* 0.8 law/solar-mass)
           [w star] (star-with-disk disk-m 1.5e11)
           ;; Force a fragmenting regime so we test the spawn logic.
           w (assoc-in w [:test/disk-regime star]
@@ -90,7 +90,7 @@
 
 (deftest gravito-turbulent-disk-does-not-fragment
   (testing "a disk with Q < 1 but beta > 3 does not fragment"
-    (let [disk-m (* 0.3 law/solar-mass)
+    (let [disk-m (* 0.8 law/solar-mass)
           [w0 star] (star-with-disk disk-m 1.5e11)
           w0 (assoc-in w0 [:test/disk-regime star]
                        {:toomre-q 0.5 :cooling-beta 10.0
@@ -103,7 +103,7 @@
 
 (deftest disk-never-spawns-planetesimal
   (testing "direct disk fragmentation never emits :planetesimal"
-    (let [disk-m (* 0.3 law/solar-mass)
+    (let [disk-m (* 0.8 law/solar-mass)
           [w star] (star-with-disk disk-m 1.5e11)
           w (assoc-in w [:test/disk-regime star]
                       {:toomre-q 0.5 :cooling-beta 1.5
@@ -116,7 +116,7 @@
 
 (deftest disk-mass-and-angmom-conserved-through-fragment-spawn
   (testing "fragment debit conserves disk mass and angular momentum"
-    (let [disk-m (* 0.3 law/solar-mass)
+    (let [disk-m (* 0.8 law/solar-mass)
           [w star] (star-with-disk disk-m 1.5e11)
           w (assoc-in w [:test/disk-regime star]
                       {:toomre-q 0.5 :cooling-beta 1.5
@@ -151,7 +151,7 @@
 
 (deftest fragment-cap-limits-spawns
   (testing "a disk with fragments-spawned = cap does not fragment again"
-    (let [disk-m (* 0.3 law/solar-mass)
+    (let [disk-m (* 0.8 law/solar-mass)
           [w star] (star-with-disk disk-m 1.5e11)
           w (-> w
                 (assoc-in [:test/disk-regime star]
@@ -166,7 +166,7 @@
 
 (deftest planet-seeding-skips-fragmenting-star
   (testing "a star that fragments its disk on this tick does not also seed planets"
-    (let [disk-m (* 0.3 law/solar-mass)
+    (let [disk-m (* 0.8 law/solar-mass)
           [w0 star] (star-with-disk disk-m 1.5e11)
           w0 (-> w0
                  (assoc :genesis/sim-time 1.0e14

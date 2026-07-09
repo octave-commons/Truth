@@ -104,8 +104,11 @@
       0.0)))
 
 (def ^:const disk-viscous-alpha
-  "Shakura-Sunyaev viscosity parameter. α ~ 0.01 for typical protoplanetary disks."
-  0.01)
+  "Shakura-Sunyaev viscosity parameter. When the disk is self-gravitating,
+   gravitoturbulence and global spiral modes can drive effective α up to ~0.1.
+   We use 0.05 so the disk drains onto the star faster than the old 0.01 value,
+   but not so fast that the disk vanishes in one tick."
+  0.05)
 
 (def ^:const disk-sound-speed
   "Characteristic sound speed in a protoplanetary disk (m/s). ~300 m/s at 1 AU."
@@ -116,12 +119,20 @@
    and cooling-time estimates."
   100.0)
 
+(def ^:const disk-radius-max
+  "Maximum outer radius used for viscous-disk physics. Real disks rarely exceed
+   ~1000 AU before they become gravitationally unstable or are truncated by the
+   surrounding cloud; allowing the disk radius to grow to the full centrifugal
+   radius from a 2e16 m nebula produces a multi-Gyr viscous timescale and stalls
+   star growth."
+  1.5e14) ;; 1000 AU
+
 (defn disk-viscous-timescale
   "Viscous timescale (s) for a protoplanetary disk: t_visc = R² / (α c_s H)
    where H = c_s/Ω is the disk scale height. For a Keplerian disk at radius R:
    t_visc ~ R² / (α c_s² / Ω_K) ~ R^(3/2) / (α c_s²) × √(G M)."
   [dsk-rad mass]
-  (let [R (double (or dsk-rad 0.0))
+  (let [R (double (min disk-radius-max (or dsk-rad 0.0)))
         M (double (or mass 0.0))]
     (if (and (pos? R) (pos? M))
       ;; t_visc = R^(3/2) / (α × c_s^2) × √(G M / R)  ≈  R² / (α × c_s × H)

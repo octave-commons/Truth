@@ -50,8 +50,8 @@
         (and (= nw :protostar)
              (nil? (ecs/get-component w eid c/accretion-radius)))
         (ecs/put-component w eid c/accretion-radius
-                           (double (or old-gas-radius
-                                       (ecs/get-component w eid c/radius) 0.0)))
+                           (* 10.0 (double (or old-gas-radius
+                                                (ecs/get-component w eid c/radius) 0.0))))
 
         (and (= old :nebula)
              (not= nw :nebula)

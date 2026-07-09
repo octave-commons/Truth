@@ -26,17 +26,23 @@ category: "specs"
 
 ***
 
-## 2. Rendering: tight zoom
+## 2. Rendering: tight zoom and close-up bodies
 
 ### 2.1 Problem
 
-The dev window uses a fixed icosahedron mesh (`:subdivisions` from config, default 2). At close orbit distances the facets become visible as "weird lines," and the dynamic projection near-plane can clip the front of a small body.
+The dev window uses a fixed icosahedron mesh (`:subdivisions` from config, default 2). At close orbit distances three problems appear:
+
+1. **Floating-point precision loss:** Camera and body positions are far from the world origin (≈1.0 render units) while a true-scale body radius is tiny (≈1e-7 ru). When the vertex shader subtracts these large values to obtain a small relative position, single-precision `float` destroys precision, causing the body to flicker, distort, or vanish entirely. This affects **all** bodies (stars, planets, moons), not only the selected one.
+2. **Projection clipping:** the dynamic near-plane can clip the front of a small body, and the fixed mesh facets become visible.
+3. **Low-resolution halo:** the selection/hover/intervention rings are drawn with a fixed segment count, so the ring appears as a polygon when zoomed in.
 
 ### 2.2 Fix
 
-- **Adaptive mesh subdivision:** `infra.dev.window.loop/ensure-resources` recomputes `:requested-subdivisions` from the selected body's screen-space size. The sphere mesh is regenerated only when the required subdivision crosses a threshold.
-- **Near-plane:** `infra.render.scene.setup/camera-matrices` clamps the near-plane to a small fraction of the selected body's render radius (or a hard floor), so tight orbits do not clip. The far-plane remains dynamic by orbit distance.
-- **Min approach:** keep `cam/min-approach-distance` at 2.5 radii; the artifact is mesh/near-plane, not the camera bound.
+1. **Floating-origin render pass:** `infra.render.scene.setup/render-scene` accepts an optional `:render-origin`. Before rendering, it subtracts the origin from the camera position/target and from every body position, the volume bounding box, and the volume light positions. This keeps the viewed body near the origin in render space and gives the vertex shader enough precision to draw a smooth sphere. The origin is the camera target, so the focused region is always at the origin.
+2. **Adaptive mesh subdivision:** `infra.dev.window.loop/ensure-resources` recomputes `:requested-subdivisions` from the **largest** body on screen (not just the selected one). The sphere mesh is regenerated only when the required subdivision crosses a threshold. Because the mesh is shared, this makes every body on screen smooth, not just the selection.
+3. **Near-plane:** `infra.render.scene.setup/camera-matrices` clamps the near-plane to a small fraction of the orbit distance (or a hard floor), so tight orbits do not clip. The far-plane remains dynamic by orbit distance.
+4. **Adaptive halo:** `infra.inspect.overlay/halo-shapes` now computes the segment count from the on-screen ring size, so the selection/hover/intervention rings stay smooth when zoomed in. The ring is also explicitly closed (last vertex equals first).
+5. **Min approach:** keep `cam/min-approach-distance` at 2.5 radii; the artifact is rendering precision, not the camera bound.
 
 ### 2.3 Subdivision heuristic
 
@@ -172,7 +178,10 @@ These follow the canonical dual-representation spec and are left for a subsequen
 | `src/domain/integrator/core.clj` | Filter `mass-ws`, `ionization-ws`, `composition-ws`, `comp-condensed-ws`, `rotation-ws` by due entities. |
 | `src/domain/integrator/temperature.clj` | Filter by due entities. |
 | `src/infra/render/scene/setup.clj` | Smarter near-plane based on selected body radius. |
-| `src/infra/dev/window/loop.clj` | Adaptive `:requested-subdivisions` from selected body screen size. |
+| `src/infra/render/scene/setup.clj` | Floating-origin camera/body/volume shift in `render-scene`. |
+| `src/infra/dev/window/loop.clj` | Adaptive `:requested-subdivisions` from largest on-screen body; pass `render-origin` to renderer. |
+| `src/infra/inspect/overlay.clj` | Adaptive halo segment count and closed ring. |
+| `src/infra/render/window.clj` | Offscreen rendering also uses `render-origin`. |
 | `src/infra/render/input.clj` | `L` key to jump to nearest living world. |
 | `src/infra/render/hud.clj` | Life notification includes body name; optional follow hint. |
 | `src/infra/menu/panels.clj` | Living-worlds subsection in Entities panel. |

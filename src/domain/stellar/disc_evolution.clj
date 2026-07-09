@@ -21,14 +21,19 @@
 
 (def ^:const disk-fragment-threshold
   "Disk-to-star mass ratio above which the disk becomes gravitationally unstable
-   and fragments into planetary embryos. From Toomre instability: Q = c_s Ω / (π G Σ) < 1.
-   Empirically, M_disk/M_star > 0.1 triggers fragmentation."
-  0.1)
+   and fragments into planetary embryos. Literature suggests this threshold is
+   much higher for low-mass stars: a 0.25 M_sun host requires q ~ 0.7 (cold) to
+   ~ 1.4 (irradiated). We use 0.7 as a gameplay-compromise that still allows
+   gas-giant formation without starving the star. See
+   kanban/tasks/star-growth-disk-fragmentation-nebula-transparency-spec.md."
+  0.7)
 
 (def ^:const binary-fragment-threshold
-  "Disk-to-star mass ratio above which the disk fragments into a stellar companion.
-   Much more massive disk needed for binary formation. ~0.5 M_star."
-  0.5)
+  "Disk-to-star mass ratio above which the disk fragments into a stellar
+   companion (binary). Realistically the disk must approach or exceed the
+   star's mass before it becomes non-Keplerian and unstable to companion
+   formation."
+  1.0)
 
 (def ^:const max-gi-fragments-per-disk
   "Maximum number of direct gravitational-instability fragments a single disk
