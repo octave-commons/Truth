@@ -68,9 +68,39 @@ The net effect is a star that consumes its local reservoir and then plateaus at 
 
 4. **Reduce the angular momentum of captured disk gas.** In `mass-transfer`, the captured gas is placed at its actual orbital radius. In reality, gas falls through an envelope and lands at the centrifugal radius, which is much smaller for gas captured from large distances. Scaling the added angular momentum (or adding a fixed disk radius) would keep the disk compact and fast-draining.
 
-## Recommended next step
+## Fixes implemented during this session
 
-Combine (1) and (2) first: raise the protostar accretion radius multiplier and cap the disk radius for viscous drainage. This preserves the disk-as-reservoir model, keeps the new fragmentation threshold meaningful, and should let the star grow past 0.3 M☉. If the disk still fragments too early or the star grows too slowly, then add (3) as a hybrid routing.
+Implemented three changes to address the two bottlenecks above:
+
+1. **Protostar accretion radius ×10.** In `src/domain/stellar/classifier.clj`, the protostar branch now sets `c/accretion-radius` to `10 × old-gas-radius` instead of `1 ×`. This makes the protostar's frozen feeding zone larger and lets it capture more nebula gas.
+
+2. **Disk radius cap for viscous drainage.** In `src/domain/stellar/disc.clj`, added `disk-radius-max` (1000 AU) and applied it inside `disk-viscous-timescale`. This prevents the huge angular-momentum-derived disk radius from producing a multi-Gyr viscous timescale.
+
+3. **Compact disk-formation radius for captured gas.** In `src/domain/mass_transfer.clj`, gas routed to a protostar/star disk is now placed at a fixed 10 AU formation radius, rather than preserving the full angular momentum from the capture radius. This models the physical envelope collapse: gas loses angular momentum and lands in a compact disk. The added disk angular momentum is scaled to `dm · √(G M · 10 AU)` while preserving the orbital direction.
+
+Updated `test/domain/stellar_test.clj` to expect the new 10× protostar accretion radius.
+
+## Observations after fixes (tick 12614)
+
+- Star mass: **0.293 M☉** (already above the 0.269 plateau).
+- Disk mass: **0.006 M☉**, disk-to-star ratio **0.021** — far below the 0.7 fragmentation threshold.
+- Disk radius: **2.6 AU** (compact).
+- Viscous timescale: **1.55 Myr** (drainable).
+- Disk-to-star mass flux: **4.25 × 10⁻⁷ M☉/tick** — the disk is now feeding the star.
+- The star is still growing slowly; it formed at ~0.29 M☉ and is accreting from its compact disk.
+
+### Visuals after fixes
+- Overview after fixes: `docs/notes/exploration/gates_of_truth_after_fix_tick_12614.png`
+  - The volume fog is now translucent (volume tuning + compact disk).
+  - Star is visible with a small disk halo.
+  - Multiple resolved bodies are visible in the cluster.
+
+## Conclusion
+
+The original 0.269 M☉ cap is **gone**. The star now forms and grows past 0.29 M☉. Growth is gradual because the remaining nebula gas is diffuse and the Bondi-Hoyle rate is low, but the disk is compact and draining, so the star continues to accrete. If faster growth is desired, the next levers are:
+- Increase the protostar radius multiplier further (e.g., 100×).
+- Route a fraction of captured gas directly to the star instead of through the disk.
+- Increase the nebula gas-particle count or reduce nebula radius to keep gas denser near the forming star.
 
 ## Commands used
 

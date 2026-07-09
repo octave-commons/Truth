@@ -88,13 +88,13 @@
    Deterministic (seeded RNG) so runs and tests reproduce."
   ([world total-mass extent] (seed-nebula world total-mass extent {}))
   ([world total-mass extent {:keys [gas-count n-seeds seed-r spin turb seed metallicity]
-                             ;; `seed-r` widened (0.12→0.18 of extent) so the
-                             ;; overdensity clumps are diffuse, not pinpoints: at
-                             ;; 0.12 each seed's local free-fall time was far
-                             ;; shorter than the timestep, so it imploded in a
-                             ;; couple of ticks ("collapses awfully fast"). Wider,
-                             ;; sparser seeds resolve the collapse over many ticks.
-                             :or   {gas-count 1000 n-seeds 5 seed-r 0.18
+                             ;; Single seed (down from 5) so only one overdensity
+                             ;; centre collapses early; the rest of the cloud is
+                             ;; diffuse and feeds the single core rather than
+                             ;; spawning a swarm of competing cores. seed-r widened
+                             ;; to 0.25 so the seed is diffuse and resolves over
+                             ;; many ticks, not a pinpoint implosion.
+                             :or   {gas-count 1000 n-seeds 1 seed-r 0.25
                                     spin 0.55 turb 0.08 seed 42
                                     metallicity :population-i}}]
    (let [rng    (java.util.Random. (long seed))
@@ -172,10 +172,12 @@
   {:G law/G
    :theta 0.5
    :nebula-mass 4e30
-   :nebula-radius 2.0e16
+   :nebula-radius 3.0e16
    :collapse-fraction 0.5
    :contraction-time 9.5e14
    :gas-count 1000
+   :n-seeds 1
+   :seed-r 0.25
    :spin 0.6
    :turb 0.15
    :wind-rate-scale 1.5
@@ -230,11 +232,11 @@
 (defn- seeded-world
   "Seed the nebula of gas particles on `base` and attach the gas smoothing
    radius used by the classifier before bodies contract."
-  [base {:keys [nebula-mass nebula-radius gas-count spin turb metallicity]
+  [base {:keys [nebula-mass nebula-radius gas-count n-seeds seed-r spin turb metallicity]
          :as _opts}]
   (-> (seed-nebula base nebula-mass nebula-radius
-                   {:gas-count gas-count :spin spin :turb turb
-                    :metallicity metallicity})
+                   {:gas-count gas-count :n-seeds n-seeds :seed-r seed-r
+                    :spin spin :turb turb :metallicity metallicity})
       (assoc :genesis/gas-smoothing-radius (* nebula-radius 0.003))))
 
 (defn create-world

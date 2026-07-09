@@ -223,7 +223,10 @@ These values are starting points; the final tuning should be verified visually.
 | File | Change |
 |------|--------|
 | `src/domain/stellar/disc_evolution.clj` | Update `disk-fragment-threshold`, `binary-fragment-threshold`, and `disk-viscous-alpha`. |
-| `src/domain/stellar/disc.clj` | No change (viscous timescale already uses `disk-viscous-alpha`). |
+| `src/domain/stellar/classifier.clj` | Set protostar `c/accretion-radius` to 10× old-gas-radius. |
+| `src/domain/stellar/disc.clj` | Add `disk-radius-max` and cap `disk-viscous-timescale`. |
+| `src/domain/mass_transfer.clj` | Place captured disk gas at 10 AU formation radius. |
+| `test/domain/stellar_test.clj` | Update protostar accretion-radius test expectation. |
 | `src/infra/render/field.clj` | Update `default-volume-config`. |
 | `src/infra/render/shader.clj` | Optional density cutoff bump in the volume fragment shader. |
 | `test/domain/disk_evolution_test.clj` | Update disk masses in fragmentation tests from 0.3 M☉ to 0.8 M☉ so they exceed the new 0.7 threshold. |
@@ -250,7 +253,47 @@ These values are starting points; the final tuning should be verified visually.
 
 ***
 
-## 13. References
+## 14. Post-implementation findings and additional fixes
+
+After the initial changes above were implemented, the live simulation was still observed to plateau at ~0.263 M☉. nREPL inspection revealed two additional bottlenecks not caused by disk fragmentation:
+
+1. **Starved feeding zone:** The protostar's frozen `c/accretion-radius` was set to `1 × old-gas-radius`, leaving a 3 × 10¹⁵ m feeding zone. The nearest remaining gas was at ~3.7 × 10¹⁵ m, so the star captured no new material.
+2. **Over-expanded disk:** Gas already captured had j ≈ 10¹⁸ m²/s, giving a disk radius of ~200,000 AU and a viscous timescale of ~10²¹ s, so the disk could not drain onto the star.
+
+Two further changes were made:
+
+### 14.1 Protostar accretion radius ×10
+
+In `src/domain/stellar/classifier.clj`, the protostar branch now sets `c/accretion-radius` to `10 × old-gas-radius` instead of `1 ×`. This gives protostars a larger feeding zone consistent with the main accretors in the simulation.
+
+### 14.2 Compact disk formation radius
+
+In `src/domain/mass_transfer.clj`, gas routed to a protostar/star disk is now placed at a fixed 10 AU formation radius. The added disk angular momentum is scaled to `dm · √(G M · 10 AU)` while preserving the orbital direction. This models the real envelope-collapse process where gas loses angular momentum and lands in a compact disk, instead of preserving the full angular momentum from the Bondi capture radius.
+
+### 14.3 Disk radius cap for viscous drainage
+
+In `src/domain/stellar/disc.clj`, a `disk-radius-max` of 1000 AU is applied inside `disk-viscous-timescale`. This acts as a safety cap so that even if angular momentum is conserved in some capture path, the viscous timescale does not explode.
+
+### 14.4 Result
+
+After these fixes, the live simulation produced a star at **0.293 M☉** (tick 12614) with a compact disk of **0.006 M☉** draining at **4.25 × 10⁻⁷ M☉/tick**. The original 0.269 M☉ cap is gone. Further tuning (100× feeding zone, direct star routing, or different initial nebula parameters) can speed up growth if desired.
+
+## 15. References
+
+1. Kratter, K. M., & Lodato, G. (2016). *Gravitational Instabilities in Circumstellar Disks*. arXiv:1603.01280. https://arxiv.org/abs/1603.01280
+2. Mercer, A., & Stamatellos, D. (2020). *Fragmentation favoured in discs around higher mass stars*. arXiv:2001.06224. https://arxiv.org/abs/2001.06224
+3. Kratter, K. M., Matzner, C. D., & Krumholz, M. R. (2007). *Embedded, Accreting Disks in Massive Star Formation*. arXiv:0712.0853. https://arxiv.org/abs/0712.0853
+4. Project research: `docs/research/physics/protoplanetary-disks-planet-formation.md`
+5. Project research: `docs/research/physics/protoplanetary-disks-extended.md`
+6. Project research: `docs/research/physics/stellar-nebula-mass-hierarchy.md`
+7. Project research: `docs/research/physics/stellar-mergers-accretion.md`
+8. Project research: `docs/research/physics/rate-limited-accretion-mass-transfer.md`
+9. Project spec: `kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md`
+10. Project spec: `kanban/tasks/phase-0-stellar-winds-mass-transfer-remnants-technical-spec.md`
+11. Project spec: `kanban/tasks/gradual-mass-transfer-spec.md`
+12. Project notes: `docs/notes/improve-planetary-disk-modeling-and-rendering-claude-session-005-now-let-me-verify-renderclj-still-compil.md`
+13. Project notes: `docs/notes/exploration/nrepl-exploration-star-growth-stall.md`
+
 
 1. Kratter, K. M., & Lodato, G. (2016). *Gravitational Instabilities in Circumstellar Disks*. arXiv:1603.01280. https://arxiv.org/abs/1603.01280
 2. Mercer, A., & Stamatellos, D. (2020). *Fragmentation favoured in discs around higher mass stars*. arXiv:2001.06224. https://arxiv.org/abs/2001.06224

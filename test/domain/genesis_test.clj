@@ -122,7 +122,7 @@
     (is (<= 0.0 (genesis/thermal-progress 5.0) (genesis/thermal-progress 1.0e8) 1.0)))
 
   (testing "A fresh world starts at the bulk-cloud step derived from its dynamical time"
-    (let [w        (genesis/create-world {:gas-count 20})
+    (let [w        (genesis/create-world {:gas-count 20 :nebula-radius 2.0e16})
           ;; default nebula: radius 2.0e16, mass 4e30
           t-dyn    (math/sqrt (/ (math/pow 2.0e16 3) (* law/G 4.0e30)))
           expected (:dt (pacing/pacing-for t-dyn 2.0e16))]

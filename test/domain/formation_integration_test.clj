@@ -167,7 +167,9 @@
 
 (deftest persistent-cache-matches-full-rebuild
   (testing "10 ticks with persistent cache and full-rebuild produce identical worlds"
-    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0})
+    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0
+                                           :nebula-radius 2.0e16
+                                           :n-seeds 5 :seed-r 0.18})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
                           :sim/dt 0.0))]
@@ -183,7 +185,9 @@
 
 (deftest persistent-cache-interval-one-matches-invalidation
   (testing "10 ticks with interval=1 persistent cache match invalidate=true mode"
-    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0})
+    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0
+                                           :nebula-radius 2.0e16
+                                           :n-seeds 5 :seed-r 0.18})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
                           :sim/dt 0.0))
@@ -201,7 +205,9 @@
 
 (deftest persistent-cache-default-interval-stays-stable
   (testing "30 ticks with default persistent-cache interval stay stable vs full rebuild"
-    (let [base (-> (genesis/create-world {:gas-count 30 :spin 0.4 :turb 0.05})
+    (let [base (-> (genesis/create-world {:gas-count 30 :spin 0.4 :turb 0.05
+                                           :nebula-radius 2.0e16
+                                           :n-seeds 5 :seed-r 0.18})
                    (assoc :genesis/adaptive-pacing? false))
           full (assoc base :genesis/invalidate-neighbor-cache? true)
           run #(reduce (fn [w _] (genesis/tick-world w)) % (range 30))

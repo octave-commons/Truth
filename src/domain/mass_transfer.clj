@@ -15,6 +15,7 @@
    [domain.spatial.index   :as spatial]
    [domain.stellar        :as stellar]
    [law.mass-transfer     :as lmt]
+   [law.stellar           :as lst]
    [shape.spatial         :as sp]))
 
 (def ^:private zero3 [0.0 0.0 0.0])
@@ -157,18 +158,41 @@
                          1.0e4)
                       (< (hash01 (hash [(:id %) sink-eid tick])) bias)))))
 
+(def ^:private disk-formation-radius
+  "Captured gas is placed at this centrifugal radius when routed to a
+   protostar/star disk. Gas falling from the Bondi radius (~10⁴ AU) carries far
+   too much angular momentum to form a compact protoplanetary disk; in reality it
+   loses angular momentum in the collapsing envelope and lands at ~1–10 AU. We
+   use 10 AU as the effective disk-formation radius."
+  1.5e12)
+
+(defn- disk-angular-momentum-from-radius
+  "Return angular momentum vector for mass `dm` placed in a Keplerian disk at
+   `radius` around a mass `M` sink. Direction follows the captured parcel's
+   orbital angular momentum around the sink; if that is zero, default to +z."
+  [dm M radius dpos v-rel]
+  (let [j (Math/sqrt (* lst/G M radius))
+        L-raw (stellar/orbital-angular-momentum 1.0 dpos v-rel)
+        L-len (sp/len L-raw)
+        target-L (* dm j)]
+    (if (pos? L-len)
+      (sp/v* L-raw (/ target-L L-len))
+      [0.0 0.0 target-L])))
+
 (defn- donor-flux
   "Add flux for one donor parcel to the running write-set. If disk? is true,
-   gas is routed to the disk; otherwise it is merged into the sink core."
+   gas is routed to the disk at a compact formation radius; otherwise it is
+   merged into the sink core."
   [world sink-eid pos M v-sink disk? donor dm ws]
   (let [donor-eid (:id donor)
         dpos      (or (:position donor) zero3)
-        v-donor   (or (ecs/get-component world donor-eid c/velocity) zero3)]
+        v-donor   (or (ecs/get-component world donor-eid c/velocity) zero3)
+        r-rel     (sp/v- dpos pos)
+        v-rel     (sp/v- v-donor v-sink)]
     (if disk?
       (-> ws
           (add-disk! sink-eid dm
-                     (stellar/orbital-angular-momentum
-                      dm (sp/v- dpos pos) (sp/v- v-donor v-sink)))
+                     (disk-angular-momentum-from-radius dm M disk-formation-radius r-rel v-rel))
           (add-flux! donor-eid (- dm) zero3))
       (-> ws
           (add-flux! sink-eid dm (if (pos? M) (sp/v* v-donor (/ dm M)) zero3))
