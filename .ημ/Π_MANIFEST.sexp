@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260709092032"
-  :generated "2026-07-09T09:20:32Z"
-  :previous-tag "Π-20260709052013"
-  :previous-commit "aeb7611"
+  :tag "Π-20260709142532"
+  :generated "2026-07-09T14:25:32Z"
+  :previous-tag "Π-20260709092032"
+  :previous-commit "dfbbd7def6fc26c3541a9ab5758b0cf9c227f9a4"
   :files (
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
@@ -280,15 +280,14 @@
     (M ".ημ/actors/truth-research-physics/triggers/README.md" :sha256 "0a85a8b0bd739018064b5b9e535517d06734ad556dd5e468c7a6e87ddb151112")
     (M ".ημ/run-research.sh" :sha256 "39e07f6a9995290b1dfebbb5101dbccbd0f81ea726ec5b3d8e02dd665c3a7780")
     (M ".ημ/session-mycology/ledger.md" :sha256 "6fb0b0000240d81857874f6b4612f231f962ecffeb9c1c3d88d8b80e11e66c8e")
-    (M ".ημ/session-mycology/review-receipts.edn" :sha256 "162ff3cc2c24585064b7c0cc4289cbb77845b21a1507672710cf7a471c0cd28e")
+    (M ".ημ/session-mycology/review-receipts.edn" :sha256 "11a93035d2866a21d1e69e68851d05c6438a3751b530af590b40ddafb62c7497")
     (M ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "8a0e688c6e3b8440ba84e764d9b188f0df524e384631c299ab23daeaf942844c")
     (M ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "4b0327490eec3a5920c45c076a92db2b03813d8de62383068f49a861ba4d576e")
     (M ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "c91ed3f30b8bb8330eb1ef83c1a5436849b42784ca4773220fb01cff281140f0")
     (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "8435534477dbcd40dfeadfa00fb34824a190d907db3782dfca9226504ef6d2ac")
     (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "eaf5c27f94f744a306a569e311d0d3f8fef10d08d072ecc03ec11a168e1f6cc2")
-    (M ".ημ/Π_LAST.md" :sha256 "908f5716f097ade6ad38bd0f44c6bf830ec5ea055d0be2e5add43901f982dd74")
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "777c6ca7aef866aa5657dfac820d31832ccc180b58ceba681c14e32eab058343")
-    (M ".ημ/Π_STATE.sexp" :sha256 "87c13d155c8972e70189fd654a5630eae34d979bb42cfd8633d47fa289b35068")
+    (M ".ημ/Π_LAST.md" :sha256 "02e0cc2436d1a534fcf03d8ee65385ca9c24b46b1fbaf90f28b40be2376c1a05")
+    (M ".ημ/Π_STATE.sexp" :sha256 "300ffac2ff98b65f7f6102894d8d145db7a205b6152118c6ddf94d377712360c")
     (M "AGENTS.md" :sha256 "af109d583578a56569ecaea4f9eda46e9a2e36df8b80567be1601683c3d04aff")
     (M "CLAUDE.md" :sha256 "d3d1aa87156cfbb3ad1ebfd1848a6ee65961041f9b33b4ac7594e64ea78f0f2e")
     (M "CONTRACT.edn" :sha256 "463298dd814c60b3857bc41a23e5d7fc1af1d18d33b52e14151b55db889f7966")
@@ -621,7 +620,7 @@
     (M "kanban/tasks/tick-perf-drift-profile.md" :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "09ba786b68e0d23ed265a24e93c1251caa361fdb122b558b8fdf1803ee4d3bbd")
+    (M "receipts.edn" :sha256 "4b96dadfd098719df61f9fa5b6d896a94621293128080726c9f4252c8878d3d9")
     (M "receipts.log" :sha256 "0f777a613becd7a6129f69fa4f4ac2ddaccd5452db416313476dd8f1927350e6")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")
@@ -843,4 +842,5 @@
     (M "test/shape/core_test.clj" :sha256 "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43")
     (M "test/shape/spatial_test.clj" :sha256 "d2591674b40e19e782766e51ae829503486c45c1eb300a48c3a2f663ca182f32")
     (M "test/test_runner.clj" :sha256 "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "d81575b8608361d42e32fd98b721e92a3102be1602d1a25c9389fb2f1f160c12")
   ))
