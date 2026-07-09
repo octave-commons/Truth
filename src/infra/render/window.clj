@@ -148,13 +148,13 @@
 
 (defn- render-offscreen-scene
   [mesh camera width height {:keys [body line hud sprite particle]} fbo
-   bodies hud-rects hud-text volume]
+   bodies hud-rects hud-text volume render-origin]
   (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
   (rscene/render-scene {:body-program body :line-program line :hud-program hud
                         :sprite-program sprite :particle-program particle
                         :hud hud-rects :hud-text hud-text :volume volume
                         :mesh-world mesh :camera camera :width width :height height
-                        :bodies bodies :t 0.0})
+                        :bodies bodies :t 0.0 :render-origin render-origin})
   (rvolume/delete-volume volume))
 
 (defn- write-png-flipped [path width height]
@@ -193,12 +193,14 @@
          bodies-fn (resolve-bodies-fn phase0? bodies-fn)
          w         (swap! world-atom tick-fn)
          camera    (resolve-camera phase0? w camera camera-mode)
+         render-origin (:target camera)
          ctx       (units/make-context camera {:width width :height height})
          bodies    (bodies-fn w)
          hud       (when phase0? (rscene/hud-rects-from-world w))
          hud-text  (when phase0? (rhud/hud-text-from-world w))
-         volume    (rvolume/frame-volume {:ctx ctx :world w :program (:volume-program programs) :res (or volume-res :medium) :cfg volume-config})]
-     (render-offscreen-scene mesh camera width height programs fbo bodies hud hud-text volume)
+         volume    (rvolume/frame-volume {:ctx ctx :world w :program (:volume-program programs)
+                                            :res (or volume-res :medium) :cfg volume-config})]
+     (render-offscreen-scene mesh camera width height programs fbo bodies hud hud-text volume render-origin)
      (GL11/glFlush)
      (write-png-flipped path width height)
      (cleanup-offscreen window)

@@ -75,9 +75,11 @@
                                        :ctx ctx
                                        :color [1.0 1.0 1.0]
                                        :n 16})]
-      (is (= 32 (count halo)) "16 segments → 32 vertices")
+      (is (even? (count halo)) "line segments produce pairs of vertices")
+      (is (>= (count halo) 32) "at least the requested 16 segments are emitted")
       (is (every? #(= :line (:render-mode %)) halo))
-      (is (every? #(= [1.0 1.0 1.0] (:color %)) halo)))))
+      (is (every? #(= [1.0 1.0 1.0] (:color %)) halo))
+      (is (= (:position (first halo)) (:position (last halo))) "ring is closed"))))
 
 (deftest test-inspector-card
   (testing "Inspector card is anchored to the body's screen position"

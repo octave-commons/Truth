@@ -20,24 +20,39 @@
   [{:position (vec a) :color color :size 1.0 :render-mode :line}
    {:position (vec b) :color color :size 1.0 :render-mode :line}])
 
+(defn- adaptive-segments
+  "Compute a smooth segment count for a halo of render radius `r` centered at
+   `center`, given the current camera context. The ring is subdivided so each
+   segment is roughly four pixels on screen, capped between 32 and 256."
+  [r center ctx]
+  (let [{:keys [cam-pos tan-half]} (units/camera-basis ctx)
+        h (double (get-in ctx [:viewport :height]))
+        dist (max 1.0e-12 (sp/len (sp/v- (vec center) cam-pos)))
+        screen-r (* (double r) (/ h (* 2.0 dist tan-half)))
+        n (int (/ (* 2.0 math/PI screen-r) 4.0))]
+    (max 32 (min 256 n))))
+
 (defn- normalize [v]
   (let [l (sp/len v)] (if (pos? l) (sp/v* v (/ 1.0 l)) [0.0 0.0 1.0])))
 
 (defn halo-shapes
   "A camera-facing ring of render radius `r` around `center`, as :line segments —
    the selection marker. Lives in the camera's right/up plane so it reads as a
-   ring from any angle."
+   ring from any angle. `n` is a minimum segment count; if the halo is large on
+   screen the count is raised so the ring stays smooth when zoomed in."
   [{:keys [center r ctx color n]}]
-  (let [{:keys [right up]} (units/camera-basis ctx)
+  (let [segs (max (int (or n 32)) (adaptive-segments r center ctx))
+        {:keys [right up]} (units/camera-basis ctx)
         pt (fn [a]
              (sp/v+ (vec center)
                     (sp/v+ (sp/v* right (* r (math/cos a)))
-                           (sp/v* up    (* r (math/sin a))))))]
+                           (sp/v* up    (* r (math/sin a))))))
+        pts (mapv (fn [i] (pt (* 2.0 math/PI (/ (double i) segs)))) (range segs))]
     (vec (mapcat (fn [i]
-                   (let [a0 (* 2.0 math/PI (/ (double i) n))
-                         a1 (* 2.0 math/PI (/ (double (inc i)) n))]
-                     (line-seg (pt a0) (pt a1) color)))
-                 (range n)))))
+                   (line-seg (nth pts i)
+                             (nth pts (mod (inc i) segs))
+                             color))
+                 (range segs)))))
 
 (defn- speed-color
   "Cool→hot ramp by speed (km/s): slow teal → fast amber."

@@ -272,6 +272,7 @@
               w         @world-atom
               _         (swap! camera-atom cam/update-camera-for-world w cam-settings)
               cam       @camera-atom
+              render-origin (:target cam)
               ctx       (units/make-context cam {:width fb-w :height fb-h})
               [cur-sx cur-sy] (when-let [cur (:cursor cfg)]
                                 (let [winw (int-array 1) winh (int-array 1)
@@ -305,14 +306,18 @@
                           (when (and s (inspect/selected-shape bodies s)) s))
               _         (when (and (:selection @config-atom) (nil? sel))
                           (swap! config-atom #(menu/apply-action % [:ui/select-entity nil])))
-              _         (if-let [shape (and sel (inspect/selected-shape bodies sel))]
-                          (let [screen-diam (render/body-screen-diameter shape cam fb-h 60.0)
-                                requested (render/subdivisions-for-screen-size screen-diam)]
-                            (swap! config-atom assoc
-                                   :zoom-min (cam/min-approach-distance (:radius shape))
-                                   :requested-subdivisions requested))
-                          (when (or (:zoom-min cfg) (:requested-subdivisions cfg))
-                            (swap! config-atom dissoc :zoom-min :requested-subdivisions)))
+              _         (let [screenable (filter #(and (= :body (:render-mode %))
+                                                          (:position %)
+                                                          (:radius %)) bodies)
+                              max-screen-diam (if (seq screenable)
+                                                  (apply max (map #(render/body-screen-diameter % cam fb-h 60.0) screenable))
+                                                  0)
+                              requested (render/subdivisions-for-screen-size max-screen-diam)]
+                          (swap! config-atom assoc :requested-subdivisions requested))
+              _         (when-let [shape (and sel (inspect/selected-shape bodies sel))]
+                          (swap! config-atom assoc :zoom-min (cam/min-approach-distance (:radius shape))))
+              _         (when (and (not sel) (:zoom-min cfg))
+                          (swap! config-atom dissoc :zoom-min))
               hover     (when (and cur-sx (not over-menu?)) (inspect/pick-entity ctx bodies cur-sx cur-sy))
               overlay   (concat (when sel (inspect/selection-overlay-shapes ctx w sel bodies))
                                 (inspect/hover-overlay-shapes ctx bodies hover sel)
@@ -351,7 +356,8 @@
                                 :width fb-w
                                 :height fb-h
                                 :bodies bodies
-                                :t @time-atom})
+                                :t @time-atom
+                                :render-origin render-origin})
           (render/delete-volume volume))
         (handle-screenshot-request world-atom config-atom)
         (GLFW/glfwSwapBuffers window)

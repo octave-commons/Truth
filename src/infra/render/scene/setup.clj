@@ -2,7 +2,10 @@
   "OpenGL scene setup and draw-call orchestration.
 
    Builds camera matrices, partitions renderables, and dispatches the volume,
-   particle, line, solid-body, sprite, and HUD passes."
+   particle, line, solid-body, sprite, and HUD passes. Supports a
+   `:render-origin` so close-up bodies can be rendered in a camera-relative
+   coordinate system, avoiding single-precision jitter when the camera and body
+   are far from the world origin."
   (:require
    [infra.camera :as cam]
    [infra.render.math :as rmath]
@@ -29,6 +32,29 @@
    conditioned."
   [camera]
   (max 100.0 (min 10000.0 (* 1000.0 (double (or (:distance camera) 50.0))))))
+
+(defn- shift-camera
+  "Subtract `origin` from the camera's position and target so the scene can be
+   rendered in a camera-relative coordinate system."
+  [camera origin]
+  (-> camera
+      (update :position sp/v- origin)
+      (update :target sp/v- origin)))
+
+(defn- shift-bodies
+  "Subtract `origin` from the :position of every render shape."
+  [bodies origin]
+  (mapv #(update % :position sp/v- origin) bodies))
+
+(defn- shift-volume
+  "Shift a volume descriptor's box and light positions by `origin`."
+  [volume origin]
+  (when volume
+    (-> volume
+        (update :box-min sp/v- origin)
+        (update :box-max sp/v- origin)
+        (update :lights (fn [lights]
+                          (mapv #(update % :pos sp/v- origin) lights))))))
 
 (defn- camera-matrices
   "Projection and view matrices for the current camera. The near plane is a
@@ -169,16 +195,22 @@
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be :particle,
-   :body, :line, or :sprite."
+   :body, :line, or :sprite. Optional `:render-origin` shifts the camera and all
+   positions into a camera-relative coordinate system, fixing single-precision
+   jitter when zoomed in on a body far from the world origin."
   [{:keys [body-program line-program sprite-program particle-program hud-program hud hud-text volume
-           mesh-world camera width height bodies t]}]
+           mesh-world camera width height bodies t render-origin]}]
   (render-scene-setup width height)
-  (let [{:keys [projection view]} (camera-matrices camera width height)
-        {:keys [particles lines solids sprites]} (partition-renderables bodies camera width height)]
-    (render-volume-pass volume camera width height)
-    (render-particles-pass particle-program projection view camera t particles)
+  (let [origin  (or render-origin [0.0 0.0 0.0])
+        camera' (shift-camera camera origin)
+        bodies' (shift-bodies bodies origin)
+        volume' (shift-volume volume origin)
+        {:keys [projection view]} (camera-matrices camera' width height)
+        {:keys [particles lines solids sprites]} (partition-renderables bodies' camera' width height)]
+    (render-volume-pass volume' camera' width height)
+    (render-particles-pass particle-program projection view camera' t particles)
     (render-lines-pass line-program projection view lines)
-    (render-solids-pass body-program mesh-world projection view camera solids)
+    (render-solids-pass body-program mesh-world projection view camera' solids)
     (render-sprites-pass sprite-program projection view sprites)
     (render-hud-pass hud-program hud hud-text width height)))
 

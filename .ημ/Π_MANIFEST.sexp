@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260709142532"
-  :generated "2026-07-09T14:25:32Z"
-  :previous-tag "Π-20260709092032"
-  :previous-commit "dfbbd7def6fc26c3541a9ab5758b0cf9c227f9a4"
+  :tag "Π-20260709172832"
+  :generated "2026-07-09T17:28:32Z"
+  :previous-tag "Π-20260709142532"
+  :previous-commit "05a73f5ec5565fee1c53a4b30d71b7f5f6bdceaf"
   :files (
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
@@ -287,6 +287,7 @@
     (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "8435534477dbcd40dfeadfa00fb34824a190d907db3782dfca9226504ef6d2ac")
     (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "eaf5c27f94f744a306a569e311d0d3f8fef10d08d072ecc03ec11a168e1f6cc2")
     (M ".ημ/Π_LAST.md" :sha256 "02e0cc2436d1a534fcf03d8ee65385ca9c24b46b1fbaf90f28b40be2376c1a05")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "b03c86334691f9e31203a8bb003e332337bcc3804fa214e410a88901c9d6e1f5")
     (M ".ημ/Π_STATE.sexp" :sha256 "300ffac2ff98b65f7f6102894d8d145db7a205b6152118c6ddf94d377712360c")
     (M "AGENTS.md" :sha256 "af109d583578a56569ecaea4f9eda46e9a2e36df8b80567be1601683c3d04aff")
     (M "CLAUDE.md" :sha256 "d3d1aa87156cfbb3ad1ebfd1848a6ee65961041f9b33b4ac7594e64ea78f0f2e")
@@ -620,7 +621,7 @@
     (M "kanban/tasks/tick-perf-drift-profile.md" :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "4b96dadfd098719df61f9fa5b6d896a94621293128080726c9f4252c8878d3d9")
+    (M "receipts.edn" :sha256 "239c6fb5f760886d87a4f68e7b1c11482f1ad265340b96e3400ac7ac44b14e2f")
     (M "receipts.log" :sha256 "0f777a613becd7a6129f69fa4f4ac2ddaccd5452db416313476dd8f1927350e6")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")
@@ -718,12 +719,12 @@
     (M "src/infra/dev/server.clj" :sha256 "33e4b476d3f56b47b1d3294a1b029d4fd381c300ec39ad7f343b173293d5caf8")
     (M "src/infra/dev/window.clj" :sha256 "7f8c8558172edc52945ed53a5d938d5d743ab948d8aa14daf95d6a4348b88b6b")
     (M "src/infra/dev/window/lifecycle.clj" :sha256 "ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c")
-    (M "src/infra/dev/window/loop.clj" :sha256 "38fb7906b08f918a9edfd6e7e38fcb5728000c7de25ae5c37db8eca9a402c9bf")
+    (M "src/infra/dev/window/loop.clj" :sha256 "3ff6fa880a42167f595ce35b7aa118295e991f09e2c6ee6d8028d4b02c1767da")
     (M "src/infra/input.clj" :sha256 "b042c0e4eed45609727a83605e0ced5f24accdbd6a52f7aad7249b79e20bf965")
     (M "src/infra/inspect.clj" :sha256 "cb4ac30ca9b8febf77961cdf88a615121bd4e7d5a36c6ee3e6f476b38f792abb")
     (M "src/infra/inspect/card.clj" :sha256 "b298d363b9c0d88359a55e95729464be02e83cee5db3fff9cde339a47633dcf5")
     (M "src/infra/inspect/format.clj" :sha256 "5dbc6570882948cb870c9a445bbe4bbf3f1183a008c96abb87689ffd3d7a603b")
-    (M "src/infra/inspect/overlay.clj" :sha256 "7c6607987a37f9b5a886e86fcbbcd8db9735b8955d02aa9ffcbcc3bcec139aa2")
+    (M "src/infra/inspect/overlay.clj" :sha256 "4f73ee044b5cc544efeda41052fc7ed3d3fe9eb0190bf26b689251af809bc66b")
     (M "src/infra/inspect/picking.clj" :sha256 "cc909dc08d79b7c99c5da85943daa2a77b0e9dd6a203a56fa52dc65da91fab88")
     (M "src/infra/menu.clj" :sha256 "d9bbda25aac10b3751a567cc468498f0d80803dc5d0e47b171334bf3f111ee02")
     (M "src/infra/menu/panels.clj" :sha256 "9353ee77532e3d41029e95af7b602306794ca7c4aafae2dc9dd24adc8a6fdd56")
@@ -739,11 +740,11 @@
     (M "src/infra/render/scene/bodies.clj" :sha256 "e5309dea19d1575433748792978a841c1ee659da4d60dbc81e07c872d5a3769d")
     (M "src/infra/render/scene/hud.clj" :sha256 "c043fef80fd22c1b8427aa38e1d9af5eaa9b37d299bf39a3a883173700c55348")
     (M "src/infra/render/scene/particles.clj" :sha256 "9647331325d491158d287b9b662f005c33f0634ad2719bb9bb3fa38eef56a2b2")
-    (M "src/infra/render/scene/setup.clj" :sha256 "221dab5d33b699c9682a5c2cdc868585db2a077758edd7c5cef9181d1abd61f0")
+    (M "src/infra/render/scene/setup.clj" :sha256 "38934935176da791f26ffcc263462ffd9dddf3106e70392c0f4f6aaa172c5122")
     (M "src/infra/render/shader.clj" :sha256 "f18c5a1dff77961c88ef115517978f02b4fdad8a8fadb0e6e824eb0297015060")
     (M "src/infra/render/units.clj" :sha256 "b90c9bb420750ae6e1bec73d31f0687ede7303a0b066f065f4085e8001d5dadf")
     (M "src/infra/render/volume.clj" :sha256 "0e0f8242fe4aa11902cd8a69d931a5f0342293567acb017bfb751bab397abdd3")
-    (M "src/infra/render/window.clj" :sha256 "bd2fbdb6285371554af375f231c6ae3c4710c98a20f82c4b63696a72fab56e5c")
+    (M "src/infra/render/window.clj" :sha256 "07d1b833bc9f0b54dd39f4f3bf1c59662f9be303aa7d15ada2f56d6b987bb69a")
     (M "src/law/composition.clj" :sha256 "f775cf153e890f99f461591588a77202ab1b79aba7fc17a265cb42cedabe9da5")
     (M "src/law/contract.clj" :sha256 "23c5aa68995e8389742cdc5dbbd5433765a4331410eec39e0cd7b50e70214b19")
     (M "src/law/ecology.clj" :sha256 "3940c5668db3a577b1a5f15923ea2ea12b3fd1ac07c27ead1c8dc5b5a951bf7b")
@@ -825,7 +826,7 @@
     (M "test/infra/camera_test.clj" :sha256 "6493d4cfd335767f7cf49256584b1d8c5b6bbf58e9c8d16602853516285981ce")
     (M "test/infra/dev/window_test.clj" :sha256 "b7502f5bbcebee3a84946098645be2a94bdebc642580ede086f20e7fc8e24567")
     (M "test/infra/input_test.clj" :sha256 "9aa9c6dde785ecff7b84b33d6c9f59438e029cf7f12f81984a3bb9354493fea4")
-    (M "test/infra/inspect_test.clj" :sha256 "ec172643dd979884b087cf556208b51ea673c309ae8d6c7a2215bcddfce77d70")
+    (M "test/infra/inspect_test.clj" :sha256 "d3b6fb0dcb8adf1c26191ba82858c55d5d7563ec6b261b0aa4adcf9f921351ef")
     (M "test/infra/menu_test.clj" :sha256 "ed8843ad2f017234cdc7c58610d506ea99b3bb328ccfad4fed8e83e591b9ff96")
     (M "test/infra/render/field_test.clj" :sha256 "f44350e6c2d350af03a3a05dd2052f52f6a4c8a2f5e648af1017b6087aa5db7f")
     (M "test/infra/render/shader_test.clj" :sha256 "a13f2011efe7632cbb26bdd46624fa608e975f6ca847bb6a8df03153e8df4566")
@@ -842,5 +843,4 @@
     (M "test/shape/core_test.clj" :sha256 "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43")
     (M "test/shape/spatial_test.clj" :sha256 "d2591674b40e19e782766e51ae829503486c45c1eb300a48c3a2f663ca182f32")
     (M "test/test_runner.clj" :sha256 "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7")
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "d81575b8608361d42e32fd98b721e92a3102be1602d1a25c9389fb2f1f160c12")
   ))
