@@ -1,46 +1,37 @@
 ((pi "0.63.1")
  (repo "/home/err/spaces/Truth")
  (branch "main")
- (head "c1a3a68491024d8ff0a5692aa65d48343c4f88d5")
- (tag "Π-20260708231149")
- (ts "2026-07-08T23:11:49Z")
+ (head "5b84c5f395e8ebe15fd5ff65009e540857c4484c")
+ (tag "Π-20260709001406")
+ (ts "2026-07-09T00:14:06Z")
  (host "spaces/Truth")
  (origin "fork-tax-tender")
  (dod "pay fork tax on significant changes")
  (manifest [
-  ".ημ/actors/truth-research-atmosphere/AGENT.md"
-  ".ημ/actors/truth-research-atmosphere/actor.edn"
-  ".ημ/actors/truth-research-atmosphere/runtime/systemd.timer"
-  ".ημ/actors/truth-research-biology/AGENT.md"
-  ".ημ/actors/truth-research-biology/actor.edn"
-  ".ημ/actors/truth-research-biology/runtime/systemd.timer"
-  ".ημ/actors/truth-research-coordinator/AGENT.md"
-  ".ημ/actors/truth-research-coordinator/actor.edn"
-  ".ημ/actors/truth-research-coordinator/runtime/systemd.timer"
-  ".ημ/actors/truth-research-cosmology/AGENT.md"
-  ".ημ/actors/truth-research-cosmology/actor.edn"
-  ".ημ/actors/truth-research-cosmology/runtime/systemd.timer"
-  ".ημ/actors/truth-research-culture/AGENT.md"
-  ".ημ/actors/truth-research-culture/actor.edn"
-  ".ημ/actors/truth-research-culture/runtime/systemd.timer"
-  ".ημ/actors/truth-research-geology/AGENT.md"
-  ".ημ/actors/truth-research-geology/actor.edn"
-  ".ημ/actors/truth-research-geology/runtime/systemd.timer"
-  ".ημ/actors/truth-research-physics/AGENT.md"
-  ".ημ/actors/truth-research-physics/actor.edn"
-  ".ημ/actors/truth-research-physics/runtime/systemd.timer"
-  ".ημ/session-mycology/ledger.md"
-  ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md"
-  "README.md"
-  "receipts.edn"
-  ".ημ/Π_LAST.md"
-  ".ημ/Π_MANIFEST.sexp"
-  ".ημ/Π_STATE.sexp"
- ])
+   ".ημ/session-mycology/ledger.md"
+   "bench/gates_of_truth/bench.clj"
+   "bench/gates_of_truth/bench/phase0.clj"
+   "kanban/tasks/tick-perf-drift-profile.md"
+   "receipts.edn"
+   "src/domain/ecs/components.clj"
+   "src/domain/physics/cache/soa.clj"
+   "src/domain/stellar.clj"
+   "kanban/tasks/spec-neighbor-cache-fan-out-lane.md"
+  ])
  (owner "fork-tax-tender")
- (note "Π snapshot: research actors interval 48h→24h and OnCalendar 10:00 daily, README update, receipts/ledger append, new physics-dt-unit-mismatch spore.")
+ (note "fork-tax-tender detected significant changes and paid the fork tax on the originally observed working tree: physics-SoA fill optimization, new neighbor-cache component, stellar benchmark coverage, phase0 benchmark repair, ledger and receipts append, new kanban task. Neighbor-cache fan-out lane implementation files were modified concurrently during this turn and were left uncommitted as live work.")
  (verification
-   (test "edn + markdown sanity")
-   (result "actor.edn files valid EDN; no Clojure code changed since prior passing test run"))
- (concurrent nil)
+   (test "clojure -M:test")
+   (result "617 tests, 0 failures, 0 errors"))
+ (concurrent [
+   "src/domain/ecs/registry.clj"
+   "src/domain/genesis/systems.clj"
+   "src/domain/genesis/tick.clj"
+   "src/domain/hydro/common.clj"
+   "src/domain/hydro/density.clj"
+   "src/domain/hydro/pressure.clj"
+   "src/domain/physics/cache.clj"
+   "src/domain/physics/cache/neighbor.clj"
+   "src/domain/em/lorentz.clj"
+  ])
  (blockers nil))

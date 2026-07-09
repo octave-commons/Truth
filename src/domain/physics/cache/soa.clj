@@ -27,44 +27,36 @@
               acc))
           [0.0 0.0 0.0] maps))
 
-(defn- soa-row-values
-  "Compute one SoA row from entity components and accumulated forces."
-  [eid comps dt accel-maps dv-maps]
-  (let [[x y z] (comps c/position)
-        [vx0 vy0 vz0] (comps c/velocity)
-        [ax ay az] (sum-force-vectors eid accel-maps)
-        [dvx dvy dvz] (sum-force-vectors eid dv-maps)
-        vpx (+ (double vx0) (* (double ax) dt) (double dvx))
-        vpy (+ (double vy0) (* (double ay) dt) (double dvy))
-        vpz (+ (double vz0) (* (double az) dt) (double dvz))]
-    {:m (double (or (comps c/mass) 0.0))
-     :r (double (or (comps c/radius) 0.0))
-     :px (double x) :py (double y) :pz (double z)
-     :vx (double vx0) :vy (double vy0) :vz (double vz0)
-     :px-pred (+ (double x) (* vpx dt))
-     :py-pred (+ (double y) (* vpy dt))
-     :pz-pred (+ (double z) (* vpz dt))}))
-
 (defn- fill-physics-soa!
   "Fill SoA arrays from projected entities and force maps.
    Writes the disjoint index range [start, end)."
-  [all eids mass radius px py pz vx vy vz pxp pyp pzp dt accel-maps dv-maps start end]
+  [all       ^objects eids ^doubles mass ^doubles radius
+      ^doubles px ^doubles py ^doubles pz
+      ^doubles vx ^doubles vy ^doubles vz
+      ^doubles pxp ^doubles pyp ^doubles pzp
+      dt accel-maps dv-maps start end]
   (loop [i (long start)]
     (when (< i end)
       (let [[eid comps] (nth all i)
-            row (soa-row-values eid comps dt accel-maps dv-maps)]
-        (aset ^objects eids i eid)
-        (aset ^doubles mass i (:m row))
-        (aset ^doubles radius i (:r row))
-        (aset ^doubles px i (:px row))
-        (aset ^doubles py i (:py row))
-        (aset ^doubles pz i (:pz row))
-        (aset ^doubles vx i (:vx row))
-        (aset ^doubles vy i (:vy row))
-        (aset ^doubles vz i (:vz row))
-        (aset ^doubles pxp i (:px-pred row))
-        (aset ^doubles pyp i (:py-pred row))
-        (aset ^doubles pzp i (:pz-pred row)))
+            [x y z] (comps c/position)
+            [vx0 vy0 vz0] (comps c/velocity)
+            [ax ay az] (sum-force-vectors eid accel-maps)
+            [dvx dvy dvz] (sum-force-vectors eid dv-maps)
+            vpx (+ (double vx0) (* (double ax) dt) (double dvx))
+            vpy (+ (double vy0) (* (double ay) dt) (double dvy))
+            vpz (+ (double vz0) (* (double az) dt) (double dvz))]
+        (aset eids i eid)
+        (aset mass i (double (or (comps c/mass) 0.0)))
+        (aset radius i (double (or (comps c/radius) 0.0)))
+        (aset px i (double x))
+        (aset py i (double y))
+        (aset pz i (double z))
+        (aset vx i (double vx0))
+        (aset vy i (double vy0))
+        (aset vz i (double vz0))
+        (aset pxp i (+ (double x) (* vpx dt)))
+        (aset pyp i (+ (double y) (* vpy dt)))
+        (aset pzp i (+ (double z) (* vpz dt))))
       (recur (inc i)))))
 
 (defn- validate-physics-soa!

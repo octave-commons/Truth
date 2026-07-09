@@ -12,7 +12,8 @@
    [domain.stellar.disc             :as disc]
    [domain.stellar.disc-evolution   :as disc-evolution]
    [domain.stellar.wind             :as wind]
-   [domain.stellar.fusion           :as fusion]))
+   [domain.stellar.fusion           :as fusion]
+   [domain.stellar.temperature      :as temperature]))
 
 ;; --- Re-exports from existing sub-modules -----------------------------------
 (def ^{:doc "Re-export; see `domain.stellar.thermodynamics/entity->region`."}
@@ -25,6 +26,8 @@
   eos-system geometry/eos-system)
 (def ^{:doc "Re-export; see `domain.stellar.classifier/classifier-system`."}
   classifier-system classifier/classifier-system)
+(def ^{:doc "Re-export; see `domain.stellar.temperature/temperature-system`."}
+  temperature-system temperature/temperature-system)
 (def ^{:doc "Re-export; see `domain.stellar.classifier/complexity-score`."}
   complexity-score classifier/complexity-score)
 (def ^{:doc "Re-export; see `domain.stellar.sink/sink-formation-system`."}

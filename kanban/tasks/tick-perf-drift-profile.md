@@ -329,6 +329,18 @@ survives).
     binding constraint; reverted to keep `future` semantics (binding
     conveyance, familiar failure mode).
 
+- Fix 4 round 6 (2026-07-08) — physics-SoA fill regression and benchmark repair:
+  - `fill-physics-soa!` in `src/domain/physics/cache/soa.clj` had regressed to
+    ~25 ms @1000 by creating a per-entity map and then extracting fields into
+    primitive arrays. Rewrote it to write directly to type-hinted arrays with the
+    same predicted-position arithmetic. SoA build @1000: ~25 ms → ~1.2 ms;
+    `tick-world` @1000: ~72 ms → ~48.6 ms (`clojure -M:bench phase0`).
+  - The phase0 benchmark was broken: `domain.genesis` no longer exports
+    `step-physics` (it lives in `domain.genesis.tick`), the sequential fallback
+    referenced old namespaces, and `domain.stellar` did not re-export
+    `temperature-system`. Repaired the benchmark and expanded `:phase0` `:covers`
+    to declare all tick-participating namespaces.
+
 ### Remaining bottlenecks (@1000 bodies, warm, clean; sustained mean ≈ 17.6 ms)
 
 Measured p50 on a warm frozen snapshot — serial chain: `spatial-index` 2.8

@@ -72,6 +72,13 @@
 ;; emit their own contributions.
 (def hydro-accel :component/hydro-accel) ;; [ax ay az]
 
+;; --- Neighbor cache (shared by hydro + EM) ----------------------------------
+;; One `law.field/neighbor-cache-entry-schema` value per hydro/EM-active entity.
+;; Built/refreshed by the `:neighbor-cache` fan-out system; hydro and em-lorentz
+;; read the one-tick-stale snapshot entry. Moving the cache from a world key to a
+;; component eliminates the last serial pre-phase in `step-physics`.
+(def neighbor-cache :component/neighbor-cache)
+
 ;; --- Acceleration contributions (double-buffer accumulator inputs) ----------
 ;; Each force-emitter owns ONE of these; the motion integrator reads them all
 ;; and SUMS them into the net acceleration before advancing velocity/position.

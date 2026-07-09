@@ -1,51 +1,43 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260708231149`
-- **Timestamp:** 2026-07-08T23:11:49Z
+- **Π tag:** `Π-20260709001406`
+- **Timestamp:** 2026-07-09T00:14:06Z
 - **Branch:** `main`
-- **Parent head:** `c1a3a68491024d8ff0a5692aa65d48343c4f88d5`
+- **Parent head:** `5b84c5f395e8ebe15fd5ff65009e540857c4484c`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `.ημ/actors/truth-research-atmosphere/AGENT.md`
-- `.ημ/actors/truth-research-atmosphere/actor.edn`
-- `.ημ/actors/truth-research-atmosphere/runtime/systemd.timer`
-- `.ημ/actors/truth-research-biology/AGENT.md`
-- `.ημ/actors/truth-research-biology/actor.edn`
-- `.ημ/actors/truth-research-biology/runtime/systemd.timer`
-- `.ημ/actors/truth-research-coordinator/AGENT.md`
-- `.ημ/actors/truth-research-coordinator/actor.edn`
-- `.ημ/actors/truth-research-coordinator/runtime/systemd.timer`
-- `.ημ/actors/truth-research-cosmology/AGENT.md`
-- `.ημ/actors/truth-research-cosmology/actor.edn`
-- `.ημ/actors/truth-research-cosmology/runtime/systemd.timer`
-- `.ημ/actors/truth-research-culture/AGENT.md`
-- `.ημ/actors/truth-research-culture/actor.edn`
-- `.ημ/actors/truth-research-culture/runtime/systemd.timer`
-- `.ημ/actors/truth-research-geology/AGENT.md`
-- `.ημ/actors/truth-research-geology/actor.edn`
-- `.ημ/actors/truth-research-geology/runtime/systemd.timer`
-- `.ημ/actors/truth-research-physics/AGENT.md`
-- `.ημ/actors/truth-research-physics/actor.edn`
-- `.ημ/actors/truth-research-physics/runtime/systemd.timer`
 - `.ημ/session-mycology/ledger.md`
-- `.ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md`
-- `README.md`
+- `bench/gates_of_truth/bench.clj`
+- `bench/gates_of_truth/bench/phase0.clj`
+- `kanban/tasks/tick-perf-drift-profile.md`
 - `receipts.edn`
-- `.ημ/Π_LAST.md`
-- `.ημ/Π_MANIFEST.sexp`
-- `.ημ/Π_STATE.sexp`
+- `src/domain/ecs/components.clj`
+- `src/domain/physics/cache/soa.clj`
+- `src/domain/stellar.clj`
+- `kanban/tasks/spec-neighbor-cache-fan-out-lane.md`
 
 ## Verification
 
-- `edn + markdown sanity` — actor.edn files valid EDN; no Clojure code changed since prior passing test run.
+- `clojure -M:test` — 617 tests, 0 failures, 0 errors.
 
 ## Concurrent / Ephemeral
 
-- No unowned or blocked modifications left in the working tree.
+The following files were modified during this fork-tax turn and were treated as live concurrent work; they remain in the working tree uncommitted:
+
+- `src/domain/ecs/registry.clj`
+- `src/domain/genesis/systems.clj`
+- `src/domain/genesis/tick.clj`
+- `src/domain/hydro/common.clj`
+- `src/domain/hydro/density.clj`
+- `src/domain/hydro/pressure.clj`
+- `src/domain/physics/cache.clj`
+- `src/domain/physics/cache/neighbor.clj`
+- `src/domain/em/lorentz.clj`
+
 - `.ημ/actors/fork-tax-tender/sessions/`, `inbox/`, and `outbox/` remain ignored per `.gitignore`.
 
 ## No Known Blockers
 
-All stageable, repo-relevant working state has been committed and tagged.
+All stageable, repo-relevant working state intended for this snapshot has been committed and tagged.

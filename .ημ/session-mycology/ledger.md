@@ -223,3 +223,12 @@
   spore: none
   receipt-refs: 2026-07-08T23:11:49Z
   note: Detected 28 significant files (actor schedules, README, receipts, ledger, new spore, handoff artifacts). Regenerated .ημ/Π_* artifacts via bb script with -c core.quotepath=false. No Clojure source changes; verification limited to EDN sanity on actor.edn. Committed, tagged, and pushed main + Π-20260708231149. No concurrent dirt.
+- ts: 2026-07-09T00:07:14.851774951Z
+  session: ses_0c0f9f161ffegZK7S36nqvx4Zs
+  task: Optimize physics-SoA fill and repair phase0 benchmark
+  p-efficiency: 0.7
+  p-friction: 0.5
+  p-skill-candidate: 0.75
+  spore: none
+  receipt-refs: none
+  note: fill-physics-soa! created a map per entity causing a 20x regression (~25 ms @1000). Direct array writes restored ~1.2 ms. Also benchmark needed namespace repairs and :covers updates.

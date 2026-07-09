@@ -10,6 +10,7 @@
    5. Parallel vs sequential comparison"
   (:require
    [domain.genesis        :as genesis]
+   [domain.genesis.tick   :as gtick]
    [domain.arc            :as arc]
    [domain.ecs.core       :as ecs]
    [domain.ecs.tick       :as tick]
@@ -59,7 +60,7 @@
         world1 (-> (ecs/advance-tick w)
                    (domain.spatial.index/spatial-index))
         t1 (System/nanoTime)
-        world2 (genesis/step-physics world1)
+        world2 (gtick/step-physics world1)
         t2 (System/nanoTime)
         world3 (-> world2
                    (intervention/expire-interventions)
@@ -204,7 +205,7 @@
     (println "\n  Overhead functions measured on post-physics world (500 particles):")
     (let [w1 (-> (ecs/advance-tick w500)
                  (domain.spatial.index/spatial-index))
-          w2 (genesis/step-physics w1)
+          w2 (gtick/step-physics w1)
           summ (genesis/system-summary w2)]
       (quick-bench "  advance-tick + spatial-index"
                    (fn [] (-> (ecs/advance-tick w500)
@@ -331,37 +332,22 @@
     ;; --- Parallel vs sequential step-physics ---
     (println "\n  Step-physics parallel vs sequential (500 particles):")
     (quick-bench "  step-physics parallel (on initial w500)"
-                 (fn [] (genesis/step-physics w500)))
+                 (fn [] (gtick/step-physics w500)))
     (let [w1 (-> (ecs/advance-tick w500)
                  (domain.spatial.index/spatial-index))]
       (quick-bench "  step-physics parallel (on world1 with spatial tree)"
-                   (fn [] (genesis/step-physics w1))))
+                   (fn [] (gtick/step-physics w1))))
     (quick-bench "  step-physics sequential"
                  (fn [] (step-physics-sequential w500)))
 
     ;; --- Parallel vs sequential ---
     (println "\n  Parallel vs Sequential (500 particles):")
 
-    (quick-bench "  full parallel tick"
-                 (fn [] (genesis/step-physics w500)))
+    (quick-bench "  full parallel step-physics"
+                 (fn [] (gtick/step-physics w500)))
 
-    ;; Sequential fallback
-    (quick-bench "  full sequential tick (approximate)"
-                 (fn []
-        ;; Run each system sequentially (approximates non-parallel path)
-                   (-> w500
-                       ((:run (stellar/structure-system)))
-                       ((:run (stellar/eos-system)))
-                       ((:run (stellar/classifier-system)))
-                       ((:run (stellar/temperature-system (:sim/dt w500))))
-                       ((:run (em/field-system (:sim/dt w500))))
-                       (collision/collision-detection-system)
-                       (stellar/fusion-promotion-system)
-                       ((:run (stellar/deuterium-depletion-system)))
-                       (stellar/sink-formation-system)
-                       (stellar/disk-evolution-system)
-                       ((:run (stellar/stellar-wind-system)))
-                       ((:run (stellar/stellar-flare-system))))))
+    (quick-bench "  full sequential step-physics"
+                 (fn [] (step-physics-sequential w500)))
 
     ;; --- Multi-tick scaling ---
     (println "\n  Multi-tick Scaling (500 particles):")

@@ -135,12 +135,25 @@
                 :covers #{'infra.render 'infra.render.units 'infra.camera}}
     :phase0    {:label  "Full Phase 0 Tick"
                 :ns     'gates-of-truth.bench.phase0
-                :covers #{'domain.genesis 'domain.arc 'domain.ecs.core
-                          'domain.ecs.tick 'domain.ecs.components
-                          'domain.stellar 'domain.orbital.system 'domain.hydro
-                          'domain.em 'domain.physics.collision 'domain.regime
+                :covers #{'domain.genesis 'domain.genesis.bootstrap 'domain.genesis.summary
+                          'domain.genesis.systems 'domain.genesis.tick 'domain.arc
+                          'domain.ecs.core 'domain.ecs.tick 'domain.ecs.components
+                          'domain.stellar 'domain.stellar.classifier 'domain.stellar.geometry
+                          'domain.stellar.temperature 'domain.stellar.fusion 'domain.stellar.wind
+                          'domain.stellar.sink 'domain.stellar.disc-evolution 'domain.stellar.seeder
+                          'domain.stellar.thermodynamics 'domain.stellar.structure 'domain.stellar.collapse
+                          'domain.stellar.disc 'domain.stellar.merge
+                          'domain.orbital.system 'domain.hydro 'domain.hydro.density
+                          'domain.hydro.pressure 'domain.hydro.common 'domain.hydro.kernel
+                          'domain.em 'domain.em.field 'domain.em.lorentz 'domain.em.magnetosphere
+                          'domain.physics.collision 'domain.regime 'domain.mass-transfer
+                          'domain.debris 'domain.ecology 'domain.lod 'domain.profile
+                          'domain.integrator 'domain.integrator.core 'domain.integrator.base
+                          'domain.integrator.kinematics 'domain.integrator.temperature
+                          'domain.physics.cache 'domain.physics.cache.soa 'domain.physics.cache.neighbor
                           'domain.intervention 'domain.player 'domain.pacing
-                          'domain.spatial.index 'domain.chemistry}}})
+                          'domain.spatial.index 'domain.chemistry 'domain.atmosphere
+                          'domain.world-bootstrap}}})
 
 (def group-order
   "Execution order: ECS first (foundational), then physics, then integration."
