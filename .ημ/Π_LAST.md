@@ -1,23 +1,23 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260709211312`
-- **Timestamp:** 2026-07-09T21:13:12Z
+- **Π tag:** `Π-20260709224509`
+- **Timestamp:** 2026-07-09T22:45:09Z
 - **Branch:** `main`
-- **Parent head:** `5e7ea0f52abff0a5708ddf00e6e7f17f4770d03b`
+- **Parent head:** `4ff3ae1eaf73b89a0f20a5f3254e9a08c68525b9`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-Two new kanban spec cards were added since the last snapshot:
+- `receipts.edn` — appended two new receipts: a `:fork-tax` entry for the prior snapshot and a `:build` receipt from the receipt-river flow.
+- `.ημ/session-mycology/review-receipts.edn` — added two recent spore-review records (2026-07-09T21:20:47Z and 2026-07-09T21:54:05Z) and refined review notes.
+- `.ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md` and four sibling spores — updated `reviewed` timestamp and `reviewer-session` to reflect the latest review cycle.
+- `kanban/openhax.kanban.json` → `openhax.kanban.json` — moved the kanban configuration to the repository root and corrected `tasksDir` from `./tasks` to `./kanban/tasks`.
 
-- `kanban/tasks/exposed-tunables-and-settings-menu-spec.md` — design spec for moving the simulation's hard-coded magic numbers into a player-facing `domain.defaults` registry and a Settings panel.
-- `kanban/tasks/start-menu-save-game-spec.md` — design spec for the game shell, world-lines, save/load/auto-save, and compatibility-version migration.
-
-These are the only stageable, repo-relevant changes introduced since the previous Π tag.
+These are all stageable, repo-relevant metadata changes introduced since the previous Π tag.
 
 ## Verification
 
-- No targeted tests exist for draft markdown spec cards.
+- No targeted tests exist for metadata, session-mycology, or kanban config files.
 - `verification skipped: no targeted tests`.
 
 ## Concurrent / Ephemeral

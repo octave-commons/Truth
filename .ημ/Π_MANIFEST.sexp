@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260709211312"
-  :generated "2026-07-09T21:13:12Z"
-  :previous-tag "Π-20260709211123"
-  :previous-commit "5e7ea0f52abff0a5708ddf00e6e7f17f4770d03b"
+  :tag "Π-20260709224509"
+  :generated "2026-07-09T22:45:09Z"
+  :previous-tag "Π-20260709211312"
+  :previous-commit "4ff3ae1eaf73b89a0f20a5f3254e9a08c68525b9"
   :files (
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
@@ -280,15 +280,15 @@
     (M ".ημ/actors/truth-research-physics/triggers/README.md" :sha256 "0a85a8b0bd739018064b5b9e535517d06734ad556dd5e468c7a6e87ddb151112")
     (M ".ημ/run-research.sh" :sha256 "39e07f6a9995290b1dfebbb5101dbccbd0f81ea726ec5b3d8e02dd665c3a7780")
     (M ".ημ/session-mycology/ledger.md" :sha256 "d54c1577ebf6887fbb098ccfdb86a09b523037aa62629367c1965932df4c3f17")
-    (M ".ημ/session-mycology/review-receipts.edn" :sha256 "f85f8e7d915bc229d12d4af6d0770209081e00891d9cec95fac45205aa6c9eac")
-    (M ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "cd64310556b6d8a2dcb581be3e48a791af36f211ad81f5dd71249b349a8107fc")
-    (M ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "139b07760205cfb99505bb1f1884ab9d688fe552a4b30ea33d9b30b82271d80b")
-    (M ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "db447d1aff8132be1a7bf0dd90ff5001d19a458f4b1270fb9559ca9bb7d4885a")
-    (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "847ce08400010f66208c0f28a040930d9fc75eda2b83828f53b5ff8ce1214ebd")
-    (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "954f499d96ea4ec192f53831e62d0fb202869b182fc18caf9f0a6b46ad2e763d")
-    (M ".ημ/Π_LAST.md" :sha256 "5365796443c138796b6e73e612bd1c96c935c825a11e763f19011122ac30da6b")
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "e5422755e64d0d6219e354fd48b437d653c81970867753246a04e02cd5f1e66f")
-    (M ".ημ/Π_STATE.sexp" :sha256 "c8371bfe2af7a7b0c097ff0639bbfa8f3b74efdc730ef36145c413192a0d0573")
+    (M ".ημ/session-mycology/review-receipts.edn" :sha256 "31a205a4ffd966d663bd9eb7b39062ce59bcb9ba0de9d449bb2a6c24c9278d49")
+    (M ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "af9efb455fab077018c8fc5b5930b4b5f43ba5cc518704a427d12b5c2393f161")
+    (M ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "5039f6a894659310a635fe1cbf9fe15274abf8acdb6e70f6f61a2404d32b5eb2")
+    (M ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "4431197df880a86cc4f103ed8e732aea5589ec27bfb14755b63d20ab4c442244")
+    (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "50d52e10e5b8b9a4a34d9a456bf8cfaf2e383a4965a8d3647aaeded3294dbd91")
+    (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "d4c7140df91083027cdaf48e5377ca08423ce885488479c3991e880472ac1421")
+    (M ".ημ/Π_LAST.md" :sha256 "283137007450c871f25f5c453fc85f4f7d831b077642f592cb3d4a330ec72c88")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "42f5353bb0c78cf669b1a5f6f988624cbbf5ff26a06d46ee57f838ace067915e")
+    (M ".ημ/Π_STATE.sexp" :sha256 "b6e36fc88af76f0f390e20ee6aa6b59a4b9d2831ed7a0da95c883f7cd9fd8412")
     (M "AGENTS.md" :sha256 "af109d583578a56569ecaea4f9eda46e9a2e36df8b80567be1601683c3d04aff")
     (M "CLAUDE.md" :sha256 "d3d1aa87156cfbb3ad1ebfd1848a6ee65961041f9b33b4ac7594e64ea78f0f2e")
     (M "CONTRACT.edn" :sha256 "463298dd814c60b3857bc41a23e5d7fc1af1d18d33b52e14151b55db889f7966")
@@ -548,7 +548,6 @@
     (M "docs/research/unit-coordinate-transforms-game-render.md" :sha256 "c9aca62de3588383dab0bb865784dc517f3ad48e50ca52b405c627a6b72493d0")
     (M "docs/specs/benchmark-coverage.md" :sha256 "ed3adf4f7622fcced8bff6cb6352fe95676559590162ff82f21715a16085849d")
     (M "heretic.edn" :sha256 "da8651d53ea639b25ee946906ea3bc57ff81a87a8c2c0b300cf716d222407629")
-    (M "kanban/openhax.kanban.json" :sha256 "62b4fbd9efce1f52b99d22ec6d816544c6cd36ecd5bacbe55808f2a02905b63c")
     (M "kanban/tasks/.events/ledger.edn" :sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
     (M "kanban/tasks/core-accretion-physics-spec.md" :sha256 "ed281c6341446739cee617b3efd13b08aa6965c45a02a3db3d16e1a9d18fa57d")
     (M "kanban/tasks/decouple-the-formation-loop-from-phase-0-framing.md" :sha256 "e740f0a8a1cc8ee477b270e92d6dd1b09165cacef6dde7eae6ac5d5a8705fcea")
@@ -629,8 +628,9 @@
     (M "kanban/tasks/stellar-wind-plasma-state-spec.md" :sha256 "25120cb91859fd02c9edbc5416a1a389a24b9a92e4decf0a471d040891cab363")
     (M "kanban/tasks/tick-perf-drift-profile.md" :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
+    (M "openhax.kanban.json" :sha256 "d27b66ffe03adac7b62ac887c01c43003e74e4a24a9d2acfea778cab2d03acc6")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "d183ec6e31b091a1168f7985cebf78cbdbaa40fe1f2f66b317093a1a46341298")
+    (M "receipts.edn" :sha256 "7e5048596fd8a1f6113478e1461dd0a162d8cce74276db5526f52266041ae80d")
     (M "receipts.log" :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")
@@ -852,5 +852,4 @@
     (M "test/shape/core_test.clj" :sha256 "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43")
     (M "test/shape/spatial_test.clj" :sha256 "d2591674b40e19e782766e51ae829503486c45c1eb300a48c3a2f663ca182f32")
     (M "test/test_runner.clj" :sha256 "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7")
-  )
-)
+  ))
