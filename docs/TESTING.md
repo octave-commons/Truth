@@ -1,5 +1,30 @@
 # Test Coverage & Mutation Testing
 
+## Running tests by group
+
+The default runner loads every test namespace, which is correct for CI but slow
+for local feedback. A group-aware runner in `test/test_runner.clj` loads only the
+selected namespaces:
+
+```bash
+clojure -M:test:unit-test          # fast unit tests (excludes integration simulations)
+clojure -M:test:integration-test     # slow simulation/integration tests only
+clojure -M:test:domain-test          # domain tests only
+clojure -M:test:infra-test           # infra tests only
+clojure -M:test:law-test             # law/contract tests only
+clojure -M:test:shape-test           # shape/geometry tests only
+clojure -M:test:render-test          # render/appearance/window tests only
+clojure -M:test:architecture-test    # architecture guards only
+clojure -M:test:test-runner -g domain -g law  # arbitrary combinations
+clojure -M:test                    # full suite via cognitect runner (CI)
+```
+
+Group membership is defined in `test/test_runner.clj`. The `integration` group
+contains the intentionally slow simulation tests (`domain.genesis-test`,
+`domain.formation-integration-test`, `domain.dominant-star-test`, etc.).
+
+## Test Coverage & Mutation Testing
+
 Two complementary questions about the test suite:
 
 - **Coverage** (`cloverage`) — *was this code executed by a test?* Fast, mature,

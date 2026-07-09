@@ -54,10 +54,21 @@
     :reads  #{c/density c/temperature}
     :writes #{c/pressure}}
 
-   {:id     :hydro
-    :ns     'domain.hydro.pressure
-    :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius}
-    :writes #{c/accel-pressure}}
+    {:id     :hydro
+     :ns     'domain.hydro.pressure
+     :reads  #{c/matter-state c/position c/density c/pressure c/mass c/radius c/neighbor-cache}
+     :writes #{c/accel-pressure}}
+
+    ;; Neighbor cache: fan-out builder for the SPH kernel + curl/pressure-grad
+    ;; values shared by hydro and EM-Lorentz. One-tick-stale Jacobi lag — the
+    ;; cache is built from the frozen input world and read by consumers in the
+    ;; same tick's parallel fan-out. Replaces the world-key `:genesis/neighbor-cache`
+    ;; and the serial `future` pre-phase in `step-physics`.
+    {:id     :neighbor-cache
+     :ns     'domain.physics.cache.neighbor
+     :reads  #{c/matter-state c/position c/velocity c/density c/pressure c/mass c/radius c/b-field}
+     :writes #{c/neighbor-cache}}
+
 
    ;; Jeans-collapse was removed from the pipeline; accretion-radius is now
    ;; written by the classifier (sole writer of both matter-state and accretion-radius).
@@ -308,10 +319,11 @@
      ;; EM is split: the Lorentz force and magnetic braking are computed together
     ;; in one pass over EM-active entities; the integrator owns angular-momentum/
     ;; spin and adds the torque. Resistive flux decay (b-field) stays on field.
-   {:id     :em-lorentz
-    :ns     'domain.em.lorentz
-    :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state}
-    :writes #{c/accel-lorentz c/torque-em}}
+    {:id     :em-lorentz
+     :ns     'domain.em.lorentz
+     :reads  #{c/b-field c/radius c/position c/density c/angular-momentum c/matter-state c/neighbor-cache}
+     :writes #{c/accel-lorentz c/torque-em}}
+
 
     ;; The Field owner: b-field via conserved frozen flux Φ = B·R² (B = Φ/R²
     ;; amplifies as the radius contracts) plus Ohmic decay. Subsumes collapse's

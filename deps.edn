@@ -22,6 +22,18 @@
                        criterium/criterium {:mvn/version "0.4.6"}}
           :main-opts ["-m" "cognitect.test-runner"]
           :exec-fn cognitect.test-runner.api/test}
+   ;; --- Grouped test runners (load only selected namespaces) ----------------
+   :test-runner {:main-opts ["-m" "test-runner"]
+                 :extra-deps {}}
+   :unit-test {:main-opts ["-m" "test-runner" "-g" "fast"]}
+   :integration-test {:main-opts ["-m" "test-runner" "-g" "integration"]}
+   :domain-test {:main-opts ["-m" "test-runner" "-g" "domain"]}
+   :infra-test {:main-opts ["-m" "test-runner" "-g" "infra"]}
+   :law-test {:main-opts ["-m" "test-runner" "-g" "law"]}
+   :shape-test {:main-opts ["-m" "test-runner" "-g" "shape"]}
+   :render-test {:main-opts ["-m" "test-runner" "-g" "render"]}
+   :architecture-test {:main-opts ["-m" "test-runner" "-g" "architecture"]}
+   :full-test {:main-opts ["-m" "test-runner" "-g" "all"]}
    :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
           :main-opts ["-m" "nrepl.cmdline"]}
     :dev  {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}

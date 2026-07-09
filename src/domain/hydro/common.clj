@@ -48,14 +48,15 @@
 
    Accepts a single options map:
      {:world :data :radius-fn :state-pred :gradient-key}."
-  [{:keys [world data radius-fn state-pred gradient-key]}]
-  (let [h (double (radius-fn data))]
-    (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
-      (let [hh2 (* h h)
-            nbrs (filterv #(and (state-pred (:matter-state %))
-                                (<= (double (:r2 %)) hh2))
-                          (:neighbors entry))
-            grads (mapv gradient-key nbrs)]
-        [nbrs grads])
-      [(idx/within-radius (:genesis/spatial-tree world) (:position data) h
-                          #(state-pred (:matter-state %))) nil])))
+   [{:keys [world data radius-fn state-pred gradient-key]}]
+   (let [h (double (radius-fn data))]
+     (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
+       (let [hh2 (* h h)
+             nbrs (filterv #(and (state-pred (:matter-state %))
+                                 (<= (double (:r2 %)) hh2))
+                           (:neighbors entry))
+             grads (mapv gradient-key nbrs)]
+         [nbrs grads])
+       [(idx/within-radius (:genesis/spatial-tree world) (:position data) h
+                           #(state-pred (:matter-state %))) nil])))
+

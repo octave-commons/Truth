@@ -137,7 +137,8 @@
   "Build a state map for a single actor directory."
   [^File dir]
   (let [edn (read-actor-edn dir)
-        sessions (list-directories (io/file dir "sessions"))
+        sessions (->> (list-directories (io/file dir "sessions"))
+                  (sort-by file-mtime >))
         inbox (io/file dir "inbox")
         outbox (io/file dir "outbox")
         sessions-with-status (map (fn [s]

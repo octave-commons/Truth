@@ -24,16 +24,17 @@
         rz (- pz nz)
         h (+ r-self (double (or (:radius n) 1.0)))
         h2 (* h h)
-        r2 (+ (* rx rx) (* ry ry) (* rz rz))
-        [gx gy gz] (if gradients
-                     (nth gradients idx)
-                     (if (>= r2 h2)
-                       [0.0 0.0 0.0]
-                       (kernel/kernel-gradient [rx ry rz] r2 h)))
-        term (kernel/pressure-term density pressure
-                                   (double (:density n)) (double (:pressure n)))
-        scale (* (double (:mass n)) term -1.0)]
-    [(* gx scale) (* gy scale) (* gz scale)]))
+        r2 (+ (* rx rx) (* ry ry) (* rz rz))]
+    (if (or (>= r2 h2)
+            (not (and (:density n) (:pressure n) (:mass n))))
+      [0.0 0.0 0.0]
+      (let [[gx gy gz] (if gradients
+                       (nth gradients idx)
+                       (kernel/kernel-gradient [rx ry rz] r2 h))
+            term (kernel/pressure-term density pressure
+                                       (double (:density n)) (double (:pressure n)))
+            scale (* (double (:mass n)) term -1.0)]
+        [(* gx scale) (* gy scale) (* gz scale)]))))
 
 (defn pressure-gradient-acceleration
   "SPH pressure-gradient acceleration for one particle. `neighbors` is a seq of
@@ -74,7 +75,8 @@
     (reduce
      (fn [[ax ay az :as acc] n]
        (if-not (and (<= (double (:r2 n)) hh2)
-                    (lf/hydro-em-active? (:matter-state n)))
+                    (lf/hydro-em-active? (:matter-state n))
+                    (:density n) (:pressure n) (:mass n))
          acc
          (let [[gx gy gz] (:gradient-pressure n)
                term  (kernel/pressure-term density pressure
@@ -152,17 +154,17 @@
                              world :hydro/compute
                              (fn [_world]
                                (par/par-mapv
-                                (fn [data]
-                                  (let [h (* 2.0 (double (or (:radius data) 1.0)))]
-                                    (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
-                                      [(:eid data)
-                                       (pressure-gradient-acceleration-from-cache
-                                        data (:neighbors entry) (* h h))]
-                                      (let [nbrs (idx/within-radius
-                                                  (:genesis/spatial-tree world) (:position data) h
-                                                  #(common/hydro-active? (:matter-state %)))]
-                                        [(:eid data)
-                                         (pressure-gradient-acceleration data nbrs nil)]))))
+                                 (fn [data]
+                                   (let [h (* 2.0 (double (or (:radius data) 1.0)))]
+                                     (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
+                                       [(:eid data)
+                                        (pressure-gradient-acceleration-from-cache
+                                         data (:neighbors entry) (* h h))]
+                                       (let [nbrs (idx/within-radius
+                                                   (:genesis/spatial-tree world) (:position data) h
+                                                   #(common/hydro-active? (:matter-state %)))]
+                                         [(:eid data)
+                                          (pressure-gradient-acceleration data nbrs nil)]))))
                                 active)))
                    cell     (reduce (fn [m [eid a]]
                                       (if (lf/finite-vec3? a) (assoc m eid a) m))

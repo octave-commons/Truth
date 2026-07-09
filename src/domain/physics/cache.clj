@@ -34,17 +34,27 @@
   "Attach pressure and curl gradients to a spatial-index item."
   neighbor/neighbor-with-gradients)
 
-(def rebuild-neighbor-cache
-  "Build or refresh a persistent `:genesis/neighbor-cache` onto `world`."
-  neighbor/rebuild-neighbor-cache)
-
 (def build-neighbor-cache
-  "Build a fresh `:genesis/neighbor-cache` onto `world`."
+  "Build a fresh `c/neighbor-cache` component for every hydro/EM-active entity.
+
+   This is a convenience wrapper for tests and legacy callers; the production
+   tick path uses `neighbor-cache-system` in the parallel fan-out."
   neighbor/build-neighbor-cache)
 
+(def rebuild-neighbor-cache
+  "Return a write-set `{c/neighbor-cache {eid entry}}` for the current tick.
+
+   Used by `neighbor-cache-system` in the fan-out; tests and legacy callers
+   should prefer `build-neighbor-cache`, which applies the write-set."
+  neighbor/rebuild-neighbor-cache)
+
 (def strip-neighbor-cache
-  "Remove `:genesis/neighbor-cache` from `world`."
+  "Remove `c/neighbor-cache` from every entity in `world`."
   neighbor/strip-neighbor-cache)
+
+(def neighbor-cache-system
+  "Fan-out system that builds/refreshes per-entity `c/neighbor-cache` components."
+  neighbor/neighbor-cache-system)
 
 (def build-physics-soa
   "Build and assoc a fresh `:genesis/physics-soa` SoA cache onto `world`."

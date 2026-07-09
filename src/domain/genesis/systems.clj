@@ -23,7 +23,8 @@
    [domain.ecology :as ecology]
    [domain.debris :as debris]
    [domain.orbital.system :as orbital]
-   [domain.hydro :as hydro]))
+   [domain.hydro :as hydro]
+   [domain.physics.cache :as cache]))
 
 ;; Ongoing physics that is not specific to formation moved to its proper owner:
 ;;   xuv-atmospheric-escape-system → domain.atmosphere
@@ -65,13 +66,14 @@
 
 (defn- ^:private physics-lifecycle-systems
   "Collision, promotion, sink, disk, mass transfer, LOD, magnetosphere, ecology,
-   and debris."
+   debris, and neighbor cache."
   []
   [(collision/collision-detection-system)
    (fusion/fusion-promotion-system)
    (sink/sink-formation-system)
    (disc-evolution/disk-evolution-system)
    (mt/mass-transfer-system)
+   (cache/neighbor-cache-system)
    (lod/lod-scheduler)
    (em/magnetosphere-coupling-system)
    (ecology/ecology-system)

@@ -214,6 +214,7 @@
    :angular-momentum (comps c/angular-momentum)
    :rotation-axis    (get (opt c/rotation-axis) eid)
    :ionization       (get (opt c/ionization-fraction) eid 1.0)
+   :neighbor-cache   (get (opt c/neighbor-cache) eid)
    :state    (comps c/matter-state)})
 
 (defn- build-active-lorentz-data
@@ -224,11 +225,12 @@
   [world]
   (let [required (ecs/all-of world c/b-field c/radius c/position c/density
                              c/angular-momentum c/matter-state)
-        opt-tables {c/velocity      (get-in world [:components c/velocity])
-                    c/mass          (get-in world [:components c/mass])
-                    c/pressure      (get-in world [:components c/pressure])
-                    c/rotation-axis (get-in world [:components c/rotation-axis])
-                    c/ionization-fraction (get-in world [:components c/ionization-fraction])}]
+         opt-tables {c/velocity      (get-in world [:components c/velocity])
+                     c/mass          (get-in world [:components c/mass])
+                     c/pressure      (get-in world [:components c/pressure])
+                     c/rotation-axis (get-in world [:components c/rotation-axis])
+                     c/ionization-fraction (get-in world [:components c/ionization-fraction])
+                     c/neighbor-cache (get-in world [:components c/neighbor-cache])}]
     (persistent!
      (reduce (fn [acc [eid comps]]
                (if (em-active? (comps c/matter-state))
@@ -241,7 +243,7 @@
   "Return [neighbors curl-gradients] for `data`, using the transient neighbor
    cache when present. `h` is the query radius. gradients is nil on fallback."
   [world data h]
-  (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
+  (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
     (let [hh2 (* h h)
           nbrs (filterv #(and (em-active? (:matter-state %))
                               (<= (double (:r2 %)) hh2))
@@ -379,11 +381,11 @@
 
 (defn- lorentz-acceleration-cell
   "Compute [eid accel-lorentz torque-em] for one EM-active entity."
-  [dt data cache tree]
+  [dt data tree]
   (let [eid    (:eid data)
         radius (double (or (:radius data) 1.0))
         h      (* 2.0 radius)
-        curl-b (if-let [entry (get cache eid)]
+        curl-b (if-let [entry (:neighbor-cache data)]
                  (curl-estimate-from-cache
                   {:b-field (:b-field data)
                    :density (:density data)
@@ -418,14 +420,13 @@
   {:id     :em-lorentz
    :writes #{c/accel-lorentz c/torque-em}
    :run    (fn [world]
-             (let [active    (build-active-lorentz-data world)
-                   tree      (:genesis/spatial-tree world)
-                   cache     (:genesis/neighbor-cache world)
-                   [computed dt-compute] (profile/timing
-                                          #(par/par-mapv
-                                            (fn [data]
-                                              (lorentz-acceleration-cell dt data cache tree))
-                                            active))
+              (let [active    (build-active-lorentz-data world)
+                    tree      (:genesis/spatial-tree world)
+                    [computed dt-compute] (profile/timing
+                                           #(par/par-mapv
+                                             (fn [data]
+                                               (lorentz-acceleration-cell dt data tree))
+                                             active))
                    accel-cell  (transient {})
                    torque-cell (transient {})
                    _           (doseq [[eid a t] computed]

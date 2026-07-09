@@ -85,30 +85,18 @@
    post-fold phase and no second simulation path.
 
    Transient snapshot caches — `:ecs/_query-cache` and `:genesis/physics-soa` —
-   are built before the fan-out and stripped after the fold. The
-   `:genesis/neighbor-cache` is now persistent across ticks: it is rebuilt from
-   the previous tick's cache in `step-physics` and survives the fold so the next
+   are built before the fan-out and stripped after the fold. The neighbor cache
+   is now a persistent component (`c/neighbor-cache`) rebuilt by the
+   `:neighbor-cache` fan-out system each tick; it survives the fold so the next
    tick can reuse valid entries."
-  [world]
-  (let [systems (systems/physics-systems-parallel world)
-        ;; The neighbor-cache rebuild and the SoA build both read only the
-        ;; frozen input world (spatial tree + components), so they run
-        ;; concurrently — the rebuild is the most expensive pre-fan-out step
-        ;; and previously serialized in front of the SoA build.
-        nb-fut  (future
-                  (:genesis/neighbor-cache
-                   (pcache/rebuild-neighbor-cache
-                    world
-                    (when-not (:genesis/invalidate-neighbor-cache? world)
-                      (:genesis/neighbor-cache world))
-                    (:tick world))))
-        world   (-> world
-                    (ecs/with-query-cache)
-                    (pcache/build-physics-soa)
-                    (assoc :genesis/neighbor-cache @nb-fut))]
-    (-> (tick/run-parallel world systems)
-        (ecs/strip-query-cache)
-        (pcache/strip-physics-soa))))
+   [world]
+   (let [systems (systems/physics-systems-parallel world)
+         world   (-> world
+                     (ecs/with-query-cache)
+                     (pcache/build-physics-soa))]
+     (-> (tick/run-parallel world systems)
+         (ecs/strip-query-cache)
+         (pcache/strip-physics-soa))))
 
 (defn- tick-physics
   "Run one step of physics + lifecycle on the already tick-advanced world."

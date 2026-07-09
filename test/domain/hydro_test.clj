@@ -516,10 +516,11 @@
                                             :matter-state :nebula
                                             :temperature 12.0})
           w2 (spatial/spatial-index w2)
-          cached (pcache/build-neighbor-cache w2)]
+                    cached (pcache/build-neighbor-cache w2)]
       (is (= (hydro/gas-samples cached)
-             (hydro/gas-samples (dissoc cached :genesis/neighbor-cache)))
-          "samples are equal whether or not :genesis/neighbor-cache exists"))))
+             (hydro/gas-samples (pcache/strip-neighbor-cache cached)))
+          "samples are equal whether or not c/neighbor-cache exists")))
+)
 
 (deftest test-gas-samples-agrees-with-gas-structure
   (testing "after the tick's density pass, gas-samples mirrors gas-structure's [eid ρ h/2]"
@@ -568,7 +569,7 @@
           "gas-structure results match with and without cache"))))
 
 (deftest test-hydro-system-fallback-without-cache
-  (testing "hydro-system runs correctly when :genesis/neighbor-cache is absent"
+  (testing "hydro-system runs correctly when c/neighbor-cache is absent"
     (let [base (ecs/empty-world)
           [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
@@ -596,7 +597,7 @@
       (is (pos? (first a-b)) "low-pressure right pushes right"))))
 
 (deftest test-density-system-fallback-without-cache
-  (testing "density-system runs correctly when :genesis/neighbor-cache is absent"
+  (testing "density-system runs correctly when c/neighbor-cache is absent"
     (let [base (ecs/empty-world)
           [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]

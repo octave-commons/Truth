@@ -21,6 +21,7 @@
    [domain.ecs.event      :as event]
    [domain.ecs.components  :as c]
    [domain.stellar        :as stellar]
+   [domain.physics.cache  :as pcache]
    [law.composition       :as lcomp]
    [law.stellar           :as law]
    [shape.spatial         :as sp]))
@@ -157,12 +158,12 @@
   "Drop per-tick caches and cache-config flags so two otherwise-identical worlds
    can be compared."
   [world]
-  (dissoc world
-          :genesis/neighbor-cache
-          :genesis/neighbor-cache-full-rebuild-interval
-          :genesis/physics-soa
-          :ecs/_query-cache
-          :genesis/invalidate-neighbor-cache?))
+  (-> world
+      (dissoc :genesis/neighbor-cache-full-rebuild-interval
+              :genesis/physics-soa
+              :ecs/_query-cache
+              :genesis/invalidate-neighbor-cache?)
+      (pcache/strip-neighbor-cache)))
 
 (deftest persistent-cache-matches-full-rebuild
   (testing "10 ticks with persistent cache and full-rebuild produce identical worlds"

@@ -1,6 +1,8 @@
 # Spec: Neighbor-Cache Fan-Out Lane
 
-**Status:** in progress  
+**Status:** done  
+**Completion note:** Migration completed. The world-key `:genesis/neighbor-cache` is now a per-entity `c/neighbor-cache` component rebuilt by the `:neighbor-cache` system in `domain.physics.cache.neighbor` as a fan-out lane. Tests: `clojure -M:test` — 617 tests, 15134 assertions, 0 failures. `clojure -M:bench phase0` shows the neighbor-cache system in the per-system profile.
+
 **Target:** Remove the last serial pre-phase from `step-physics` by making the neighbor cache a first-class fan-out system, moving the ~2.6 ms serial cost into the parallel lane load and allowing the tick budget to approach 16.6 ms at 1000 bodies.  
 **Scope:** `src/domain/physics/cache/neighbor.clj`, `src/domain/physics/cache.clj`, `src/domain/ecs/components.clj`, `src/domain/ecs/registry.clj`, `src/domain/genesis/systems.clj`, `src/domain/genesis/tick.clj`, `src/domain/hydro/common.clj`, `src/domain/hydro/density.clj`, `src/domain/hydro/pressure.clj`, `src/domain/em/lorentz.clj`, tests.
 

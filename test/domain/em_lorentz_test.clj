@@ -176,7 +176,7 @@
       (is (zero? (sp/len a))))))
 
 (deftest test-em-system-fallback-without-cache
-  (testing "em-system runs correctly when :genesis/neighbor-cache is absent"
+  (testing "em-system runs correctly when c/neighbor-cache is absent"
     (let [base (ecs/empty-world)
           [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]

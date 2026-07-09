@@ -74,8 +74,8 @@
   finite-vec3?)
 
 (def neighbor-cache-entry-schema
-  "Malli schema for one entry of the persistent :genesis/neighbor-cache shared
-   by SPH hydro and MHD-lite EM. Neighbor maps must include :r2, the squared
+  "Malli schema for one entry of the persistent `c/neighbor-cache` component
+   shared by SPH hydro and MHD-lite EM. Neighbor maps must include :r2, the squared
    distance from the central particle, so consumers can filter without
    recomputing distance. :anchor-position is where the neighbor set was last
    actually queried and :query-r the radius that query covered — the reuse

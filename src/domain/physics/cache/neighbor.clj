@@ -8,6 +8,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.ecs.parallel :as par]
+   [domain.ecs.tick :as tick]
    [domain.hydro :as hydro]
    [domain.spatial.index :as idx]
    [shape.spatial :as sp]))
@@ -219,12 +220,15 @@
                  :nn-id nn-id))))))
 
 (defn- cache-full-rebuild?
-  "True when the neighbor cache must be fully rebuilt this tick."
-  [world prev-cache tick]
-  (let [interval (:genesis/neighbor-cache-full-rebuild-interval world 10)]
-    (or (nil? prev-cache)
-        (:genesis/invalidate-neighbor-cache? world)
-        (zero? (mod tick interval)))))
+  "True when the neighbor cache must be fully rebuilt this tick.
+
+   A full rebuild is forced when `:genesis/invalidate-neighbor-cache?` is set or
+   when `tick` is a multiple of the configured interval. Otherwise the per-entity
+   refresh path reuses previous neighbor identities when they are still valid."
+  [world tick]
+  (let [interval (long (or (:genesis/neighbor-cache-full-rebuild-interval world) 10))]
+    (or (:genesis/invalidate-neighbor-cache? world)
+        (zero? (mod (long tick) interval)))))
 
 (defn- item-by-id-map
   "Build an id->item lookup from `:genesis/spatial-items` unless forced rebuild."
@@ -233,9 +237,10 @@
     (into {} (map (juxt :id identity)) (:genesis/spatial-items world))))
 
 (defn- build-or-refresh-cache-entry
-  "Return `[eid entry]` for `eid`, reusing the previous entry when valid."
-  [world full-rebuild? item-by-id prev eid]
-  (let [prev-entry (prev eid)
+  "Return `[eid entry]` for `eid`, reusing the previous entry when valid.
+   `prev-fn` returns the previous cache entry for an eid (or nil)."
+  [world full-rebuild? item-by-id prev-fn eid]
+  (let [prev-entry (prev-fn eid)
         reusable? (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
         data (entity->cache-data world eid)]
     (when (cache-active? (:state data))
@@ -246,34 +251,65 @@
           [eid entry])))))
 
 (defn rebuild-neighbor-cache
-  "Build or refresh a persistent `:genesis/neighbor-cache` onto `world`.
+  "Build or refresh per-entity `c/neighbor-cache` entries.
 
-   Reuses previous neighbor identities when valid, otherwise rebuilds with a
-   real spatial query. A full rebuild is forced when `prev-cache` is nil, the
-   world carries `:genesis/invalidate-neighbor-cache?`, or `tick` is a multiple
-   of the configured interval. Entities no longer alive or hydro/EM-active are
-   evicted."
-  [world prev-cache tick]
-  (let [full? (cache-full-rebuild? world prev-cache tick)
+   Returns a write-set `{c/neighbor-cache {eid entry}}` suitable for the
+   double-buffer fan-out. Reuses previous neighbor identities when valid,
+   otherwise rebuilds with a real spatial query. A full rebuild is forced when
+   `:genesis/invalidate-neighbor-cache?` is set or `tick` is a multiple of the
+   configured interval. Entities no longer alive or hydro/EM-active are evicted
+   (absent from the write-set)."
+  [world tick]
+  (let [full? (cache-full-rebuild? world tick)
         item-by-id (item-by-id-map world full?)
-        prev (or prev-cache {})
+        prev-fn #(ecs/get-component world % c/neighbor-cache)
         eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
-        entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev %) eids)]
-    (assoc world :genesis/neighbor-cache (into {} (keep identity) entries))))
+        entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
+        new-cache (into {} (keep identity) entries)
+        prior (get-in world [:components c/neighbor-cache])
+        removed (into {} (comp (remove #(contains? new-cache (key %)))
+                               (map (fn [[eid _]] [eid tick/removed])))
+                        prior)]
+    (if (seq removed)
+      {c/neighbor-cache (into new-cache removed)}
+      {c/neighbor-cache new-cache})))
 
 (defn build-neighbor-cache
-  "Build a fresh `:genesis/neighbor-cache` onto `world`.
+  "Build a fresh neighbor cache onto `world` as `c/neighbor-cache` components.
 
-   Convenience wrapper around `rebuild-neighbor-cache` with no previous cache,
-   forcing a full rebuild on tick 0. Preserves the original one-shot API used
-   by tests and legacy callers."
+   Convenience wrapper for tests and legacy callers that applies the write-set
+   produced by `rebuild-neighbor-cache` at tick 0 directly to the world."
   [world]
-  (rebuild-neighbor-cache world nil 0))
+  (let [ws (rebuild-neighbor-cache world 0)]
+    (reduce-kv (fn [w eid entry]
+                 (ecs/put-component w eid c/neighbor-cache entry))
+               world
+               (get ws c/neighbor-cache {}))))
 
 (defn strip-neighbor-cache
-  "Remove `:genesis/neighbor-cache` from `world`.
+  "Remove `c/neighbor-cache` from every entity in `world`.
 
    Mostly useful for tests or callers that need to discard the persistent cache
    before comparing worlds byte-for-byte."
   [world]
-  (dissoc world :genesis/neighbor-cache))
+  (reduce (fn [w eid]
+            (ecs/remove-component w eid c/neighbor-cache))
+          world
+          (ecs/entities-with world c/neighbor-cache)))
+
+(defn neighbor-cache-system
+  "Fan-out system: build or refresh per-entity `c/neighbor-cache` entries.
+
+   Reads the one-tick-stale `c/neighbor-cache` components from the frozen
+   snapshot to decide reuse, and emits the current tick's entries as a write-set.
+   Hydro and EM-Lorentz read the same stale snapshot entries, so all consumers
+   see the same one-tick Jacobi lag."
+  []
+  {:id     :neighbor-cache
+   :ns     'domain.physics.cache.neighbor
+   :reads  #{c/matter-state c/position c/velocity c/mass c/radius
+             c/density c/pressure c/temperature c/b-field
+             c/neighbor-cache}
+   :writes #{c/neighbor-cache}
+   :run    (fn [world]
+             (rebuild-neighbor-cache world (long (or (:tick world) 0))))})

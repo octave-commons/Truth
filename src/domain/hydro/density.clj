@@ -29,7 +29,7 @@
              dy (- py (double (nth np 1)))
              dz (- pz (double (nth np 2)))
              r2 (+ (* dx dx) (* dy dy) (* dz dz))]
-         (if (>= r2 h2)
+         (if (or (>= r2 h2) (not (:mass n)))
            rho
            (+ rho (* (double (:mass n)) (kernel/kernel-r2 r2 h))))))
      0.0
@@ -45,12 +45,13 @@
   [neighbors h]
   (let [h   (double h)
         hh2 (* h h)]
-    (reduce (fn [rho n]
-              (let [r2 (double (:r2 n))]
-                (if (and (< r2 hh2)
-                         (lf/hydro-em-active? (:matter-state n)))
-                  (+ (double rho) (* (double (:mass n)) (kernel/kernel-r2 r2 h)))
-                  rho)))
+     (reduce (fn [rho n]
+               (let [r2 (double (:r2 n))]
+                 (if (and (< r2 hh2)
+                          (lf/hydro-em-active? (:matter-state n))
+                          (:mass n))
+                   (+ (double rho) (* (double (:mass n)) (kernel/kernel-r2 r2 h)))
+                   rho)))
             0.0
             neighbors)))
 
@@ -75,7 +76,7 @@
    cache when present."
   [world data h]
   (let [hh2 (* h h)]
-    (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
+    (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
       (filterv #(and (common/hydro-active? (:matter-state %))
                      (<= (double (:r2 %)) hh2))
                (:neighbors entry))
@@ -85,7 +86,7 @@
 (defn- density-update
   "Compute `[eid rho press r']` for one gas parcel."
   [world data]
-  (let [entry (get-in world [:genesis/neighbor-cache (:eid data)])
+  (let [entry (ecs/get-component world (:eid data) c/neighbor-cache)
         h (if entry (:h entry) (smoothing-length data world))
         nbrs (density-neighbors world data h)
         rho (sph-density (assoc data :radius (* 0.5 h)) nbrs)
@@ -140,7 +141,7 @@
         gas      (filterv #(= :nebula (:state %)) all-data)]
     (par/par-mapv
      (fn [data]
-       (if-let [entry (get-in world [:genesis/neighbor-cache (:eid data)])]
+       (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
          (let [h (:h entry)]
            [(:eid data) (sph-density-from-cache (:neighbors entry) h) (* 0.5 h)])
          (let [h    (smoothing-length data world)

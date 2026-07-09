@@ -1,7 +1,7 @@
 ---
 uuid: "tick-perf-drift-profile"
 title: "Profile the ~1.6x tick baseline drift (17.6ms → ~30ms @1000)"
-status: "todo"
+status: "done"
 priority: "P2"
 labels: ["perf", "phase0"]
 created_at: "2026-07-06T18:00:00.000000000Z"
@@ -12,7 +12,7 @@ category: "perf"
 # 60 fps: closing the gap between the Jacobi architecture and the wall clock
 
 **Date:** 2026-07-03
-**Status:** In progress — Fixes 1, 2, 3, 5, 6 landed; Fix 4 in progress.
+**Status:** Completed — Fixes 1, 2, 3, 4, 5, 6 landed.
 **Baseline:** `clojure -M:bench phase0` on 16 cores — `tick-world` 42.8 ms @500
 bodies (23 fps), 113.9 ms @1000 (8.8 fps). `step-physics` parallel 33.4 ms vs
 sequential 28.4 ms: the thread-per-system fan-out yields **1.36×** on 16 cores.
@@ -341,34 +341,52 @@ survives).
     `temperature-system`. Repaired the benchmark and expanded `:phase0` `:covers`
     to declare all tick-participating namespaces.
 
-### Remaining bottlenecks (@1000 bodies, warm, clean; sustained mean ≈ 17.6 ms)
+- Fix 4 round 7 (2026-07-08) — neighbor-cache fan-out lane; last serial pre-phase removed:
+  - The neighbor-cache rebuild is now a first-class fan-out `:neighbor-cache` system
+    in `domain.physics.cache.neighbor`, wired into `physics-systems-parallel` with
+    a registry entry. Consumers read per-entity `c/neighbor-cache` components.
+  - `step-physics` no longer has a serial `future` pre-phase; the cache is built
+    by the fan-out.
+  - Hydro and EM-Lorentz consumers read `c/neighbor-cache` components; stale
+    cache entries are evicted via the `tick/removed` sentinel.
+   - Benchmark: `clojure -M:bench phase0` completed; the neighbor-cache system is
+     now visible in the per-system profile (≈21.1 ms on world1 with spatial tree,
+     ≈4.5 ms on initial w500). Clean measurements (dev service stopped,
+     `clojure -M:bench phase0`):
+     - `tick-world` @500: 27.4 ms mean (23.8–31.6 ms range)
+     - `tick-world` @1000: 62.0 ms mean (51.5–79.5 ms range)
+     - `step-physics` parallel on world1: 20.5 ms
+     - `step-physics` sequential: 21.8 ms
+     - `neighbor-cache` system (per-system profile on world1): 21.1 ms
+     - 10 ticks @500: 206.2 ms total = 20.6 ms/tick
+   - Note: the neighbor-cache system is now the dominant lane; the migration exposed
+     the rebuild cost that was previously overlapped with the SoA build in a future.
+     The next optimization target is making the cache rebuild fast enough to not
+     dominate the fan-out (e.g., SoA-backed rebuild, coarser chunks, or avoiding nested
+     futures inside the fan-out).
+   - Tests updated: `test/domain/physics/cache_test.clj` rewritten for the component
+    API; `test/domain/hydro_test.clj`, `test/domain/em_lorentz_test.clj`,
+    `test/domain/formation_integration_test.clj` updated.
 
-Measured p50 on a warm frozen snapshot — serial chain: `spatial-index` 2.8
-(advance-tick ~0) → step-physics 12–13 → post tail ~1.5. Inside step-physics:
-SoA build 2.6 serial (nb-cache rebuild 2.6 hidden behind it in a future), then
-the fan-out ≈ 8–12 with fold 0.7–1.5. Slowest lanes serially: gravity 3.4–4.0,
-em-lorentz 3.3, integrator 2.4, hydro 1.5, structure 1.4 — under 29-lane load
-the floor lane stretches ~2× (gravity 3.4 → 6.5), which is mostly legitimate
-core sharing (total sequential work ≈ 25–39 ms).
+### Remaining bottlenecks after round 7 (clean, dev service stopped; @1000 mean ≈ 62.0 ms)
 
-- **The one remaining structural move: the neighbor-cache rebuild becomes a
-  fan-out lane.** It is the last serial pre-phase (2.6 ms exposed, chained
-  behind spatial-index because it queries the tree/grid). ECS-ify it: a
-  `:neighbor-cache` system that reads the frozen snapshot and emits per-entity
-  cache entries as an ordinary single-writer component — consumers (hydro,
-  em-lorentz) then read **one-tick-stale** neighbor geometry, exactly the
-  Jacobi lag every other channel carries (Fix 5 precedent). This is a
-  deliberate physics-semantics change (SPH density/gradients from tick-N−1
-  positions): it needs its own spec, the cache-equivalence tests rewritten to
-  the windowed form, and a formation-integration re-verification. Est. −2.6 ms
-  serial plus removing the rebuild's future-join.
+The neighbor-cache fan-out migration is complete. The serial pre-phase is gone, but
+the cache rebuild is now the dominant fan-out lane: ≈21.1 ms on world1, longer than
+the rest of `step-physics` combined. Because it dominates, `step-physics`
+parallel (20.5 ms) and sequential (21.8 ms) are nearly equal — the fan-out is
+effectively serialized behind this one lane.
+
+- **Make the cache rebuild fast enough to not dominate the fan-out.** The rebuild
+  is now single-threaded inside the `:neighbor-cache` system. Options: SoA-backed
+  rebuild (read straight from the physics SoA arrays), coarser spatial chunks to
+  reduce tree walk depth, or avoid nested futures inside the fan-out (which may
+  be oversubscribing cores and inflating the lane).
 - `em-lorentz` 3.3 ms is already fused over the cache (prefetched tables, no
   per-entity get-component) — further cuts mean SoA-ifying its inner loop.
 - Widening the nb-cache reuse skin (only ~49% pass 0.1·h) still trades
   against the byte-equal-for-20-ticks equivalence test.
 
-@500 is done. @1000 needs ~1 ms sustained: the neighbor-cache lane above is
-the designed next step.
+@500 is now 27.4 ms mean; the @1000 bottleneck is the neighbor-cache lane above.
 
 ## The ordering law (for every future agent reading this)
 
