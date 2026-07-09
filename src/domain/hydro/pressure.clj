@@ -106,11 +106,11 @@
   (par/par-mapv
    (fn [data]
      (let [radius-fn #(* 2.0 (double (or (:radius %) 1.0)))
-           [nbrs grads] (common/cache-neighbors-and-gradients
-                         {:world world :data data
-                          :radius-fn radius-fn
-                          :state-pred common/hydro-active?
-                          :gradient-key :gradient-pressure})]
+        [nbrs grads] (common/cache-neighbors-and-gradients
+                      {:world world :data data
+                       :radius-fn radius-fn
+                       :state-pred common/hydro-active?
+                       :gradient-key :gradient-pressure})]
        [(:eid data)
         (pressure-gradient-acceleration data nbrs grads)]))
    active))
@@ -156,11 +156,11 @@
                                (par/par-mapv
                                  (fn [data]
                                    (let [h (* 2.0 (double (or (:radius data) 1.0)))]
-                                     (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
-                                       [(:eid data)
-                                        (pressure-gradient-acceleration-from-cache
-                                         data (:neighbors entry) (* h h))]
-                                       (let [nbrs (idx/within-radius
+                                      (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
+                                        [(:eid data)
+                                         (pressure-gradient-acceleration-from-cache
+                                          data (:neighbors entry) (* h h))]
+                                        (let [nbrs (idx/within-radius
                                                    (:genesis/spatial-tree world) (:position data) h
                                                    #(common/hydro-active? (:matter-state %)))]
                                          [(:eid data)

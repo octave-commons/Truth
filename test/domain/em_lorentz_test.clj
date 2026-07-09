@@ -126,11 +126,10 @@
 (deftest test-curl-estimate-matches-with-cache
   (testing "Cached curl equals on-the-fly curl for the same neighbors"
     (let [b [0.0 0.0 1.0]
-          _data-a {:position [0.0 0.0 0.0] :b-field b :mass 1.0 :density 1.0 :radius 1.0}
           data-b {:position [0.5 0.0 0.0] :b-field [0.0 0.0 0.5] :mass 1.0 :density 1.0 :radius 1.0}
-          curl-uncached (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :neighbors [data-b]})
+          curl-uncached (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :radius 1.0 :neighbors [data-b]})
           grads [(:gradient-curl (pcache/neighbor-with-gradients [0.0 0.0 0.0] 1.0 data-b))]
-          curl-cached (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :neighbors [data-b] :gradients grads})]
+          curl-cached (em/curl-estimate {:b-field b :density 1.0 :position [0.0 0.0 0.0] :radius 1.0 :neighbors [data-b] :gradients grads})]
       (is (< (sp/dist curl-uncached curl-cached)
              (* 1e-12 (max 1.0 (sp/len curl-uncached))))
           "cached curl matches on-the-fly curl"))))

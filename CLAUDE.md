@@ -132,7 +132,19 @@ current UX/render code is acknowledged ad-hoc, not design intent.
 
 This repository is cohabited by **Claude Code** and **OpenCode**. Both agents
 read the same project state and must write shared artifacts in the same format.
-The canonical skills live under `~/.agents/skills/`.
+The canonical skills live under `~/.agents/skills/`, and **project-local skills
+live under `.agents/skills/`** in this repository. OpenCode and eta-mu can load
+project-local skills when invoked from the workspace; Claude discovers them via
+`AGENTS.md` and the per-skill `CONTRACT.edn` files.
+
+### Project-local skills
+
+- **deep-research** — `.agents/skills/deep-research/`
+- **dedicated-influence-channel** — `.agents/skills/dedicated-influence-channel/`
+- **receipt-driven-regression-recovery** — `.agents/skills/receipt-driven-regression-recovery/`
+- **physics-dt-unit-mismatch** — `.agents/skills/physics-dt-unit-mismatch/`
+
+Use these for recurring Gates-of-Truth-specific patterns before writing new ad-hoc guidance.
 
 ### Receipt River
 

@@ -43,8 +43,8 @@
 (defn cache-neighbors-and-gradients
   "Return [neighbors gradients] for `data` using the transient neighbor cache
    when present, otherwise query the spatial index. `radius-fn` produces the
-   query radius from the particle data; `state-pred` filters neighbors by matter
-   state. The returned `gradients` is nil when the cache is not used.
+   query radius from the particle data; `state-pred` filters neighbors by
+   matter state. The returned `gradients` is nil when the cache is not used.
 
    Accepts a single options map:
      {:world :data :radius-fn :state-pred :gradient-key}."

@@ -182,8 +182,13 @@ mention the dashboard in any related docs so other agents can find it.
 
 ## Agent Skills
 
+Project-local skills live under `.agents/skills/` and are discoverable by OpenCode (when working in this project), by eta-mu (through the per-skill `CONTRACT.edn` and project `CONTRACT.edn`), and by Claude (via this file). Prefer these over inventing ad-hoc instructions for recurring tasks.
+
 - **agent-notes-splitter** — Use when `docs/notes/` contains large agent-conversation markdown exports that need to be split into manageable, topic-bounded chunks. Recovers Claude sessions from JSONL logs if needed. (Skill file: `.opencode/skill/agent-notes-splitter/SKILL.md`)
-- **deep-research** — Deep academic research for the simulation. Investigates arxiv, cites sources, runs for extended periods, generates `docs/research/` notebooks with LaTeX, Clojure pseudocode, charts, graphs, and toy models. Covers cosmology, physics, geology, biology, atmosphere, culture. (Skill file: `.agents/skills/deep-research/SKILL.md`)
+- **deep-research** — Deep academic research for the simulation. Investigates arxiv, cites sources, runs for extended periods, generates `docs/research/` notebooks with LaTeX, Clojure pseudocode, charts, graphs, and toy models. Covers cosmology, physics, geology, biology, atmosphere, culture. (Skill file: `.agents/skills/deep-research/SKILL.md`, Contract: `.agents/skills/deep-research/CONTRACT.edn`)
+- **dedicated-influence-channel** — Add a new conserved-quantity flow to the ECS without violating single-writer or barrier invariants. (Skill file: `.agents/skills/dedicated-influence-channel/SKILL.md`, Contract: `.agents/skills/dedicated-influence-channel/CONTRACT.edn`)
+- **receipt-driven-regression-recovery** — Before rewriting regression code, search `receipts.edn` for the prior design decision so you don't lose solved work. (Skill file: `.agents/skills/receipt-driven-regression-recovery/SKILL.md`, Contract: `.agents/skills/receipt-driven-regression-recovery/CONTRACT.edn`)
+- **physics-dt-unit-mismatch** — When a simulation feature suddenly stops producing results, audit `dt`/time reads before assuming a missing feature. (Skill file: `.agents/skills/physics-dt-unit-mismatch/SKILL.md`, Contract: `.agents/skills/physics-dt-unit-mismatch/CONTRACT.edn`)
 
 ---
 

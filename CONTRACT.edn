@@ -1,0 +1,34 @@
+(skill-system
+  (rule
+    "Project-local skills are co-located with the codebase they serve. They are discoverable by OpenCode through .agents/skills/, by eta-mu through this CONTRACT.edn, and by Claude through AGENTS.md."))
+
+(skill-registry
+  (root ".agents/skills")
+
+  (entry
+    (name "deep-research")
+    (contract ".agents/skills/deep-research/CONTRACT.edn")
+    (priority 70)
+    (autoload false)
+    (description "Produce rigorous, citation-backed, multi-domain research notebooks for the simulation."))
+
+  (entry
+    (name "dedicated-influence-channel")
+    (contract ".agents/skills/dedicated-influence-channel/CONTRACT.edn")
+    (priority 70)
+    (autoload false)
+    (description "Safely extend an ECS influence system with a new conserved-quantity flow."))
+
+  (entry
+    (name "receipt-driven-regression-recovery")
+    (contract ".agents/skills/receipt-driven-regression-recovery/CONTRACT.edn")
+    (priority 75)
+    (autoload false)
+    (description "Recover previously-validated designs from receipts.edn before rewriting regression code."))
+
+  (entry
+    (name "physics-dt-unit-mismatch")
+    (contract ".agents/skills/physics-dt-unit-mismatch/CONTRACT.edn")
+    (priority 75)
+    (autoload false)
+    (description "Audit dt/time reads when a simulation feature suddenly stops producing results.")))

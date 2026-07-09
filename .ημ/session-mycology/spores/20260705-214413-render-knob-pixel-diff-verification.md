@@ -1,13 +1,18 @@
 ---
-status: incubating
+status: rejected
+reviewed: 2026-07-09T01:35:37Z
+reviewer-session: 19b3e756-ddf4-4fbc-a500-e68b33bcdc64
 created: 2026-07-06T02:44:13.784709815Z
 source-session: /home/err/spaces/Truth
 source-task: SPH froxel bridge: verify :volume-config threading end-to-end
 p-efficiency: 0.5
 p-friction: 0.5
 p-skill-candidate: 0.75
+p-recurrence: 0.75
+p-generalizable: 0.65
+p-worth-promoting: 0.75
 promoted-to: ""
-rejected-reason: ""
+rejected-reason: "Too narrow: tightly coupled to this project's GL renderer, screenshot-request API, and nREPL bencode client. The frozen-scene control and host-side shader reproduction are valuable debugging habits, but they do not generalize enough to warrant a standalone skill."
 ---
 
 ## Problem

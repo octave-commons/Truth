@@ -9,6 +9,7 @@
    [domain.ecs.components :as c]
    [domain.ecs.parallel :as par]
    [domain.ecs.tick :as tick]
+   [domain.profile :as profile]
    [domain.hydro :as hydro]
    [domain.spatial.index :as idx]
    [shape.spatial :as sp]))
@@ -32,7 +33,7 @@
    refreshes all field data, the smoothing length, and gradients every tick
    regardless; only the neighbor IDENTITIES are trusted across ticks, so this
    is the classic SPH neighbor-list skin criterion."
-  0.1)
+   0.1)
 
 (defn max-displacement-squared
   "Return the squared displacement threshold for smoothing length `h` and
@@ -73,18 +74,17 @@
                     (max-displacement-squared h displacement-tolerance))))))))
 
 (defn- entity->cache-data
-  "Project an ECS entity into the map the cache builder needs."
-  [world eid]
-  {:eid         eid
-   :position    (ecs/get-component world eid c/position)
-   :velocity    (ecs/get-component world eid c/velocity)
-   :mass        (ecs/get-component world eid c/mass)
-   :radius      (ecs/get-component world eid c/radius)
-   :density     (ecs/get-component world eid c/density)
-   :pressure    (ecs/get-component world eid c/pressure)
-   :temperature (ecs/get-component world eid c/temperature)
-   :b-field     (ecs/get-component world eid c/b-field)
-   :state       (ecs/get-component world eid c/matter-state)})
+  "Project an ECS entity into the map the cache builder needs.
+
+   Only the fields actually required by the cache entry and reuse checks are
+   fetched from the pre-built `item-by-id` map over `:genesis/spatial-items`,
+   avoiding all per-entity component lookups on the hot path."
+  [item-by-id eid]
+  (let [item (item-by-id eid)]
+    {:eid      eid
+     :position (:position item)
+     :radius   (:radius item)
+     :state    (:matter-state item)}))
 
 (defn neighbor-with-gradients
   "Attach pressure and curl gradients to a spatial-index item, both computed in
@@ -98,7 +98,7 @@
         rz    (- (double (nth pos-c 2)) (double (nth pos-n 2)))
         r2    (+ (* rx rx) (* ry ry) (* rz rz))
         h-pressure (+ r-c r-n)
-        h-curl     (* 0.5 (+ r-n 1.0))
+        h-curl     (* 0.5 (+ r-c r-n))
         grad-pressure (hydro/kernel-gradient [rx ry rz] r2 h-pressure)
         grad-curl     (hydro/kernel-gradient [rx ry rz] r2 h-curl)]
     (assoc item
@@ -127,11 +127,6 @@
      :query-r          query-r
      :h                h
      :radius           r-c
-     :mass             (:mass data)
-     :density          (:density data)
-     :pressure         (:pressure data)
-     :b-field          (:b-field data)
-     :velocity         (:velocity data)
      :state            (:state data)
      :neighbors        nbrs
      :gradients        (mapv :gradient-pressure nbrs)
@@ -147,9 +142,6 @@
         r-c     (double (or (:radius data) 1.0))
         [d nn-id] (idx/query-nearest world pos (:eid data))
         h       (hydro/smoothing-length-from-dist data d)
-        ;; Density/pressure/EM all need neighbors inside max(h, 2r); the skin
-        ;; factor buys headroom so sub-tolerance drift and small kernel growth
-        ;; stay inside the queried coverage instead of forcing a requery.
         query-r (* (+ 1.0 displacement-tolerance) (max h (* 2.0 r-c)))
         grid    (:genesis/spatial-grid world)
         tree    (:genesis/spatial-tree world)
@@ -178,7 +170,7 @@
    recomputed at the current positions — the smoothing length from the distance
    to the remembered nearest neighbor (min'd against the cached set in case a
    set member drifted closer), every neighbor's fields from `item-by-id` (this
-   tick's `:genesis/spatial-items`), and r2 and kernel gradients. The
+   tick's `:genesis/spatial-items`), and squared distances. The
    `:anchor-position` and `:query-r` are carried over unchanged so displacement
    keeps accumulating against the last real query.
 
@@ -231,24 +223,23 @@
         (zero? (mod (long tick) interval)))))
 
 (defn- item-by-id-map
-  "Build an id->item lookup from `:genesis/spatial-items` unless forced rebuild."
-  [world full-rebuild?]
-  (when-not full-rebuild?
-    (into {} (map (juxt :id identity)) (:genesis/spatial-items world))))
+  "Build an id->item lookup from `:genesis/spatial-items`."
+  [world]
+  (into {} (map (juxt :id identity)) (:genesis/spatial-items world)))
 
 (defn- build-or-refresh-cache-entry
   "Return `[eid entry]` for `eid`, reusing the previous entry when valid.
    `prev-fn` returns the previous cache entry for an eid (or nil)."
-  [world full-rebuild? item-by-id prev-fn eid]
-  (let [prev-entry (prev-fn eid)
-        reusable? (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
-        data (entity->cache-data world eid)]
-    (when (cache-active? (:state data))
-      (let [entry (or (when reusable? (refresh-cache-entry data prev-entry item-by-id))
-                      (build-cache-entry world data))]
-        (when (or (false? (:genesis/validate-neighbor-cache? world))
-                  (neighbor-cache-entry? entry))
-          [eid entry])))))
+   [world full-rebuild? item-by-id prev-fn eid]
+   (let [prev-entry (prev-fn eid)
+         reusable? (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
+         data (entity->cache-data item-by-id eid)]
+     (when (cache-active? (:state data))
+       (let [entry (or (when reusable? (refresh-cache-entry data prev-entry item-by-id))
+                       (build-cache-entry world data))]
+         (when (or (false? (:genesis/validate-neighbor-cache? world))
+                   (neighbor-cache-entry? entry))
+           [eid entry])))))
 
 (defn rebuild-neighbor-cache
   "Build or refresh per-entity `c/neighbor-cache` entries.
@@ -260,19 +251,47 @@
    configured interval. Entities no longer alive or hydro/EM-active are evicted
    (absent from the write-set)."
   [world tick]
-  (let [full? (cache-full-rebuild? world tick)
-        item-by-id (item-by-id-map world full?)
-        prev-fn #(ecs/get-component world % c/neighbor-cache)
-        eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
-        entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
-        new-cache (into {} (keep identity) entries)
-        prior (get-in world [:components c/neighbor-cache])
-        removed (into {} (comp (remove #(contains? new-cache (key %)))
-                               (map (fn [[eid _]] [eid tick/removed])))
-                        prior)]
-    (if (seq removed)
-      {c/neighbor-cache (into new-cache removed)}
-      {c/neighbor-cache new-cache})))
+  (if (:genesis/profile-subsystems? world)
+    (let [t0 (System/nanoTime)
+          full? (cache-full-rebuild? world tick)
+          t1 (System/nanoTime)
+          item-by-id (item-by-id-map world)
+          t2 (System/nanoTime)
+          prior (get-in world [:components c/neighbor-cache])
+          prev-fn #(ecs/get-component world % c/neighbor-cache)
+          eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
+          t3 (System/nanoTime)
+          entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
+          t4 (System/nanoTime)
+          new-cache (into {} (keep identity) entries)
+          t5 (System/nanoTime)
+          removed (into {} (comp (remove #(contains? new-cache (key %)))
+                                (map (fn [[eid _]] [eid tick/removed])))
+                         prior)
+          t6 (System/nanoTime)
+          ws {c/neighbor-cache (if (seq removed) (into new-cache removed) new-cache)}]
+      (assoc ws :genesis/_profile
+             {:neighbor-cache/full-check (- t1 t0)
+              :neighbor-cache/item-map (- t2 t1)
+              :neighbor-cache/scan-prior (- t3 t2)
+              :neighbor-cache/build-entries (- t4 t3)
+              :neighbor-cache/build-map (- t5 t4)
+              :neighbor-cache/evict (- t6 t5)
+              :neighbor-cache/rebuild (- t6 t0)}))
+    (let [full? (cache-full-rebuild? world tick)
+           item-by-id (item-by-id-map world)
+           prev-fn #(ecs/get-component world % c/neighbor-cache)
+          eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
+          entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
+          new-cache (into {} (keep identity) entries)
+          prior (get-in world [:components c/neighbor-cache])
+          removed (into {} (comp (remove #(contains? new-cache (key %)))
+                                (map (fn [[eid _]] [eid tick/removed])))
+                         prior)]
+      (if (seq removed)
+        {c/neighbor-cache (into new-cache removed)}
+        {c/neighbor-cache new-cache}))))
+
 
 (defn build-neighbor-cache
   "Build a fresh neighbor cache onto `world` as `c/neighbor-cache` components.
@@ -307,9 +326,13 @@
   []
   {:id     :neighbor-cache
    :ns     'domain.physics.cache.neighbor
-   :reads  #{c/matter-state c/position c/velocity c/mass c/radius
-             c/density c/pressure c/temperature c/b-field
+   :reads  #{c/matter-state c/position c/mass c/radius
              c/neighbor-cache}
    :writes #{c/neighbor-cache}
    :run    (fn [world]
-             (rebuild-neighbor-cache world (long (or (:tick world) 0))))})
+             (let [[ws dt] (profile/timing #(rebuild-neighbor-cache world (long (or (:tick world) 0))))]
+               (if (:genesis/profile-subsystems? world)
+                 (assoc ws :genesis/_profile
+                        (merge-with + (or (:genesis/_profile ws) {})
+                                    {:neighbor-cache/rebuild (double dt)}))
+                 ws)))})

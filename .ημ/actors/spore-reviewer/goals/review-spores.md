@@ -1,0 +1,1 @@
+Review the set of incubated skill spores across project roots in `.ημ/session-mycology/spores/` and decide which deserve promotion to full skills. Fall back to the legacy global directory `~/.config/opencode/spores/` only when no project-local spores exist.

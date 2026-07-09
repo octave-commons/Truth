@@ -1,0 +1,29 @@
+(skill-contract
+  (name "deep-research")
+  (v "ημ.skill/deep-research@0.2.0")
+
+  (intent
+    "Produce rigorous, citation-backed, multi-domain research notebooks that feed the Gates of Truth simulation with published science.")
+
+  (activation
+    (priority 70)
+    (explicit ["skill:deep-research"])
+    (triggers ["deep research" "research notebook" "investigate the science" "arxiv search" "literature review"]))
+
+  (governance
+    (touch-layer :semi-stable)
+    (non-override [:mission :directives :safety :license :output-shape])
+    (requires-user-approval false))
+
+  (effects
+    (writes true)
+    (network true)
+    (commits false))
+
+  (protocol
+    (workflow
+      ["Identify the domain and specific question."
+       "Search arxiv, textbooks, and primary sources for published methods and values."
+       "Write a research notebook under docs/research/<domain>/ with LaTeX, pseudocode, and citations."
+       "Produce toy models or charts where they clarify the method."
+       "Link findings to actionable simulation specs or code paths."])))

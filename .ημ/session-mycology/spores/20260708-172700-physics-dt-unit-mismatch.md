@@ -1,12 +1,17 @@
 ---
-status: incubating
+status: promoted
+reviewed: 2026-07-09T01:35:37Z
+reviewer-session: 19b3e756-ddf4-4fbc-a500-e68b33bcdc64
 created: 2026-07-08T22:27:00.912840134Z
 source-session: ses_0c0f9f161ffegZK7S36nqvx4Zs
 source-task: Fix star-formation regression from dt mismatch in mass-transfer
 p-efficiency: 0.5
 p-friction: 0.5
 p-skill-candidate: 0.8
-promoted-to: ""
+p-recurrence: 0.85
+p-generalizable: 0.8
+p-worth-promoting: 0.8
+promoted-to: /home/err/spaces/Truth/.agents/skills/physics-dt-unit-mismatch/SKILL.md
 rejected-reason: ""
 ---
 

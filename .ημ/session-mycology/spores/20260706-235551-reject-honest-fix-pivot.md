@@ -1,13 +1,18 @@
 ---
-status: incubating
+status: rejected
+reviewed: 2026-07-09T01:35:37Z
+reviewer-session: 19b3e756-ddf4-4fbc-a500-e68b33bcdc64
 created: 2026-07-07T04:55:51.875939905Z
 source-session: ses_0c5304a02ffelcFB41KkldUz4s
 source-task: Pivot from a hack/workaround to the honest architecture when the user rejects it
 p-efficiency: 0.5
 p-friction: 0.5
 p-skill-candidate: 0.7
+p-recurrence: 0.6
+p-generalizable: 0.8
+p-worth-promoting: 0.7
 promoted-to: ""
-rejected-reason: ""
+rejected-reason: "Too vague and generic: the pattern is good engineering discipline (do the right thing when pushed back) but is already covered by work-cycle, spec-driven-dev, and honest user-feedback loops. It does not add a distinct, reusable protocol."
 ---
 
 ## Problem

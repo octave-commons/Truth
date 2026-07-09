@@ -1,0 +1,1 @@
+Promote spores that meet the promotion threshold to real skills under `/home/err/spaces/Truth/.agents/skills/<name>/SKILL.md`. Also create a minimal `CONTRACT.edn` in the same directory so eta-mu can discover the skill, and ensure the skill is documented in `AGENTS.md` and `CLAUDE.md`.

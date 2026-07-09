@@ -1,0 +1,15 @@
+{:actor/id "spore-reviewer"
+ :actor/name "Skill Spore Reviewer (Gates of Truth)"
+ :actor/purpose "Periodically review incubated skill spores in the Gates of Truth project and promote worthy ones to full skills under ~/.agents/skills/"
+ :actor/created-at "2026-07-08T19:30:00Z"
+ :actor/runtime {:type :one-shot
+                 :manual "/home/err/spaces/Truth/.eta-mu/actors/spore-reviewer/runtime/runner.sh"
+                 :automated {:type :systemd-timer
+                             :timer "spore-reviewer.timer"
+                             :service "spore-reviewer.service"
+                             :interval "6h"
+                             :install "systemctl --user enable spore-reviewer.timer && systemctl --user start spore-reviewer.timer"
+                             :files ["runtime/systemd.service" "runtime/systemd.timer" "runtime/systemd-runner.sh"]}}
+ :actor/inbox-path ".eta-mu/actors/spore-reviewer/inbox"
+ :actor/outbox-path ".eta-mu/actors/spore-reviewer/outbox"
+ :actor/sessions-path ".eta-mu/actors/spore-reviewer/sessions"}

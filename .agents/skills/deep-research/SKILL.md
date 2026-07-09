@@ -15,6 +15,11 @@ compatibility: opencode
 metadata:
   audience: agents
   workflow: academic-research
+  project: gates-of-truth
+  discoverable-by:
+    - opencode
+    - eta-mu
+    - claude
   version: 2
 ---
 

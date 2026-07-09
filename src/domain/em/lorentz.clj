@@ -30,10 +30,11 @@
 (defn- curl-neighbor-contribution
   "Single neighbor contribution to the SPH curl estimate. `state` is the central
    particle state map; `n` is the neighbor map with :b-field, :mass, :density,
-   :position and optionally :radius or :gradient-curl."
+   :position and :radius."
   [state n]
   (let [{[px py pz] :position
-         [bx by bz] :b-field} state
+         [bx by bz] :b-field
+         r-c        :radius} state
         np (:position n)
         nx (double (nth np 0))
         ny (double (nth np 1))
@@ -42,11 +43,10 @@
         ry (- py ny)
         rz (- pz nz)
         r2 (+ (* rx rx) (* ry ry) (* rz rz))
-        [gx gy gz] (or (:gradient-curl n)
-                       (let [h (* 0.5 (+ (double (or (:radius n) 1.0)) 1.0))]
-                         (if (>= r2 (* h h))
-                           [0.0 0.0 0.0]
-                           (hydro/kernel-gradient [rx ry rz] r2 h))))
+        h  (* 0.5 (+ (double (or r-c 1.0)) (double (or (:radius n) 1.0))))
+        [gx gy gz] (if (>= r2 (* h h))
+                     [0.0 0.0 0.0]
+                     (hydro/kernel-gradient [rx ry rz] r2 h))
         [bnx bny bnz] (:b-field n)
         dbx (- bx (double bnx))
         dby (- by (double bny))
@@ -62,10 +62,10 @@
   "Estimate (∇ × B) at a clump from neighboring b-field vectors using an SPH-like
    curl formula. Returns a vector in T/m. Zero neighbors → zero curl.
 
-   `state` is a map with :b-field, :density, :position, and :neighbors. Optional
-   :gradients aligns with :neighbors and contains pre-computed ∇_i W vectors.
-
-   Uses the symmetric SPH curl: (∇ × B)_i = Σ_j m_j/ρ_j (B_i - B_j) × ∇_i W_ij."
+   `state` is a map with :b-field, :density, :position, :radius and :neighbors.
+   Optional :gradients aligns with :neighbors and contains pre-computed
+   ∇_i W vectors. Uses the symmetric SPH curl:
+   (∇ × B)_i = Σ_j m_j/ρ_j (B_i - B_j) × ∇_i W_ij."
   [{:keys [b-field density position neighbors gradients] :as state}]
   (if (or (not (lf/finite-vec3? b-field))
           (not (pos? (double density))))
@@ -269,12 +269,21 @@
                   (double (:density n 1.0)))]
     [(* cxj factor) (* cyj factor) (* czj factor)]))
 
+(defn- gradient-non-zero?
+  "True if `grad` is a non-zero 3-vector. Used to skip neighbors whose
+   pre-computed curl gradient lies outside the kernel support."
+  [grad]
+  (boolean
+   (when-let [[gx gy gz] grad]
+     (or (not (zero? gx)) (not (zero? gy)) (not (zero? gz))))))
+
 (defn curl-estimate-from-cache
   "Estimate (∇ × B) for the Lorentz acceleration system using a pre-built
    neighbor-cache entry. Walks the cached neighbors once, skipping particles
-   that are not EM-active or lie outside the EM smoothing radius `h`, and
-   uses their pre-computed `:gradient-curl`. Avoids allocating a filtered
-   neighbor vector and a separate gradients vector.
+   that are not EM-active, lie outside the EM smoothing radius `h`, or carry a
+   zero curl gradient (i.e. lie outside the per-neighbor kernel support), and
+   uses the pre-computed `:gradient-curl` for the rest. Avoids allocating a
+   filtered neighbor vector or a separate gradients vector.
 
    `state` is a map with :b-field, :density, :position and :neighbors. `h` is the
    EM smoothing radius."
@@ -291,6 +300,7 @@
        (fn [acc _idx n]
          (if-not (and (em-active? (:matter-state n))
                       (<= (double (:r2 n)) hh2)
+                      (gradient-non-zero? (:gradient-curl n))
                       (lf/finite-vec3? (:b-field n)))
            acc
            (mapv + acc (curl-cached-neighbor-contribution state n))))
@@ -306,11 +316,12 @@
   (let [eid (:eid data)
         h (* 2.0 (double (or (:radius data) 1.0)))
         [nbrs grads] (em-neighbors-and-curl-gradients world data h)
-        curl-b (curl-estimate {:b-field (:b-field data)
-                               :density (:density data)
-                               :position (:position data)
-                               :neighbors nbrs
-                               :gradients grads})
+         curl-b (curl-estimate {:b-field (:b-field data)
+                                :density (:density data)
+                                :position (:position data)
+                                :radius (:radius data)
+                                :neighbors nbrs
+                                :gradients grads})
         lorentz (capped-lorentz-acceleration data curl-b)
         torque (magnetic-braking-torque data dt)]
     [eid lorentz torque]))
@@ -385,24 +396,26 @@
   (let [eid    (:eid data)
         radius (double (or (:radius data) 1.0))
         h      (* 2.0 radius)
-        curl-b (if-let [entry (:neighbor-cache data)]
-                 (curl-estimate-from-cache
-                  {:b-field (:b-field data)
-                   :density (:density data)
-                   :position (:position data)
-                   :neighbors (:neighbors entry)}
-                  h)
-                 (if tree
-                   (let [nbrs (idx/within-radius
-                               tree (:position data) h
-                               em-active-neighbor?)]
-                     (curl-estimate
-                      {:b-field (:b-field data)
-                       :density (:density data)
-                       :position (:position data)
-                       :neighbors nbrs
-                       :gradients nil}))
-                   [0.0 0.0 0.0]))
+         curl-b (if-let [entry (:neighbor-cache data)]
+                  (curl-estimate-from-cache
+                   {:b-field (:b-field data)
+                    :density (:density data)
+                    :position (:position data)
+                    :radius (:radius data)
+                    :neighbors (:neighbors entry)}
+                   h)
+                  (if tree
+                    (let [nbrs (idx/within-radius
+                                tree (:position data) h
+                                em-active-neighbor?)]
+                      (curl-estimate
+                       {:b-field (:b-field data)
+                        :density (:density data)
+                        :position (:position data)
+                        :radius (:radius data)
+                        :neighbors nbrs
+                        :gradients nil}))
+                    [0.0 0.0 0.0]))
         accel  (let [[cx cy cz] curl-b]
                  (if (and (zero? cx) (zero? cy) (zero? cz))
                    [0.0 0.0 0.0]

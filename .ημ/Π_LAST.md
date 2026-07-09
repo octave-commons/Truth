@@ -1,45 +1,52 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260709012039`
-- **Timestamp:** 2026-07-09T01:20:39Z
+- **Π tag:** `Π-20260709031432`
+- **Timestamp:** 2026-07-09T03:14:32Z
 - **Branch:** `main`
-- **Parent head:** `e9ad32a5bb341de7a90ac1cc92e783fc71aae4a2`
+- **Parent head:** `0ca6456a671b1144954415b49ae240ef88639653`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `README.md`
-- `deps.edn`
-- `docs/TESTING.md`
-- `kanban/tasks/spec-neighbor-cache-fan-out-lane.md`
-- `kanban/tasks/tick-perf-drift-profile.md`
+- `AGENTS.md`
+- `CLAUDE.md`
+- `CONTRACT.edn`
 - `receipts.edn`
-- `receipts.log`
-- `src/domain/ecs/registry.clj`
 - `src/domain/em/lorentz.clj`
-- `src/domain/genesis/systems.clj`
-- `src/domain/genesis/tick.clj`
 - `src/domain/hydro/common.clj`
-- `src/domain/hydro/density.clj`
 - `src/domain/hydro/pressure.clj`
-- `src/domain/physics/cache.clj`
 - `src/domain/physics/cache/neighbor.clj`
-- `src/infra/dev/actor_dashboard.clj`
-- `src/law/field/schema.clj`
 - `test/domain/em_lorentz_test.clj`
-- `test/domain/formation_integration_test.clj`
-- `test/domain/hydro_test.clj`
-- `test/domain/physics/cache_test.clj`
-- `test/test_runner.clj`
+- `.agents/skills/deep-research/SKILL.md`
+- `.agents/skills/deep-research/CONTRACT.edn`
+- `.agents/skills/dedicated-influence-channel/SKILL.md`
+- `.agents/skills/dedicated-influence-channel/CONTRACT.edn`
+- `.agents/skills/physics-dt-unit-mismatch/SKILL.md`
+- `.agents/skills/physics-dt-unit-mismatch/CONTRACT.edn`
+- `.agents/skills/receipt-driven-regression-recovery/SKILL.md`
+- `.agents/skills/receipt-driven-regression-recovery/CONTRACT.edn`
+- `.ημ/actors/spore-reviewer/AGENT.md`
+- `.ημ/actors/spore-reviewer/actor.edn`
+- `.ημ/actors/spore-reviewer/goals/`
+- `.ημ/actors/spore-reviewer/methods/`
+- `.ημ/actors/spore-reviewer/responsibilities/`
+- `.ημ/actors/spore-reviewer/runtime/`
+- `.ημ/actors/spore-reviewer/schedules/`
+- `.ημ/actors/spore-reviewer/triggers/`
+- `.ημ/session-mycology/review-receipts.edn`
+- `.ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md`
+- `.ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md`
+- `.ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md`
+- `.ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md`
+- `.ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md`
 - `.ημ/Π_STATE.sexp`
 - `.ημ/Π_LAST.md`
 - `.ημ/Π_MANIFEST.sexp`
 
 ## Verification
 
-- `clojure -M:test:architecture-test` — 6 tests, 0 failures/errors
-- `clojure -M:test:full-test` — 617 tests, 15134 assertions, 0 failures/errors
-- `clojure -M:test` — 617 tests, 15134 assertions, 0 failures/errors
+- `clojure -M:test` — 617 tests, 14984 assertions, 0 failures/errors
+- Note: `src/domain/physics/cache/neighbor.clj` reports LSP paren-balance warnings; the full test suite passes, so these are treated as tooling false positives for this snapshot.
 
 ## Concurrent / Ephemeral
 
