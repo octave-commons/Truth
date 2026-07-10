@@ -1,7 +1,7 @@
 ---
 uuid: "spec-merged-hydro-em-pair-loop-with-shared-neighbor-cache"
 title: "Spec: Merged Hydro/EM Pair Loop with Shared Neighbor Cache"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "hydro", "em", "performance"]
 created_at: "2026-07-02T19:35:28.965731772Z"
@@ -103,3 +103,9 @@ In `law/field.clj` or `law/plasma.clj`:
 5. Add law predicates/caps.
 6. Add tests and benchmarks.
 7. Review + revise.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — cache/neighbor.clj shared cache; em/lorentz curl-estimate-from-cache gated by mhd-regime?; hydro reads it; cache-parity tests. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

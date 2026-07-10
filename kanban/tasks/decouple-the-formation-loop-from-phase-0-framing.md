@@ -1,7 +1,7 @@
 ---
 uuid: "decouple-the-formation-loop-from-phase-0-framing"
 title: "Decouple the Formation Loop from Phase-0 Framing"
-status: "todo"
+status: "rejected"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.624013616Z"
@@ -268,3 +268,7 @@ and keywords without moving systems or altering behavior. It makes the file's
 actual job explicit and clears the way for the physical system moves.
 
 Next action: approve this spec, then write failing tests and begin Phase 1.
+
+---
+Triage 2026-07-10 (todo→rejected): STALE-SUPERSEDED — explicitly superseded by genesis-arc-separation (which shipped as domain.genesis+domain.arc with :genesis/* keys); the proposed domain.formation / :formation/* naming was never adopted.
+---

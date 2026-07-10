@@ -277,3 +277,13 @@
   spore: none
   receipt-refs: none
   note: A single-space-only grep pattern (\[domain.stellar :as) silently missed aligned-spacing requires, so I twice reported wrong facts (18 prod callers; no prod callers) and nearly closed the card on a false premise. The safety sweep AFTER deletion is what caught the real callers. Lesson: whitespace-tolerant patterns for require/usage audits, and never assert a caller count from one grep.
+- ts: 2026-07-10T09:06:04Z
+  session: 2026-07-10T08-54-05-1adee44c-4971-4b8c-869c-b45674a18dd6
+  task: Pay fork tax after concurrent content commit
+  p-efficiency: 0.6
+  p-friction: 0.7
+  p-skill-candidate: 0.8
+  spore: 20260710-090604-fork-tax-concurrent-content-handoff
+  receipt-refs: 2026-07-10T09:06:04Z
+  note: Another agent committed content changes mid-activation. Regenerated .ημ artifacts against the new HEAD, tagged content and handoff commits separately, and left newer concurrent kanban edits for the next tax. Manifest generation requires -c core.quotepath=false to preserve .ημ Unicode paths.
+

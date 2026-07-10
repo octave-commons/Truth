@@ -1,7 +1,7 @@
 ---
 uuid: "stellar-wind-plasma-state-spec"
 title: "Stellar Wind Plasma State Spec"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.856296905Z"
@@ -253,3 +253,9 @@ Total wind energy deposited per star per tick is capped at a fraction of the sta
 2. **Non-thermal velocity dispersion:** bulk velocity is sufficient for Phase 0; no dispersion term.
 3. **Flash-heating prevention:** cap total wind energy per star per tick and keep ram-pressure heating local (within a few smoothing lengths) with a low efficiency factor.
 4. **Parcel vs. field model:** adopt the flux/ram-pressure-field model. Stellar wind is no longer emitted as discrete `:nebula` parcels; instead each star writes a `c/wind-profile` (Ṁ, v_w, ram-pressure vs. r) and a `c/wind-heating` influence that ablates nearby gas gradually. This avoids parcel proliferation and is consistent with the gradual-mass-transfer direction.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — law/plasma.clj wind-profile; wind-system writes c/wind-profile (no parcels); wind-ablation-system; integrator folds mass-loss+ionization; spec tests present. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

@@ -1,12 +1,17 @@
 ---
-status: incubating
+status: promoted
+reviewed: 2026-07-10T09:55:05Z
+reviewer-session: 8424cdd9-8bc2-4536-a07e-29ecd496c33f
 created: 2026-07-10T08:58:01.070934604Z
 source-session: /home/err/spaces/Truth
 source-task: Audit callers of a namespace before deleting/deprecating it
 p-efficiency: 0.5
 p-friction: 0.5
 p-skill-candidate: 0.85
-promoted-to: ""
+p-recurrence: 0.75
+p-generalizable: 0.85
+p-worth-promoting: 0.85
+promoted-to: /home/err/.agents/skills/whitespace-tolerant-require-audits/SKILL.md
 rejected-reason: ""
 ---
 

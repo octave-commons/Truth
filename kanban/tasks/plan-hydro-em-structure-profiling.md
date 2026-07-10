@@ -1,7 +1,7 @@
 ---
 uuid: "plan-hydro-em-structure-profiling"
 title: "Plan: Hydro / EM / structure profiling"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "hydro", "em", "performance"]
 created_at: "2026-07-02T19:35:28.964538735Z"
@@ -112,3 +112,9 @@ Use the report to choose one of:
 - SoA-ize hydro/EM pair loops (project arrays once, share across neighbors).
 - Reduce spatial-index build cost (e.g., skip uniform grid when it does not help).
 - Throttle non-physics systems (structure/eos/classifier) by LOD or tick skipping.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — domain/profile.clj profile-section gated by :genesis/profile-subsystems?; systems wrapped; bench/phase0 harness prints per-subsystem ms. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

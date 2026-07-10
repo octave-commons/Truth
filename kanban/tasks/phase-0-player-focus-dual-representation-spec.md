@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-player-focus-dual-representation-spec"
 title: "Phase 0 Player Focus & Dual-Representation Spec"
-status: "todo"
+status: "accepted"
 priority: "P1"
 labels: ["specs", "phase0", "player"]
 created_at: "2026-07-02T19:35:28.969550823Z"
@@ -184,3 +184,7 @@ This is the operational form of the handoff described in `kanban/tasks/ecology-w
 **Phase 1** (immediate-zone promotion) is the smallest shippable step. It requires no demotion system, no regional evolution, and no rendering changes beyond using the existing particle renderer for newly promoted clumps. It proves that focus can create resolved matter and that conservation laws hold.
 
 Next action: approve this spec, then write schemas, failing tests, and Phase 1 implementation.
+
+---
+Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — only tick-cadence LOD (domain.lod) realized; promotion/demotion + conservation invariants entirely open — break into per-phase cards. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+---

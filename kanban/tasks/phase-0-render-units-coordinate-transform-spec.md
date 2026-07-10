@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-render-units-coordinate-transform-spec"
 title: "Phase 0 Render Units / Coordinate Transform Spec"
-status: "todo"
+status: "done"
 priority: "P2"
 labels: ["specs", "phase0", "render"]
 created_at: "2026-07-08T02:24:29.765675587Z"
@@ -269,3 +269,9 @@ The log-compression formula is the existing one from `infra.render/phys->render-
    **Recommendation:** Later, as part of the broader render-asset-organization Phase 3/4 split. This spec only updates its internals.
 
 (End of file)
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — infra/render/units.clj pure RenderContext world<->render, phys<->render-radius, screen ray; law/render.clj schemas; inspect delegates. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

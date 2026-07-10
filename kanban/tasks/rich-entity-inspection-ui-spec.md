@@ -187,3 +187,7 @@ Already exists; used for hierarchy.
 1. Should `c/inspect-history` be written for all resolved bodies or only the selected/focused body?
 2. What is the performance cost of rendering the sparklines and raw ECS table every frame?
 3. Should the panel support collapse of individual panes to reduce visual clutter?
+
+---
+2026-07-10: designated canonical rich-inspection card; duplicate rich-entity-inspection-ui rejected. Still OPEN — pane-based rich panel not yet built (inspector is text-only in infra/inspect/card.clj).
+---

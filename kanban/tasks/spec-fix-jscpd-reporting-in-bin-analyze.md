@@ -1,7 +1,7 @@
 ---
 uuid: "spec-fix-jscpd-reporting-in-bin-analyze"
 title: "Spec: Fix jscpd Reporting in `bin/analyze`"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.826122060Z"
@@ -75,3 +75,9 @@ This fix is a small shell-script change. It should be committed as its own chang
 
 1. Should `jscpd` eventually become a blocking check in `bin/analyze --strict`, or should it remain advisory because some duplication is acceptable in test helpers and DSL-generated code?
 2. Should the project add a `.jscpd.json` configuration to exclude generated files or test fixtures that are intentionally repetitive?
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — bin/analyze:59-71 implements the exact fix: separate stdout/stderr capture, 'jscpd unavailable' only when empty, clone-header grep + Total summary. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

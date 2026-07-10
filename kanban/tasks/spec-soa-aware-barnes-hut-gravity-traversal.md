@@ -1,7 +1,7 @@
 ---
 uuid: "spec-soa-aware-barnes-hut-gravity-traversal"
 title: "Spec: SoA-aware Barnes–Hut gravity traversal"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "gravity", "gravity"]
 created_at: "2026-07-02T19:35:28.972686898Z"
@@ -103,3 +103,9 @@ Add to `test/domain/orbital/system_test.clj`:
 - The traversal is duplicated; `traverse-stack` and `traverse-soa` may drift. Keep them side-by-side only until SoA path is validated, then remove the slower one.
 - Self-id handling must match the body path exactly.
 - Leaf bodies carry `:id` from `:phase0/spatial-items`; ensure observer/player ids never collide with SoA eids.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — gravity/barnes_hut/force.clj acceleration-for-soa explicit-stack traverse-soa-idx; barnes_hut_test SoA parity tests. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

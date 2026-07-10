@@ -1,7 +1,7 @@
 ---
 uuid: "spec-r-first-kernel-cutoff-for-sph"
 title: "Spec: r²-First Kernel Cutoff for SPH"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "sph", "performance"]
 created_at: "2026-07-02T19:35:28.965299077Z"
@@ -83,3 +83,9 @@ Cache builder computes `r2` once and reuses it for both gradient flavors.
 3. Update `sph-density`, `pressure-gradient-acceleration`, `curl-estimate` to consume `r2`.
 4. Update any bench/test helpers that call kernel directly.
 5. Verify tests + benchmarks.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — hydro/kernel.clj kernel-r2 + r2 gradient arity early-return before sqrt; cached :r2; r-vs-r2 parity tests. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

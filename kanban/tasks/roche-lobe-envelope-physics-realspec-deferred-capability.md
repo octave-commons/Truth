@@ -1,7 +1,7 @@
 ---
 uuid: "roche-lobe-envelope-physics-realspec-deferred-capability"
 title: "Roche-Lobe Envelope Physics Realspec (deferred capability)"
-status: "todo"
+status: "accepted"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.801876991Z"
@@ -109,3 +109,7 @@ Accreted angular momentum is added to `:spin/angular-momentum`. Excess spin is f
 4. Ryu, T., Sari, R., de Mink, S. E. et al. 2025, *A\u0026A*, 702, A61. arXiv:2505.18255.
 5. Hurley, J. R., Tout, C. A. \u0026 Pols, O. R. 2002, *MNRAS*, 329, 897.
 6. Hubber, D. A., Walch, S. \u0026 Whitworth, A. P. 2013, *MNRAS*, 430, 3261.
+
+---
+Triage 2026-07-10 (todo→accepted): DEFERRED-CAPABILITY — gated on a future trigger not yet hit; base model in place, deferred physics untouched. Parked out of the execution queue.
+---

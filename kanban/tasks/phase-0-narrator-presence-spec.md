@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-narrator-presence-spec"
 title: "Phase 0 Narrator Presence Spec"
-status: "todo"
+status: "accepted"
 priority: "P1"
 labels: ["specs", "phase0", "myth"]
 created_at: "2026-07-02T19:35:28.968199939Z"
@@ -134,3 +134,7 @@ Layer 4 (chat shell) is explicitly out of scope for the first implementation.
 **Phase 1** (ambience mood) is the smallest step. It adds a pure mood function, a narrative system, and a HUD tint hook. It proves the narrator is present without requiring any text generation infrastructure.
 
 Next action: approve this spec, then write schemas, failing tests, and Phase 1 implementation.
+
+---
+Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — event-phrasing + ambient :narrator panel landed via domain.arc; mood engine + law.narrative schemas unbuilt — re-scope to remaining mood/ambience work. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+---

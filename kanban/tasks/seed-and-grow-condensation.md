@@ -1,7 +1,7 @@
 ---
 uuid: "seed-and-grow-condensation"
 title: "Seed-and-Grow Condensation (decouple body mass from parcel mass)"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "phase0", "physics", "resolution"]
 created_at: "2026-07-06T18:00:00.000000000Z"
@@ -180,3 +180,9 @@ not rename the ladder.
 - Collisional growth: the current literal-overlap collision path does not model
   gravitational focusing. Oligarchic growth from seeds to planets is future work;
   for now planets come from the disk seeder.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — seeder/condensation-seeder-system emits spawn-request-condense+mass-flux-condense+one-shot marker; all 10 spec tests present; card self-declares implemented. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

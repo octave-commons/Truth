@@ -1,7 +1,7 @@
 ---
 uuid: "rich-entity-inspection-ui"
 title: "Rich Entity Inspection UI"
-status: "todo"
+status: "rejected"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.795806328Z"
@@ -564,3 +564,7 @@ The existing `inspector-card` is preserved as `inspect/minimal-card`. `rich-insp
 3. Should composition use a stacked bar instead of grouped bars when space is tight?
 
 These are deferred to the implementation phase and can be resolved without changing the architecture above.
+
+---
+2026-07-10 → rejected as duplicate of rich-entity-inspection-ui-spec (~90% redundant panes/contract). Canonical card: rich-entity-inspection-ui-spec.
+---

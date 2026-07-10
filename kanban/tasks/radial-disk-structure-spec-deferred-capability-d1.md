@@ -1,7 +1,7 @@
 ---
 uuid: "radial-disk-structure-spec-deferred-capability-d1"
 title: "Radial Disk Structure Spec (deferred capability D1)"
-status: "todo"
+status: "accepted"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-06T16:24:25.293741153Z"
@@ -106,3 +106,7 @@ The snow line becomes the radius where `T(r) = Tc(H₂O)`; as the star brightens
 
 1. Annulus count vs. cost — decide empirically at promotion.
 2. Whether to store the profile as a component or recompute per tick from scalars + a shape function (memory vs. CPU) — decide at promotion.
+
+---
+Triage 2026-07-10 (todo→accepted): DEFERRED-CAPABILITY — gated on a future trigger not yet hit; base model in place, deferred physics untouched. Parked out of the execution queue.
+---

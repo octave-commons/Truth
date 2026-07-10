@@ -1,7 +1,7 @@
 ---
 uuid: "genesis-arc-separation-physics-substrate-vs-player-arc"
 title: "Genesis Arc Separation: Physics Substrate vs. Player Arc"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "player"]
 created_at: "2026-07-08T02:24:29.664331897Z"
@@ -354,3 +354,9 @@ It changes names and keys without moving systems or altering behavior.
 become a real layer, and the physics loop no longer knows it is "Phase 0."
 
 Next action: approve this spec, then write failing tests and begin Phase 1.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — domain.genesis + domain.arc split shipped; :genesis/* + :arc/genesis-* keys; systems moved to atmosphere/lod/magnetosphere/habitability; no domain.phase0 refs. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

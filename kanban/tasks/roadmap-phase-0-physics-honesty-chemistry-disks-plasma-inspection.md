@@ -1,7 +1,7 @@
 ---
 uuid: "roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection"
 title: "Roadmap: Phase 0 Physics Honesty — Chemistry, Disks, Plasma, Inspection"
-status: "todo"
+status: "accepted"
 priority: "P1"
 labels: ["specs", "phase0", "em", "chemistry"]
 created_at: "2026-07-06T16:24:25.288382115Z"
@@ -185,3 +185,7 @@ These are discrete fixes that live inside a milestone but are worth their own ca
 ## 9. Open questions (epic level)
 
 (none — the round-1/round-2 design session resolved the spine; per-spec open questions are resolved in each spec's decisions section with capability-gated conditions.)
+
+---
+Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — ROADMAP umbrella over 9 member specs, milestone-mixed progress (M0/M1 landed, M3 partial); not a single executable task. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+---

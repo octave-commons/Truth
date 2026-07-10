@@ -1,7 +1,7 @@
 ---
 uuid: "spec-soa-primitive-array-physics-cache"
 title: "Spec: SoA Primitive-Array Physics Cache"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["specs", "performance"]
 created_at: "2026-07-02T19:35:28.973115615Z"
@@ -108,3 +108,9 @@ After physics:
 - The ECS world is the single source of truth; the SoA cache must be rebuilt every tick and never mutated directly by systems.
 - Primitive arrays require careful handling of `nil`/missing fields.
 - The win may be smaller than hoped if the JVM JIT already optimizes the ECS map lookups.
+
+---
+Triage 2026-07-10 (todo→in_review): DONE-IN-CODE per code check — cache/soa.clj build/strip-physics-soa + integrator/orbital SoA paths + soa_cache_test parity tests. Staged for close pending sign-off.
+
+2026-07-10 → DONE (triage batch-close): implemented + test-covered in code; owner approved close on triage evidence.
+---

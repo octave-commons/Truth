@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-renderer-asset-organization-spec"
 title: "Phase 0 Renderer Asset Organization Spec"
-status: "todo"
+status: "accepted"
 priority: "P2"
 labels: ["specs", "phase0", "render", "render"]
 created_at: "2026-07-02T19:35:28.971042782Z"
@@ -235,3 +235,7 @@ Final verification:
    **Recommendation:** Those are shape caches, not GL resources; keep them in `infra.render.projection`.
 3. Do we want runtime shader uniform reflection, or keep uniform locations explicit?  
    **Recommendation:** Keep explicit for now; add reflection only if uniform-set bugs accumulate.
+
+---
+Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — Phases 1-4 done (single-renderer split, shader/mesh/hud/volume, schemas); only asset-cache/passes/material Phases 5-6 remain — split residual card. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+---
