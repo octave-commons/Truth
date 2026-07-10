@@ -1,14 +1,14 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710004605`
-- **Timestamp:** 2026-07-10T00:46:05Z
+- **Π tag:** `Π-20260710024805`
+- **Timestamp:** 2026-07-10T02:48:05Z
 - **Branch:** `main`
-- **Parent head:** `53c92a3f5735face596a29b9d1d1eeffb815774d`
+- **Parent head:** `414efe01209f9035c0606747bdf60cc638b11593`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `receipts.edn` — appended the `:fork-tax` receipt from the prior snapshot and left it staged for this snapshot.
+- `receipts.edn` — committed the uncommitted `:fork-tax` receipts from the previous activation (paid at 00:46Z and no-op at 01:48Z).
 - `.ημ/Π_STATE.sexp`, `.ημ/Π_MANIFEST.sexp`, `.ημ/Π_LAST.md` — regenerated as handoff artifacts for this snapshot.
 
 These are repo-relevant metadata and handoff artifacts introduced since the previous Π tag.
@@ -20,7 +20,7 @@ These are repo-relevant metadata and handoff artifacts introduced since the prev
 
 ## Concurrent / Ephemeral
 
-None. All stageable, repo-relevant working state has been absorbed into this snapshot. Actor session/inbox/outbox paths are excluded by `.gitignore` and were left untouched.
+After committing and tagging this snapshot, a new `:fork-tax :paid` receipt was appended to `receipts.edn` referencing this snapshot; it is intentionally left uncommitted for the next tax. Actor session/inbox/outbox paths are excluded by `.gitignore` and were left untouched.
 
 ## Safety
 
