@@ -1,13 +1,13 @@
 ((pi "0.63.2")
- (repo "/home/err/spaces/Truth")
- (branch "main")
- (head "adbc704a17d72d188549f789b0583b038a061b58")
- (tag "Π-20260709234505")
- (ts "2026-07-09T23:45:05Z")
- (host "spaces/Truth")
- (origin "fork-tax-tender/481a6480-6c87-452f-ae31-98c832809a01")
- (dod "pay fork tax on significant changes")
- (manifest [
+  (repo "/home/err/spaces/Truth")
+  (branch "main")
+  (head "53c92a3f5735face596a29b9d1d1eeffb815774d")
+  (tag "Π-20260710004605")
+  (ts "2026-07-10T00:46:05Z")
+  (host "spaces/Truth")
+  (origin "/home/err/spaces/Truth/.eta-mu/actors/fork-tax-tender/inbox/2026-07-10T00-46-05-e909ca9d-348d-4312-aac9-d0dacc90760d.md")
+  (dod "pay fork tax on significant changes")
+  (manifest [
     ".agents/skills/dedicated-influence-channel/CONTRACT.edn"
     ".agents/skills/dedicated-influence-channel/SKILL.md"
     ".agents/skills/deep-research/CONTRACT.edn"
