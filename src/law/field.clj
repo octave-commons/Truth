@@ -34,6 +34,13 @@
 (def gas-sample? schema/gas-sample?)
 (def field-cell-contract schema/field-cell-contract)
 
+;; --- Dual-representation / focus zones (Phase 1) ----------------------------
+
+(def field-zone-schema schema/field-zone-schema)
+(def statistical-cell-schema schema/statistical-cell-schema)
+(def attention-shell-schema schema/attention-shell-schema)
+(def promotion-invariant? schema/promotion-invariant?)
+
 ;; --- Physical constants -----------------------------------------------------
 
 (def ^:const mu-0 1.25663706212e-6) ;; vacuum permeability, T·m/A (SI)

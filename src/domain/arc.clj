@@ -19,6 +19,7 @@
    [domain.ecology      :as ecology]
    [domain.player       :as player]
    [domain.naming       :as naming]
+   [domain.narrative    :as narrative]
    [domain.ecs.core     :as ecs]
    [domain.ecs.components :as c]
    [domain.ecs.event    :as event]))
@@ -273,8 +274,9 @@
         dt     (- (:genesis/sim-time w1) (:genesis/sim-time world))
         w2     (advance-arc w1)
         w3     ((player/observer-system dt) w2)
-        obs    (player/get-observer w3)
-        summ   (or (:genesis/_prev-summary w3) (genesis/system-summary w3))]
-    (assoc w3 :genesis/active
+        w4     ((narrative/narrative-system) w3)
+        obs    (player/get-observer w4)
+        summ   (or (:genesis/_prev-summary w4) (genesis/system-summary w4))]
+    (assoc w4 :genesis/active
            (and (player/can-interact? obs)
                 (pos? (:body-count summ))))))

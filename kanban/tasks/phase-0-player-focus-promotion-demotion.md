@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-player-focus-promotion-demotion"
 title: "Phase 0 Player Focus Promotion & Demotion"
-status: "ready"
+status: "in_progress"
 priority: "P1"
 labels: ["specs", "phase0", "player"]
 created_at: "2026-07-10T12:00:00Z"
@@ -75,3 +75,7 @@ energy budget.
 - `test/architecture_test.clj` passes.
 - No new `reg/write-conflicts` from the new systems.
 - Parent card updated with link to this residual card.
+
+---
+Started 2026-07-10: moving to in_progress. Will inspect current LOD/focus code, then implement promotion/demotion + conservation invariants.
+---

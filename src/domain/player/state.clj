@@ -5,7 +5,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]))
 
-(defn create-observer "A fresh observer map at the given position." [position] {:agency 0.0, :focus-radius 5.0E15, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :drift-velocity (sp/vec3 0 0 0), :coherence 0.8, :resolution 0.0, :id (java.util.UUID/randomUUID), :resonance-thresholds #{}, :position position, :focus-position position, :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []})
+(defn create-observer "A fresh observer map at the given position." [position] {:agency 0.0, :focus-radius 5.0E15, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :drift-velocity (sp/vec3 0 0 0), :coherence 0.8, :resolution 0.0, :id (java.util.UUID/randomUUID), :resonance-thresholds #{}, :position position, :focus-position position, :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events [] :attention-shell {:immediate-r 4.0E15 :regional-r 1.5E16}})
 
 (defn observer-entity "The singleton observer entity id, or nil." [world] (first (ecs/entities-with world c/observer)))
 
@@ -15,4 +15,4 @@
 
 (defn update-observer "Apply f to the observer map in the world." [world f & args] (if-let [eid (observer-entity world)] (ecs/update-component world eid c/observer (fn* [p1__247#] (apply f p1__247# args))) world))
 
-(defn spawn-observer "Spawn the singleton observer entity. Returns [world eid]." [world position] (let [[w eid] (ecs/spawn world)] [(ecs/put-component w eid c/observer (create-observer position)) eid]))
+(defn spawn-observer "Spawn the singleton observer entity. Returns [world eid]." [world position] (let [[w eid] (ecs/spawn world) w (ecs/put-component w eid c/observer (create-observer position))] [(ecs/put-component w eid c/narrative-state {:mood :anticipation :last-utterance-tick nil :topics #{}}) eid]))

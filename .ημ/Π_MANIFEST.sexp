@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260710125705"
-  :generated "2026-07-10T12:57:05Z"
-  :previous-tag "Π-20260710115900"
-  :previous-commit "f74b110043f2f2912d84d2988cc86a76845ce826"
+  :tag "Π-20260710135957"
+  :generated "2026-07-10T13:59:57Z"
+  :previous-tag "Π-20260710125705"
+  :previous-commit "3f5a6d5"
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
     (M ".agents/skills/deep-research/CONTRACT.edn" :sha256 "a2043a4a0bd6ce703d407765bf5f92489482ff32863879b1bb7d089660266714")
@@ -288,7 +288,7 @@
     (M ".ημ/session-mycology/spores/20260710-035801-whitespace-tolerant-require-audits.md" :sha256 "b201b6d5c225ea57235fda2e7dabf47df5a7e0b7e0bf696ce02d5bdba4eb821d")
     (M ".ημ/session-mycology/spores/20260710-090604-fork-tax-concurrent-content-handoff.md" :sha256 "7656827420f7f71ec0192d58e1ebd21c5225d47bf4e81fd8f90898512091b70a")
     (M ".ημ/Π_LAST.md" :sha256 "5eb0a44550885f85bee23dc69eb64e54c8b2c67143684148e0b891862c7729a1")
-    (M ".ημ/Π_MANIFEST.sexp" :sha256 "82b2cc43ca16ed4912acac9d24d495c0b1b7b9bc42678c00436946c5d81d4131")
+    (M ".ημ/Π_MANIFEST.sexp" :sha256 "16d88ec530051e6575327762968989a9f98f0778166801c8523b9b13c81911d7")
     (M ".ημ/Π_STATE.sexp" :sha256 "f03329d95d9dae31fd0c287822afd71b0dde5c5b9e93655e98ecf56d9c2e2e23")
     (M "AGENTS.md" :sha256 "a3d84fa86a797405f10730b129b61a3e4dad7942a4a30c77df994ee180d590cd")
     (M "CLAUDE.md" :sha256 "23c1d0d389e4580bc462fcdab190ee4b493b07e724b89c6df96c6467c15e64d8")
@@ -578,10 +578,10 @@
     (M "kanban/tasks/phase-0-complete-planet-formation-pipeline-spec.md" :sha256 "75f8c3184410942f7333af83ca8122af165933518f73bf82108c4920f9629161")
     (M "kanban/tasks/phase-0-habitability-handoff-spec.md" :sha256 "572859bb912a8513281769810ef9a374964ec0563a4656586c263a4afa9f228c")
     (M "kanban/tasks/phase-0-jeans-driven-formation-spec.md" :sha256 "318b94fd6826cdbe27abafac764ca03b180701a451dacbe6372f2fba06a6d6d9")
-    (M "kanban/tasks/phase-0-narrator-mood-ambience.md" :sha256 "6cb29642902e30024c7bffcef7a6669368aa1f0197c84f8597c7f20e0370c709")
+    (M "kanban/tasks/phase-0-narrator-mood-ambience.md" :sha256 "6a428435c7a08f37b837fff9ec5158893441693fa80acfd5d296597adfa3e155")
     (M "kanban/tasks/phase-0-narrator-presence-spec.md" :sha256 "1a6e2b45956da90d77e6ba28945620884c76b3ed031a5b2daa3dd9ea17017eb1")
     (M "kanban/tasks/phase-0-player-focus-dual-representation-spec.md" :sha256 "bf17ac6c969c709b12a1a5f68100e5c196b6cbaf41049f448a06e1904f18290a")
-    (M "kanban/tasks/phase-0-player-focus-promotion-demotion.md" :sha256 "63c00dee9717ae32f2c2cac5940bcea46a9af2e312e50e3fdb641b423b6d4197")
+    (M "kanban/tasks/phase-0-player-focus-promotion-demotion.md" :sha256 "6882eb50dc19d0cef4ec415557f220b5e23fb6f93ed5d8ec7bce6195447805a2")
     (M "kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md" :sha256 "1f780a94df649091f87af278ea46ff342ed6101f69015fad9c2738c29ab1464d")
     (M "kanban/tasks/phase-0-render-units-coordinate-transform-spec.md" :sha256 "6486ef48f7af978670a424a721fcd354905c21a881639fc903d3e6395a3a4a23")
     (M "kanban/tasks/phase-0-renderer-asset-organization-spec.md" :sha256 "ba59d06d444498518e3c875c62f30544a0b407769b0306776f94c38db9834a4f")
@@ -641,10 +641,10 @@
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "openhax.kanban.json" :sha256 "d27b66ffe03adac7b62ac887c01c43003e74e4a24a9d2acfea778cab2d03acc6")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "f9d8072a173e4c0af430fade767b285889c99126baeca752f10d90c3aa150b87")
+    (M "receipts.edn" :sha256 "bfe4c0322b80d2d035ca192a7cb28dbce4be71a8e61bcecae3690171080fe9e8")
     (M "receipts.log" :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
-    (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")
+    (M "src/domain/arc.clj" :sha256 "d8e96db2e26fe5bfa538dc30deb39ebdd9c7e00793e616f8ba1d1b5edf4bd191")
     (M "src/domain/atmosphere.clj" :sha256 "1821620e67f2685892b7071e25f3e47044106279333c5e29482b7518d0e5f5d5")
     (M "src/domain/chemistry.clj" :sha256 "05514b9b742b8c25849e8848eae39fc958c062c814119a37c8ac4a0499c63259")
     (M "src/domain/debris.clj" :sha256 "e550c3ab13239d079c69005aaa6c4a65af9e62b96ba97e372e97426793ba2286")
@@ -653,7 +653,7 @@
     (M "src/domain/ecology/math.clj" :sha256 "87bdb8d8727bc3008511b2ff51e93c82255643f347727fccdc9b0201cf298a35")
     (M "src/domain/ecology/state.clj" :sha256 "06d541b19b3f8e988de6bedcc8512392cdc930c38d5c359c596aeefa4604dfb8")
     (M "src/domain/ecology/system.clj" :sha256 "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04")
-    (M "src/domain/ecs/components.clj" :sha256 "8ef6def60e0011db92bc5463e64845ad8a00b462f5be0673b42d5de1d2b14d23")
+    (M "src/domain/ecs/components.clj" :sha256 "c29e9dfbbb255382637cd7a20800da7d0e9404b30bf6e4426b726dcd30267303")
     (M "src/domain/ecs/core.clj" :sha256 "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970")
     (M "src/domain/ecs/dsl.clj" :sha256 "30c05269b986c41bf35d728ee1cd37fd5578b990cebb9c3c3e6ad86771d63878")
     (M "src/domain/ecs/event.clj" :sha256 "df0ad16a90acdb4bea9b6025a73517756e40b0e35f7335a3e72463ea2e9ccfaa")
@@ -710,7 +710,7 @@
     (M "src/domain/player/economy.clj" :sha256 "3f8d2f3abb2d6344d1a2f44772bb1631f489b088baf41d61d52bdd9ba351c1ae")
     (M "src/domain/player/focus.clj" :sha256 "27f3d5b1ab9e144a10851a19a4f600d6c9439204f32d4db502ce07058c87133c")
     (M "src/domain/player/influence.clj" :sha256 "a6386944c08be1a786a8e3d3838c2801d4a9d62446e04083df9ac7cc3cfef82b")
-    (M "src/domain/player/state.clj" :sha256 "87919b28ab6c1a6757e5ce034c59cb33d87eaef8880929651a960b34a74acb11")
+    (M "src/domain/player/state.clj" :sha256 "d0a929c9566d5aa1ac143c93618df818ed18203fdae85e9a3fe1bab45792becd")
     (M "src/domain/player/system.clj" :sha256 "b0882f59bf9543d41fbe5ca98bb344fced8c6085070371ce1c3e2e67332cd43b")
     (M "src/domain/profile.clj" :sha256 "edd4712d25f4cc73a087eeac120dfdf7f3521043f3ee303a7c7c066e5eee5eb4")
     (M "src/domain/regime.clj" :sha256 "d1560aa97609d2d6c0bee6ebf97dbb713b103769f2cfe033268edd3bfcb35ac7")
@@ -757,7 +757,7 @@
     (M "src/infra/render/mesh.clj" :sha256 "08643e3f76dff7e4c2ac5393b56648f798c724f871ce8ce0ac61845229b1d42d")
     (M "src/infra/render/scene.clj" :sha256 "6a1dc97e5ee9a96f2d07576499f0cd22725937d8788fc9c301740d357bdc4a8b")
     (M "src/infra/render/scene/bodies.clj" :sha256 "e5309dea19d1575433748792978a841c1ee659da4d60dbc81e07c872d5a3769d")
-    (M "src/infra/render/scene/hud.clj" :sha256 "c043fef80fd22c1b8427aa38e1d9af5eaa9b37d299bf39a3a883173700c55348")
+    (M "src/infra/render/scene/hud.clj" :sha256 "a44cf2e431101639ba9d0aa195e6de15acf34cdc08b77890f7ef36087e513685")
     (M "src/infra/render/scene/particles.clj" :sha256 "9647331325d491158d287b9b662f005c33f0634ad2719bb9bb3fa38eef56a2b2")
     (M "src/infra/render/scene/setup.clj" :sha256 "38934935176da791f26ffcc263462ffd9dddf3106e70392c0f4f6aaa172c5122")
     (M "src/infra/render/shader.clj" :sha256 "8f671de3c45ed77aa0bc99b2b291ca9efbe1f30e4524d5d45d8e9cf5384427df")
@@ -769,8 +769,8 @@
     (M "src/law/ecology.clj" :sha256 "3940c5668db3a577b1a5f15923ea2ea12b3fd1ac07c27ead1c8dc5b5a951bf7b")
     (M "src/law/ecology/schema.clj" :sha256 "5468f8eab6068884a19c7f9914a66d388217e30076e429ed1bf1f9dc4c5d39c3")
     (M "src/law/ecs_dsl.clj" :sha256 "03a885276719fbf96cadca6c42cf03ec57034278327fc572a490fc153ebb718c")
-    (M "src/law/field.clj" :sha256 "13324cf9fdfee71303393698b7b38daf70d055458fc831803237e959604e15b8")
-    (M "src/law/field/schema.clj" :sha256 "9953ed575b08c9ed03838f2052ae435f0ebed42bb54cad733d914545ee78274a")
+    (M "src/law/field.clj" :sha256 "2b5403f0f521c1fb9d07541a0e8c3c0bec741feeb4b2defe25b410a5d701e829")
+    (M "src/law/field/schema.clj" :sha256 "d2dc8602e416e1d5f38ad57aaa9a42833cbbc3441f7fddc487eba589abfc659e")
     (M "src/law/ledger.clj" :sha256 "db8d9912aae70588fafc7f80eecab5be029117535e31b3bd89347baebfd88e02")
     (M "src/law/mass_transfer.clj" :sha256 "cced757bc24073380049526ea977057d16c84170e8ceaa4ec4684159310a9e66")
     (M "src/law/mass_transfer/schema.clj" :sha256 "ebf247f862da22711f5abdafd71aa9b5ddbfe208d0dcf37fee62f5167efa506b")

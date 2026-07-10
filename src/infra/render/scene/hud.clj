@@ -6,6 +6,8 @@
   (:require
    [clojure.math :as math]
    [domain.player :as player]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [infra.render.color :as rcolor]
    [infra.render.units :as units]))
 
@@ -39,18 +41,33 @@
             (ring-segments fpos (max 0.5 (first fr)) col 48)))
     []))
 
+(defn- mood-color
+  "Subtle tint colour for a narrative mood, as [r g b a] in NDC."
+  [mood]
+  (case mood
+    :wonder        [0.25 0.32 0.55 0.12]
+    :dread         [0.45 0.12 0.12 0.14]
+    :tenderness    [0.42 0.25 0.42 0.10]
+    :sterility     [0.55 0.55 0.55 0.10]
+    :anticipation  [0.20 0.30 0.35 0.08]
+    [0.10 0.12 0.16 0.06]))
+
 (defn hud-rects-from-world
-  "HUD rectangles (NDC) for the observer: a coherence track + fill and a thin
-   focus-intensity bar. Empty when there is no observer."
+  "HUD rectangles (NDC) for the observer: a coherence track + fill, a thin
+   focus-intensity bar, and a subtle mood tint. Empty when there is no observer."
   [world]
-  (if-let [obs (player/get-observer world)]
-    (let [coh  (double (or (:coherence obs) 0.0))
+  (if-let [eid (player/observer-entity world)]
+    (let [obs  (player/get-observer world)
+          nstate (ecs/get-component world eid c/narrative-state)
+          mood (:mood nstate :anticipation)
+          coh  (double (or (:coherence obs) 0.0))
           mx   (double (or (:max-coherence obs) 1.0))
           frac (max 0.0 (min 1.0 (/ coh (max 1e-9 mx))))
           fi   (double (or (:focus-intensity obs) 0.5))
           col  (conj (rcolor/coherence-color (player/decoherence-state obs)) 0.92)
           x0 -0.96 x1 -0.46 y0 -0.93 y1 -0.89]
-      [{:x0 x0 :y0 y0 :x1 x1 :y1 y1 :color [0.10 0.10 0.16 0.65]}
+      [{:x0 -1.0 :y0 -1.0 :x1 1.0 :y1 1.0 :color (mood-color mood)}
+       {:x0 x0 :y0 y0 :x1 x1 :y1 y1 :color [0.10 0.10 0.16 0.65]}
        {:x0 x0 :y0 y0 :x1 (+ x0 (* (- x1 x0) frac)) :y1 y1 :color col}
        {:x0 x0 :y0 -0.875 :x1 (+ x0 (* (- x1 x0) fi)) :y1 -0.86
         :color [0.70 0.86 1.0 0.85]}])

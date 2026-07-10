@@ -163,6 +163,19 @@
 ;; Holds coherence, focus volume, and witnessed-event memory — see domain.player.
 (def observer     :component/observer)
 
+;; --- Dual-representation / focus zones (Phase 1) ----------------------------
+;; `field-zone` tags an entity as :immediate, :regional, or :global.
+;; `statistical-mass` is the mass budgeted in a regional/global cell.
+;; `attention-shell` is the observer's immediate/regional focus radii.
+(def field-zone       :component/field-zone)        ;; :immediate | :regional | :global
+(def statistical-mass :component/statistical-mass) ;; kg, bookkeeping during promotion
+(def attention-shell  :component/attention-shell)    ;; {:immediate-r m :regional-r m}
+
+;; --- Narrative presence (Phase 1) -------------------------------------------
+;; Observer-side narrative state: current mood, last utterance tick, and the
+;; set of topics already touched. Written only by domain.narrative.
+(def narrative-state :component/narrative-state)
+
 ;; --- Stellar SED / atmosphere (Phase 1) -------------------------------------
 ;; Panchromatic spectral energy distribution and layered stellar atmospheres.
 ;; Derived from: docs/research/phase1-radiation-plasma-truth.md §2-3

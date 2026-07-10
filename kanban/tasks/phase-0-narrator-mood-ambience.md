@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-narrator-mood-ambience"
 title: "Phase 0 Narrator Mood & Ambience"
-status: "ready"
+status: "review"
 priority: "P1"
 labels: ["specs", "phase0", "myth"]
 created_at: "2026-07-10T12:00:00Z"
@@ -69,3 +69,9 @@ no addressed text, no chat shell.
 - `clojure -M:test` green.
 - `test/architecture_test.clj` passes.
 - Parent card updated with link to this residual card.
+
+---
+Started 2026-07-10: moving to in_progress. Will inspect domain.arc and current narrative-state placeholder, then add law.narrative schemas, mood pure function, narrative system, and HUD tint hook.
+
+Completed 2026-07-10: implemented narrator mood \u0026 ambience.\n- Added law.narrative with mood/narrative-state schemas.\n- Added :component/narrative-state and initialized it on observer spawn.\n- Created domain.narrative with mood-from-events pure function and narrative-system.\n- Wired narrative-system into domain.arc/tick-genesis after observer-system.\n- Added mood-tint rectangle to infra.render.scene.hud/hud-rects-from-world.\n- Added 5 tests covering wonder, dread, sterility, state write, render crash guard.\n- Verification: clojure -M:test 642 tests/13463 assertions green; architecture-test green; clj-kondo 0 warnings; cljfmt clean; bin/analyze --strict no blocking findings.
+---

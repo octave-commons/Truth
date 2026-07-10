@@ -151,6 +151,50 @@
   "Predicate: does `value` satisfy `law.field/gas-sample-schema`?"
   (m/validator gas-sample-schema))
 
+;; --- Dual-representation / focus zones (Phase 1) ----------------------------
+
+(def field-zone-schema
+  "Zone tag for the dual-representation fidelity of an entity."
+  #{:immediate :regional :global})
+
+(def statistical-cell-schema
+  "Mass budget of a regional statistical cell: total mass, centre-of-mass
+   velocity, specific angular momentum, mean thermodynamic state, and
+   composition."
+  [:map
+   [:mass [:and :double [:> 0]]]
+   [:velocity [:tuple :double :double :double]]
+   [:angular-momentum [:tuple :double :double :double]]
+   [:mean-b [:tuple :double :double :double]]
+   [:temperature [:and :double [:>= 0]]]
+   [:composition [:map-of :keyword :double]]])
+
+(def attention-shell-schema
+  "Observer focus radii: immediate and regional attention shells."
+  [:map
+   [:immediate-r [:and :double [:> 0]]]
+   [:regional-r [:and :double [:> 0]]]])
+
+(defn promotion-invariant?
+  "Return true if the promoted/demoted set conserves total mass, linear momentum,
+   and angular momentum within relative `tol` (default 1e-6). `before` and `after`
+   are collections of maps with :mass, :velocity, and :angular-momentum."
+  ([before after] (promotion-invariant? before after 1e-6))
+  ([before after tol]
+   (letfn [(mass [coll] (reduce + 0.0 (map :mass coll)))
+           (momentum [coll]
+             (reduce (fn [v item] (mapv + v (mapv * (repeat (:mass item)) (:velocity item))))
+                     [0.0 0.0 0.0] coll))
+           (angmom [coll] (reduce (fn [v item] (mapv + v (:angular-momentum item)))
+                                  [0.0 0.0 0.0] coll))
+           (rel-close? [a b]
+             (or (= a b)
+                 (< (Math/abs (- a b))
+                    (* (max (Math/abs a) (Math/abs b) 1.0) tol))))]
+     (and (rel-close? (mass before) (mass after))
+          (every? #(rel-close? %1 %2) (map vector (momentum before) (momentum after)))
+          (every? #(rel-close? %1 %2) (map vector (angmom before) (angmom after)))))))
+
 ;; --- Contract ---------------------------------------------------------------
 
 (def field-cell-contract
