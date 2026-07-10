@@ -40,6 +40,19 @@
 ;; classifier threshold between gas-giant embryos and brown dwarfs.
 (def ^:const brown-dwarf-desert-mass (* 30.0 jupiter-mass))
 
+;; White-dwarf radius scale: approximate degenerate radius floor for a
+;; stellar remnant. Used as the structure floor for :stellar-remnant.
+(defn white-dwarf-radius
+  "Approximate white-dwarf radius (m) for a remnant of `mass`.
+   Scales roughly as M^(-1/3) with a solar-mass floor near 0.01 R_sun."
+  [mass]
+  (let [m (max 1e-3 (/ (double (or mass solar-mass)) solar-mass))]
+    (* 0.01 solar-radius (math/pow m (- (/ 1.0 3.0))))))
+
+;; Ablation floor: when a bound body's mass drops below this, it is despawned.
+;; Chosen as a small fraction of the deuterium-burning limit.
+(def ^:const ablation-floor (* 1.0e-3 deuterium-burning-mass))
+
 ;; Hydrogen-burning minimum mass: the brown-dwarf / star boundary. ~80 M_Jupiter.
 (def ^:const hydrogen-burning-mass   (* 0.08 solar-mass))
 

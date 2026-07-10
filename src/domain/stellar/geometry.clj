@@ -37,6 +37,10 @@
       (:gas-giant :brown-dwarf :planet)
       (let [r (sphere-radius m planet-material-density)]
         {:radius r :density planet-material-density})
+      :stellar-remnant
+      (let [r (law/white-dwarf-radius m)
+            rho (/ m (* (/ 4.0 3.0) math/PI (math/pow r 3)))]
+        {:radius r :density rho})
       (:protostar :star :condensed-core)
       (let [L     (or angular-momentum [0.0 0.0 0.0])
             o     (double (or oblateness 1.0))
@@ -87,7 +91,7 @@
         rad-map (get-in world [:components c/radius] {})]
     (persistent!
      (reduce-kv (fn [acc eid st]
-                  (if (and (#{:planetesimal :gas-giant :brown-dwarf :planet :condensed-core :protostar :star} st)
+                  (if (and (#{:planetesimal :gas-giant :brown-dwarf :planet :condensed-core :protostar :star :stellar-remnant} st)
                            (contains? mass-map eid)
                            (contains? rad-map eid))
                     (conj! acc eid)
@@ -127,6 +131,7 @@
    thermo/rotation-axis. Computed per matter-state (design note §7b):
      :nebula           SPH density + adaptive smoothing radius (fluid sample)
      :planetesimal / :gas-giant / :brown-dwarf / :planet fixed material density → radius from mass (solid)
+     :stellar-remnant  degenerate white-dwarf scale radius, no contraction
      :protostar/:star  KH oblate contraction toward the main-sequence floor
    Replaces the radius/density writes of density-system, jeans-collapse, and
    collapse. The future home of the voxel shape representation."

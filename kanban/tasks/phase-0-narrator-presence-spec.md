@@ -139,4 +139,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — event-phrasing + ambient :narrator panel landed via domain.arc; mood engine + law.narrative schemas unbuilt — re-scope to remaining mood/ambience work. Needs breakdown into residual ≤5pt cards before re-entering the queue.
 
 Triage 2026-07-10: event phrasing + ambient panel landed; mood engine and law.narrative schemas remain. Moved to breakdown to split residual ≤5pt mood/ambience cards.
+
+Triage 2026-07-10: residual mood/ambience work split into child card phase-0-narrator-mood-ambience (ready, P1, 3pt). Parent stays in breakdown as umbrella.
 ---

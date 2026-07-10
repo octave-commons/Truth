@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-splint-idiom-cleanup"
 title: "Splint idiom cleanup"
-status: "breakdown"
+status: "ready"
 priority: "P2"
 estimate: "2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
@@ -407,4 +407,6 @@ Triage 2026-07-10: PARTIAL — 18 splint warnings remain (from ~404). Breakdown:
 Triage 2026-07-10: CONSOLIDATED — this is now the single splint residual card (owner call). Absorbs the former sub-cards (splint-math, -arithmetic-control, -naming-structure, -predicate-test-collections) and the gating card (-final-gate), all rejected as over-fragmentation for an 18-warning remainder. Scope: clear/suppress the 18 remaining splint warnings (8 catch-throwable in loop.clj → documented suppression; 10 idiom fixes across mass_transfer/lorentz/focus/economy) and update docs/STATIC-ANALYSIS.md splint gating policy. ~2pt.
 
 Triage 2026-07-10: 18 warnings remain; scope collapsed to a single residual pass. Moved to breakdown to resize/re-scope to ~2pt and absorb over-fragmented sub-cards.
+
+Triage 2026-07-10: scope collapsed to ~2pt residual (18 warnings). Estimate updated to 2. Moved to ready.
 ---

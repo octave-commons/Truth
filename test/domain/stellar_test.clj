@@ -19,6 +19,7 @@
    [domain.ecs.tick :as tick]
    [domain.physics.collision :as collision]
    [domain.spatial.index    :as spatial]
+   [domain.integrator       :as integrator]
    [domain.genesis           :as genesis]
    [law.stellar :as law]
    [shape.spatial :as sp]))
@@ -160,13 +161,100 @@
           hot-at   (fn [f] (classifier/classify-next-state (assoc hot  :mass (* f msun)) gas-mass))]
       ;; hysteresis: a still-fusing star does NOT demote on mass alone
       (is (= :star (hot-at 0.05)) "a still-fusing star keeps burning despite mass loss")
-      ;; once fusion has ceased, demotion follows the bound mass ladder
-      (is (= :star        (cold-at 0.5)))     ;; above hydrogen-burning → stays a star
-      (is (= :brown-dwarf (cold-at 0.05)))    ;; below H, above desert → brown dwarf
-      (is (= :gas-giant   (cold-at 0.005)))   ;; below desert, above opacity → gas giant
-      (is (= :planetesimal (cold-at 0.0005))) ;; below opacity → stripped core
+      ;; once fusion has ceased, a star collapses to a degenerate remnant
+      (is (= :star           (cold-at 0.5)))      ;; above hydrogen-burning → stays a star
+      (is (= :stellar-remnant (cold-at 0.05)))     ;; below H-burning → remnant
+      (is (= :stellar-remnant (cold-at 0.005)))    ;; still below H-burning → remnant
+      (is (= :stellar-remnant (cold-at 0.0005)))   ;; far below H-burning → remnant
       (is (not-any? #{:nebula} (map cold-at [0.5 0.05 0.005 0.0005]))
           "a collapsed body never re-dissolves to gas"))))
+
+(deftest test-protostar-demotes-to-remnant
+  (testing "A protostar stripped below the deuterium-burning limit becomes a stellar remnant, never :nebula"
+    (let [region {:matter-state :protostar :mass (* 0.5 law/deuterium-burning-mass)
+                  :radius 1.0e9 :temperature 1.0e5 :pressure 1.0e13
+                  :composition {:H 0.7 :He 0.28 :metals 0.02}}
+          gas-mass 1.0e28]
+      (is (= :stellar-remnant (classifier/classify-next-state region gas-mass))
+          "protostar below D-burning mass becomes remnant")
+      (is (not= :nebula (classifier/classify-next-state region gas-mass))
+          "protostar never re-dissolves to gas"))))
+
+(deftest test-brown-dwarf-demotes-to-remnant
+  (testing "A brown dwarf stripped below the deuterium-burning limit becomes a stellar remnant, never :nebula"
+    (let [region {:matter-state :brown-dwarf :mass (* 0.5 law/deuterium-burning-mass)
+                  :radius 1.0e9 :temperature 1.0e5 :pressure 1.0e13
+                  :composition {:H 0.7 :He 0.28 :metals 0.02}}
+          gas-mass 1.0e28]
+      (is (= :stellar-remnant (classifier/classify-next-state region gas-mass))
+          "brown dwarf below D-burning mass becomes remnant")
+      (is (not= :nebula (classifier/classify-next-state region gas-mass))
+          "brown dwarf never re-dissolves to gas"))))
+
+(deftest test-remnant-stays-terminal
+  (testing "A stellar remnant is terminal: it does not demote further or re-ignite"
+    (let [region {:matter-state :stellar-remnant :mass (* 0.5 law/deuterium-burning-mass)
+                  :radius 1.0e8 :temperature 1.0e4 :pressure 1.0e10
+                  :composition {:H 0.7 :He 0.28 :metals 0.02}}
+          gas-mass 1.0e28]
+      (is (= :stellar-remnant (classifier/classify-next-state region gas-mass))))))
+
+(deftest test-total-ablation-despawns-bound-body
+  (testing "A bound body whose mass drops to the ablation floor is marked consumed-ablation and despawned"
+    (let [base (ecs/empty-world)
+          [w1 eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass (* 1.5 law/ablation-floor)
+                                             :radius 1.0e9
+                                             :matter-state :star
+                                             :composition {:H 0.7 :He 0.28 :metals 0.02}})
+          w2 (ecs/put-component w1 eid c/mass-flux-flare (- (* 2.0 law/ablation-floor)))
+          ws (integrator/mass-ws w2)
+          w3 (tick/apply-write-set w2 ws)]
+      (is (contains? (ws c/consumed-ablation) eid)
+          "ablated bound body is marked consumed-ablation")
+      (is (contains? (ws c/mass) eid)
+          "ablated body's mass is rewritten")
+      (is (<= (get-in ws [c/mass eid]) law/ablation-floor)
+          "ablated body's mass is at or below the ablation floor")
+      (is (not= :nebula (get-in w3 [:components c/matter-state eid]))
+          "bound body never became :nebula before despawn")
+      (let [w4 (genesis/materialize-lifecycle w3)]
+        (is (empty? (ecs/entities-with w4 c/mass))
+            "ablated body is despawned")))))
+
+(deftest test-remnant-cools-not-contracts
+  (testing "A stellar remnant cools radiatively; its temperature does not rise from contraction"
+    (let [base (ecs/empty-world)
+          [w1 eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass (* 0.5 law/deuterium-burning-mass)
+                                             :radius 1.0e8
+                                             :matter-state :stellar-remnant
+                                             :temperature 1000.0
+                                             :density 1.0e6
+                                             :composition {:H 0.7 :He 0.28 :metals 0.02}})
+          ws-short ((:run (structure/temperature-system 1.0e12)) w1)
+          t1 (get-in ws-short [c/temperature eid])
+          ws-long  ((:run (structure/temperature-system 1.0e13)) w1)
+          t2 (get-in ws-long [c/temperature eid])]
+      (is (< t1 1000.0) "remnant cools over short dt")
+      (is (< t2 t1)     "remnant temperature falls further over longer dt")
+      (is (>= t2 3.0)   "remnant stays above the CMB floor"))))
+
+(deftest test-remnant-does-not-wind
+  (testing "A stellar remnant does not emit a stellar wind profile"
+    (let [base (ecs/empty-world)
+          [w1 eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass (* 0.5 law/deuterium-burning-mass)
+                                             :radius 1.0e8
+                                             :matter-state :stellar-remnant
+                                             :temperature 1.0e4
+                                             :composition {:H 0.7 :He 0.28 :metals 0.02}})
+          ws ((:run (wind/stellar-wind-system)) w1)]
+      (is (nil? (get-in ws [c/wind-profile eid]))
+          "remnant receives no wind profile"))))
 
 (deftest test-stellar-wind-emits-profile
   (testing "stellar-wind-system emits a c/wind-profile for a luminous star; no

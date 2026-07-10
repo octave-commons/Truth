@@ -8,6 +8,7 @@
    [domain.chemistry :as chemistry]
    [domain.stellar.thermodynamics :as thermo]
    [domain.integrator.base :as base]
+   [law.stellar :as law]
    [shape.spatial :as sp]))
 
 (defn- depleted-donors
@@ -77,6 +78,23 @@
           (let [inv (/ 1.0 total-m)]
             (reduce-kv (fn [m k v] (assoc m k (* v inv))) {} comp-acc)))))))
 
+(defn- ablated-bodies
+  "Return {eid true} for bound bodies whose new mass would fall at or below
+   `law/ablation-floor`. Bound states are every resolved matter-state except
+   :nebula. A bound core never re-dissolves to gas; at total ablation it is
+   despawned and its conserved mass lives in shed parcels / the companion."
+  [world floor cell]
+  (let [floor (double (or floor 0.0))]
+    (reduce-kv (fn [acc eid m1]
+                 (let [st (ecs/get-component world eid c/matter-state)]
+                   (if (and (not= :nebula st)
+                            (some? st)
+                            (<= (double m1) floor))
+                     (assoc acc eid true)
+                     acc)))
+               {}
+               cell)))
+
 (defn mass-ws
   "Mass. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass) — the per-source mass
    fluxes (stellar wind/flare loss, XUV escape, disk→star viscous transfer) and
@@ -108,10 +126,11 @@
                                       [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-a))])))))
                         (keys absorbs))
         depleted  (depleted-donors world 0.0)
+        ablated   (ablated-bodies world law/ablation-floor (merge cell extra))
         mass-write   (if (empty? (merge cell extra)) {} {c/mass (merge cell extra)})]
-    (if (empty? depleted)
-      mass-write
-      (assoc mass-write c/consumed-transfer depleted))))
+    (cond-> mass-write
+      (seq depleted) (assoc c/consumed-transfer depleted)
+      (seq ablated)  (assoc c/consumed-ablation ablated))))
 
 (defn ionization-ws
   "Ionization-fraction. The integrator applies wind-heating ionization increments

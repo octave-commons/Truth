@@ -257,7 +257,7 @@
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
   [c/consumed-merge c/consumed-accrete c/consumed-escape
-   c/consumed-transfer])
+   c/consumed-transfer c/consumed-ablation])
 
 (def ^:private spawn-request-components
   "Lifecycle spawn requests; each is {eid [seed-spec ...]} materialized into new

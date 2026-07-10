@@ -1,16 +1,12 @@
 ((pi "0.63.2")
   (repo "/home/err/spaces/Truth")
   (branch "main")
-  (head "877b015479a9ee418f7ede4c353686fa3e45e3f8")
-  (tag "Π-20260710105551")
-  (ts "2026-07-10T10:55:51Z")
+  (head "2a5170cb4fc8844f0c3f706e84490420bc176691")
+  (tag "Π-20260710115900")
+  (ts "2026-07-10T11:59:00Z")
   (host "spaces/Truth")
-  (origin "/home/err/spaces/Truth/.eta-mu/actors/fork-tax-tender/inbox/2026-07-10T10-55-05-4f881e50-1e11-460b-9c42-af9b9cbbd28c.md")
+  (origin "/home/err/spaces/Truth/.eta-mu/actors/fork-tax-tender/inbox/2026-07-10T11-56-05-f86f5e27-206b-419e-9d37-3c24d5ef568d.md")
   (dod "pay fork tax on significant changes")
-  (manifest [
-    ".ημ/Π_LAST.md"
-    ".ημ/Π_MANIFEST.sexp"
-    ".ημ/Π_STATE.sexp"
-  ])
-  (tests "verification skipped: no targeted tests")
-  (note "fork-tax-tender detected significant working-tree changes in the Gates of Truth repository and paid the fork tax. Tag Π-20260710105551. Scope: 45 kanban task-card updates (static-analysis cluster triage close-outs, status/frontmatter updates, new ecology-m5 and perf-tick residual cards), new PROCESS.md project process document, AGENTS.md and CLAUDE.md skill-list updates, session-mycology ledger/review/spore updates, and appended receipts.edn."))
+  (manifest [".ημ/Π_LAST.md" ".ημ/Π_MANIFEST.sexp" ".ημ/Π_STATE.sexp" "kanban/tasks/core-accretion-physics-spec.md" "kanban/tasks/ecology-m5-phase4-handoff-event.md" "kanban/tasks/perf-tick-residual-gap-to-60fps.md" "kanban/tasks/phase-0-narrator-mood-ambience.md" "kanban/tasks/phase-0-narrator-presence-spec.md" "kanban/tasks/phase-0-player-focus-dual-representation-spec.md" "kanban/tasks/phase-0-player-focus-promotion-demotion.md" "kanban/tasks/phase-0-renderer-asset-organization-spec.md" "kanban/tasks/phase-0-renderer-asset-phases-5-6.md" "kanban/tasks/phase-0-stellar-remnant-ladder.md" "kanban/tasks/phase-0-stellar-winds-mass-transfer-remnants-technical-spec.md" "kanban/tasks/static-analysis-splint-idiom-cleanup.md" "receipts.edn" "src/domain/ecs/components.clj" "src/domain/ecs/registry.clj" "src/domain/genesis/bootstrap.clj" "src/domain/integrator/core.clj" "src/domain/stellar/classifier.clj" "src/domain/stellar/geometry.clj" "src/domain/stellar/temperature.clj" "src/law/stellar.clj" "src/law/stellar/orbital.clj" "src/law/stellar/orbital/constants.clj" "src/law/stellar/schema.clj" "test/domain/stellar_test.clj"])
+  (tests "clojure -M:test:test-runner -g architecture -g domain -g law: 541 tests, 5102 assertions, 0 failures, 0 errors; clj-kondo --lint changed files: 0 errors, 0 warnings")
+  (note "fork-tax-tender detected significant working-tree changes in the Gates of Truth repository and paid the fork tax. Scope: kanban task updates, ECS components/registry tuning, genesis bootstrap, integrator core, stellar classifier/geometry/temperature, law/stellar orbital constants/schema, and test/domain/stellar_test updates. Regenerated .ημ handoff artifacts."))

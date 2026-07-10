@@ -189,4 +189,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — only tick-cadence LOD (domain.lod) realized; promotion/demotion + conservation invariants entirely open — break into per-phase cards. Needs breakdown into residual ≤5pt cards before re-entering the queue.
 
 Triage 2026-07-10: tick-cadence LOD exists; promotion/demotion and conservation invariants are open. Moved to breakdown to split per-phase residual cards.
+
+Triage 2026-07-10: residual promotion/demotion work split into child card phase-0-player-focus-promotion-demotion (ready, P1, 5pt). Parent stays in breakdown as umbrella.
 ---

@@ -82,7 +82,7 @@
     (and (#{:protostar :star :condensed-core} state) (:mass region) (:radius region))
     (thermo/virial-temperature (:mass region) (:radius region))
 
-    (#{:planetesimal :gas-giant :brown-dwarf :planet} state)
+    (#{:planetesimal :gas-giant :brown-dwarf :planet :stellar-remnant} state)
     (let [star-heat (radiative-heat region star-lums star-poss star-bands dt)
           t (double (or (:temperature region) 3.0))
           drp (thermo/radiative-cooling-delta region dt)]
@@ -101,7 +101,8 @@
                          (Kelvin–Helmholtz) heating that RISES as Structure
                          contracts the radius, carrying the core to ignition. A
                          pure derivation from mass + radius (no frozen reference).
-      :planetesimal / :gas-giant / :brown-dwarf / :planet   radiative: cool toward the CMB, warmed by nearby stars.
+      :planetesimal / :gas-giant / :brown-dwarf / :planet  radiative: cool toward the CMB, warmed by nearby stars.
+     :stellar-remnant                                    same radiative cooling as planets/debris — a remnant cools, never re-heats by contraction.
 
      :nebula             skipped — diffuse gas stays at its seeded background.
    Replaces collapse's compression heating and the legacy thermal-system."

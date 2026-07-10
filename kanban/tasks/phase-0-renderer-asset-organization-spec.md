@@ -240,4 +240,6 @@ Final verification:
 Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — Phases 1-4 done (single-renderer split, shader/mesh/hud/volume, schemas); only asset-cache/passes/material Phases 5-6 remain — split residual card. Needs breakdown into residual ≤5pt cards before re-entering the queue.
 
 Triage 2026-07-10: phases 1-4 done; asset-cache/passes/material remain. Moved to breakdown to split a residual ≤5pt card for phases 5-6.
+
+Triage 2026-07-10: residual Phases 5-6 work split into child card phase-0-renderer-asset-phases-5-6 (ready, P2, 5pt). Parent stays in breakdown as umbrella.
 ---

@@ -130,7 +130,7 @@
               c/absorb-merge c/absorb-accrete c/wind-heating
               c/lod-tick-phase}
     :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
-              c/angular-momentum c/spin c/consumed-transfer}}
+              c/angular-momentum c/spin c/consumed-transfer c/consumed-ablation}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
    ;; tick-world). Sole writer of accel.observer; the integrator sums it.

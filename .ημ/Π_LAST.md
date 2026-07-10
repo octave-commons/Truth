@@ -1,26 +1,28 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710105551`
-- **Timestamp:** 2026-07-10T10:55:51Z
+- **Π tag:** `Π-20260710115900`
+- **Timestamp:** 2026-07-10T11:59:00Z
 - **Branch:** `main`
-- **Parent head:** `877b015479a9ee418f7ede4c353686fa3e45e3f8`
+- **Parent head:** `2a5170cb4fc8844f0c3f706e84490420bc176691`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- **45 kanban task cards** updated in `kanban/tasks/` — frontmatter status and label updates from the static-analysis cluster triage and close-out cycle, plus new ecology-m5 children and perf-tick residual gap cards (cards moved among `todo`, `accepted`, `in_progress`, `in_review`, `done`, and `rejected`).
-- **`PROCESS.md`** — new project process document added, documenting the Research→Design→Task grounding discipline and Definition-of-Ready/Definition-of-Done gates.
-- **`AGENTS.md`** and **`CLAUDE.md`** — updated skill lists (e.g., `whitespace-tolerant-require-audits` promotion).
-- **`.ημ/session-mycology/ledger.md`** — updated with the latest spore review / ledger entry.
-- **`.ημ/session-mycology/review-receipts.edn`** — updated with the latest spore review decisions.
-- **`.ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md`** — spore status updated.
-- **`receipts.edn`** — appended with the ready-board triage, static-analysis cluster triage, and the fork-tax entry from the prior snapshot.
+- **8 kanban task cards** updated in `kanban/tasks/` — frontmatter status and label updates across accretion physics, ecology-m5, perf-tick residual, narrator presence, player focus dual representation, renderer asset organization, stellar winds/mass-transfer/remnants, and static-analysis splint idiom cleanup.
+- **4 new kanban task cards** added in `kanban/tasks/` — narrator mood/ambience, player focus promotion/demotion, renderer asset phases 5-6, and stellar remnant ladder.
+- **`src/domain/ecs/components.clj`** and **`src/domain/ecs/registry.clj`** — ECS component/registry adjustments.
+- **`src/domain/genesis/bootstrap.clj`** — genesis bootstrap tuning.
+- **`src/domain/integrator/core.clj`** — integrator core updates (25 insertions).
+- **`src/domain/stellar/classifier.clj`**, **`src/domain/stellar/geometry.clj`**, **`src/domain/stellar/temperature.clj`** — stellar sub-module refactor and tuning.
+- **`src/law/stellar.clj`**, **`src/law/stellar/orbital.clj`**, **`src/law/stellar/orbital/constants.clj`**, **`src/law/stellar/schema.clj`** — law/stellar orbital constants and schema additions.
+- **`test/domain/stellar_test.clj`** — new stellar tests (98 insertions).
+- **`receipts.edn`** — appended with the prior fork-tax no-op/paid entries and this snapshot's receipt.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
-- No source code or spec files changed in this snapshot; the kanban and process updates are process bookkeeping only.
-- `verification skipped: no targeted tests` — no code/spec changes to verify.
+- `clojure -M:test:test-runner -g architecture -g domain -g law` → 541 tests, 5102 assertions, 0 failures, 0 errors.
+- `clj-kondo --lint` on the changed Clojure files → 0 errors, 0 warnings.
 
 ## Concurrent / Ephemeral
 

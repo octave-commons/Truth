@@ -51,7 +51,7 @@
              (nil? (ecs/get-component w eid c/accretion-radius)))
         (ecs/put-component w eid c/accretion-radius
                            (* 10.0 (double (or old-gas-radius
-                                                (ecs/get-component w eid c/radius) 0.0))))
+                                               (ecs/get-component w eid c/radius) 0.0))))
 
         (and (= old :nebula)
              (not= nw :nebula)
@@ -105,20 +105,17 @@
 
 (defn- star-next-state
   "Hysteresis: a star stays a star while fusion is self-sustaining or its mass
-   remains above the H-burning limit; otherwise it degrades down the ladder."
+   remains above the H-burning limit; otherwise it collapses to a degenerate
+   :stellar-remnant — never back to :nebula."
   [m region]
-  ;; Intentional: hysteresis keeps a star classified while fusion-sustaining OR
-  ;; above the H-burning mass limit; the two identical results are the desired
-  ;; redundant guard, not a logic error.
-  #_{:splint/disable [lint/identical-branches]}
   (cond
-    (law/fusion-sustaining? region)     :star
-    (>= m law/hydrogen-burning-mass)  :star
-    (>= m law/deuterium-burning-mass) :brown-dwarf
-    :else                             (law/substellar-mass-class m)))
+    (law/fusion-sustaining? region)    :star
+    (>= m law/hydrogen-burning-mass) :star
+    :else                              :stellar-remnant))
 
 (defn- protostar-next-state
-  "Protostar: ignite, stall as a brown dwarf, or fall down the substellar ladder."
+  "Protostar: ignite, stall as a brown dwarf, or collapse to a remnant if
+   stripped below the deuterium-burning limit. Never returns to :nebula."
   [{:keys [mass radius temperature] :as region}]
   (let [m (double (or mass 0.0))]
     (cond
@@ -132,9 +129,18 @@
       :brown-dwarf
 
       (< m law/deuterium-burning-mass)
-      (law/substellar-mass-class m)
+      :stellar-remnant
 
       :else :protostar)))
+
+(defn- brown-dwarf-next-state
+  "Brown dwarf: climb to protostar if massive enough, or collapse to a remnant
+   if stripped below the deuterium-burning limit. Never returns to :nebula."
+  [m]
+  (cond
+    (>= m law/hydrogen-burning-mass) :protostar
+    (>= m law/deuterium-burning-mass) :brown-dwarf
+    :else                              :stellar-remnant))
 
 (defn- condense-next-state
   "Diffuse gas condenses to a :condensed-core when Jeans-unstable and dense
@@ -161,9 +167,9 @@
     :else                             :condensed-core))
 
 (def ^:private substellar-state-map
-  "States that climb the substellar mass ladder share the same transition fn."
-  {:brown-dwarf substellar-up-ladder
-   :gas-giant   substellar-up-ladder
+  "States that climb the substellar mass ladder share the same transition fn.
+   :brown-dwarf is handled separately because it can collapse to :stellar-remnant."
+  {:gas-giant   substellar-up-ladder
    :planetesimal substellar-up-ladder
    :condensed-core condensed-core-up-ladder})
 
@@ -179,7 +185,8 @@
       :brown-dwarf --accreted to ≥ H-burning-->                :protostar
       :protostar  --T≥1e7 & M≥0.08 M⊙ & H-->                  :star
                   --contraction stalled & 0.013–0.08 M⊙-->    :brown-dwarf
-      :star / :brown-dwarf / :gas-giant / :planetesimal       terminal or down-ladder
+      :star / :brown-dwarf / :gas-giant / :planetesimal       terminal, down-ladder, or :stellar-remnant
+      :stellar-remnant                                         terminal (degenerate remnant)
       :planet                                                 owned by the disk
                                                                sub-grid (beat 6)
 
@@ -201,9 +208,11 @@
    (let [m (double (or mass 0.0))]
      (or (when-let [f (substellar-state-map matter-state)] (f m))
          (case matter-state
-           :star        (star-next-state m region)
-           :protostar   (protostar-next-state region)
-           :planet      :planet
+           :star             (star-next-state m region)
+           :protostar        (protostar-next-state region)
+           :brown-dwarf      (brown-dwarf-next-state m)
+           :stellar-remnant  :stellar-remnant
+           :planet           :planet
            (condense-next-state region gas-particle-mass sink-zones))))))
 
 ;; --- Feeding-zone constants -------------------------------------------------

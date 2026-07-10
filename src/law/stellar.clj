@@ -46,6 +46,8 @@
 (def ^:const planet-mass-threshold orbital/planet-mass-threshold)   ;; kg — debris → planet-scale
 (def ^:const star-mass-threshold   orbital/star-mass-threshold) ;; kg — planet → star-forming core (dominant)
 
+(def ^:const ablation-floor orbital/ablation-floor) ;; kg — bound body despawn threshold
+
 (def ^:const melt-temperature orbital/melt-temperature)
 (def ^:const shatter-malleability-max orbital/shatter-malleability-max)
 (def ^:const shatter-dv-threshold orbital/shatter-dv-threshold)
@@ -62,6 +64,7 @@
 (def virial-speed orbital/virial-speed)
 (def plummer-acceleration orbital/plummer-acceleration)
 (def main-sequence-radius orbital/main-sequence-radius)
+(def white-dwarf-radius orbital/white-dwarf-radius)
 (def mass-class orbital/mass-class)
 (def malleability orbital/malleability)
 (def hydrostatic-equilibrium? orbital/hydrostatic-equilibrium?)

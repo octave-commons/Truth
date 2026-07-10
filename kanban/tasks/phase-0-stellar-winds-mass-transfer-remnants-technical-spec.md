@@ -282,4 +282,6 @@ Touch points (mirror how `:brown-dwarf` is wired):
 Triage 2026-07-10 (ready→accepted): PARTIAL: winds/ablation/flares + BHL/Roche mass-transfer shipped+wired+tested; UNBUILT = §2/§4/§5 remnant ladder (:stellar-remnant state, down-ladder mass-loss demotion, irreversibility invariant). Split a focused remnant-ladder residual card.
 
 Triage 2026-07-10: phases A/B shipped; only remnant-ladder (stellar-remnant state, down-ladder demotion) remains. Moved to breakdown to split a focused residual card.
+
+Triage 2026-07-10: residual remnant-ladder work split into child card  (ready, P1, 5pt). Parent stays in breakdown as umbrella until child is done.
 ---

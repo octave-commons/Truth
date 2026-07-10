@@ -1,7 +1,7 @@
 ---
 uuid: "ecology-m5-phase4-handoff-event"
 title: "M5 Handoff Phase 4: planet-candidate record + handoff event"
-status: "breakdown"
+status: "blocked"
 priority: "P2"
 labels: ["phase0", "handoff", "epic-ecology-water-gate-snowline"]
 created_at: "2026-07-10T00:00:00Z"
@@ -39,4 +39,6 @@ Assemble the canonical `:planet-candidate` output record and emit it as a
 
 ---
 Triage 2026-07-10: scoped 5pt but depends on phase1-3. Moved to breakdown until dependencies are in progress/done.
+
+Triage 2026-07-10: sized 5pt but depends on ecology-m5-phase1/2/3. Moved to blocked until dependencies advance.
 ---

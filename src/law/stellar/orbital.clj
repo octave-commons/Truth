@@ -25,6 +25,7 @@
 (def ^:const deuterium-burning-mass constants/deuterium-burning-mass)
 (def ^:const brown-dwarf-desert-mass constants/brown-dwarf-desert-mass)
 (def ^:const hydrogen-burning-mass constants/hydrogen-burning-mass)
+(def ^:const ablation-floor constants/ablation-floor)
 
 ;; Feeding-zone and accretion thresholds
 (def ^:const feeding-zone-hill-factor constants/feeding-zone-hill-factor)
@@ -41,6 +42,7 @@
 (def substellar-mass-class constants/substellar-mass-class)
 (def ideal-gas-pressure constants/ideal-gas-pressure)
 (def main-sequence-radius constants/main-sequence-radius)
+(def white-dwarf-radius constants/white-dwarf-radius)
 (def mass-class constants/mass-class)
 (def malleability constants/malleability)
 (def hydrostatic-equilibrium? constants/hydrostatic-equilibrium?)

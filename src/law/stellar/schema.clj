@@ -13,7 +13,7 @@
    :temperature pos?
    :density     pos?
    :composition map? ;; {:H 0.75 :He 0.24 :metals 0.01}
-   :state       keyword? ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :protostar :star :planet
+   :state       keyword? ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :protostar :star :planet :stellar-remnant
    :luminosity  number?
    :pressure    number?})
 

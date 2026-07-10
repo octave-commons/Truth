@@ -32,7 +32,7 @@
 (def composition  :component/composition)   ;; {:H 0.7346 :He 0.2485 ...} mass fractions
 (def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map}
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
-(def matter-state :component/matter-state)  ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :planet :protostar :star
+(def matter-state :component/matter-state)  ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :planet :protostar :star :stellar-remnant
 
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
@@ -147,6 +147,7 @@
 (def consumed-accrete :component/consumed.accrete) ;; absorbed gas parcel, reaped (sink)
 (def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
 (def consumed-transfer :component/consumed.transfer) ;; donor drained below floor by gradual mass transfer, reaped (integrator)
+(def consumed-ablation :component/consumed.ablation) ;; bound body ablated below mass floor, reaped (integrator)
 
 ;; Condensation seeding: one-shot marker per gas parcel so it does not seed
 ;; repeatedly, and the dedicated mass-flux influence the integrator folds.
