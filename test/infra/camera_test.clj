@@ -5,15 +5,15 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [infra.camera :as cam]
    [shape.spatial :as sp]))
 
 (deftest test-update-camera-track-largest-cluster
   (testing "Camera target moves toward the largest mass cluster"
-    (let [[w _] (stellar/spawn-clump (ecs/empty-world)
-                                     {:position [3e15 0.0 0.0] :mass 2e30 :radius 1e14
-                                      :matter-state :star})
+    (let [[w _] (seeder/spawn-clump (ecs/empty-world)
+                                    {:position [3e15 0.0 0.0] :mass 2e30 :radius 1e14
+                                     :matter-state :star})
           cam0 (cam/make-camera)
           cam1 (cam/update-camera-for-world cam0 w (assoc (cam/default-camera-settings)
                                                           :mode :track-largest-cluster))]
@@ -38,11 +38,11 @@
 
 (deftest test-follow-selection-tracks-exactly-when-close
   (testing "At planetary zoom the camera target snaps to and tracks the selected body"
-    (let [[w body-eid] (stellar/spawn-clump (ecs/empty-world)
-                                            {:position [1e15 0.0 0.0]
-                                             :mass 1e24
-                                             :radius 6e8
-                                             :matter-state :planet})
+    (let [[w body-eid] (seeder/spawn-clump (ecs/empty-world)
+                                           {:position [1e15 0.0 0.0]
+                                            :mass 1e24
+                                            :radius 6e8
+                                            :matter-state :planet})
           cam0 (assoc (cam/make-camera 10.0) :target [0.0 0.0 0.0])
           settings (assoc (cam/default-camera-settings)
                           :mode :follow-selection
@@ -57,11 +57,11 @@
 
 (deftest test-follow-selection-lerps-when-far
   (testing "Far from the selected body the camera still smoothly approaches"
-    (let [[w body-eid] (stellar/spawn-clump (ecs/empty-world)
-                                            {:position [1e18 0.0 0.0]
-                                             :mass 1e24
-                                             :radius 6e14
-                                             :matter-state :planet})
+    (let [[w body-eid] (seeder/spawn-clump (ecs/empty-world)
+                                           {:position [1e18 0.0 0.0]
+                                            :mass 1e24
+                                            :radius 6e14
+                                            :matter-state :planet})
           cam0 (assoc (cam/make-camera 2000.0) :target [0.0 0.0 0.0])
           settings (assoc (cam/default-camera-settings)
                           :mode :follow-selection

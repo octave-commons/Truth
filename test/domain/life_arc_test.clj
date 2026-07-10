@@ -9,14 +9,14 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.event :as event]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [law.ecology :as le]))
 
 (defn- world-with-planet
   "Minimal world with one habitable :planet entity. Returns [world eid]."
   []
   (let [w (-> (ecs/empty-world) (event/with-ledger))
-        [w eid] (stellar/spawn-clump
+        [w eid] (seeder/spawn-clump
                  w {:position [1.5e11 0.0 0.0] :velocity [0.0 0.0 0.0]
                     :mass 5.97e24 :radius 6.4e6 :temperature 300.0
                     :matter-state :planet

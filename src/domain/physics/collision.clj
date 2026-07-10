@@ -38,7 +38,7 @@
 
    Gas accretion onto a sink is a SEPARATE channel: `:nebula` parcels are not
    collidable (they resolve by Jeans condensation, or by falling into a sink's
-   accretion radius — see `stellar/sink-formation-system`). Keeping the two
+   accretion radius — see `domain.stellar.sink/sink-formation-system`). Keeping the two
    channels distinct is the standard sink-particle split: gas accretes via the
    gravitational capture radius; bound bodies merge only on contact."
   [world]

@@ -2,7 +2,8 @@
   "Tests for protoplanetary disk regime and restricted GI fragmentation."
   (:require
    [clojure.math :as math] [clojure.test :refer [deftest testing is]]
-   [domain.stellar :as stellar]
+   [domain.stellar.disc-evolution :as disc-evolution]
+   [domain.stellar.seeder :as seeder]
    [domain.stellar.structure :as structure]
    [domain.planet-formation :as pf]
    [domain.ecs.core :as ecs]
@@ -18,7 +19,7 @@
   (let [M law/solar-mass
         j (math/sqrt (* law/G M radius-m))
         disk-L [0.0 0.0 (* disk-mass j)]
-        [w eid] (stellar/spawn-clump
+        [w eid] (seeder/spawn-clump
                  (ecs/empty-world)
                  {:position [0.0 0.0 0.0]
                   :velocity [0.0 0.0 0.0]
@@ -78,7 +79,7 @@
                        :regime :fragmenting
                        :solid-surface-density 10.0
                        :snow-line 2.7e11})
-          ws (stellar/disk-evolution-system w)
+          ws (disc-evolution/disk-evolution-system w)
           spawns (get-in ws [:components c/spawn-request-disk star])
           spawn (first spawns)]
       (is (some? spawn))
@@ -97,7 +98,7 @@
                         :regime :gravito-turbulent
                         :solid-surface-density 10.0
                         :snow-line 2.7e11})
-          ws (stellar/disk-evolution-system w0)
+          ws (disc-evolution/disk-evolution-system w0)
           spawns (get-in ws [:components c/spawn-request-disk star])]
       (is (nil? spawns)))))
 
@@ -110,7 +111,7 @@
                        :regime :fragmenting
                        :solid-surface-density 10.0
                        :snow-line 2.7e11})
-          ws (stellar/disk-evolution-system w)
+          ws (disc-evolution/disk-evolution-system w)
           spawns (get-in ws [:components c/spawn-request-disk star])]
       (is (every? #(not= :planetesimal (:matter-state %)) spawns)))))
 
@@ -125,7 +126,7 @@
                        :snow-line 2.7e11})
           m0 (double (ecs/get-component w star c/disk-mass))
           L0 (sp/len (ecs/get-component w star c/disk-angular-mom))
-          ws (stellar/disk-evolution-system w)
+          ws (disc-evolution/disk-evolution-system w)
           disk-m1 (double (get-in ws [:components c/disk-mass star]))
           L1 (sp/len (get-in ws [:components c/disk-angular-mom star]))
           mass-flux (double (get-in ws [:components c/mass-flux-disk star] 0.0))
@@ -141,7 +142,7 @@
   (testing "disk-evolution always writes a scalar disk-regime for disk-holding stars"
     (let [disk-m (* 0.1 law/solar-mass)
           [w star] (star-with-disk disk-m 1.5e11)
-          ws (stellar/disk-evolution-system w)
+          ws (disc-evolution/disk-evolution-system w)
           regime (get-in ws [:components c/disk-regime star])]
       (is (contains? regime :toomre-q))
       (is (contains? regime :cooling-beta))
@@ -159,8 +160,8 @@
                            :regime :fragmenting
                            :solid-surface-density 10.0
                            :snow-line 2.7e11})
-                (ecs/put-component star c/disk-fragments-spawned stellar/max-gi-fragments-per-disk))
-          ws (stellar/disk-evolution-system w)
+                (ecs/put-component star c/disk-fragments-spawned disc-evolution/max-gi-fragments-per-disk))
+          ws (disc-evolution/disk-evolution-system w)
           spawns (get-in ws [:components c/spawn-request-disk star])]
       (is (nil? spawns)))))
 
@@ -177,6 +178,6 @@
                             :regime :fragmenting
                             :solid-surface-density 10.0
                             :snow-line 2.7e11}))
-          ws (stellar/disk-evolution-system w0)
+          ws (disc-evolution/disk-evolution-system w0)
           planet-spawns (get-in ws [:components c/spawn-request-planet star])]
       (is (nil? planet-spawns)))))

@@ -4,7 +4,8 @@
    parcels."
   (:require
    [clojure.test :refer [deftest testing is]]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
+   [domain.stellar.wind :as wind]
    [domain.stellar.structure :as structure]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
@@ -15,7 +16,7 @@
   "Return [world star-eid] with a luminous star."
   []
   (let [w (ecs/empty-world)
-        [w eid] (stellar/spawn-clump
+        [w eid] (seeder/spawn-clump
                  w {:position [0.0 0.0 0.0]
                     :velocity [0.0 0.0 0.0]
                     :mass (* 1.0 law/solar-mass)
@@ -32,7 +33,7 @@
               (assoc :genesis/wind-rate-scale 1.0e6
                      :sim/dt 1.0e13
                      :tick 0))
-        ws ((:run (stellar/stellar-wind-system)) w)
+        ws ((:run (wind/stellar-wind-system)) w)
         profile (get-in ws [c/wind-profile star])]
     (is (some? profile) "star emitted a wind profile")
     (is (pos? (:wind/dot-m profile)) "profile has positive mass-loss rate")
@@ -43,8 +44,8 @@
 (deftest wind-profile-mass-loss-rate-scales-with-luminosity
   (let [[w star] (world-with-star)
         w (assoc w :sim/dt 1.0e13 :tick 0)
-        low-k  ((:run (stellar/stellar-wind-system)) (assoc w :genesis/wind-rate-scale 1.0))
-        high-k ((:run (stellar/stellar-wind-system)) (assoc w :genesis/wind-rate-scale 10.0))
+        low-k  ((:run (wind/stellar-wind-system)) (assoc w :genesis/wind-rate-scale 1.0))
+        high-k ((:run (wind/stellar-wind-system)) (assoc w :genesis/wind-rate-scale 10.0))
         mdot-low  (:wind/dot-m (get-in low-k  [c/wind-profile star]))
         mdot-high (:wind/dot-m (get-in high-k [c/wind-profile star]))
         ratio     (/ mdot-high mdot-low)]
@@ -55,21 +56,21 @@
 (deftest wind-ablation-heats-nearby-parcel
   (let [[w star] (world-with-star)
         gas-pos [1.0e14 0.0 0.0]
-        [w gas] (stellar/spawn-clump w {:position gas-pos
-                                        :velocity [0.0 0.0 0.0]
-                                        :mass 1.0e28
-                                        :radius 6.0e13
-                                        :matter-state :nebula
-                                        :density 1.0e-16
-                                        :temperature 10.0})
+        [w gas] (seeder/spawn-clump w {:position gas-pos
+                                       :velocity [0.0 0.0 0.0]
+                                       :mass 1.0e28
+                                       :radius 6.0e13
+                                       :matter-state :nebula
+                                       :density 1.0e-16
+                                       :temperature 10.0})
         w (-> w
               (assoc :genesis/wind-rate-scale 1.0e6
                      :genesis/wind-interaction-factor 10.0
                      :genesis/gas-smoothing-radius 6.0e13
                      :sim/dt 1.0e13
                      :tick 0))
-        w1 (tick/apply-write-set w ((:run (stellar/stellar-wind-system)) w))
-        ws ((:run (stellar/wind-ablation-system)) w1)
+        w1 (tick/apply-write-set w ((:run (wind/stellar-wind-system)) w))
+        ws ((:run (wind/wind-ablation-system)) w1)
         heating (get-in ws [c/wind-heating gas])]
     (is (some? heating) "parcel received wind-heating influence")
     (is (pos? (:wind-heating/delta-t heating)) "heating is positive")
@@ -79,21 +80,21 @@
 (deftest wind-ablation-mass-conserved-in-ledger
   (let [[w star] (world-with-star)
         gas-pos [1.0e14 0.0 0.0]
-        [w gas] (stellar/spawn-clump w {:position gas-pos
-                                        :velocity [0.0 0.0 0.0]
-                                        :mass 1.0e28
-                                        :radius 6.0e13
-                                        :matter-state :nebula
-                                        :density 1.0e-16
-                                        :temperature 10.0})
+        [w gas] (seeder/spawn-clump w {:position gas-pos
+                                       :velocity [0.0 0.0 0.0]
+                                       :mass 1.0e28
+                                       :radius 6.0e13
+                                       :matter-state :nebula
+                                       :density 1.0e-16
+                                       :temperature 10.0})
         w (-> w
               (assoc :genesis/wind-rate-scale 1.0e6
                      :genesis/wind-interaction-factor 10.0
                      :genesis/gas-smoothing-radius 6.0e13
                      :sim/dt 1.0e13
                      :tick 0))
-        w1 (tick/apply-write-set w ((:run (stellar/stellar-wind-system)) w))
-        ws ((:run (stellar/wind-ablation-system)) w1)
+        w1 (tick/apply-write-set w ((:run (wind/stellar-wind-system)) w))
+        ws ((:run (wind/wind-ablation-system)) w1)
         dm-gas (:wind-heating/mass-loss (get-in ws [c/wind-heating gas]))
         dm-star (get-in ws [c/wind-mass-lost star])]
     (is (pos? dm-gas) "gas parcel lost mass")
@@ -104,13 +105,13 @@
   (testing "A parcel at or below the ablation floor loses no mass"
     (let [[w _star] (world-with-star)
           gas-pos [1.0e14 0.0 0.0]
-          [w gas] (stellar/spawn-clump w {:position gas-pos
-                                          :velocity [0.0 0.0 0.0]
-                                          :mass 1.0e28
-                                          :radius 6.0e13
-                                          :matter-state :nebula
-                                          :density 1.0e-16
-                                          :temperature 10.0})
+          [w gas] (seeder/spawn-clump w {:position gas-pos
+                                         :velocity [0.0 0.0 0.0]
+                                         :mass 1.0e28
+                                         :radius 6.0e13
+                                         :matter-state :nebula
+                                         :density 1.0e-16
+                                         :temperature 10.0})
           w (-> w
                 (assoc :genesis/wind-rate-scale 1.0e6
                        :genesis/wind-interaction-factor 10.0
@@ -118,8 +119,8 @@
                        :genesis/wind-ablation-min-mass 1.0e28
                        :sim/dt 1.0e13
                        :tick 0))
-          w1 (tick/apply-write-set w ((:run (stellar/stellar-wind-system)) w))
-          ws ((:run (stellar/wind-ablation-system)) w1)
+          w1 (tick/apply-write-set w ((:run (wind/stellar-wind-system)) w))
+          ws ((:run (wind/wind-ablation-system)) w1)
           heating (get-in ws [c/wind-heating gas])]
       (is (nil? heating) "parcel at floor is not ablated"))))
 
@@ -128,13 +129,13 @@
     (let [max-frac 0.05
           [w _star] (world-with-star)
           gas-pos [1.0e14 0.0 0.0]
-          [w gas] (stellar/spawn-clump w {:position gas-pos
-                                          :velocity [0.0 0.0 0.0]
-                                          :mass 1.0e28
-                                          :radius 6.0e13
-                                          :matter-state :nebula
-                                          :density 1.0e-16
-                                          :temperature 10.0})
+          [w gas] (seeder/spawn-clump w {:position gas-pos
+                                         :velocity [0.0 0.0 0.0]
+                                         :mass 1.0e28
+                                         :radius 6.0e13
+                                         :matter-state :nebula
+                                         :density 1.0e-16
+                                         :temperature 10.0})
           w (-> w
                 (assoc :genesis/wind-rate-scale 1.0e9
                        :genesis/wind-interaction-factor 10.0
@@ -144,8 +145,8 @@
                        :genesis/gas-particle-mass 4.0e27
                        :sim/dt 1.0e14
                        :tick 0))
-          w1 (tick/apply-write-set w ((:run (stellar/stellar-wind-system)) w))
-          ws ((:run (stellar/wind-ablation-system)) w1)
+          w1 (tick/apply-write-set w ((:run (wind/stellar-wind-system)) w))
+          ws ((:run (wind/wind-ablation-system)) w1)
           dm (:wind-heating/mass-loss (get-in ws [c/wind-heating gas]))
           expected (* max-frac 1.0e28)]
       (is (some? dm) "parcel received mass-loss")
@@ -155,7 +156,7 @@
 
 (deftest hot-nebula-cools-radiatively
   (let [w (ecs/empty-world)
-        [w eid] (stellar/spawn-clump
+        [w eid] (seeder/spawn-clump
                  w {:position [1.0e15 0.0 0.0]
                     :velocity [0.0 0.0 0.0]
                     :mass 1.0e24

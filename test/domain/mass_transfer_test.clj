@@ -6,7 +6,7 @@
    [domain.integrator :as integ]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [law.mass-transfer :as lmt]
    [law.stellar :as law]
    [domain.spatial.index]))
@@ -65,14 +65,14 @@
    nebula parcel inside its capture radius."
   []
   (let [w (ecs/empty-world)
-        [w sink] (stellar/spawn-clump
+        [w sink] (seeder/spawn-clump
                   w {:position [0.0 0.0 0.0]
                      :velocity [0.0 0.0 0.0]
                      :mass (* 0.1 law/solar-mass)
                      :radius 1.0e10
                      :matter-state :protostar
                      :temperature 1.0e3})
-        [w gas] (stellar/spawn-clump
+        [w gas] (seeder/spawn-clump
                  w {:position [1.0e11 0.0 0.0]
                     :velocity [-1.0e3 0.0 0.0]
                     :mass 1.0e28
@@ -115,13 +115,13 @@
 
 (deftest roche-lobe-system-emits-conservative-overflow
   (let [w (ecs/empty-world)
-        [w donor] (stellar/spawn-clump
+        [w donor] (seeder/spawn-clump
                    w {:position [0.0 0.0 0.0]
                       :velocity [0.0 0.0 0.0]
                       :mass (* 1.0 law/solar-mass)
                       :radius 2.0e9
                       :matter-state :star})
-        [w accr] (stellar/spawn-clump
+        [w accr] (seeder/spawn-clump
                   w {:position [3.0e9 0.0 0.0]
                      :velocity [0.0 1.0e4 0.0]
                      :mass (* 0.5 law/solar-mass)
@@ -148,7 +148,7 @@
 
 (deftest combined-system-emits-both-kinds
   (let [[w sink gas] (world-with-sink-and-gas)
-        [w accr] (stellar/spawn-clump
+        [w accr] (seeder/spawn-clump
                   w {:position [1.0e10 0.0 0.0]
                      :velocity [0.0 1.0e4 0.0]
                      :mass (* 0.5 law/solar-mass)
@@ -176,13 +176,13 @@
 
 (deftest integrator-applies-transfer-debit-and-credit
   (let [w (ecs/empty-world)
-        [w sink] (stellar/spawn-clump
+        [w sink] (seeder/spawn-clump
                   w {:position [0.0 0.0 0.0]
                      :velocity [0.0 0.0 0.0]
                      :mass 1.0e30
                      :radius 1.0e10
                      :matter-state :protostar})
-        [w donor] (stellar/spawn-clump
+        [w donor] (seeder/spawn-clump
                    w {:position [1.0e11 0.0 0.0]
                       :velocity [0.0 1.0e3 0.0]
                       :mass 1.0e28
@@ -201,13 +201,13 @@
 
 (deftest integrator-reaps-depleted-donors
   (let [w (ecs/empty-world)
-        [w sink] (stellar/spawn-clump
+        [w sink] (seeder/spawn-clump
                   w {:position [0.0 0.0 0.0]
                      :velocity [0.0 0.0 0.0]
                      :mass 1.0e30
                      :radius 1.0e10
                      :matter-state :protostar})
-        [w donor] (stellar/spawn-clump
+        [w donor] (seeder/spawn-clump
                    w {:position [1.0e11 0.0 0.0]
                       :velocity [0.0 1.0e3 0.0]
                       :mass 1.0e20

@@ -299,7 +299,7 @@
     :writes #{c/magnetosphere}}
 
    ;; :thermal retired — temperature is now owned by the integrator, which reuses
-   ;; stellar/temperature-system's virial/radiative derivation and layers the
+   ;; domain.stellar.temperature/temperature-system's virial/radiative derivation and layers the
    ;; heat.intervention ease on top (spec §7.4-7.5).
 
    ;; Nucleosynthesis emits comp.burn: the burned (H→He) composition for stars and

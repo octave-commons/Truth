@@ -1,12 +1,13 @@
 ---
 uuid: "ecology-water-gate-snowline"
 title: "Ecology water/habitability gate is trivially satisfied"
-status: "in_progress"
+status: "accepted"
 priority: "P2"
-labels: ["fix", "phase0", "chemistry", "handoff"]
+labels: ["fix", "phase0", "chemistry", "handoff", "epic"]
 created_at: "2026-07-06T16:21:51.000000000Z"
 source: "kanban/tasks/ecology-water-gate-snowline.md"
-category: "fix"
+category: "specs"
+estimate: 21
 ---
 
 # Phase 0 Habitability Handoff Spec
@@ -23,7 +24,24 @@ category: "fix"
 > `ready-to-narrow?`. Recommend resetting status to `todo`/`ready` or beginning
 > Phase 1 (material + thermal classification, §9 first deliverable).
 
-**Status:** ready for implementation
+> **Breakdown (2026-07-10, owner call → this card is now the epic):** The full
+> M5 handoff below is 13+ points, so per PROCESS.md it was split into ≤5-point
+> child slices. This card is retained as the **epic / canonical spec**; execute
+> the children. The trivially-satisfied water gate in this card's title is
+> resolved by **Phase 1** (a real material/thermal class replaces the
+> `habitability-score > 0.2` scalar gate).
+>
+> | Child slice | Est | Covers |
+> |---|---|---|
+> | `ecology-m5-phase1-planet-classification.md` | 5 | §3.1–§3.2 material class + thermal band (also fixes the trivial gate) |
+> | `ecology-m5-phase2-orbit-stability.md` | 3 | §3.3 analytic orbit-stability proxy |
+> | `ecology-m5-phase3-atmosphere-retention.md` | 3 | §4 atmosphere class + retained species |
+> | `ecology-m5-phase4-handoff-event.md` | 5 | §2, §5 `:planet-candidate` record + `:phase0-handoff` event |
+>
+> Child sum 16 → epic estimate 21 (next Fibonacci with coordination overhead).
+> Dependency order: Phase 1 → (2, 3 parallel) → Phase 4.
+
+**Status:** ready for implementation (epic — see Breakdown above)
 **Milestone:** M5 in `kanban/tasks/roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection.md`
 **Goal:** Define when Phase 0 ends and what information a surviving planet carries into Phase 1 (planetary cooling, atmosphere formation, prebiotic chemistry).
 **Principle:** Phase 0 does not generate life; it produces physically grounded planet candidates from which life can plausibly emerge. The handoff is a data contract, not a cinematic.
@@ -238,3 +256,7 @@ This record is appended to the ledger as a `:phase0-handoff` event.
 **Phase 1** (material + thermal classification) is the smallest step. It needs no orbit integration or atmosphere physics, just composition and two-body temperature. It makes the planet categories explicit and testable.
 
 Next action: approve this spec, then write schemas, failing tests, and Phase 1 implementation.
+
+---
+2026-07-10 → accepted (epic). Split into 4 ≤5pt child slices: ecology-m5-phase1-planet-classification, -phase2-orbit-stability, -phase3-atmosphere-retention, -phase4-handoff-event. Trivial water gate resolved by Phase 1. See Breakdown table in card.
+---

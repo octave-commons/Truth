@@ -52,7 +52,7 @@
 (def deuterium-depletion-system-spec
   "System: deuterium-depletion-system
    Phase: 0 (runs every tick for :protostar and :star entities)
-   Namespace: domain.stellar
+   Namespace: domain.stellar.fusion
 
    READS:  c/matter-state, c/composition, c/temperature
    WRITES: c/composition (:D key zeroed)
@@ -95,7 +95,7 @@
 (def stellar-sed-system-spec
   "System: stellar-sed-system
    Phase: 1 (runs every tick for :star entities)
-   Namespace: domain.stellar
+   Namespace: domain.stellar.fusion
 
    READS:  c/mass, c/radius, c/composition, c/matter-state, c/luminosity
    WRITES: c/sed-bands, c/luminosity (revised)
@@ -175,7 +175,7 @@
 (def stellar-wind-system-plasma-spec
   "System: stellar-wind-system
    Phase: 1 (fan-out emitter)
-   Namespace: domain.stellar
+   Namespace: domain.stellar.wind
 
    READS:  c/matter-state, c/mass, c/radius, c/luminosity,
            c/atmosphere-shells, c/sed-bands, c/b-field
@@ -250,7 +250,7 @@
 (def stellar-flare-xuv-spec
   "System: stellar-flare-system (Phase 1 revision)
    Phase: 1 (runs when flare triggers)
-   Namespace: domain.stellar
+   Namespace: domain.stellar.wind
 
    READS:  c/sed-bands, c/matter-state
    WRITES: c/sed-bands (transient XUV boost), c/event-source

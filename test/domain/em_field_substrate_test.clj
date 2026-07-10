@@ -8,7 +8,7 @@
    [domain.ecs.tick :as tick]
    [domain.em :as em]
    [domain.genesis :as genesis]
-   [domain.stellar :as stellar]
+   [domain.stellar.wind :as wind]
    [law.stellar :as law]
    [shape.spatial :as sp]))
 
@@ -46,7 +46,7 @@
   (let [[w star] (star-world)
         w        (assoc w :genesis/flare-period 1 :genesis/flare-mass-factor 1.0)
         sources  (em/field-sources w)
-        ws       ((:run (stellar/stellar-flare-system)) w)
+        ws       ((:run (wind/stellar-flare-system)) w)
         w'       (-> (tick/apply-write-set w ws)
                      (genesis/materialize-lifecycle))
         parcel   (launched-parcel w' star)]

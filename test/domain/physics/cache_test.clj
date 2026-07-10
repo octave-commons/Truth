@@ -7,7 +7,7 @@
    [domain.ecs.tick :as tick]
    [domain.physics.cache :as cache]
    [domain.spatial.index :as spatial]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [law.field :as lfield]))
 
 (defn- seeded-world
@@ -15,7 +15,7 @@
   ([n]
    (let [base (ecs/empty-world)]
      (reduce (fn [w i]
-               (first (stellar/spawn-clump
+               (first (seeder/spawn-clump
                        w {:position [(double (* i 1e14)) 0.0 0.0]
                           :velocity [0.0 0.0 0.0]
                           :mass 1e28

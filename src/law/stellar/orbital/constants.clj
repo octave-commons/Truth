@@ -92,7 +92,7 @@
    physics forbids: planets are SUB-GRID and are seeded by a core-accretion
    prescription on the disk's solid surface density (domain.planet-formation),
    never by a mass threshold on a gas parcel. Its only callers,
-   `domain.stellar/classify-system` and `jeans-collapse-system`, are NOT in the
+   `domain.stellar.classifier/classifier-system` and `jeans-collapse-system`, are NOT in the
    production pipeline (`genesis/physics-systems-parallel`); the live path is
    `classify-next-state` (density + Jeans + fusion gates, no :planet tier) plus
    the Part 4 seeder. Kept only for the historical tests that pin its behaviour;

@@ -5,7 +5,7 @@
   (:require
    [clojure.math :as math] [clojure.test :refer [deftest testing is]]
    [domain.hydro :as hydro]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.physics.cache :as pcache]
    [law.stellar :as ls]
    [law.field :as lfield]
@@ -97,20 +97,20 @@
 (deftest test-hydro-system-stores-acceleration
   (testing "hydro-system computes and stores c/hydro-accel on gas particles"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 1e14
-                                             :matter-state :nebula
-                                             :density 1e-18
-                                             :pressure 1e-13})
-          [w2 eb] (stellar/spawn-clump w1   {:position [2e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 1e14
-                                             :matter-state :nebula
-                                             :density 1e-18
-                                             :pressure 1e-13})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :density 1e-18
+                                            :pressure 1e-13})
+          [w2 eb] (seeder/spawn-clump w1   {:position [2e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :density 1e-18
+                                            :pressure 1e-13})
           w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
@@ -124,20 +124,20 @@
 (deftest test-hydro-system-pressure-gradient
   (testing "A pressure gradient produces acceleration pointing downhill"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 100.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 100.0})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0})
           w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
@@ -163,20 +163,20 @@
 (deftest test-hydro-accel-cleared-for-resolved-bodies
   (testing "When a clump stops being hydro-active its acceleration is removed"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 100.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 2e14
                                              :matter-state :nebula
                                              :density 1.0
-                                             :pressure 100.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 2e14
-                                              :matter-state :nebula
-                                              :density 1.0
-                                              :pressure 1.0})
+                                             :pressure 1.0})
           w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           _   (is (some? (ecs/get-component w3 ea c/hydro-accel))
@@ -263,18 +263,18 @@
 (deftest test-density-system-updates-nebula-density
   (testing "density-system overwrites seed density with SPH density for :nebula"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
           w2 (spatial/spatial-index w2)
           seed-rho (ecs/get-component w2 ea c/density)
           w3 ((hydro/density-system 1e10) w2)
@@ -287,12 +287,12 @@
 (deftest test-density-system-preserves-resolved-body-density
   (testing "density-system does not overwrite :planet or :protostar body-density"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e29
-                                             :radius 1e13
-                                             :matter-state :planet
-                                             :temperature 200.0})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e29
+                                            :radius 1e13
+                                            :matter-state :planet
+                                            :temperature 200.0})
           seed-rho (ecs/get-component w1 ea c/density)
           w1 (spatial/spatial-index w1)
           w2 ((hydro/density-system 1e10) w1)]
@@ -302,18 +302,18 @@
 (deftest test-density-pressure-consistent
   (testing "after density-system, pressure equals ideal-gas-law of new density"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
           w2 (spatial/spatial-index w2)
           w3 ((hydro/density-system 1e10) w2)
           rho (ecs/get-component w3 ea c/density)
@@ -325,18 +325,18 @@
 (deftest test-density-system-updates-radius
   (testing "density-system shrinks the radius of a crowded gas particle"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
           w2 (spatial/spatial-index w2)
           seed-r (ecs/get-component w2 ea c/radius)
           w3 ((hydro/density-system 1e10) w2)
@@ -346,24 +346,24 @@
 (deftest test-radius-density-consistent
   (testing "adaptive radius keeps r³ × ρ proportional to fixed mass"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
-          [w3 ec] (stellar/spawn-clump w2   {:position [3e15 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 1e14
-                                             :matter-state :nebula
-                                             :temperature 12.0})
+          [w3 ec] (seeder/spawn-clump w2   {:position [3e15 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
           w3 (spatial/spatial-index w3)
           w4 ((hydro/density-system 1e10) w3)
           r-crowded (ecs/get-component w4 ea c/radius)
@@ -380,18 +380,18 @@
 (deftest test-density-system-matches-with-cache
   (testing "density-system produces identical densities when using the shared cache"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
           w2 (spatial/spatial-index w2)
           rho-uncached (ecs/get-component ((hydro/density-system 1e10) w2) ea c/density)
           cached (pcache/build-neighbor-cache w2)
@@ -403,20 +403,20 @@
 (deftest test-hydro-system-matches-with-cache
   (testing "hydro-system produces identical pressure-gradient accelerations with cache"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 100.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 2e14
                                              :matter-state :nebula
                                              :density 1.0
-                                             :pressure 100.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 2e14
-                                              :matter-state :nebula
-                                              :density 1.0
-                                              :pressure 1.0})
+                                             :pressure 1.0})
           w2 (spatial/spatial-index w2)
           a-uncached (ecs/get-component ((hydro/hydro-system 1e10) w2) ea c/hydro-accel)
           cached (pcache/build-neighbor-cache w2)
@@ -460,12 +460,12 @@
   (testing "gas-samples projects exactly the hydro-active states, each valid per law.field"
     (let [base (ecs/empty-world)
           spawn (fn [w state pos]
-                  (stellar/spawn-clump w {:position pos
-                                          :velocity [0.0 0.0 0.0]
-                                          :mass 1e28
-                                          :radius 1e14
-                                          :matter-state state
-                                          :temperature 12.0}))
+                  (seeder/spawn-clump w {:position pos
+                                         :velocity [0.0 0.0 0.0]
+                                         :mass 1e28
+                                         :radius 1e14
+                                         :matter-state state
+                                         :temperature 12.0}))
           [w1 e-neb]  (spawn base :nebula [0.0 0.0 0.0])
           [w2 e-prot] (spawn w1 :protostar [3e14 0.0 0.0])
           [w3 _e-st]  (spawn w2 :star [6e14 0.0 0.0])
@@ -479,12 +479,12 @@
 (deftest test-gas-samples-reads-tick-components
   (testing "gas-samples is a pure projection of the components the tick maintains"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [1.0e14 2.0e14 3.0e14]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 1e14
-                                             :matter-state :nebula
-                                             :temperature 12.0})
+          [w1 ea] (seeder/spawn-clump base {:position [1.0e14 2.0e14 3.0e14]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
           rho0 2.5e-15
           r0   1.25e13
           ion0 0.35
@@ -503,34 +503,33 @@
 (deftest test-gas-samples-cache-independent
   (testing "gas-samples never touches the neighbor cache — identical with and without it"
     (let [base (ecs/empty-world)
-          [w1 _ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1 {:position [1e14 0.0 0.0]
-                                            :velocity [0.0 0.0 0.0]
-                                            :mass 1e28
-                                            :radius 1e14
-                                            :matter-state :nebula
-                                            :temperature 12.0})
+          [w1 _ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1 {:position [1e14 0.0 0.0]
+                                           :velocity [0.0 0.0 0.0]
+                                           :mass 1e28
+                                           :radius 1e14
+                                           :matter-state :nebula
+                                           :temperature 12.0})
           w2 (spatial/spatial-index w2)
-                    cached (pcache/build-neighbor-cache w2)]
+          cached (pcache/build-neighbor-cache w2)]
       (is (= (hydro/gas-samples cached)
              (hydro/gas-samples (pcache/strip-neighbor-cache cached)))
-          "samples are equal whether or not c/neighbor-cache exists")))
-)
+          "samples are equal whether or not c/neighbor-cache exists"))))
 
 (deftest test-gas-samples-agrees-with-gas-structure
   (testing "after the tick's density pass, gas-samples mirrors gas-structure's [eid ρ h/2]"
     (let [base (ecs/empty-world)
-          spawn (fn [w pos] (stellar/spawn-clump w {:position pos
-                                                    :velocity [0.0 0.0 0.0]
-                                                    :mass 1e28
-                                                    :radius 1e14
-                                                    :matter-state :nebula
-                                                    :temperature 12.0}))
+          spawn (fn [w pos] (seeder/spawn-clump w {:position pos
+                                                   :velocity [0.0 0.0 0.0]
+                                                   :mass 1e28
+                                                   :radius 1e14
+                                                   :matter-state :nebula
+                                                   :temperature 12.0}))
           [w1 _] (spawn base [0.0 0.0 0.0])
           [w2 _] (spawn w1 [1e14 0.0 0.0])
           [w3 _] (spawn w2 [0.0 1.5e14 0.0])
@@ -548,18 +547,18 @@
 (deftest test-gas-structure-matches-with-cache
   (testing "gas-structure returns identical [eid density radius] with cache"
     (let [base (ecs/empty-world)
-          [w1 _ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
+          [w1 _ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                             :velocity [0.0 0.0 0.0]
+                                             :mass 1e28
+                                             :radius 1e14
+                                             :matter-state :nebula
+                                             :temperature 12.0})
           w2 (spatial/spatial-index w2)
           uncached (hydro/gas-structure w2)
           cached (pcache/build-neighbor-cache w2)
@@ -571,20 +570,20 @@
 (deftest test-hydro-system-fallback-without-cache
   (testing "hydro-system runs correctly when c/neighbor-cache is absent"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 100.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 100.0})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0})
           w2 (spatial/spatial-index w2)
           w3 ((hydro/hydro-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
@@ -599,18 +598,18 @@
 (deftest test-density-system-fallback-without-cache
   (testing "density-system runs correctly when c/neighbor-cache is absent"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :temperature 12.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 1e14
                                              :matter-state :nebula
                                              :temperature 12.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 1e14
-                                              :matter-state :nebula
-                                              :temperature 12.0})
           w2 (spatial/spatial-index w2)
           seed-rho (ecs/get-component w2 ea c/density)
           w3 ((hydro/density-system 1e10) w2)
@@ -623,20 +622,20 @@
 (deftest test-hydro-includes-protostar-neighbors
   (testing "A :nebula parcel feels pressure from a nearby :protostar neighbor"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
+                                             :mass 2e29
+                                             :radius 2e13
+                                             :matter-state :protostar
                                              :density 1.0
-                                             :pressure 1.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 2e29
-                                              :radius 2e13
-                                              :matter-state :protostar
-                                              :density 1.0
-                                              :pressure 100.0})
+                                             :pressure 100.0})
           w2 (spatial/spatial-index w2)
           a-a (ecs/get-component ((hydro/hydro-system 1e10) w2) ea c/hydro-accel)]
       (is (some? a-a))

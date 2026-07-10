@@ -9,7 +9,7 @@
    [domain.orbital.system :as orbital]
    [domain.physics.cache :as cache]
    [domain.spatial.index :as spatial]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [law.field :as lfield]))
 
 (defn- seeded-world
@@ -18,7 +18,7 @@
   ([n]
    (let [base (ecs/empty-world)]
      (reduce (fn [w i]
-               (first (stellar/spawn-clump
+               (first (seeder/spawn-clump
                        w {:position [(double (* i 1e14)) 0.0 0.0]
                           :velocity [0.0 0.0 0.0]
                           :mass 1e28
@@ -77,7 +77,7 @@
 
 (deftest test-soa-missing-optional-components
   (testing "Entities missing density/pressure/b-field still produce a valid cache"
-    (let [w (first (stellar/spawn-clump
+    (let [w (first (seeder/spawn-clump
                     (ecs/empty-world)
                     {:position [1e14 0.0 0.0]
                      :velocity [0.0 1e3 0.0]
@@ -174,14 +174,14 @@
 
 (deftest test-soa-absorb-merge-parity
   (testing "SoA path blends absorb-merge packets identically to ECS path"
-    (let [eid-a (second (stellar/spawn-clump
+    (let [eid-a (second (seeder/spawn-clump
                          (ecs/empty-world)
                          {:position [0.0 0.0 0.0]
                           :velocity [0.0 0.0 0.0]
                           :mass 1e28
                           :radius 2e14
                           :matter-state :nebula}))
-          eid-b (second (stellar/spawn-clump
+          eid-b (second (seeder/spawn-clump
                          (ecs/empty-world)
                          {:position [1e13 0.0 0.0]
                           :velocity [1e3 0.0 0.0]

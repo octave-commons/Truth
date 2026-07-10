@@ -15,7 +15,9 @@
    [domain.ecs.core       :as ecs]
    [domain.ecs.tick       :as tick]
    [domain.ecs.components :as c]
-   [domain.stellar        :as stellar]
+   [domain.stellar.classifier :as classifier]
+   [domain.stellar.geometry   :as geometry]
+   [domain.stellar.temperature :as temperature]
    [domain.orbital.system :as orbital]
    [domain.hydro          :as hydro]
    [domain.em             :as em]
@@ -69,7 +71,7 @@
         t3 (System/nanoTime)
         summ (genesis/system-summary world3)
         t4 (System/nanoTime)
-        complexity (stellar/complexity-score summ)
+        complexity (classifier/complexity-score summ)
         phase (arc/detect-arc summ (:genesis/sim-time world3))
         t5 (System/nanoTime)
         stats (genesis/stats-of world3 summ)
@@ -218,7 +220,7 @@
       (quick-bench "  detect-phase + complexity-score (post-physics)"
                    (fn [] (let [s (genesis/system-summary w2)]
                             (arc/detect-arc s (:genesis/sim-time w2))
-                            (stellar/complexity-score s))))
+                            (classifier/complexity-score s))))
       (quick-bench "  pacing (post-physics)"
                    (fn [] (when-not (false? (:genesis/adaptive-pacing? w2))
                             (-> (pacing/pace w2)
@@ -227,7 +229,7 @@
                    (fn [] ((player/observer-system (:sim/dt w2)) w2)))
       (quick-bench "  non-physics tick overhead"
                    (fn [] (let [summ (genesis/system-summary w2)
-                                complexity (stellar/complexity-score summ)
+                                complexity (classifier/complexity-score summ)
                                 phase (arc/detect-arc summ (:genesis/sim-time w2))
                                 stats (genesis/stats-of w2 summ)
                                 pacing (when-not (false? (:genesis/adaptive-pacing? w2))
@@ -264,9 +266,9 @@
                  (fn [] (genesis/stats-of w500 (genesis/system-summary w500))))
 
     (quick-bench "  detect-phase + complexity-score"
-                 (fn [] (let [summ (genesis/system-summary w500)]
-                          (arc/detect-arc summ (:genesis/sim-time w500))
-                          (stellar/complexity-score summ))))
+                   (fn [] (let [summ (genesis/system-summary w500)]
+                            (arc/detect-arc summ (:genesis/sim-time w500))
+                            (classifier/complexity-score summ))))
 
     (quick-bench "  pacing"
                  (fn [] (when-not (false? (:genesis/adaptive-pacing? w500))
@@ -312,13 +314,13 @@
 
     ;; Stellar systems
     (quick-bench "  stellar structure-system"
-                 (fn [] ((:run (stellar/structure-system)) w500)))
+                 (fn [] ((:run (geometry/structure-system)) w500)))
 
     (quick-bench "  stellar classifier-system"
-                 (fn [] ((:run (stellar/classifier-system)) w500)))
+                 (fn [] ((:run (classifier/classifier-system)) w500)))
 
     (quick-bench "  stellar temperature-system"
-                 (fn [] ((:run (stellar/temperature-system (:sim/dt w500))) w500)))
+                 (fn [] ((:run (temperature/temperature-system (:sim/dt w500))) w500)))
 
     ;; Regime
     (quick-bench "  regime-system"

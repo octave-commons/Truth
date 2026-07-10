@@ -131,7 +131,7 @@
 (def disk-mass-flux :component/disk-mass-flux)  ;; kg accreted to the disk this tick (sink)
 (def disk-l-flux    :component/disk-l-flux)     ;; [Lx Ly Lz] accreted disk L this tick (sink)
 ;; Spawn requests, materialized at world-construction (spec §5). Each value is a
-;; vector of seed-spec maps (as `stellar/spawn-clump` expects); an optional
+;; vector of seed-spec maps (as `domain.stellar.seeder/spawn-clump` expects); an optional
 ;; :extra-components map on a spec is applied to the new entity after spawning.
 ;; One request component per spawning source so single-writer holds.
 (def spawn-request-flare     :component/spawn-request.flare)

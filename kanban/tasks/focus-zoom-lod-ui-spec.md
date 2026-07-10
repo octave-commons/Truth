@@ -1,14 +1,13 @@
 ---
 uuid: "focus-zoom-lod-ui-spec"
 title: "Focus, Zoom, LOD, and Life-Emergence UI"
-status: "done"
+status: done
 priority: "P1"
 labels: ["specs", "phase0", "player", "ui", "lod"]
 created_at: "2026-07-08T23:45:00.000000000Z"
 source: "kanban/tasks/focus-zoom-lod-ui-spec.md"
 category: "specs"
 ---
-
 # Focus, Zoom, LOD, and Life-Emergence UI Spec
 
 **Status:** done (2026-07-10)  
@@ -234,3 +233,61 @@ These follow the canonical dual-representation spec and are left for a subsequen
 2. Implement life-emergence location UI and inspector ecology stats.
 3. Implement LOD tick-phase scheduling and integrator filtering.
 4. Run architecture-test and full suite; benchmark if LOD throttling is enabled.
+
+***
+
+## Review — 2026-07-10 (independent reviewer)
+
+**Verdict:** READY-FOR-DONE
+
+Deliverables verified against code (file:line):
+
+- **§5 LOD component & single-writer:**
+  - `c/lod-tick-phase` defined at `src/domain/ecs/components.clj:174`.
+  - `domain.lod` is the SOLE writer of both `c/lod-level` and `c/lod-tick-phase`
+    (docstring `src/domain/lod.clj:48`; writes at `src/domain/lod.clj:77-78`,
+    guarded by a level-change check so no write when level is unchanged).
+  - Integrator declares `:reads #{c/lod-tick-phase}` at `src/domain/integrator.clj:107`.
+  - `:lod/throttle-ticks?` due-entity filtering present in
+    `src/domain/integrator/base.clj:73-85` (`due-entity?`, default off — gated on
+    `(:lod/throttle-ticks? world)`), `src/domain/integrator/core.clj:122-192`
+    (mass/temperature/composition/rotation filtered via `base/due-entities`), and
+    `src/domain/integrator/kinematics.clj:159` (`due-idxs` position filter).
+- **§2 Rendering:** `:render-origin` floating-origin shift in
+  `src/infra/render/scene/setup.clj:198-204`; offscreen path passes it through in
+  `src/infra/render/window.clj:196-203` (origin = camera target). Adaptive
+  subdivisions in `src/infra/dev/window/loop.clj:315-316`
+  (`render/subdivisions-for-screen-size` from largest on-screen body). Adaptive
+  halo segment count + closed ring in `src/infra/inspect/overlay.clj:23-44`
+  (`adaptive-segments`, `halo-shapes`).
+- **§3 Life-emergence UI:** notification with body name at
+  `src/domain/arc.clj:136` (`"Life emerges on %s! +50 quanta"`). `L`-key jump in
+  `src/infra/render/input.clj` (`nearest-living-world` :50, `jump-to-living-world`
+  :60, "No living world yet." :68, bound :171). Living Worlds section in
+  `src/infra/menu/panels.clj:127,193` (`ecology/living?` filter).
+- **§4 Stats:** ecology facts (biomass/complexity/stability/moisture/temperature/
+  seeded) in `src/infra/inspect/format.clj:106-110` (`body-facts`, gated on
+  `ecology/living?`).
+
+**§7 tests — all 6 exist** (three under slightly different names):
+
+1. `adaptive-subdivisions-rise-with-screen-size` → `test-adaptive-subdivisions-rise-with-screen-size` — `test/infra/render_test.clj:361`.
+2. `life-notification-includes-body-name` → `life-emergence-notification-includes-body-name` — `test/domain/arc_test.clj:208` (asserts text matches `#"Life emerges on"`).
+3. `living-worlds-list-contains-only-living-planets` — `test/infra/menu_test.clj:139` (exact).
+4. `inspector-shows-ecology-stats` → `test-inspector-shows-ecology-stats` — `test/infra/inspect_test.clj:100`.
+5. `lod-scheduler-writes-tick-phase-on-level-change` — `test/domain/lod_test.clj:31` (exact).
+6. `integrator-skips-non-due-entities` → covered by `integrator-due-entity-filter` (`test/domain/lod_test.clj:57`) and `kinematics-ws-skips-non-due-entities` (`test/domain/lod_test.clj:79`).
+
+**Test runs (this review):**
+
+- `clojure -M:test -n domain.lod-test` → Ran 3 tests, 15 assertions, **0 failures, 0 errors**.
+- `clojure -M:test -n infra.inspect-test` → Ran 8 tests, 27 assertions, **0 failures, 0 errors**.
+- `clojure -M:test -n architecture-test` → Ran 6 tests, 23 assertions, **0 failures, 0 errors** (confirms invariant #2: no single-writer / write-conflict violation for `c/lod-level` / `c/lod-tick-phase`).
+- `clojure -M:test -n domain.arc-test -n infra.menu-test -n infra.render-test` → Ran 49 tests, 186 assertions, **0 failures, 0 errors**.
+
+**Gaps / notes (non-blocking):**
+
+- Three of the six §7 test names differ from the spec's exact strings (functionally equivalent coverage present). Cosmetic only.
+- Full `clojure -M:test` was not run end-to-end here; the targeted namespaces covering every §2–§7 deliverable plus the architecture guards are all green.
+
+All specced deliverables §2–§7 are present in the tree and the targeted + architecture tests pass. Recommend moving to done.

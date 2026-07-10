@@ -268,3 +268,12 @@
   spore: none
   receipt-refs: none
   note: Manifest generation worked, but git's default core.quotepath escaped non-ASCII paths (.ημ) and caused FileNotFoundError until -c core.quotepath=false was used. Next time, generate manifests from git ls-files with explicit core.quotepath=false.
+- ts: 2026-07-10T08:57:47.011532522Z
+  session: /home/err/spaces/Truth
+  task: Resolve domain.stellar facade: verify claims then delete + migrate callers
+  p-efficiency: 0.6
+  p-friction: 0.7
+  p-skill-candidate: 0.85
+  spore: none
+  receipt-refs: none
+  note: A single-space-only grep pattern (\[domain.stellar :as) silently missed aligned-spacing requires, so I twice reported wrong facts (18 prod callers; no prod callers) and nearly closed the card on a false premise. The safety sweep AFTER deletion is what caught the real callers. Lesson: whitespace-tolerant patterns for require/usage audits, and never assert a caller count from one grep.

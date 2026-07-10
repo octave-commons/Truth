@@ -6,7 +6,7 @@
    [domain.genesis           :as genesis]
    [domain.arc              :as arc]
    [domain.pacing           :as pacing]
-   [domain.stellar          :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.stellar.thermodynamics :as thermo]
    [domain.stellar.classifier :as classifier]
    [domain.stellar.collapse :as collapse]
@@ -269,12 +269,12 @@
 (deftest per-body-promotion-events-fire-for-each-transition
   (testing "Every body that promotes out of nebula or ignites emits its own event"
     (let [before (ecs/empty-world)
-          [before gas0] (stellar/spawn-clump before {:position [0 0 0] :mass 1e29 :radius 1e14
-                                                     :matter-state :nebula})
-          [before gas1] (stellar/spawn-clump before {:position [1e15 0 0] :mass 1e29 :radius 1e14
-                                                     :matter-state :nebula})
-          [before debris] (stellar/spawn-clump before {:position [2e15 0 0] :mass 1e25 :radius 1e10
-                                                       :matter-state :nebula})
+          [before gas0] (seeder/spawn-clump before {:position [0 0 0] :mass 1e29 :radius 1e14
+                                                    :matter-state :nebula})
+          [before gas1] (seeder/spawn-clump before {:position [1e15 0 0] :mass 1e29 :radius 1e14
+                                                    :matter-state :nebula})
+          [before debris] (seeder/spawn-clump before {:position [2e15 0 0] :mass 1e25 :radius 1e10
+                                                      :matter-state :nebula})
           after  (-> before
                      (ecs/put-component gas0 c/matter-state :protostar)
                      (ecs/put-component gas1 c/matter-state :planetesimal)
@@ -327,10 +327,10 @@
                       (event/with-ledger)
                       (event/register-handler :event/collision
                                               structure/stellar-merge-handler))
-          [w1 _]  (stellar/spawn-clump base {:position [0 0 0]   :mass 2e30 :radius 1.0
-                                             :matter-state :protostar})
-          [w2 _]  (stellar/spawn-clump w1   {:position [0.5 0 0] :mass 1e30 :radius 1.0
-                                             :matter-state :planet})
+          [w1 _]  (seeder/spawn-clump base {:position [0 0 0]   :mass 2e30 :radius 1.0
+                                            :matter-state :protostar})
+          [w2 _]  (seeder/spawn-clump w1   {:position [0.5 0 0] :mass 1e30 :radius 1.0
+                                            :matter-state :planet})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
           w3      (genesis/materialize-lifecycle w3)

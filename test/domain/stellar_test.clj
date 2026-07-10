@@ -4,7 +4,9 @@
    hold before downstream systems (disc formation, EM, regime) can be trusted."
   (:require
    [clojure.math :as math] [clojure.test :refer [deftest testing is]]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
+   [domain.stellar.wind :as wind]
+   [domain.stellar.fusion :as fusion]
    [domain.stellar.thermodynamics :as thermo]
    [domain.stellar.collapse :as collapse]
    [domain.stellar.classifier :as classifier]
@@ -53,10 +55,10 @@
 
 (deftest test-seed-clump-angular-momentum
   (testing "A clump seeded with position and velocity carries orbital L"
-    (let [cm (stellar/seed-clump {:position [1e15 0.0 0.0]
-                                  :velocity [0.0 2e3 0.0]
-                                  :mass 1e30
-                                  :radius 1e14})]
+    (let [cm (seeder/seed-clump {:position [1e15 0.0 0.0]
+                                 :velocity [0.0 2e3 0.0]
+                                 :mass 1e30
+                                 :radius 1e14})]
       (is (some? (get cm c/angular-momentum)))
       (is (pos? (nth (get cm c/angular-momentum) 2)))
       (is (some? (get cm c/spin)))
@@ -71,18 +73,18 @@
                       (event/with-ledger)
                       (event/register-handler :event/collision
                                               structure/stellar-merge-handler))
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1.0
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 1e42]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [0.5 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e30
-                                             :radius 1.0
-                                             :matter-state :planet
-                                             :angular-momentum [0.0 0.0 5e41]})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1.0
+                                            :matter-state :protostar
+                                            :angular-momentum [0.0 0.0 1e42]})
+          [w2 eb] (seeder/spawn-clump w1   {:position [0.5 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e30
+                                            :radius 1.0
+                                            :matter-state :planet
+                                            :angular-momentum [0.0 0.0 5e41]})
           La      (ecs/get-component w2 ea c/angular-momentum)
           Lb      (ecs/get-component w2 eb c/angular-momentum)
           total-L (sp/v+ La Lb)
@@ -115,19 +117,19 @@
                       (event/register-handler :event/collision
                                               structure/stellar-merge-handler))
           ;; compact star: ~main-sequence radius, high density
-          [w1 _star] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                                :velocity [0.0 0.0 0.0]
-                                                :mass 2.0e30
-                                                :radius 3.0e8
-                                                :matter-state :star
-                                                :accretion-radius 1.0e12})
-          ;; diffuse, freshly-condensed body 1000× larger but lighter
-          [w2 _gas] (stellar/spawn-clump w1   {:position [1.0e11 0.0 0.0]
+          [w1 _star] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
                                                :velocity [0.0 0.0 0.0]
-                                               :mass 5.0e29
-                                               :radius 5.0e11
-                                               :matter-state :protostar
+                                               :mass 2.0e30
+                                               :radius 3.0e8
+                                               :matter-state :star
                                                :accretion-radius 1.0e12})
+          ;; diffuse, freshly-condensed body 1000× larger but lighter
+          [w2 _gas] (seeder/spawn-clump w1   {:position [1.0e11 0.0 0.0]
+                                              :velocity [0.0 0.0 0.0]
+                                              :mass 5.0e29
+                                              :radius 5.0e11
+                                              :matter-state :protostar
+                                              :accretion-radius 1.0e12})
           w2       (spatial/spatial-index w2)
           w3       (collision/collision-detection-system w2)
           w3       (genesis/materialize-lifecycle w3)
@@ -169,16 +171,16 @@
 (deftest test-stellar-wind-emits-profile
   (testing "stellar-wind-system emits a c/wind-profile for a luminous star; no
             ballistic parcels are spawned."
-    (let [[w star] (stellar/spawn-clump (ecs/empty-world)
-                                        {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                         :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
-                                         :matter-state :star
-                                         :composition {:H 0.7 :He 0.28 :metals 0.02}})
+    (let [[w star] (seeder/spawn-clump (ecs/empty-world)
+                                       {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                        :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
+                                        :matter-state :star
+                                        :composition {:H 0.7 :He 0.28 :metals 0.02}})
           w     (-> w
                     (ecs/put-component star c/pressure 1.0e13) ;; -> fusion-possible -> L>0
                     (ecs/put-component star c/luminosity 1.0e26)
                     (assoc :sim/dt 1.0e14 :genesis/wind-rate-scale 1.0e3))
-          ws    ((:run (stellar/stellar-wind-system)) w)
+          ws    ((:run (wind/stellar-wind-system)) w)
           w1    (tick/apply-write-set w ws)
           profile (ecs/get-component w1 star c/wind-profile)]
       (is (some? profile) "star received a wind profile")
@@ -190,17 +192,17 @@
 (deftest test-wind-ablation-heats-nearby-gas
   (testing "wind-ablation-system emits c/wind-heating on a nebula parcel within
             the interaction radius of a star."
-    (let [[w star] (stellar/spawn-clump (ecs/empty-world)
-                                        {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                         :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
-                                         :matter-state :star
-                                         :composition {:H 0.7 :He 0.28 :metals 0.02}})
+    (let [[w star] (seeder/spawn-clump (ecs/empty-world)
+                                       {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                        :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
+                                        :matter-state :star
+                                        :composition {:H 0.7 :He 0.28 :metals 0.02}})
           gas-pos [1.0e14 0.0 0.0]
-          [w gas] (stellar/spawn-clump w {:position gas-pos :velocity [0.0 0.0 0.0]
-                                          :mass 1.0e28 :radius 6.0e13
-                                          :matter-state :nebula
-                                          :density 1.0e-16
-                                          :temperature 10.0})
+          [w gas] (seeder/spawn-clump w {:position gas-pos :velocity [0.0 0.0 0.0]
+                                         :mass 1.0e28 :radius 6.0e13
+                                         :matter-state :nebula
+                                         :density 1.0e-16
+                                         :temperature 10.0})
           w     (-> w
                     (ecs/put-component star c/pressure 1.0e13)
                     (ecs/put-component star c/luminosity 1.0e28)
@@ -208,8 +210,8 @@
                            :genesis/wind-rate-scale 1.0e6
                            :genesis/wind-interaction-factor 10.0
                            :genesis/gas-smoothing-radius 6.0e13))
-          w1    (tick/apply-write-set w ((:run (stellar/stellar-wind-system)) w))
-          ws    ((:run (stellar/wind-ablation-system)) w1)
+          w1    (tick/apply-write-set w ((:run (wind/stellar-wind-system)) w))
+          ws    ((:run (wind/wind-ablation-system)) w1)
           heating (get-in ws [c/wind-heating gas])]
       (is (some? heating) "parcel received wind-heating influence")
       (is (pos? (:wind-heating/delta-t heating)) "heating is positive")
@@ -220,11 +222,11 @@
 (deftest test-stellar-flare-conserves-and-ejects-hot
   (testing "stellar-flare-system ejects a hot parcel, conserving mass (winds spec
             phase B). flare-period 1 forces a flare on the tick."
-    (let [[w _star] (stellar/spawn-clump (ecs/empty-world)
-                                         {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                          :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
-                                          :matter-state :star
-                                          :composition {:H 0.7 :He 0.28 :metals 0.02}})
+    (let [[w _star] (seeder/spawn-clump (ecs/empty-world)
+                                        {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                         :mass (* 0.5 1.989e30) :radius 3.0e8 :temperature 2.0e7
+                                         :matter-state :star
+                                         :composition {:H 0.7 :He 0.28 :metals 0.02}})
           w     (assoc w :sim/dt 1.0e12 :genesis/flare-period 1
                        :genesis/wind-parcel-mass 5.0e27 :genesis/gas-smoothing-radius 6.0e13)
           tmass (fn [w] (+ (reduce + (map #(double (or (ecs/get-component w % c/mass) 0.0))
@@ -232,7 +234,7 @@
                            (reduce + (map #(double (or (ecs/get-component w % c/mass-flux-flare) 0.0))
                                           (ecs/entities-with w c/mass-flux-flare)))))
           m0    (tmass w)
-          ws    ((:run (stellar/stellar-flare-system)) w)
+          ws    ((:run (wind/stellar-flare-system)) w)
           w1    (-> (tick/apply-write-set w ws)
                     (genesis/materialize-lifecycle))
           hot   (filter #(and (= :nebula (ecs/get-component w1 % c/matter-state))
@@ -250,18 +252,18 @@
           ;; two equal masses orbiting each other — close enough to overlap
           ;; (distance 1e12 < 2×radius 2e12)
           ;; High temperature (malleable/molten) to avoid shatter path
-          [w1 _ea] (stellar/spawn-clump base {:position [5e11 0.0 0.0]
-                                              :velocity [0.0 1e4 0.0]
-                                              :mass 1e25
-                                              :radius 1.0e12
-                                              :matter-state :planetesimal
-                                              :temperature 3000.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [-5e11 0.0 0.0]
-                                              :velocity [0.0 -1e4 0.0]
-                                              :mass 1e25
-                                              :radius 1.0e12
-                                              :matter-state :planetesimal
-                                              :temperature 3000.0})
+          [w1 _ea] (seeder/spawn-clump base {:position [5e11 0.0 0.0]
+                                             :velocity [0.0 1e4 0.0]
+                                             :mass 1e25
+                                             :radius 1.0e12
+                                             :matter-state :planetesimal
+                                             :temperature 3000.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [-5e11 0.0 0.0]
+                                             :velocity [0.0 -1e4 0.0]
+                                             :mass 1e25
+                                             :radius 1.0e12
+                                             :matter-state :planetesimal
+                                             :temperature 3000.0})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
           w3      (genesis/materialize-lifecycle w3)
@@ -299,12 +301,12 @@
 (deftest test-collapse-flattens-rotating-clump
   (testing "A rotating protostar becomes oblate as it contracts"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 1e45]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :angular-momentum [0.0 0.0 1e45]})
           _a0 (ecs/get-component w eid c/radius)
           ob0  (ecs/get-component w eid c/oblateness)
           w2   (collapse/collapse-system w)
@@ -321,12 +323,12 @@
 (deftest test-collapse-mass-conserved
   (testing "Mass is unchanged after oblate collapse"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 1e45]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :angular-momentum [0.0 0.0 1e45]})
           m0   (ecs/get-component w eid c/mass)
           w2   (collapse/collapse-system w)
           m1   (ecs/get-component w2 eid c/mass)]
@@ -348,12 +350,12 @@
 (deftest test-collapse-conserves-angular-momentum
   (testing "A contracting protostar spins up while L stays constant"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 1e45]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :angular-momentum [0.0 0.0 1e45]})
           L0   (ecs/get-component w eid c/angular-momentum)
           spin0 (ecs/get-component w eid c/spin)
           w2   (collapse/collapse-system w)
@@ -387,12 +389,12 @@
           ;; bounded number of steps — this test pins the floor invariant, not
           ;; the production (tens-of-Myr) contraction pace.
           base    (assoc (ecs/empty-world) :sim/dt 1e15 :genesis/contraction-time 1e12)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :angular-momentum [0.0 0.0 0.0]})
           ;; many contraction steps — old code would halve to a point each tick
           w'      (nth (iterate collapse/collapse-system w) 80)
           r       (ecs/get-component w' eid c/radius)]
@@ -408,13 +410,13 @@
 (deftest test-collapse-heats-toward-fusion
   (testing "A contracting protostar heats adiabatically and can reach fusion"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e10
-                                             :matter-state :protostar
-                                             :temperature 1e6
-                                             :density 4.7})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e10
+                                            :matter-state :protostar
+                                            :temperature 1e6
+                                            :density 4.7})
           w' (loop [wi w n 0]
                (if (>= n 2000)
                  wi
@@ -439,10 +441,10 @@
   (testing "A clump reaching star-forming mass freezes its radius as a feeding zone"
     (let [base    (-> (ecs/empty-world)
                       (assoc :genesis/gas-particle-mass 1e27))
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1.1e30   ;; above star-mass-threshold
-                                             :radius 1e14})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1.1e30   ;; above star-mass-threshold
+                                            :radius 1e14})
           w2      (classifier/classify-system w)]
       (is (= :protostar (ecs/get-component w2 eid c/matter-state)))
       (is (= 1e15 (ecs/get-component w2 eid c/accretion-radius))
@@ -455,19 +457,19 @@
                       (event/register-handler :event/collision
                                               structure/stellar-merge-handler))
           ;; star with a tiny photosphere but a large feeding zone
-          [w1 _]  (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1.5e30
-                                             :radius 1e9          ;; photosphere
-                                             :matter-state :star})
+          [w1 _]  (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1.5e30
+                                            :radius 1e9          ;; photosphere
+                                            :matter-state :star})
           star    (first (ecs/entities-with w1 c/mass))
           w1      (ecs/put-component w1 star c/accretion-radius 1e14)
           ;; debris clump well outside the photosphere but inside the feeding zone
-          [w2 _]  (stellar/spawn-clump w1 {:position [5e13 0.0 0.0]
-                                           :velocity [0.0 0.0 0.0]
-                                           :mass 5e27
-                                           :radius 6e13
-                                           :matter-state :planetesimal})
+          [w2 _]  (seeder/spawn-clump w1 {:position [5e13 0.0 0.0]
+                                          :velocity [0.0 0.0 0.0]
+                                          :mass 5e27
+                                          :radius 6e13
+                                          :matter-state :planetesimal})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
           w3      (genesis/materialize-lifecycle w3)]
@@ -480,12 +482,12 @@
                       (event/with-ledger)
                       (event/register-handler :event/collision
                                               structure/stellar-merge-handler))
-          [w1 _]  (stellar/spawn-clump base {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                             :mass 1.5e30 :radius 1e9 :matter-state :star})
+          [w1 _]  (seeder/spawn-clump base {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                            :mass 1.5e30 :radius 1e9 :matter-state :star})
           star    (first (ecs/entities-with w1 c/mass))
           w1      (ecs/put-component w1 star c/accretion-radius 1e14)
-          [w2 _]  (stellar/spawn-clump w1 {:position [5e13 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                           :mass 5e27 :radius 6e13})
+          [w2 _]  (seeder/spawn-clump w1 {:position [5e13 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                          :mass 5e27 :radius 6e13})
           w2      (spatial/spatial-index w2)
           w3      (collision/collision-detection-system w2)
           w3      (genesis/materialize-lifecycle w3)
@@ -498,12 +500,12 @@
 (deftest test-nonrotating-collapse-stays-spherical
   (testing "A non-rotating protostar stays spherical"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :angular-momentum [0.0 0.0 0.0]})
           w2   (collapse/collapse-system w)
           ob   (ecs/get-component w2 eid c/oblateness)]
       (is (< (abs (- ob 1.0)) 1e-12)))))
@@ -529,11 +531,11 @@
 (deftest test-stable-gas-remains-nebula
   (testing "A hot, tenuous gas particle with r << lambda_J stays diffuse"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e28
-                                             :radius 1e10
-                                             :temperature 1000.0})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e28
+                                            :radius 1e10
+                                            :temperature 1000.0})
           ;; override density to a low value so lambda_J is huge
           w2 (-> w
                  (ecs/put-component eid c/density 1e-9)
@@ -545,11 +547,11 @@
 (deftest test-jeans-unstable-gas-promotes
   (testing "A cold, dense gas particle with r > lambda_J collapses to a resolved body"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e28
-                                             :radius 1e14
-                                             :temperature 100.0})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e28
+                                            :radius 1e14
+                                            :temperature 100.0})
           ;; override density so lambda_J is small
           w2 (-> w
                  (ecs/put-component eid c/density 1e-9)
@@ -563,12 +565,12 @@
 (deftest test-jeans-collapse-ignores-resolved-bodies
   (testing "Already-resolved bodies are not affected by Jeans collapse"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e28
-                                             :radius 1e14
-                                             :temperature 100.0
-                                             :matter-state :planet})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e28
+                                            :radius 1e14
+                                            :temperature 100.0
+                                            :matter-state :planet})
           w2 (-> w
                  (ecs/put-component eid c/density 1e-9)
                  (ecs/put-component eid c/pressure (law/ideal-gas-pressure 1e-9 100.0)))
@@ -611,20 +613,20 @@
   (testing "A Jeans-unstable parcel inside a sink's radius does NOT condense"
     (let [;; Create a sink at origin with a large accretion radius
           base (ecs/empty-world)
-          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                                   :velocity [0.0 0.0 0.0]
-                                                   :mass 2e28
-                                                   :radius 1e12
-                                                   :temperature 10.0
-                                                   :density 1e-6
-                                                   :matter-state :planetesimal})
+          [w1 sink-eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 2e28
+                                                  :radius 1e12
+                                                  :temperature 10.0
+                                                  :density 1e-6
+                                                  :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
           ;; Create a Jeans-unstable parcel INSIDE the sink's radius
-          [w2 parcel-eid] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
-                                                   :velocity [0.0 0.0 0.0]
-                                                   :mass 2e28
-                                                   :radius 1e14
-                                                   :temperature 10.0})
+          [w2 parcel-eid] (seeder/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 2e28
+                                                  :radius 1e14
+                                                  :temperature 10.0})
           w2 (-> w2
                  (ecs/put-component parcel-eid c/density 1e-6)
                  (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
@@ -635,20 +637,20 @@
       (is (= :nebula next-state) "Parcel inside sink radius stays :nebula")))
   (testing "A Jeans-unstable parcel OUTSIDE sinks condenses normally"
     (let [base (ecs/empty-world)
-          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                                   :velocity [0.0 0.0 0.0]
-                                                   :mass 2e28
-                                                   :radius 1e12
-                                                   :temperature 10.0
-                                                   :density 1e-6
-                                                   :matter-state :planetesimal})
+          [w1 sink-eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 2e28
+                                                  :radius 1e12
+                                                  :temperature 10.0
+                                                  :density 1e-6
+                                                  :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 1e11)
           ;; Create a Jeans-unstable parcel OUTSIDE the sink's radius
-          [w2 parcel-eid] (stellar/spawn-clump w1 {:position [1e13 0.0 0.0]
-                                                   :velocity [0.0 0.0 0.0]
-                                                   :mass 2e28
-                                                   :radius 1e14
-                                                   :temperature 10.0})
+          [w2 parcel-eid] (seeder/spawn-clump w1 {:position [1e13 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 2e28
+                                                  :radius 1e14
+                                                  :temperature 10.0})
           w2 (-> w2
                  (ecs/put-component parcel-eid c/density 1e-6)
                  (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
@@ -663,33 +665,33 @@
             double-count. Gas parcels in the feeding zone are left untouched here."
     (let [base (ecs/empty-world)
           ;; Create a sink that just condensed (:planetesimal with accretion-radius)
-          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                                   :velocity [0.0 0.0 0.0]
-                                                   :mass 2e28
-                                                   :radius 1e12
-                                                   :temperature 10.0
-                                                   :matter-state :planetesimal})
+          [w1 sink-eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 2e28
+                                                  :radius 1e12
+                                                  :temperature 10.0
+                                                  :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
           ;; Create gas parcels within accretion radius
-          [w2 p1] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
-                                           :velocity [100.0 0.0 0.0]
-                                           :mass 1e27
-                                           :radius 1e10
-                                           :temperature 10.0
-                                           :matter-state :nebula})
-          [w3 p2] (stellar/spawn-clump w2 {:position [0.0 2e12 0.0]
-                                           :velocity [0.0 200.0 0.0]
-                                           :mass 1e27
-                                           :radius 1e10
-                                           :temperature 10.0
-                                           :matter-state :nebula})
+          [w2 p1] (seeder/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                          :velocity [100.0 0.0 0.0]
+                                          :mass 1e27
+                                          :radius 1e10
+                                          :temperature 10.0
+                                          :matter-state :nebula})
+          [w3 p2] (seeder/spawn-clump w2 {:position [0.0 2e12 0.0]
+                                          :velocity [0.0 200.0 0.0]
+                                          :mass 1e27
+                                          :radius 1e10
+                                          :temperature 10.0
+                                          :matter-state :nebula})
           ;; Create a gas parcel OUTSIDE accretion radius (should not be absorbed)
-          [w4 p3] (stellar/spawn-clump w3 {:position [1e14 0.0 0.0]
-                                           :velocity [0.0 0.0 0.0]
-                                           :mass 1e27
-                                           :radius 1e10
-                                           :temperature 10.0
-                                           :matter-state :nebula})
+          [w4 p3] (seeder/spawn-clump w3 {:position [1e14 0.0 0.0]
+                                          :velocity [0.0 0.0 0.0]
+                                          :mass 1e27
+                                          :radius 1e10
+                                          :temperature 10.0
+                                          :matter-state :nebula})
           ;; Run sink formation
           w5 (sink/sink-formation-system w4)
           sink-mass (ecs/get-component w5 sink-eid c/mass)
@@ -710,20 +712,20 @@
   (testing "A protostar sink drains nearby small :planetesimal via absorb-accrete"
     (let [base (ecs/empty-world)
           ;; A forming core (protostar) with a wide feeding zone
-          [w1 sink-eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                                   :velocity [0.0 0.0 0.0]
-                                                   :mass 5e28
-                                                   :radius 1e12
-                                                   :temperature 1000.0
-                                                   :matter-state :protostar})
+          [w1 sink-eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 5e28
+                                                  :radius 1e12
+                                                  :temperature 1000.0
+                                                  :matter-state :protostar})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
           ;; A small planetesimal inside the feeding zone
-          [w2 deb] (stellar/spawn-clump w1 {:position [1e12 0.0 0.0]
-                                            :velocity [0.0 0.0 0.0]
-                                            :mass 1e27
-                                            :radius 1e10
-                                            :temperature 50.0
-                                            :matter-state :planetesimal})
+          [w2 deb] (seeder/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                           :velocity [0.0 0.0 0.0]
+                                           :mass 1e27
+                                           :radius 1e10
+                                           :temperature 50.0
+                                           :matter-state :planetesimal})
           w3 (sink/sink-formation-system w2)
           absorbs (ecs/get-component w3 sink-eid c/absorb-accrete)]
       (is (some? (ecs/get-component w3 deb c/consumed-accrete))
@@ -760,14 +762,14 @@
           t-vir  (thermo/virial-temperature mass r-ms)
           press  (law/ideal-gas-pressure rho t-vir)
           c   {:H 0.74 :He 0.24 :metals 0.02}
-          [w eid] (stellar/spawn-clump (ecs/empty-world)
-                                       {:position [0 0 0] :velocity [0 0 0]
-                                        :mass mass :radius r-ms
-                                        :temperature t-vir :density rho
-                                        :pressure press :composition c
-                                        :matter-state :protostar})
+          [w eid] (seeder/spawn-clump (ecs/empty-world)
+                                      {:position [0 0 0] :velocity [0 0 0]
+                                       :mass mass :radius r-ms
+                                       :temperature t-vir :density rho
+                                       :pressure press :composition c
+                                       :matter-state :protostar})
           ;; Barrier emits promotion-signal; classifier/fusion apply it next tick
-          w'     (stellar/fusion-promotion-system w)
+          w'     (fusion/fusion-promotion-system w)
           sig    (ecs/get-component w' eid c/promotion-signal)
           state' (ecs/get-component w' eid c/matter-state)
           lum'   (double (or (ecs/get-component w' eid c/luminosity) 0.0))]
@@ -784,13 +786,13 @@
           t-vir  (thermo/virial-temperature mass r-ms)
           press  (law/ideal-gas-pressure rho t-vir)
           c   {:H 0.74 :He 0.24 :metals 0.02}
-          [w eid] (stellar/spawn-clump (ecs/empty-world)
-                                       {:position [0 0 0] :velocity [0 0 0]
-                                        :mass mass :radius r-ms
-                                        :temperature t-vir :density rho
-                                        :pressure press :composition c
-                                        :matter-state :star})
-          w'     (stellar/fusion-promotion-system w)
+          [w eid] (seeder/spawn-clump (ecs/empty-world)
+                                      {:position [0 0 0] :velocity [0 0 0]
+                                       :mass mass :radius r-ms
+                                       :temperature t-vir :density rho
+                                       :pressure press :composition c
+                                       :matter-state :star})
+          w'     (fusion/fusion-promotion-system w)
           sig    (ecs/get-component w' eid c/promotion-signal)]
       (is (some? sig) "Promotion signal emitted for zero-luminosity star")
       (is (= :star (:promotion sig)) "Signal confirms :star")

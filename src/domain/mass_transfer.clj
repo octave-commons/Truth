@@ -13,7 +13,8 @@
    [domain.ecs.parallel    :as par]
    [domain.ecs.tick       :as tick]
    [domain.spatial.index   :as spatial]
-   [domain.stellar        :as stellar]
+   [domain.stellar.sink            :as sink]
+   [domain.stellar.thermodynamics :as thermo]
    [law.mass-transfer     :as lmt]
    [law.stellar           :as lst]
    [shape.spatial         :as sp]))
@@ -109,7 +110,7 @@
   [world sink-eid dt c-s]
   (let [M       (double (or (ecs/get-component world sink-eid c/mass) 0.0))
         pos     (or (ecs/get-component world sink-eid c/position) zero3)
-        r-acc   (stellar/effective-accretion-radius world sink-eid)
+        r-acc   (sink/effective-accretion-radius world sink-eid)
         zone    (spatial/query-within-radius world pos r-acc gas-pred)
         rho-inf (zone-average zone #(donor-density world (:id %)))
         v-rel   (zone-average zone #(relative-velocity world sink-eid (:id %)))
@@ -144,7 +145,7 @@
         rate   (or (ecs/get-component world sink-eid c/accretion-rate) {})
         r-acc  (double (:sink/r-acc rate 0.0))
         dot-m  (double (:sink/dot-m rate 0.0))
-        bias   (stellar/imf-accretion-bias M)]
+        bias   (sink/imf-accretion-bias M)]
     {:M M :pos pos :v-sink v-sink :disk? disk?
      :r-acc r-acc :dot-m dot-m :bias bias}))
 
@@ -153,8 +154,8 @@
   [world sink-eid pos r-acc bias star-data tick]
   (->> (spatial/query-within-radius world pos r-acc gas-pred)
        (remove #(= (:id %) sink-eid))
-       (filterv #(and (< (stellar/stellar-feedback-temperature
-                          (:position %) star-data stellar/feedback-radius)
+       (filterv #(and (< (sink/stellar-feedback-temperature
+                          (:position %) star-data sink/feedback-radius)
                          1.0e4)
                       (< (hash01 (hash [(:id %) sink-eid tick])) bias)))))
 
@@ -172,7 +173,7 @@
    orbital angular momentum around the sink; if that is zero, default to +z."
   [dm M radius dpos v-rel]
   (let [j (Math/sqrt (* lst/G M radius))
-        L-raw (stellar/orbital-angular-momentum 1.0 dpos v-rel)
+        L-raw (thermo/orbital-angular-momentum 1.0 dpos v-rel)
         L-len (sp/len L-raw)
         target-L (* dm j)]
     (if (pos? L-len)
@@ -298,7 +299,7 @@
   ([world]
    (let [sinks (find-sink-eids world)
          dt    (double (or (:sim/dt world) 1.0))
-         c-s   stellar/capture-velocity-dispersion]
+         c-s   sink/capture-velocity-dispersion]
      {c/accretion-rate
       (->> sinks
            (par/par-mapv #(vector % (sink-accretion-rate world % dt c-s)))

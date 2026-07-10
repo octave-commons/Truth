@@ -4,7 +4,8 @@
    domain.stellar; the sub-grid planet seeder lives in domain.planet-formation."
   (:require
    [clojure.math :as math] [clojure.test          :refer [deftest testing is]]
-   [domain.stellar :as stellar]
+   [domain.stellar.disc :as disc]
+   [domain.stellar.seeder :as seeder]
    [domain.stellar.structure :as structure]
    [domain.planet-formation :as pf]
    [domain.ecs.core       :as ecs]
@@ -36,7 +37,7 @@
           vel (circular-velocity M pos)
           region {:position pos :velocity vel :mass 1.0e25
                   :matter-state :planetesimal :oblateness 1.0}]
-      (is (= :disc (stellar/disc-classify region (central M)))))))
+      (is (= :disc (disc/disc-classify region (central M)))))))
 
 (deftest disc-classify-radial-infall-is-envelope
   (testing "a body falling straight in (bound, no tangential motion) → :envelope"
@@ -45,7 +46,7 @@
           v-in (* 0.3 (math/sqrt (/ (* law/G M) au)))  ;; slow inward, stays bound
           region {:position pos :velocity [(- v-in) 0.0 0.0] :mass 1.0e25
                   :matter-state :planetesimal :oblateness 1.0}]
-      (is (= :envelope (stellar/disc-classify region (central M)))))))
+      (is (= :envelope (disc/disc-classify region (central M)))))))
 
 (deftest disc-classify-hyperbolic-is-outflow
   (testing "an unbound (super-escape) body → :outflow (component doc: unbound/hyperbolic)"
@@ -54,7 +55,7 @@
           v-esc (math/sqrt (/ (* 2.0 law/G M) au))
           region {:position pos :velocity [(* 2.0 v-esc) 0.0 0.0] :mass 1.0e25
                   :matter-state :planetesimal :oblateness 1.0}]
-      (is (= :outflow (stellar/disc-classify region (central M)))))))
+      (is (= :outflow (disc/disc-classify region (central M)))))))
 
 (deftest disc-classify-oblate-spinner-is-disc
   (testing "a moderately flattened body on a disc orbit is still :disc (h/r < 0.3)"
@@ -63,13 +64,13 @@
           vel (circular-velocity M pos)
           region {:position pos :velocity vel :mass 1.0e25
                   :matter-state :planetesimal :oblateness 0.9}]  ;; h/r = 0.1
-      (is (= :disc (stellar/disc-classify region (central M)))))))
+      (is (= :disc (disc/disc-classify region (central M)))))))
 
 (deftest disc-classify-star-itself-is-nil
   (testing "the central star (matter-state :star) is not disc material → nil"
     (let [region {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0] :mass solar-mass
                   :matter-state :star :oblateness 1.0}]
-      (is (nil? (stellar/disc-classify region (central solar-mass)))))))
+      (is (nil? (disc/disc-classify region (central solar-mass)))))))
 
 ;; --- Part 3: Toomre Q + disc regime ----------------------------------------
 
@@ -178,11 +179,11 @@
     :or {disk-mass 1.0e27 body-mass 6.0e24 n 24
          sim-time 1.0e14 ignition-time 0.0 maturity pf/disk-maturity-seconds}}]
   (let [M solar-mass
-        [w star] (stellar/spawn-clump (ecs/empty-world)
-                                      {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                       :mass M :radius law/solar-radius :temperature 5800.0
-                                       :matter-state :star
-                                       :composition lcomp/solar-composition})
+        [w star] (seeder/spawn-clump (ecs/empty-world)
+                                     {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                      :mass M :radius law/solar-radius :temperature 5800.0
+                                      :matter-state :star
+                                      :composition lcomp/solar-composition})
         w (-> w
               (ecs/put-component star c/luminosity law/solar-luminosity)
               (ecs/put-component star c/disk-mass disk-mass)
@@ -195,10 +196,10 @@
         w (reduce (fn [w r]
                     (let [pos [r 0.0 0.0]
                           vel (circular-velocity M pos)
-                          [w2 eid] (stellar/spawn-clump w
-                                                        {:position pos :velocity vel
-                                                         :mass body-mass :radius 1.0e7
-                                                         :matter-state :planetesimal})]
+                          [w2 eid] (seeder/spawn-clump w
+                                                       {:position pos :velocity vel
+                                                        :mass body-mass :radius 1.0e7
+                                                        :matter-state :planetesimal})]
                       (ecs/put-component w2 eid c/disc-tag :disc)))
                   w radii)]
     [(assoc w :genesis/sim-time sim-time

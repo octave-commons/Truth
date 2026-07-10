@@ -5,7 +5,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecology :as ecology]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [infra.camera :as cam]
    [infra.inspect :as inspect]
    [infra.render :as render]
@@ -83,11 +83,11 @@
 
 (deftest test-inspector-card
   (testing "Inspector card is anchored to the body's screen position"
-    (let [[w eid] (stellar/spawn-clump (ecs/empty-world)
-                                       {:position [0.0 0.0 -3.0e15]
-                                        :mass 2e30 :radius 1e9
-                                        :matter-state :star
-                                        :temperature 5800.0})
+    (let [[w eid] (seeder/spawn-clump (ecs/empty-world)
+                                      {:position [0.0 0.0 -3.0e15]
+                                       :mass 2e30 :radius 1e9
+                                       :matter-state :star
+                                       :temperature 5800.0})
           camera (cam/make-camera 50.0)
           ctx    (units/make-context camera {:width 1280 :height 720})
           bodies (render/phase0-bodies-from-world w)

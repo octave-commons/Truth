@@ -69,7 +69,7 @@
 
 (defn jeans-ratio
   "L/λ_J for a clump — at or above 1 it is Jeans-unstable. Same Jeans length as
-   domain.stellar/gravitational-collapse-rate, reported as a smooth ratio."
+   domain.stellar.collapse/gravitational-collapse-rate, reported as a smooth ratio."
   [{:keys [density temperature radius]}]
   (if (and density temperature radius
            (pos? (double density)) (pos? (double temperature)))

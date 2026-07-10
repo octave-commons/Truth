@@ -5,7 +5,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.ecs.tick :as tick]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.spatial.index :as spatial]
    [domain.physics.cache :as pcache]
    [domain.hydro :as hydro]
@@ -16,20 +16,20 @@
 (deftest test-merged-system-matches-pressure-acceleration
   (testing "Merged system pressure channel equals the standalone hydro pressure system"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 100.0})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 100.0})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0})
           w2 (spatial/spatial-index w2)
           cached (pcache/build-neighbor-cache w2)
           dt 1e10
@@ -53,24 +53,24 @@
 (deftest test-merged-system-matches-lorentz-acceleration
   (testing "Merged system Lorentz channel equals the standalone Lorentz system"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 1.0]
-                                             :angular-momentum [0.0 0.0 1e30]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 0.5]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 1.0]
+                                            :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 0.5]
+                                            :angular-momentum [0.0 0.0 0.0]})
           w2 (spatial/spatial-index w2)
           cached (pcache/build-neighbor-cache w2)
           dt 1e10
@@ -93,15 +93,15 @@
 (deftest test-merged-system-computes-magnetic-braking
   (testing "Merged system emits magnetic-braking torque for rotating protostars"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :density 1e-15
-                                             :pressure 1e-10
-                                             :b-field [0.0 0.0 1.0e-4]
-                                             :angular-momentum [0.0 0.0 1e45]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :density 1e-15
+                                            :pressure 1e-10
+                                            :b-field [0.0 0.0 1.0e-4]
+                                            :angular-momentum [0.0 0.0 1e45]})
           w (spatial/spatial-index w)
           cached (pcache/build-neighbor-cache w)
           dt 1e10
@@ -115,20 +115,20 @@
 (deftest test-merged-system-clears-stale-for-resolved-bodies
   (testing "When a clump stops being hydro/EM-active its acceleration channels are removed"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 100.0})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 2e14
                                              :matter-state :nebula
                                              :density 1.0
-                                             :pressure 100.0})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 2e14
-                                              :matter-state :nebula
-                                              :density 1.0
-                                              :pressure 1.0})
+                                             :pressure 1.0})
           w2 (spatial/spatial-index w2)
           cached (pcache/build-neighbor-cache w2)
           dt 1e10

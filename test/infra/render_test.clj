@@ -7,20 +7,20 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.stellar.collapse :as collapse]
    [domain.genesis :as genesis]
    [domain.player :as player]
    [domain.hydro :as hydro]
    [infra.camera :as cam]
    [infra.input :as input]
-  [infra.render :as r]
-  [infra.render.math :as rmath]
-  [infra.render.scene.bodies :as rbodies]
-  [infra.render.scene.setup :as rsetup]
-  [infra.render.field :as rfield]
-  [infra.render.volume :as rvolume]
-  [infra.render.units :as units]))
+   [infra.render :as r]
+   [infra.render.math :as rmath]
+   [infra.render.scene.bodies :as rbodies]
+   [infra.render.scene.setup :as rsetup]
+   [infra.render.field :as rfield]
+   [infra.render.volume :as rvolume]
+   [infra.render.units :as units]))
 
 (deftest test-tint-color
   (testing "Tinting keeps colours in [0,1] and shifts by regime"
@@ -68,15 +68,15 @@
 
 (deftest test-phase0-projection
   (testing "Gas contributes to froxel volume, protostar → body + field line, star → shaded body"
-    (let [[w1 _] (stellar/spawn-clump (ecs/empty-world)
-                                      {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e13
-                                       :matter-state :nebula})
-          [w2 _] (stellar/spawn-clump w1
-                                      {:position [2e15 0.0 0.0] :mass 2e30 :radius 1e14
-                                       :matter-state :protostar})
-          [w3 _] (stellar/spawn-clump w2
-                                      {:position [4e16 0.0 0.0] :mass 2e30 :radius 1e9
-                                       :matter-state :star})
+    (let [[w1 _] (seeder/spawn-clump (ecs/empty-world)
+                                     {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e13
+                                      :matter-state :nebula})
+          [w2 _] (seeder/spawn-clump w1
+                                     {:position [2e15 0.0 0.0] :mass 2e30 :radius 1e14
+                                      :matter-state :protostar})
+          [w3 _] (seeder/spawn-clump w2
+                                     {:position [4e16 0.0 0.0] :mass 2e30 :radius 1e9
+                                      :matter-state :star})
           shapes (r/phase0-bodies-from-world w3)
           modes  (frequencies (map :render-mode shapes))]
       (is (pos? (get modes :body 0))     "protostar + star produce shaded bodies")
@@ -85,9 +85,9 @@
 (deftest test-nebula-density-visualization
   (testing "Froxel gas samples carry density in volume builder"
     (let [base (ecs/empty-world)
-          [w1 _] (stellar/spawn-clump base
-                                      {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
-                                       :matter-state :nebula :density 1e-18 :temperature 12.0})
+          [w1 _] (seeder/spawn-clump base
+                                     {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                      :matter-state :nebula :density 1e-18 :temperature 12.0})
           ctx  (units/make-context (cam/make-camera) {:width 1 :height 1})
           pts  (#'rvolume/render-samples ctx w1 rfield/default-volume-config)]
       (is (seq pts) "nebula produces gas samples for the froxel texture")
@@ -120,15 +120,15 @@
 (deftest test-dust-parcels-render-warmer
   (testing "Dust-rich (solid-fraction > 0.5) disc parcels use the warm disk colour ramp and a density boost"
     (let [base (ecs/empty-world)
-          [w1 disc-eid] (stellar/spawn-clump base
-                                             {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
-                                              :matter-state :nebula :density 1e-15 :temperature 300.0
-                                              :composition {:Fe 0.35 :Si 0.35 :O 0.15 :H 0.075 :He 0.075}})
+          [w1 disc-eid] (seeder/spawn-clump base
+                                            {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                             :matter-state :nebula :density 1e-15 :temperature 300.0
+                                             :composition {:Fe 0.35 :Si 0.35 :O 0.15 :H 0.075 :He 0.075}})
           w1 (ecs/put-component w1 disc-eid c/disc-tag :disc)
-          [w2 _neb-eid] (stellar/spawn-clump w1
-                                             {:position [3e15 0.0 0.0] :mass 1e28 :radius 1e14
-                                              :matter-state :nebula :density 1e-15 :temperature 300.0
-                                              :composition {:H 0.75 :He 0.25}})
+          [w2 _neb-eid] (seeder/spawn-clump w1
+                                            {:position [3e15 0.0 0.0] :mass 1e28 :radius 1e14
+                                             :matter-state :nebula :density 1e-15 :temperature 300.0
+                                             :composition {:H 0.75 :He 0.25}})
           ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
           pts (#'rvolume/render-samples ctx w2 rfield/default-volume-config)
           disc-pt (first (filter #(= (units/world->render ctx [0.0 0.0 0.0]) (:p %)) pts))
@@ -144,14 +144,14 @@
 (deftest test-solid-fraction-selects-dust-or-gas
   (testing "Composition-driven solid fraction decides dust vs gas rendering"
     (let [ctx (units/make-context (cam/make-camera) {:width 1 :height 1})
-          [base _dust-eid] (stellar/spawn-clump (ecs/empty-world)
-                                                {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
-                                                 :matter-state :nebula :density 1e-15 :temperature 300.0
-                                                 :composition {:Fe 0.35 :Si 0.35 :H 0.15 :He 0.15}})
-          [w _gas-eid] (stellar/spawn-clump base
-                                            {:position [3e15 0.0 0.0] :mass 1e28 :radius 1e14
-                                             :matter-state :nebula :density 1e-15 :temperature 300.0
-                                             :composition {:H 0.8 :He 0.2}})
+          [base _dust-eid] (seeder/spawn-clump (ecs/empty-world)
+                                               {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                                :matter-state :nebula :density 1e-15 :temperature 300.0
+                                                :composition {:Fe 0.35 :Si 0.35 :H 0.15 :He 0.15}})
+          [w _gas-eid] (seeder/spawn-clump base
+                                           {:position [3e15 0.0 0.0] :mass 1e28 :radius 1e14
+                                            :matter-state :nebula :density 1e-15 :temperature 300.0
+                                            :composition {:H 0.8 :He 0.2}})
           pts (#'rvolume/render-samples ctx w rfield/default-volume-config)
           dust-pt (first (filter #(= (units/world->render ctx [0.0 0.0 0.0]) (:p %)) pts))
           gas-pt  (first (filter #(= (units/world->render ctx [3e15 0.0 0.0]) (:p %)) pts))]
@@ -167,10 +167,10 @@
 (deftest test-gas-samples-include-solid-fraction
   (testing "gas-samples exposes composition and derived solid-fraction"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base
-                                       {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
-                                        :matter-state :nebula :density 1e-15 :temperature 300.0
-                                        :composition {:Fe 0.35 :Si 0.35 :H 0.15 :He 0.15}})
+          [w eid] (seeder/spawn-clump base
+                                      {:position [0.0 0.0 0.0] :mass 1e28 :radius 1e14
+                                       :matter-state :nebula :density 1e-15 :temperature 300.0
+                                       :composition {:Fe 0.35 :Si 0.35 :H 0.15 :He 0.15}})
           sample (first (filter #(= eid (:eid %)) (hydro/gas-samples w)))]
       (is (some? sample))
       (is (map? (:composition sample)))
@@ -277,13 +277,13 @@
 
 (deftest test-oblate-body-projection
   (testing "Rotating protostars are projected with oblateness and rotation axis"
-    (let [[w _eid] (stellar/spawn-clump (ecs/empty-world)
-                                        {:position [0.0 0.0 0.0]
-                                         :velocity [0.0 0.0 0.0]
-                                         :mass 2e30
-                                         :radius 1e15
-                                         :matter-state :protostar
-                                         :angular-momentum [0.0 0.0 1e45]})
+    (let [[w _eid] (seeder/spawn-clump (ecs/empty-world)
+                                       {:position [0.0 0.0 0.0]
+                                        :velocity [0.0 0.0 0.0]
+                                        :mass 2e30
+                                        :radius 1e15
+                                        :matter-state :protostar
+                                        :angular-momentum [0.0 0.0 1e45]})
           w2 (collapse/collapse-system w)
           shapes (r/phase0-bodies-from-world w2)
           bodies (filter #(= :body (:render-mode %)) shapes)]
@@ -347,11 +347,11 @@
 
 (deftest test-body-brightness
   (testing "Stars scale with luminosity; non-stars are dim"
-    (let [[w eid] (stellar/spawn-clump (ecs/empty-world)
-                                       {:position [0.0 0.0 0.0]
-                                        :mass 2e30 :radius 6.957e8
-                                        :matter-state :star
-                                        :temperature 5800.0})
+    (let [[w eid] (seeder/spawn-clump (ecs/empty-world)
+                                      {:position [0.0 0.0 0.0]
+                                       :mass 2e30 :radius 6.957e8
+                                       :matter-state :star
+                                       :temperature 5800.0})
           w (ecs/put-component w eid c/luminosity 3.828e26)
           b (r/body-brightness w eid :star)]
       (is (>= b 1.0) "a sun-like star is at least unit brightness")

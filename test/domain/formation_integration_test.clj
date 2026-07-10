@@ -20,7 +20,7 @@
    [domain.ecs.core       :as ecs]
    [domain.ecs.event      :as event]
    [domain.ecs.components  :as c]
-   [domain.stellar        :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.physics.cache  :as pcache]
    [law.composition       :as lcomp]
    [law.stellar           :as law]
@@ -38,11 +38,11 @@
   [w {:keys [disk-mass body-mass n] :or {disk-mass 1.0e27 body-mass 6.0e24 n 24}}]
   (let [M law/solar-mass
         au law/au
-        [w star] (stellar/spawn-clump w
-                                      {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
-                                       :mass M :radius law/solar-radius :temperature 2.0e7
-                                       :matter-state :star
-                                       :composition lcomp/solar-composition})
+        [w star] (seeder/spawn-clump w
+                                     {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]
+                                      :mass M :radius law/solar-radius :temperature 2.0e7
+                                      :matter-state :star
+                                      :composition lcomp/solar-composition})
         w (-> w
               (ecs/put-component star c/pressure 1.0e13)  ;; fusion sustaining
               (ecs/put-component star c/luminosity law/solar-luminosity)
@@ -60,10 +60,10 @@
                            theta (* 2.399963229728653 i)]  ;; golden angle (rad)
                        [(* r (math/cos theta)) (* r (math/sin theta)) 0.0]))
         w (reduce (fn [w pos]
-                    (let [[w2 eid] (stellar/spawn-clump w
-                                                        {:position pos :velocity (circular-velocity M pos)
-                                                         :mass body-mass :radius 1.0e7
-                                                         :matter-state :planetesimal})]
+                    (let [[w2 eid] (seeder/spawn-clump w
+                                                       {:position pos :velocity (circular-velocity M pos)
+                                                        :mass body-mass :radius 1.0e7
+                                                        :matter-state :planetesimal})]
                       (ecs/put-component w2 eid c/disc-tag :disc)))
                   w placements)]
     [w star]))
@@ -168,8 +168,8 @@
 (deftest persistent-cache-matches-full-rebuild
   (testing "10 ticks with persistent cache and full-rebuild produce identical worlds"
     (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0
-                                           :nebula-radius 2.0e16
-                                           :n-seeds 5 :seed-r 0.18})
+                                          :nebula-radius 2.0e16
+                                          :n-seeds 5 :seed-r 0.18})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
                           :sim/dt 0.0))]
@@ -186,8 +186,8 @@
 (deftest persistent-cache-interval-one-matches-invalidation
   (testing "10 ticks with interval=1 persistent cache match invalidate=true mode"
     (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0
-                                           :nebula-radius 2.0e16
-                                           :n-seeds 5 :seed-r 0.18})
+                                          :nebula-radius 2.0e16
+                                          :n-seeds 5 :seed-r 0.18})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
                           :sim/dt 0.0))
@@ -206,8 +206,8 @@
 (deftest persistent-cache-default-interval-stays-stable
   (testing "30 ticks with default persistent-cache interval stay stable vs full rebuild"
     (let [base (-> (genesis/create-world {:gas-count 30 :spin 0.4 :turb 0.05
-                                           :nebula-radius 2.0e16
-                                           :n-seeds 5 :seed-r 0.18})
+                                          :nebula-radius 2.0e16
+                                          :n-seeds 5 :seed-r 0.18})
                    (assoc :genesis/adaptive-pacing? false))
           full (assoc base :genesis/invalidate-neighbor-cache? true)
           run #(reduce (fn [w _] (genesis/tick-world w)) % (range 30))

@@ -40,7 +40,6 @@
 (def facade-namespaces
   #{'domain.player
     'domain.ecology
-    'domain.stellar
     'infra.render})
 
 ;; System-assembly namespaces that wire many sub-modules together.  High fan-out

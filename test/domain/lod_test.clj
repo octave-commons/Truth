@@ -9,22 +9,22 @@
    [domain.lod :as lod]
    [domain.integrator.base :as base]
    [domain.integrator.kinematics :as kinematics]
-   [domain.stellar :as stellar]))
+   [domain.stellar.seeder :as seeder]))
 
 (defn- world-with-star-planet-observer
   "A world with a star at the origin, a planet at 1e12 m, and an observer at the
    origin."
   []
-  (let [[w _star] (stellar/spawn-clump (ecs/empty-world)
-                                       {:position [0.0 0.0 0.0]
-                                        :mass 2e30 :radius 6.957e8
-                                        :matter-state :star
-                                        :temperature 5800.0})
-        [w _planet] (stellar/spawn-clump w
-                                         {:position [1.0e12 0.0 0.0]
-                                          :mass 6e24 :radius 6.4e6
-                                          :matter-state :planet
-                                          :temperature 300.0})
+  (let [[w _star] (seeder/spawn-clump (ecs/empty-world)
+                                      {:position [0.0 0.0 0.0]
+                                       :mass 2e30 :radius 6.957e8
+                                       :matter-state :star
+                                       :temperature 5800.0})
+        [w _planet] (seeder/spawn-clump w
+                                        {:position [1.0e12 0.0 0.0]
+                                         :mass 6e24 :radius 6.4e6
+                                         :matter-state :planet
+                                         :temperature 300.0})
         [w _obs] (player/spawn-observer w [0.0 0.0 0.0])]
     (assoc w :next-id 10 :tick 0)))
 

@@ -8,7 +8,7 @@
    [domain.ecs.components :as c]
    [domain.genesis :as genesis]
    [domain.integrator :as integ]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.stellar.classifier :as classifier]
    [domain.stellar.structure :as structure]
    [domain.spatial.index]
@@ -31,7 +31,7 @@
 
 (defn- with-condense-tick
   "Return world with `:genesis/sim-time` and `:sim/dt` chosen to make
-   `stellar/condense-tick?` true."
+   `classifier/condense-tick?` true."
   [w dt]
   (assoc w :genesis/sim-time (- classifier/condense-interval (double dt))
          :sim/dt (double dt)))
@@ -54,7 +54,7 @@
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/condensation-seed-mass-kg 1.0e16)
                 (with-condense-tick 2.0e11))
-          ws ((:run (stellar/condensation-seeder-system)) w)
+          ws ((:run (seeder/condensation-seeder-system)) w)
           specs (get-in ws [c/spawn-request-condense eid])]
       (is (seq specs) "spawn request was emitted")
       (is (= 1 (count specs)) "exactly one seed spec")
@@ -80,7 +80,7 @@
                                      c/disc-tag :disc})
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
-          ws ((:run (stellar/condensation-seeder-system)) w)]
+          ws ((:run (seeder/condensation-seeder-system)) w)]
       (is (not= :planetesimal (classifier/classify-next-state region pm))
           "precondition: this is a big condense, not planetesimal")
       (is (nil? (get-in ws [c/spawn-request-condense eid]))
@@ -105,7 +105,7 @@
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/condensation-seed-mass-kg 1.0e16)
                 (with-condense-tick 2.0e11))
-          ws ((:run (stellar/condensation-seeder-system)) w)]
+          ws ((:run (seeder/condensation-seeder-system)) w)]
       (is (== -1.0e16 (get-in ws [c/mass-flux-condense eid]))
           "parent parcel is debited exactly the seed mass")
       (is (true? (get-in ws [c/condensation-seeded eid]))
@@ -130,7 +130,7 @@
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/condensation-seed-mass-kg 1.0e16)
                 (with-condense-tick 2.0e11))
-          ws ((:run (stellar/condensation-seeder-system)) w)
+          ws ((:run (seeder/condensation-seeder-system)) w)
           spec (first (get-in ws [c/spawn-request-condense eid]))
           d (sp/dist [1.0e15 0.0 0.0] (:position spec))]
       (is (pos? d) "seed position differs from parent position")
@@ -154,7 +154,7 @@
                                      c/disc-tag :disc})
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
-          ws ((:run (stellar/condensation-seeder-system)) w)]
+          ws ((:run (seeder/condensation-seeder-system)) w)]
       (is (nil? (get-in ws [c/spawn-request-condense eid]))))))
 
 (deftest seeder-skips-nebula-outside-disc
@@ -174,13 +174,13 @@
                                      c/disc-tag :envelope})
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
-          ws ((:run (stellar/condensation-seeder-system)) w)]
+          ws ((:run (seeder/condensation-seeder-system)) w)]
       (is (nil? (get-in ws [c/spawn-request-condense eid]))))))
 
 (deftest integrator-folds-condense-debit
   (testing "c/mass-flux-condense folds through the generic :mass accumulate"
     (let [w (ecs/empty-world)
-          [w parent] (stellar/spawn-clump
+          [w parent] (seeder/spawn-clump
                       w {:position [0.0 0.0 0.0]
                          :velocity [0.0 0.0 0.0]
                          :mass 1.0e28

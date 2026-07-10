@@ -6,7 +6,7 @@
    [clojure.test :refer [deftest testing is]]
    [domain.em     :as em]
    [domain.physics.cache :as pcache]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.ecs.core :as ecs]
    [domain.ecs.tick :as tick]
    [domain.ecs.components :as c]
@@ -54,24 +54,24 @@
   (testing "em-system adds Lorentz acceleration to c/hydro-accel"
     (let [base (ecs/empty-world)
           ;; uniform field → zero curl; add a gradient by tilting one neighbor
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 1.0]
-                                             :angular-momentum [0.0 0.0 1e30]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 0.5]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 1.0]
+                                            :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 0.5]
+                                            :angular-momentum [0.0 0.0 0.0]})
           w2 (spatial/spatial-index w2)
           w3 ((em/em-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
@@ -85,15 +85,15 @@
 (deftest test-em-system-brakes-spin
   (testing "em-system reduces the magnitude of angular momentum over one tick"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 2e30
-                                             :radius 1e15
-                                             :matter-state :protostar
-                                             :density 1e-15
-                                             :pressure 1e-10
-                                             :b-field [0.0 0.0 1.0e-4]
-                                             :angular-momentum [0.0 0.0 1e45]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 2e30
+                                            :radius 1e15
+                                            :matter-state :protostar
+                                            :density 1e-15
+                                            :pressure 1e-10
+                                            :b-field [0.0 0.0 1.0e-4]
+                                            :angular-momentum [0.0 0.0 1e45]})
           L0   (ecs/get-component w eid c/angular-momentum)
           spin0 (ecs/get-component w eid c/spin)
           w    (spatial/spatial-index w)
@@ -108,15 +108,15 @@
 (deftest test-em-system-conserves-b-field-bounds
   (testing "Resistive decay keeps B finite"
     (let [base (ecs/empty-world)
-          [w eid] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 1e14
-                                             :matter-state :nebula
-                                             :density 1e-18
-                                             :pressure 1e-13
-                                             :b-field [0.0 0.0 1.0e-9]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 1e14
+                                            :matter-state :nebula
+                                            :density 1e-18
+                                            :pressure 1e-13
+                                            :b-field [0.0 0.0 1.0e-9]
+                                            :angular-momentum [0.0 0.0 0.0]})
           w    (spatial/spatial-index w)
           w2   ((em/em-system 1e10) w)
           b    (ecs/get-component w2 eid c/b-field)]
@@ -137,24 +137,24 @@
 (deftest test-em-system-matches-with-cache
   (testing "em-system applies the same Lorentz acceleration with and without cache"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 1.0]
+                                            :angular-momentum [0.0 0.0 1e30]})
+          [w2 _eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
                                              :velocity [0.0 0.0 0.0]
                                              :mass 1e28
                                              :radius 2e14
                                              :matter-state :nebula
                                              :density 1.0
                                              :pressure 1.0
-                                             :b-field [0.0 0.0 1.0]
-                                             :angular-momentum [0.0 0.0 1e30]})
-          [w2 _eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                              :velocity [0.0 0.0 0.0]
-                                              :mass 1e28
-                                              :radius 2e14
-                                              :matter-state :nebula
-                                              :density 1.0
-                                              :pressure 1.0
-                                              :b-field [0.0 0.0 0.5]
-                                              :angular-momentum [0.0 0.0 0.0]})
+                                             :b-field [0.0 0.0 0.5]
+                                             :angular-momentum [0.0 0.0 0.0]})
           w2 (spatial/spatial-index w2)
           a-uncached (ecs/get-component ((em/em-system 1e10) w2) ea c/hydro-accel)
           cached (pcache/build-neighbor-cache w2)
@@ -177,24 +177,24 @@
 (deftest test-em-system-fallback-without-cache
   (testing "em-system runs correctly when c/neighbor-cache is absent"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 1.0]
-                                             :angular-momentum [0.0 0.0 1e30]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 0.5]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 1.0]
+                                            :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 0.5]
+                                            :angular-momentum [0.0 0.0 0.0]})
           w2 (spatial/spatial-index w2)
           w3 ((em/em-system 1e10) w2)
           a-a (ecs/get-component w3 ea c/hydro-accel)
@@ -209,24 +209,24 @@
 (deftest test-lorentz-system-fallback-without-cache
   (testing "lorentz-acceleration-system runs correctly without neighbor cache"
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 1.0]
-                                             :angular-momentum [0.0 0.0 1e30]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 0.5]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 1.0]
+                                            :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 0.5]
+                                            :angular-momentum [0.0 0.0 0.0]})
           w2 (spatial/spatial-index w2)
           ws ((:run (em/lorentz-acceleration-system 1e10)) w2)
           w3 (tick/apply-write-set w2 ws)
@@ -242,24 +242,24 @@
 (deftest test-neutral-parcel-feels-no-lorentz-force
   (testing "A parcel with ionization-fraction zero experiences zero Lorentz acceleration."
     (let [base (ecs/empty-world)
-          [w1 ea] (stellar/spawn-clump base {:position [0.0 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 1.0]
-                                             :angular-momentum [0.0 0.0 1e30]})
-          [w2 eb] (stellar/spawn-clump w1   {:position [1e14 0.0 0.0]
-                                             :velocity [0.0 0.0 0.0]
-                                             :mass 1e28
-                                             :radius 2e14
-                                             :matter-state :nebula
-                                             :density 1.0
-                                             :pressure 1.0
-                                             :b-field [0.0 0.0 0.5]
-                                             :angular-momentum [0.0 0.0 0.0]})
+          [w1 ea] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 1.0]
+                                            :angular-momentum [0.0 0.0 1e30]})
+          [w2 eb] (seeder/spawn-clump w1   {:position [1e14 0.0 0.0]
+                                            :velocity [0.0 0.0 0.0]
+                                            :mass 1e28
+                                            :radius 2e14
+                                            :matter-state :nebula
+                                            :density 1.0
+                                            :pressure 1.0
+                                            :b-field [0.0 0.0 0.5]
+                                            :angular-momentum [0.0 0.0 0.0]})
           w2 (-> w2
                  (ecs/put-component ea c/ionization-fraction 0.0)
                  (ecs/put-component eb c/ionization-fraction 0.0)

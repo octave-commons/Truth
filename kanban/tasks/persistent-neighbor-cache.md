@@ -1,14 +1,13 @@
 ---
 uuid: "persistent-neighbor-cache"
 title: "Persistent Neighbor Cache for Phase 0"
-status: "in_progress"
+status: done
 priority: "P0"
 labels: ["perf", "phase0", "spec"]
 created_at: "2026-07-03T00:00:00Z"
 source: "kanban/tasks/persistent-neighbor-cache.md"
 category: "specs"
 ---
-
 # Spec: Persistent Neighbor Cache for Phase 0
 
 **Status:** implemented — acceptance criteria met, pending review/merge  
@@ -194,3 +193,58 @@ Central-particle displacement alone cannot detect a neighbor that moves into the
    profiling showed the nearest-neighbor descent at ~28 ms serial @1000 was the
    real cost, not the radius query).
 6. Code review + merge.
+
+## Review — 2026-07-10 (independent reviewer)
+
+**Verdict:** READY-FOR-DONE
+
+Verified the code state matches the 2026-07-10 status-update block; the two
+follow-on refactors (facade split + registry fan-out lane) are landed.
+
+- **Facade split confirmed.** `src/domain/physics/cache.clj:1-70` is a thin
+  facade: its ns docstring states the split, and every public var is a `def`
+  aliasing `domain.physics.cache.neighbor` or `domain.physics.cache.soa`
+  (`neighbor/rebuild-neighbor-cache`, `neighbor/build-neighbor-cache`,
+  `neighbor/displacement-tolerance`, `neighbor/cache-entry-valid?`,
+  `soa/build-physics-soa`, etc.). No implementation logic remains in the facade.
+- **`domain.physics.cache.neighbor` has all the named API.**
+  `displacement-tolerance` (neighbor.clj:29, `^:const` 0.1),
+  `cache-entry-valid?` (neighbor.clj:45), `refresh-cache-entry`
+  (neighbor.clj:180, private `defn-`), `build-neighbor-cache` (neighbor.clj:309),
+  `rebuild-neighbor-cache` (neighbor.clj:258). Entry keys `:anchor-position`,
+  `:query-r`, `:nn-id` are all produced (`assemble-cache-entry` neighbor.clj:141-147,
+  `build-cache-entry` sets `:nn-id` at neighbor.clj:165-166).
+- **Registry fan-out lane confirmed.** `src/domain/ecs/registry.clj:73-76`
+  declares `{:id :neighbor-cache :ns 'domain.physics.cache.neighbor
+  :writes #{c/neighbor-cache} :reads #{c/matter-state c/position c/mass c/radius
+  c/neighbor-cache}}`. The lane is actually wired into the tick:
+  `cache/neighbor-cache-system` is included in `physics-systems-parallel`
+  (`src/domain/genesis/systems.clj:75`). The system reads the one-tick-stale
+  `c/neighbor-cache` from the frozen snapshot and emits the write-set
+  (neighbor.clj:332-351) — genuine Jacobi fan-out, no serial pre-phase.
+- **Old world-key path is gone.** `grep -n "neighbor-cache" src/domain/genesis.clj`
+  returns nothing; the only remaining textual reference to
+  `:genesis/neighbor-cache` in `src/` is a *comment* in registry.clj:71 noting
+  the world-key was replaced. §3.5's `step-physics`-strips-cache path no longer
+  exists.
+- **Schema requires the new keys.** `neighbor-cache-entry-schema`
+  (`src/law/field/schema.clj:76-92`, re-exported from `src/law/field.clj:27`)
+  makes both `[:anchor-position [:tuple :double :double :double]]` and
+  `[:query-r [:and :double [:> 0]]]` non-optional entries of the `:map`.
+- **Tests pass (actual runs, 2026-07-10):**
+  - `clojure -M:test -n domain.physics.cache-test` → **12 tests, 137 assertions,
+    0 failures, 0 errors.**
+  - `clojure -M:test -n domain.formation-integration-test` → **8 tests, 55
+    assertions, 0 failures, 0 errors.**
+
+Acceptance-criteria assessment:
+- AC#4 (persistent vs full-rebuild physically equivalent) is covered by the
+  passing `formation-integration-test`. AC#1's targeted namespaces are green.
+- **Not independently re-verified here** (out of review scope, no discrepancy
+  found): AC#1's exact full-suite count of 507, and the benchmark figures in
+  AC#2/AC#3/Promotion-step-5 (would require `clojure -M:bench phase0`). These
+  are performance claims, not correctness gates, and do not block promotion.
+
+Promotion-path step 6 (code review + merge) is satisfied by this review; the
+work is on `main`. No discrepancies between card claims and code found.
+Recommend moving this card to `done`.

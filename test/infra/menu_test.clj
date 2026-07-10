@@ -6,7 +6,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.player :as player]
-   [domain.stellar :as stellar]
+   [domain.stellar.seeder :as seeder]
    [domain.ecology :as ecology]
    [infra.camera :as cam]
    [infra.menu :as menu]
@@ -78,11 +78,11 @@
 
 (deftest entities-viewer-lists-resolved-bodies
   (testing "the Entities panel lists resolved bodies with formatted mass/radius"
-    (let [[w _] (stellar/spawn-clump (ecs/empty-world)
-                                     {:position [0.0 0.0 0.0]
-                                      :mass 2e30 :radius 6.957e8
-                                      :matter-state :star
-                                      :temperature 5800.0})
+    (let [[w _] (seeder/spawn-clump (ecs/empty-world)
+                                    {:position [0.0 0.0 0.0]
+                                     :mass 2e30 :radius 6.957e8
+                                     :matter-state :star
+                                     :temperature 5800.0})
           cfg (menu/apply-action base [:ui/toggle-domain :entities])
           {:keys [hits text]} (menu/menu-hud cfg w 1280.0 720.0)]
       (is (seq (filter #(re-find #"Star" (:text %)) text)) "panel shows a star row")

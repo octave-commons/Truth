@@ -38,10 +38,10 @@ When the scope is larger than the available session, carve off a reviewable subs
 inventory lingering files, capture blockers, link references).&#x20;
 
 ```
-6. **Review → Test → Document**
+6. **Review → Done**
 ```
 
-Move through _In Review_, _Testing_ and _Document_ then _Done_ per board flow, recording evidence and summaries.&#x20;
+Move to _In Review_; when the reviewer approves **and** the global [Definition of Done](#definition-of-done-global-gates) is satisfied, advance to _Done_, recording evidence and summaries on the card. Testing and documentation are DoD gates, not their own columns.
 
 # Kanban as a Finite State Machine (FSM)
 
@@ -76,9 +76,7 @@ flowchart TD
     Ready["🛠 Ready"]
     Todo["🟢 To Do"]
     InProgress["🟡 In Progress"]
-    Testing["🧪 Testing"]
     InReview["🔍 In Review"]
-    Document["📚 Document"]
     Done["✅ Done"]
   end
 
@@ -96,25 +94,20 @@ flowchart TD
   Ready --> Todo
   Todo --> InProgress
   InProgress --> InReview
-  InReview --> Testing
-  Testing --> Document
-  Document --> Done
+  InReview --> Done
 
   %% ====== Cycles back to Planning / queue ======
   Ready --> Breakdown
   Todo --> Breakdown
   InProgress --> Breakdown
   InReview --> Breakdown
-  Testing --> InProgress
 
   %% ====== Session-end, no-PR handoff ======
   InProgress --> Todo
-  Document --> InReview
 
   %% ====== Review crossroads (re-open work) ======
   InReview --> InProgress
   InReview --> Todo
-  Testing --> InReview
 
   %% ====== Defer / archive loops ======
   Accepted --> IceBox
@@ -156,11 +149,8 @@ flowchart TD
 - **In Progress → In Review**
   Coherent, reviewable change exists.
 
-- **In Review → Testing**
-  Review approved; proceed to testing phase.
-
-- **Testing → Document**
-  Testing complete; proceed to documentation.
+- **In Review → Done**
+  Review approved **and** the global [Definition of Done](#definition-of-done-global-gates) is satisfied. Testing and documentation are gates here, not separate columns.
 
 - **In Progress → Todo** _session-end handoff; no PR required_
   Capacity limit reached without a reviewable change. Record artifacts/notes + next step; move to **Todo** if WIP allows; else remain **In Progress** and mark a minor blocker.
@@ -175,17 +165,32 @@ flowchart TD
 - **In Review → Todo** _(fallback)_
   Changes requested; assignee busy **or** **In Progress** WIP full.
 
-- **Testing → In Review**
-  Testing failed or needs review adjustments; return to review phase.
-
-- **Document → Done | In Review**
-  Docs/evidence complete → Done; otherwise → In Review for another pass.
-
 - **Done → (no mandatory back edge)**
   Follow-ups are modeled as new tasks (optionally seeded from Done).
 
 - **Blocked → Breakdown** _(unblock event)_
   Fires when any linked blocker advances e.g., to In Review/Done or evidence shows dependency removed; return to Breakdown to re-plan.
+
+## Definition of Done (global gates)
+
+These were once their own board columns (**Testing**, **Document**). They are now
+**gates every task clears on the In Review → Done transition**, not states you
+move a card through. A reviewer advances a card to _Done_ only when all apply:
+
+- **Tests pass.** The change ships with tests that exercise it, and the relevant
+  suite is green (`clojure -M:test`, plus `test/architecture_test.clj` for
+  structural work). Record the command and pass/fail counts on the card.
+- **Static gates clean.** `bin/analyze` (or `bin/analyze --strict` for
+  structural work) introduces no new warning classes in the touched files.
+- **Documented.** Public vars have docstrings; the card records a short summary
+  of what changed plus evidence (test output, benchmark numbers, screenshots).
+  Update `docs/designs`/`docs/notes` when behavior or architecture changed.
+- **Invariants intact.** Single ECS substrate, double-buffer single-writer
+  fan-out (no serial barrier tier), no `domain/` → `infra/` import — see
+  `CLAUDE.md`. `reg/write-conflicts` empty for ECS work.
+
+A card that fails any gate goes back to **In Progress** (or **Todo**), not to a
+Testing/Document column — those no longer exist.
 
 ### Blocking policy
 

@@ -1,7 +1,7 @@
 ---
 uuid: "perf-60fps-parallel-tick"
 title: "60 fps: closing the gap between the Jacobi architecture and the wall clock"
-status: "in_progress"
+status: "done"
 priority: "P0"
 labels: ["perf", "phase0", "spec"]
 created_at: "2026-07-03T00:00:00Z"
@@ -22,3 +22,7 @@ Tracks `kanban/tasks/tick-perf-drift-profile.md`.
 > (`spec-neighbor-cache-fan-out-lane.md`), and the SoA gravity/kinematics cache
 > split (`spec-soa-primitive-array-physics-cache.md`). This card remains the
 > open umbrella for the residual gap to 60 fps @1000.
+
+---
+2026-07-10 → closed as umbrella. Concrete perf sub-tasks landed (persistent-neighbor-cache done; SoA cache + neighbor fan-out lane in main). 60fps@1000 not yet met; residual gap tracked by new card perf-tick-residual-gap-to-60fps.md (profile-then-fix). This vague umbrella retired to keep the board honest.
+---
