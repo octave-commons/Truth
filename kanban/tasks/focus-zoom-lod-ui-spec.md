@@ -11,7 +11,22 @@ category: "specs"
 
 # Focus, Zoom, LOD, and Life-Emergence UI Spec
 
-**Status:** in-progress  
+**Status:** done (2026-07-10)  
+
+> **Status update (2026-07-10, Claude Code — code-state review):** Body status
+> corrected from `in-progress` to `done` to match the frontmatter and the code.
+> All specced pieces are present in the tree:
+> - `c/lod-tick-phase` in `domain.ecs.components`; `domain.lod` is its sole
+>   writer (and of `c/lod-level`); `domain.integrator` `:reads` it.
+> - `:lod/throttle-ticks?` filtering in `domain.integrator.kinematics` /
+>   `.core` / `.base` (due-entity filter, opt-in, default off).
+> - Floating-origin render: `:render-origin` in `infra.render.scene.setup`.
+> - Life-emergence UI: `"Life emerges on %s! +50 quanta"` in `domain.arc`;
+>   `L`-key `jump-to-living-world` + `nearest-living-world` in
+>   `infra.render.input`; Living Worlds section in `infra.menu.panels`;
+>   ecology facts (biomass/complexity/…) in `infra.inspect.format/body-facts`.
+> Full `clojure -M:test` not re-run here.
+
 **Goal:** Let the player zoom in tightly on planets and life-bearing worlds without rendering artifacts, tell them where life emerges, surface the stats they need, and make the observer's focus actually drive simulation LOD.  
 **Canonical backing:** `kanban/tasks/phase-0-player-focus-dual-representation-spec.md` §2–§3.
 

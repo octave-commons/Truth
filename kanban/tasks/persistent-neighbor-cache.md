@@ -12,6 +12,26 @@ category: "specs"
 # Spec: Persistent Neighbor Cache for Phase 0
 
 **Status:** implemented — acceptance criteria met, pending review/merge  
+
+> **Status update (2026-07-10, Claude Code — code-state review):** This is
+> **landed on `main` and has been superseded by two follow-on refactors**, so
+> §3.5's implementation notes are now stale:
+> - `src/domain/physics/cache.clj` is now a **thin facade** re-exporting
+>   `domain.physics.cache.neighbor` (the persistent SPH/MHD neighbor list) and
+>   `domain.physics.cache.soa` (the transient SoA gravity/kinematics cache).
+>   `rebuild-neighbor-cache` / `build-neighbor-cache` / `refresh-cache-entry` /
+>   `displacement-tolerance` / `cache-entry-valid?` all live in
+>   `domain.physics.cache.neighbor` (see `spec-soa-primitive-array-physics-cache.md`).
+> - The rebuild is **no longer a `step-physics` call over the world-key
+>   `:genesis/neighbor-cache`** (§3.5). It is now a **registry fan-out lane** —
+>   `{:id :neighbor-cache :ns 'domain.physics.cache.neighbor :writes #{c/neighbor-cache}}`
+>   in `domain.ecs.registry` — that reads the frozen input world and writes the
+>   `c/neighbor-cache` component, consumed by hydro/EM in the same tick's
+>   fan-out (see `spec-neighbor-cache-fan-out-lane.md`). The world-key path
+>   described in §3.5 is gone.
+> Promotion-path step 6 ("Code review + merge") is effectively closed — the work
+> is in `main`. **Recommend moving this card to `done`.**
+
 **Target:** `kanban/tasks/tick-perf-drift-profile.md` Fix 4 continuation  
 **Scope:** `src/domain/physics/cache.clj`, `src/domain/genesis.clj`, `src/domain/hydro.clj`, `src/domain/em.clj`, `src/domain/spatial/index.clj`, tests
 

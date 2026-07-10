@@ -1,21 +1,25 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710070234`
-- **Timestamp:** 2026-07-10T07:02:34Z
+- **Π tag:** `Π-20260710075706`
+- **Timestamp:** 2026-07-10T07:57:06Z
 - **Branch:** `main`
-- **Parent head:** `5b44fdc3cc4d2e572a0af0cb831e0d1f18d257a0`
+- **Parent head:** `6b6f2333417f718a1b2737880b8916589ae1905c`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `receipts.edn` — committed the uncommitted `:fork-tax` `:paid` receipt from the previous activation (05:51Z) and two new `:observation` receipts from `pi`.
+- `kanban/tasks/ecology-water-gate-snowline.md` — updated ecology water-gate / snowline task state.
+- `kanban/tasks/focus-zoom-lod-ui-spec.md` — updated focus-zoom LOD UI spec task state.
+- `kanban/tasks/perf-60fps-parallel-tick.md` — updated 60fps parallel tick performance task state.
+- `kanban/tasks/persistent-neighbor-cache.md` — updated persistent neighbor cache task state.
+- `kanban/tasks/static-analysis-split-stellar-disc-wind.md` — updated static-analysis split stellar disc wind task state.
+- `receipts.edn` — committed the uncommitted `:fork-tax` `:paid` receipt from the previous activation (07:02Z).
+- `PROCESS.md` — added new project process overview document (untracked).
 - `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp` — regenerated as handoff artifacts for this snapshot.
-
-These are repo-relevant metadata and receipt artifacts introduced since the previous Π tag.
 
 ## Verification
 
-- No targeted tests exist for receipt or handoff-artifact files.
+- No targeted tests exist for kanban, process, receipt, or handoff-artifact files.
 - `verification skipped: no targeted tests`.
 
 ## Concurrent / Ephemeral

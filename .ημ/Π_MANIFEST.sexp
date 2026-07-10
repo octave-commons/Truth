@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260710070234"
-  :generated "2026-07-10T07:02:34Z"
-  :previous-tag "Π-20260710055105"
-  :previous-commit "5b44fdc3cc4d2e572a0af0cb831e0d1f18d257a0"
+  :tag "Π-20260710075706"
+  :generated "2026-07-10T07:57:06Z"
+  :previous-tag "Π-20260710070234"
+  :previous-commit "6b6f2333417f718a1b2737880b8916589ae1905c"
     (M ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (M ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
     (M ".agents/skills/deep-research/CONTRACT.edn" :sha256 "a2043a4a0bd6ce703d407765bf5f92489482ff32863879b1bb7d089660266714")
@@ -285,12 +285,13 @@
     (M ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "7eb1135fc380d6dd69e39b6b7ab5fd290a36b1669458afce0c0309b8a7991980")
     (M ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "68a91c773a827b350bdd5187c45754713fcc6f171093effc34ad1b0ebe518f8f")
     (M ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "3e093d0d60a5870526b7a544b258fe65cba975d78062c229af37cb1242a9ccb2")
-    (M ".ημ/Π_LAST.md" :sha256 "4e6818fe831cc580589d020b8af9158c6ae0f182444f304774dc7a2be33eafc4")
-    (M ".ημ/Π_STATE.sexp" :sha256 "b2f521e0c1b64f95693df27081709099878849aa62a56b5686ac4f0844d377bd")
+    (M ".ημ/Π_LAST.md" :sha256 "2626b441858ec7213975f8e94c6b519ddedeb9c8e1cafc5a0b70c8ae8e5e712d")
+    (M ".ημ/Π_STATE.sexp" :sha256 "b3cdb8421a6922cf3b57a126ae4dd968a26ffe957e5e54ee0df03ae8f54d0c14")
     (M "AGENTS.md" :sha256 "af109d583578a56569ecaea4f9eda46e9a2e36df8b80567be1601683c3d04aff")
     (M "CLAUDE.md" :sha256 "d3d1aa87156cfbb3ad1ebfd1848a6ee65961041f9b33b4ac7594e64ea78f0f2e")
     (M "CONTRACT.edn" :sha256 "463298dd814c60b3857bc41a23e5d7fc1af1d18d33b52e14151b55db889f7966")
     (M "EOF" :sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+    (M "PROCESS.md" :sha256 "07b398472a41fdeaf2db29d6fb5b4a2bcdab3d09605b504202d046daec4cc417")
     (M "README.md" :sha256 "66a3198d05691c8cc9e805efc39b3181a96893f637f4a1124c435bc914baf8ae")
     (M "bench/gates_of_truth/bench.clj" :sha256 "1f35ce82141fd6fb056005bfc43b51e821e3ae66fa9f4d1d31b293790d0191b0")
     (M "bench/gates_of_truth/bench/collision.clj" :sha256 "6afd44c3d969323aa239a80346f576e81a555db87426a3a8513ad39537c9b057")
@@ -550,10 +551,10 @@
     (M "kanban/tasks/core-accretion-physics-spec.md" :sha256 "ed281c6341446739cee617b3efd13b08aa6965c45a02a3db3d16e1a9d18fa57d")
     (M "kanban/tasks/decouple-the-formation-loop-from-phase-0-framing.md" :sha256 "e740f0a8a1cc8ee477b270e92d6dd1b09165cacef6dde7eae6ac5d5a8705fcea")
     (M "kanban/tasks/disk-regime-tag-unification.md" :sha256 "48ae6e091367ee62dd567ba3dd200f4f05891bd77e91d44979c59a6c93838342")
-    (M "kanban/tasks/ecology-water-gate-snowline.md" :sha256 "e59dd70705429490e064fdb5a094ae2d63c29cb358b97919bdf4f20b233c3e64")
+    (M "kanban/tasks/ecology-water-gate-snowline.md" :sha256 "b490ebacb4303a2dc7efdd16a04dd20b19a27b61d81d12f2e5e1d10f6c687382")
     (M "kanban/tasks/epic-static-analysis-cleanup.md" :sha256 "d7a5f629d06a1c159730d5b2841a8e2b376180cedf9705885a12b995814ab047")
     (M "kanban/tasks/exposed-tunables-and-settings-menu-spec.md" :sha256 "fae239fdce70d4f24826620cd33eb0b9b9e00f8ae8ea09b7495e6c52ec5c32b0")
-    (M "kanban/tasks/focus-zoom-lod-ui-spec.md" :sha256 "5503eb127878c3892fd7c9bbd3ae6080339d43e532dedb3c6bd9c43c95fa8d1d")
+    (M "kanban/tasks/focus-zoom-lod-ui-spec.md" :sha256 "b61f3e376d7d8eafaaa60a64db1120e17208418811c9a36d2ae2517bface7878")
     (M "kanban/tasks/gammie-alpha-beta-coupling.md" :sha256 "2f7eac97aa662ea3d5b190e3382d862fde9a21815a63665db65023a463122040")
     (M "kanban/tasks/genesis-arc-separation-physics-substrate-vs-player-arc.md" :sha256 "5d3e357e187ee1fcc9061a06065829d60678846f8239a9940319b9abbdbc50b8")
     (M "kanban/tasks/genesis-formation-authoritative-star-planet-formation-spec.md" :sha256 "1de1e5f74933818e54b8c32d202d4fe572b5cad8c420d4edb2ba933a4a01fecc")
@@ -563,8 +564,8 @@
     (M "kanban/tasks/metal-enrichment-and-seeding-spec.md" :sha256 "08b233357753def2fdcfeb03ebaf1d80df31dd75bc18f512420346288b6064c9")
     (M "kanban/tasks/nebular-chemistry-and-composition-spec.md" :sha256 "b67e6af8d7a32e7ca552bb91a3e42ec130f527a0eabb7a4e98fb119c647e0aa8")
     (M "kanban/tasks/notes-to-specs-synthesis.md" :sha256 "57933faf78333ab80229ec4aa19f22f9446e016ec2c0fe483371cbe04b92b78d")
-    (M "kanban/tasks/perf-60fps-parallel-tick.md" :sha256 "55e59b7e459730feb0f9b75715b07b9e99f4b29bf8d082630eea34dcde10ba70")
-    (M "kanban/tasks/persistent-neighbor-cache.md" :sha256 "2e203499d139b17c9b044ec9efa370a78506d6f7c6d7bf1ef7ee3fcbb82c2f35")
+    (M "kanban/tasks/perf-60fps-parallel-tick.md" :sha256 "8ed7c8f5aa62e163a48aab5a954676377c6e583b8a51333cfea5331294eac2fd")
+    (M "kanban/tasks/persistent-neighbor-cache.md" :sha256 "14b435c227ec5e5e6d11c7d77e5ffe4ef5b391f2ac30cf7708f2b13891c5b709")
     (M "kanban/tasks/phase-0-chemistry-differentiation-spec.md" :sha256 "805b7cfd33c992d5ae371f0b648323aa5a0848cc7e4ae1e772cca7f4317c538b")
     (M "kanban/tasks/phase-0-complete-planet-formation-pipeline-spec.md" :sha256 "b3feb3fa07f8bb627e224040ab4422f242eeadc35d982372ea7cddf807c9757e")
     (M "kanban/tasks/phase-0-habitability-handoff-spec.md" :sha256 "c8c8c79af461a17506477923d3b4cc6a1f5c4e20a94275d28e88bcce782bf842")
@@ -621,14 +622,14 @@
     (M "kanban/tasks/static-analysis-splint-predicate-test-collections.md" :sha256 "42a3cc09e69a952b5dcad3976825847a4912e4a1ead4589776be9f1139c75092")
     (M "kanban/tasks/static-analysis-split-render.md" :sha256 "b656e3bfd82936095dd7794c1b2266efffeb8d3faa7c5c13c0785ee467122166")
     (M "kanban/tasks/static-analysis-split-stellar-core.md" :sha256 "8eb7511b2b6b753a8e00e36f45af4733ef254fc4285c541b93f26e3e84bfd472")
-    (M "kanban/tasks/static-analysis-split-stellar-disc-wind.md" :sha256 "49bbcfae8f4eded9358940d0b3c5933021ced44a719e6b3eedb73e28942a9475")
+    (M "kanban/tasks/static-analysis-split-stellar-disc-wind.md" :sha256 "d579291c49af1a9daf2a05a6627faf2eaa172716d46de4cdabbfe8ecebc7a893")
     (M "kanban/tasks/static-analysis-structural-cleanup.md" :sha256 "80edc2235d0232bfb5f19b315bb28153d0308d7770e84cc873efd60270c65bef")
     (M "kanban/tasks/stellar-wind-plasma-state-spec.md" :sha256 "25120cb91859fd02c9edbc5416a1a389a24b9a92e4decf0a471d040891cab363")
     (M "kanban/tasks/tick-perf-drift-profile.md" :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (M "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (M "openhax.kanban.json" :sha256 "d27b66ffe03adac7b62ac887c01c43003e74e4a24a9d2acfea778cab2d03acc6")
     (M "perf_report_20260701_175703.txt" :sha256 "4f5b828593f2b432ccfc29dd9cfd31990db1d9d0a2aa2ccafc2ddd2694eed280")
-    (M "receipts.edn" :sha256 "c5256912cca2b9ec054065543f6a59e2d573bb751bc4f333003bd92ea89be4ec")
+    (M "receipts.edn" :sha256 "fde69979690b126c40f49d68e50a04bae01ebf3b46828d47f9ddbac6af83c2a6")
     (M "receipts.log" :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (M "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (M "src/domain/arc.clj" :sha256 "075828486a0e495b0a0eba61deee8b4a38f2cb5a89c5ae341697785996daf37e")

@@ -1,11 +1,11 @@
 ((pi "0.63.2")
   (repo "/home/err/spaces/Truth")
   (branch "main")
-  (head "5b44fdc3cc4d2e572a0af0cb831e0d1f18d257a0")
-  (tag "Π-20260710070234")
-  (ts "2026-07-10T07:02:34Z")
+  (head "6b6f2333417f718a1b2737880b8916589ae1905c")
+  (tag "Π-20260710075706")
+  (ts "2026-07-10T07:57:06Z")
   (host "spaces/Truth")
-  (origin "/home/err/spaces/Truth/.eta-mu/actors/fork-tax-tender/inbox/2026-07-10T06-52-05-6d6889b3-13b9-4e1d-bf63-6584f46905b3.md")
+  (origin "/home/err/spaces/Truth/.eta-mu/actors/fork-tax-tender/inbox/2026-07-10T07-53-05-45423cd1-2d3b-49c1-99a1-648f4b577ac5.md")
   (dod "pay fork tax on significant changes")
   (manifest [
     ".agents/skills/dedicated-influence-channel/CONTRACT.edn"
@@ -297,6 +297,7 @@
     "CLAUDE.md"
     "CONTRACT.edn"
     "EOF"
+    "PROCESS.md"
     "README.md"
     "bench/gates_of_truth/bench.clj"
     "bench/gates_of_truth/bench/collision.clj"

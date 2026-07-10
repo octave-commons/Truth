@@ -11,6 +11,18 @@ category: "fix"
 
 # Phase 0 Habitability Handoff Spec
 
+> **Status update (2026-07-10, Claude Code — code-state review):** Frontmatter
+> reads `in_progress`, but **none of the M5 structured-handoff code exists yet**
+> — this card is effectively `todo`/ready, not started. Verified absent in
+> `src/`: `material-class`, `thermal-band`, `atmosphere-class`, `handoff-system`,
+> and any `:planet-candidate` / `:phase0-handoff` record (§3–§5). The
+> **interim scalar path described in the model-update note is still the live
+> code**: `domain.habitability/habitable-worlds` filters
+> `(> (habitability-of %) 0.2)` (the trivially-satisfied gate this card's title
+> flags), and `domain.arc` still handles the soft handoff via
+> `ready-to-narrow?`. Recommend resetting status to `todo`/`ready` or beginning
+> Phase 1 (material + thermal classification, §9 first deliverable).
+
 **Status:** ready for implementation
 **Milestone:** M5 in `kanban/tasks/roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection.md`
 **Goal:** Define when Phase 0 ends and what information a surviving planet carries into Phase 1 (planetary cooling, atmosphere formation, prebiotic chemistry).

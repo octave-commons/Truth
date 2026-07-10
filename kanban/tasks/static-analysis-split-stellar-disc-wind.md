@@ -12,6 +12,21 @@ estimate: 3
 
 # Split domain.stellar Disc, Wind, and Seeder Modules
 
+> **Status update (2026-07-10, Claude Code — code-state review):** The split is
+> **complete in code**; this card's `in_progress` status no longer reflects the
+> tree. All target sub-modules exist under `src/domain/stellar/`:
+> `disc.clj`, `disc_evolution.clj`, `seeder.clj`, `wind.clj`, `fusion.clj`
+> (plus the earlier `classifier`, `collapse`, `geometry`, `merge`, `sink`,
+> `structure`, `temperature`, `thermodynamics`). `src/domain/stellar.clj` is a
+> thin re-export facade (docstring: "Thin facade over the split stellar
+> sub-modules"). `clojure -M:test -n architecture-test` is **green** (6 tests /
+> 23 assertions, 0 failures), which validates the "Done when" criteria that it
+> covers: single-writer / empty `reg/write-conflicts`, no `domain/`→`infra/`
+> import, and the LOC/public-var HARD thresholds. Not independently re-verified
+> here: `^:deprecated` markers on the facade re-exports (they are plain `def`
+> re-exports, not tagged `^:deprecated`) and the full `clojure -M:test` suite.
+> **Recommend moving this card to `done`** after confirming those two.
+>
 > Parent spec: `kanban/tasks/static-analysis-structural-cleanup.md`
 > Parent kanban: `kanban/tasks/static-analysis-structural-cleanup.md`
 
