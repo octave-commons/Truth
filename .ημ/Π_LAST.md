@@ -1,23 +1,20 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710145905`
-- **Timestamp:** 2026-07-10T14:59:05Z
+- **Π tag:** `Π-20260710152145`
+- **Timestamp:** 2026-07-10T15:21:45Z
 - **Branch:** `main`
-- **Parent head:** `74c04b8`
+- **Parent head:** `6fc72e3`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — appended two receipts:
-  - `fork-tax` `:paid` at 2026-07-10T13:59:57Z for the narrative mood/ambience layer snapshot (Π-20260710135957).
-  - `receipt-river` `:observation` at 2026-07-10T14:07:47.904Z.
-- **`.ημ/session-mycology/ledger.md`** — appended session-mycology retrospective for the Π-20260710135957 fork-tax turn.
+- **`receipts.edn`** — committed the previously uncommitted 14:59:05 fork-tax receipt entry (for the Π-20260710145905 snapshot).
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- EDN/markdown sanity of the appended receipts and ledger entry was confirmed.
+- EDN/markdown sanity of the pending receipt and regenerated artifacts was confirmed.
 - The manifest was regenerated with sha256 hashes for all tracked files (manifest excluded from its own hash listing to avoid the circular fixed-point issue).
 
 ## Concurrent / Ephemeral
