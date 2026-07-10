@@ -1,15 +1,15 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710171842`
-- **Timestamp:** 2026-07-10T17:18:42Z
+- **Π tag:** `Π-20260710181936`
+- **Timestamp:** 2026-07-10T18:19:36Z
 - **Branch:** `main`
-- **Parent head:** `7f28c8d505c5c4c53b07b39c76b47f52f0a25e4c`
-- **Previous tag:** `Π-20260710162010`
+- **Parent head:** `4693cb8234a41fb668afdde30958b41d47c3eb97`
+- **Previous tag:** `Π-20260710171842`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — committed the pending 16:21:10Z fork-tax receipt (for Π-20260710162010) and two pi observation receipts at 2026-07-10T16:22:46Z and 2026-07-10T16:22:52Z.
+- **`receipts.edn`** — committed the pending 17:21:58Z pi observation receipt and the current fork-tax receipt for this activation.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
@@ -25,6 +25,10 @@ Actor session/inbox/outbox paths are excluded by `.gitignore` and were left unto
 ## Safety
 
 No secrets, unresolved merge conflicts, or blocked paths were detected. All stageable, repo-relevant working state intended for this snapshot has been committed and tagged.
+
+## Note on Receipt Commit SHA
+
+To preserve the append-only ledger and the invariant that new commits are always added on top (no amend), the fork-tax receipt records the Π tag directly in `:refs` instead of the commit SHA of the commit that contains it. The actual commit SHA is retrievable as the tag target in git history.
 
 ## No Known Blockers
 
