@@ -296,3 +296,12 @@
   spore: none
   receipt-refs: none
   note: Scoring all spores up front and preparing promotion/rejection files in one parallel batch kept the review compact. Friction: double-checking standard template and AGENTS.md/CLAUDE.md listings for already-promoted skills.
+- ts: 2026-07-10T14:06:37.190356775Z
+  session: ses_0b3adbdabffeemvs0H7Quaz2Yc
+  task: fork-tax-tender paid Π-20260710135957 on narrative layer changes
+  p-efficiency: 0.85
+  p-friction: 0.55
+  p-skill-candidate: 0.65
+  spore: none
+  receipt-refs: none
+  note: Bash loops over git ls-files corrupted Unicode paths (e.g. .ημ) during manifest generation; switched to Python script. Receipt EDN append required matching comma-separated format. Targeted tests passed.
