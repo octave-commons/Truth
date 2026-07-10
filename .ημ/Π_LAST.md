@@ -1,33 +1,33 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710212107`
-- **Timestamp:** 2026-07-10T21:21:07Z
+- **Π tag:** `Π-20260710222335`
+- **Timestamp:** 2026-07-10T22:23:35Z
 - **Branch:** `main`
-- **Parent head:** `3a7ff525737dad7e651129274328b6b91b5dd933`
-- **Previous tag:** `Π-20260710202026`
-- **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax on owned paths.
+- **Parent head:** `620ac2dd791f0ab2f1a71d15da30e37f92db061a`
+- **Previous tag:** `Π-20260710212107`
+- **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax on the deferred deletions and updated artifacts.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — committed the pending 20:20:26Z fork-tax-tender observation receipt and its 20:20:26.001Z reflection receipt.
+- **Previously deferred deletions** — now committed:
+  - `.agents/skills/deep-research/CONTRACT.edn`
+  - `.agents/skills/deep-research/SKILL.md`
+  - `EOF`
+  - `perf_report_20260701_175703.txt`
+- **`.ημ/session-mycology/review-receipts.edn`** — updated spore review records.
+- **`.ημ/session-mycology/spores/*.md`** — updated session-mycology spore records.
+- **`receipts.edn`** — appended the pending fork-tax observation and reflection receipts from earlier activations.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- EDN/markdown sanity of the pending receipts and regenerated artifacts was confirmed.
+- EDN/markdown sanity of the pending receipts, spore files, and regenerated artifacts was confirmed.
 - The manifest was regenerated with sha256 hashes for all tracked files (manifest excluded from its own hash listing).
 
 ## Concurrent / Ephemeral
 
-The following tracked paths were deleted in the working tree but were **not** absorbed in this snapshot because they appear to be concurrent/unowned or generated/runtime artifacts:
-
-- `.agents/skills/deep-research/CONTRACT.edn`
-- `.agents/skills/deep-research/SKILL.md`
-- `EOF`
-- `perf_report_20260701_175703.txt`
-
-These deletions remain in the working tree. Their owner should review and stage them (or restore the files) in a subsequent commit. `.ημ/.env` is gitignored and contains live credentials; it was left untouched. Actor session/inbox/outbox paths are excluded by `.gitignore` and were left untouched.
+No concurrent/unowned repo-relevant paths were left untouched in this snapshot. Per-activation runtime files under `.eta-mu/actors/fork-tax-tender/sessions/`, `inbox/`, and `outbox/` are excluded by `.gitignore` and were left untouched. `.ημ/.env` is gitignored and contains live credentials; it was left untouched.
 
 ## Safety
 
@@ -39,4 +39,4 @@ To preserve the append-only ledger and the invariant that new commits are always
 
 ## Known Residuals
 
-Concurrent/unowned deletions listed above were intentionally not staged. They are not blockers for this snapshot, but they are visible in `git status --short` and should be addressed by their owner.
+None. Any new changes that appear after this snapshot will be picked up by the next scheduled fork-tax check.

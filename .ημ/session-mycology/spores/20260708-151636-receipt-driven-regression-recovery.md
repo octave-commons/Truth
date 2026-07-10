@@ -1,7 +1,7 @@
 ---
 status: promoted
-reviewed: 2026-07-10T15:27:26Z
-reviewer-session: aaaa66f6-7c3d-437a-ab82-c02bce1eaf8b
+reviewed: 2026-07-10T21:27:27Z
+reviewer-session: 1b81c939-4735-419a-b6d8-c07830042386
 created: 2026-07-08T20:16:36.103789056Z
 source-session: ses_0c0f9f161ffegZK7S36nqvx4Zs
 source-task: Recovered lost two-channel formation from receipts.edn

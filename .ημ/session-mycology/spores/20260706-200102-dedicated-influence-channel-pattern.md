@@ -1,7 +1,7 @@
 ---
 status: promoted
-reviewed: 2026-07-10T15:27:26Z
-reviewer-session: aaaa66f6-7c3d-437a-ab82-c02bce1eaf8b
+reviewed: 2026-07-10T21:27:27Z
+reviewer-session: 1b81c939-4735-419a-b6d8-c07830042386
 created: 2026-07-07T01:01:02.861903126Z
 source-session: ses_0c62648feffeHiJD4Cv61Hieaz
 source-task: Implemented seed-and-grow condensation with dedicated mass-flux influence channel
