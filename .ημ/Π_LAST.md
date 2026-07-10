@@ -1,34 +1,30 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710075706`
-- **Timestamp:** 2026-07-10T07:57:06Z
+- **Π tag:** `Π-20260710090604`
+- **Timestamp:** 2026-07-10T09:06:04Z
 - **Branch:** `main`
-- **Parent head:** `6b6f2333417f718a1b2737880b8916589ae1905c`
+- **Parent head:** `56da23a92eaf8243a743c4dd7fdc1afadd29490b`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- `kanban/tasks/ecology-water-gate-snowline.md` — updated ecology water-gate / snowline task state.
-- `kanban/tasks/focus-zoom-lod-ui-spec.md` — updated focus-zoom LOD UI spec task state.
-- `kanban/tasks/perf-60fps-parallel-tick.md` — updated 60fps parallel tick performance task state.
-- `kanban/tasks/persistent-neighbor-cache.md` — updated persistent neighbor cache task state.
-- `kanban/tasks/static-analysis-split-stellar-disc-wind.md` — updated static-analysis split stellar disc wind task state.
-- `receipts.edn` — committed the uncommitted `:fork-tax` `:paid` receipt from the previous activation (07:02Z).
-- `PROCESS.md` — added new project process overview document (untracked).
-- `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp` — regenerated as handoff artifacts for this snapshot.
+- `.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp` — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
-- No targeted tests exist for kanban, process, receipt, or handoff-artifact files.
-- `verification skipped: no targeted tests`.
+- `bin/test domain` → 482 tests, 4920 assertions, 0 failures/errors.
+- `bin/test infra` → 88 tests, 8315 assertions, 0 failures/errors.
+- `bin/test architecture` → 6 tests, 23 assertions, 0 failures/errors.
+- `clj-kondo --lint` changed files → 0 errors, 0 warnings.
+- Repaired `bench/gates_of_truth/bench/phase0.clj` references to the split `domain.stellar` sub-namespaces.
 
 ## Concurrent / Ephemeral
 
-After committing and tagging this snapshot, a new `:fork-tax` `:paid` receipt will be appended to `receipts.edn` referencing this snapshot; it is intentionally left uncommitted for the next tax. Actor session/inbox/outbox paths are excluded by `.gitignore` and were left untouched.
+Actor session/inbox/outbox paths are excluded by `.gitignore` and were left untouched. `.ημ/.env` is gitignored and contains live credentials; it was not staged. The new `:fork-tax :paid` receipt appended to `receipts.edn` is intentionally left uncommitted for the next tax.
 
 ## Safety
 
-`.ημ/.env` contains live API keys and is correctly excluded by `.gitignore`. It was not staged.
+No secrets, unresolved merge conflicts, or blocked paths were detected. The deletion of `src/domain/stellar.clj` is intentional: the monolithic namespace has been split into `src/domain/stellar/*.clj` and the single unused aggregate require was removed from `bench/gates_of_truth/bench/phase0.clj`.
 
 ## No Known Blockers
 
