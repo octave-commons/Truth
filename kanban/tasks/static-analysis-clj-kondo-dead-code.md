@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-clj-kondo-dead-code"
 title: "clj-kondo: dead private code removal"
-status: "accepted"
+status: "done"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -25,3 +25,7 @@ Remove genuinely unused private vars and imports that survived the correctness p
 - `clj-kondo --lint src test` reports zero `unused-private-var` findings.
 - Any kept private var has a docstring explaining why and a `{:clj-kondo/ignore [:unused-private-var]}` annotation.
 - `clojure -M:test` is green.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
+---

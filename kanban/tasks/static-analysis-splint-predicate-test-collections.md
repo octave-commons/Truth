@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-splint-predicate-test-collections"
 title: "Splint cleanup: predicate, test, and collection idioms"
-status: "accepted"
+status: "rejected"
 priority: "P2"
 estimate: 2
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
@@ -44,3 +44,7 @@ Fix predicate, test, collection, and string idioms reported by Splint.
 - `clojure -M:splint` reports ≤ 5 warnings.
 - `clojure -M:test` passes.
 - Any `catch-throwable` suppression explains why the broad catch is required for the window/loop to survive.
+
+---
+Triage 2026-07-10 → rejected: consolidated into static-analysis-splint-idiom-cleanup (18-warning remainder too small to justify separate cards).
+---

@@ -1,7 +1,7 @@
 ---
 uuid: "roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection"
 title: "Roadmap: Phase 0 Physics Honesty — Chemistry, Disks, Plasma, Inspection"
-status: "accepted"
+status: "breakdown"
 priority: "P1"
 labels: ["specs", "phase0", "em", "chemistry"]
 created_at: "2026-07-06T16:24:25.288382115Z"
@@ -188,4 +188,6 @@ These are discrete fixes that live inside a milestone but are worth their own ca
 
 ---
 Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — ROADMAP umbrella over 9 member specs, milestone-mixed progress (M0/M1 landed, M3 partial); not a single executable task. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+
+Triage 2026-07-10: roadmap umbrella with mixed milestone progress; not directly executable. Moved to breakdown while children execute.
 ---

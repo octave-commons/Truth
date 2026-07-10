@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-dead-code-tooling-dsl"
 title: "Dead code cleanup: tooling baseline and test DSL suppressions"
-status: "accepted"
+status: "ready"
 priority: "P2"
 estimate: 3
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
@@ -26,3 +26,7 @@ Done when:
 - `clojure-lsp diagnostics | grep unused-public-var | grep -E 'dsl_test|rewind_test|ledger_test'` returns nothing.
 - The diagnostic count is reproducible and matches the spec table.
 - `clojure -M:test` is green.
+
+---
+Triage 2026-07-10: scoped 3pt, clear baseline + DSL suppression work. Ready for implementation.
+---

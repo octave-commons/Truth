@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-player-focus-dual-representation-spec"
 title: "Phase 0 Player Focus & Dual-Representation Spec"
-status: "accepted"
+status: "breakdown"
 priority: "P1"
 labels: ["specs", "phase0", "player"]
 created_at: "2026-07-02T19:35:28.969550823Z"
@@ -187,4 +187,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 
 ---
 Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — only tick-cadence LOD (domain.lod) realized; promotion/demotion + conservation invariants entirely open — break into per-phase cards. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+
+Triage 2026-07-10: tick-cadence LOD exists; promotion/demotion and conservation invariants are open. Moved to breakdown to split per-phase residual cards.
 ---

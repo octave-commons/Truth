@@ -189,6 +189,7 @@ Project-local skills live under `.agents/skills/` and are discoverable by OpenCo
 - **dedicated-influence-channel** — Add a new conserved-quantity flow to the ECS without violating single-writer or barrier invariants. (Skill file: `.agents/skills/dedicated-influence-channel/SKILL.md`, Contract: `.agents/skills/dedicated-influence-channel/CONTRACT.edn`)
 - **receipt-driven-regression-recovery** — Before rewriting regression code, search `receipts.edn` for the prior design decision so you don't lose solved work. (Skill file: `.agents/skills/receipt-driven-regression-recovery/SKILL.md`, Contract: `.agents/skills/receipt-driven-regression-recovery/CONTRACT.edn`)
 - **physics-dt-unit-mismatch** — When a simulation feature suddenly stops producing results, audit `dt`/time reads before assuming a missing feature. (Skill file: `.agents/skills/physics-dt-unit-mismatch/SKILL.md`, Contract: `.agents/skills/physics-dt-unit-mismatch/CONTRACT.edn`)
+- **whitespace-tolerant-require-audits** — Audit namespace requires and usages with whitespace-tolerant patterns before deleting or deprecating code. (Skill file: `.agents/skills/whitespace-tolerant-require-audits/SKILL.md`, Contract: `.agents/skills/whitespace-tolerant-require-audits/CONTRACT.edn`)
 
 ---
 

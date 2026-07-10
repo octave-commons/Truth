@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-complete-planet-formation-pipeline-spec"
 title: "Phase 0 — Complete Planet Formation Pipeline Spec"
-status: "ready"
+status: "done"
 priority: "P0"
 labels: ["specs", "phase0"]
 created_at: "2026-07-02T19:35:28.969079826Z"
@@ -461,3 +461,9 @@ The output: a star system with 3–8 planets of physically-grounded types, at ph
 **Phase A** (disc identification) is the smallest step. It needs no new physics — just velocity decomposition relative to the central star. It makes the disc visible to the rest of the simulation and enables Phase B (Toomre Q, which needs to know which bodies are disc members).
 
 Next action: approve Phase A, then write schemas, failing tests, and implementation.
+
+---
+Triage 2026-07-10 (ready→accepted): ROADMAP-EPIC umbrella: pipeline functionally complete end-to-end; residual tracked by children protoplanetary-disk-and-planet-formation-spec (done) + core-accretion-physics-spec (partial). Close as umbrella.
+
+Triage 2026-07-10: umbrella functionally complete; residual tracked by children. Moved to done.
+---

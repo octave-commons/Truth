@@ -143,6 +143,7 @@ project-local skills when invoked from the workspace; Claude discovers them via
 - **dedicated-influence-channel** — `.agents/skills/dedicated-influence-channel/`
 - **receipt-driven-regression-recovery** — `.agents/skills/receipt-driven-regression-recovery/`
 - **physics-dt-unit-mismatch** — `.agents/skills/physics-dt-unit-mismatch/`
+- **whitespace-tolerant-require-audits** — `.agents/skills/whitespace-tolerant-require-audits/`
 
 Use these for recurring Gates-of-Truth-specific patterns before writing new ad-hoc guidance.
 

@@ -182,3 +182,7 @@ The partition is derived every tick but has **no readers** today. M2 gives it co
 3. **Sigmoid vs hard-step condensation** → **Sigmoid**, ΔT≈30 K (§6.1).
 4. **Pressure-dependent Tc** → **Deferred (D3)**, gated on the radial disk profile (radial-disk-structure-realspec) which supplies local pressure. Single 10⁻⁴-bar Lodders table until then.
 5. **Full C/O molecular network** → **Deferred (D8)**, gated on a Phase-1 atmosphere-chemistry consumer of C/O.
+
+---
+Triage 2026-07-10 (stays ready): PARTIAL — M0 element-resolved composition substrate + M2 render/consumer done & tested. Remaining ready slice: §6.1 sigmoid solid-fraction (currently hard step in chemistry/partition-solids) + §6.5 planet composition from c/comp-condensed at formation radius (currently static pfc/planet-composition table).
+---

@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-splint-math"
 title: "Splint cleanup: math interop bulk sweep"
-status: "accepted"
+status: "rejected"
 priority: "P2"
 estimate: 5
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
@@ -29,3 +29,7 @@ Replace all `Math/*` interop with the equivalent `clojure.math` function across 
 - `clojure -M:splint` reports ≤ 81 warnings.
 - `clojure -M:test` passes.
 - Hot-path namespaces (`domain.gravity.barnes-hut`, `domain.stellar`, `infra.render`) are benchmarked with `bin/bench` if their math-heavy paths changed.
+
+---
+Triage 2026-07-10 → rejected: consolidated into static-analysis-splint-idiom-cleanup (18-warning remainder too small to justify separate cards).
+---

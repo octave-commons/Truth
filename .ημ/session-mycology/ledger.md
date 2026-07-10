@@ -287,3 +287,12 @@
   receipt-refs: 2026-07-10T09:06:04Z
   note: Another agent committed content changes mid-activation. Regenerated .ημ artifacts against the new HEAD, tagged content and handoff commits separately, and left newer concurrent kanban edits for the next tax. Manifest generation requires -c core.quotepath=false to preserve .ημ Unicode paths.
 
+- ts: 2026-07-10T10:00:52.575058991Z
+  session: ses_0b48c3addffeqk7MZ0bBHGeZJI
+  task: Batch review of 7 incubated skill spores
+  p-efficiency: 0.85
+  p-friction: 0.25
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: none
+  note: Scoring all spores up front and preparing promotion/rejection files in one parallel batch kept the review compact. Friction: double-checking standard template and AGENTS.md/CLAUDE.md listings for already-promoted skills.

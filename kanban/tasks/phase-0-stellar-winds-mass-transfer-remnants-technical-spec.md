@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-stellar-winds-mass-transfer-remnants-technical-spec"
 title: "Phase 0 — Stellar Winds, Mass Transfer & Remnants: Technical Spec"
-status: "ready"
+status: "breakdown"
 priority: "P1"
 labels: ["specs", "phase0", "em"]
 created_at: "2026-07-02T19:35:28.972299950Z"
@@ -277,3 +277,9 @@ Touch points (mirror how `:brown-dwarf` is wired):
    **cinematic-lively** (stars visibly breathe; demotion possible)?
 3. Fusion enrichment of wind composition (He/metals) now or later — cheap and a
    nice touch for downstream chemistry.
+
+---
+Triage 2026-07-10 (ready→accepted): PARTIAL: winds/ablation/flares + BHL/Roche mass-transfer shipped+wired+tested; UNBUILT = §2/§4/§5 remnant ladder (:stellar-remnant state, down-ladder mass-loss demotion, irreversibility invariant). Split a focused remnant-ladder residual card.
+
+Triage 2026-07-10: phases A/B shipped; only remnant-ladder (stellar-remnant state, down-ladder demotion) remains. Moved to breakdown to split a focused residual card.
+---

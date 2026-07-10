@@ -15,6 +15,7 @@ Anchor on the kanban card as the single source of truth and, before advancing, d
 - Confirm the desired outcomes so the card reflects the slice you intend to deliver.
 - Capture acceptance criteria or explicit exit signals on the task so "done" is unambiguous.
 - Note any uncertainties, risks, or open questions directly on the task to surface follow-ups early.
+- For feature/spec work, link the backing **design** and confirm that design cites grounding research. If no design exists yet, the first slice is to *write the design*, not the feature — see [Grounding](#grounding-research--design--task).
 - Record the scoped plan and supporting notes on the linked task before moving to step 3.
 
 ```
@@ -28,6 +29,7 @@ Break into small, testable slices; assess **complexity, scope, and Level of Effo
 
    - A matching task is **In Progress** (or you move it there), and WIP rules aren’t violated.&#x20;
    - The slice is scored **≤5** and fits capacity after planning; otherwise continue refinement/splitting.&#x20;
+   - **Feature/spec tasks link a design that cites grounding research** (Definition of Ready). Hygiene, research, and design tasks are exempt — see [Grounding](#grounding-research--design--task).
 
 ```
 5. **Implement Slice**
@@ -42,6 +44,39 @@ inventory lingering files, capture blockers, link references).&#x20;
 ```
 
 Move to _In Review_; when the reviewer approves **and** the global [Definition of Done](#definition-of-done-global-gates) is satisfied, advance to _Done_, recording evidence and summaries on the card. Testing and documentation are DoD gates, not their own columns.
+
+# Grounding: Research → Design → Task
+
+Feature work flows down a three-layer chain, and each layer **cites the one above it**.
+This is the traceability the board previously lacked: specs appeared with no design
+and designs with no evidence, so "why are we building this, and is it grounded?"
+had no answer on the card.
+
+1. **Research** — grounding evidence: papers, physical derivations, prior art,
+   measurements, profiling. Lives in `docs/notes/research/` and dated
+   `docs/notes/*.md`. Research is *findings*, not plans.
+2. **Design** — a high-level approach in `docs/designs/*.md` that **cites the
+   research it rests on** (link the note/paper). One design backs many tasks;
+   it answers *what and why*.
+3. **Feature task** — a `kanban/tasks/*.md` card that **references its design**
+   via a `design:` frontmatter key and a `> Design: docs/designs/<file>.md`
+   line in the body. The task answers *the next testable slice*.
+
+Rules:
+
+- **Definition of Ready (feature/spec tasks):** may enter **Ready** only if it
+  links a design, and that design cites grounding research. If the design does
+  not exist yet, the task's first slice is **"write the design"** (a `design`
+  task), not the feature.
+- **Exemptions:** mechanical/hygiene tasks (static-analysis cleanup, formatting,
+  dead-code, benchmarks, no-behavior-change refactors) and pure `research` /
+  `design` tasks need no upstream design link. Mark them with a
+  `hygiene`, `research`, or `design` label.
+- **Broken links are triage findings, not silent gaps:** a feature task whose
+  `design:` points nowhere, or a design that cites no research, must be flagged
+  during triage (→ Breakdown) rather than pulled into work.
+- Designs should list the tasks that implement them where practical, so the
+  chain is walkable in both directions.
 
 # Kanban as a Finite State Machine (FSM)
 

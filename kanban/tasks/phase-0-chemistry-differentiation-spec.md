@@ -238,3 +238,7 @@ This does not create new ECS entities; it is a derived property used by the habi
 **Phase 1** (composition validation + derived groups) is the smallest step. It makes the existing `c/composition` data trustworthy and gives the rest of the game a vocabulary for material classes.
 
 Next action: approve this spec, then write schemas, failing tests, and Phase 1 implementation.
+
+---
+Triage 2026-07-10 (stays ready): PARTIAL — Phases 1-2 (malleability + merge/shatter) done & tested. Remaining ready slice: differentiation-system + :component/differentiated-layers + :component/volatile-budget + volatile-loss-on-hot-merge (only pure helper differentiate-composition exists, never ticked).
+---

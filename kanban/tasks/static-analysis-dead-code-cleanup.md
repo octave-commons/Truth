@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-dead-code-cleanup"
 title: "Dead Code Audit: clojure-lsp unused-public-var cleanup"
-status: "accepted"
+status: "breakdown"
 priority: "P2"
 estimate: 15
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
@@ -347,3 +347,9 @@ Rationale: the cleanup touches **157 unused public vars across 30 namespaces**, 
 | Phase 6 — Final verification | 0 | 1 | Confirm only `^:api` surface remains, update docs, optional CI gate |
 
 (End of spec)
+
+---
+Triage 2026-07-10: OPEN — clojure-lsp reports 312 unused-public-var (147 domain, 102 law, 49 infra, ~14 bench). Most are intentional-by-design (law schemas/contracts = public API; ECS future-facing vocabulary; render facade; bench entry points; unwired features). Real work = per-var triage: delete genuine dead code vs mark ^:api / suppress. This is the single largest remaining static-analysis slice; children (domain-infra, law-schemas, ecs-components, tooling-dsl) partition it sensibly — keep them.
+
+Triage 2026-07-10: 15pt epic partitioned into four ≤5pt children (tooling-dsl, ecs-components, law-schemas, domain-infra). Moved to breakdown as umbrella.
+---

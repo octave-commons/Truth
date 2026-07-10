@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-clj-kondo-verification"
 title: "clj-kondo: final verification & suppression lock-in"
-status: "accepted"
+status: "done"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -28,3 +28,7 @@ Drive clj-kondo to zero and lock in the result so the project cannot regress.
 - `bin/analyze` clj-kondo section is empty.
 - `clojure -M:test` is green.
 - `bin/bench` is run if a hot-path namespace was touched in earlier phases.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo section empty (0/0); suppressions locked.
+---

@@ -1,7 +1,7 @@
 ---
 uuid: "stage-2-sink-formation-technical-spec"
 title: "Stage 2 — Sink Formation: Technical Spec"
-status: "ready"
+status: "done"
 priority: "P0"
 labels: ["specs", "stage2", "sink"]
 created_at: "2026-07-02T19:35:28.973668076Z"
@@ -297,3 +297,7 @@ holds at 3–8. One star ignites. The renderer shows size-by-mass — the centra
 sink reads large, the disk sinks read small. The collapse is slow enough to
 watch. This is the character creation screen: one world, one star, a few
 potential planets, emerging from physics.
+
+---
+Triage 2026-07-10 (ready→done): DONE-IN-CODE — sink-formation-system emitter (sink.clj:241, registry.clj:178); within-existing-sink? isolation gate; bondi/effective-accretion-radius; competitive accretion; tested in dominant_star + formation_integration. Evolved beyond spec.
+---

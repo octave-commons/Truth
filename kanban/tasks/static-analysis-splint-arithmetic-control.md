@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-splint-arithmetic-control"
 title: "Splint cleanup: arithmetic and control-flow idioms"
-status: "accepted"
+status: "rejected"
 priority: "P2"
 estimate: 2
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
@@ -41,3 +41,7 @@ Fix arithmetic and control-flow idioms reported by Splint, excluding the bulk ma
 
 - `clojure -M:splint` reports ≤ 45 warnings.
 - `clojure -M:test` passes.
+
+---
+Triage 2026-07-10 → rejected: consolidated into static-analysis-splint-idiom-cleanup (18-warning remainder too small to justify separate cards).
+---

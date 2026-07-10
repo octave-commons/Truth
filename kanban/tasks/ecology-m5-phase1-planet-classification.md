@@ -1,7 +1,7 @@
 ---
 uuid: "ecology-m5-phase1-planet-classification"
 title: "M5 Handoff Phase 1: material + thermal classification"
-status: "accepted"
+status: "ready"
 priority: "P2"
 labels: ["fix", "phase0", "chemistry", "handoff", "epic-ecology-water-gate-snowline"]
 created_at: "2026-07-10T00:00:00Z"
@@ -36,3 +36,7 @@ where `habitability-score > 0.2` was not.
 - Tests: `rocky-planet-classified-by-composition`,
   `gas-giant-classified-by-hydrogen`, `thermal-band-computed-from-orbit`.
 - Single-writer preserved; `reg/write-conflicts` empty; `architecture-test` green.
+
+---
+Triage 2026-07-10: scoped 5pt, clear pure-function + fan-out emitter scope. Ready for implementation.
+---

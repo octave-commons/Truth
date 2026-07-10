@@ -1,9 +1,9 @@
 ---
 uuid: "static-analysis-splint-idiom-cleanup"
 title: "Splint idiom cleanup"
-status: "accepted"
+status: "breakdown"
 priority: "P2"
-estimate: 13
+estimate: "2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
 created_at: "2026-07-07T00:00:00Z"
 source: "kanban/tasks/static-analysis-splint-idiom-cleanup.md"
@@ -400,3 +400,11 @@ This work has been broken down into ≤5-point sub-tasks. Each sub-task is track
 | Phase 4 | Predicate, test, and collection idioms | 2 |
 | Phase 5 | Final suppression, gating, and documentation | 1 |
 | **Total** | | **13** |
+
+---
+Triage 2026-07-10: PARTIAL — 18 splint warnings remain (from ~404). Breakdown: 8 lint/catch-throwable (loop.clj top-level error frames — likely SUPPRESS, not fix), 2 style/prefer-clj-math, 2 style/def-fn, 1 each pos-checks/plus-one/loop-empty-when/let-if/into-literal/fn-wrapper. Files: loop.clj(11), mass_transfer.clj(4), lorentz/focus/economy(1 each). This is ~1-2pt total — recommend collapsing the 5 splint sub-cards into a single residual pass.
+
+Triage 2026-07-10: CONSOLIDATED — this is now the single splint residual card (owner call). Absorbs the former sub-cards (splint-math, -arithmetic-control, -naming-structure, -predicate-test-collections) and the gating card (-final-gate), all rejected as over-fragmentation for an 18-warning remainder. Scope: clear/suppress the 18 remaining splint warnings (8 catch-throwable in loop.clj → documented suppression; 10 idiom fixes across mass_transfer/lorentz/focus/economy) and update docs/STATIC-ANALYSIS.md splint gating policy. ~2pt.
+
+Triage 2026-07-10: 18 warnings remain; scope collapsed to a single residual pass. Moved to breakdown to resize/re-scope to ~2pt and absorb over-fragmented sub-cards.
+---

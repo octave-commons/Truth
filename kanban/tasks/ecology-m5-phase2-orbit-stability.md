@@ -1,7 +1,7 @@
 ---
 uuid: "ecology-m5-phase2-orbit-stability"
 title: "M5 Handoff Phase 2: orbit stability"
-status: "accepted"
+status: "ready"
 priority: "P2"
 labels: ["phase0", "handoff", "epic-ecology-water-gate-snowline"]
 created_at: "2026-07-10T00:00:00Z"
@@ -32,3 +32,7 @@ integration behind the proxy proving too coarse).
 - Tests: `circular-orbit-is-stable`, `plunging-orbit-is-unstable`,
   `close-planet-pair-is-unstable`.
 - Single-writer preserved; `architecture-test` green.
+
+---
+Triage 2026-07-10: scoped 3pt, analytic proxy only. Ready for implementation.
+---

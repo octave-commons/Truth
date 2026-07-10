@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-narrator-presence-spec"
 title: "Phase 0 Narrator Presence Spec"
-status: "accepted"
+status: "breakdown"
 priority: "P1"
 labels: ["specs", "phase0", "myth"]
 created_at: "2026-07-02T19:35:28.968199939Z"
@@ -137,4 +137,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 
 ---
 Triage 2026-07-10 (todo→accepted): PARTIAL/ROADMAP — event-phrasing + ambient :narrator panel landed via domain.arc; mood engine + law.narrative schemas unbuilt — re-scope to remaining mood/ambience work. Needs breakdown into residual ≤5pt cards before re-entering the queue.
+
+Triage 2026-07-10: event phrasing + ambient panel landed; mood engine and law.narrative schemas remain. Moved to breakdown to split residual ≤5pt mood/ambience cards.
 ---

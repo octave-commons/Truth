@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-splint-final-gate"
 title: "Splint cleanup: final suppression and gating readiness"
-status: "accepted"
+status: "rejected"
 priority: "P2"
 estimate: 1
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
@@ -31,3 +31,9 @@ Triage any remaining Splint warnings, add documented suppressions where necessar
 - `clojure -M:test` passes.
 - `test/architecture_test.clj` still passes.
 - `docs/STATIC-ANALYSIS.md` is updated with the Splint gating policy.
+
+---
+Triage 2026-07-10: BLOCKED — splint count is 18, not 0. Depends on the splint remainder + a decision on the 8 catch-throwable (suppress vs refactor). Capstone; keep parked until the remainder closes.
+
+Triage 2026-07-10 → rejected: consolidated into static-analysis-splint-idiom-cleanup (18-warning remainder too small to justify separate cards).
+---

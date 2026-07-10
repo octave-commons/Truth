@@ -1,7 +1,7 @@
 ---
 uuid: "metal-enrichment-and-seeding-spec"
 title: "Metal Enrichment and Seeding Spec"
-status: "ready"
+status: "done"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-06T16:24:25.292114936Z"
@@ -145,3 +145,7 @@ The integrator's `absorb-comp-blend` (`integrator.clj:181`) already does mass-we
 ## 10. Open questions
 
 (none — research Q3/Q4/Q5 resolved above with capability gates.)
+
+---
+Triage 2026-07-10 (ready→done): DONE-IN-CODE — M1 root fix implemented+tested: :genesis/metallicity Pop-I default → floor composition (bootstrap.clj:102,226; composition.clj:109); seeder threads it; test-metallicity-seeding asserts Z>0.01. D4 supernova enrichment deliberately deferred.
+---

@@ -1,7 +1,7 @@
 ---
 uuid: "ecology-m5-phase3-atmosphere-retention"
 title: "M5 Handoff Phase 3: atmosphere retention"
-status: "accepted"
+status: "ready"
 priority: "P2"
 labels: ["phase0", "chemistry", "handoff", "epic-ecology-water-gate-snowline"]
 created_at: "2026-07-10T00:00:00Z"
@@ -31,3 +31,7 @@ set of retained species.
 - Tests: `earth-like-retains-n2`, `moon-like-loses-atmosphere`,
   `gas-giant-retains-h2`.
 - Single-writer preserved; `architecture-test` green.
+
+---
+Triage 2026-07-10: scoped 3pt, clear retention calculation. Ready for implementation.
+---

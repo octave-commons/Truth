@@ -1,7 +1,7 @@
 ---
 uuid: "roche-lobe-envelope-physics-realspec-deferred-capability"
 title: "Roche-Lobe Envelope Physics Realspec (deferred capability)"
-status: "accepted"
+status: "icebox"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.801876991Z"
@@ -112,4 +112,6 @@ Accreted angular momentum is added to `:spin/angular-momentum`. Excess spin is f
 
 ---
 Triage 2026-07-10 (todo→accepted): DEFERRED-CAPABILITY — gated on a future trigger not yet hit; base model in place, deferred physics untouched. Parked out of the execution queue.
+
+Triage 2026-07-10: deferred capability; trigger not hit. Parked in icebox until binary RLOF is observed and Ritter isothermal branch breaks.
 ---

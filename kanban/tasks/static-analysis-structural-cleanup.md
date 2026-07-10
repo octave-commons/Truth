@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-structural-cleanup"
 title: "Static Analysis Structural Cleanup"
-status: "accepted"
+status: "done"
 priority: "P1"
 labels: ["static-analysis", "architecture", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -508,3 +508,7 @@ This spec is too large for a single PR or work session. It has been decomposed i
 | `static-analysis-rationalize-genesis` | Rationalize domain.genesis Fan-Out | 2 | Bootstrapper-only facade; P1. |
 | `static-analysis-final-validation` | Final Validation and Gating for Structural Cleanup | 1 | Strict analysis, tests, bench, docs; P2. |
 | **Total** | | **21** | Matches the original estimate above. |
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — 0 HARD structural breaches + 0 undocumented; architecture-test green; docs/STATIC-ANALYSIS.md present. Soft warn-tier god-namespaces (law.stellar 52 vars etc.) remain as non-breaching nice-to-haves.
+---

@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-splint-naming-structure"
 title: "Splint cleanup: naming and structural rules"
-status: "accepted"
+status: "rejected"
 priority: "P2"
 estimate: 3
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
@@ -47,3 +47,7 @@ Every suppression must include a `;; Intentional:` or `;; Suppressed:` comment e
 - `clojure -M:splint` reports ≤ 15 warnings.
 - `clojure -M:test` passes.
 - Any public API rename keeps a `^:deprecated` alias for one release, or is documented as a suppression.
+
+---
+Triage 2026-07-10 → rejected: consolidated into static-analysis-splint-idiom-cleanup (18-warning remainder too small to justify separate cards).
+---

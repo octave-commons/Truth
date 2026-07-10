@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-final-validation"
 title: "Final Validation and Gating for Structural Cleanup"
-status: "accepted"
+status: "blocked"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"
@@ -30,3 +30,9 @@ Run the final validation gate for the structural cleanup. Ensure all child tasks
 - `clojure -M:test` is green.
 - `bin/bench` shows no regression on hot paths.
 - `docs/STATIC-ANALYSIS.md` reflects the final state.
+
+---
+Triage 2026-07-10: capstone, BLOCKED. bin/analyze --strict already passes (no blocking findings), but the epic's intent (zero warnings) is unmet: splint 18, dead-code 312, cljfmt 7 remain. Close only after those + splint-final-gate.
+
+Triage 2026-07-10: capstone blocked; cannot close until splint warnings, dead-code findings, and cljfmt files are cleared. Status set to blocked.
+---

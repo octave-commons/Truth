@@ -1,7 +1,7 @@
 ---
 uuid: "ecology-water-gate-snowline"
 title: "Ecology water/habitability gate is trivially satisfied"
-status: "accepted"
+status: "breakdown"
 priority: "P2"
 labels: ["fix", "phase0", "chemistry", "handoff", "epic"]
 created_at: "2026-07-06T16:21:51.000000000Z"
@@ -259,4 +259,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 
 ---
 2026-07-10 → accepted (epic). Split into 4 ≤5pt child slices: ecology-m5-phase1-planet-classification, -phase2-orbit-stability, -phase3-atmosphere-retention, -phase4-handoff-event. Trivial water gate resolved by Phase 1. See Breakdown table in card.
+
+Triage 2026-07-10: 21pt epic split into four ≤5pt children (phase1-4). Moved to breakdown as umbrella; children are ready.
 ---

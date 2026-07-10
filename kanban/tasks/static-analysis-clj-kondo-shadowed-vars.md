@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-clj-kondo-shadowed-vars"
 title: "clj-kondo: shadowed vars & idiom cleanup"
-status: "accepted"
+status: "done"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -28,3 +28,7 @@ Perform the most invasive local-rename pass after the tree is otherwise stable, 
 - Public API names are unchanged; only local bindings are renamed.
 - `clojure -M:test` is green.
 - A short live dev-window run shows no regressions if a hot-path namespace was touched.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
+---

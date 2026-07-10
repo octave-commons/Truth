@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-dead-code-domain-infra"
 title: "Dead code cleanup: domain.* and infra.* + final verification"
-status: "accepted"
+status: "ready"
 priority: "P2"
 estimate: 5
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
@@ -30,3 +30,7 @@ Done when:
 - `test/architecture_test.clj` still passes.
 - `bin/bench` shows no regression if hot-path namespaces were touched.
 - `docs/STATIC-ANALYSIS.md` is updated.
+
+---
+Triage 2026-07-10: scoped 5pt, clear exit criteria. Ready for implementation.
+---

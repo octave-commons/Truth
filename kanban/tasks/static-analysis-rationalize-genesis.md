@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-rationalize-genesis"
 title: "Rationalize domain.genesis Fan-Out"
-status: "accepted"
+status: "done"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"
@@ -28,3 +28,7 @@ Reduce `domain.genesis` to a bootstrapper-only facade. Move generic tick orchest
 - `domain.genesis` remains the sole Phase 0 world bootstrapper (`single-ecs-substrate` architecture test passes).
 - `clojure -M:test` is green, including `test/architecture_test.clj`.
 - Removed or moved public APIs have `^:deprecated` aliases during transition.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — smell report HIGH FAN-OUT: none (genesis fan-out <18); single-ecs-substrate arch test green.
+---

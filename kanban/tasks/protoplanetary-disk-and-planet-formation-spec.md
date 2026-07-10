@@ -1,7 +1,7 @@
 ---
 uuid: "protoplanetary-disk-and-planet-formation-spec"
 title: "Protoplanetary Disk and Planet Formation Spec"
-status: "ready"
+status: "done"
 priority: "P0"
 labels: ["specs"]
 created_at: "2026-07-06T16:24:25.294723239Z"
@@ -188,3 +188,7 @@ The seeder's *growth physics* — accretion-derived mass (critical core mass + v
 5. **Composition fidelity (inherit disk C/O, ice fraction)** → **built in M3** via `c/comp-condensed` at the formation radius (core-accretion-physics-realspec §6); CO/CO₂ lines are D8.
 6. **GI fragment survival / rapid migration into star** → folds into migration (**D2**).
 7. **Multi-star disks** → **Deferred (D5)**, gated on a persistent bound stellar binary sharing disk mass.
+
+---
+Triage 2026-07-10 (ready→done): DONE-IN-CODE — c/disk-regime + c/disk-fragments-spawned written; disk-regime-map Toomre-Q+Gammie-β classifier; GI fragmentation gas-giant-only, capped, gated; planet-seeds sole :planet source; all §8 tests in disk_evolution_test.
+---

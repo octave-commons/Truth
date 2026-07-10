@@ -1,7 +1,7 @@
 ---
 uuid: "perf-tick-residual-gap-to-60fps"
 title: "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000"
-status: "accepted"
+status: "breakdown"
 priority: "P1"
 labels: ["perf", "phase0", "spec"]
 created_at: "2026-07-10T00:00:00Z"
@@ -36,3 +36,7 @@ contexts/dates, so this card must **not** assume one.
   before/after `bin/bench` delta.
 - Physics unchanged: byte-equivalence / windowed-equivalence contract holds
   (see `persistent-neighbor-cache.md` §4 pattern).
+
+---
+Triage 2026-07-10: sized 3 but first slice is profiling, not a blind fix. Moved to breakdown to capture current benchmark baseline and scope the single largest hot segment.
+---

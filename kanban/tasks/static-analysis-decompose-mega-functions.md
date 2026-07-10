@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-decompose-mega-functions"
 title: "Decompose HARD Mega-Functions"
-status: "accepted"
+status: "done"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"
@@ -28,3 +28,7 @@ Extract helpers and decompose the 11 HARD mega-functions (≥80 LOC) that are no
 - `bin/analyze` HARD function count ≤ 2 (the remaining ones handled by namespace splits).
 - `clojure -M:test` is green, including `test/architecture_test.clj`.
 - No public API is removed without a `^:deprecated` alias.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — 0 functions >=80 LOC (HARD); only warn-tier (>=40) remain — done-when HARD<=2 satisfied.
+---

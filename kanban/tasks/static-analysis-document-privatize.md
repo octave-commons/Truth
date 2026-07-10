@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-document-privatize"
 title: "Document and Privatize Undocumented Public Functions"
-status: "accepted"
+status: "done"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "architecture"]
 created_at: "2026-07-07T00:00:00Z"
@@ -27,3 +27,7 @@ Add docstrings to the 81 undocumented public functions reported by `bin/analyze`
 - `bin/analyze` reports zero undocumented public functions.
 - `clojure -M:test` is green, including `test/architecture_test.clj`.
 - No public API is removed without a `^:deprecated` alias.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — smell report: undocumented public fns: 0.
+---

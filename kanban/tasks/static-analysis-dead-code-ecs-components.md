@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-dead-code-ecs-components"
 title: "Dead code cleanup: ECS component future-facing vocabulary"
-status: "accepted"
+status: "ready"
 priority: "P2"
 estimate: 2
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
@@ -25,3 +25,9 @@ Done when:
 - `clojure-lsp diagnostics | grep unused-public-var | grep 'domain.ecs.components'` returns nothing or only documented `^:api` surface.
 - `clojure -M:test` is green.
 - `test/architecture_test.clj` still passes.
+
+---
+Triage 2026-07-10: OPEN — domain.ecs.components still has 10 unsuppressed unused-public-var (elements, orbit-ref, force-accum, event-source, sink-identity, biome-cell, civilization, territory, renderable, cell-id) — future-facing vocabulary. Fix = mark ^:api / documented suppression, not delete.
+
+Triage 2026-07-10: scoped 2pt, clear future-facing vocabulary decision. Ready for implementation.
+---

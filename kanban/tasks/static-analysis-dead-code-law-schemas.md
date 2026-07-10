@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-dead-code-law-schemas"
 title: "Dead code cleanup: law.* contracts and schemas"
-status: "accepted"
+status: "ready"
 priority: "P2"
 estimate: 5
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
@@ -25,3 +25,7 @@ Scope: Phase 4 of the dead-code cleanup spec.
 Done when:
 - `clojure-lsp diagnostics | grep unused-public-var | grep 'src/law/'` returns nothing or only documented `^:api` surface.
 - `clojure -M:test` is green.
+
+---
+Triage 2026-07-10: scoped 5pt, clear per-var triage (delete/private/^:api). Ready for implementation.
+---

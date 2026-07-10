@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-clj-kondo-cleanup"
 title: "Spec: Static Analysis Cleanup — clj-kondo Mechanical Warnings"
-status: "accepted"
+status: "done"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -346,3 +346,7 @@ This work is tracked as a parent kanban card (`kanban/tasks/static-analysis-clj-
 | `static-analysis-clj-kondo-shadowed-vars` | clj-kondo: shadowed vars & idiom cleanup | 3 | M1.4 | Invasive local renames in hot-path namespaces plus idiom fixes. |
 | `static-analysis-clj-kondo-verification` | clj-kondo: final verification & suppression lock-in | 1 | M1.5 | Zero out, document suppressions, and lock CI gate. |
 | **Total** | | **13** | | |
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
+---

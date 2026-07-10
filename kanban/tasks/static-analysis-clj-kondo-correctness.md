@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-clj-kondo-correctness"
 title: "clj-kondo: correctness & require hygiene"
-status: "accepted"
+status: "done"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -31,3 +31,7 @@ Fix the clj-kondo findings that can hide real bugs or break compilation: `unreso
 - `clojure -M:test` is green.
 - The architecture test (`test/architecture_test.clj`) still passes.
 - Any kept side-effect require is documented with a suppression and comment.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
+---

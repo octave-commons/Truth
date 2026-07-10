@@ -1,7 +1,7 @@
 ---
 uuid: "epic-static-analysis-cleanup"
 title: "Epic: Static Analysis Cleanup"
-status: "accepted"
+status: "breakdown"
 priority: "P1"
 labels: ["specs", "static-analysis", "epic"]
 created_at: "2026-07-08T02:24:29.644598782Z"
@@ -157,3 +157,9 @@ This volume is dangerous. Every warning is a candidate for masking the next real
 | **Child sum** | | **65** | |
 | **Epic coordination / integration / gating overhead** | | **+6** | Cross-PR sequencing, merge-conflict resolution, architecture-test guardrails, final `--strict` gate and `docs/STATIC-ANALYSIS.md` update. |
 | **Reconciled epic total** | | **89** | Sum rounds up to the next Fibonacci number (≥21 rule): 89. |
+
+---
+Triage 2026-07-10 progress (bin/analyze ground truth): DONE — clj-kondo 0/0 (all 6 kondo cards), structural 0 HARD/0 undoc (structural-cleanup, decompose-mega, document-privatize, rationalize-genesis, split-stellar-disc-wind), jscpd reporting fixed. REMAINING — splint 18 warnings (~1-2pt, over-fragmented across 6 cards), dead-code 312 unused-public-var (suppress-vs-delete triage, the big one), cljfmt 7 files (~2pt, now Ready), then final-validation/final-gate capstones. Epic is ~80% done by card count.
+
+Triage 2026-07-10: ~80% complete; remaining splint/dead-code/cljfmt work tracked by children. Moved to breakdown as umbrella tracking.
+---

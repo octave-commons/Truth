@@ -1,7 +1,7 @@
 ---
 uuid: "static-analysis-clj-kondo-unused-bindings"
 title: "clj-kondo: unused bindings & values cleanup"
-status: "accepted"
+status: "done"
 priority: "P2"
 labels: ["specs", "static-analysis", "epic-static-analysis-cleanup"]
 created_at: "2026-07-07T00:00:00Z"
@@ -26,3 +26,7 @@ Clean up the largest visible noise category: unused local bindings, discarded va
 - `clj-kondo --lint src test` reports zero `unused-binding`, `unused-value`, and `used-underscored-binding` findings.
 - Bindings intentionally kept for shape are renamed with `_` prefix and documented.
 - `clojure -M:test` is green.
+
+---
+Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
+---
