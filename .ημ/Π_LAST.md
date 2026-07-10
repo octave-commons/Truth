@@ -1,21 +1,21 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710181936`
-- **Timestamp:** 2026-07-10T18:19:36Z
+- **Π tag:** `Π-20260710202026`
+- **Timestamp:** 2026-07-10T20:20:26Z
 - **Branch:** `main`
-- **Parent head:** `4693cb8234a41fb668afdde30958b41d47c3eb97`
-- **Previous tag:** `Π-20260710171842`
+- **Parent head:** `1ee60507e19cef8f9fe7c56ba755ddf2abbcfc48`
+- **Previous tag:** `Π-20260710181936`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — committed the pending 17:21:58Z pi observation receipt and the current fork-tax receipt for this activation.
+- **`receipts.edn`** — committed the pending 19:20:00Z fork-tax-tender no-op observation receipt.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- EDN/markdown sanity of the pending receipts and regenerated artifacts was confirmed.
+- EDN/markdown sanity of the pending receipt and regenerated artifacts was confirmed.
 - The manifest was regenerated with sha256 hashes for all tracked files (manifest excluded from its own hash listing).
 
 ## Concurrent / Ephemeral
