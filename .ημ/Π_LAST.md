@@ -1,21 +1,24 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260710152145`
-- **Timestamp:** 2026-07-10T15:21:45Z
+- **Π tag:** `Π-20260710162010`
+- **Timestamp:** 2026-07-10T16:20:10Z
 - **Branch:** `main`
-- **Parent head:** `6fc72e3`
+- **Parent head:** `d0a1a227ca79ecf95cdd759269bdbe1ea4705607`
+- **Previous tag:** `Π-20260710152145`
 - **Reason:** fork-tax-tender activation detected significant working-tree changes and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — committed the previously uncommitted 14:59:05 fork-tax receipt entry (for the Π-20260710145905 snapshot).
+- **`receipts.edn`** — appended the pending fork-tax receipt for the Π-20260710152145 snapshot (previously uncommitted after the 15:21:45 handoff) and a pi observation receipt at 2026-07-10T15:26:09Z.
+- **`.ημ/session-mycology/review-receipts.edn`** — appended the 15:27:26Z spore-review receipt from the spore-reviewer actor.
+- **`.ημ/session-mycology/spores/*.md`** — updated review metadata (status, reviewer-session, scores, promoted-to/rejected-reason) for seven spores.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
 - EDN/markdown sanity of the pending receipt and regenerated artifacts was confirmed.
-- The manifest was regenerated with sha256 hashes for all tracked files (manifest excluded from its own hash listing to avoid the circular fixed-point issue).
+- The manifest was regenerated with sha256 hashes for all tracked files (manifest excluded from its own hash listing).
 
 ## Concurrent / Ephemeral
 
