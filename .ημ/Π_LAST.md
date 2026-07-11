@@ -1,29 +1,21 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260711050745`
-- **Timestamp:** 2026-07-11T05:07:45Z
+- **Π tag:** `Π-20260711061213`
+- **Timestamp:** 2026-07-11T06:12:13Z
 - **Branch:** `main`
-- **Parent head:** `14953113fa66510457dbc9c4908409e4eba7c055`
-- **Previous tag:** `Π-20260711010938`
-- **Reason:** fork-tax-tender activation detected updated `.ημ/session-mycology/` review records from `spore-reviewer` session `d1353e32-3b03-4879-ad0b-5446092b7212` and paid the fork tax.
+- **Parent head:** `d4c10295e361a0fc4ece2c1e3fe497efa9c5b109`
+- **Previous tag:** `Π-20260711050745`
+- **Reason:** `fork-tax-tender` activation detected a modified `receipts.edn` (no-op receipt from session `da61cc4c-1d89-4bb5-b68c-d288bea7825d`) and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`.ημ/session-mycology/review-receipts.edn`** — appended the latest spore-review receipt from `spore-reviewer` session `d1353e32-3b03-4879-ad0b-5446092b7212` (2026-07-11T04:17:45Z), reaffirming four promoted and three rejected spores.
-- **`.ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md`** — updated `reviewed` and `reviewer-session` frontmatter.
-- **`.ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md`** — updated `reviewed` and `reviewer-session` frontmatter.
-- **`.ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md`** — updated `reviewed` and `reviewer-session` frontmatter.
-- **`.ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md`** — updated `reviewed` and `reviewer-session` frontmatter.
-- **`.ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md`** — updated `reviewed` and `reviewer-session` frontmatter.
-- **`.ημ/session-mycology/spores/20260710-035801-whitespace-tolerant-require-audits.md`** — updated `reviewed` and `reviewer-session` frontmatter.
-- **`.ημ/session-mycology/spores/20260710-090604-fork-tax-concurrent-content-handoff.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`receipts.edn`** — appended the no-op receipt from the current `fork-tax-tender` activation (session `da61cc4c-1d89-4bb5-b68c-d288bea7825d`).
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- The modified files are ledger/spore metadata updates and regenerated handoff artifacts.
-- The manifest was regenerated with sha256 hashes for all tracked files.
+- EDN/markdown sanity was confirmed before staging.
 
 ## Concurrent / Ephemeral
 
