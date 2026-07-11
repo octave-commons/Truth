@@ -1,26 +1,33 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260711000817`
-- **Timestamp:** 2026-07-11T00:08:17Z
+- **Π tag:** `Π-20260711010938`
+- **Timestamp:** 2026-07-11T01:09:38Z
 - **Branch:** `main`
-- **Parent head:** `0a0a8f1aa2fa841ad54ff3d954bf487aaa53ebc3`
-- **Previous tag:** `Π-20260710222335`
-- **Reason:** fork-tax-tender activation detected a modified `receipts.edn` (uncommitted no-op and observation receipts from a prior session) and paid the fork tax.
+- **Parent head:** `11de666baba691456b83c16e7961be8c04a9e868`
+- **Previous tag:** `Π-20260711000817`
+- **Reason:** fork-tax-tender activation detected updated `.ημ/session-mycology/` review records from `spore-reviewer` and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — committed the two pending entries added by the previous fork-tax-tender session: a `:fork-tax :no-op` receipt and a follow-up observation reflection.
+- **`.ημ/session-mycology/review-receipts.edn`** — appended the latest spore-review receipt from `spore-reviewer` session `82b1ced6-f9e6-4e36-b207-efd8414d6285` (2026-07-11T00:18:25Z), reaffirming four promoted and three rejected spores.
+- **`.ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`.ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`.ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`.ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`.ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`.ημ/session-mycology/spores/20260710-035801-whitespace-tolerant-require-audits.md`** — updated `reviewed` and `reviewer-session` frontmatter.
+- **`.ημ/session-mycology/spores/20260710-090604-fork-tax-concurrent-content-handoff.md`** — updated `reviewed` and `reviewer-session` frontmatter.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- EDN/markdown sanity of the pending receipts and regenerated artifacts was confirmed.
+- The modified files are ledger/spore metadata updates and regenerated handoff artifacts.
 - The manifest was regenerated with sha256 hashes for all tracked files.
 
 ## Concurrent / Ephemeral
 
-No concurrent/unowned repo-relevant paths were left untouched in this snapshot. Per-activation runtime files under `.eta-mu/actors/fork-tax-tender/sessions/`, `inbox/`, and `outbox/` are excluded by `.gitignore` and were left untouched. `.ημ/.env` is gitignored and contains live credentials; it was left untouched.
+No concurrent/unowned repo-relevant paths were left untouched in this snapshot. Per-activation runtime files under `.eta-mu/actors/fork-tax-tender/sessions/`, `inbox/`, and `outbox/` are excluded by the significant-changes guard and were left untouched. `.ημ/.env` is gitignored and contains live credentials; it was left untouched.
 
 ## Safety
 
