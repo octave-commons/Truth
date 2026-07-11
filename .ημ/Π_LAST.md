@@ -1,21 +1,21 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260711155130`
-- **Timestamp:** 2026-07-11T15:51:30Z
+- **Π tag:** `Π-20260711165140`
+- **Timestamp:** 2026-07-11T16:51:40Z
 - **Branch:** `main`
-- **Parent head:** `0c3b3d3641872133a81566aba305bf307926f1eb`
-- **Previous tag:** `Π-20260711145040`
+- **Parent head:** `96ed661594d4276c369d953db282ec0a6238f25d`
+- **Previous tag:** `Π-20260711155130`
 - **Reason:** `fork-tax-tender` activation detected uncommitted fork-tax receipts in `receipts.edn` from prior scheduled checks.
 
 ## Scope Absorbed
 
-- **`receipts.edn`** — committed the uncommitted fork-tax receipts from prior scheduled checks (2026-07-11T14:56:49Z and 2026-07-11T14:57:34Z).
+- **`receipts.edn`** — committed the uncommitted fork-tax receipts from prior scheduled checks (2026-07-11T15:58:43Z and 2026-07-11T15:59:29Z).
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- EDN/markdown sanity of `receipts.edn` was confirmed before staging (325 valid EDN entries).
+- EDN/markdown sanity of `receipts.edn` was confirmed before staging (327 valid EDN entries).
 
 ## Concurrent / Ephemeral
 

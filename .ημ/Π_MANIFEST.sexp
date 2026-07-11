@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260711155130"
-  :generated "2026-07-11T15:51:30Z"
-  :previous-tag "Π-20260711145040"
-  :previous-commit "0c3b3d3641872133a81566aba305bf307926f1eb"
+  :tag "Π-20260711165140"
+  :generated "2026-07-11T16:51:40Z"
+  :previous-tag "Π-20260711155130"
+  :previous-commit "96ed661594d4276c369d953db282ec0a6238f25d"
     (T '.agents/skills/dedicated-influence-channel/CONTRACT.edn' :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (T '.agents/skills/dedicated-influence-channel/SKILL.md' :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
     (T '.agents/skills/physics-dt-unit-mismatch/CONTRACT.edn' :sha256 "da8d3b3ed0e78fb20c55a79d1988a6b140f82de7981455bfbc97ec5ae331e33f")
@@ -287,8 +287,8 @@
     (T '.ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md' :sha256 "1d436dc78b6176268700428945860129ae6c6360514a46db388e96d8ca842db4")
     (T '.ημ/session-mycology/spores/20260710-035801-whitespace-tolerant-require-audits.md' :sha256 "bebc8dc17433eef1e1ebae48bb648bf5c6c46bc976371af8033f21e81228dc7d")
     (T '.ημ/session-mycology/spores/20260710-090604-fork-tax-concurrent-content-handoff.md' :sha256 "fcfcc2be5b287505e349d50f2410c9ebf352110942588923faf525d829d0388f")
-    (T '.ημ/Π_LAST.md' :sha256 "6fc0242073f81b9e27079878b15e823944082dbd335bb0fcfe961a83fa273797")
-    (T '.ημ/Π_STATE.sexp' :sha256 "076b05e2a7596e1d265aed4bae6cca46e678062f95d2b8edf3d1eb06dae2b1aa")
+    (T '.ημ/Π_LAST.md' :sha256 "9b2f6ec2cf11d02af68cef4247b14de6290758ba73616f9c2943a6f37149771c")
+    (T '.ημ/Π_STATE.sexp' :sha256 "618018ba08c5777c860e441a78c2a710ca75286be1a5e6d2bd434ce38d5d47c3")
     (T 'AGENTS.md' :sha256 "a3d84fa86a797405f10730b129b61a3e4dad7942a4a30c77df994ee180d590cd")
     (T 'CLAUDE.md' :sha256 "23c1d0d389e4580bc462fcdab190ee4b493b07e724b89c6df96c6467c15e64d8")
     (T 'CONTRACT.edn' :sha256 "463298dd814c60b3857bc41a23e5d7fc1af1d18d33b52e14151b55db889f7966")
@@ -344,7 +344,7 @@
     (T 'docs/notes/archive/2026.06.25.16.41.16.md' :sha256 "35faaec23cbea4748ca0fbf4d6deda166cd90e7894c9168be4ccde2e78091902")
     (T 'docs/notes/archive/2026.06.25.22.11.59.md' :sha256 "4dd86d41ed73e5c18424fc45ffb5106aa29fa0675d2a0660a032d436cfbadcba")
     (T 'docs/notes/archive/2026.07.06.22.04.23-plan.md' :sha256 "c0e8647e737bb47fe0b6310d21252b22d3e40b4bf9d6ee182eb28c160ac600a7")
-    (T "docs/notes/archive/Tell me what we've learned studying HOPS315 with j.md" :sha256 "f600b3456a7266c0ef2e3bb267fc0713c273c47459b608b247b483312a941e83")
+    (T 'docs/notes/archive/Tell me what we\'ve learned studying HOPS315 with j.md' :sha256 "f600b3456a7266c0ef2e3bb267fc0713c273c47459b608b247b483312a941e83")
     (T 'docs/notes/archive/architecture-exploration.md' :sha256 "be5127a0cfc168521813669040d3847706e00c97b187f3d01a48f734a3e4fe90")
     (T 'docs/notes/archive/claude-identify-missing-planetary-specs-in-code-2026-07-07.md' :sha256 "866315aa1915b3b65f8a8a16208210d25dd9d481814fb892f653dde1d09b0233")
     (T 'docs/notes/archive/claude-identify-missing-planetary-specs-in-code.md' :sha256 "5ad942dfbe4ac9065c20a84261e4d3e6effffa78fafa076a7e93ae42952b5802")
@@ -403,16 +403,16 @@
     (T 'docs/notes/research/formation-rendering/formation-rendering-investigation-005-all-four-issues-are-fixed-with-tests-and.md' :sha256 "7a0a196d0559765c7c92e5fc9070966bc886122718678eb43900c14d6ba23d88")
     (T 'docs/notes/research/formation-rendering/formation-rendering-investigation-006-now-i-understand-the-playerobserver-mode.md' :sha256 "746e908dd8ce41d3450dc5ce75d04b361a91a9b9fb8e263047badab39ea7634f")
     (T 'docs/notes/research/hops315-fsm/README.md' :sha256 "f7925b5282a4ae0926a1557adb4ed5fdd52702fa1fbedcbdac09b45a477992d0")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-001-what-is-hops-315.md" :sha256 "71ec58908f476cb082a0c29940683a0eeab1f6caf450cd7075ca0f18cc209bf8")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-002-where-your-latest-work-actually-lives.md" :sha256 "f727c5acf1581b38b34db8ac7de162f4c6cd6112b3a99e4e47608e03c4921d8e")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-003-what-changed-today-from-code-receipts.md" :sha256 "03dcec356d225bfeab49b33140ca8f839eddde1701b41d9d23bf2fc6d9f1ecac")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-004-1-gas-ladder-from-nebula-to-star-disk.md" :sha256 "e0badf6e14ae6dead1fb5613f4707097a292a2ba77b134986428277fc4f80479")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-005-1-treat-the-fsm-as-a-firstclass-law-obje.md" :sha256 "c08c891f265eda8995e721fc237c365335ca77561d69b8b37d41d593879f6ff9")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-006-the-five-machines.md" :sha256 "af8c491b09e689560b0cd7c0a17d256eb7a44b3bb7b212196cde42f0174b4306")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-007-catalog-rules.md" :sha256 "30b55da909949be9e80e2737c62b6e7b9392b133342c8269933063bdf26a5543")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-008-the-design-principle.md" :sha256 "589bb961755e5db57b305e030f5b870cc7c70d8ee90bdb13ce351127bb4c30f3")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-009-the-bridge.md" :sha256 "cd3ee74b4249c5e6b0c7c9316ecb408b6732421f3024c325c3fd1f871a2cf6b5")
-    (T "docs/notes/research/hops315-fsm/Tell me what we've learned studying HOPS315 with j-010-projection-functions.md" :sha256 "7c9f33ee575fdfc8adbc630b83b7284768821c395d21de4517f581d8c4aa6a60")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-001-what-is-hops-315.md' :sha256 "71ec58908f476cb082a0c29940683a0eeab1f6caf450cd7075ca0f18cc209bf8")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-002-where-your-latest-work-actually-lives.md' :sha256 "f727c5acf1581b38b34db8ac7de162f4c6cd6112b3a99e4e47608e03c4921d8e")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-003-what-changed-today-from-code-receipts.md' :sha256 "03dcec356d225bfeab49b33140ca8f839eddde1701b41d9d23bf2fc6d9f1ecac")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-004-1-gas-ladder-from-nebula-to-star-disk.md' :sha256 "e0badf6e14ae6dead1fb5613f4707097a292a2ba77b134986428277fc4f80479")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-005-1-treat-the-fsm-as-a-firstclass-law-obje.md' :sha256 "c08c891f265eda8995e721fc237c365335ca77561d69b8b37d41d593879f6ff9")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-006-the-five-machines.md' :sha256 "af8c491b09e689560b0cd7c0a17d256eb7a44b3bb7b212196cde42f0174b4306")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-007-catalog-rules.md' :sha256 "30b55da909949be9e80e2737c62b6e7b9392b133342c8269933063bdf26a5543")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-008-the-design-principle.md' :sha256 "589bb961755e5db57b305e030f5b870cc7c70d8ee90bdb13ce351127bb4c30f3")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-009-the-bridge.md' :sha256 "cd3ee74b4249c5e6b0c7c9316ecb408b6732421f3024c325c3fd1f871a2cf6b5")
+    (T 'docs/notes/research/hops315-fsm/Tell me what we\'ve learned studying HOPS315 with j-010-projection-functions.md' :sha256 "7c9f33ee575fdfc8adbc630b83b7284768821c395d21de4517f581d8c4aa6a60")
     (T 'docs/notes/research/index.md' :sha256 "b3fc8d990e01580f6cf1e27676a39e2e274b6877294d73170d38d29a21f5ae72")
     (T 'docs/notes/research/phase0-nebula/README.md' :sha256 "ba5ee65aedf61d7dedf9314406ca3f55554002dcc3f7b78c6299a467e359fabf")
     (T 'docs/notes/research/phase0-nebula/phase-0-001-docsdesignstruth-phase-0-stellar-nebula.md' :sha256 "f468e62e91112ce8d044ba85d2840c1e707bfa274037385f2168d4581bdd9dc3")
@@ -638,7 +638,7 @@
     (T 'kanban/tasks/tick-perf-drift-profile.md' :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (T 'opencode.json' :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (T 'openhax.kanban.json' :sha256 "d27b66ffe03adac7b62ac887c01c43003e74e4a24a9d2acfea778cab2d03acc6")
-    (T 'receipts.edn' :sha256 "205bb1ca41f02554997df1f1b6ce2f2966a196193f535031ecbfeca4dd50e19f")
+    (T 'receipts.edn' :sha256 "58266ce4e0fbbe4d4a2eab73ff334b0805cf718057d27a69a3b66a0cb54cd83f")
     (T 'receipts.log' :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (T 'session-ses_0ca8.md' :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (T 'src/domain/arc.clj' :sha256 "d8e96db2e26fe5bfa538dc30deb39ebdd9c7e00793e616f8ba1d1b5edf4bd191")
@@ -863,5 +863,5 @@
     (T 'test/shape/core_test.clj' :sha256 "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43")
     (T 'test/shape/spatial_test.clj' :sha256 "d2591674b40e19e782766e51ae829503486c45c1eb300a48c3a2f663ca182f32")
     (T 'test/test_runner.clj' :sha256 "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7")
-    (T '.ημ/Π_MANIFEST.sexp' :sha256 "328d964f0598fd1ce73fad62e62dd9b7b02405c245a5cc32b9ac2d7c270c644d")
+    (T '.ημ/Π_MANIFEST.sexp' :sha256 "693b6ec53dd9774efe65f3412a3b0ae9379ddea48c1f6a0923ba86cf1d2a383a")
 )
