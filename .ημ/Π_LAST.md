@@ -1,23 +1,22 @@
 # Π Last — Gates of Truth
 
-- **Π tag:** `Π-20260711074525`
-- **Timestamp:** 2026-07-11T07:45:25Z
+- **Π tag:** `Π-20260711094941`
+- **Timestamp:** 2026-07-11T09:49:41Z
 - **Branch:** `main`
-- **Parent head:** `c710c3fc795ec85dd0f595cd7c4eecbd4ff948db`
-- **Previous tag:** `Π-20260711061213`
-- **Reason:** `fork-tax-tender` activation detected a new promoted skill (`whitespace-tolerant-require-audits`), updated spore-review records, and a prior no-op receipt, then paid the fork tax.
+- **Parent head:** `cd3013c3c75572a7aa956b9e5b4eaf658357a03a`
+- **Previous tag:** `Π-20260711074525`
+- **Reason:** `fork-tax-tender` activation detected appended receipts in `receipts.edn` and paid the fork tax.
 
 ## Scope Absorbed
 
-- **`.agents/skills/whitespace-tolerant-require-audits/`** — newly promoted skill files (`SKILL.md` and `CONTRACT.edn`) from the spore-review session.
-- **`.ημ/session-mycology/review-receipts.edn`** — appended the latest spore-review entry.
-- **`receipts.edn`** — appended the fork-tax `:paid` receipt for this activation and the prior no-op receipt from the immediately preceding check.
+- **`receipts.edn`** — appended the 08:46:19 no-op receipt and the 08:46:40 observation reflection from the previous fork-tax-tender activation.
 - **`.ημ/Π_STATE.sexp`, `.ημ/Π_LAST.md`, `.ημ/Π_MANIFEST.sexp`** — regenerated handoff artifacts for this snapshot.
 
 ## Verification
 
 - No Clojure source files changed; no targeted tests were run.
-- EDN/markdown sanity of the new skill, review-receipts, and the receipts ledger was confirmed before staging.
+- EDN/markdown sanity of `receipts.edn` was confirmed before staging.
+- `.ημ/Π_MANIFEST.sexp` regenerated with 597 tracked-file hashes (`.ημ/` paths excluded as runtime/handoff artifacts).
 
 ## Concurrent / Ephemeral
 
@@ -26,10 +25,6 @@ No concurrent/unowned repo-relevant paths were left untouched in this snapshot. 
 ## Safety
 
 No secrets, unresolved merge conflicts, or blocked paths were detected among the owned scope. All stageable, repo-relevant working state intended for this snapshot has been committed and tagged.
-
-## Note on Receipt Commit SHA
-
-To preserve the append-only ledger and the invariant that new commits are always added on top (no amend), the fork-tax receipt records the Π tag directly in `:refs` instead of the commit SHA of the commit that contains it. The actual commit SHA is retrievable as the tag target in git history.
 
 ## Known Residuals
 
