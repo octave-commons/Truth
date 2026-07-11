@@ -1,8 +1,8 @@
 (Π-manifest
-  :tag "Π-20260711010938"
-  :generated "2026-07-11T01:12:02Z"
-  :previous-tag "Π-20260711000817"
-  :previous-commit "11de666"
+  :tag "Π-20260711050745"
+  :generated "2026-07-11T05:09:25Z"
+  :previous-tag "Π-20260711010938"
+  :previous-commit "14953113"
     (T ".agents/skills/dedicated-influence-channel/CONTRACT.edn" :sha256 "e320bb5bdd8192cc741bc0ec062de290fd1b865c2594877c798094ed39541494")
     (T ".agents/skills/dedicated-influence-channel/SKILL.md" :sha256 "ef3a1776a290eae7285adf0158a0e7124eff4bfbfd0c59fd4daf8c00483f362e")
     (T ".agents/skills/physics-dt-unit-mismatch/CONTRACT.edn" :sha256 "da8d3b3ed0e78fb20c55a79d1988a6b140f82de7981455bfbc97ec5ae331e33f")
@@ -277,17 +277,17 @@
     (T ".ημ/actors/truth-research-physics/triggers/README.md" :sha256 "0a85a8b0bd739018064b5b9e535517d06734ad556dd5e468c7a6e87ddb151112")
     (T ".ημ/run-research.sh" :sha256 "39e07f6a9995290b1dfebbb5101dbccbd0f81ea726ec5b3d8e02dd665c3a7780")
     (T ".ημ/session-mycology/ledger.md" :sha256 "5affa6ff36e29ef59035ddfce6901aba0a34cc3a2e252f654729e108fe8dab7d")
-    (T ".ημ/session-mycology/review-receipts.edn" :sha256 "199b43fa1454278308a78ec8782824783ad8b828f23bac7f8064b658729eb6a8")
-    (T ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "c016abfdc64802ce285c8aa7be5a5008ac9222a2234c89c959f9aea19b85e182")
-    (T ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "47eb9bc5b0c2440fc8bae36bb47b9831cc997e6ffd25b4e872320c1cb1e6f1a2")
-    (T ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "f26e5776be2563d99d8e80cd2b958d700f2c12df352ea4b90b637eac674ab84c")
-    (T ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "693f615b12d6e419b66c58f9eae7ea38b500d92a828578704556fa185c580162")
-    (T ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "e1774ba0df6e90fa7a40536cd9c8d1726f29f5df42dbc222199a7a98c37a2ec0")
-    (T ".ημ/session-mycology/spores/20260710-035801-whitespace-tolerant-require-audits.md" :sha256 "42104f52280b3f2a9921556308356078fc5a246769d04bddae3fcddade34eecf")
-    (T ".ημ/session-mycology/spores/20260710-090604-fork-tax-concurrent-content-handoff.md" :sha256 "78550b15a18924de59f2c273b3750b4e85b4afd8ca49c8c4565a951a4a75ebc6")
-    (T ".ημ/Π_LAST.md" :sha256 "8da51330fe61f2daeca692c52038d324f7f1301349d7fb402643a3aa3fea50e9")
-    (T ".ημ/Π_MANIFEST.sexp" :sha256 "d4dbbc0f0054921ddd66c074957dce989c2408e8c8bbcabc5abc7116fd238525")
-    (T ".ημ/Π_STATE.sexp" :sha256 "93179a9a828381076480a795dd53868b8f60cc058510778f89010c336cb883b2")
+    (T ".ημ/session-mycology/review-receipts.edn" :sha256 "ec4e66016743e081933f03102655bf2a48dcc417007ddea2d0402e5f89ab570d")
+    (T ".ημ/session-mycology/spores/20260705-214413-render-knob-pixel-diff-verification.md" :sha256 "277faf853c5fb43288e4c7abdf738e754a5f27f418892cce98d96d7f02460553")
+    (T ".ημ/session-mycology/spores/20260706-200102-dedicated-influence-channel-pattern.md" :sha256 "1c726d9833d64aed424fc1eba6432f28d243325fa674c213d8e64fdb154bea63")
+    (T ".ημ/session-mycology/spores/20260706-235551-reject-honest-fix-pivot.md" :sha256 "faa19c08b21962db997ef41991d66a1261e16c9b2c1a3363129b5828784150b8")
+    (T ".ημ/session-mycology/spores/20260708-151636-receipt-driven-regression-recovery.md" :sha256 "cf6e4ffd8a9c5779306a7a7a5cc41d2d7f38a887da43f23e0a3fc5f6a3fe1e14")
+    (T ".ημ/session-mycology/spores/20260708-172700-physics-dt-unit-mismatch.md" :sha256 "1d436dc78b6176268700428945860129ae6c6360514a46db388e96d8ca842db4")
+    (T ".ημ/session-mycology/spores/20260710-035801-whitespace-tolerant-require-audits.md" :sha256 "bebc8dc17433eef1e1ebae48bb648bf5c6c46bc976371af8033f21e81228dc7d")
+    (T ".ημ/session-mycology/spores/20260710-090604-fork-tax-concurrent-content-handoff.md" :sha256 "fcfcc2be5b287505e349d50f2410c9ebf352110942588923faf525d829d0388f")
+    (T ".ημ/Π_LAST.md" :sha256 "3f0e6d9fe5a23bcb4354ca674de47ac7b35c8ababc3746ea7cb25971a2691abb")
+    (T ".ημ/Π_MANIFEST.sexp" :sha256 "470abafad23165d24a65e56533b0a6e9d853b289ee160ebce8606f56d5fc57ce")
+    (T ".ημ/Π_STATE.sexp" :sha256 "02cd508e583e866fea214848f217479917243c7e1e9fdd3ce4f15cfe01b35d3a")
     (T "AGENTS.md" :sha256 "a3d84fa86a797405f10730b129b61a3e4dad7942a4a30c77df994ee180d590cd")
     (T "CLAUDE.md" :sha256 "23c1d0d389e4580bc462fcdab190ee4b493b07e724b89c6df96c6467c15e64d8")
     (T "CONTRACT.edn" :sha256 "463298dd814c60b3857bc41a23e5d7fc1af1d18d33b52e14151b55db889f7966")
@@ -637,7 +637,7 @@
     (T "kanban/tasks/tick-perf-drift-profile.md" :sha256 "ac7855f7ae847dd1fa492927944b676cf35e55fbc5208feafd0900e08a2dedc3")
     (T "opencode.json" :sha256 "3a1689520689222b217d5107e8e7becc3fbbd2aae41dc086435cd6a941b650c1")
     (T "openhax.kanban.json" :sha256 "d27b66ffe03adac7b62ac887c01c43003e74e4a24a9d2acfea778cab2d03acc6")
-    (T "receipts.edn" :sha256 "8c9100b747ec30736212ea3ef181afa8dfb2fb8d25054d9a09511acf0d542415")
+    (T "receipts.edn" :sha256 "98a49dfc865030ae3f1866a6f952196dad0a6812f17f93c8d053ef80aa7ce8f1")
     (T "receipts.log" :sha256 "73fa573fe442eeadb3f36dc673ed90482b8e534ed003bd70790d22f71c398408")
     (T "session-ses_0ca8.md" :sha256 "4b1edc55a894cbd4ad00a068091d3adeb6988772063499f68a94d81ed94f882b")
     (T "src/domain/arc.clj" :sha256 "d8e96db2e26fe5bfa538dc30deb39ebdd9c7e00793e616f8ba1d1b5edf4bd191")

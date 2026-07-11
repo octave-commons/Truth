@@ -1,7 +1,7 @@
 ---
 status: promoted
-reviewed: 2026-07-11T00:18:25Z
-reviewer-session: 82b1ced6-f9e6-4e36-b207-efd8414d6285
+reviewed: 2026-07-11T04:17:45Z
+reviewer-session: d1353e32-3b03-4879-ad0b-5446092b7212
 created: 2026-07-10T08:58:01.070934604Z
 source-session: /home/err/spaces/Truth
 source-task: Audit callers of a namespace before deleting/deprecating it
