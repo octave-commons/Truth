@@ -283,6 +283,27 @@
 (def civilization :component/civilization)
 (def territory    :component/territory)
 
+;; --- Voxel substrate (Voxel 3: focus promotion/demotion) --------------------
+;; All four are written SOLELY by the `:voxel-focus` fan-out system
+;; (domain.voxel.focus); all live on the committed world entity (the band's
+;; lifecycle is exactly the world's committed lifetime — commitment is
+;; write-once, so one band per world, no spawn/despawn churn).
+;; `voxel-field`       the cached `domain.interior/seed-field` macro geology
+;;                     field — the deterministically regenerable seed the
+;;                     band materializes from and demotion diffs against.
+;; `voxel-band`        the resolved band: {:spec {:anchor :dir :h-r :depth-m
+;;                     :region} :voxels {[i j k] voxel} :touched {[i j k]
+;;                     provenance}} — present only while materialized.
+;; `voxel-edit-queue`  the deferred edit queue (ordered job vector) EVERY
+;;                     voxel edit drains through under the
+;;                     `law.voxel/edit-budget-ms-per-tick` cap (design §7.1).
+;; `voxel-edit-diffs`  ordered `law.voxel/edit-diff-schema` vector — the
+;;                     field-seed + edit-diff save representation (§7.3).
+(def voxel-field      :component/voxel.field)
+(def voxel-band       :component/voxel.band)
+(def voxel-edit-queue :component/voxel.edit-queue)
+(def voxel-edit-diffs :component/voxel.edit-diffs)
+
 ;; --- Render -----------------------------------------------------------------
 (def renderable   :component/renderable)
 (def cell-id      :component/cell-id)

@@ -191,6 +191,18 @@
    only under focus)."
   0.15)
 
+;; --- Voxel materialization (Voxel 3: focus band seed values) -----------------
+
+(def ^:const layer-cohesion-reference-pa
+  "Seed cohesion (Pascals, SI) per macro-layer name — the shear strength a
+   freshly materialized voxel carries before any edit touches it
+   (`law.voxel/voxel-schema` `:cohesion`). Orders of magnitude from the
+   literature: intact crustal rock ~10 MPa, mantle rock at pressure
+   effectively stronger, core iron ~1 GPa, ice Ih ~1 MPa. Coarse reference
+   values, not a rheology model — edits and collision physics (slices 4-6)
+   diverge from them."
+  {:core 1.0e9 :mantle 1.0e8 :crust 1.0e7 :ice-shell 1.0e6})
+
 ;; --- Deterministic layout ---------------------------------------------------------
 
 (def ^:const golden-angle-radians

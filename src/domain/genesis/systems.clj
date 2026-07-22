@@ -24,6 +24,7 @@
    [domain.debris :as debris]
    [domain.genesis.promotion :as promotion]
    [domain.narrowing :as narrowing]
+   [domain.voxel.focus :as voxel-focus]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
    [domain.physics.cache :as cache]))
@@ -82,9 +83,13 @@
     (em/magnetosphere-coupling-system)
     (ecology/ecology-system)
     (debris/debris-reaper-system)
-     (promotion/focus-zone-system)
-     (narrowing/binding-system)
-     (narrowing/commitment-system)])
+      (promotion/focus-zone-system)
+      (narrowing/binding-system)
+      (narrowing/commitment-system)
+      ;; Voxel 3: the committed world's focus band. Runs after :commitment
+      ;; and :handoff, whose outputs (c/commitment-state, c/planet-
+      ;; candidate) it reads one tick Jacobi-stale.
+      (voxel-focus/voxel-focus-system)])
 
 (defn physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer

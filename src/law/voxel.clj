@@ -233,3 +233,74 @@
    impact's crater visibly FORMS over ~a second. Declared here from day one
    as the tunable; the queue itself is a later slice."
   2.0)
+
+;; --- Edit-queue cost model (design §7.1, Voxel 3) -----------------------------
+;; The drain is BUDGETED IN ESTIMATED MILLISECONDS, never wall-clock time: every
+;; job's cost is a pure function of its payload (explicit `:cost-ms`, else the
+;; per-voxel model below), so tests drive the same drain with fake costs and the
+;; live tick never calls a clock.
+
+(def ^:const edit-cost-base-ms
+  "Fixed estimated cost (ms) of draining any one edit-queue job — the
+   bookkeeping overhead of applying a job independent of its voxel count."
+  0.05)
+
+(def ^:const edit-cost-per-voxel-ms
+  "Estimated cost (ms) per voxel touched by an edit-queue job. 1 µs/voxel:
+   the order of a handful of map operations on one voxel record."
+  1.0e-3)
+
+(def edit-chunk-voxels
+  "Voxels per promotion/demotion chunk: the most voxel work one drained job
+   may do while staying inside `edit-budget-ms-per-tick` under the cost
+   model. The `:voxel-focus` system splits band promotion/demotion into
+   chunks of this size at enqueue/step time, so the 2 ms cap holds for band
+   churn exactly as it does for later sculpt/mine/collision edits — a big
+   retarget visibly sweeps over several ticks."
+  (long (Math/floor (/ (- edit-budget-ms-per-tick edit-cost-base-ms)
+                       edit-cost-per-voxel-ms))))
+
+(def max-edits-per-job
+  "GUIDANCE FOR PRODUCERS (slices 4-6): the most edits one `:apply-edits`
+   job may carry while its estimated cost stays inside the per-tick budget
+   — equal to `edit-chunk-voxels` by construction of the cost model. Jobs
+   are ATOMIC in the drain: a producer that enqueues more edits than this
+   in one job forces the oversized-head escape and silently exceeds the
+   2 ms cap for that tick. Split larger edit sets with
+   `domain.voxel.queue/edits->jobs`, which preserves apply order across the
+   chunks it emits."
+  edit-chunk-voxels)
+
+;; --- Focus band (design §7.2 RESOLVED 2026-07-22: focus-driven dynamic band) ---
+
+(def ^:const focus-band-depth-reference-m
+  "Band depth (m) at observation-effect 1.0 (design §7.2, owner resolution
+   2026-07-22): the resolved band's depth is
+   `focus-band-depth-reference-m × coherence × focus-intensity` — the SAME
+   product (`domain.player.focus/observation-effect`) that scales how
+   strongly attention resolves reality in the horizontal focus cone,
+   projected downward. Deeper focus literally deepens the world: 10 km at
+   full effect, crust-reference order (`law.interior/crust-thickness-
+   reference-m` is 30 km), clamped per world by the shell thickness and by
+   `focus-band-max-voxels`."
+  1.0e4)
+
+(def ^:const focus-band-max-voxels
+  "Hard cap on resolved voxels in the focus band (performance is a
+   correctness property): the band's horizontal extent AND depth are
+   clamped against the count bound n(h, d) ≤ π(h/e + ½)² × layers(d) —
+   the ½-cell rim margin and the radial-window layer count make the cap
+   REAL (a plain π(h/e)²(d/e) estimate undercounts by ~5% and leaked
+   8568 > 8192 before the margin was added; `domain.voxel.band/band-target`
+   derives both clamps from the bound and
+   `domain.voxel-focus-test/band-respects-voxel-cap` pins it). A deep band
+   narrows and a wide band shallows — attention is the resource, and the
+   voxel budget is its exchange rate. 8192 voxels ≈ 4 chunks at
+   `edit-chunk-voxels`."
+  8192)
+
+(def ^:const focus-band-min-horizontal-edges
+  "Minimum horizontal extent of the band, in canonical voxel edges: the band
+   never resolves thinner than a 4×4 voxel patch no matter how deep the
+   focus drives it."
+  4)

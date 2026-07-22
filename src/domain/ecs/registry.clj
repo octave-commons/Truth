@@ -422,6 +422,23 @@
                c/palette c/time-lock}
      :writes #{c/commitment-state c/palette c/time-lock}}
 
+    ;; Voxel 3: the focus-driven voxel band on the committed world. Reads
+    ;; the observer's focus, the committed world's candidate record and
+    ;; position (one tick Jacobi-stale, like every cross-system read), and
+    ;; its own four columns one tick stale. Sole writer of all four: the
+    ;; field seed cache, the resolved band, the deferred edit queue, and
+    ;; the accumulated edit-diff save representation. Band retargets and
+    ;; demotion fold-back drain through the budgeted queue
+    ;; (law.voxel/edit-budget-ms-per-tick) — one system because promotion
+    ;; and demotion write the same columns (the :focus-zone precedent).
+    {:id     :voxel-focus
+     :ns     'domain.voxel.focus
+     :reads  #{c/observer c/position c/planet-candidate c/commitment-state
+               c/voxel-field c/voxel-band c/voxel-edit-queue
+               c/voxel-edit-diffs}
+     :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
+               c/voxel-edit-diffs}}
+
     ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position
    ;; — a pure Galilean shift, not a post-fold position write (spec §6).
