@@ -1,11 +1,11 @@
 ---
 category: "specs"
 labels: ["specs", "phase0", "player"]
-write-id: "1784746133350-0.xaqw24o868nifxr21vx"
+write-id: "1784751643574-0.ruxyldkdgfg9hn7mh2x"
 source: "kanban/tasks/phase-0-player-focus-promotion-demotion.md"
 title: "Phase 0 Player Focus Promotion & Demotion"
 priority: "P1"
-status: "breakdown"
+status: "done"
 estimate: "8"
 uuid: "phase-0-player-focus-promotion-demotion"
 created_at: "2026-07-10T12:00:00Z"
@@ -97,4 +97,6 @@ Re-scope 2026-07-22 (Claude, decision from Aaron): this card is now the EPIC. Di
 | phase-0-player-focus-c-conservation-tests | 2 | 7 named tests; pure promotion-invariant test unblocked now, 6 world tests need B | blocked (needs B) |
 
 Dependency order: A -> B -> C. Epic est bumped 5 -> 8 (rewrite, not wiring). in_progress -> breakdown (epic). Sequenced AFTER the M5 handoff chain to avoid file conflicts on components/registry/systems.
+
+Epic COMPLETE 2026-07-22 (resumed session): all 3 children done + committed on m5-ecology-handoff (f5dc0f5, 0dedd69 + this commit). A: domain.field statistical-cell substrate + lifecycle markers. B: :focus-zone fan-out emitter (one combined promotion+demotion system, sole writer, threshold-delay preserved). C: 7 named conservation tests green + latent promotion-invariant? arity bug fixed. Working promotion/demotion with proven conservation — unblocks narrowing-binding-mechanic (first playable Narrowing slice). Closing epic.
 ---

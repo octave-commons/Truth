@@ -251,8 +251,8 @@
                  (< (Math/abs (- a b))
                     (* (max (Math/abs a) (Math/abs b) 1.0) tol))))]
      (and (rel-close? (mass before) (mass after))
-          (every? #(rel-close? %1 %2) (map vector (momentum before) (momentum after)))
-          (every? #(rel-close? %1 %2) (map vector (angmom before) (angmom after)))))))
+           (every? (fn [[a b]] (rel-close? a b)) (map vector (momentum before) (momentum after)))
+           (every? (fn [[a b]] (rel-close? a b)) (map vector (angmom before) (angmom after)))))))
 
 ;; --- Contract ---------------------------------------------------------------
 

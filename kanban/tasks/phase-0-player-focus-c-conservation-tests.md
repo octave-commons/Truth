@@ -1,13 +1,14 @@
 ---
-uuid: "phase-0-player-focus-c-conservation-tests"
-title: "Player Focus C: conservation tests + invariant validator"
-status: "blocked"
-priority: "P1"
-labels: ["specs", "phase0", "player", "test", "epic-player-focus-promotion-demotion"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/phase-0-player-focus-c-conservation-tests.md"
 category: "specs"
-estimate: 2
+labels: ["specs", "phase0", "player", "test", "epic-player-focus-promotion-demotion"]
+write-id: "1784751639182-0.xr2fxm0r74fi3tnavwl"
+source: "kanban/tasks/phase-0-player-focus-c-conservation-tests.md"
+title: "Player Focus C: conservation tests + invariant validator"
+priority: "P1"
+status: "done"
+estimate: "2"
+uuid: "phase-0-player-focus-c-conservation-tests"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Player Focus C: conservation tests + invariant validator
@@ -53,4 +54,8 @@ Write the 7 named tests (fixtures follow `test/domain/field_test.clj` /
 ---
 Created 2026-07-22 (Claude): child C. The pure invariant test is unblocked now;
 the 6 world-level tests are blocked on child B.
+
+Triage 2026-07-22 (resumed session): child B done + committed (0dedd69). Dispatching impl agent for the 7 named conservation tests. blocked -> in_progress.
+
+Complete + independently verified 2026-07-22 (resumed session). focus-conservation-test 7 named tests green; full suite 676/13561 (was 669/13536) 0 failures; architecture green; write-conflicts {}. All 7 card tests in test/domain/focus_conservation_test.clj: promotion mass/momentum/L conserved via promotion-invariant? tol; demotion mass credit + consumed-demote; ledger events survive despawn; same-tick threshold event blocks demotion; validator true/false cases. FOUND + FIXED latent bug in law.field/promotion-invariant? (schema.clj:254-255): every? over mapped pairs called 2-arity pred with 1 arg -> ArityException on any real input; shipped latent in child A (validator had zero callers until now). Fixed to destructured fn. Epic closes: A+B+C all done.
 ---
