@@ -172,6 +172,7 @@
 (def spawn-request-disk      :component/spawn-request.disk)   ;; disk fragment spawns (binary/planet)
 (def spawn-request-planet    :component/spawn-request.planet) ;; sub-grid planet seeder (Part 4)
 (def spawn-request-condense  :component/spawn-request.condense) ;; small-body seed from gas condensation
+(def spawn-request-promotion :component/spawn-request.promotion) ;; promotion spawn spec, one per source regional cell (dual-representation, Phase 1)
 ;; Lifecycle markers, reaped/materialized at world-construction (spec §5). Each
 ;; consumed marker has a single owner so single-writer holds; the reaper removes
 ;; any entity carrying ANY consumed.* marker.
@@ -180,6 +181,7 @@
 (def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
 (def consumed-transfer :component/consumed.transfer) ;; donor drained below floor by gradual mass transfer, reaped (integrator)
 (def consumed-ablation :component/consumed.ablation) ;; bound body ablated below mass floor, reaped (integrator)
+(def consumed-demote :component/consumed.demote) ;; resolved body marked for aggregation into its source cell + despawn (demotion, dual-representation Phase 1)
 
 ;; Condensation seeding: one-shot marker per gas parcel so it does not seed
 ;; repeatedly, and the dedicated mass-flux influence the integrator folds.
@@ -202,6 +204,10 @@
 (def field-zone       :component/field-zone)        ;; :immediate | :regional | :global
 (def statistical-mass :component/statistical-mass) ;; kg, bookkeeping during promotion
 (def attention-shell  :component/attention-shell)    ;; {:immediate-r m :regional-r m}
+;; Stamped on a clump promoted out of a regional cell: the source cell's entity
+;; id (int), so demotion credits mass/velocity/angular-momentum back to the
+;; right cell without a spatial lookup.
+(def promoted-from-cell :component/promoted-from-cell)
 
 ;; --- Narrative presence (Phase 1) -------------------------------------------
 ;; Observer-side narrative state: current mood, last utterance tick, and the

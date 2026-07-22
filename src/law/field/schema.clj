@@ -175,6 +175,65 @@
    [:immediate-r [:and :double [:> 0]]]
    [:regional-r [:and :double [:> 0]]]])
 
+;; --- Promotion/demotion lifecycle markers (Player Focus, child A) -----------
+;; The regional-cell substrate the focus-zone system (child B) will consume:
+;; `spawn-request-promotion` seed specs, the `consumed-demote` reap marker, and
+;; `promoted-from-cell` back-pointer. Schemas only — nothing ticks yet.
+
+(def promotion-spawn-spec-schema
+  "One seed spec carried by `c/spawn-request-promotion`, as
+   `domain.stellar.seeder/spawn-clump` expects (spec §5), plus an optional
+   `:extra-components` map applied to the spawned entity after materialization
+   — used to stamp `c/promoted-from-cell` with the source cell's entity id."
+  [:map
+   [:position [:tuple :double :double :double]]
+   [:velocity {:optional true} [:tuple :double :double :double]]
+   [:mass [:and :double [:> 0]]]
+   [:radius [:and :double [:> 0]]]
+   [:temperature {:optional true} [:and :double [:>= 0]]]
+   [:composition {:optional true} [:map-of :keyword :double]]
+   [:matter-state {:optional true} :keyword]
+   [:body-kind {:optional true} :keyword]
+   [:angular-momentum {:optional true} [:tuple :double :double :double]]
+   [:extra-components {:optional true} [:map-of :keyword :any]]])
+
+(def promotion-spawn-spec?
+  "Predicate: does `value` satisfy `law.field/promotion-spawn-spec-schema`?"
+  (m/validator promotion-spawn-spec-schema))
+
+(def consumed-demote-schema
+  "The `c/consumed.demote` marker: a resolved body flagged for aggregation into
+   its source cell and despawn at world-construction. A bare boolean flag, like
+   the other `consumed.*` markers."
+  :boolean)
+
+(def consumed-demote?
+  "Predicate: does `value` satisfy `law.field/consumed-demote-schema`?"
+  (m/validator consumed-demote-schema))
+
+(def promoted-from-cell-schema
+  "The `c/promoted-from-cell` back-pointer: a non-negative entity id (int) of
+   the regional cell a promoted clump was sampled from."
+  [:and :int [:>= 0]])
+
+(def promoted-from-cell?
+  "Predicate: does `value` satisfy `law.field/promoted-from-cell-schema`?"
+  (m/validator promoted-from-cell-schema))
+
+(def regional-cell-schema
+  "An ECS regional cell entity: the statistical-mass ledger, the :regional
+   field-zone tag, and a position — and, by construction, no `c/matter-state`
+   key, so it stays structurally invisible to gravity/hydro/classifier/
+   integrator (all of which filter on `c/matter-state`)."
+  [:map
+   [:statistical-mass statistical-cell-schema]
+   [:field-zone [:= :regional]]
+   [:position [:tuple :double :double :double]]])
+
+(def regional-cell?
+  "Predicate: does `value` satisfy `law.field/regional-cell-schema`?"
+  (m/validator regional-cell-schema))
+
 (defn promotion-invariant?
   "Return true if the promoted/demoted set conserves total mass, linear momentum,
    and angular momentum within relative `tol` (default 1e-6). `before` and `after`
