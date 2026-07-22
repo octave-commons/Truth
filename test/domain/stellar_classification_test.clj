@@ -69,8 +69,57 @@
         ws      ((:run sys) w)]
     (testing "sole writer of material-class, thermal-band, and orbit-stable"
       (is (= :classification (:id sys)))
-      (is (= #{c/material-class c/thermal-band c/orbit-stable} (:writes sys))))
+      (is (= #{c/material-class c/thermal-band c/orbit-stable
+               c/atmosphere-class c/retained-species} (:writes sys))))
     (testing "the planet is classified; the star is not a classification target"
       (is (= :rocky (get-in ws [c/material-class planet])))
       (is (= :temperate (get-in ws [c/thermal-band planet])))
       (is (nil? (get-in ws [c/material-class star]))))))
+
+;; --- atmosphere-class (M5 handoff Phase 3) ----------------------------------
+;; See kanban/tasks/ecology-m5-phase3-atmosphere-retention.md and the
+;; grounding research note docs/research/atmosphere/planetary-atmosphere-
+;; retention-classifier.md, which supersedes the parent card's rougher
+;; formulas where they conflict (RMS thermal velocity, not most-probable
+;; speed; see that note's §3.4).
+;;
+;; DEVIATION FROM THE CARD (flagged in the card's own 2026-07-22 triage note
+;; and the research note §6.1): the card's literal `moon-like-loses-
+;; atmosphere` test does NOT return `:none` under grounded Jeans physics — a
+;; real Moon (M=7.34e22 kg, R=1.737e6 m, T_eff≈250K) computes retention
+;; ratios of r(N2)=5.03, r(CO2)=6.31, r(H2O)=4.04, all above the heavy-
+;; species threshold of 3, landing in `:thin`. The Moon's real airlessness is
+;; volatile-poor formation (giant-impact origin) plus non-thermal solar-wind
+;; sputtering — both outside Jeans-escape scope by construction, not a bug
+;; here. Replaced with `hot-fragment-loses-atmosphere`, a genuinely airless
+;; small/hot body (M=5e20 kg, R=3e5 m, T=600K) that cleanly returns `:none`.
+
+(deftest earth-like-retains-n2
+  (testing "Earth-like mass/radius/temperature retains a thick N2/CO2/H2O atmosphere"
+    (let [result (classifier/atmosphere-class
+                  {:mass law/earth-mass :radius 6.371e6 :temperature 255.0
+                   :material-class :rocky :thermal-band :temperate})]
+      (is (= :thick (:atmosphere-class result)))
+      (is (contains? (:retained-species result) :N2)))))
+
+(deftest gas-giant-retains-h2
+  (testing "Jupiter-like mass/radius/temperature retains its primordial H2/He envelope"
+    (let [result (classifier/atmosphere-class
+                  {:mass law/jupiter-mass :radius 6.9911e7 :temperature 110.0
+                   :material-class :gaseous :thermal-band :frozen})]
+      (is (= :thick (:atmosphere-class result)))
+      (is (contains? (:retained-species result) :H2)))))
+
+(deftest hot-fragment-loses-atmosphere
+  (testing "a small, hot rocky fragment (M=5e20kg, R=300km, T=600K) is cleanly airless"
+    ;; See the deviation note above: this replaces the card's literal
+    ;; moon-like-loses-atmosphere test with a body that is unambiguously
+    ;; below the Volkov et al. (2011) hydrodynamic-blow-off floor (r<3 for
+    ;; every candidate species), rather than a real-world edge case whose
+    ;; airlessness is driven by non-thermal effects this classifier does not
+    ;; model.
+    (let [result (classifier/atmosphere-class
+                  {:mass 5.0e20 :radius 3.0e5 :temperature 600.0
+                   :material-class :rocky :thermal-band :hot})]
+      (is (= :none (:atmosphere-class result)))
+      (is (empty? (:retained-species result))))))

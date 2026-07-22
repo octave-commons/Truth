@@ -97,6 +97,16 @@
   "Predicate: does `value` satisfy `orbit-stable-schema`?"
   (m/validator orbit-stable-schema))
 
+;; --- Atmosphere retention (M5 handoff Phase 3) -------------------------------
+;; `:component/atmosphere-class` and `:component/retained-species` schemas
+;; live in `law.atmosphere` (alongside its retention-ratio thresholds and
+;; species-mass constants) and are re-exported here as `law.stellar/
+;; atmosphere-class-schema` / `retained-species-schema`, mirroring how
+;; `material-class-schema`/`thermal-band-schema` above are re-exported from
+;; `law.stellar.schema`. See kanban/tasks/ecology-m5-phase3-atmosphere-
+;; retention.md and docs/research/atmosphere/planetary-atmosphere-retention-
+;; classifier.md.
+
 (def stellar-system-schema
   "Container for all bodies in a forming star system"
   {:id           uuid?

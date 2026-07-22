@@ -9,6 +9,7 @@
    [domain.ecs.core        :as ecs]
    [domain.ecs.components   :as c]
    [law.composition         :as lcomp]
+   [law.atmosphere          :as atmosphere]
    [law.stellar             :as law]))
 
 ;; --- Element re-exports -------------------------------------------------------
@@ -224,18 +225,27 @@
 ;; --- Atmospheric retention ---------------------------------------------------
 
 (defn escape-velocity
-  "Calculate escape velocity for a body."
+  "Calculate escape velocity for a body. Thin wrapper over
+   `law.atmosphere/escape-velocity` (v_esc = sqrt(2GM/R))."
   [mass radius]
-  (math/sqrt (/ (* 2 6.674e-11 mass) radius)))
+  (atmosphere/escape-velocity mass radius))
 
 (defn can-retain-gas?
-  "Check if body can retain a gas based on temperature and escape velocity."
+  "Check if body can retain a gas based on temperature and escape velocity.
+
+   Uses the RMS thermal-velocity convention (`law.atmosphere/thermal-
+   velocity-rms`, v_th = sqrt(3 k_B T / m)) with a uniform Jeans-ratio
+   threshold of 6 for every species. `domain.stellar.classifier/atmosphere-
+   class` (M5 handoff Phase 3) shares this exact v_th convention via
+   `law.atmosphere` but uses species-differentiated thresholds (6 for H2/He,
+   3 for heavier secondary volatiles) — see that ns and the research note
+   docs/research/atmosphere/planetary-atmosphere-retention-classifier.md §3.4
+   for why a single v_th convention now backs both checks."
   [body-mass body-radius gas-element temperature]
-  (let [v-escape (escape-velocity body-mass body-radius)
-        molecular-mass (get-in element-properties [gas-element :mass] 1.0)
-        v-thermal (math/sqrt (/ (* 3 1.38e-23 temperature)
-                                (* molecular-mass 1.66e-27)))
-        jeans-parameter (/ v-escape v-thermal)]
+  (let [molecular-mass (get-in element-properties [gas-element :mass] 1.0)
+        species-mass-kg (* molecular-mass 1.66e-27)
+        jeans-parameter (atmosphere/retention-ratio body-mass body-radius
+                                                    temperature species-mass-kg)]
     (> jeans-parameter 6)))
 
 (defn potential-atmosphere

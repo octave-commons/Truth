@@ -83,8 +83,10 @@
                                               c/temperature 288.0}))
         sys      (classifier/classification-system)
         ws       ((:run sys) w)]
-    (testing "sole writer of material-class, thermal-band, AND orbit-stable"
-      (is (= #{c/material-class c/thermal-band c/orbit-stable} (:writes sys))))
+    (testing "sole writer of material-class, thermal-band, orbit-stable,
+              atmosphere-class, AND retained-species"
+      (is (= #{c/material-class c/thermal-band c/orbit-stable
+               c/atmosphere-class c/retained-species} (:writes sys))))
     (testing "the circular-orbit planet is marked stable"
       (is (true? (get-in ws [c/orbit-stable planet-eid])))
       (is (nil? (get-in ws [c/orbit-stable star-eid]))))))

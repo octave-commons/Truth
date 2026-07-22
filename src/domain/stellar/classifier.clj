@@ -10,6 +10,7 @@
    [domain.ecs.components        :as c]
    [domain.orbital.stability      :as stability]
    [domain.profile               :as profile]
+   [law.atmosphere                :as atmosphere]
    [shape.spatial                :as sp]))
 
 ;; --- Complexity / time scale ------------------------------------------------
@@ -468,21 +469,143 @@
           (stability/orbit-stability {:position pos :velocity vel :mass mass}
                                      star others))))))
 
+;; --- M5 handoff Phase 3: atmosphere retention --------------------------------
+;; See kanban/tasks/ecology-m5-phase3-atmosphere-retention.md, parent
+;; kanban/tasks/ecology-water-gate-snowline.md §4, and the grounding research
+;; note docs/research/atmosphere/planetary-atmosphere-retention-classifier.md
+;; (which supersedes the parent card's rougher formulas — most-probable-speed
+;; v_th and the literal moon-like test — where they conflict; see that note's
+;; §3.4 and §6.1). Folded into `classification-system` for the same reason
+;; Phase 2 was: it is a pure downstream consumer of material-class/thermal-
+;; band computed in the very same fan-out, so extending one write-set keeps
+;; `reg/write-conflicts` empty without a second emitter re-scanning candidates.
+
+(defn- candidate-species
+  "Chemically plausible atmospheric volatiles for a body of `material-class`
+   at `thermal-band` (research note §3.3): gaseous bodies retain a primordial
+   H2/He envelope; rocky/icy/mixed bodies are gated to secondary volatiles
+   (N2, CO2), with H2O added only when the thermal band is warm enough that
+   water is not locked up as surface/subsurface ice (:temperate/:warm/:hot;
+   the same snowline boundary Phase 1 already uses for thermal-band)."
+  [material-class thermal-band]
+  (if (= material-class :gaseous)
+    #{:H2 :He}
+    (cond-> #{:N2 :CO2}
+      (contains? #{:temperate :warm :hot} thermal-band) (conj :H2O))))
+
+(defn- representative-species-mass
+  "Single dominant-species molecular mass (kg) used for the overall
+   atmosphere-class bucket (research note §4.2): the H/He mean mass for
+   gaseous bodies, otherwise CO2 for :hot bodies (Venus-like, secondary CO2
+   atmosphere dominant) or N2 for cooler bodies (Earth/Titan-like default)."
+  [material-class thermal-band]
+  (if (= material-class :gaseous)
+    atmosphere/h2-he-mean-mass
+    (if (= thermal-band :hot)
+      (:CO2 atmosphere/species-mass)
+      (:N2 atmosphere/species-mass))))
+
+(defn- species-retention-threshold
+  "Retention-ratio threshold for `species`: the higher H2/He bar (early-XUV
+   exposure) or the lower heavy-secondary-volatile bar (research note §3.4)."
+  [species]
+  (if (contains? #{:H2 :He} species)
+    atmosphere/h-he-retention-ratio
+    atmosphere/heavy-retention-ratio))
+
+(defn- atmosphere-bucket
+  "Bucket a representative retention ratio into a coarse atmosphere-class
+   (research note §3.4): `:none` r<3, `:thin` 3-6, `:substantial` 6-10,
+   `:thick` r>=10."
+  [ratio]
+  (cond
+    (< ratio atmosphere/thin-ratio-floor)         :none
+    (< ratio atmosphere/substantial-ratio-floor)  :thin
+    (< ratio atmosphere/thick-ratio-floor)        :substantial
+    :else                                         :thick))
+
+(defn atmosphere-class
+  "Coarse Phase-0 atmosphere-retention classifier (M5 handoff Phase 3), pure
+   function of quantities already resolved by handoff time:
+
+     `{:mass M :radius R :temperature T :material-class mc :thermal-band tb}`
+     => `{:atmosphere-class :none|:thin|:substantial|:thick
+          :retained-species #{:H2 :He :H2O :N2 :CO2}}`
+
+   Uses the classical Jeans escape-parameter ratio
+   `r = v_esc/v_th = sqrt(2GM/R) / sqrt(3 k_B T / m)` (RMS thermal speed,
+   `law.atmosphere/retention-ratio` — the same v_th convention as
+   `domain.chemistry/can-retain-gas?`, see that fn's docstring and the
+   research note §3.4 for the reconciliation). The composition gate
+   (`candidate-species`) runs FIRST: a species must be chemically plausible
+   for this material-class/thermal-band before its retention ratio is even
+   checked, so a volatile-poor rocky body cannot be credited with a thick
+   CO2 atmosphere just because its gravity is high enough in principle.
+
+   This is a one-shot formation-time verdict against THERMAL escape only —
+   it does not model non-thermal loss (solar-wind sputtering, no-
+   magnetosphere pickup), which is what actually strips real ambiguous
+   bodies like the Moon or Mercury (research note §6.1, §8.2); do not read
+   `:thin`/`:substantial` as \"confirmed has a bound atmosphere.\""
+  [{:keys [mass radius temperature material-class thermal-band]}]
+  (let [candidates (candidate-species material-class thermal-band)
+        retained   (into #{}
+                         (filter #(> (atmosphere/retention-ratio
+                                      mass radius temperature
+                                      (get atmosphere/species-mass %))
+                                     (species-retention-threshold %)))
+                         candidates)
+        mu         (representative-species-mass material-class thermal-band)
+        ratio      (atmosphere/retention-ratio mass radius temperature mu)]
+    {:atmosphere-class (atmosphere-bucket ratio)
+     :retained-species retained}))
+
+(defn- classify-body-equilibrium-temp
+  "Two-body equilibrium temperature (K) for a candidate body, mirroring
+   `classify-body-thermal` but returning the raw temperature instead of its
+   bucketed thermal-band — the input `atmosphere-class` needs (research note
+   §4.2), not the coarse label. nil when the star or this body's position
+   is not yet resolvable."
+  [world star eid mclass]
+  (when star
+    (when-let [pos (ecs/get-component world eid c/position)]
+      (when-let [star-pos (:position star)]
+        (let [a (sp/dist pos star-pos)]
+          (when (pos? a)
+            (equilibrium-temperature (:luminosity star) a
+                                     (get material-albedo mclass 0.3))))))))
+
+(defn- classify-body-atmosphere
+  "Run `atmosphere-class` for one candidate body, or nil (omitted from the
+   write-set) when mass/radius/material-class/thermal-band/temperature are
+   not all resolvable yet."
+  [world star eid mclass tband]
+  (when (and mclass tband)
+    (when-let [mass (ecs/get-component world eid c/mass)]
+      (when-let [radius (ecs/get-component world eid c/radius)]
+        (when-let [t-eff (classify-body-equilibrium-temp world star eid mclass)]
+          (atmosphere-class {:mass mass :radius radius :temperature t-eff
+                             :material-class mclass :thermal-band tband}))))))
+
 (defn classification-system
   "Double-buffer write-set system: SOLE writer of `c/material-class`,
-   `c/thermal-band`, AND `c/orbit-stable` (M5 handoff Phases 1 and 2). Jacobi
-   fan-out emitter — reads the frozen snapshot only, writes all three
-   component types for every planet-candidate body (any matter-state other
-   than nebula/protostar/star/stellar-remnant) that has composition, mass, and
-   a resolvable position relative to the central star. Orbit stability is an
-   ANALYTIC PROXY (`domain.orbital.stability/orbit-stability`) — periapsis/
-   apoapsis bounds plus Hill-radius separation from sibling candidates — NOT a
-   10 Myr two-body integration. Bodies missing required data (or with no
-   central star yet) are simply omitted from the write-set this tick, not
-   defaulted."
+   `c/thermal-band`, `c/orbit-stable`, `c/atmosphere-class`, AND
+   `c/retained-species` (M5 handoff Phases 1-3). Jacobi fan-out emitter —
+   reads the frozen snapshot only, writes all five component types for every
+   planet-candidate body (any matter-state other than nebula/protostar/
+   star/stellar-remnant) that has composition, mass, and a resolvable
+   position relative to the central star. Orbit stability is an ANALYTIC
+   PROXY (`domain.orbital.stability/orbit-stability`) — periapsis/apoapsis
+   bounds plus Hill-radius separation from sibling candidates — NOT a 10 Myr
+   two-body integration. Atmosphere retention (`atmosphere-class`) is a
+   one-shot Jeans-escape-ratio verdict, not an ongoing mass-loss simulation
+   (that is `domain.atmosphere`'s xuv-atmospheric-escape-system) — see that
+   fn's docstring. Bodies missing required data (or with no central star
+   yet) are simply omitted from the write-set this tick, not defaulted."
   []
   {:id     :classification
-   :writes #{c/material-class c/thermal-band c/orbit-stable}
+   :writes #{c/material-class c/thermal-band c/orbit-stable
+             c/atmosphere-class c/retained-species}
    :reads  #{c/matter-state c/mass c/composition c/temperature c/position
              c/velocity c/radius c/luminosity}
    :run
@@ -507,7 +630,18 @@
            stabilities (into {} (keep (fn [eid]
                                         (when-some [ok (classify-body-stability world star eid candidates)]
                                           [eid ok])))
-                             eids)]
+                             eids)
+           atmospheres (into {} (keep (fn [eid]
+                                        (when-let [verdict (classify-body-atmosphere
+                                                            world star eid
+                                                            (get materials eid)
+                                                            (get thermals eid))]
+                                          [eid verdict])))
+                             eids)
+           atmosphere-classes (into {} (keep (fn [[eid v]] [eid (:atmosphere-class v)])) atmospheres)
+           retained-species-map (into {} (keep (fn [[eid v]] [eid (:retained-species v)])) atmospheres)]
        {c/material-class materials
         c/thermal-band   thermals
-        c/orbit-stable   stabilities}))})
+        c/orbit-stable   stabilities
+        c/atmosphere-class atmosphere-classes
+        c/retained-species retained-species-map}))})

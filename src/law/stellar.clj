@@ -3,7 +3,8 @@
    Defines the physical laws governing Phase 0 of Gates of Truth."
   (:require
    [law.stellar.schema :as schema]
-   [law.stellar.orbital :as orbital]))
+   [law.stellar.orbital :as orbital]
+   [law.atmosphere :as atmosphere]))
 
 ;; Schemas
 (def matter-state-schema schema/matter-state-schema)
@@ -17,6 +18,10 @@
 (def material-class? schema/material-class?)
 (def thermal-band-schema schema/thermal-band-schema)
 (def thermal-band? schema/thermal-band?)
+(def atmosphere-class-schema atmosphere/atmosphere-class-schema)
+(def atmosphere-class? atmosphere/atmosphere-class?)
+(def retained-species-schema atmosphere/retained-species-schema)
+(def retained-species? atmosphere/retained-species?)
 (def stellar-system-schema schema/stellar-system-schema)
 
 ;; Contracts

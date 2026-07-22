@@ -47,6 +47,15 @@
 ;; kanban/tasks/ecology-m5-phase2-orbit-stability.md.
 (def orbit-stable :component/orbit-stable?) ;; bool — analytic stability proxy
 
+;; --- Atmosphere retention (M5 handoff Phase 3) ------------------------------
+;; Coarse Jeans-escape-ratio classifier: how much atmosphere (if any) a
+;; candidate body retains, and which volatile species. Downstream of
+;; material-class/thermal-band (Phase 1). See
+;; kanban/tasks/ecology-m5-phase3-atmosphere-retention.md and
+;; docs/research/atmosphere/planetary-atmosphere-retention-classifier.md.
+(def atmosphere-class :component/atmosphere-class) ;; :none :thin :substantial :thick
+(def retained-species :component/retained-species) ;; #{:H2 :He :H2O :N2 :CO2}
+
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
 ;; frozen into a clump; `regime` is the dominant-physics tag the classifier
