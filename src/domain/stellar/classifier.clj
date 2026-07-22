@@ -5,9 +5,12 @@
    [domain.stellar.thermodynamics :as thermo]
    [domain.stellar.collapse      :as collapse]
    [domain.stellar.sink          :as sink]
+   [domain.chemistry             :as chemistry]
    [domain.ecs.core              :as ecs]
    [domain.ecs.components        :as c]
-   [domain.profile               :as profile]))
+   [domain.orbital.stability      :as stability]
+   [domain.profile               :as profile]
+   [shape.spatial                :as sp]))
 
 ;; --- Complexity / time scale ------------------------------------------------
 
@@ -316,3 +319,195 @@
        [:classifier/transitions classifier-transitions]
        [:classifier/select classifier-select]
        [:classifier/write-set classifier-write-set]]))})
+
+;; --- M5 handoff Phase 1: material + thermal classification ------------------
+;; See kanban/tasks/ecology-m5-phase1-planet-classification.md and parent
+;; kanban/tasks/ecology-water-gate-snowline.md §3.1-3.2. Pure classification
+;; from composition/mass and two-body equilibrium temperature only — no orbit
+;; integration, no atmosphere physics. This is the real material/thermal gate
+;; that replaces the trivially-satisfied `habitability-score > 0.2` scalar.
+
+(def ^:const rocky-max-mass
+  "Upper mass bound (kg) for the :rocky material class (parent §3.1)." 1.0e25)
+
+(def ^:const icy-max-mass
+  "Upper mass bound (kg) for the :icy material class (parent §3.1)." 5.0e25)
+
+(def ^:const gas-giant-min-mass
+  "Lower mass bound (kg) for the :gaseous material class (parent §3.1)." 1.0e25)
+
+(defn material-class
+  "Bulk material class of a body from its element-resolved `composition` map
+   (domain.chemistry/bulk-categories at `temperature`), plus `mass` (kg), per
+   parent §3.1:
+
+     :rocky    metal+rock > 50%, H+He < 25%, mass < 1e25 kg
+     :icy      ice/volatiles > 50%, mass < 5e25 kg
+     :gaseous  H+He > 50%, mass > 1e25 kg
+     :mixed    none of the above strongly
+
+   Uses the DERIVED bulk categories (metal/rock/ice fractions from Lodders
+   condensation temperatures), never a stored `:metals` key — composition is
+   the real element map (H, He, O, Si, Fe, ...)."
+  [composition mass temperature]
+  (let [m (double mass)
+        {:keys [rock metal ice]} (chemistry/bulk-categories composition temperature)
+        rock-metal (+ (double rock) (double metal))
+        h-he (+ (double (get composition :H 0.0))
+                (double (get composition :He 0.0)))]
+    (cond
+      (and (> h-he 0.5) (> m gas-giant-min-mass))            :gaseous
+      (and (> rock-metal 0.5) (< h-he 0.25) (< m rocky-max-mass)) :rocky
+      (and (> (double ice) 0.5) (< m icy-max-mass))           :icy
+      :else                                                   :mixed)))
+
+(def ^:private material-albedo
+  "Coarse Bond albedo by material class — ice and cloud tops reflect more
+   sunlight than bare rock/metal. A single rough number per class, not a
+   wavelength-resolved model (parent §3.2)."
+  {:rocky   0.3
+   :icy     0.5
+   :gaseous 0.5
+   :mixed   0.3})
+
+(defn equilibrium-temperature
+  "Two-body radiative equilibrium temperature (K):
+     T_eff = (L (1 - A) / (16 π σ a²))^0.25
+   for a star of luminosity `L` (W), orbital separation `a` (m), and Bond
+   albedo `albedo` (parent §3.2)."
+  [L a albedo]
+  (let [l (double L) aa (double a) alb (double albedo)]
+    (math/pow (/ (* l (- 1.0 alb))
+                 (* 16.0 math/PI law/stefan-boltzmann aa aa))
+              0.25)))
+
+(defn thermal-band
+  "Coarse thermal band for a body of `material-class` at orbital separation
+   `a` (m) from a star of luminosity `L` (W). Computes the two-body
+   equilibrium temperature (`equilibrium-temperature`) with a coarse
+   composition-based Bond albedo, then buckets it per parent §3.2:
+     :frozen < 150 K, :cold 150-250 K, :temperate 250-350 K,
+     :warm 350-450 K, :hot > 450 K."
+  [L a material-class]
+  (let [albedo (get material-albedo material-class 0.3)
+        t-eff (equilibrium-temperature L a albedo)]
+    (cond
+      (< t-eff 150.0) :frozen
+      (< t-eff 250.0) :cold
+      (< t-eff 350.0) :temperate
+      (< t-eff 450.0) :warm
+      :else            :hot)))
+
+(def ^:private non-classifiable-states
+  "Matter states that are not planet-candidate bodies and are excluded from
+   material/thermal classification: diffuse gas and the central star itself."
+  #{:nebula :star :protostar :stellar-remnant})
+
+(defn- central-star
+  "The most massive :star or :protostar in `world`, as
+   `{:position :velocity :mass :radius :luminosity}`, or nil if none exists
+   yet. Mirrors `domain.stellar.disc/disc-identification-system`'s
+   central-body lookup. Mass/radius/velocity feed the M5 Phase 2 orbit-
+   stability proxy (`domain.orbital.stability/orbit-stability`) alongside the
+   luminosity Phase 1 already reads for thermal-band."
+  [world]
+  (let [candidates (filterv #(contains? #{:star :protostar}
+                                        (ecs/get-component world % c/matter-state))
+                            (ecs/entities-with world c/matter-state c/mass))]
+    (when (seq candidates)
+      (let [eid (apply max-key #(ecs/get-component world % c/mass) candidates)]
+        {:position   (ecs/get-component world eid c/position)
+         :velocity   (or (ecs/get-component world eid c/velocity) [0.0 0.0 0.0])
+         :mass       (double (or (ecs/get-component world eid c/mass) 0.0))
+         :radius     (double (or (ecs/get-component world eid c/radius) 0.0))
+         :luminosity (double (or (ecs/get-component world eid c/luminosity) 0.0))}))))
+
+(defn- classify-body-material
+  [world eid]
+  (when-let [composition (ecs/get-component world eid c/composition)]
+    (when-let [mass (ecs/get-component world eid c/mass)]
+      (let [temperature (double (or (ecs/get-component world eid c/temperature) 0.0))]
+        (material-class composition mass temperature)))))
+
+(defn- classify-body-thermal
+  [world star eid mclass]
+  (when star
+    (when-let [pos (ecs/get-component world eid c/position)]
+      (when-let [star-pos (:position star)]
+        (let [a (sp/dist pos star-pos)]
+          (when (pos? a)
+            (thermal-band (:luminosity star) a mclass)))))))
+
+;; --- M5 handoff Phase 2: orbit stability (analytic proxy) --------------------
+;; See kanban/tasks/ecology-m5-phase2-orbit-stability.md and parent
+;; kanban/tasks/ecology-water-gate-snowline.md §3.3. Folded into
+;; `classification-system` rather than a separate `:stability` system: it needs
+;; the exact same candidate-body scan and the same central-star lookup this
+;; system already does for material/thermal classification, so extending the
+;; one write-set keeps reads minimal and `reg/write-conflicts` empty without a
+;; second fan-out emitter duplicating the scan.
+
+(defn- candidate-snapshot
+  "`{:position :mass}` for a candidate body, or nil if either is missing."
+  [world eid]
+  (when-let [pos (ecs/get-component world eid c/position)]
+    (when-let [mass (ecs/get-component world eid c/mass)]
+      {:position pos :mass mass})))
+
+(defn- classify-body-stability
+  "Run the analytic orbit-stability proxy for one candidate against the
+   central `star` and every OTHER candidate in `candidates` (a map of
+   eid -> `{:position :mass}`). nil (omitted from the write-set) when the star
+   or this body's own velocity/mass/position are not yet resolvable."
+  [world star eid candidates]
+  (when star
+    (when-let [pos (ecs/get-component world eid c/position)]
+      (when-let [mass (ecs/get-component world eid c/mass)]
+        (let [vel (or (ecs/get-component world eid c/velocity) [0.0 0.0 0.0])
+              others (keep (fn [[oid data]] (when (not= oid eid) data)) candidates)]
+          (stability/orbit-stability {:position pos :velocity vel :mass mass}
+                                     star others))))))
+
+(defn classification-system
+  "Double-buffer write-set system: SOLE writer of `c/material-class`,
+   `c/thermal-band`, AND `c/orbit-stable` (M5 handoff Phases 1 and 2). Jacobi
+   fan-out emitter — reads the frozen snapshot only, writes all three
+   component types for every planet-candidate body (any matter-state other
+   than nebula/protostar/star/stellar-remnant) that has composition, mass, and
+   a resolvable position relative to the central star. Orbit stability is an
+   ANALYTIC PROXY (`domain.orbital.stability/orbit-stability`) — periapsis/
+   apoapsis bounds plus Hill-radius separation from sibling candidates — NOT a
+   10 Myr two-body integration. Bodies missing required data (or with no
+   central star yet) are simply omitted from the write-set this tick, not
+   defaulted."
+  []
+  {:id     :classification
+   :writes #{c/material-class c/thermal-band c/orbit-stable}
+   :reads  #{c/matter-state c/mass c/composition c/temperature c/position
+             c/velocity c/radius c/luminosity}
+   :run
+   (fn [world]
+     (let [star (central-star world)
+           eids (filterv #(not (contains? non-classifiable-states
+                                          (ecs/get-component world % c/matter-state)))
+                         (ecs/entities-with world c/matter-state c/mass))
+           materials (into {} (keep (fn [eid]
+                                      (when-let [mclass (classify-body-material world eid)]
+                                        [eid mclass])))
+                           eids)
+           thermals (into {} (keep (fn [eid]
+                                     (when-let [band (classify-body-thermal
+                                                      world star eid (get materials eid :mixed))]
+                                       [eid band])))
+                          eids)
+           candidates (into {} (keep (fn [eid]
+                                       (when-let [snap (candidate-snapshot world eid)]
+                                         [eid snap])))
+                            eids)
+           stabilities (into {} (keep (fn [eid]
+                                        (when-some [ok (classify-body-stability world star eid candidates)]
+                                          [eid ok])))
+                             eids)]
+       {c/material-class materials
+        c/thermal-band   thermals
+        c/orbit-stable   stabilities}))})

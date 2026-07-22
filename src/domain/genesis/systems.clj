@@ -49,6 +49,7 @@
   "Classifier, seeding, fusion, chemistry, wind, disc, and regime."
   [dt]
   [(classifier/classifier-system)
+   (classifier/classification-system)
    (seeder/condensation-seeder-system)
    (em/field-system dt)
    (fusion/fusion-system)

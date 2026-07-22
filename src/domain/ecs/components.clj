@@ -34,6 +34,19 @@
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
 (def matter-state :component/matter-state)  ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :planet :protostar :star :stellar-remnant
 
+;; --- Planet classification (M5 handoff Phase 1) -----------------------------
+;; First structured "planet candidate" tags: composition/mass and two-body
+;; equilibrium temperature only — no orbit integration, no atmosphere physics.
+;; See kanban/tasks/ecology-m5-phase1-planet-classification.md.
+(def material-class :component/material-class) ;; :rocky :icy :gaseous :mixed
+(def thermal-band   :component/thermal-band)    ;; :frozen :cold :temperate :warm :hot
+
+;; --- Orbit stability (M5 handoff Phase 2) -----------------------------------
+;; Analytic stability proxy (periapsis/apoapsis/Hill-radius gates), NOT a
+;; 10 Myr two-body integration. See
+;; kanban/tasks/ecology-m5-phase2-orbit-stability.md.
+(def orbit-stable :component/orbit-stable?) ;; bool — analytic stability proxy
+
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
 ;; frozen into a clump; `regime` is the dominant-physics tag the classifier

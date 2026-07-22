@@ -13,6 +13,10 @@
 (def oblateness-schema schema/oblateness-schema)
 (def rotation-axis-schema schema/rotation-axis-schema)
 (def accretion-radius-schema schema/accretion-radius-schema)
+(def material-class-schema schema/material-class-schema)
+(def material-class? schema/material-class?)
+(def thermal-band-schema schema/thermal-band-schema)
+(def thermal-band? schema/thermal-band?)
 (def stellar-system-schema schema/stellar-system-schema)
 
 ;; Contracts

@@ -87,6 +87,22 @@
               c/pressure c/composition c/promotion-signal c/disc-tag}
     :writes #{c/matter-state c/accretion-radius}}
 
+    ;; M5 handoff Phases 1 + 2: material + thermal classification AND the
+    ;; analytic orbit-stability proxy. SOLE writer of material-class,
+    ;; thermal-band, AND orbit-stable — pure composition/mass + two-body
+    ;; equilibrium-temperature tags plus periapsis/apoapsis/Hill-radius gates
+    ;; for planet-candidate bodies (parent
+    ;; kanban/tasks/ecology-water-gate-snowline.md §3.1-3.3). Orbit stability is
+    ;; a snapshot proxy, NOT a 10 Myr two-body integration (see
+    ;; kanban/tasks/ecology-m5-phase2-orbit-stability.md); folded in here rather
+    ;; than a separate system because it reuses the same candidate scan and
+    ;; central-star lookup, keeping reads minimal and write-conflicts empty.
+   {:id     :classification
+    :ns     'domain.stellar.classifier
+    :reads  #{c/matter-state c/mass c/composition c/temperature c/position
+              c/velocity c/radius c/luminosity}
+    :writes #{c/material-class c/thermal-band c/orbit-stable}}
+
      ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
      ;; small physical seed instead of promoting the whole parcel. Emits the spawn
      ;; request, the parent parcel's mass-flux-condense debit, and a one-shot

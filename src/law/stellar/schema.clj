@@ -1,6 +1,7 @@
 (ns law.stellar.schema
   "Malli schemas and contracts for stellar nebula, star formation, and planetary bodies."
   (:require
+   [malli.core :as m]
    [law.contract :as contract]))
 
 (def matter-state-schema
@@ -52,6 +53,49 @@
    photosphere: it is the capture radius within which gas is accreted, and it
    does NOT shrink when the photosphere contracts. nil for ordinary gas clumps."
   (some-fn nil? pos?))
+
+;; --- Planet classification (M5 handoff Phase 1, §3.1-3.2) -------------------
+;; Material class and thermal band are the first structured "planet candidate"
+;; tags — composition/mass and two-body equilibrium temperature, no orbit
+;; integration or atmosphere physics. See
+;; kanban/tasks/ecology-m5-phase1-planet-classification.md.
+
+(def material-class-schema
+  "Bulk material class derived from composition (`domain.chemistry/bulk-
+   categories`) and mass: `:rocky` (metal+rock dominant, low H/He, sub-1e25 kg),
+   `:icy` (ice/volatile dominant, sub-5e25 kg), `:gaseous` (H/He dominant,
+   above 1e25 kg), or `:mixed` (none of the above strongly)."
+  [:enum :rocky :icy :gaseous :mixed])
+
+(def material-class?
+  "Predicate: does `value` satisfy `material-class-schema`?"
+  (m/validator material-class-schema))
+
+(def thermal-band-schema
+  "Coarse two-body equilibrium-temperature band, bucketed from
+   T_eff = (L(1-A) / (16 π σ a²))^0.25: `:frozen` (<150K), `:cold` (150-250K),
+   `:temperate` (250-350K), `:warm` (350-450K), `:hot` (>450K)."
+  [:enum :frozen :cold :temperate :warm :hot])
+
+(def thermal-band?
+  "Predicate: does `value` satisfy `thermal-band-schema`?"
+  (m/validator thermal-band-schema))
+
+;; --- Orbit stability (M5 handoff Phase 2, §3.3) -----------------------------
+;; Analytic proxy tag — periapsis/apoapsis bounds plus Hill-radius separation
+;; from other candidates, NOT a 10 Myr two-body integration. See
+;; kanban/tasks/ecology-m5-phase2-orbit-stability.md.
+
+(def orbit-stable-schema
+  "Whether a candidate planet's orbit passes the analytic stability proxy
+   (`domain.orbital.stability/orbit-stability`): periapsis clear of the star,
+   apoapsis bound to the system, and no close approach to a sibling
+   candidate."
+  :boolean)
+
+(def orbit-stable?
+  "Predicate: does `value` satisfy `orbit-stable-schema`?"
+  (m/validator orbit-stable-schema))
 
 (def stellar-system-schema
   "Container for all bodies in a forming star system"
