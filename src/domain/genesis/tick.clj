@@ -125,6 +125,43 @@
       (emit-threshold world :event/phase0-handoff
                       {:candidates (vec (vals candidates))}))))
 
+;; --- Narrowing B: the :event/world-commitment ledger append ------------------
+;; Same serial-emit precedent as emit-handoff-event above: the `:commitment`
+;; fan-out system (domain.narrowing/commitment-system) is the SOLE writer of
+;; `c/commitment-state`, but a ledger dispatch from inside a write-set `:run`
+;; is diffed away at the component-type boundary — so the canonical threshold
+;; event (docs/designs/commitment-and-resonance.md §4.2) is appended here,
+;; SERIALLY after the fold, reacting to what the fan-out decided.
+
+(defn- commitment-reason
+  "The §4.2 `:reason` for the captured world: `:living` when its ecology is in
+   a living phase, `:habitable` when it carries the M5 planet-candidate record
+   (the stabilized-candidate contract), else `:chosen`."
+  [world eid]
+  (let [eco (ecs/get-component world eid c/ecology)]
+    (cond
+      (and eco (ecology/living? eco))                 :living
+      (ecs/get-component world eid c/planet-candidate) :habitable
+      :else                                           :chosen)))
+
+(defn emit-commitment-event
+  "Append the canonical `:event/world-commitment` event
+   (commitment-and-resonance.md §4.2) the first tick a world carries
+   `c/commitment-state :committed`. Idempotent: a no-op once the event is on
+   the ledger, and a no-op before capture. The payload is
+   {:world eid :arc (:arc/current world) :reason ...} — under the :data key,
+   the same emit-threshold shape as :event/phase0-handoff."
+  [world]
+  (let [committed (some (fn [[eid state]] (when (= :committed state) eid))
+                        (get-in world [:components c/commitment-state] {}))]
+    (if (or (nil? committed)
+            (seq (event/events-of-kind world :event/world-commitment)))
+      world
+      (emit-threshold world :event/world-commitment
+                      {:world  committed
+                       :arc    (:arc/current world)
+                       :reason (commitment-reason world committed)}))))
+
 (defn- tick-physics
   "Run one step of physics + lifecycle on the already tick-advanced world."
   [world]
@@ -132,7 +169,8 @@
       (intervention/expire-interventions)
       bootstrap/materialize-lifecycle
       (emit-promotion-events world)
-      emit-handoff-event))
+      emit-handoff-event
+      emit-commitment-event))
 
 (defn- advance-simulation-clock
   "Compute stats, complexity, pacing, and advance sim-time for the post-physics

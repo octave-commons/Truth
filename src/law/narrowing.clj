@@ -28,6 +28,76 @@
   "Predicate: does `value` satisfy `law.narrowing/binding-scar-schema`?"
   (m/validator binding-scar-schema))
 
+;; --- Commitment horizon (child B) ---------------------------------------------
+
+(def commitment-state-schema
+  "The `c/commitment-state` component on a candidate world: `:committed` on the
+   one captured world, `:inert` on every unchosen candidate (visible, no longer
+   interactive — commitment-and-resonance.md §4.3). Write-once: capture is
+   hard-irreversible for the world-line, so no transition out of these states
+   exists at the system level."
+  [:enum :committed :inert])
+
+(def commitment-state?
+  "Predicate: does `value` satisfy `law.narrowing/commitment-state-schema`?"
+  (m/validator commitment-state-schema))
+
+(def ability-schema
+  "An allocatable hotbar ability. Genesis palette (commitment-and-resonance.md
+   §3) and Phase 1 planetary palette (§4.4) share the same six slots."
+  [:enum :seed :heat :cool :spark :grow :evolve
+   :atmosphere :hydrography :tectonics :orbit :biosphere :culture])
+
+(def palette-schema
+  "The `c/palette` component on the observer entity: which palette is active
+   and which ability each of the six allocatable slots is armed with."
+  [:map
+   [:active [:enum :genesis :planetary]]
+   [:slots [:map-of [:int {:min 1 :max 6}] ability-schema]]])
+
+(def palette?
+  "Predicate: does `value` satisfy `law.narrowing/palette-schema`?"
+  (m/validator palette-schema))
+
+(def time-lock-schema
+  "The `c/time-lock` component stamped on the committed world at capture — the
+   planetary time-lock of commitment-and-resonance.md §5.1: the committed world
+   and its immediate neighborhood run at base rate (one simulation second per
+   wall second); everything outside is sub-cycled. This record is the DATA
+   HOOK only: pacing (`:sim/dt`) actuation and lod-scheduler sub-cycle
+   rewiring against it are a later card."
+  [:map
+   [:locked? [:= true]]
+   [:captured-tick :int]
+   [:base-rate [:= 1.0]]
+   [:neighborhood [:= :immediate]]
+   [:outside [:= :sub-cycled]]])
+
+(def time-lock?
+  "Predicate: does `value` satisfy `law.narrowing/time-lock-schema`?"
+  (m/validator time-lock-schema))
+
+(def genesis-palette
+  "The Genesis allocatable palette (commitment-and-resonance.md §3): the six
+   slots before capture. Declared for completeness — nothing writes `c/palette`
+   pre-capture yet (the live Genesis hotbar is the infra-side keymap
+   `infra.render.input/action-palette`; modelling it domain-side is a later
+   card)."
+  {:active :genesis
+   :slots  {1 :seed 2 :heat 3 :cool 4 :spark 5 :grow 6 :evolve}})
+
+(def planetary-palette
+  "The Phase 1 planetary palette (commitment-and-resonance.md §4.4), re-armed
+   IN PLACE over the same six slots at capture."
+  {:active :planetary
+   :slots  {1 :atmosphere 2 :hydrography 3 :tectonics
+            4 :orbit 5 :biosphere 6 :culture}})
+
+(def phase-1-unlock-costs
+  "Resonance unlock cost per Phase 1 palette ability (§4.4). Data for the
+   allocation/respec card; nothing consumes it yet."
+  {:atmosphere 0 :hydrography 0 :tectonics 1 :orbit 1 :biosphere 2 :culture 2})
+
 ;; --- Tuned constants ----------------------------------------------------------
 ;; All rates are PER TICK (one frame), not per sim-second — the same convention
 ;; as the coherence economy (domain.player.economy), so binding moves at a
@@ -58,8 +128,9 @@
 ;; (Focus, Q, held). Below the floor the observer is glancing, not falling.
 
 (def ^:const capture-threshold 0.85)
-;; Binding at which the world reaches capture (design §3). Exposed as data for
-;; the later commitment/threshold card; nothing consumes it yet.
+;; Binding at which the world reaches capture (design §3): the point past which
+;; the exit cost exceeds any reserve the player can hold. Consumed by the
+;; `:commitment` fan-out system (domain.narrowing/commitment-system).
 
 ;; --- Cost-curve tuning ---------------------------------------------------------
 

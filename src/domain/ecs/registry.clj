@@ -400,10 +400,27 @@
    ;; scar tally. Reads its own prior output one tick stale (ordinary Jacobi
    ;; lag, like :neighbor-cache). Binding is exposed as data the :focus-zone
    ;; promotion/demotion machinery could read later; it does not rewire it.
-   {:id     :binding
-    :ns     'domain.narrowing
-    :reads  #{c/observer c/position c/planet-candidate c/binding c/binding-scar}
-    :writes #{c/binding c/binding-scar}}
+    {:id     :binding
+     :ns     'domain.narrowing
+     :reads  #{c/observer c/position c/planet-candidate c/binding c/binding-scar}
+     :writes #{c/binding c/binding-scar}}
+
+    ;; The First Narrowing, child B: the commitment horizon. Reads the
+    ;; observer's one-tick-stale c/binding (Jacobi output of :binding) and the
+    ;; M5 planet-candidate records; on capture writes the write-once commitment
+    ;; marker (:committed on the captured world, :inert on unchosen
+    ;; candidates), the re-armed Phase 1 planetary palette on the observer, and
+    ;; the planetary time-lock record on the committed world. Also reads its
+    ;; own prior output (idempotency) and the `:arc/current` world key for the
+    ;; readiness gate — world keys are not declarable here. The canonical
+    ;; :event/world-commitment ledger event is appended serially post-fold by
+    ;; domain.genesis.tick/emit-commitment-event, reacting to the
+    ;; c/commitment-state marker (the emit-handoff-event precedent).
+    {:id     :commitment
+     :ns     'domain.narrowing
+     :reads  #{c/observer c/binding c/planet-candidate c/commitment-state
+               c/palette c/time-lock}
+     :writes #{c/commitment-state c/palette c/time-lock}}
 
     ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position

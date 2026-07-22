@@ -41,11 +41,27 @@
    capture. Wiring these to actual verbs (Q/R, Agency spend) is a later card;
    they are exposed here as pure functions of (binding, world-params).
 
-   The `:binding` system is the sole writer of `c/binding` and
-   `c/binding-scar`, a double-buffer fan-out emitter in the style of
-   `:focus-zone`. It exposes binding as DATA the focus-zone promotion/demotion
-   system could read later; it does NOT rewire promotion/demotion (that is
-   the parent epic's later child)."
+    The `:binding` system is the sole writer of `c/binding` and
+    `c/binding-scar`, a double-buffer fan-out emitter in the style of
+    `:focus-zone`. It exposes binding as DATA the focus-zone promotion/demotion
+    system could read later; it does NOT rewire promotion/demotion (that is
+    the parent epic's later child).
+
+    Child B (kanban/tasks/narrowing-commitment-horizon.md; design §3-4) adds
+    the COMMITMENT HORIZON: the `:commitment` system watches the binding map
+    and, when the deepest-bound world's coupling crosses
+    `law.narrowing/capture-threshold` while `ready-to-commit?` holds, fires
+    exactly once — stamping `c/commitment-state` (`:committed` on the captured
+    world, `:inert` on every unchosen candidate), re-arming the observer's six
+    hotbar slots IN PLACE to the Phase 1 planetary palette (`c/palette`), and
+    engaging the planetary time-lock (`c/time-lock`). The canonical
+    `:event/world-commitment` ledger event is appended SERIALLY after the fold
+    by `domain.genesis.tick/emit-commitment-event` (same precedent as
+    `emit-handoff-event` — a ledger dispatch from inside a write-set `:run` is
+    diffed away at the component-type boundary). Capture is hard-irreversible:
+    `c/commitment-state` is write-once, so no second commitment can ever fire
+    and un-binding post-capture is impossible at the system level (pre-capture
+    withdrawal is child A's cost curve + scar, already shipped)."
   (:require
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
@@ -201,6 +217,121 @@
              (binding-step {:binding (or (ecs/get-component world obs-eid c/binding) {})
                             :scars   (or (ecs/get-component world obs-eid c/binding-scar) {})
                             :focused-eids focused})]
-         {c/binding      {obs-eid binding}
-          c/binding-scar {obs-eid scars}})
-       {}))})
+          {c/binding      {obs-eid binding}
+           c/binding-scar {obs-eid scars}})
+        {}))})
+
+;; --- Commitment horizon (child B) --------------------------------------------
+
+(defn ready-to-commit?
+  "True when the capture gate's readiness half holds for `world-eid`: the arc
+   has reached planet formation (`:arc/genesis-planets-formed` or
+   `:arc/life-emergence`) AND the world is a stabilized candidate (carries the
+   M5 `c/planet-candidate` record).
+
+   NOTE (gap): canon `domain.arc/ready-to-narrow?` (commitment-and-resonance.md
+   §4.1) is unreachable from this fan-out namespace — domain.arc requires
+   domain.genesis, which requires domain.genesis.systems, which requires THIS
+   namespace; requiring domain.arc here would close a dependency cycle. The
+   arc half is therefore read directly from the `:arc/current` world key (one
+   tick stale inside the fan-out — ordinary Jacobi lag, like every cross-system
+   read), and the habitable-world half degrades honestly to the M5
+   planet-candidate record: that record IS the component-level stabilized-
+   candidate contract, and it is the only thing binding can accrue on. The
+   chemistry-scored `habitability/habitable-worlds` refinement is unreachable
+   for the same cycle reason."
+  [world world-eid]
+  (and (#{:arc/genesis-planets-formed :arc/life-emergence} (:arc/current world))
+       (some? (ecs/get-component world world-eid c/planet-candidate))))
+
+(defn time-lock-record
+  "The planetary time-lock record stamped on the committed world at capture
+   (commitment-and-resonance.md §5.1): base rate 1 s/s for the committed world
+   and its immediate neighborhood, everything outside sub-cycled. This is the
+   minimal DATA HOOK — the existing cadence mechanisms (world-level `:sim/dt`
+   pacing, and `c/lod-tick-phase` owned solely by `:lod-scheduler`) cannot be
+   written from this system without violating single-writer, so actuating the
+   lock against them is a later card."
+  [tick]
+  {:locked?       true
+   :captured-tick (long (or tick 0))
+   :base-rate     1.0
+   :neighborhood  :immediate
+   :outside       :sub-cycled})
+
+(defn- committed-world-eid
+  "The eid of the already-committed world, or nil. A `:committed`
+   `c/commitment-state` anywhere is the hard-irreversible marker: the horizon
+   has been crossed for this world-line and no second commitment may fire."
+  [world]
+  (some (fn [[eid state]] (when (= :committed state) eid))
+        (get-in world [:components c/commitment-state] {})))
+
+(defn- captured-eid
+  "The deepest-bound world at or past `law/capture-threshold` that is ready to
+   commit, or nil. You fall into the deepest well first."
+  [world binding]
+  (->> binding
+       (filter (fn [[eid b]] (and (>= (double b) law/capture-threshold)
+                                  (ready-to-commit? world eid))))
+       (sort-by (fn [[_ b]] (- (double b))))
+       ffirst))
+
+(defn commitment-system
+  "The `:commitment` write-set system (double-buffer fan-out, in the style of
+   `:binding` above). SOLE writer of `c/commitment-state`, `c/palette`, and
+   `c/time-lock`. Reads the frozen snapshot only: the observer entity, its
+   one-tick-stale `c/binding` (ordinary Jacobi lag), every candidate world's
+   `c/planet-candidate`, and its own prior write-once output.
+
+   On capture — deepest-bound world at or past `law/capture-threshold` while
+   `ready-to-commit?` holds — fires EXACTLY ONCE:
+   - `c/commitment-state`: `:committed` on the captured world, `:inert` on
+     every unchosen candidate. This is the per-world interactivity marker;
+     nothing else in the codebase marks per-world interactivity today (gap
+     noted on the card).
+   - `c/palette` on the observer: the six slots re-armed IN PLACE to the Phase
+     1 planetary palette (`law/planetary-palette`). Resonance CARRIES OVER
+     automatically: it lives in the observer component (`:resonance`), which
+     no fan-out system writes, so the palette swap never touches it. Nothing
+     is unallocated because Resonance was never allocated into domain-side
+     slots — the Genesis palette is currently the infra-side keymap
+     `infra.render.input/action-palette`, so `c/palette` first appears AT
+     capture; modelling the pre-capture Genesis palette domain-side
+     (`law/genesis-palette`) and the Resonance respec flow are later cards.
+   - `c/time-lock` on the captured world: the §5.1 data hook; cadence
+     actuation is a later card (see `time-lock-record`).
+
+   Irreversibility: `c/commitment-state` is write-once — when a `:committed`
+   world exists this system emits nothing, forever. The `:binding` system
+   keeps running post-capture (harmless stale coupling data), but the horizon
+   cannot be re-crossed and cannot be uncrossed.
+
+   The canonical `:event/world-commitment` ledger event
+   (commitment-and-resonance.md §4.2) is NOT emitted here — a ledger dispatch
+   from inside a write-set `:run` is diffed away at the component-type
+   boundary. It is appended SERIALLY after the fold by
+   `domain.genesis.tick/emit-commitment-event`, reacting to the
+   `c/commitment-state :committed` marker this system writes (the exact
+   `emit-handoff-event` precedent)."
+  []
+  {:id     :commitment
+   :ns     'domain.narrowing
+   :writes (reg/registry-writes :commitment)
+   :run
+   (fn [world]
+     (if (committed-world-eid world)
+       {}
+       (if-let [obs-eid (player/observer-entity world)]
+         (let [binding  (or (ecs/get-component world obs-eid c/binding) {})
+               captured (captured-eid world binding)]
+           (if-not captured
+             {}
+             (let [unchosen (remove #(= captured %)
+                                    (ecs/entities-with world c/planet-candidate))]
+               {c/commitment-state (into {captured :committed}
+                                         (map (fn [eid] [eid :inert]))
+                                         unchosen)
+                c/time-lock        {captured (time-lock-record (:tick world))}
+                c/palette          {obs-eid law/planetary-palette}})))
+         {})))})

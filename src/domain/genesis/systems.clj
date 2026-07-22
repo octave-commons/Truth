@@ -82,8 +82,9 @@
     (em/magnetosphere-coupling-system)
     (ecology/ecology-system)
     (debris/debris-reaper-system)
-    (promotion/focus-zone-system)
-    (narrowing/binding-system)])
+     (promotion/focus-zone-system)
+     (narrowing/binding-system)
+     (narrowing/commitment-system)])
 
 (defn physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer

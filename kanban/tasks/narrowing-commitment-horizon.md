@@ -1,11 +1,11 @@
 ---
 category: "specs"
 labels: ["specs", "phase1", "player", "narrowing", "epic-the-first-narrowing"]
-write-id: "1784749025351-0.aib02xecz7ai898mg5d"
+write-id: "1784753132811-0.030ia4hlp0gre34yxqqp"
 source: "kanban/tasks/narrowing-commitment-horizon.md"
 title: "Narrowing B: commitment horizon (capture → world-commitment)"
 priority: "P1"
-status: "blocked"
+status: "done"
 estimate: "5"
 uuid: "narrowing-commitment-horizon"
 created_at: "2026-07-22T00:00:00Z"
@@ -46,4 +46,8 @@ not prompted.
 Created 2026-07-22 (Claude): child B of The First Narrowing.
 
 Design decision 2026-07-22 (Aaron): pre-capture reversibility carries a small sunk cost/scar (see binding-mechanic card); capture itself remains hard-irreversible for the world-line.
+
+Triage 2026-07-22 (resumed session): Narrowing A done + committed (0d08012) — binding coupling + cost curves + scar live. Dispatching impl agent for the commitment horizon. blocked -> in_progress.
+
+Complete + independently verified 2026-07-22 (resumed session). commitment-test 8 tests green; full suite 695/13622 (was 687/13589) 0 failures; architecture green; write-conflicts {}. Landed: capture at binding>=0.85 + ready-to-commit? fires :event/world-commitment exactly once (serial emit-threshold post-fold, handoff precedent; canonical §4.2 payload {:world :arc :reason} under :data); c/palette re-armed in place to the 6 Phase 1 planetary slots with Resonance carried over (lives in c/observer, untouched); unchosen worlds marked c/commitment-state :inert; c/time-lock data hook engaged (:base-rate 1.0, neighborhood :immediate, outside :sub-cycled); :committed short-circuits forever (hard-irreversible). GAPS noted in docstrings: ready-to-narrow? unreachable (ns cycle) -> minimal ready-to-commit? world-key + M5 planet-candidate gate; no domain hotbar (palette modeled as data); time-lock cadence actuation later card. in_progress -> done. Unblocks narrowing-frame-handoff.
 ---

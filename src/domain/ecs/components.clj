@@ -220,6 +220,24 @@
 (def binding      :component/binding)
 (def binding-scar :component/binding-scar)
 
+;; --- Commitment horizon (The First Narrowing, child B) ----------------------
+;; `commitment-state` marks a candidate world's relationship to the crossed
+;; horizon: `:committed` on the one captured world, `:inert` on every unchosen
+;; candidate — visible in the Entities list and Journal but no longer
+;; interactive (docs/designs/commitment-and-resonance.md §4.3). Nothing else in
+;; the codebase marks per-world interactivity today; this component IS that
+;; marker (gap noted on the card). Write-once: never cleared, never rewritten.
+;; `palette` lives on the observer entity: the six allocatable hotbar slots,
+;; re-armed IN PLACE from the Genesis palette to the Phase 1 planetary palette
+;; at capture (§4.4). Resonance is NOT part of it — Resonance lives in the
+;; observer component and carries over untouched. `time-lock` is stamped on
+;; the committed world when the planetary time-lock engages (§5.1).
+;; Sole writer of all three: the `:commitment` fan-out system
+;; (domain.narrowing/commitment-system).
+(def commitment-state :component/commitment-state) ;; :committed | :inert
+(def palette          :component/palette)          ;; {:active :slots {1..6 ability-kw}}
+(def time-lock        :component/time-lock)        ;; law.narrowing/time-lock-schema
+
 ;; --- Narrative presence (Phase 1) -------------------------------------------
 ;; Observer-side narrative state: current mood, last utterance tick, and the
 ;; set of topics already touched. Written only by domain.narrative.
