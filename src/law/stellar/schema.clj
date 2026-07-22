@@ -107,6 +107,56 @@
 ;; retention.md and docs/research/atmosphere/planetary-atmosphere-retention-
 ;; classifier.md.
 
+;; --- Handoff / planet-candidate record (M5 handoff Phase 4) -----------------
+;; The canonical `:planet-candidate` output record (parent
+;; kanban/tasks/ecology-water-gate-snowline.md §5) and the `:event/phase0-
+;; handoff` ledger event that carries a batch of them. See
+;; kanban/tasks/ecology-m5-phase4-handoff-event.md and
+;; `domain.stellar.classifier/handoff-system` /
+;; `domain.genesis.tick/emit-handoff-event`.
+
+(def planet-candidate-schema
+  "Every key of the parent §5 `:planet-candidate` contract. `:planet-id` and
+   `:star-id` are ECS entity ids (integers in this engine; `uuid?` kept as an
+   alternative for parity with `matter-state-schema` above).
+   `:equilibrium-temperature`/`:semi-major-axis`/`:eccentricity` may be nil
+   only in the degenerate case where the two-body orbit is unbound at record-
+   build time (should not occur for anything that passed `handoff-system`'s
+   own eligibility gate, but the schema does not assume it can't)."
+  [:map
+   [:planet-id               [:or uuid? integer?]]
+   [:star-id                 [:or uuid? integer?]]
+   [:material-class          material-class-schema]
+   [:thermal-band            thermal-band-schema]
+   [:equilibrium-temperature [:maybe number?]] ;; K
+   [:semi-major-axis         [:maybe number?]] ;; m
+   [:eccentricity            [:maybe number?]]
+   [:orbit-stable?           :boolean]
+   [:atmosphere-class        keyword?] ;; law.atmosphere/atmosphere-class-schema
+   [:retained-species        set?]     ;; law.atmosphere/retained-species-schema
+   [:bulk-composition        map?]     ;; {:H double :He double :O double ...} mass fractions
+   [:angular-momentum        vector?]  ;; [Lx Ly Lz] kg m²/s
+   [:rotation-axis           vector?]  ;; unit [nx ny nz]
+   [:oblateness              [:maybe number?]]
+   [:surface-gravity         number?]  ;; m/s²
+   [:core-dynamo?            :boolean]
+   [:magnetic-field          vector?]  ;; [Bx By Bz] tesla
+   [:formation-events        sequential?]]) ;; [event-id ...]
+
+(def planet-candidate?
+  "Predicate: does `value` satisfy `planet-candidate-schema`?"
+  (m/validator planet-candidate-schema))
+
+(def phase0-handoff-event-schema
+  "Payload shape of the `:event/phase0-handoff` ledger event
+   (`domain.genesis.tick/emit-handoff-event`): the batch of
+   `:planet-candidate` records that met the handoff gate this tick."
+  [:map [:candidates [:sequential planet-candidate-schema]]])
+
+(def phase0-handoff-event?
+  "Predicate: does `value` satisfy `phase0-handoff-event-schema`?"
+  (m/validator phase0-handoff-event-schema))
+
 (def stellar-system-schema
   "Container for all bodies in a forming star system"
   {:id           uuid?

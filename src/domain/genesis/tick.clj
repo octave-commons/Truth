@@ -89,14 +89,41 @@
    is now a persistent component (`c/neighbor-cache`) rebuilt by the
    `:neighbor-cache` fan-out system each tick; it survives the fold so the next
    tick can reuse valid entries."
-   [world]
-   (let [systems (systems/physics-systems-parallel world)
-         world   (-> world
-                     (ecs/with-query-cache)
-                     (pcache/build-physics-soa))]
-     (-> (tick/run-parallel world systems)
-         (ecs/strip-query-cache)
-         (pcache/strip-physics-soa))))
+  [world]
+  (let [systems (systems/physics-systems-parallel world)
+        world   (-> world
+                    (ecs/with-query-cache)
+                    (pcache/build-physics-soa))]
+    (-> (tick/run-parallel world systems)
+        (ecs/strip-query-cache)
+        (pcache/strip-physics-soa))))
+
+;; --- M5 handoff Phase 4: the :event/phase0-handoff ledger append ------------
+;; See kanban/tasks/ecology-m5-phase4-handoff-event.md and parent
+;; kanban/tasks/ecology-water-gate-snowline.md §2, §5. `domain.stellar.
+;; classifier/handoff-system` is a genuine write-set fan-out emitter and the
+;; SOLE writer of `c/planet-candidate`, but — like `:event/collision` in
+;; `domain.physics.collision/collision-detection-system`'s 0-arity fan-out
+;; form — a ledger event dispatched from INSIDE a write-set `:run` only
+;; mutates a scratch snapshot that gets diffed away at the component-type
+;; boundary (`domain.ecs.tick/apply-write-set` only understands component
+;; write-sets, not `:ledger`). So, exactly like `emit-promotion-events`
+;; above, the real ledger append is a SERIAL step run once per tick after
+;; the fold, reacting to what the fan-out already decided.
+
+(defn emit-handoff-event
+  "Append a single `:event/phase0-handoff` event to `world`'s ledger the
+   first tick its `c/planet-candidate` component is non-empty. Idempotent:
+   a no-op once the event is already in the ledger, and a no-op while no
+   candidate has yet cleared `handoff-system`'s §2 gate (that gate is the
+   single source of truth this step reacts to — it is not re-checked here)."
+  [world]
+  (let [candidates (get-in world [:components c/planet-candidate] {})]
+    (if (or (empty? candidates)
+            (seq (event/events-of-kind world :event/phase0-handoff)))
+      world
+      (emit-threshold world :event/phase0-handoff
+                      {:candidates (vec (vals candidates))}))))
 
 (defn- tick-physics
   "Run one step of physics + lifecycle on the already tick-advanced world."
@@ -104,7 +131,8 @@
   (-> (step-physics world)
       (intervention/expire-interventions)
       bootstrap/materialize-lifecycle
-      (emit-promotion-events world)))
+      (emit-promotion-events world)
+      emit-handoff-event))
 
 (defn- advance-simulation-clock
   "Compute stats, complexity, pacing, and advance sim-time for the post-physics

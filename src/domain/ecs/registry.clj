@@ -110,6 +110,24 @@
     :writes #{c/material-class c/thermal-band c/orbit-stable
               c/atmosphere-class c/retained-species}}
 
+    ;; M5 handoff Phase 4: the `:planet-candidate` output record + handoff
+    ;; gate (parent kanban/tasks/ecology-water-gate-snowline.md §2, §5). SOLE
+    ;; writer of `c/planet-candidate`. Reuses the material-class/thermal-band/
+    ;; orbit-stable/atmosphere-class/retained-species already written by
+    ;; `:classification` above (one Jacobi-lag tick stale, same as every
+    ;; other cross-system read in this fan-out) rather than re-deriving them,
+    ;; and reads `c/absorb-merge` as the "system not yet settled" proxy — a
+    ;; pending, unresolved collision merge in flight. See
+    ;; kanban/tasks/ecology-m5-phase4-handoff-event.md.
+   {:id     :handoff
+    :ns     'domain.stellar.classifier
+    :reads  #{c/matter-state c/mass c/composition c/position c/velocity
+              c/radius c/luminosity c/material-class c/thermal-band
+              c/orbit-stable c/atmosphere-class c/retained-species
+              c/angular-momentum c/rotation-axis c/oblateness c/b-field
+              c/spin c/absorb-merge}
+    :writes #{c/planet-candidate}}
+
      ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
      ;; small physical seed instead of promoting the whole parcel. Emits the spawn
      ;; request, the parent parcel's mass-flux-condense debit, and a one-shot

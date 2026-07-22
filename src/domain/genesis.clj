@@ -15,7 +15,8 @@
    [domain.genesis.bootstrap :as bootstrap]
    [domain.genesis.tick :as tick]
    [domain.genesis.summary :as summary]
-   [domain.genesis.systems :as systems]))
+   [domain.genesis.systems :as systems]
+   [domain.stellar.classifier :as classifier]))
 
 (def create-world
   "Bootstrap a Phase 0 world ready to tick."
@@ -48,6 +49,19 @@
   "Emit per-body matter-state promotion events between `before` (pre-physics
    snapshot) and `after` (post-physics world)."
   tick/emit-promotion-events)
+
+(def handoff-system
+  "M5 handoff Phase 4 fan-out emitter (`domain.stellar.classifier/
+   handoff-system`): SOLE writer of `c/planet-candidate`, the full planet-
+   candidate output record (parent kanban/tasks/ecology-water-gate-
+   snowline.md §5), gated on the §2 handoff criteria."
+  classifier/handoff-system)
+
+(def emit-handoff-event
+  "Append the `:event/phase0-handoff` ledger event once `world`'s
+   `c/planet-candidate` component is non-empty (M5 handoff Phase 4, parent
+   §2, §5). Idempotent — a no-op once already recorded."
+  tick/emit-handoff-event)
 
 (def physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer fan-out."

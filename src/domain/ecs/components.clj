@@ -56,6 +56,16 @@
 (def atmosphere-class :component/atmosphere-class) ;; :none :thin :substantial :thick
 (def retained-species :component/retained-species) ;; #{:H2 :He :H2O :N2 :CO2}
 
+;; --- Handoff / planet-candidate record (M5 handoff Phase 4) -----------------
+;; The full `:planet-candidate` output record (parent kanban/tasks/ecology-
+;; water-gate-snowline.md §5), assembled once a candidate body meets the §2
+;; per-planet handoff table. Sole writer: `domain.stellar.classifier/
+;; handoff-system`. Persists once written — a candidate that briefly stops
+;; meeting the gate (e.g. a transient collision in flight) keeps its last
+;; recorded contract rather than being retracted, mirroring how
+;; matter-state promotions are never walked back.
+(def planet-candidate :component/planet-candidate) ;; the full :planet-candidate map, see law.stellar.schema/planet-candidate-schema
+
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
 ;; frozen into a clump; `regime` is the dominant-physics tag the classifier

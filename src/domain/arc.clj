@@ -166,12 +166,30 @@
   (and (#{:arc/genesis-planets-formed :arc/life-emergence} (:arc/current world))
        (seq (habitability/habitable-worlds world))))
 
+(defn phase0-handoff-succeeded?
+  "True once the M5 handoff has fired — a `:event/phase0-handoff` event is on
+   the ledger (`domain.genesis.tick/emit-handoff-event`, appended once
+   `domain.stellar.classifier/handoff-system`'s full §2 gate — stable star,
+   at least one eligible candidate, dynamically settled — has been met at
+   least once). This is the authoritative Phase 0 ending (parent
+   kanban/tasks/ecology-water-gate-snowline.md §2, §6 Phase 4); it supersedes
+   the older `ready-to-narrow?` scalar soft handoff below, which predates the
+   structured `:planet-candidate` record."
+  [world]
+  (boolean (seq (event/events-of-kind world :event/phase0-handoff))))
+
 (defn genesis-ending
   "If the genesis arc has reached a terminal outcome, describe it; else nil."
   [world]
   (let [arc (:arc/current world)
         obs (player/get-observer world)]
     (cond
+      (phase0-handoff-succeeded? world)
+      {:type    :success
+       :candidates (vec (vals (get-in world [:components c/planet-candidate] {})))
+       :time    (:genesis/sim-time world)
+       :message "A world capable of harboring life has formed."}
+
       (ready-to-narrow? world)
       {:type    :ready-to-narrow
        :worlds  (habitability/habitable-worlds world)

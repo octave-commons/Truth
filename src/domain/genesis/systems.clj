@@ -46,10 +46,12 @@
    (geometry/eos-system)])
 
 (defn- ^:private physics-formation-systems
-  "Classifier, seeding, fusion, chemistry, wind, disc, and regime."
+  "Classifier, planet classification + M5 handoff, seeding, fusion,
+   chemistry, wind, disc, and regime."
   [dt]
   [(classifier/classifier-system)
    (classifier/classification-system)
+   (classifier/handoff-system)
    (seeder/condensation-seeder-system)
    (em/field-system dt)
    (fusion/fusion-system)
