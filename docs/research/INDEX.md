@@ -69,6 +69,7 @@ New ECS component keywords added to `domain.ecs.components`:
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
 | xuv-escape-regime-transition.md | validated | 1 | R = t_rec/t_flow controls transition; F_crit ~ 10⁴ erg/cm²/s | Murray-Clay+2009, Owen & Alvarez 2016, Lampón+2021 |
+| planetary-atmosphere-retention-classifier.md | draft | 0 (M5 Phase 3) | Coarse per-planet atmosphere-class classifier grounded in Jeans λ (blow-off <2-3, boil-off ~15-35, safe 10-80+) and the Zahnle & Catling 2017 cosmic shoreline (I∝v_esc⁴); toy model shows Moon/Mercury land near the shoreline boundary (matches real ambiguity, not a bug) and flags a v_th convention mismatch between the kanban spec and `domain.chemistry/can-retain-gas?` | Volkov+2011, Zahnle & Catling 2017, Fossati+2017, Kubyshkina+2018 |
 
 **Actor:** truth-research-atmosphere
 **Schedule:** Every 48h

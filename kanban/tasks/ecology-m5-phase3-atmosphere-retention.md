@@ -1,13 +1,14 @@
 ---
-uuid: "ecology-m5-phase3-atmosphere-retention"
-title: "M5 Handoff Phase 3: atmosphere retention"
-status: "ready"
-priority: "P2"
-labels: ["phase0", "chemistry", "handoff", "epic-ecology-water-gate-snowline"]
-created_at: "2026-07-10T00:00:00Z"
-source: "kanban/tasks/ecology-m5-phase3-atmosphere-retention.md"
 category: "specs"
-estimate: 3
+labels: ["phase0", "chemistry", "handoff", "epic-ecology-water-gate-snowline"]
+write-id: "1784746503009-0.wm3ghjeebwm4uaq0g7v"
+source: "kanban/tasks/ecology-m5-phase3-atmosphere-retention.md"
+title: "M5 Handoff Phase 3: atmosphere retention"
+priority: "P2"
+status: "in_progress"
+estimate: "3"
+uuid: "ecology-m5-phase3-atmosphere-retention"
+created_at: "2026-07-10T00:00:00Z"
 ---
 
 # M5 Handoff Phase 3: atmosphere retention
@@ -34,4 +35,10 @@ set of retained species.
 
 ---
 Triage 2026-07-10: scoped 3pt, clear retention calculation. Ready for implementation.
+
+Research grounding 2026-07-22 (Claude, deep-research agent): note at docs/research/atmosphere/planetary-atmosphere-retention-classifier.md (+ toy model). Implement Phase 3 against it. Classifier: atmosphere-class{:mass :radius :temperature :material-class :thermal-band} -> {:atmosphere-class :none|:thin|:substantial|:thick :retained-species #{:H2 :He :H2O :N2 :CO2}}. Uses v_esc=sqrt(2GM/R), rms v_th=sqrt(3kT/m), ratio r=v_esc/v_th. Composition gate FIRST (gaseous->H2/He; rocky/icy/mixed->N2/CO2, +H2O only if thermal-band temperate/warm/hot). Buckets: :none r<3, :thin 3-6, :substantial 6-10, :thick r>=10. Retention: H2/He need r>6 (lambda>36); H2O/N2/CO2 need r>3 (lambda>9) — asymmetry grounded in Volkov 2011 / Fossati-Kubyshkina / early XUV exposure. Cosmic shoreline (Zahnle&Catling 2017, I_XUV~v_esc^4) is an OPTIONAL diagnostic only (Phase 0 lacks tracked XUV history). Sanity table: Earth/Mars/Jupiter/Titan/Pluto/hot-super-earth all sensible.
+
+TWO FLAGS TO RESOLVE DURING IMPL: (1) the card's literal 'moon-like-loses-atmosphere' test does NOT return :none under grounded Jeans physics (real Moon -> :thin; its airlessness is volatile-poor formation + solar-wind sputtering, not Jeans). Swap that test to a genuinely small/hot fragment (~5e20 kg, 300 km, 600 K) which classifies :none cleanly. (2) Unit-convention mismatch: existing domain.chemistry/can-retain-gas? uses rms v_th + uniform threshold 6; the parent spec uses most-probable-speed + 3/6 — ~22% disagreement. Reconcile to ONE convention (recommend rms, matching shipped code) during Phase 3.
+
+Triage 2026-07-22 (Claude): Phases 1-2 done + committed (c1b88c5). Dispatching Sonnet impl agent grounded in the research note, resolving both flags. ready -> in_progress.
 ---

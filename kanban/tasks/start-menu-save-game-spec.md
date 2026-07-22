@@ -1,12 +1,13 @@
 ---
-uuid: "start-menu-save-game-spec"
-title: "Start Menu and Save-Game System"
-status: "draft"
-priority: "P1"
-labels: ["specs", "phase0", "player", "ui", "save-system"]
-created_at: "2026-07-09T21:30:00.000000000Z"
-source: "kanban/tasks/start-menu-save-game-spec.md"
 category: "specs"
+labels: ["specs", "phase0", "player", "ui", "save-system"]
+write-id: "1784745420482-0.bl0w1dtfq4hh9hknult"
+source: "kanban/tasks/start-menu-save-game-spec.md"
+title: "Start Menu and Save-Game System"
+priority: "P1"
+status: "icebox"
+uuid: "start-menu-save-game-spec"
+created_at: "2026-07-09T21:30:00.000000000Z"
 ---
 
 # Start Menu and Save-Game System Spec
@@ -381,3 +382,7 @@ The menu layout should be navigable with a gamepad. Button focus is explicit and
 3. `src/infra/menu/widgets.clj` — menu widget model
 4. `kanban/tasks/exposed-tunables-and-settings-menu-spec.md` — companion: tunables and Settings panel
 5. `kanban/tasks/focus-zoom-lod-ui-spec.md` — existing UI conventions
+
+---
+Triage 2026-07-22 (Claude, decision from Aaron): moved from non-canonical 'draft' to icebox. Rationale: large shell/persistence feature (start menu, world-lines, save/load, compat-versioning, migrations) that depends on the tunables registry (settings-overrides) landing first. Park until exposed-tunables Phases 1-2 are done, then revisit for breakdown. Design doc is complete and preserved as-is.
+---

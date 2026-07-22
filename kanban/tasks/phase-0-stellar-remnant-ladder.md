@@ -1,13 +1,14 @@
 ---
-uuid: "phase-0-stellar-remnant-ladder"
-title: "Phase 0 Stellar Remnant Ladder"
-status: "review"
-priority: "P1"
-labels: ["specs", "phase0", "em"]
-created_at: "2026-07-10T12:00:00Z"
-source: "kanban/tasks/phase-0-stellar-remnant-ladder.md"
 category: "specs"
-estimate: 5
+labels: ["specs", "phase0", "em"]
+write-id: "1784745365933-0.k4m2djg58odj1gaefd"
+source: "kanban/tasks/phase-0-stellar-remnant-ladder.md"
+title: "Phase 0 Stellar Remnant Ladder"
+priority: "P1"
+status: "done"
+estimate: "5"
+uuid: "phase-0-stellar-remnant-ladder"
+created_at: "2026-07-10T12:00:00Z"
 ---
 
 # Phase 0 Stellar Remnant Ladder
@@ -66,4 +67,6 @@ core degrades to `:stellar-remnant` and, only when fully ablated, despawns.
 Started 2026-07-10: moving to in_progress. Will read current matter-state/structure/classifier code, write tests, implement remnant state.
 
 Completed 2026-07-10: implemented stellar-remnant ladder.\n- Added :stellar-remnant matter-state to components + schema.\n- Added white-dwarf-radius and ablation-floor constants in law.stellar.\n- Modified classifier: stars, protostars, brown dwarfs demote to :stellar-remnant below thresholds; never return to :nebula.\n- Modified structure: remnant uses degenerate white-dwarf radius + density.\n- Modified temperature: remnant cools radiatively.\n- Modified integrator: bound bodies at/below ablation-floor emit c/consumed-ablation and despawn.\n- Added 6 tests covering demotion, terminal state, ablation, cooling, no wind.\n- Verification: clojure -M:test 637 tests/13449 assertions green; architecture-test green; clj-kondo 0 warnings; bin/analyze --strict no blocking findings.
+
+Review 2026-07-22 (Claude, verified by review agent): VERDICT PASS-WITH-NITS. All 6 code criteria met — :stellar-remnant terminal matter-state (components.clj:35, schema.clj:16); down-ladder star/protostar/brown-dwarf -> remnant, never -> nebula (classifier.clj:106-216); degenerate white-dwarf-radius (orbital/constants.clj:45-50) used in geometry.clj:40-43; radiative cooling not virial (temperature.clj:85-89); despawn-on-ablation via c/consumed-ablation at ablation-floor (integrator/core.clj:81-133); 6+1 tests green. domain.stellar-test 42/130 green; full suite 642/13463 green. NITS (non-blocking, flagged): 4 test names differ from the card's Tests wording; parent card describes the split but has no literal filename/uuid cross-link. review -> done.
 ---
