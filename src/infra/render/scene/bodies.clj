@@ -49,12 +49,18 @@
    `threshold-pixels` is converted to a :sprite shape with a clamped pixel size.
    Stars use their :brightness to boost sprite size, so luminous bodies stay
    visible as point sources even when their physical sphere is sub-pixel.
-   Other shapes are passed through unchanged. Returns [solid-bodies sprites]."
+   Shapes ALREADY classified :sprite (e.g. regional-cell probability clouds)
+   pass straight to the sprite list; other shapes are passed through unchanged.
+   Returns [solid-bodies sprites]."
   [shapes camera height threshold-pixels]
   (let [threshold (double (or threshold-pixels default-sprite-lod-threshold-pixels))
         ppr (pixels-per-radian height 60.0)]
     (reduce (fn [[solids sprites] shape]
-              (if (= :body (:render-mode shape))
+              (cond
+                (= :sprite (:render-mode shape))
+                [solids (conj sprites shape)]
+
+                (= :body (:render-mode shape))
                 (let [dist       (sp/dist (:position camera) (:position shape))
                       angular-diam (* 2.0 (/ (double (:radius shape)) (max dist 1.0e-12)))
                       pixel-diam (* angular-diam ppr)
@@ -73,6 +79,8 @@
                                                    :render-mode :sprite
                                                    :size size))])
                     [(conj solids shape) sprites]))
+
+                :else
                 [(conj solids shape) sprites]))
             [[] []]
             shapes)))
@@ -81,6 +89,53 @@
 
 ;; Moved to infra.render.scene.setup so the setup namespace can compute it
 ;; directly; re-exported from the scene facade for compatibility.
+
+;; --- Sky simplification: regional statistical cells render as dimmed clouds --
+
+(def ^:const cell-cloud-dim
+  "Brightness factor applied to a regional cell's thermal/composition colour.
+   Demoted matter must read as a probability haze next to resolved bodies, so
+   the cloud keeps the matter's hue but most of its light is gone."
+  0.30)
+
+(def ^:const cell-cloud-size
+  "Sprite size (pixels) of a regional-cell probability cloud. Deliberately
+   mid-range in the sprite clamp band (see classify-body-lod): present in the
+   sky, never dominant."
+  14.0)
+
+(defn- cell-cloud-shapes
+  "Dimmed probability-cloud sprites for every regional statistical cell
+   (`c/field-zone :regional`, i.e. `c/position` + `c/statistical-mass` and no
+   `c/matter-state`). This is the demotion path made visible: when a promoted
+   clump folds back into its cell, the resolved body shape vanishes from the
+   projection above and the cell's dim cloud remains — the sky simplifies in
+   frame instead of the mass blinking out.
+
+   Colour is the cell ledger's own thermal/composition colour scaled by
+   cell-cloud-dim (sprites carry RGB, no alpha, so 'dimmed' is darker light,
+   matching how classify-body-lod dims distant proxies). Position projects
+   through units/world->render like every body: z-up, true-scale intact.
+
+   GAP: cells do not feed the volumetric froxel field
+   (infra.render.volume/render-samples reads domain.hydro/gas-samples, which
+   is matter-state-filtered), so a fully demoted region has no ray-marched
+   haze — only these sprites. Splatting cell ledgers into the volume is a
+   later card."
+  [ctx world]
+  (into []
+        (keep (fn [eid]
+                (when-let [ledger (ecs/get-component world eid c/statistical-mass)]
+                  (let [pos  (ecs/get-component world eid c/position)
+                        base (rcolor/body-render-color (:temperature ledger)
+                                                       (:composition ledger))]
+                    {:entity      eid
+                     :position    (units/world->render ctx pos)
+                     :color       (mapv #(* cell-cloud-dim (double %)) base)
+                     :size        cell-cloud-size
+                     :kind        :statistical-cell
+                     :render-mode :sprite}))))
+        (ecs/entities-with world c/position c/statistical-mass)))
 
 ;; --- Phase 0 projection ---------------------------------------------------
 
@@ -115,7 +170,8 @@
   [ctx world]
   (let [_focus (player-focus-level world)]
     (into
-     (hud/player-overlay-shapes ctx world)
+     (into (hud/player-overlay-shapes ctx world)
+           (cell-cloud-shapes ctx world))
      (mapcat
       (fn [eid]
         (let [state   (ecs/get-component world eid c/matter-state)

@@ -1,13 +1,14 @@
 ---
-uuid: "the-first-narrowing-star-to-planet"
-title: "Epic: The First Narrowing (star-system → planet)"
-status: "breakdown"
-priority: "P1"
-labels: ["specs", "phase0", "phase1", "player", "narrowing", "epic"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/the-first-narrowing-star-to-planet.md"
 category: "specs"
-estimate: 13
+labels: ["specs", "phase0", "phase1", "player", "narrowing", "epic"]
+write-id: "1784754416111-0.48txxo1b4tejodv6pj0"
+source: "kanban/tasks/the-first-narrowing-star-to-planet.md"
+title: "Epic: The First Narrowing (star-system → planet)"
+priority: "P1"
+status: "done"
+estimate: "13"
+uuid: "the-first-narrowing-star-to-planet"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Epic: The First Narrowing (star-system → planet)
@@ -52,4 +53,6 @@ palette, and engaging planetary time-lock.
 Created 2026-07-22 (Claude): manifested from Aaron's vision ("smooth gradual
 transition that feels like a decision; gravitationally bound; gets sculpting
 abilities"). Sequenced after the Player Focus rewrite (shared substrate).
+
+Epic COMPLETE 2026-07-22 (resumed session): all 3 children done + committed on m5-ecology-handoff (0d08012 binding, d230bca commitment, this commit frame-handoff). The star->planet narrowing is now mechanically real end-to-end: binding accrues under sustained focus (zero-sum, sunk-cost scar, literal GM/R cost curves), capture fires :event/world-commitment at binding>=0.85 + ready (hard-irreversible, palette re-arms in place, unchosen worlds inert, time-lock hook), and the frame tightens continuously into capture with no cut + one ambient narrator line. Open follow-ups for the next ladder rung (planetary-voxel-substrate): time-lock cadence actuation, Agency-spend verb wiring, tether tracking-mode support, cells into froxel volume. Closing epic.
 ---

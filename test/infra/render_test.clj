@@ -7,6 +7,7 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.field :as field]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.collapse :as collapse]
    [domain.genesis :as genesis]
@@ -396,3 +397,31 @@
       (is (> (:kappa cfg) 0.045) "absorption is raised from the old 0.045"))))
 
 
+
+(deftest test-regional-cell-renders-as-dim-cloud
+  (testing "a demoted (regional statistical) cell is visible as a dimmed probability-cloud sprite"
+    (let [ledger {:mass 1.0e24
+                  :velocity [0.0 0.0 0.0]
+                  :angular-momentum [0.0 0.0 0.0]
+                  :mean-b [0.0 0.0 0.0]
+                  :temperature 300.0
+                  :composition {:silicate 1.0}}
+          [w cell-eid] (field/spawn-regional-cell (ecs/empty-world) ledger [2.0e15 0.0 0.0])
+          shapes (rbodies/phase0-bodies-from-world w)
+          cloud  (some #(when (= cell-eid (:entity %)) %) shapes)]
+      (is (some? cloud) "the cell contributes a shape — demotion is visible in-frame")
+      (is (= :sprite (:render-mode cloud)) "rendered through the existing sprite path")
+      (is (= :statistical-cell (:kind cloud)))
+      (is (= [2.0 0.0 0.0] (:position cloud))
+          "true-scale projection: 2e15 m is 2 ru at the Phase 0 view scale")
+      (is (every? #(<= 0.0 % 0.31) (:color cloud))
+          "dimmed: the cloud keeps its hue but most of its light is gone")))
+  (testing "resolved bodies are untouched by the cell path"
+    (let [[w body-eid] (seeder/spawn-clump (ecs/empty-world)
+                                           {:position [1.0e15 0.0 0.0]
+                                            :mass 1.0e24 :radius 6.0e8
+                                            :matter-state :planet})
+          shapes (rbodies/phase0-bodies-from-world w)
+          body   (some #(when (= body-eid (:entity %)) %) shapes)]
+      (is (some? body))
+      (is (= :body (:render-mode body)) "a resolved world still renders as a body, not a cloud"))))

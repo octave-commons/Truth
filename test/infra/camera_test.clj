@@ -5,8 +5,11 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.player :as player]
    [domain.stellar.seeder :as seeder]
    [infra.camera :as cam]
+   [infra.camera.navigation.tether :as tether]
+   [law.narrowing :as law]
    [shape.spatial :as sp]))
 
 (deftest test-update-camera-track-largest-cluster
@@ -187,3 +190,83 @@
           "strafe velocity matches camera right direction scaled by move speed")
       (is (not (zero? (nth v-fwd 2))) "forward velocity follows the pitched look direction (has z)")
       (is (zero? (nth v-rgt 2)) "strafe velocity stays horizontal (no vertical z)"))))
+
+;; --- The binding tether (The First Narrowing, child C) ---------------------
+
+(defn- world-with-bound-planet
+  "A world with an observer and one planet at [1e16 0 0]; returns
+   [world obs-eid world-eid]."
+  []
+  (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
+        [w world-eid] (seeder/spawn-clump w {:position [1.0e16 0.0 0.0]
+                                             :mass 1.0e24 :radius 6.0e8
+                                             :matter-state :planet})]
+    [w obs-eid world-eid]))
+
+(deftest test-tether-strength-curve
+  (testing "strength is binding / capture-threshold, clamped to [0,1]"
+    (is (= 0.0 (tether/tether-strength 0.0)))
+    (is (= 0.5 (tether/tether-strength (* 0.5 law/capture-threshold))))
+    (is (= 1.0 (tether/tether-strength law/capture-threshold))
+        "fully engaged exactly at the capture threshold")
+    (is (= 1.0 (tether/tether-strength 1.0))
+        "clamped past the threshold — binding can deepen to 1.0 without overdrive")))
+
+(deftest test-tether-step-follows-binding-depth
+  (testing "no binding leaves the camera untouched; binding eases the frame toward the world"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          cam0 (assoc (cam/make-camera 100.0) :target [0.0 0.0 0.0])
+          cam-free (cam/tether-step cam0 w {:input-active? false})
+          w-bound (ecs/put-component w obs-eid c/binding
+                                     {world-eid (* 0.5 law/capture-threshold)})
+          cam1 (cam/tether-step cam0 w-bound {:input-active? false})]
+      (is (= cam0 cam-free) "no binding, no pull")
+      (is (> (first (:target cam1)) 0.0) "target eases toward the bound world")
+      (is (< (first (:target cam1)) 1.0)
+          "one frame is a gentle lerp step, not a snap (world sits 10 ru out)")
+      (is (< (:distance cam1) (:distance cam0)) "the frame tightens"))))
+
+(deftest test-tether-player-override
+  (testing "player input wins outright at any binding depth, even full capture"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid 1.0})
+          cam0 (assoc (cam/make-camera 100.0) :target [5.0 5.0 0.0])]
+      (is (= cam0 (cam/tether-step cam0 w-bound {:input-active? true}))
+          "while the player fights, the tether does not act"))))
+
+(deftest test-tether-no-jump-at-capture
+  (testing "the capture event is invisible to the tether: same binding, same step"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid law/capture-threshold})
+          w-committed (ecs/put-component w-bound world-eid c/commitment-state :committed)
+          cam0 (assoc (cam/make-camera 100.0) :target [0.0 0.0 0.0])]
+      (is (= (cam/tether-step cam0 w-bound {:input-active? false})
+             (cam/tether-step cam0 w-committed {:input-active? false}))
+          "commitment-state changes nothing — the tether reads binding only")))
+  (testing "camera position is continuous across the capture tick"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          cam0 (assoc (cam/make-camera 100.0) :target [0.0 0.0 0.0])
+          w-below (ecs/put-component w obs-eid c/binding
+                                     {world-eid (- law/capture-threshold 0.01)})
+          w-at (ecs/put-component w obs-eid c/binding {world-eid law/capture-threshold})
+          cam-below (cam/tether-step cam0 w-below {:input-active? false})
+          cam-at (cam/tether-step cam0 w-at {:input-active? false})
+          disp-below (sp/dist (:target cam-below) (:target cam0))
+          dist-step-below (abs (- (:distance cam-below) (:distance cam0)))
+          disp-at (sp/dist (:target cam-at) (:target cam0))
+          dist-step-at (abs (- (:distance cam-at) (:distance cam0)))]
+      (is (pos? disp-below))
+      (is (<= disp-at (* 1.05 disp-below))
+          "the capture-tick step is the same size as the step before it")
+      (is (<= dist-step-at (* 1.05 dist-step-below))
+          "distance tightening is continuous across the capture tick"))))
+
+(deftest test-tether-reengages-gently-after-a-fight
+  (testing "after the player releases input far from the world, the first resumed step is small"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid 1.0})
+          cam-far (assoc (cam/make-camera 300.0) :target [-50.0 20.0 10.0])
+          cam1 (cam/tether-step cam-far w-bound {:input-active? false})
+          gap (sp/dist (:target cam-far) [10.0 0.0 0.0])]
+      (is (<= (sp/dist (:target cam1) (:target cam-far)) (* 1.001 tether/tether-rate gap))
+          "resumption moves at most the lerp fraction of the remaining gap — no lurch"))))

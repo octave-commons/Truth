@@ -8,6 +8,7 @@
    public API of the original monolithic navigation namespace."
   (:require
    [infra.camera.navigation.input :as input]
+   [infra.camera.navigation.tether :as tether]
    [infra.camera.navigation.tracking :as tracking]))
 
 ;; ---------------------------------------------------------------------------
@@ -128,3 +129,14 @@
     :follow-selection (tracking/update-camera-follow-selection camera world settings)
     :track-largest-cluster (tracking/update-camera-track-cluster camera world settings)
     :fit-all (tracking/update-camera-fit-all camera world settings)))
+
+;; ---------------------------------------------------------------------------
+;; Binding tether (The First Narrowing, child C)
+;; ---------------------------------------------------------------------------
+
+(defn tether-step
+  "One frame of the binding camera tether. Pure: returns a new Camera. Player
+   input (`:input-active?`) wins outright; otherwise the frame tightens toward
+   the deepest-bound world at a rate continuous in binding depth."
+  [camera world opts]
+  (tether/tether-step camera world opts))

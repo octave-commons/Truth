@@ -7,22 +7,27 @@
   "Keyword mood tags that the narrative system can assign to the observer."
   #{:wonder :dread :tenderness :sterility :anticipation})
 
-(def narrative-state-schema
-  "Observer-side narrative state. `:mood` is the current ambience; the other
-   keys are reserved for Phase 2+ embedded phrasing and topic tracking."
-  [:map
-   [:mood mood-schema]
-   [:last-utterance-tick [:or :nil :int]]
-   [:topics [:set :keyword]]])
-
 (def utterance-schema
-  "A single narrator utterance. Reserved for Phase 2+ embedded phrasing."
+  "A single narrator utterance. Phase 1 uses it only for the ONE ambient
+   world-commitment line (attribution :ambient); embedded phrasing and
+   addressed utterances remain Phase 2+."
   [:map
    [:text :string]
    [:attribution [:enum :ambient :embedded :addressed]]
    [:topic :keyword]
    [:tick :int]
    [:context :map]])
+
+(def narrative-state-schema
+  "Observer-side narrative state. `:mood` is the current ambience;
+   `:last-line` is the most recent ambient utterance (surfaced as a subtle
+   viewport float and the Narrator menu's 'Last line'); the other keys are
+   reserved for Phase 2+ embedded phrasing and topic tracking."
+  [:map
+   [:mood mood-schema]
+   [:last-utterance-tick [:or :nil :int]]
+   [:topics [:set :keyword]]
+   [:last-line {:optional true} utterance-schema]])
 
 (def topic-schema
   "Narrative topic tags. Reserved for Phase 2+ embedded phrasing."

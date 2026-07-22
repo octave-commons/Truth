@@ -5,6 +5,8 @@
   (:require
    [clojure.math :as math] [domain.pacing :as pacing]
    [domain.player :as player]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [domain.intervention :as intervention]
    [infra.render.color :as color]
    [infra.render.input :as rinput])
@@ -232,10 +234,39 @@
    :scale 1.2
    :color [0.50 0.55 0.65 0.55]})
 
+(def ^:const ambient-line-fade-ticks
+  "How long an ambient narrator line floats in the viewport before it is gone.
+   Long and quiet: the line is an ambience, not a notification (the transient
+   centered event notification above fades in 200 ticks and stays a separate,
+   brighter channel)."
+  600)
+
+(defn- ambient-line-entry
+  "The most recent AMBIENT narrator line as a small, dim viewport float,
+   fading over ambient-line-fade-ticks. This is the felt surface of
+   law.narrative utterances with :attribution :ambient (The First Narrowing,
+   child C; ux-architecture.md 'Ambient line display: viewport float'). Never
+   addressed text, never a modal, never centred like the event notification:
+   it sits low and off to the side at low alpha. nil when there is no line,
+   the line is not ambient, or it has fully faded."
+  [world width height]
+  (when-let [eid (player/observer-entity world)]
+    (when-let [line (:last-line (ecs/get-component world eid c/narrative-state))]
+      (when (= :ambient (:attribution line))
+        (let [age   (- (long (or (:tick world) 0)) (long (:tick line)))
+              alpha (max 0.0 (- 0.55 (* 0.55 (/ (double age) ambient-line-fade-ticks))))]
+          (when (> alpha 0.03)
+            {:text  (:text line)
+             :x     (* (double width) 0.5)
+             :y     (* (double height) 0.72)
+             :scale 1.5
+             :color [0.80 0.72 0.85 ^double alpha]}))))))
+
 (defn observer-hud-text
   "Player HUD: quanta/state (bottom-left), observation note + quest (bottom-center),
-   event notifications (center), controls hint (bottom-right). `height` anchors
-   everything to the framebuffer size. Empty without an observer."
+   event notifications (center), ambient narrator line (low viewport float),
+   controls hint (bottom-right). `height` anchors everything to the framebuffer
+   size. Empty without an observer."
   [world width height]
   (if-let [obs (player/get-observer world)]
     (let [state   (player/decoherence-state obs)
@@ -244,6 +275,7 @@
           notif   (:arc/notification world)
           base    (observer-base-text obs state width height)
           n-line  (notif-entry world notif width height)
+          a-line  (ambient-line-entry world width height)
           w       (double width)
           h       (double height)]
       (cond-> base
@@ -254,6 +286,7 @@
                       :x (- w 200.0) :y (- h 18.0)
                       :scale 1.4 :color [0.70 0.85 0.95 0.70]})
         n-line (conj n-line)
+        a-line (conj a-line)
         true   (conj (controls-help-line width height))))
     []))
 

@@ -260,17 +260,22 @@
               fb-w      (max 1 (aget wbuf 0))
               fb-h      (max 1 (aget hbuf 0))
               cam-settings cfg
-              _         (when (= :manual (:mode cam-settings))
-                          (let [ks @keys-atom
-                                input {:forward (cond (ks GLFW/GLFW_KEY_W) 1.0 (ks GLFW/GLFW_KEY_S) -1.0 :else 0.0)
-                                       :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)}]
-                            (when (or (not= 0.0 (:forward input)) (not= 0.0 (:right input)))
-                              (let [velocity (cam/observer-move-velocity @camera-atom input cam-settings)]
-                                (swap! world-atom player/update-observer #(player/drift % velocity wall-dt))
-                                (swap! world-atom player/update-observer
-                                       (fn [o] (player/set-focus o (:position o) (:focus-radius o) (:focus-intensity o))))))))
+              drive-input (when (= :manual (:mode cam-settings))
+                            (let [ks @keys-atom]
+                              {:forward (cond (ks GLFW/GLFW_KEY_W) 1.0 (ks GLFW/GLFW_KEY_S) -1.0 :else 0.0)
+                               :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)}))
+              input-active? (boolean (and drive-input
+                                          (or (not= 0.0 (:forward drive-input))
+                                              (not= 0.0 (:right drive-input)))))
+              _         (when input-active?
+                          (let [velocity (cam/observer-move-velocity @camera-atom drive-input cam-settings)]
+                            (swap! world-atom player/update-observer #(player/drift % velocity wall-dt))
+                            (swap! world-atom player/update-observer
+                                   (fn [o] (player/set-focus o (:position o) (:focus-radius o) (:focus-intensity o))))))
               w         @world-atom
               _         (swap! camera-atom cam/update-camera-for-world w cam-settings)
+              _         (when (= :manual (:mode cam-settings))
+                          (swap! camera-atom cam/tether-step w {:input-active? input-active?}))
               cam       @camera-atom
               render-origin (:target cam)
               ctx       (units/make-context cam {:width fb-w :height fb-h})

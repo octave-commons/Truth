@@ -155,3 +155,11 @@
    Camera."
   [camera world settings]
   (nav/update-camera-for-world camera world settings))
+
+(defn tether-step
+  "One frame of the binding camera tether (The First Narrowing, child C).
+   Pure: returns a new Camera. Player input wins; the pull follows binding
+   depth continuously, fully engaged by the capture threshold, so there is no
+   jump-cut at capture."
+  [camera world opts]
+  (nav/tether-step camera world opts))
