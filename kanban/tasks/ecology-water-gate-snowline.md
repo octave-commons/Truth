@@ -1,13 +1,14 @@
 ---
-uuid: "ecology-water-gate-snowline"
-title: "Ecology water/habitability gate is trivially satisfied"
-status: "breakdown"
-priority: "P2"
-labels: ["fix", "phase0", "chemistry", "handoff", "epic"]
-created_at: "2026-07-06T16:21:51.000000000Z"
-source: "kanban/tasks/ecology-water-gate-snowline.md"
 category: "specs"
-estimate: 21
+labels: ["fix", "phase0", "chemistry", "handoff", "epic"]
+write-id: "1784747762211-0.kyzjb0ropxhp61vrlqg"
+source: "kanban/tasks/ecology-water-gate-snowline.md"
+title: "Ecology water/habitability gate is trivially satisfied"
+priority: "P2"
+status: "breakdown"
+estimate: "21"
+uuid: "ecology-water-gate-snowline"
+created_at: "2026-07-06T16:21:51.000000000Z"
 ---
 
 # Phase 0 Habitability Handoff Spec
@@ -261,4 +262,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 2026-07-10 → accepted (epic). Split into 4 ≤5pt child slices: ecology-m5-phase1-planet-classification, -phase2-orbit-stability, -phase3-atmosphere-retention, -phase4-handoff-event. Trivial water gate resolved by Phase 1. See Breakdown table in card.
 
 Triage 2026-07-10: 21pt epic split into four ≤5pt children (phase1-4). Moved to breakdown as umbrella; children are ready.
+
+Epic progress 2026-07-22 (Claude): M5 handoff chain 3/4 done. Phase1 (material+thermal class — this ALSO retires the trivially-satisfied habitability-score>0.2 gate this epic's title flags), Phase2 (orbit-stability proxy), Phase3 (atmosphere retention, research-grounded) all DONE + committed. Phase4 (handoff-event) now unblocked -> ready, held for owner go-ahead. Epic closes when Phase4 lands. Branch: m5-ecology-handoff.
 ---
