@@ -42,6 +42,12 @@
 (def ^{:doc "Deduct `cost` agency, clamped at zero."}
   spend-agency economy/spend-agency)
 
+(def ^{:doc "True if the observer has at least `cost` resonance."}
+  can-afford-resonance? economy/can-afford-resonance?)
+
+(def ^{:doc "Deduct `cost` resonance, clamped at zero."}
+  spend-resonance economy/spend-resonance)
+
 (def ^{:doc "Update observer coherence from drain, regen, and witnessed events."}
   apply-coherence economy/apply-coherence)
 

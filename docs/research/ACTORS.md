@@ -23,6 +23,10 @@ only write to `docs/research/` and never modify source code.
 | `truth-research-peer-reviewer` | Quality | on-demand | Run notebooks, review text/figures/code/citations, suggest future topics |
 | `truth-research-gap-analyst` | Cross-domain | on-demand | Compare coverage to simulation needs, identify missing research and cross-links |
 
+### Recent outputs
+
+- 2026-07-22 — `truth-research-geology` (cratering): `docs/research/2026-07-22-crater-scaling-laws-for-voxel-carving.md` — selected + parameterized scaling-law set for Voxel 5 (`collision-shock-voxel-carving`), resolves design gap §7.6.
+
 These actors do not produce primary research notebooks. They read the existing research, write structured reports to their own outboxes, and feed recommendations back to the coordinator or domain actors.
 
 ### Research Output Quality Loop

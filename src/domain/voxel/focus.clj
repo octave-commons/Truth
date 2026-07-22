@@ -27,12 +27,15 @@
    `law.voxel/edit-budget-ms-per-tick` by `domain.voxel.queue/drain`.
    Retargets are chunked to `law.voxel/edit-chunk-voxels` so the cap holds
    for band churn exactly as for later edits; a big retarget visibly sweeps
-   over several ticks. Later slices enqueue by writing their OWN
+   over several ticks. Producers enqueue by writing their OWN
    producer-suffixed request component (the `accel.*` influence-registry
    pattern — one writer per component); this system's `:reads` grows to
-   fold them, exactly as the integrator's accumulate lists grow. Tests
-   inject jobs by writing `c/voxel-edit-queue` directly into the frozen
-   fixture world.
+   fold them, exactly as the integrator's accumulate lists grow. Voxel 4
+   is the first such producer: `c/voxel-sculpt-request` (written by the
+   `:voxel-sculpt` system, `domain.voxel.sculpt`) folds as a field bias
+   plus derived `:apply-edits` jobs, provenance `:sculpt`. Tests inject
+   jobs by writing `c/voxel-edit-queue` directly into the frozen fixture
+   world.
 
    EDIT DIFFS ARE COMPONENTS, NOT LEDGER EVENTS (owner decision §7.3): the
    accumulated `law.voxel/edit-diff-schema` vector is the world's SAVE
@@ -48,17 +51,18 @@
    Reads the observer, the committed world's `c/planet-candidate` /
    `c/position`, and its own four components. Never writes `c/matter-state`
    or any other system's column."
-  (:require
-   [domain.ecs.components :as c]
-   [domain.ecs.core :as ecs]
-   [domain.ecs.registry :as reg]
-   [domain.ecs.tick :as tick]
-   [domain.interior :as interior]
-   [domain.player :as player]
-   [domain.voxel.band :as band]
-   [domain.voxel.queue :as queue]
-   [law.voxel :as voxel]
-   [shape.spatial :as sp]))
+   (:require
+    [domain.ecs.components :as c]
+    [domain.ecs.core :as ecs]
+    [domain.ecs.registry :as reg]
+    [domain.ecs.tick :as tick]
+    [domain.interior :as interior]
+    [domain.player :as player]
+    [domain.voxel.band :as band]
+    [domain.voxel.queue :as queue]
+    [domain.voxel.sculpt :as sculpt]
+    [law.voxel :as voxel]
+    [shape.spatial :as sp]))
 
 ;; --- World lookups ---------------------------------------------------------------
 
@@ -230,33 +234,41 @@
          (when-not position
            (throw (ex-info "domain.voxel.focus: committed world carries no c/position"
                            {:eid eid})))
-         (let [obs     (player/get-observer world)
-               field0  (ecs/get-component world eid c/voxel-field)
-               field   (or field0 (interior/seed-field candidate))
-               band0   (ecs/get-component world eid c/voxel-band)
-               queue0  (or (ecs/get-component world eid c/voxel-edit-queue) [])
-               diffs0  (or (ecs/get-component world eid c/voxel-edit-diffs) [])
-               target  (when (and obs (:focus-position obs))
-                         (band/band-target obs field
-                                           (sp/v- (:focus-position obs) position)))
-               queue1  (maybe-enqueue-retarget queue0 band0 target)
-               state'  (queue/drain {:band band0 :diffs diffs0 :queue queue1}
-                                    voxel/edit-budget-ms-per-tick
-                                    (fn [s job] (apply-job field (:tick world) s job)))
-               band'   (:band state')
-               queue'  (:queue state')
-               diffs'  (:diffs state')]
-           (cond-> {}
-             (nil? field0)
-             (assoc c/voxel-field {eid field})
+          (let [obs     (player/get-observer world)
+                field0  (ecs/get-component world eid c/voxel-field)
+                seed    (or field0 (interior/seed-field candidate))
+                band0   (ecs/get-component world eid c/voxel-band)
+                queue0  (or (ecs/get-component world eid c/voxel-edit-queue) [])
+                diffs0  (or (ecs/get-component world eid c/voxel-edit-diffs) [])
+                ;; Voxel 4: paid sculpt ops arrive one Jacobi tick stale on
+                ;; the producer-suffixed request channel and fold into the
+                ;; two columns this system owns — the field (biased) and the
+                ;; queue (derived local edits enqueued under the band).
+                ops     (ecs/get-component world eid c/voxel-sculpt-request)
+                {:keys [field jobs]} (sculpt/fold-ops seed band0 ops)
+                target  (when (and obs (:focus-position obs))
+                          (band/band-target obs field
+                                            (sp/v- (:focus-position obs) position)))
+                queue1  (maybe-enqueue-retarget queue0 band0 target)
+                queue2  (into queue1 jobs)
+                state'  (queue/drain {:band band0 :diffs diffs0 :queue queue2}
+                                     voxel/edit-budget-ms-per-tick
+                                     (fn [s job] (apply-job field (:tick world) s job)))
+                band'   (:band state')
+                queue'  (:queue state')
+                diffs'  (:diffs state')]
+            (cond-> {}
+              (or (nil? field0)
+                  (not (identical? seed field)))
+              (assoc c/voxel-field {eid field})
 
-             (not (identical? band0 band'))
-             (assoc c/voxel-band {eid (if (nil? band') tick/removed band')})
+              (not (identical? band0 band'))
+              (assoc c/voxel-band {eid (if (nil? band') tick/removed band')})
 
-             (or (not (identical? queue0 queue1))
-                 (not (identical? queue1 queue')))
-             (assoc c/voxel-edit-queue {eid queue'})
+              (or (not (identical? queue0 queue2))
+                  (not (identical? queue2 queue')))
+              (assoc c/voxel-edit-queue {eid queue'})
 
-             (not (identical? diffs0 diffs'))
-             (assoc c/voxel-edit-diffs {eid diffs'}))))
-       {}))})
+              (not (identical? diffs0 diffs'))
+              (assoc c/voxel-edit-diffs {eid diffs'}))))
+        {}))})

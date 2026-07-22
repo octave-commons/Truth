@@ -15,7 +15,8 @@
    [domain.stellar.classifier :as classifier]
    [domain.player :as player]
    [domain.pacing :as pacing]
-   [domain.ecology :as ecology]))
+   [domain.ecology :as ecology]
+   [domain.voxel.sculpt :as sculpt]))
 
 ;; --- Threshold events -------------------------------------------------------
 
@@ -167,6 +168,7 @@
   [world]
   (-> (step-physics world)
       (intervention/expire-interventions)
+      (sculpt/clear-sculpt-ops)
       bootstrap/materialize-lifecycle
       (emit-promotion-events world)
       emit-handoff-event

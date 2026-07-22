@@ -304,3 +304,133 @@
    never resolves thinner than a 4×4 voxel patch no matter how deep the
    focus drives it."
   4)
+
+;; --- God-scale sculpting ops (Voxel 4: palette -> field bias) -----------------
+;; Design docs/designs/planetary-voxel-substrate.md §5 tier 1: the Phase 1
+;; ability palette biases the MACRO field statistically; local voxel edits fall
+;; out of the field change only where the band is resolved (macro-drives-local
+;; — never direct god-finger voxel pokes). Schemas and tuned constants only;
+;; the behavior lives in `domain.voxel.sculpt`.
+
+(def sculpt-verb-schema
+  "The god-scale sculpting verbs of the Phase 1 palette (design §5 tier 1):
+   uplift (crustal thickening under convergence), erosion (sediment export
+   from the sculpt site, deposition at the rim), volcanism (upwelling-driven
+   melt). Each is a STATISTICAL field bias plus the band-local edits that
+   fall out of it — never a direct voxel poke."
+  [:enum :uplift :erosion :volcanism])
+
+(def sculpt-verb?
+  "Predicate: does `value` satisfy `law.voxel/sculpt-verb-schema`?"
+  (m/validator sculpt-verb-schema))
+
+(def sculpt-verb->ability
+  "The Phase 1 palette ability (`law.narrowing/ability-schema`) each sculpt
+   verb fires through: uplift and volcanism are Tectonics; erosion is
+   Hydrography (commitment-and-resonance.md §4.4's 'biasing plate motion,
+   volcanism, erosion rates'). The op is gated on this ability being armed
+   in the observer's `c/palette` slots."
+  {:uplift :tectonics :erosion :hydrography :volcanism :tectonics})
+
+(def sculpt-op-schema
+  "One PAID god-scale sculpt request (Voxel 4): the record the actuation
+   entry (`domain.voxel.sculpt/request-op`) appends after gating and
+   spending, translated one tick later into `c/voxel-sculpt-request` for the
+   `:voxel-focus` fold. `:verb` the sculpt verb; `:magnitude` the op's
+   intensity in (0,1] (cost and effect both scale with it); `:anchor` the
+   unit body-centric surface direction the op centres on (the observer's
+   sub-focus direction — god-scale ops land where attention is); `:target`
+   the committed world's entity id; `:cost` the Resonance already spent on
+   it (carried for the record — the spend happens at actuation, never in
+   the fan-out); `:tick` the tick the request was placed."
+  [:map
+   [:verb sculpt-verb-schema]
+   [:magnitude [:and :double [:> 0] [:<= 1]]]
+   [:anchor [:tuple :double :double :double]]
+   [:target :int]
+   [:cost [:and :double [:>= 0]]]
+   [:tick [:and :int [:>= 0]]]])
+
+(def sculpt-op?
+  "Predicate: does `value` satisfy `law.voxel/sculpt-op-schema`?"
+  (m/validator sculpt-op-schema))
+
+(def sculpt-op-cost-coefficients
+  "Resonance cost coefficients per sculpt verb: cost = base + per-magnitude
+   × magnitude — strictly monotone in magnitude by construction (every
+   per-magnitude is positive). Volcanism is the priciest (melt is a
+   regime change, not a rearrangement); erosion the cheapest (it only
+   rearranges the surface). Same order as `law.narrowing/phase-1-unlock-
+   costs` — a handful of Resonance per op."
+  {:uplift    {:base 1.0 :per-magnitude 2.0}
+   :erosion   {:base 1.0 :per-magnitude 1.0}
+   :volcanism {:base 2.0 :per-magnitude 2.0}})
+
+(def ^:const sculpt-influence-radius-reference-m
+  "Surface radius (m) of a sculpt op's influence disc at magnitude 1.0 —
+   the patch around the anchor whose field bias resolves into local voxel
+   edits where the band overlaps. 512 m ≈ 8 canonical voxel edges: smaller
+   than a wide band's horizontal reach, so a mid-magnitude op visibly
+   sculpts a sub-region of the band."
+  512.0)
+
+(def ^:const sculpt-mass-move-fraction
+  "Fraction of a donor voxel's DISPLACEABLE mass (see the floor below) one
+   op moves at magnitude 1.0; scales linearly with magnitude. Uplift moves
+   it deep→shallow within the column; erosion moves it off the column top
+   to the rim columns. Mass is REDISTRIBUTED, never created — the sum over
+   the affected voxels is invariant up to double rounding."
+  0.25)
+
+(def ^:const sculpt-donor-mass-floor-fraction
+  "A donor voxel always keeps at least this fraction of its pre-op mass:
+   displaceable mass = mass × (1 − floor). Keeps densities strictly
+   positive (law.voxel/voxel-schema) and the sculpt bounded no matter how
+   often an op repeats on the same column."
+  0.5)
+
+(def ^:const sculpt-erosion-recipient-fraction
+  "Fraction of the band's columns (rounded up, at least one) that receive
+   eroded sediment: the columns FARTHEST from the op's anchor axis — the
+   local lowlands relative to the sculpt site. Total removed from donor
+   tops is spread evenly across recipient tops."
+  0.25)
+
+(def ^:const sculpt-erosion-cell-mass-fraction
+  "Fraction of the donor resource cell's `:total-mass` the field-level
+   erosion bias exports at magnitude 1.0, credited to the nearest other
+   cell — the resource field's `:total-mass` conservation discipline
+   (design §3): the field sum is invariant, mass is transported."
+  0.1)
+
+(def ^:const sculpt-plate-velocity-lever
+  "Uplift's plate-velocity bias, in units of
+   `law.interior/plate-speed-reference-m-per-s` per unit magnitude: the
+   plate nearest the anchor gains a tangential push TOWARD the anchor
+   (convergence — the statistical steer toward crustal thickening), god-
+   scale meaning 'on the order of natural plate motion', not a
+   planet-cracking kick."
+  1.0)
+
+(def ^:const sculpt-convection-speed-lever
+  "Convection-cell speed bias per unit magnitude: the targeted cell's
+   `:speed` multiplies by (1 + lever × magnitude). Uplift boosts the
+   nearest DOWNWELLING cell (convergence/subduction pairs with crustal
+   thickening); volcanism boosts the nearest UPWELLING cell (melt
+   delivery) — the two verbs steer different halves of the mantle
+   pattern."
+  1.0)
+
+(def ^:const sculpt-melt-temperature-k
+  "Temperature (K) at or above which a sculpted voxel transitions
+   `:solid` → `:melt` — basaltic liquidus order (no per-material melt
+   model yet; one honest reference, like `law.interior`'s constants)."
+  1.4e3)
+
+(def ^:const sculpt-volcanism-thermal-lever-k
+  "Temperature added to in-disc voxels by volcanism at magnitude 1.0
+   (K): heat is the PAID effect (Resonance spends to inject thermal
+   energy — mass is untouched, so band mass is exactly invariant).
+   2000 K takes temperate crust seed temperatures (~500 K) past
+   `sculpt-melt-temperature-k` at magnitudes ≳ 0.45."
+  2.0e3)

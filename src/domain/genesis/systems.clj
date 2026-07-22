@@ -25,6 +25,7 @@
    [domain.genesis.promotion :as promotion]
    [domain.narrowing :as narrowing]
    [domain.voxel.focus :as voxel-focus]
+   [domain.voxel.sculpt :as voxel-sculpt]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
    [domain.physics.cache :as cache]))
@@ -86,6 +87,10 @@
       (promotion/focus-zone-system)
       (narrowing/binding-system)
       (narrowing/commitment-system)
+      ;; Voxel 4: god-scale sculpting — translates the paid ops on the
+      ;; `:voxel/sculpt-ops` world key into the `c/voxel-sculpt-request`
+      ;; channel the voxel-focus fold consumes one Jacobi tick later.
+      (voxel-sculpt/sculpt-system)
       ;; Voxel 3: the committed world's focus band. Runs after :commitment
       ;; and :handoff, whose outputs (c/commitment-state, c/planet-
       ;; candidate) it reads one tick Jacobi-stale.

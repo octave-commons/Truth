@@ -431,13 +431,28 @@
     ;; demotion fold-back drain through the budgeted queue
     ;; (law.voxel/edit-budget-ms-per-tick) — one system because promotion
     ;; and demotion write the same columns (the :focus-zone precedent).
+    ;; Voxel 4: also reads `c/voxel-sculpt-request` (one tick stale, the
+    ;; producer-suffixed request channel) and folds the paid sculpt ops
+    ;; into the field it owns + the queue it owns.
     {:id     :voxel-focus
      :ns     'domain.voxel.focus
      :reads  #{c/observer c/position c/planet-candidate c/commitment-state
                c/voxel-field c/voxel-band c/voxel-edit-queue
-               c/voxel-edit-diffs}
+               c/voxel-edit-diffs c/voxel-sculpt-request}
      :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
                c/voxel-edit-diffs}}
+
+    ;; Voxel 4: god-scale sculpting (design planetary-voxel-substrate.md
+    ;; §5 tier 1). Translates the paid ops on the `:voxel/sculpt-ops`
+    ;; world key (the `:genesis/interventions` precedent — world keys are
+    ;; not declarable here) into the producer-suffixed request component
+    ;; the `:voxel-focus` fold consumes one Jacobi tick later. Sole writer
+    ;; of `c/voxel-sculpt-request`; reads its own prior output one tick
+    ;; stale to auto-clear drained requests.
+    {:id     :voxel-sculpt
+     :ns     'domain.voxel.sculpt
+     :reads  #{c/commitment-state c/voxel-sculpt-request}
+     :writes #{c/voxel-sculpt-request}}
 
     ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position

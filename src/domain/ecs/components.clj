@@ -304,6 +304,16 @@
 (def voxel-edit-queue :component/voxel.edit-queue)
 (def voxel-edit-diffs :component/voxel.edit-diffs)
 
+;; `voxel-sculpt-request` lives on the committed world entity: the vector of
+;; PAID god-scale sculpt ops (`law.voxel/sculpt-op-schema`) awaiting the
+;; `:voxel-focus` fold — the producer-suffixed request channel Voxel 4 uses
+;; to reach the queue without writing another system's column (the accel.*
+;; influence-registry pattern: one writer per component, the consumer's
+;; :reads grows to fold it). Transient: re-emitted each tick from the
+;; `:voxel/sculpt-ops` world key by its sole writer, the `:voxel-sculpt`
+;; fan-out system (domain.voxel.sculpt), and auto-cleared when empty.
+(def voxel-sculpt-request :component/voxel.sculpt-request)
+
 ;; --- Render -----------------------------------------------------------------
 (def renderable   :component/renderable)
 (def cell-id      :component/cell-id)
