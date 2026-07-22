@@ -134,7 +134,37 @@
   "Predicate: does `value` satisfy `law.voxel/resource-cell-schema`?"
   (m/validator resource-cell-schema))
 
+(def macro-layer-schema
+  "One differentiated interior layer of the macro geology field seed
+   (core / mantle / crust / ice-shell; design §4, §7 layer-template gap —
+   the honest first model lives in `domain.interior`, its constants in
+   `law.interior`). Radii are body-centric metres, mass kg, density kg/m³,
+   temperature K. Layers are emitted inside-out and mass-balanced: their
+   masses sum to the seeded body's derived mass exactly (up to double
+   rounding), so the field conserves the candidate's mass by construction."
+  [:map
+   [:name :keyword]
+   [:inner-radius [:and :double [:>= 0]]]
+   [:outer-radius [:and :double [:> 0]]]
+   [:mass [:and :double [:> 0]]]
+   [:density [:and :double [:> 0]]]
+   [:temperature [:and :double [:>= 0]]]])
+
+(def macro-layer?
+  "Predicate: does `value` satisfy `law.voxel/macro-layer-schema`?"
+  (m/validator macro-layer-schema))
+
 ;; --- Edit diffs (design §7.3: field-seed + edit diff save strategy) -------------
+
+(def ^:const canonical-voxel-edge-m
+  "The ONE canonical voxel edge length (m) of a seeded world's voxel grid
+   (design §7.2): pinned here by the seed generator (slice 2,
+   `domain.interior/seed-field`) and never varying per band or per focus
+   depth. This is the grid `voxel-edit-schema`'s `:offset` indexes — the
+   load-bearing constant that docstring refers to. 64 m: coarse enough that
+   a focus band stays cheap, fine enough that mining/sculpting reads as
+   terrain; a deliberate first pin, tunable only with a save migration."
+  64.0)
 
 (def voxel-edit-schema
   "One voxel-level change inside an edit diff: the voxel-local integer grid
@@ -143,11 +173,12 @@
    already determines it; persist it only when the pre-edit state diverged
    from the seed (e.g. an earlier diff).
 
-   Grid convention (load-bearing, design §7.2): offsets index the SEED'S
-   canonical grid — one fixed voxel edge length per world, pinned by the
-   seed generator (slice 2) and never varying per band or per focus depth.
-   Re-materialization at any focus depth must replay diffs onto that same
-   canonical grid or the offsets are silently wrong."
+    Grid convention (load-bearing, design §7.2): offsets index the SEED'S
+    canonical grid — one fixed voxel edge length per world, pinned by the
+    seed generator (slice 2) as `canonical-voxel-edge-m` and never varying
+    per band or per focus depth.
+    Re-materialization at any focus depth must replay diffs onto that same
+    canonical grid or the offsets are silently wrong."
   [:map
    [:offset [:tuple :int :int :int]]
    [:after [:maybe voxel-schema]]

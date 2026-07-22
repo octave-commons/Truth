@@ -1,13 +1,14 @@
 ---
-uuid: "planet-candidate-to-voxel-seed"
-title: "Voxel 2: planet-candidate -> macro geology field seed"
-status: "blocked"
-priority: "P1"
-labels: ["specs", "phase1", "voxel", "epic-planetary-voxel-substrate"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/planet-candidate-to-voxel-seed.md"
 category: "specs"
-estimate: 5
+labels: ["specs", "phase1", "voxel", "epic-planetary-voxel-substrate"]
+write-id: "1784757170540-0.20oc0j0eopfohwgohfb"
+source: "kanban/tasks/planet-candidate-to-voxel-seed.md"
+title: "Voxel 2: planet-candidate -> macro geology field seed"
+priority: "P1"
+status: "done"
+estimate: "5"
+uuid: "planet-candidate-to-voxel-seed"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Voxel 2: planet-candidate -> macro geology field seed
@@ -43,4 +44,8 @@ save/persistence strategy regenerates from.
 
 ---
 Created 2026-07-22 (resumed session): slice 2 of the approved breakdown.
+
+Triage 2026-07-22: Voxel 1 done + committed (acb3e59), schemas reviewed. Dispatching impl agent for the seed generator. blocked -> in_progress.
+
+Complete + reviewed 2026-07-22. domain.interior pure deterministic seed: body figure via uniform-density inversion R=3g/(4pi*G*rho) (candidate lacks mass/radius); layer template core=FeNi/0.85 clamped, mass-exact shells; mineral enrichment redistributing (downwelling Fe/Ni x3, upwelling S x2, polar ice gated); thermal surface=equilibrium-temp + 15K/km capped. Determinism: no PRNG, closed-form Fibonacci spirals pinned to rotation-axis. Review PASS-WITH-NITS, all 3 resolved: Earth anchor pinned (R/M within 20%), iron lever zero-centered per class (icy rho 1265->2015, exposed + fixed latent ice-shell volume inconsistency), FP reductions sorted (spec-stable). :gaseous candidates fail loud (no solid surface). Suite 722/13834 green; architecture green. in_progress -> done. Unblocks voxel-focus-promotion-demotion (the keystone).
 ---
