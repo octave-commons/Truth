@@ -185,6 +185,23 @@ This design sits on work already scoped:
 
 ## 8. Open design questions (for the owner)
 
+### Resolved 2026-07-22 (Aaron)
+
+1. **Binding curve honesty → literal shape, tuned scale.** The exit-cost curve's
+   *shape* is derived from the world's real escape-energy proxy (M5 surface
+   gravity / mass); only the overall magnitude is tuned for feel. Heavier, denser
+   worlds are genuinely harder to leave.
+2. **Pre-capture reversibility → small sunk cost / scar.** Un-binding before
+   capture is allowed but leaves a lasting mark (spent Agency and/or a faint
+   world-line scar), so binding reads as a real decision, not window-shopping.
+3. **Multiple candidates → you can only fall one way.** Binding to one world
+   actively *decays* binding to the others; attention is zero-sum and commitment
+   is a genuine fork, matching the narrowing metaphor.
+
+### Still open
+
+
+
 1. **Binding curve honesty:** tie the exit-cost curve literally to the world's
    escape-energy proxy (from M5 surface gravity), or keep it a tuned game curve
    that merely *evokes* a gravity well? (Recommend: literal shape, tuned scale.)
