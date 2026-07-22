@@ -394,7 +394,18 @@
               c/promoted-from-cell c/radius c/temperature c/composition c/b-field}
     :writes #{c/field-zone c/statistical-mass c/spawn-request-promotion c/consumed-demote}}
 
-   ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
+   ;; The First Narrowing, child A: gravitational binding. Reads the observer's
+   ;; focus/attention state and every candidate world's position, and writes the
+   ;; observer's {world-eid -> [0,1]} coupling plus its permanent sunk-cost
+   ;; scar tally. Reads its own prior output one tick stale (ordinary Jacobi
+   ;; lag, like :neighbor-cache). Binding is exposed as data the :focus-zone
+   ;; promotion/demotion machinery could read later; it does not rewire it.
+   {:id     :binding
+    :ns     'domain.narrowing
+    :reads  #{c/observer c/position c/planet-candidate c/binding c/binding-scar}
+    :writes #{c/binding c/binding-scar}}
+
+    ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position
    ;; — a pure Galilean shift, not a post-fold position write (spec §6).
    ])

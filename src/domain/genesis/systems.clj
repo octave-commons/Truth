@@ -23,6 +23,7 @@
    [domain.ecology :as ecology]
    [domain.debris :as debris]
    [domain.genesis.promotion :as promotion]
+   [domain.narrowing :as narrowing]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
    [domain.physics.cache :as cache]))
@@ -71,17 +72,18 @@
   "Collision, promotion, sink, disk, mass transfer, LOD, magnetosphere, ecology,
    debris, and neighbor cache."
   []
-  [(collision/collision-detection-system)
-   (fusion/fusion-promotion-system)
-   (sink/sink-formation-system)
-   (disc-evolution/disk-evolution-system)
-   (mt/mass-transfer-system)
-   (cache/neighbor-cache-system)
-   (lod/lod-scheduler)
-   (em/magnetosphere-coupling-system)
-   (ecology/ecology-system)
-   (debris/debris-reaper-system)
-   (promotion/focus-zone-system)])
+   [(collision/collision-detection-system)
+    (fusion/fusion-promotion-system)
+    (sink/sink-formation-system)
+    (disc-evolution/disk-evolution-system)
+    (mt/mass-transfer-system)
+    (cache/neighbor-cache-system)
+    (lod/lod-scheduler)
+    (em/magnetosphere-coupling-system)
+    (ecology/ecology-system)
+    (debris/debris-reaper-system)
+    (promotion/focus-zone-system)
+    (narrowing/binding-system)])
 
 (defn physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer

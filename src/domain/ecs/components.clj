@@ -1,7 +1,8 @@
 (ns domain.ecs.components
   "Canonical component type keywords for Gates of Truth.
    No logic here — just the vocabulary.
-   Every system queries these exact keywords.")
+   Every system queries these exact keywords."
+  (:refer-clojure :exclude [binding]))
 
 ;; --- Spatial ----------------------------------------------------------------
 (def position  :component/position)
@@ -208,6 +209,16 @@
 ;; id (int), so demotion credits mass/velocity/angular-momentum back to the
 ;; right cell without a spatial lookup.
 (def promoted-from-cell :component/promoted-from-cell)
+
+;; --- Narrowing / gravitational binding (The First Narrowing, child A) -------
+;; `binding` lives on the observer entity: {world-eid -> binding in [0,1]}, the
+;; continuous observer<->world coupling that is the mechanical substance of
+;; becoming gravitationally bound (docs/designs/the-first-narrowing-star-to-
+;; planet.md §2). `binding-scar` is the sunk-cost tally: {world-eid -> spent,
+;; never-refunded binding} left behind when binding to a world is lost before
+;; capture. Sole writer of both: the `:binding` fan-out system (domain.narrowing).
+(def binding      :component/binding)
+(def binding-scar :component/binding-scar)
 
 ;; --- Narrative presence (Phase 1) -------------------------------------------
 ;; Observer-side narrative state: current mood, last utterance tick, and the
