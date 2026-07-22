@@ -22,6 +22,7 @@
    [domain.lod :as lod]
    [domain.ecology :as ecology]
    [domain.debris :as debris]
+   [domain.genesis.promotion :as promotion]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
    [domain.physics.cache :as cache]))
@@ -79,7 +80,8 @@
    (lod/lod-scheduler)
    (em/magnetosphere-coupling-system)
    (ecology/ecology-system)
-   (debris/debris-reaper-system)])
+   (debris/debris-reaper-system)
+   (promotion/focus-zone-system)])
 
 (defn physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer

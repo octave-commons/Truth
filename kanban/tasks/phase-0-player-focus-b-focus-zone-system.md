@@ -1,13 +1,14 @@
 ---
-uuid: "phase-0-player-focus-b-focus-zone-system"
-title: "Player Focus B: :focus-zone fan-out emitter (promotion + demotion)"
-status: "blocked"
-priority: "P1"
-labels: ["specs", "phase0", "player", "epic-player-focus-promotion-demotion"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/phase-0-player-focus-b-focus-zone-system.md"
 category: "specs"
-estimate: 3
+labels: ["specs", "phase0", "player", "epic-player-focus-promotion-demotion"]
+write-id: "1784751209037-0.tjulrzhlwhsd7op50n4"
+source: "kanban/tasks/phase-0-player-focus-b-focus-zone-system.md"
+title: "Player Focus B: :focus-zone fan-out emitter (promotion + demotion)"
+priority: "P1"
+status: "done"
+estimate: "3"
+uuid: "phase-0-player-focus-b-focus-zone-system"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Player Focus B: :focus-zone fan-out emitter (promotion + demotion)
@@ -56,4 +57,8 @@ flux, and energy.
 ---
 Created 2026-07-22 (Claude): child B. Blocked until child A lands (needs the new
 markers + cell substrate).
+
+Triage 2026-07-22 (Claude): child A done + committed (domain.field substrate + markers). Source tree clean. Dispatching Sonnet impl agent for the :focus-zone emitter rewrite. blocked -> in_progress.
+
+Complete + independently verified 2026-07-22 (resumed session, Claude session c9f1a749 died on API limit mid-cleanup). focus-zone-test 5 tests green; full suite 669/13536 (was 664/13519) 0 failures; architecture-test green; write-conflicts {} — :focus-zone is sole writer of field-zone/statistical-mass/spawn-request-promotion/consumed-demote. Landed: one combined promotion+demotion fan-out emitter in domain.genesis.promotion; promotion emits spawn-request-promotion spec (full cell mass/velocity/L) + debits cell ledger to 0.0 same write-set; demotion folds withdrawn clump mass+velocity+L back into source cell and marks consumed-demote; same-tick threshold events block demotion (delay preserved); no c/matter-state writes. in_progress -> done. Unblocks child C (conservation tests).
 ---

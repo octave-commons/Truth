@@ -1,13 +1,14 @@
 ---
-uuid: "narrowing-commitment-horizon"
-title: "Narrowing B: commitment horizon (capture → world-commitment)"
-status: "blocked"
-priority: "P1"
-labels: ["specs", "phase1", "player", "narrowing", "epic-the-first-narrowing"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/narrowing-commitment-horizon.md"
 category: "specs"
-estimate: 5
+labels: ["specs", "phase1", "player", "narrowing", "epic-the-first-narrowing"]
+write-id: "1784749025351-0.aib02xecz7ai898mg5d"
+source: "kanban/tasks/narrowing-commitment-horizon.md"
+title: "Narrowing B: commitment horizon (capture → world-commitment)"
+priority: "P1"
+status: "blocked"
+estimate: "5"
+uuid: "narrowing-commitment-horizon"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Narrowing B: commitment horizon (capture → world-commitment)
@@ -43,4 +44,6 @@ not prompted.
 
 ---
 Created 2026-07-22 (Claude): child B of The First Narrowing.
+
+Design decision 2026-07-22 (Aaron): pre-capture reversibility carries a small sunk cost/scar (see binding-mechanic card); capture itself remains hard-irreversible for the world-line.
 ---

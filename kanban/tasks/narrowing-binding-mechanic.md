@@ -1,13 +1,14 @@
 ---
-uuid: "narrowing-binding-mechanic"
-title: "Narrowing A: gravitational binding coupling + cost curve"
-status: "blocked"
-priority: "P1"
-labels: ["specs", "phase0", "phase1", "player", "narrowing", "epic-the-first-narrowing"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/narrowing-binding-mechanic.md"
 category: "specs"
-estimate: 5
+labels: ["specs", "phase0", "phase1", "player", "narrowing", "epic-the-first-narrowing"]
+write-id: "1784749024823-0.qyw492wf12o042e3ry"
+source: "kanban/tasks/narrowing-binding-mechanic.md"
+title: "Narrowing A: gravitational binding coupling + cost curve"
+priority: "P1"
+status: "blocked"
+estimate: "5"
+uuid: "narrowing-binding-mechanic"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Narrowing A: gravitational binding coupling + cost curve
@@ -43,4 +44,6 @@ candidate world — the mechanical substance of becoming gravitationally bound.
 
 ---
 Created 2026-07-22 (Claude): child A of The First Narrowing.
+
+Design decisions 2026-07-22 (Aaron): (1) binding cost curve = LITERAL shape from the world's escape-energy proxy (M5 surface gravity/mass), tuned scale only — heavier/denser worlds genuinely harder to leave; (2) pre-capture un-binding leaves a SMALL SUNK COST / world-line scar (spent Agency), so binding is a real decision; (3) TWO WORLDS: binding to one actively DECAYS binding to others — attention is zero-sum, you can only fall one way. Bake these into binding-step + cost curve.
 ---

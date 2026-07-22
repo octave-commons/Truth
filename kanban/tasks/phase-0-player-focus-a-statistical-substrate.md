@@ -1,13 +1,14 @@
 ---
-uuid: "phase-0-player-focus-a-statistical-substrate"
-title: "Player Focus A: statistical-cell substrate + lifecycle markers"
-status: "ready"
-priority: "P1"
-labels: ["specs", "phase0", "player", "epic-player-focus-promotion-demotion"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/phase-0-player-focus-a-statistical-substrate.md"
 category: "specs"
-estimate: 2
+labels: ["specs", "phase0", "player", "epic-player-focus-promotion-demotion"]
+write-id: "1784749578275-0.jifd3dtytvbm3vae75a"
+source: "kanban/tasks/phase-0-player-focus-a-statistical-substrate.md"
+title: "Player Focus A: statistical-cell substrate + lifecycle markers"
+priority: "P1"
+status: "done"
+estimate: "2"
+uuid: "phase-0-player-focus-a-statistical-substrate"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Player Focus A: statistical-cell substrate + lifecycle markers
@@ -54,4 +55,8 @@ lifecycle markers that promotion/demotion will emit — nothing that ticks yet.
 ---
 Created 2026-07-22 (Claude): child A of the Player Focus rewrite. See parent for
 the full discovery plan (false-start finding + target `:focus-zone` design).
+
+Triage 2026-07-22 (Claude): M5 chain done + committed; source tree clean. Dispatching Sonnet impl agent for the substrate (the foundation the whole Narrowing ladder stands on). ready -> in_progress.
+
+Complete + independently verified 2026-07-22 (Claude). field-cell-test 6 tests green; architecture-test 6/23 green; full suite 664/13519 (was 658/13499) 0 failures; write-conflicts {} (unchanged — no new writer). New domain.field ns (spawn-regional-cell: statistical-mass + field-zone :regional + position, no matter-state); markers spawn-request-promotion/consumed-demote registered in bootstrap spawn/consumed lists; promoted-from-cell + law/field schemas. GUARD PASSED: no sweep filters on c/position-alone or c/mass-alone that would catch a cell (cell carries statistical-mass, never c/mass/velocity/body-kind). Cell round-trips through materialize-lifecycle without perturbing siblings. Committed. in_progress -> done. Unblocks child B.
 ---

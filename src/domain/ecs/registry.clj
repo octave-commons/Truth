@@ -379,6 +379,21 @@
     :reads  #{c/matter-state c/position c/velocity c/mass}
     :writes #{c/consumed-escape}}
 
+   ;; Player Focus dual-representation: promotes overlapping regional cells
+   ;; into resolved clumps, and demotes previously-promoted clumps that have
+   ;; left the immediate focus radius back into their source cell. One system
+   ;; because both directions write c/statistical-mass. c/field-zone is set
+   ;; only at spawn time (via the spawn spec's :extra-components, like
+   ;; c/matter-state/c/body-kind on every other spawn-request.* type) rather
+   ;; than through this system's per-tick write-set, but is declared here as
+   ;; the sole owner since no other system ever writes it.
+   {:id     :focus-zone
+    :ns     'domain.genesis.promotion
+    :reads  #{c/observer c/position c/field-zone c/statistical-mass
+              c/matter-state c/mass c/velocity c/angular-momentum
+              c/promoted-from-cell c/radius c/temperature c/composition c/b-field}
+    :writes #{c/field-zone c/statistical-mass c/spawn-request-promotion c/consumed-demote}}
+
    ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position
    ;; — a pure Galilean shift, not a post-fold position write (spec §6).

@@ -1,11 +1,11 @@
 ---
 category: "specs"
 labels: ["fix", "phase0", "chemistry", "handoff", "epic"]
-write-id: "1784747762211-0.kyzjb0ropxhp61vrlqg"
+write-id: "1784749189389-0.941q2dnlnwqymrva8qa"
 source: "kanban/tasks/ecology-water-gate-snowline.md"
 title: "Ecology water/habitability gate is trivially satisfied"
 priority: "P2"
-status: "breakdown"
+status: "done"
 estimate: "21"
 uuid: "ecology-water-gate-snowline"
 created_at: "2026-07-06T16:21:51.000000000Z"
@@ -264,4 +264,6 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 Triage 2026-07-10: 21pt epic split into four ≤5pt children (phase1-4). Moved to breakdown as umbrella; children are ready.
 
 Epic progress 2026-07-22 (Claude): M5 handoff chain 3/4 done. Phase1 (material+thermal class — this ALSO retires the trivially-satisfied habitability-score>0.2 gate this epic's title flags), Phase2 (orbit-stability proxy), Phase3 (atmosphere retention, research-grounded) all DONE + committed. Phase4 (handoff-event) now unblocked -> ready, held for owner go-ahead. Epic closes when Phase4 lands. Branch: m5-ecology-handoff.
+
+Epic COMPLETE 2026-07-22 (Claude): all 4 M5 handoff children done + committed on branch m5-ecology-handoff (c1b88c5, a73b483, e9f52c2). Phase1 material+thermal class (also retired the trivially-satisfied habitability-score>0.2 gate this epic's title flagged), Phase2 orbit-stability proxy, Phase3 atmosphere retention (research-grounded), Phase4 :planet-candidate record + :phase0-handoff event + :success ending. Phase 0 now produces a physically-grounded planet-candidate contract — the doorway into the planetary phase (see docs/designs/the-first-narrowing-star-to-planet.md §5 and planetary-voxel-substrate.md). Closing epic.
 ---
