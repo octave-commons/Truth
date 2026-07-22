@@ -1,7 +1,8 @@
 # Planetary Voxel Substrate
 
 **Path:** `docs/designs/planetary-voxel-substrate.md`
-**Status:** proposed (2026-07-22)
+**Status:** approved (2026-07-22) — §7 questions 1-3 resolved by owner;
+6-slice breakdown approved, slices 1-3 in execution
 **Scope:** How a committed world's interior and surface become editable matter
 — voxels — under the existing focus-cone duality, seeded from the Phase 0
 `:planet-candidate` handoff, and how impacts, sculpting, mining, and
@@ -363,22 +364,30 @@ budget for carving a crater's worth of voxels inside a single tick; see §7.
 The research notes are the user's own exploratory conversation, not a
 finished spec — the following are genuine gaps, not filled in above:
 
-1. **Performance envelope.** No source gives a voxel count budget, a target
-   voxel size at "near-surface, Immediate zone" resolution, or a frame-time
-   budget for crater carving / mesh regeneration. `CLAUDE.md`'s fixed-60Hz
-   tick constraint means this needs an explicit budget before implementation
-   starts.
-2. **Deep-interior resolution boundary.** Source #1 says voxels apply to "a
-   band a few tens of km thick" under the surface, with mantle/core staying
-   in the macro field — but neither source defines the transition rule (is
-   it a fixed depth, a temperature isosurface, a function of local focus
-   intensity?) or what happens if the player tries to mine/dig past the
-   bottom of the voxel band (e.g. a very deep mineshaft in the far-future
-   character-scale mode).
-3. **Save/world-size.** No source addresses how a voxelized crust band is
-   persisted (sparse octree? region files? regenerate-on-demand from the
-   macro field plus a diff of player edits?) or what the storage cost looks
-   like for a planet the player has spent significant time sculpting.
+1. **Performance envelope.** RESOLVED 2026-07-22 (Aaron): **deferred edit
+   queue with a hard 2 ms/tick cap.** Voxel ops (carve, sculpt, mine) enqueue
+   edits; a budgeted drain applies ≤2 ms of work per tick, spilling the rest
+   to later ticks — a big impact's crater visibly *forms* over ~a second,
+   which is a feature (felt mass) not a bug. Budget constant lives in `law/`
+   as a tunable from day one. Original gap: no source gave a voxel count or
+   frame-time budget; `CLAUDE.md`'s fixed-60Hz tick required an explicit one.
+2. **Deep-interior resolution boundary.** RESOLVED 2026-07-22 (Aaron):
+   **focus-driven dynamic band.** Voxels exist only near the player's focus;
+   the depth boundary follows focus intensity — deeper play literally deepens
+   the world. This is the attention ontology applied to depth: the same rule
+   as the horizontal focus cone, projected downward. Consequence: the band
+   must persist/unpersist as focus moves, which makes the save representation
+   (item 3) load-bearing — unpersisted regions must round-trip through the
+   macro field + edit diff without loss. Original gap: neither source defined
+   the transition rule (fixed depth / isosurface / focus function) or what
+   happens digging past the band.
+3. **Save/world-size.** RESOLVED 2026-07-22 (Aaron): **field-seed + edit
+   diff.** Persist only the diff of player/collision edits against the
+   deterministically regenerable macro-field seed; load = regenerate +
+   replay. This is the statistical/voxel duality's natural persistence form
+   and the only option that survives item 2's persist/unpersist churn.
+   Original gap: no source addressed persistence representation or storage
+   cost.
 4. **Chemistry/mineral fidelity.** The mineral examples given (basalt,
    granite, ore, ice, regolith) are illustrative, not a closed taxonomy;
    there's no specified mapping from `law.composition` element fractions +
@@ -395,11 +404,12 @@ finished spec — the following are genuine gaps, not filled in above:
 
 ---
 
-## 8. Proposed board breakdown
+## 8. Board breakdown
 
-Not created here — proposed for the orchestrator to turn into kanban cards,
-in dependency order, each sized to fit the ≤5-point child-slice convention
-already used by the M5 epic (`ecology-water-gate-snowline.md`) breakdown.
+APPROVED 2026-07-22 (Aaron) — materialized as kanban cards, in dependency
+order, each sized to fit the ≤5-point child-slice convention already used by
+the M5 epic (`ecology-water-gate-snowline.md`) breakdown. Owner sequencing
+call: execute 1 → 2 → 3 first, hold 4–6 until the substrate proves out.
 
 | # | Slice title | Est | Scope | Depends on |
 |---|---|---|---|---|
