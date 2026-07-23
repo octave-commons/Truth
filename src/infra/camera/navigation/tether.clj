@@ -28,15 +28,16 @@
      frame tightens always works.
 
    GAPS (honest slice notes):
-   - This namespace's own `tether-step` is still actuated in :manual mode
-     only (`infra.dev.window.loop`). :fit-all and :follow-selection instead
-     reconcile with binding INSIDE `infra.camera.navigation.tracking`
-     (`blend-toward-binding`, narrowing-tether-default-camera-modes): their
-     own auto-target/distance is blended toward the same bound-world frame
-     this fn computes, by the same `tether-strength`, so the pull is not
-     erased. :track-largest-cluster deliberately does not reconcile — a
-     cluster-of-mass framing and a single bound world are different framings
-     by design.
+   - This namespace's own `tether-step` is actuated in :manual mode only
+     (`infra.dev.window.loop`). :fit-all, :follow-selection, and
+     :track-largest-cluster each compute their own target/distance from the
+     live bodies and do NOT reconcile with the binding tether — a prior
+     reconciliation (`blend-toward-binding`,
+     narrowing-tether-default-camera-modes) unconditionally overrode the
+     player's scroll-zoom and produced a target/distance feedback bounce
+     while bound (camera-bind-blend-regression-fix); it was removed rather
+     than patched. The tightening-frame feel outside :manual returns via the
+     camera following the gravity-bound spark, not a camera-side blend.
    - The tether reads the ONE deepest-bound world. Pre-capture oscillation
      between two near-equal candidates would seesaw the pull; the zero-sum
      decay in domain.narrowing makes that state transient, so no smoothing of
@@ -60,9 +61,7 @@
   "Desired orbit distance at full engagement, in world render radii: close
    enough that the bound world fills the frame, far enough not to clip (the
    min-approach floor of 2.5 radii still applies via tracking/min-approach-distance).
-   Delegates to `tracking/frame-margin`, shared with the auto camera modes'
-   bind-blend (narrowing-tether-default-camera-modes) so :manual and the auto
-   modes agree on how close 'fully bound' frames the world."
+   Delegates to `tracking/frame-margin`, the same constant :manual mode uses."
   tracking/frame-margin)
 
 (defn tether-strength

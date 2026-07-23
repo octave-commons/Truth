@@ -277,87 +277,47 @@
       (is (<= dist-step-at (* 1.05 dist-step-below))
           "distance tightening is continuous across the capture tick"))))
 
-;; --- Tether reconciliation in the default/auto modes ------------------------
-;; (narrowing-tether-default-camera-modes)
+;; --- Scroll-zoom stays authoritative in the auto modes -----------------------
+;; (camera-bind-blend-regression-fix: no auto-pull may override the player's
+;; own set distance while bound)
 
-(defn- world-with-bound-planet-and-a-distant-decoy
-  "Like `world-with-bound-planet`, plus a second, unbound world far in the
-   opposite direction — so :fit-all's OWN unblended centroid sits far from
-   the bound world, and pulling toward the bound world is only explained by
-   the bind-blend reconciliation, not coincidence. Returns
-   [world obs-eid bound-world-eid decoy-world-eid]."
-  []
-  (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
-        [w bound-eid] (seeder/spawn-clump w {:position [1.0e16 0.0 0.0]
-                                             :mass 1.0e24 :radius 6.0e8
-                                             :matter-state :planet})
-        [w decoy-eid] (seeder/spawn-clump w {:position [-1.0e17 0.0 0.0]
-                                             :mass 1.0e24 :radius 6.0e8
-                                             :matter-state :planet})]
-    [w obs-eid bound-eid decoy-eid]))
-
-(deftest test-fit-all-default-mode-tethers-to-bound-world-without-mode-switch
-  (testing "in :fit-all — reached here WITHOUT a mode-cycle key press, via the
-            case default in update-camera-for-world when :mode is absent —
-            partial binding measurably closes the gap to the bound world
-            across several ticks, even against a decoy world pulling
-            fit-all's own centroid the other way"
-    (let [[w obs-eid bound-eid _decoy-eid] (world-with-bound-planet-and-a-distant-decoy)
-          w-bound (ecs/put-component w obs-eid c/binding
-                                     {bound-eid (* 0.5 law/capture-threshold)})
-          settings (dissoc (assoc (cam/default-camera-settings) :fit-margin 1.6) :mode)
-          world-target [10.0 0.0 0.0] ;; 1e16 m / phase0-view-scale
-          bound-cams (rest (take 8 (iterate #(cam/update-camera-for-world % w-bound settings)
-                                            (cam/make-camera 500.0))))
-          unbound-cams (rest (take 8 (iterate #(cam/update-camera-for-world % w settings)
-                                              (cam/make-camera 500.0))))
-          bound-dists (map #(sp/dist (:target %) world-target) bound-cams)
-          unbound-dists (map #(sp/dist (:target %) world-target) unbound-cams)]
-      (is (not (contains? settings :mode))
-          "sanity: this settings map has no :mode key at all — no mode-cycle key needed")
-      (is (< (last bound-dists) (first bound-dists))
-          "several ticks of the default (absent-:mode => :fit-all) case, untouched by the
-           player, visibly close the gap to the bound world")
-      (is (< (last bound-dists) (last unbound-dists))
-          "binding pulls the frame measurably closer to the bound world than the
-           decoy-skewed unbound centroid would, over the same ticks"))))
-
-(deftest test-fit-all-full-binding-locks-onto-the-bound-world
-  (testing "at full engagement (capture threshold) the blend result IS the
-            bound world's frame, overriding a decoy world's pull on the
-            unblended centroid entirely"
-    (let [[w obs-eid bound-eid _decoy-eid] (world-with-bound-planet-and-a-distant-decoy)
-          w-bound (ecs/put-component w obs-eid c/binding
-                                     {bound-eid law/capture-threshold})
-          settings (assoc (cam/default-camera-settings) :mode :fit-all)
-          cam1 (cam/update-camera-for-world (cam/make-camera 500.0) w-bound settings)]
-      (is (< (sp/dist (:target cam1) [10.0 0.0 0.0]) 1.0e-6)
-          "fully bound: the frame tracks the bound world exactly, not the decoy-skewed centroid"))))
-
-(deftest test-fit-all-unbound-is-unaffected
-  (testing "with no binding, :fit-all keeps its own framing untouched by the
-            bind-blend reconciliation"
-    (let [[w _obs-eid _world-eid] (world-with-bound-planet)
+(deftest test-fit-all-does-not-auto-pull-distance-while-bound
+  (testing "even at full binding engagement, :fit-all's own centroid framing
+            computes the same distance as when unbound — no auto-pull toward
+            the bound world's close-framing distance"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid law/capture-threshold})
           settings (assoc (cam/default-camera-settings) :mode :fit-all)
           cam0 (cam/make-camera 500.0)
-          cam1 (cam/update-camera-for-world cam0 w settings)]
-      (is (not= (:target cam0) (:target cam1)) "fit-all still frames the system as before"))))
+          cam-bound (cam/update-camera-for-world cam0 w-bound settings)
+          cam-unbound (cam/update-camera-for-world cam0 w settings)]
+      (is (= (:distance cam-bound) (:distance cam-unbound))
+          "a bind-blend would have lerped the bound result toward ~4 body radii
+           (2.4e-6 ru here), overriding the player's zoom; without it, binding
+           depth has no effect on :fit-all's distance computation"))))
 
-(deftest test-follow-selection-tethers-toward-bound-world-when-selection-differs
-  (testing "binding pulls :follow-selection's target toward the bound world even
-            when the player's selection is a DIFFERENT body"
-    (let [[w obs-eid bound-eid decoy-eid] (world-with-bound-planet-and-a-distant-decoy)
-          w-bound (ecs/put-component w obs-eid c/binding
-                                     {bound-eid law/capture-threshold})
-          cam0 (assoc (cam/make-camera 500.0) :target [0.0 0.0 0.0])
+(deftest test-follow-selection-does-not-auto-pull-distance-while-bound
+  (testing "binding to a DIFFERENT world than the one being followed never
+            drags the followed body's clamped distance toward the bound
+            world's close-framing distance"
+    (let [[w obs-eid bound-eid decoy-eid]
+          (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
+                [w bound-eid] (seeder/spawn-clump w {:position [1.0e16 0.0 0.0]
+                                                     :mass 1.0e24 :radius 6.0e8
+                                                     :matter-state :planet})
+                [w decoy-eid] (seeder/spawn-clump w {:position [-1.0e17 0.0 0.0]
+                                                     :mass 1.0e24 :radius 6.0e8
+                                                     :matter-state :planet})]
+            [w obs-eid bound-eid decoy-eid])
+          w-bound (ecs/put-component w obs-eid c/binding {bound-eid law/capture-threshold})
+          scroll-distance 500.0
+          cam0 (assoc (cam/make-camera scroll-distance) :target [0.0 0.0 0.0])
           settings (assoc (cam/default-camera-settings)
                           :mode :follow-selection :follow-eid decoy-eid)
-          cam-bound (cam/update-camera-for-world cam0 w-bound settings)
-          cam-unbound (cam/update-camera-for-world cam0 w settings)
-          world-target [10.0 0.0 0.0]]
-      (is (< (sp/dist (:target cam-bound) world-target)
-             (sp/dist (:target cam-unbound) world-target))
-          "the bind-blend pulls the followed-decoy's target measurably closer to the bound world"))))
+          cam1 (cam/update-camera-for-world cam0 w-bound settings)]
+      (is (= (:distance cam1) (:distance cam0))
+          "the player's own scroll distance (already above the min-approach
+           floor) passes through untouched, regardless of binding depth"))))
 
 (deftest test-tether-reengages-gently-after-a-fight
   (testing "after the player releases input far from the world, the first resumed step is small"

@@ -12,7 +12,6 @@
    [clojure.math :as math]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
-   [domain.narrowing :as narrowing]
    [domain.player :as player]
    [infra.camera.navigation.input :as input]
    [infra.camera.projection :as p]
@@ -124,71 +123,31 @@
 
 (def ^:const frame-margin
   "Desired orbit distance at full binding-tether engagement, in world render
-   radii — shared by the binding tether (`infra.camera.navigation.tether`)
-   and the auto camera modes' bind-blend below, so both agree on how close
-   'fully bound' frames the world."
+   radii — shared with the binding tether (`infra.camera.navigation.tether`)
+   so both agree on how close 'fully bound' frames the world."
   4.0)
-
-;; ---------------------------------------------------------------------------
-;; Binding tether reconciliation (narrowing-tether-default-camera-modes)
-;;
-;; The auto camera modes (:fit-all, :follow-selection) compute their own
-;; target/distance every frame from the live bodies, independent of the
-;; binding tether — which would otherwise erase any tether pull the instant
-;; the next auto-frame overwrites :target/:distance. `blend-toward-binding`
-;; is the single reconciliation point: once bound, it lerps the mode's own
-;; computed target/distance toward the bound world's frame by
-;; `tether-strength`, continuous in binding depth exactly like
-;; `infra.camera.navigation.tether/tether-step` — so the tether pulls in
-;; :fit-all and :follow-selection without a manual mode switch, and there is
-;; no jump-cut at any binding depth including capture.
-;; ---------------------------------------------------------------------------
-
-(defn- bound-world-frame
-  "The [target-ru distance-ru strength] the binding tether would produce for
-   the observer's deepest-bound world, or nil when unbound (no binding, zero
-   strength, or the bound world has no position). Mirrors
-   `infra.camera.navigation.tether/tether-step`'s target/distance math so the
-   auto modes can blend toward the same frame instead of a separate one."
-  [world]
-  (when-let [[eid b] (narrowing/deepest-binding world)]
-    (let [s (narrowing/tether-strength b)]
-      (when (pos? s)
-        (when-let [pos (ecs/get-component world eid c/position)]
-          (let [target (mapv #(/ (double %) p/phase0-view-scale) pos)
-                r-ru (/ (double (or (ecs/get-component world eid c/radius) 0.0))
-                        p/phase0-view-scale)
-                desired (max (* frame-margin r-ru) (min-approach-distance r-ru))]
-            [target desired s]))))))
-
-(defn- blend-toward-binding
-  "Blend an auto-mode's computed `target`/`dist` toward the bound world's
-   frame, weighted DIRECTLY by tether strength (not an additional per-frame
-   rate): at strength 0 the auto target/distance pass through unchanged; at
-   strength 1.0 (capture) the result IS the bound world's frame — 'the
-   camera should track the bound world', literally, once fully engaged.
-   Strength itself only ever changes gradually tick to tick (accrual is slow,
-   `domain.narrowing/binding-step`), so the blended target is continuous
-   across ticks with no jump-cut — the same guarantee
-   `infra.camera.navigation.tether/tether-step` makes, applied to a lerp
-   weight instead of a lerp rate because the auto modes' own target math is
-   an independent, competing pull every frame that a small additional rate
-   would not reliably win against. Returns [target dist] unchanged when
-   unbound."
-  [world target dist]
-  (if-let [[b-target b-dist s] (bound-world-frame world)]
-    [(vlerp target b-target s) (lerp dist b-dist s)]
-    [target dist]))
 
 ;; ---------------------------------------------------------------------------
 ;; Camera mode updates
 ;; ---------------------------------------------------------------------------
 
+(defn- lerp-toward
+  "Lerp `camera`'s :target toward `pos`, matching
+   `follow-selection-target`'s smoothing pattern — fast but continuous, never
+   a hard snap. Used to damp position jitter (e.g. the observer's spark
+   position) before it reaches the camera."
+  [camera pos t]
+  (vlerp (:target camera [0.0 0.0 0.0]) pos t))
+
 (defn update-camera-manual
-  "Re-centre the manual camera on the observer render position."
+  "Re-centre the manual camera on the observer render position.
+
+   Lerps toward the observer position rather than snapping — a hard `assoc`
+   here let spark-position jitter (physically integrated under the spark
+   redesign) pass straight through to the camera, producing visible bounce."
   [camera world]
   (-> camera
-      (assoc :target (observer-render-position world))
+      (assoc :target (lerp-toward camera (observer-render-position world) 0.35))
       input/update-camera-position))
 
 (defn- follow-selection-target
@@ -215,11 +174,9 @@
 
 (defn update-camera-follow-selection
   "Ride on the selected body, clamping orbit distance no closer than a couple
-   of radii. Falls back to manual behaviour when the selection is gone. Once
-   the observer is bound to a world (`domain.narrowing/deepest-binding`), the
-   computed target/distance blend toward the bound world's frame by tether
-   strength (`blend-toward-binding`) so the binding tether pulls this mode
-   too, without a manual mode switch."
+   of radii — the player's own scroll-set distance is authoritative; this
+   only floors it so the camera cannot clip inside the body. Falls back to
+   manual behaviour when the selection is gone."
   [camera world settings]
   (let [eid (:follow-eid settings)]
     (if-not (and eid (ecs/get-component world eid c/position))
@@ -227,43 +184,31 @@
       (let [r-ru (/ (double (or (ecs/get-component world eid c/radius) 0.0))
                     p/phase0-view-scale)
             target' (follow-selection-target camera world settings eid)
-            dist' (max (:distance camera) (min-approach-distance r-ru))
-            [target'' dist''] (blend-toward-binding world target' dist')]
+            dist' (max (:distance camera) (min-approach-distance r-ru))]
         (-> camera
-            (assoc :target target'' :distance dist'')
+            (assoc :target target' :distance dist')
             input/update-camera-position)))))
 
 (defn- tracking-camera-update
   "Shared body for tracking modes: compute target/distance from bodies, lerp
-   toward them, and reset yaw/pitch to the manual defaults. When `bind-blend?`
-   is true and the observer is bound to a world, the result additionally
-   blends toward that world's frame by tether strength
-   (`blend-toward-binding`) so the binding tether pulls this mode too."
-  [camera world settings target-fn radius-floor & {:keys [bind-blend?]}]
+   toward them, and reset yaw/pitch to the manual defaults."
+  [camera world settings target-fn radius-floor]
   (let [bodies (bodies->render world p/phase0-view-scale)
         target (target-fn bodies)
         radius (max radius-floor (:radius target))
         desired-dist (distance-for-radius radius 60.0 (:fit-margin settings 1.6))
         t (double (:smoothing settings 0.06))
         target' (vlerp (:target camera [0.0 0.0 0.0]) (:center target) t)
-        dist' (lerp (:distance camera) desired-dist t)
-        [target'' dist''] (if bind-blend?
-                            (blend-toward-binding world target' dist')
-                            [target' dist'])]
+        dist' (lerp (:distance camera) desired-dist t)]
     (-> camera
-        (assoc :target target''
-               :distance dist''
+        (assoc :target target'
+               :distance dist'
                :yaw (double (:manual-yaw settings -90.0))
                :pitch (double (:manual-pitch settings -20.0)))
         input/update-camera-position)))
 
 (defn update-camera-track-cluster
-  "Frame the densest mass cluster.
-
-   Does NOT reconcile with the binding tether (`bind-blend?` false): the
-   cluster-of-mass target and a single bound world are different framings by
-   design, so this mode degrades gracefully by simply continuing its own
-   framing rather than fighting the tether for the target."
+  "Frame the densest mass cluster."
   [camera world settings]
   (tracking-camera-update
    camera world settings
@@ -273,13 +218,9 @@
    5.0))
 
 (defn update-camera-fit-all
-  "Frame the whole system. Once the observer is bound to a world, blends
-   toward that world's frame by tether strength (`bind-blend?` true) — the
-   default startup mode (`:fit-all`) therefore feels the tether without a
-   manual mode switch."
+  "Frame the whole system."
   [camera world settings]
   (tracking-camera-update
    camera world settings
    #(fit-all-bounds % (:fit-percentile settings 0.90))
-   10.0
-   :bind-blend? true))
+   10.0))
