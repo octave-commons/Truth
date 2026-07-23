@@ -1,7 +1,7 @@
 ---
 uuid: "spark-planet-binding"
 title: "Spark: bind the observer to a focused planet (co-moves, no flicker)"
-status: "todo"
+status: "review"
 priority: "P1"
 labels: ["domain", "narrowing", "player", "integration-debt"]
 created_at: "2026-07-23T00:00:00Z"

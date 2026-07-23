@@ -8,6 +8,8 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [domain.orbital.system :as orbital]
+   [domain.narrowing :as narrowing]
+   [domain.physics.cache :as pcache]
    [domain.player :as player]
    [domain.intervention :as intervention]
    [infra.inspect :as inspect]
@@ -126,20 +128,32 @@
 (declare sync-cursor-mode!)
 
 (defn- sync-observer-focus-to-camera
-  "In non-manual camera modes, snap the observer spark and its focus to the
-   camera target.  In manual mode leave the focus under player control."
+  "In non-manual camera modes, snap the observer's focus to the camera
+   target.  In manual mode leave the focus under player control.
+
+   Position: once the spark is bound to a world (`domain.narrowing/deepest-
+   binding` non-nil — see the spring-tether step in `render-frame-once`,
+   which already wrote the spark's real, spring-pulled `:position` this
+   frame), this DEFERS to that real position instead of snapping it to the
+   camera target — spark-planet-binding's minimal fix to stop the camera
+   puppet from clobbering the bound position. Full reconciliation of the
+   spark's position with every camera mode (the auto-tracking modes still
+   move the CAMERA target independently of the spark) is
+   `narrowing-tether-default-camera-modes`'s job; unbound sparks keep the
+   pre-existing camera-puppet behavior unchanged."
   [world camera ctx mode]
   (if-let [obs (player/get-observer world)]
     (if (= :manual mode)
       world
-      (let [target (units/render->world ctx (:target camera))]
+      (let [target (units/render->world ctx (:target camera))
+            bound?  (some? (narrowing/deepest-binding world))]
         (player/put-observer
          world
-         (-> obs
-             (assoc :position target)
-             (assoc :focus-position target)
-             (assoc :focus-radius (:focus-radius obs))
-             (assoc :focus-intensity (:focus-intensity obs))))))
+         (cond-> obs
+           (not bound?) (assoc :position target)
+           true         (assoc :focus-position target)
+           true         (assoc :focus-radius (:focus-radius obs))
+           true         (assoc :focus-intensity (:focus-intensity obs))))))
     world))
 
 (defn- sync-cursor-mode!
@@ -272,6 +286,24 @@
                             (swap! world-atom player/update-observer #(player/drift % velocity wall-dt))
                             (swap! world-atom player/update-observer
                                    (fn [o] (player/set-focus o (:position o) (:focus-radius o) (:focus-intensity o))))))
+              w         @world-atom
+              ;; Spark<->world spring tether (spark-planet-binding, approach B):
+              ;; the observer's OWN position is pulled toward the deepest-bound
+              ;; world's predicted position every frame, paced on wall-dt like
+              ;; player/drift above — a player-experienced motion, not a
+              ;; simulated body. `input-active?` (WASD flying this frame) wins
+              ;; outright, same rule the camera tether follows.
+              _         (let [db         (narrowing/deepest-binding w)
+                              target-eid (first db)
+                              strength   (if db (narrowing/tether-strength (second db)) 0.0)
+                              target-pos (when target-eid
+                                           ((pcache/predicted-position-fn w) target-eid))]
+                          (swap! world-atom player/update-observer
+                                 #(narrowing/observer-motion-step
+                                   % {:target-pos target-pos
+                                      :strength strength
+                                      :dt wall-dt
+                                      :input-active? input-active?})))
               w         @world-atom
               _         (swap! camera-atom cam/update-camera-for-world w cam-settings)
               _         (when (= :manual (:mode cam-settings))

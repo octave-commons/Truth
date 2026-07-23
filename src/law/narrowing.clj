@@ -170,3 +170,25 @@
 ;; proxy — this factor is the only tuned knob (design decision 2026-07-22,
 ;; Aaron, on the card). At 1.0e-6, releasing an Earth-like world
 ;; (GM/R ~ 6.3e7 J/kg) at full binding costs ~63 Agency.
+
+;; --- Spark<->world spring tether (spark-planet-binding, approach B) -----------
+;; The observer ("spark") has a real, tick-integrated position pulled toward
+;; the deepest-bound world's PREDICTED position by a spring force scaled by
+;; `domain.narrowing/tether-strength` — see domain.narrowing/spring-accel and
+;; /spark-binding-step. This is a player-experienced motion, paced like
+;; domain.player.focus/drift on wall-clock dt (the spark's own felt
+;; responsiveness), not the physics fan-out's dilated `:sim/dt` — see the step
+;; fn's docstring.
+
+(def ^:const spark-spring-k 4.0)
+;; Spring constant (1/s^2) at FULL tether engagement (strength 1.0); scales
+;; linearly with strength, so an unbound or barely-bound spark feels almost no
+;; pull. At k=4.0 the natural angular frequency is 2 rad/s (~0.5 s
+;; characteristic approach time) — felt as a firm but not instant catch-up.
+
+(def ^:const spark-min-damping 0.5)
+;; Floor on the velocity-damping coefficient (1/s), applied even at zero
+;; engagement so a spark that goes from bound to free coasts to rest instead
+;; of drifting forever on leftover spring velocity. Above this floor, damping
+;; is set to the CRITICAL value for the current effective k (2*sqrt(k)) so the
+;; approach is monotonic at every engagement level — no overshoot/oscillation.

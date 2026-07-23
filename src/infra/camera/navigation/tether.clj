@@ -39,11 +39,10 @@
   (:require
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
-   [domain.player :as player]
+   [domain.narrowing :as narrowing]
    [infra.camera.navigation.input :as input]
    [infra.camera.navigation.tracking :as tracking]
    [infra.camera.projection :as p]
-   [law.narrowing :as law]
    [shape.spatial :as sp]))
 
 (def ^:const tether-rate
@@ -62,20 +61,18 @@
   "Tether engagement in [0,1] for a binding depth `b`: `b / capture-threshold`
    clamped. Reaches 1.0 exactly at the capture threshold, so the tether is
    already fully engaged when `:event/world-commitment` fires — capture is
-   not a camera event."
+   not a camera event. Delegates to `domain.narrowing/tether-strength`
+   (shared with the spark's own spring tether, spark-planet-binding, so both
+   fully engage at the same instant)."
   [b]
-  (-> (/ (double (or b 0.0)) (double law/capture-threshold))
-      (max 0.0)
-      (min 1.0)))
+  (narrowing/tether-strength b))
 
 (defn deepest-binding
   "The [world-eid binding] pair with the greatest binding depth on the
-   observer's `c/binding` map, or nil when there is no observer or no binding."
+   observer's `c/binding` map, or nil when there is no observer or no binding.
+   Delegates to `domain.narrowing/deepest-binding`."
   [world]
-  (when-let [obs-eid (player/observer-entity world)]
-    (let [binding (ecs/get-component world obs-eid c/binding)]
-      (when (seq binding)
-        (apply max-key (fn [[_ b]] (double b)) binding)))))
+  (narrowing/deepest-binding world))
 
 (defn- vlerp
   "Component-wise lerp between 3-vectors a and b by t."
