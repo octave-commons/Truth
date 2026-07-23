@@ -314,6 +314,16 @@
 ;; fan-out system (domain.voxel.sculpt), and auto-cleared when empty.
 (def voxel-sculpt-request :component/voxel.sculpt-request)
 
+;; `voxel-carve-request` lives on the committed world entity: the
+;; `law.crater/carve-request-schema` record — carve `:plans` awaiting the
+;; `:voxel-focus` fold, reported `:disruptions` (the sub-catastrophic stop),
+;; and the `:seen` absorb-merge packet idempotency set — written SOLELY by
+;; the `:voxel-carve` fan-out system (domain.voxel.carve, Voxel 5) from the
+;; sticky `absorb-merge` collision channel, and read one Jacobi tick stale
+;; by `:voxel-focus` (the producer-suffixed request-channel pattern, the
+;; voxel-sculpt-request precedent).
+(def voxel-carve-request :component/voxel.carve-request)
+
 ;; --- Render -----------------------------------------------------------------
 (def renderable   :component/renderable)
 (def cell-id      :component/cell-id)

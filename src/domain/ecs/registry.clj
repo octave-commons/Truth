@@ -434,11 +434,15 @@
     ;; Voxel 4: also reads `c/voxel-sculpt-request` (one tick stale, the
     ;; producer-suffixed request channel) and folds the paid sculpt ops
     ;; into the field it owns + the queue it owns.
+    ;; Voxel 5: also reads `c/voxel-carve-request` (one tick stale, the
+    ;; collision-carve request channel) and folds its plans + melt/vapor
+    ;; cooling into `:apply-edits` jobs, provenance `:collision`.
     {:id     :voxel-focus
      :ns     'domain.voxel.focus
      :reads  #{c/observer c/position c/planet-candidate c/commitment-state
                c/voxel-field c/voxel-band c/voxel-edit-queue
-               c/voxel-edit-diffs c/voxel-sculpt-request}
+               c/voxel-edit-diffs c/voxel-sculpt-request
+               c/voxel-carve-request}
      :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
                c/voxel-edit-diffs}}
 
@@ -453,6 +457,21 @@
      :ns     'domain.voxel.sculpt
      :reads  #{c/commitment-state c/voxel-sculpt-request}
      :writes #{c/voxel-sculpt-request}}
+
+    ;; Voxel 5: collision shock → voxel carving (design
+    ;; planetary-voxel-substrate.md §6). Classifies absorb-merge packets
+    ;; on the committed world (the durable collision record — the ledger
+    ;; event is diffed away at the write-set boundary) through the
+    ;; `law.crater` scaling laws into carve plans / disruption reports.
+    ;; Sole writer of `c/voxel-carve-request`; reads its own prior output
+    ;; one tick stale for the `:seen` idempotency set (the absorb-merge
+    ;; channel is sticky — collision-detection never clears it).
+    {:id     :voxel-carve
+     :ns     'domain.voxel.carve
+     :reads  #{c/commitment-state c/planet-candidate c/voxel-field
+               c/voxel-band c/absorb-merge c/position c/velocity
+               c/voxel-carve-request}
+     :writes #{c/voxel-carve-request}}
 
     ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position

@@ -26,6 +26,7 @@
    [domain.narrowing :as narrowing]
    [domain.voxel.focus :as voxel-focus]
    [domain.voxel.sculpt :as voxel-sculpt]
+   [domain.voxel.carve :as voxel-carve]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
    [domain.physics.cache :as cache]))
@@ -90,7 +91,11 @@
       ;; Voxel 4: god-scale sculpting — translates the paid ops on the
       ;; `:voxel/sculpt-ops` world key into the `c/voxel-sculpt-request`
       ;; channel the voxel-focus fold consumes one Jacobi tick later.
-      (voxel-sculpt/sculpt-system)
+       (voxel-sculpt/sculpt-system)
+       ;; Voxel 5: collision shock → voxel carving. Classifies absorb-merge
+       ;; packets on the committed world into `c/voxel-carve-request` carve
+       ;; plans the voxel-focus fold consumes one Jacobi tick later.
+       (voxel-carve/carve-system)
       ;; Voxel 3: the committed world's focus band. Runs after :commitment
       ;; and :handoff, whose outputs (c/commitment-state, c/planet-
       ;; candidate) it reads one tick Jacobi-stale.

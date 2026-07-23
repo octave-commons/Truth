@@ -59,6 +59,7 @@
     [domain.interior :as interior]
     [domain.player :as player]
     [domain.voxel.band :as band]
+    [domain.voxel.carve :as carve]
     [domain.voxel.queue :as queue]
     [domain.voxel.sculpt :as sculpt]
     [law.voxel :as voxel]
@@ -244,13 +245,27 @@
                 ;; the producer-suffixed request channel and fold into the
                 ;; two columns this system owns — the field (biased) and the
                 ;; queue (derived local edits enqueued under the band).
-                ops     (ecs/get-component world eid c/voxel-sculpt-request)
-                {:keys [field jobs]} (sculpt/fold-ops seed band0 ops)
-                target  (when (and obs (:focus-position obs))
-                          (band/band-target obs field
-                                            (sp/v- (:focus-position obs) position)))
-                queue1  (maybe-enqueue-retarget queue0 band0 target)
-                queue2  (into queue1 jobs)
+                 ops     (ecs/get-component world eid c/voxel-sculpt-request)
+                 {:keys [field jobs]} (sculpt/fold-ops seed band0 ops)
+                 ;; Voxel 5: collision carve plans arrive one Jacobi tick
+                 ;; stale on the producer-suffixed request channel and fold
+                 ;; into `:apply-edits` jobs, provenance `:collision`; melt/
+                 ;; vapor voxels in the band re-cool every tick through the
+                 ;; same channel (design §6 step 4). ORDER IS LOAD-BEARING:
+                 ;; cooling jobs enqueue BEFORE carve jobs so the carve wins
+                 ;; per voxel — a pre-existing :melt voxel inside a fresh
+                 ;; bowl must end carved (nil), not resurrected to cooled
+                 ;; :solid by a later-draining cooling edit (the queue is
+                 ;; strict FIFO, later job wins per voxel).
+                 carve-req    (ecs/get-component world eid c/voxel-carve-request)
+                 carve-jobs   (carve/fold-plans field band0 (:plans carve-req))
+                 cooling-jobs (carve/cooling-jobs field band0
+                                                  (double (or (:sim/dt world) 0.0)))
+                 target  (when (and obs (:focus-position obs))
+                           (band/band-target obs field
+                                             (sp/v- (:focus-position obs) position)))
+                 queue1  (maybe-enqueue-retarget queue0 band0 target)
+                 queue2  (into queue1 (concat jobs cooling-jobs carve-jobs))
                 state'  (queue/drain {:band band0 :diffs diffs0 :queue queue2}
                                      voxel/edit-budget-ms-per-tick
                                      (fn [s job] (apply-job field (:tick world) s job)))
