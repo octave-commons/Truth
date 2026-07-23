@@ -68,9 +68,10 @@
   "Tether engagement in [0,1] for a binding depth `b`: `b / capture-threshold`
    clamped. Reaches 1.0 exactly at the capture threshold, so the tether is
    already fully engaged when `:event/world-commitment` fires — capture is
-   not a camera event. Delegates to `domain.narrowing/tether-strength`
-   (shared with the spark's own spring tether, spark-planet-binding, so both
-   fully engage at the same instant)."
+   not a camera event. Delegates to `domain.narrowing/tether-strength` (the
+   shared binding-depth reading; the spark's own spring tether that used to
+   share it was deleted in spark-redesign card 4 — the spark is a
+   gravity-bound ECS body now)."
   [b]
   (narrowing/tether-strength b))
 

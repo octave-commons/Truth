@@ -229,16 +229,15 @@
           c/binding-scar {obs-eid scars}})
        {}))})
 
-;; --- Spark<->world spring tether (spark-planet-binding, approach B) -----------
-;; The observer ("spark") is NOT an ECS body; its state is the singleton
-;; c/observer map (domain.player.state/create-observer). These fns are pure
-;; steps called from the infra dev loop alongside domain.player.focus/drift —
-;; NOT a fan-out emitter (there is no per-tick component write-set here; see
-;; kanban/tasks/spark-planet-binding.md's "follow the drift precedent"
-;; instruction). Shared with the camera's binding tether
-;; (infra.camera.navigation.tether), which delegates its own tether-strength /
-;; deepest-binding to these so both the frame and the spark fully engage at
-;; the same instant, from the same reading of binding depth.
+;; --- Binding-depth readers (shared with the camera tether) ------------------
+;; `tether-strength` and `deepest-binding` are read by the camera's binding
+;; tether (infra.camera.navigation.tether) so the frame fully engages at the
+;; same instant capture fires, from the same reading of binding depth. The
+;; spark's OWN spring tether (spark-binding-step / observer-motion-step /
+;; standoff-position, spark-planet-binding approach B) was DELETED by
+;; spark-redesign card 4 (kanban/tasks/spark-as-gravity-bound-body.md): the
+;; spark is now a first-class gravity-bound ECS body — physics moves it, no
+;; puppet spring.
 
 (defn tether-strength
   "Tether/spring engagement in [0,1] for binding depth `b`: `b /
@@ -260,86 +259,6 @@
     (let [binding (ecs/get-component world obs-eid c/binding)]
       (when (seq binding)
         (apply max-key (fn [[_ b]] (double b)) binding)))))
-
-(defn standoff-position
-  "A point offset from `center` toward `toward` by `radius *
-   law/spark-standoff-factor` world meters — the minimal de-occlusion fix for
-   the bound spark (spark-planet-binding's deferred gap): spring-settling
-   exactly at a bound world's CENTER leaves the spark's sprite depth-occluded
-   behind the true-scale sphere, since nothing draws it in front. Using this
-   as the spring TARGET instead keeps the settled spark just outside the
-   world's near surface toward `toward` (the caller passes the camera's
-   world position, so the spark settles on the camera-facing side and stays
-   visible), rather than the sphere's exact center.
-
-   Falls back to `center` unmodified when `radius` is non-positive or
-   `toward` coincides with `center` (no direction to offset along, e.g. no
-   camera reading yet)."
-  [center radius toward]
-  (let [r (double (or radius 0.0))
-        d (sp/v- toward center)
-        len (sp/len d)]
-    (if (or (<= r 0.0) (< len 1.0e-6))
-      center
-      (sp/v+ center (sp/v* d (/ (* r law/spark-standoff-factor) len))))))
-
-(defn spring-accel
-  "Spring acceleration (m/s^2) pulling the spark from `pos` (with current
-   `velocity`) toward `target-pos`, scaled by tether strength `s` in [0,1]
-   (see `tether-strength`). The effective spring constant `k` scales linearly
-   with `s` (`law/spark-spring-k * s`); damping is set to the CRITICAL value
-   for that `k` (`2*sqrt(k)`, floored at `law/spark-min-damping`) so the
-   approach never overshoots at any engagement level, including the free
-   (s=0) case where only residual velocity bleeds off."
-  [pos velocity target-pos s]
-  (let [s (-> (double s) (max 0.0) (min 1.0))
-        k (* law/spark-spring-k s)
-        c (max law/spark-min-damping (* 2.0 (Math/sqrt k)))
-        d (sp/v- target-pos pos)]
-    (sp/v- (sp/v* d k) (sp/v* velocity c))))
-
-(defn spark-binding-step
-  "Advance the observer's spring-bound position by one step. Pure.
-
-   `observer` reads `:position` and `:spark-velocity` (defaults to zero).
-   `target-pos` is the deepest-bound world's PREDICTED position (a
-   `domain.physics.cache/predicted-position-fn` read in the caller — aims
-   where the body WILL be, cutting Jacobi lag), or nil when there is nothing
-   to pull toward. `strength` is `tether-strength` of the deepest binding
-   (0 when unbound). `dt` is the elapsed seconds for this step — paced like
-   `domain.player.focus/drift` on WALL-CLOCK dt, the spark's own felt
-   responsiveness, not the physics fan-out's dilated `:sim/dt` (the spark is a
-   player-experienced motion, not a simulated body).
-
-   Semi-implicit Euler: v' = v + a*dt; pos' = pos + v'*dt. When `target-pos`
-   is nil, the target collapses to the current position (zero spring
-   displacement) so only damping acts — existing velocity decays toward rest
-   instead of the spark snapping or drifting forever. Returns `observer` with
-   `:position` and `:spark-velocity` replaced."
-  [{:keys [position spark-velocity] :as observer} target-pos strength dt]
-  (let [v0     (or spark-velocity (sp/vec3 0 0 0))
-        dt     (double dt)
-        target (or target-pos position)
-        a      (spring-accel position v0 target strength)
-        v1     (sp/v+ v0 (sp/v* a dt))
-        pos1   (sp/v+ position (sp/v* v1 dt))]
-    (assoc observer :position pos1 :spark-velocity v1)))
-
-(defn observer-motion-step
-  "One frame of the spark's spring-tether motion — the exclusive owner of the
-   observer's spring integration, called from the infra dev loop alongside
-   `domain.player.focus/drift`. Pure.
-
-   Returns `observer` UNCHANGED when `:input-active?` is true: the player is
-   actively flying (WASD) this frame, and player input wins outright — same
-   rule `infra.camera.navigation.tether/tether-step` follows for the camera.
-   The spark never fights the player. Otherwise delegates to
-   `spark-binding-step` with `:target-pos`, `:strength`, and `:dt` from
-   `opts`."
-  [observer {:keys [target-pos strength dt input-active?]}]
-  (if input-active?
-    observer
-    (spark-binding-step observer target-pos strength dt)))
 
 ;; --- Commitment horizon (child B) --------------------------------------------
 

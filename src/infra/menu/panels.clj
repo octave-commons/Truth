@@ -42,7 +42,7 @@
                       (long (math/floor (double (or (:resonance obs) 0.0)))))}
        {:text (format "Focus  %.0f%%" (* 100.0 (double (or (:focus-intensity obs) 0.5))))
         :color w/col-dim}
-       {:text "Abilities: Drift · Focus · Influence · Release" :color w/col-dim}
+       {:text "Abilities: Drift · Focus · Influence" :color w/col-dim}
        {:text "Slots locked — witness fusion" :color w/col-locked}]
       [{:text "No spark present" :color w/col-dim}])
 

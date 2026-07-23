@@ -41,19 +41,20 @@
   (testing "The spark's focus follows the camera target in tracking modes, never the mouse."
     (let [world (genesis/create-world {:gas-count 3})
           obs   (player/get-observer world)
+          spark-pos (player/observer-position world)
           camera (cam/update-camera-for-world
                   (cam/make-camera) world
                   (assoc (cam/default-camera-settings) :mode :fit-all))
           ctx    (units/make-context camera {:width 1280 :height 720})
           target-world (units/render->world ctx (:target camera))]
-      (testing "non-manual mode snaps the spark position and focus to the camera target"
+      (testing "non-manual mode snaps the focus to the camera target — but NEVER the spark's position (a gravity-bound ECS column since card 4)"
         (let [world' (@#'infra.dev.window.loop/sync-observer-focus-to-camera
                       world camera ctx :fit-all)
               obs' (player/get-observer world')]
           (is (= target-world (:focus-position obs'))
               "focus is locked to the camera target in world metres")
-          (is (= target-world (:position obs'))
-              "spark position is also locked to the camera target")
+          (is (= spark-pos (player/observer-position world'))
+              "spark position is the c/position column, untouched by the camera")
           (is (= (:focus-radius obs) (:focus-radius obs'))
               "focus radius is preserved")
           (is (= (:focus-intensity obs) (:focus-intensity obs'))
@@ -69,6 +70,32 @@
               world' (@#'infra.dev.window.loop/sync-observer-focus-to-camera
                       empty-world camera ctx :fit-all)]
           (is (= empty-world world')))))))
+
+(deftest drift-intent-drains-before-tick-publish
+  (testing "WASD drift enqueued through the IntentAtom is drained on the sim
+            thread BEFORE the tick — the sim thread is the sole writer of the
+            spark's c/position and no drift is lost between the sim's deref
+            and its publish (card-4 review, finding 1)"
+    (let [[w _]   (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+          world-atom (atom w)
+          queue   (java.util.concurrent.ConcurrentLinkedQueue.)
+          intents (loop/->IntentAtom queue world-atom)
+          v       [1.0e15 0.0 0.0]]
+      (testing "the render thread's swap! enqueues; it never mutates the world"
+        (swap! intents (fn [w] (player/drift w v 0.5)))
+        (is (= [0.0 0.0 0.0] (player/observer-position @world-atom))))
+      (testing "sim iteration 1: drain applies the drift, then publish"
+        (let [w0 (@#'infra.dev.window.loop/drain-intents @world-atom queue)]
+          ;; a second frame of drift lands mid-tick, between drain and publish
+          (swap! intents (fn [w] (player/drift w v 0.25)))
+          (reset! world-atom w0)
+          (is (= [5.0e14 0.0 0.0] (player/observer-position @world-atom))
+              "first drift applied exactly once")))
+      (testing "sim iteration 2: the mid-tick drift survives to the next drain"
+        (let [w1 (@#'infra.dev.window.loop/drain-intents @world-atom queue)]
+          (reset! world-atom w1)
+          (is (= [7.5e14 0.0 0.0] (player/observer-position @world-atom))
+              "queued displacement accumulates — nothing silently discarded"))))))
 
 (deftest dump-error-artifacts-graceful-on-failure
   (testing "if writing fails the function returns an error map instead of throwing"

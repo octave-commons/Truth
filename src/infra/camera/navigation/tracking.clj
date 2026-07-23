@@ -55,10 +55,11 @@
 
 (defn observer-render-position
   "The observer (player spark/mote) position in render units, or the origin when
-   there is no observer."
+   there is no observer. Reads the spark's `c/position` column — the single
+   source of truth since spark-redesign card 4."
   [world]
-  (if-let [obs (player/get-observer world)]
-    (mapv #(/ (double %) p/phase0-view-scale) (:position obs))
+  (if-let [pos (player/observer-position world)]
+    (mapv #(/ (double %) p/phase0-view-scale) pos)
     [0.0 0.0 0.0]))
 
 (defn bodies->render

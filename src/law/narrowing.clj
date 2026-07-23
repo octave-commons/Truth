@@ -171,33 +171,8 @@
 ;; Aaron, on the card). At 1.0e-6, releasing an Earth-like world
 ;; (GM/R ~ 6.3e7 J/kg) at full binding costs ~63 Agency.
 
-;; --- Spark<->world spring tether (spark-planet-binding, approach B) -----------
-;; The observer ("spark") has a real, tick-integrated position pulled toward
-;; the deepest-bound world's PREDICTED position by a spring force scaled by
-;; `domain.narrowing/tether-strength` — see domain.narrowing/spring-accel and
-;; /spark-binding-step. This is a player-experienced motion, paced like
-;; domain.player.focus/drift on wall-clock dt (the spark's own felt
-;; responsiveness), not the physics fan-out's dilated `:sim/dt` — see the step
-;; fn's docstring.
-
-(def ^:const spark-spring-k 4.0)
-;; Spring constant (1/s^2) at FULL tether engagement (strength 1.0); scales
-;; linearly with strength, so an unbound or barely-bound spark feels almost no
-;; pull. At k=4.0 the natural angular frequency is 2 rad/s (~0.5 s
-;; characteristic approach time) — felt as a firm but not instant catch-up.
-
-(def ^:const spark-min-damping 0.5)
-;; Floor on the velocity-damping coefficient (1/s), applied even at zero
-;; engagement so a spark that goes from bound to free coasts to rest instead
-;; of drifting forever on leftover spring velocity. Above this floor, damping
-;; is set to the CRITICAL value for the current effective k (2*sqrt(k)) so the
-;; approach is monotonic at every engagement level — no overshoot/oscillation.
-
-(def ^:const spark-standoff-factor 1.15)
-;; De-occlusion fix (narrowing-tether-default-camera-modes): the spring's
-;; TARGET is offset this many world radii from the bound world's center
-;; toward the camera (domain.narrowing/standoff-position), so a fully-settled
-;; spark sits just outside the true-scale sphere's near surface instead of
-;; spring-settling at the exact center, where it renders depth-occluded
-;; behind the body. 1.15 clears the surface with a small margin without
-;; visibly detaching the spark from the world it is bound to.
+;; --- Spark spring tether: DELETED (spark-redesign card 4) -------------------
+;; The spark<->world spring constants (spark-spring-k / spark-min-damping /
+;; spark-standoff-factor) left with the spring itself — the spark is now a
+;; gravity-bound ECS body whose resolve interpolation lives in law.spark
+;; (kanban/tasks/spark-as-gravity-bound-body.md).

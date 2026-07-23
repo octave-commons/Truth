@@ -276,7 +276,7 @@
 (defn- controls-help-line
   "Bottom-right passive control legend."
   [width height]
-  {:text "focus rides camera   arrows: move focus (manual)   ,/.: narrow/widen   G: warp   L: life   space: drift"
+  {:text "focus rides camera   arrows: move focus (manual)   ,/.: narrow/widen   G: warp   L: life   WASD: fly"
    :x (- (double width) 460.0)
    :y (- (double height) 18.0)
    :scale 1.2

@@ -70,14 +70,8 @@
 
 ;; --- Movement ---------------------------------------------------------------
 
-(def ^{:doc "Move the observer by velocity * dt."}
+(def ^{:doc "Manual flight: translate the spark's c/position by velocity * dt (world -> world)."}
   drift focus/drift)
-
-(def ^{:doc "Drift toward the focus at `speed`."}
-  approach-focus focus/approach-focus)
-
-(def ^{:doc "Drift along a gradient toward interesting regions."}
-  release-focus focus/release-focus)
 
 ;; --- Influence: the dark halo -----------------------------------------------
 
@@ -126,6 +120,12 @@
 
 (def ^{:doc "Apply f to the observer map in the world."}
   update-observer state/update-observer)
+
+(def ^{:doc "The spark's physical position: the c/position column on the observer entity (single source of truth)."}
+  observer-position state/observer-position)
+
+(def ^{:doc "Load-time repair hook: seed the spark's ECS columns on pre-card-4 worlds (idempotent)."}
+  repair-observer-columns state/repair-observer-columns)
 
 (def ^{:doc "Spawn the singleton observer entity. Returns [world eid]."}
   spawn-observer state/spawn-observer)

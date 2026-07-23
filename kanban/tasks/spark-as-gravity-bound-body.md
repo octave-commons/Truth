@@ -1,7 +1,7 @@
 ---
 uuid: "spark-as-gravity-bound-body"
 title: "Spark becomes a real, gravity-bound ECS body that resolves with formation"
-status: "todo"
+status: "done"
 priority: "P1"
 labels: ["domain", "infra", "physics", "player", "spark-redesign"]
 created_at: "2026-07-23T00:00:00Z"

@@ -222,6 +222,19 @@
       (is (= rocky-cold material) "a cold rocky body is its material colour")
       (is (not= rocky-hot material) "a hot body crossfades toward thermal colour"))))
 
+(deftest test-legacy-bodies-from-world-excludes-spark
+  (testing "the legacy bodies-from-world path never renders the spark as a
+            giant sphere (card-4 review, finding 5)"
+    (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) [1.0e15 0.0 0.0])
+          [w body-eid] (seeder/spawn-clump w {:position [0.0 0.0 0.0]
+                                              :mass 1.0e24 :radius 6.0e8
+                                              :matter-state :planet})
+          bodies (rbodies/bodies-from-world w)]
+      (is (nil? (some #(when (= obs-eid (:entity %)) %) bodies))
+          "the spark is excluded — it has its own overlay")
+      (is (some #(when (= body-eid (:entity %)) %) bodies)
+          "ordinary bodies still project"))))
+
 ;; --- Player interface (spark, reticle, HUD, input) ---------------------------
 
 (deftest test-player-overlay-shapes

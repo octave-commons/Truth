@@ -7,11 +7,7 @@
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
-   [domain.ecs.components :as c]
-   [domain.ecs.core :as ecs]
    [domain.orbital.system :as orbital]
-   [domain.narrowing :as narrowing]
-   [domain.physics.cache :as pcache]
    [domain.player :as player]
    [domain.intervention :as intervention]
    [infra.inspect :as inspect]
@@ -132,32 +128,21 @@
 (declare sync-cursor-mode!)
 
 (defn- sync-observer-focus-to-camera
-  "In non-manual camera modes, snap the observer's focus to the camera
+  "In non-manual camera modes, snap the observer's FOCUS to the camera
    target.  In manual mode leave the focus under player control.
 
-   Position: once the spark is bound to a world (`domain.narrowing/deepest-
-   binding` non-nil — see the spring-tether step in `render-frame-once`,
-   which already wrote the spark's real, spring-pulled `:position` this
-   frame), this DEFERS to that real position instead of snapping it to the
-   camera target — spark-planet-binding's minimal fix to stop the camera
-   puppet from clobbering the bound position. Full reconciliation of the
-   spark's position with every camera mode (the auto-tracking modes still
-   move the CAMERA target independently of the spark) is
-   `narrowing-tether-default-camera-modes`'s job; unbound sparks keep the
-   pre-existing camera-puppet behavior unchanged."
+   The spark's own position is NEVER written here: since spark-redesign
+   card 4 the spark is a gravity-bound ECS body whose `c/position` column is
+   the single source of truth, advanced by the integrator (gravity) and by
+   `domain.player.focus/drift` (manual flight) — camera modes follow the
+   body, they do not puppet it. Only `:focus-position` (a pure attention
+   point) rides the camera target."
   [world camera ctx mode]
   (if-let [obs (player/get-observer world)]
     (if (= :manual mode)
       world
-      (let [target (units/render->world ctx (:target camera))
-            bound?  (some? (narrowing/deepest-binding world))]
-        (player/put-observer
-         world
-         (cond-> obs
-           (not bound?) (assoc :position target)
-           true         (assoc :focus-position target)
-           true         (assoc :focus-radius (:focus-radius obs))
-           true         (assoc :focus-intensity (:focus-intensity obs))))))
+      (let [target (units/render->world ctx (:target camera))]
+        (player/put-observer world (assoc obs :focus-position target))))
     world))
 
 (defn- sync-cursor-mode!
@@ -287,44 +272,26 @@
                                               (not= 0.0 (:right drive-input)))))
               _         (when input-active?
                           (let [velocity (cam/observer-move-velocity @camera-atom drive-input cam-settings)]
-                            (swap! world-atom player/update-observer #(player/drift % velocity wall-dt))
-                            (swap! world-atom player/update-observer
-                                   (fn [o] (player/set-focus o (:position o) (:focus-radius o) (:focus-intensity o))))))
-              w         @world-atom
-              ;; Spark<->world spring tether (spark-planet-binding, approach B):
-              ;; the observer's OWN position is pulled toward the deepest-bound
-              ;; world's predicted position every frame, paced on wall-dt like
-              ;; player/drift above — a player-experienced motion, not a
-              ;; simulated body. `input-active?` (WASD flying this frame) wins
-              ;; outright, same rule the camera tether follows.
-              ;;
-              ;; De-occlusion (narrowing-tether-default-camera-modes, req 3):
-              ;; the spring target is `domain.narrowing/standoff-position`
-              ;; offset from the body's exact center toward the camera's
-              ;; (previous-frame) world position, so a fully-settled spark
-              ;; sits just outside the near surface — visible — instead of at
-              ;; the center, where it renders depth-occluded behind the
-              ;; true-scale sphere. One-frame-stale camera reading is an
-              ;; ordinary Jacobi-style lag, harmless for a continuous offset.
-              _         (let [db         (narrowing/deepest-binding w)
-                              target-eid (first db)
-                              strength   (if db (narrowing/tether-strength (second db)) 0.0)
-                              raw-target (when target-eid
-                                           ((pcache/predicted-position-fn w) target-eid))
-                              cam-world  (when raw-target
-                                           (mapv #(* (double %) cam/phase0-view-scale)
-                                                 (:position @camera-atom)))
-                              target-pos (when raw-target
-                                           (narrowing/standoff-position
-                                            raw-target
-                                            (ecs/get-component w target-eid c/radius)
-                                            cam-world))]
-                          (swap! world-atom player/update-observer
-                                 #(narrowing/observer-motion-step
-                                   % {:target-pos target-pos
-                                      :strength strength
-                                      :dt wall-dt
-                                      :input-active? input-active?})))
+                            ;; Manual flight rides the INTENT QUEUE, never the
+                            ;; world-atom directly: this thread's world-atom is
+                            ;; an IntentAtom (infra.dev.window.lifecycle), so
+                            ;; this swap! enqueues world->world' and the SIM
+                            ;; thread applies it in drain-intents BEFORE the
+                            ;; tick — the sim thread is the sole writer of the
+                            ;; spark's c/position (:motion system + drained
+                            ;; intents), and no drift can be lost between the
+                            ;; sim's deref and its publish. One intent writes
+                            ;; the column (domain.player.focus/drift) and then
+                            ;; pins the attention focus to the moved spark.
+                            ;; Gravity composes underneath via the integrator —
+                            ;; no spring, no puppet (spark-redesign card 4).
+                            (swap! world-atom
+                                   (fn [w]
+                                     (let [w' (player/drift w velocity wall-dt)]
+                                       (if-let [pos (player/observer-position w')]
+                                         (player/update-observer w'
+                                                                 (fn [o] (player/set-focus o pos (:focus-radius o) (:focus-intensity o))))
+                                         w'))))))
               w         @world-atom
               _         (swap! camera-atom cam/update-camera-for-world w cam-settings)
               _         (when (= :manual (:mode cam-settings))

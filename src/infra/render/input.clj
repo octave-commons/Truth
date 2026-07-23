@@ -68,9 +68,10 @@
     (println "No living world yet.")))
 
 (defn- player-key
-  "Map a key press to a focus / drift / release action on the world's observer.
-   Arrows drift the focus volume, , / . narrow / widen it, Space releases the
-   spark to drift toward the system."
+  "Map a key press to a focus action on the world's observer.
+   Arrows drift the focus volume, , / . narrow / widen it. (The Space
+   'release' binding was deleted with the spark spring — spark-redesign
+   card 4: the unflown spark is gravity's, there is nothing to release into.)"
   [world-atom k]
   (let [step 3.0e15]
     (condp = k
@@ -80,7 +81,6 @@
       GLFW/GLFW_KEY_DOWN   (swap! world-atom move-focus-by [0.0 0.0 step])
       GLFW/GLFW_KEY_COMMA  (swap! world-atom input/handle-input :narrow-focus)
       GLFW/GLFW_KEY_PERIOD (swap! world-atom input/handle-input :widen-focus)
-      GLFW/GLFW_KEY_SPACE  (swap! world-atom input/handle-input :release)
       nil)))
 
 (defn- look-sensitivity

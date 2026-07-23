@@ -38,12 +38,14 @@
    invariant — it exists only to enumerate systems and validate disjointness."
   [;; The Structure owner: shape + compactness. radius and density are one
    ;; geometric fact, so one system owns the pair (branching on matter-state:
-   ;; gas SPH / solid material density / KH oblate contraction). Subsumes the
+   ;; gas SPH / solid material density / KH oblate contraction — plus the
+   ;; body-kind :spark resolve branch, spark-redesign card 4). Subsumes the
    ;; radius+density writes of the old density-system, jeans-collapse, collapse.
    {:id     :structure
     :ns     'domain.stellar.geometry
     :reads  #{c/matter-state c/mass c/radius c/density c/position c/temperature
-              c/pressure c/oblateness c/angular-momentum c/neighbor-cache}
+              c/pressure c/oblateness c/angular-momentum c/neighbor-cache
+              c/body-kind}
     :writes #{c/radius c/density c/oblateness c/rotation-axis}}
 
     ;; Pressure is a pure equation of state P = ρ k_B T / m_H — every former

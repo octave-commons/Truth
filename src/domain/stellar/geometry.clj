@@ -5,6 +5,7 @@
    that follows from density and temperature."
   (:require
    [clojure.math :as math] [law.stellar                  :as law]
+   [law.spark                    :as law-spark]
    [law.field                    :as lf]
    [domain.stellar.thermodynamics :as thermo]
    [domain.ecs.core              :as ecs]
@@ -125,6 +126,30 @@
            shapes (par/par-mapv #(resolved-shape-entry world % cf ct dt) eids)]
        (reduce apply-shape gas-ws shapes)))))
 
+(defn- spark-structure-ws
+  "The `body-kind = :spark` branch of the structure system (spark-redesign
+   card 4): the spark's radius is re-derived each tick from
+   `:genesis/formation-progress` (`law.spark/spark-radius`) — large and
+   diffuse before formation, shrinking to the small dense moonlet as
+   stars/planets resolve. Folded into THIS system because component ownership
+   is per-TYPE: `c/radius` has one writer, `:structure`. The spark carries no
+   `c/matter-state`, so neither the gas nor the resolved branch ever touches
+   it. Emitted only when the target differs from the snapshot."
+  [world]
+  (let [progress (double (or (:genesis/formation-progress world) 0.0))
+        r0       (double (or (:genesis/spark-initial-radius world)
+                             law-spark/default-initial-radius))
+        r1       (double (or (:genesis/spark-final-radius world)
+                             law-spark/default-final-radius))]
+    (into {}
+          (keep (fn [eid]
+                  (when (= :spark (ecs/get-component world eid c/body-kind))
+                    (let [target  (law-spark/spark-radius progress r0 r1)
+                          current (double (or (ecs/get-component world eid c/radius) 0.0))]
+                      (when (not= target current)
+                        [eid target])))))
+          (ecs/entities-with world c/body-kind c/radius))))
+
 (defn structure-system
   "Double-buffer write-set system: SOLE writer of the body's shape and the
    compactness it implies — radius, density, and (for cores) oblateness +
@@ -133,22 +158,30 @@
      :planetesimal / :gas-giant / :brown-dwarf / :planet fixed material density → radius from mass (solid)
      :stellar-remnant  degenerate white-dwarf scale radius, no contraction
      :protostar/:star  KH oblate contraction toward the main-sequence floor
-    Replaces the radius/density writes of density-system, jeans-collapse, and
-    collapse. The future home of the voxel shape representation.
+     :spark (body-kind)  resolve interpolation on :genesis/formation-progress
+       (spark-redesign card 4 — see spark-structure-ws); no matter-state, so
+       neither the gas nor the resolved branch claims it.
+     Replaces the radius/density writes of density-system, jeans-collapse, and
+     collapse. The future home of the voxel shape representation.
 
-    The gas branch reads the shared pair walk's staleness-budgeted
-    `:density-estimate` from `c/neighbor-cache` (law.field/density-stale-*
-    knobs) instead of re-walking the neighbor set."
+     The gas branch reads the shared pair walk's staleness-budgeted
+     `:density-estimate` from `c/neighbor-cache` (law.field/density-stale-*
+     knobs) instead of re-walking the neighbor set."
   []
   {:id     :structure
    :reads  #{c/matter-state c/mass c/radius c/density c/position c/temperature
-             c/pressure c/oblateness c/angular-momentum c/neighbor-cache}
+             c/pressure c/oblateness c/angular-momentum c/neighbor-cache
+             c/body-kind}
    :writes #{c/radius c/density c/oblateness c/rotation-axis}
    :run    (fn [world]
              (let [cf (:genesis/collapse-fraction world 0.5)
                    ct (:genesis/contraction-time world 9.5e14)
-                   dt (:sim/dt world 1.0e12)]
-               (resolved-structure-ws world (gas-structure-ws world) cf ct dt)))})
+                   dt (:sim/dt world 1.0e12)
+                   ws (resolved-structure-ws world (gas-structure-ws world) cf ct dt)
+                   spark (spark-structure-ws world)]
+               (if (seq spark)
+                 (update ws c/radius merge spark)
+                 ws)))})
 
 (defn eos-system
   "Double-buffer write-set system: pressure as the pure equation of state

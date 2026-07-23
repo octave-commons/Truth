@@ -9,6 +9,7 @@
    [domain.stellar.thermodynamics :as thermo]
    [domain.integrator.base :as base]
    [domain.integrator.temperature :as itemp]
+   [law.spark :as law-spark]
    [law.stellar :as law]
    [shape.spatial :as sp]))
 
@@ -119,6 +120,28 @@
                {}
                cell)))
 
+(defn- spark-mass-cell
+  "The `body-kind = :spark` branch of the mass writer (spark-redesign card 4):
+   the spark's mass is re-derived each tick from `:genesis/formation-progress`
+   (`law.spark/spark-mass`) — exactly 0 pre-formation (a test particle), rising
+   monotonically to the final moonlet mass as stars/planets resolve. Folded
+   into THIS system because component ownership is per-TYPE: `c/mass` has one
+   writer, the `:integrator`. The metric plateaus between promotions and steps
+   at them; a pure function of it cannot oscillate. Emitted only when the
+   target differs from the snapshot."
+  [world]
+  (let [progress (double (or (:genesis/formation-progress world) 0.0))
+        final    (double (or (:genesis/spark-final-mass world)
+                             law-spark/default-final-mass))]
+    (into {}
+          (keep (fn [eid]
+                  (when (= :spark (ecs/get-component world eid c/body-kind))
+                    (let [target  (law-spark/spark-mass progress final)
+                          current (double (or (ecs/get-component world eid c/mass) 0.0))]
+                      (when (not= target current)
+                        [eid target])))))
+          (ecs/entities-with world c/body-kind c/mass))))
+
 (defn mass-ws
   "Mass. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass) — the per-source mass
    fluxes (stellar wind/flare loss, XUV escape, disk→star viscous transfer) and
@@ -163,7 +186,9 @@
                         (keys absorbs))
         depleted  (depleted-donors world 0.0)
         ablated   (ablated-bodies world law/ablation-floor (merge cell extra))
-        mass-write   (if (empty? (merge cell extra)) {} {c/mass (merge cell extra)})]
+        spark     (spark-mass-cell world)
+        all-mass  (merge cell extra spark)
+        mass-write   (if (empty? all-mass) {} {c/mass all-mass})]
     (cond-> mass-write
       (seq depleted) (assoc c/consumed-transfer depleted)
       (seq ablated)  (assoc c/consumed-ablation ablated))))

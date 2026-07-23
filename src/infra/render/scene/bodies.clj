@@ -278,11 +278,17 @@
            (particles/field-line-shapes ctx world)))))
 
 (defn bodies-from-world
-  "Legacy non-Phase 0 body list from the ECS world."
+  "Legacy non-Phase 0 body list from the ECS world. The spark
+   (`c/body-kind :spark`) is EXCLUDED: it is a gravity-bound observer body
+   (spark-redesign card 4) with its own overlay (player-overlay-shapes), not
+   a scene body — including it would render a diffuse 1e12 m sphere."
   [world]
-  (map (fn [[eid comps]]
-         {:entity eid
-          :position (comps c/position)
-          :radius   (comps c/radius)
-          :kind     (comps c/body-kind)})
-       (ecs/all-of world c/position c/radius c/body-kind)))
+  (into []
+        (comp
+         (remove (fn [[_ comps]] (= :spark (comps c/body-kind))))
+         (map (fn [[eid comps]]
+                {:entity eid
+                 :position (comps c/position)
+                 :radius   (comps c/radius)
+                 :kind     (comps c/body-kind)})))
+        (ecs/all-of world c/position c/radius c/body-kind)))

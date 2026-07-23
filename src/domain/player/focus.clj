@@ -1,7 +1,10 @@
 (ns domain.player.focus
   "Focus, observation effect, and movement."
   (:require
-   [shape.spatial :as sp]))
+   [shape.spatial :as sp]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
+   [domain.player.state :as state]))
 
 (defn observation-effect "How strongly the observer's attention resolves reality." [{:keys [coherence focus-intensity]}] (* coherence focus-intensity))
 
@@ -13,13 +16,33 @@
 
 (defn widen-focus "Broaden focus radius and lower intensity." [{:keys [focus-radius focus-intensity], :as o} factor] (set-focus o (:focus-position o) (* focus-radius factor) (max 0.1 (/ focus-intensity factor))))
 
-(defn drift "Move the observer by velocity * dt." [observer velocity dt] (-> observer (assoc :drift-velocity velocity) (update :position (fn* [p1__246#] (sp/v+ p1__246# (sp/v* velocity dt))))))
+(defn drift
+  "Manual flight (WASD): translate the spark's `c/position` column by
+   `velocity * dt` and return the updated world. A DIRECT per-frame position
+   write paced on wall-clock dt — spark-redesign card 4's documented choice
+   over a velocity impulse: input written to `c/velocity` would be integrated
+   over the fan-out's dilated `:sim/dt`, either teleporting the spark
+   (physical dt x UI-scale velocity) or double-counting the motion the frame
+   write already made.
 
-(defn- normalize-vec [v] (let [l (sp/len v)] (if (> l 0) (sp/v* v (/ 1.0 l)) v)))
+   SINGLE-WRITER: pure world->world, invoked on the SIM thread only — the
+   render/input thread enqueues it through the IntentAtom
+   (infra.dev.window.loop/drain-intents), which sequences it before the
+   tick, so the sim thread is the sole writer of `c/position` (this intent +
+   the `:motion` system) and no drift can be lost to the tick's publish.
 
-(defn approach-focus "Drift toward the focus at `speed` for `dt`." [{:keys [position focus-position], :as o} speed dt] (drift o (sp/v* (normalize-vec (sp/v- focus-position position)) speed) dt))
-
-(defn release-focus "Let the spark drift along a gradient toward interesting regions, faster when\n   coherence is low." [observer gradient-field] (let [g (gradient-field (:position observer)) speed (* 1.0E12 (- 1.0 (:coherence observer)))] (assoc observer :drift-velocity (sp/v* g speed))))
+   Gravity COMPOSES with the override instead of fighting it: the integrator
+   still sums every accel channel into the spark's `c/velocity` and advances
+   the position by it every tick, so thrust displacements and gravitational
+   drift add. While the player flies, the wall-clock displacement dominates
+   (input wins); on release, the gravity-accumulated velocity carries the
+   spark on and the wells bend it into a fall or an orbit."
+  [world velocity dt]
+  (if-let [eid (state/observer-entity world)]
+    (if-let [pos (ecs/get-component world eid c/position)]
+      (ecs/put-component world eid c/position (sp/v+ pos (sp/v* velocity dt)))
+      world)
+    world))
 
 (defn decoherence-state "Return the coherence band label from :highly-coherent to :dissolved." [{:keys [coherence]}] (cond (> coherence 0.8) :highly-coherent (> coherence 0.5) :coherent (> coherence 0.2) :wavering (> coherence 0.05) :fading :else :dissolved))
 
