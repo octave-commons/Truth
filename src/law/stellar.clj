@@ -64,6 +64,9 @@
 
 (def ^:const fusion-sustain-temp-threshold orbital/fusion-sustain-temp-threshold)
 
+(def ^:const default-dark-matter-mass-factor orbital/default-dark-matter-mass-factor)
+(def ^:const default-dark-matter-scale-factor orbital/default-dark-matter-scale-factor)
+
 ;; Functions
 (def substellar-mass-class orbital/substellar-mass-class)
 (def ideal-gas-pressure orbital/ideal-gas-pressure)

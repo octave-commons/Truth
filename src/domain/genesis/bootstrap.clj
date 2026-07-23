@@ -226,6 +226,8 @@
                :genesis/metallicity metallicity
                :genesis/observer-halo-mass-factor player/default-halo-mass-factor
                :genesis/influence-dv-cap player/default-influence-dv-cap
+               :genesis/dark-matter-mass-factor law/default-dark-matter-mass-factor
+               :genesis/dark-matter-scale-factor law/default-dark-matter-scale-factor
                :genesis/well-mass-factor intervention/default-well-mass-factor
                :genesis/well-radius intervention/default-radius
                :genesis/well-ttl intervention/default-ttl

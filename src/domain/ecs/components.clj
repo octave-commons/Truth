@@ -138,6 +138,13 @@
 ;; distinct single-writer channel from accel.observer — observation is the free
 ;; gentle nudge, warp is the spent, stronger, transient force. Motion sums it.
 (def accel-warp     :component/accel.warp)     ;; [ax ay az] player warp-space force
+;; `accel.dark-matter` is the STATIC background halo (domain.gravity.dark-matter)
+;; — a very massive, large-scale-radius Plummer well centred on the world origin
+;; that never moves, collapses, or renders. Purely deepens the potential well so
+;; bodies keep their infall momentum bound instead of flinging past the system
+;; edge (kanban/tasks/dark-matter-static-halo.md). Distinct single-writer
+;; channel from accel.gravity (mutual N-body self-gravity).
+(def accel-dark-matter :component/accel.dark-matter) ;; [ax ay az] static halo pull toward origin
 
 ;; --- Influence contributions (unified-integrator inputs) --------------------
 ;; The single integrator (domain.ecs.integrator) is the sole writer of physical

@@ -157,6 +157,16 @@
     :reads  #{c/position c/mass}
     :writes #{c/accel-warp}}
 
+   ;; Spark-redesign card 1: the static dark-matter halo. A very massive,
+   ;; large-scale-radius Plummer well fixed at the world origin (which the
+   ;; integrator's COM frame-offset keeps pinned to the barycenter) — it does
+   ;; not collapse, move, or render, purely deepening the well so bodies stay
+   ;; bound. A self-contained emitter, trivial like :gravity and :warp.
+   {:id     :dark-matter
+    :ns     'domain.gravity.dark-matter
+    :reads  #{c/position}
+    :writes #{c/accel-dark-matter}}
+
    ;; The single integrator (domain.integrator): sole writer of position +
    ;; velocity (and, as the unified-physical-state migration lands,
    ;; mass/angular-momentum/spin/temperature/composition). Sums every accel.*
@@ -166,7 +176,7 @@
     :ns     'domain.integrator
     :reads  #{c/position c/velocity c/mass c/radius c/body-kind
               c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer
-              c/accel-warp c/frame-offset
+              c/accel-warp c/accel-dark-matter c/frame-offset
               c/matter-state c/density c/luminosity c/sed-bands c/composition
               c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk

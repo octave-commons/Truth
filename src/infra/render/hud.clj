@@ -8,6 +8,8 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.intervention :as intervention]
+   [domain.gravity.dark-matter :as dark-matter]
+   [law.stellar :as law]
    [infra.render.color :as color]
    [infra.render.input :as rinput]
    [infra.render.passes :as passes])
@@ -180,7 +182,10 @@
              (int (nth imf-bins 0)) (int (nth imf-bins 1))
              (int (nth imf-bins 2)) (int (nth imf-bins 3))
              (int (nth imf-bins 4)) (int (nth imf-bins 5))
-             (int (nth imf-bins 6)) (int (nth imf-bins 7)))])),
+             (int (nth imf-bins 6)) (int (nth imf-bins 7)))
+     (format "DM halo M %.2f Msun  r %.2f AU"
+             (/ (dark-matter/halo-mass world) (double law/solar-mass))
+             (/ (dark-matter/halo-scale-radius world) (double law/au)))])),
 
 (defn hud-text-from-world
   "Top-left stats panel for a Phase 0 world: the adaptive clock (elapsed

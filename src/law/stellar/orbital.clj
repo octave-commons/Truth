@@ -55,5 +55,7 @@
 (def isolation-mass dynamics/isolation-mass)
 (def virial-speed dynamics/virial-speed)
 (def plummer-acceleration dynamics/plummer-acceleration)
+(def ^:const default-dark-matter-mass-factor dynamics/default-dark-matter-mass-factor)
+(def ^:const default-dark-matter-scale-factor dynamics/default-dark-matter-scale-factor)
 (def orbital-cleared? dynamics/orbital-cleared?)
 (def planet? dynamics/planet?)

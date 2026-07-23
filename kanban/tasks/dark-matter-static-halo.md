@@ -1,7 +1,7 @@
 ---
 uuid: "dark-matter-static-halo"
 title: "Dark-matter static halo — deepen the well so bodies stay bound"
-status: "todo"
+status: "review"
 priority: "P1"
 labels: ["domain", "physics", "spark-redesign"]
 created_at: "2026-07-23T00:00:00Z"

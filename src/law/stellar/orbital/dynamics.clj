@@ -103,6 +103,24 @@
       (/ (* constants/G M r) (math/pow d2 1.5))
       0.0)))
 
+(def ^:const default-dark-matter-mass-factor
+  "Default static-halo mass, as a multiple of `:genesis/nebula-mass`: the
+   dark-matter background is deliberately MORE massive than the collapsing
+   nebula (owner decision — kanban/tasks/dark-matter-static-halo.md) so the
+   well is deep enough to hold onto infall-momentum debris that would
+   otherwise fling past the system edge. First-pass guess, overridable per
+   world via `:genesis/dark-matter-mass-factor`; needs live-window tuning
+   against SPH collapse (too deep stalls accretion/disk formation)."
+  3.0)
+
+(def ^:const default-dark-matter-scale-factor
+  "Default static-halo Plummer scale radius, as a fraction of
+   `:genesis/nebula-radius` — about half the initial nebula radius, so the
+   halo's peak pull (at a/√2, see `plummer-acceleration`) sits well inside
+   the collapsing cloud. Overridable per world via
+   `:genesis/dark-matter-scale-factor`."
+  0.5)
+
 (defn orbital-cleared?
   "Test if a body has cleared its orbital neighborhood."
   [{:keys [mass orbital-radius]} other-bodies]

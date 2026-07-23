@@ -14,7 +14,7 @@
    plus its single-writer emitter. Non-additive fields (temperature, composition,
    spin) are derived by the per-field updaters below and documented in :derived."
   {:velocity         {:accumulate [c/accel-gravity c/accel-pressure c/accel-lorentz
-                                   c/accel-observer c/accel-warp]
+                                   c/accel-observer c/accel-warp c/accel-dark-matter]
                       :compose :sum :scale :dt}
    :angular-momentum {:accumulate [c/torque-em c/torque-disk]
                       :compose :sum :scale :dt}

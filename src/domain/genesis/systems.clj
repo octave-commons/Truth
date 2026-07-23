@@ -29,6 +29,7 @@
    [domain.voxel.carve :as voxel-carve]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
+   [domain.gravity.dark-matter :as dark-matter]
    [domain.physics.cache :as cache]))
 
 ;; Ongoing physics that is not specific to formation moved to its proper owner:
@@ -41,6 +42,7 @@
   [dt]
   [(intervention/warp-acceleration-system)
    (player/observer-acceleration-system)
+   (dark-matter/dark-matter-acceleration-system)
    (intervention/thermal-intervention-system)
    (integ/integrator-system dt)])
 
