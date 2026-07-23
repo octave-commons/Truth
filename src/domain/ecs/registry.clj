@@ -43,7 +43,7 @@
    {:id     :structure
     :ns     'domain.stellar.geometry
     :reads  #{c/matter-state c/mass c/radius c/density c/position c/temperature
-              c/pressure c/oblateness c/angular-momentum}
+              c/pressure c/oblateness c/angular-momentum c/neighbor-cache}
     :writes #{c/radius c/density c/oblateness c/rotation-axis}}
 
     ;; Pressure is a pure equation of state P = ρ k_B T / m_H — every former
@@ -66,9 +66,13 @@
     :writes #{c/accel-pressure c/accel-lorentz c/torque-em}}
 
     ;; Neighbor cache: fan-out builder for the SPH kernel + curl/pressure-grad
-    ;; values shared by hydro and EM-Lorentz. One-tick-stale Jacobi lag — the
-    ;; cache is built from the frozen input world and read by consumers in the
-    ;; same tick's parallel fan-out. Replaces the world-key `:genesis/neighbor-cache`
+    ;; values shared by hydro and EM-Lorentz — the tick's ONE shared pair walk.
+    ;; Each entry carries the pair products every consumer reads (per-neighbor
+    ;; r2 and in-kernel :grad, plus the staleness-budgeted :density-estimate
+    ;; the Structure gas branch consumes), so :hydro-em and :structure never
+    ;; re-walk the neighbor set. One-tick-stale Jacobi lag — the cache is built
+    ;; from the frozen input world and read by consumers in the same tick's
+    ;; parallel fan-out. Replaces the world-key `:genesis/neighbor-cache`
     ;; and the serial `future` pre-phase in `step-physics`.
    {:id     :neighbor-cache
     :ns     'domain.physics.cache.neighbor

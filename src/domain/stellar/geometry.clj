@@ -133,10 +133,16 @@
      :planetesimal / :gas-giant / :brown-dwarf / :planet fixed material density → radius from mass (solid)
      :stellar-remnant  degenerate white-dwarf scale radius, no contraction
      :protostar/:star  KH oblate contraction toward the main-sequence floor
-   Replaces the radius/density writes of density-system, jeans-collapse, and
-   collapse. The future home of the voxel shape representation."
+    Replaces the radius/density writes of density-system, jeans-collapse, and
+    collapse. The future home of the voxel shape representation.
+
+    The gas branch reads the shared pair walk's staleness-budgeted
+    `:density-estimate` from `c/neighbor-cache` (law.field/density-stale-*
+    knobs) instead of re-walking the neighbor set."
   []
   {:id     :structure
+   :reads  #{c/matter-state c/mass c/radius c/density c/position c/temperature
+             c/pressure c/oblateness c/angular-momentum c/neighbor-cache}
    :writes #{c/radius c/density c/oblateness c/rotation-axis}
    :run    (fn [world]
              (let [cf (:genesis/collapse-fraction world 0.5)

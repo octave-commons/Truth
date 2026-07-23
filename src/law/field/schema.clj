@@ -81,7 +81,11 @@
    actually queried and :query-r the radius that query covered — the reuse
    skin is measured against them. :nn-id (optional) remembers the nearest
    neighbor's identity so the refresh path can rederive the smoothing length
-   without a tree descent."
+   without a tree descent. Optional :density-estimate/:density-anchor/
+   :density-tick carry the staleness-budgeted SPH density the shared pair walk
+   computes (law.field/density-stale-* budget knobs); per-neighbor maps may
+   carry :grad, the pair kernel gradient ∇W_ij at h_ij = r_i + r_j, precomputed
+   once per in-kernel pair for the merged hydro/EM consumer."
   [:map
    [:position [:tuple :double :double :double]]
    [:anchor-position [:tuple :double :double :double]]
@@ -89,7 +93,12 @@
    [:h [:and :double [:> 0]]]
    [:neighbors [:vector [:map]]]
    [:gradients {:optional true} [:vector [:tuple :double :double :double]]]
-   [:curl-gradients {:optional true} [:vector [:tuple :double :double :double]]]])
+   [:curl-gradients {:optional true} [:vector [:tuple :double :double :double]]]
+   [:density-estimate {:optional true} [:and :double [:>= 0]]]
+   [:density-anchor {:optional true} [:tuple :double :double :double]]
+   [:density-tick {:optional true} :int]
+   [:density-h {:optional true} [:and :double [:> 0]]]
+   [:density-m {:optional true} [:and :double [:>= 0]]]])
 
 (def neighbor-cache-entry?
   "Predicate: does `value` satisfy the neighbor-cache entry schema?"

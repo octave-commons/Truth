@@ -66,6 +66,31 @@
 (def ^:const jeans-unstable 1.0)
 ;; L/λ_J at or above this → gravitationally unstable, tends to collapse.
 
+;; --- SPH density staleness budget -------------------------------------------
+;; The shared pair walk (domain.physics.cache.neighbor) refreshes the SPH
+;; density estimate lazily: the estimate a gas parcel's Structure owner reads
+;; may lag the current geometry within a documented budget. The estimate is
+;; recomputed on ANY of: a fresh neighbor query, parcel displacement past
+;; fraction·h from the estimate anchor, h drift past fraction relative (the
+;; kernel self-term is ∝ h⁻³), parcel mass drift past fraction relative (the
+;; self-term is ∝ m — mass-transfer moves density without moving the parcel),
+;; or age reaching max-ticks. Both knobs are world-overridable
+;; (:genesis/density-stale-displacement-fraction,
+;; :genesis/density-stale-max-ticks); setting max-ticks to 1 forces a fresh
+;; estimate every tick (the pre-budget behaviour, used as the windowed-
+;; equivalence reference).
+
+(def ^:const density-stale-displacement-fraction 0.05)
+;; Fraction of the parcel's smoothing length h it may drift from the position
+;; of the last density estimate before the estimate must be recomputed. Half
+;; the neighbor-cache identity skin (0.1·h): density refreshes at least as
+;; readily as the neighbor identities it sums over.
+
+(def ^:const density-stale-max-ticks 4)
+;; Hard cap on estimate age in ticks. Catches every drift source the
+;; displacement trigger cannot see (h shrinkage, neighbor field drift) so the
+;; lag is always bounded; 1 = recompute every tick (fresh mode).
+
 ;; --- Plasma / MHD helpers ---------------------------------------------------
 
 (defn- vec3-len2

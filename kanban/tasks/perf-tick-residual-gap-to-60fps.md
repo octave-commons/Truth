@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["perf", "phase0", "spec"]
-write-id: "1784777249604-0.5an90nmmww73fho5h6t"
+write-id: "1784782942790-0.k5ywquou0mij92y72g"
 source: "kanban/tasks/perf-tick-residual-gap-to-60fps.md"
 title: "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000"
 priority: "P1"
@@ -52,4 +52,8 @@ FIX IMPLEMENTED 2026-07-22 (working tree, uncommitted): completion-order overlap
 NEXT SLICE (recommended): the residual gap is now dominated by total CPU WORK in the big-5, not overhead. Candidates in rank order: (1) hydro/gas-structure (:structure, 3.3ms) and :hydro-em (5.2ms) and :neighbor-cache (2.9ms) all walk the same neighbor sets — a shared SoA pair-loop or a staleness-budgeted density pass (needs windowed-equivalence decision, physics-adjacent); (2) SoA-ify the hydro-em pair loop (positions/density/pressure already partially in SoA); (3) bench hygiene — background pm2 tenants (knoxx etc.) put a ±3ms noise floor over @500 signals; future bench cards should quiesce them or pin to @1000 where signal > noise.
 
 First slice complete + reviewed 2026-07-22. ATTRIBUTION @500 (probe-grounded): the ~11ms 'gap' was 30 unmeasured systems — true all-systems sequential sum 22.5-27ms; big-5 (hydro-em 5.2, gravity 4.9, structure 3.3, integrator 3.2, neighbor-cache 2.9) suffer ~2.3x concurrent slowdown under CPU/memory saturation. Orchestration overhead falsified (0.06ms); CHM convoy falsified; nested par-mapv oversubscription falsified (kill-switch made it WORSE — inner fan-out load-bearing). FIX LANDED: completion-order overlapped fold (fold hides under the big-5 tail; commutative by single-writer disjointness; conflict reports sorted back to declaration order; exceptions = ExecutionException, orphaned-future semantics identical to old). Equivalence: 12 ticks x {100,500,1000}p x {profile on/off}, :components byte-identical all 6 configs. Bench @1000: tick-world 40.6-41.0 new vs 42.9-47.8 old (never worse, trend -1..-4ms; box noise ±3ms). Review PASS-WITH-NITS (stale ns docstring + interrupt assumption both fixed). RESIDUAL GAP = big-5 CPU work: next slice scoped — shared SoA pair-loop / staleness-budgeted density pass across structure+hydro-em+neighbor-cache (they walk the same neighbor sets; needs windowed-equivalence decision); bench hygiene: pin future bench cards to @1000. Probes committed in bench/gates_of_truth/bench/{attribution,equivalence,folddelta}.clj. Card STAYS in_progress — residual gap remains (55-59ms @1000 baseline vs 16.6 budget), next slice is the big-5 neighbor-set sharing.
+
+Next slice materialized as child card perf-big5-shared-neighbor-pass (5pt): owner approved the staleness-budgeted shared pass + windowed-equivalence contract 2026-07-22. This parent stays in_progress until the child lands and the @1000 delta is recorded.
+
+Child slice done 2026-07-22 (perf-big5-shared-neighbor-pass): big-3 neighbor systems 16.3 -> 8.8ms @500; tick-world @1000 35.8 -> 33.4ms with bounded-drift windowed-equivalence (owner-approved). Remaining gap to 16.6ms budget: ~2x @1000, now dominated by the remaining big-5 CPU work (hydro-em 5.5ms, gravity 4.9ms, integrator 3.2ms isolated) under saturation — next candidates: SoA-ify the hydro-em pair loop, gravity walk sharing. Keeping this card in_progress as the perf umbrella; the profiling breakdown + both completed slices are recorded above.
 ---
