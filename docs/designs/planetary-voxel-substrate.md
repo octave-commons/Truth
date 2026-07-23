@@ -386,8 +386,11 @@ finished spec — the following are genuine gaps, not filled in above:
    deterministically regenerable macro-field seed; load = regenerate +
    replay. This is the statistical/voxel duality's natural persistence form
    and the only option that survives item 2's persist/unpersist churn.
-   Original gap: no source addressed persistence representation or storage
-   cost.
+   EXTENDED 2026-07-22 (`voxel-field-bias-persistence`): god-scale sculpt
+   ops persist as a sibling ordered **field-diff** stream (the op record
+   IS the diff), so load = regenerate seed + replay field-diffs + replay
+   voxel diffs — no cross-session field/band divergence. Original gap: no
+   source addressed persistence representation or storage cost.
 4. **Chemistry/mineral fidelity.** The mineral examples given (basalt,
    granite, ore, ice, regolith) are illustrative, not a closed taxonomy;
    there's no specified mapping from `law.composition` element fractions +

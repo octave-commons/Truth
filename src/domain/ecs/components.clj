@@ -284,7 +284,7 @@
 (def territory    :component/territory)
 
 ;; --- Voxel substrate (Voxel 3: focus promotion/demotion) --------------------
-;; All four are written SOLELY by the `:voxel-focus` fan-out system
+;; All five are written SOLELY by the `:voxel-focus` fan-out system
 ;; (domain.voxel.focus); all live on the committed world entity (the band's
 ;; lifecycle is exactly the world's committed lifetime — commitment is
 ;; write-once, so one band per world, no spawn/despawn churn).
@@ -299,10 +299,17 @@
 ;;                     `law.voxel/edit-budget-ms-per-tick` cap (design §7.1).
 ;; `voxel-edit-diffs`  ordered `law.voxel/edit-diff-schema` vector — the
 ;;                     field-seed + edit-diff save representation (§7.3).
+;; `voxel-field-diffs` ordered `law.voxel/field-diff-schema` vector — the
+;;                     MACRO half of the same save story (§7.3 EXTENDED
+;;                     2026-07-22, card voxel-field-bias-persistence):
+;;                     every sculpt op that biased the field, in fold
+;;                     order, so load replays field-diffs before voxel
+;;                     diffs and no field/band divergence survives a load.
 (def voxel-field      :component/voxel.field)
 (def voxel-band       :component/voxel.band)
 (def voxel-edit-queue :component/voxel.edit-queue)
 (def voxel-edit-diffs :component/voxel.edit-diffs)
+(def voxel-field-diffs :component/voxel.field-diffs)
 
 ;; `voxel-sculpt-request` lives on the committed world entity: the vector of
 ;; PAID god-scale sculpt ops (`law.voxel/sculpt-op-schema`) awaiting the

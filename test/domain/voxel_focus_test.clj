@@ -483,6 +483,7 @@
             and emitter cannot drift"
     (is (= (reg/registry-writes :voxel-focus)
            (:writes (focus/voxel-focus-system))))
-    (is (= #{c/voxel-field c/voxel-band c/voxel-edit-queue c/voxel-edit-diffs}
+    (is (= #{c/voxel-field c/voxel-band c/voxel-edit-queue c/voxel-edit-diffs
+             c/voxel-field-diffs}
            (:writes (focus/voxel-focus-system)))
-        "exactly the four voxel columns, nothing else — no c/matter-state")))
+        "exactly the five voxel columns, nothing else — no c/matter-state")))

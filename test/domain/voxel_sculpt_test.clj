@@ -356,5 +356,6 @@
     (let [entry (some #(when (= :voxel-focus (:id %)) %) reg/systems)]
       (is (contains? (:reads entry) c/voxel-sculpt-request)
           "the fold's read is declared — no undeclared side-channel")
-      (is (= #{c/voxel-field c/voxel-band c/voxel-edit-queue c/voxel-edit-diffs}
+      (is (= #{c/voxel-field c/voxel-band c/voxel-edit-queue c/voxel-edit-diffs
+               c/voxel-field-diffs}
              (:writes entry))))))

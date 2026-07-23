@@ -425,15 +425,18 @@
     ;; Voxel 3: the focus-driven voxel band on the committed world. Reads
     ;; the observer's focus, the committed world's candidate record and
     ;; position (one tick Jacobi-stale, like every cross-system read), and
-    ;; its own four columns one tick stale. Sole writer of all four: the
-    ;; field seed cache, the resolved band, the deferred edit queue, and
-    ;; the accumulated edit-diff save representation. Band retargets and
+    ;; its own five columns one tick stale. Sole writer of all five: the
+    ;; field seed cache, the resolved band, the deferred edit queue, the
+    ;; accumulated edit-diff save representation, and the accumulated
+    ;; field-diff stream (the macro half of the §7.3 save story — card
+    ;; voxel-field-bias-persistence). Band retargets and
     ;; demotion fold-back drain through the budgeted queue
     ;; (law.voxel/edit-budget-ms-per-tick) — one system because promotion
     ;; and demotion write the same columns (the :focus-zone precedent).
     ;; Voxel 4: also reads `c/voxel-sculpt-request` (one tick stale, the
     ;; producer-suffixed request channel) and folds the paid sculpt ops
-    ;; into the field it owns + the queue it owns.
+    ;; into the field it owns + the queue it owns + the field-diff stream
+    ;; it owns (the op IS the diff — appended in fold order).
     ;; Voxel 5: also reads `c/voxel-carve-request` (one tick stale, the
     ;; collision-carve request channel) and folds its plans + melt/vapor
     ;; cooling into `:apply-edits` jobs, provenance `:collision`.
@@ -441,10 +444,10 @@
      :ns     'domain.voxel.focus
      :reads  #{c/observer c/position c/planet-candidate c/commitment-state
                c/voxel-field c/voxel-band c/voxel-edit-queue
-               c/voxel-edit-diffs c/voxel-sculpt-request
+               c/voxel-edit-diffs c/voxel-field-diffs c/voxel-sculpt-request
                c/voxel-carve-request}
      :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
-               c/voxel-edit-diffs}}
+               c/voxel-edit-diffs c/voxel-field-diffs}}
 
     ;; Voxel 4: god-scale sculpting (design planetary-voxel-substrate.md
     ;; §5 tier 1). Translates the paid ops on the `:voxel/sculpt-ops`

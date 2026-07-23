@@ -1,13 +1,14 @@
 ---
-uuid: "voxel-field-bias-persistence"
-title: "Voxel: field-bias persistence (save-story completion)"
-status: "ready"
-priority: "P2"
-labels: ["specs", "phase1", "voxel", "persistence", "epic-planetary-voxel-substrate"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/voxel-field-bias-persistence.md"
 category: "specs"
-estimate: 3
+labels: ["specs", "phase1", "voxel", "persistence", "epic-planetary-voxel-substrate"]
+write-id: "1784768178181-0.q5ultb0mkvqygham275"
+source: "kanban/tasks/voxel-field-bias-persistence.md"
+title: "Voxel: field-bias persistence (save-story completion)"
+priority: "P2"
+status: "done"
+estimate: "3"
+uuid: "voxel-field-bias-persistence"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Voxel: field-bias persistence (save-story completion)
@@ -44,4 +45,8 @@ the hole.
 ---
 Created 2026-07-22: routed from the Voxel 4 review — the only unrouted
 save hole in the substrate.
+
+Triage 2026-07-22: Voxel 4+5 done (thru bf519c4). Picking this up directly — every sculpt op widens the save hole; fix before slice 6 era. ready -> in_progress.
+
+Complete + reviewed 2026-07-22. The save hole is CLOSED: law.voxel/field-diff-schema (the op IS the diff — full sculpt-op record + fold tick + optional body); sculpt fold-ops emits per-op records in fold order; :voxel-focus stamps/validates/appends to c/voxel-field-diffs (5th write column, sole writer). domain.voxel.load: save-state/load-state — load = regenerate seed + replay field-diffs (same pure apply-op, stream order, bit-for-bit) + replay voxel diffs onto the biased field. Round-trips proven: unresolved-world field identical (with negative control), resolved-world field+band consistent, interleaved ops/edits compose, collision diffs still replay. Review PASS-WITH-NITS, both resolved: save-state now THROWS on live band (fail-loud precondition + pin test); seed-voxel-bias invariant named in field-diff-schema docstring. Design doc §7.3 extended. No-band collision gap honestly stays (no macro-field consequence exists to persist). Suite 758/14076 green; architecture green; write-conflicts {}. in_progress -> done.
 ---

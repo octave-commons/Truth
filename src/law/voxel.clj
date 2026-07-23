@@ -355,6 +355,46 @@
   "Predicate: does `value` satisfy `law.voxel/sculpt-op-schema`?"
   (m/validator sculpt-op-schema))
 
+;; --- Field diffs (design §7.3 EXTENDED 2026-07-22: the macro half of the save) ---
+
+(def field-diff-schema
+  "The persisted unit of a MACRO-field bias (design §7.3 extension, card
+   kanban/tasks/voxel-field-bias-persistence.md): a god-scale sculpt op
+   biases plate velocities, convection speeds, and resource-cell masses
+   with no voxel-diff trace, so the field-seed + edit-diff save story
+   needs this sibling stream alongside `edit-diff-schema` — load =
+   regenerate seed + replay field-diffs + replay voxel diffs.
+
+   THE OP IS THE DIFF: `:op` carries the full `sculpt-op-schema` record
+   (verb, anchor, magnitude, target, cost, request tick) exactly as it
+   folded — re-applying it in stream order through
+   `domain.voxel.sculpt/apply-op` (pure, deterministic) reproduces the
+   bias bit-for-bit. `:tick` is the FOLD tick — the tick the bias landed
+   on the field, one Jacobi tick after the op's own request tick.
+   `:body` is optional, mirroring `edit-diff-schema`: the committed world
+   is the implicit default; carry it whenever the target is not.
+
+   Replay order within one `:tick` is collection order — the same
+   discipline as `edit-diff-schema`: the `:voxel-focus` fold appends in
+   fold order, so interleaved ops replay exactly as applied.
+
+   INVARIANT (load-bearing for band round-trips): field biases must not
+   change what `domain.voxel.band/seed-voxel` yields for any offset —
+   voxel diffs replay onto the biased field, so if a bias altered the
+   seed-materialization under an already-diffed region, the replayed
+   band would diverge from the live one. Today's ops hold it (erosion
+   rescales share-preservingly; nothing touches layers or resource-cell
+   regions); any future op that shifts a region or composition
+   non-uniformly breaks it and must migrate the affected diffs."
+  [:map
+   [:op sculpt-op-schema]
+   [:tick [:and :int [:>= 0]]]
+   [:body {:optional true} :int]])
+
+(def field-diff?
+  "Predicate: does `value` satisfy `law.voxel/field-diff-schema`?"
+  (m/validator field-diff-schema))
+
 (def sculpt-op-cost-coefficients
   "Resonance cost coefficients per sculpt verb: cost = base + per-magnitude
    × magnitude — strictly monotone in magnitude by construction (every

@@ -51,10 +51,15 @@
      excavated verbatim even in the `:complex-crater` regime (widened
      rim / reduced depth / uplift per Croft 1985 pending; flagged on
      `derive-edits`, constants marked UNUSED-PENDING in law.crater).
-   - A collision on a committed world with NO resolved band produces no
-     voxel edits: design §6's off-focus consequence (the macro geology
-     field's melt-fraction scalar / `:env/magma-ocean` FSM flip) is not
-     wired — the plan classifies and drops.
+    - A collision on a committed world with NO resolved band produces no
+      voxel edits: design §6's off-focus consequence (the macro geology
+      field's melt-fraction scalar / `:env/magma-ocean` FSM flip) is not
+      wired — the plan classifies and drops. The `c/voxel-field-diffs`
+      stream (card voxel-field-bias-persistence) does NOT cover this:
+      it persists sculpt-op field biases, and a no-band collision has no
+      macro-field consequence wired at all — there is nothing to persist
+      until the consequence itself exists (the melt-fraction scalar is
+      the card that closes this).
    - Vapor voxels are tagged `:state :vapor` in the band (the schema's
      transient bookkeeping state); their mass should leave the solid
      field for the target's atmosphere/escaping debris (design §6 step 2)

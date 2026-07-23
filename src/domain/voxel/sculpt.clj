@@ -45,10 +45,14 @@
    still infra-side — no keymap dispatches `request-op` yet (the Phase 0
    keymap is `infra.render.input/action-palette`). The domain-side
    actuation path here is the contract that infra card wires to. A second
-   gap: field biases live on the cached `c/voxel-field` and are NOT part of
-   the §7.3 field-seed + edit-diff save story (diffs record voxel
-   deviations, not field bias) — persisting field bias across loads is a
-   later card."
+    gap: field biases live on the cached `c/voxel-field` and were NOT part of
+    the §7.3 field-seed + edit-diff save story (diffs record voxel
+    deviations, not field bias) — CLOSED by card
+    kanban/tasks/voxel-field-bias-persistence.md: `fold-ops` emits one
+    `{:op op}` record per folded op and the `:voxel-focus` system stamps
+    it with the fold tick and appends it to `c/voxel-field-diffs`, the
+    macro half of the save (the op IS the diff). Load = regenerate seed +
+    replay field-diffs + replay voxel diffs (`domain.voxel.load`)."
   (:require
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
@@ -422,21 +426,30 @@
 
 (defn fold-ops
   "Fold paid sculpt `ops` into the macro `field` and the resolved `band`:
-   each op biases the field (`apply-op`) and derives its local edits over
-   the band (`derive-edits`), chunked into `:apply-edits` jobs. Returns
-   {:field field' :jobs [...]}. With no ops the field passes through
-   IDENTICALLY and no jobs are produced; with ops and no band the field
-   still changes and ZERO edits are produced — macro-drives-local."
+    each op biases the field (`apply-op`) and derives its local edits over
+    the band (`derive-edits`), chunked into `:apply-edits` jobs. Returns
+    {:field field' :jobs [...] :field-diffs [...]} — one `{:op op}` record
+    per folded op, IN FOLD ORDER, emitted HERE where the op is applied so
+    the record always matches what was applied (card
+    voxel-field-bias-persistence: the `:voxel-focus` system stamps each
+    with the fold tick, validates `law.voxel/field-diff-schema`, and
+    appends to `c/voxel-field-diffs` — the op IS the diff). With no ops
+    the field passes through IDENTICALLY and no jobs or records are
+    produced; with ops and no band the field still changes and ZERO edits
+    are produced — macro-drives-local — but the field-diff record is
+    emitted regardless: the bias is exactly what an unresolved world must
+    persist."
   [field band ops]
   (if (empty? ops)
-    {:field field :jobs []}
+    {:field field :jobs [] :field-diffs []}
     (let [region (get-in band [:spec :region])]
-      (reduce (fn [{:keys [field jobs]} op]
+      (reduce (fn [{:keys [field jobs field-diffs]} op]
                 (let [biased (apply-op field op)
                       edits  (derive-edits op band)]
-                  {:field (:field biased)
-                   :jobs  (into jobs (edits->sculpt-jobs edits region))}))
-              {:field field :jobs []}
+                  {:field       (:field biased)
+                   :jobs        (into jobs (edits->sculpt-jobs edits region))
+                   :field-diffs (conj field-diffs {:op op})}))
+              {:field field :jobs [] :field-diffs []}
               ops))))
 
 ;; --- Actuation (serial, pre-tick — the domain.intervention/place precedent) ----

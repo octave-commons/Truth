@@ -15,11 +15,12 @@
    (the regenerable seed, stored once so materialization never re-derives
    it per tick).
 
-   ONE SYSTEM FOR ALL FOUR COMPONENTS — field, band, queue, diffs — for the
-   same reason `:focus-zone` is one system for promotion AND demotion: both
-   directions write the same columns, and two ids would trip
-   `domain.ecs.registry/write-conflicts`. The system reads its own prior
-   output one tick stale (ordinary Jacobi lag, like `:neighbor-cache`).
+    ONE SYSTEM FOR ALL FIVE COMPONENTS — field, band, queue, diffs,
+    field-diffs — for the same reason `:focus-zone` is one system for
+    promotion AND demotion: both directions write the same columns, and
+    two ids would trip `domain.ecs.registry/write-conflicts`. The system
+    reads its own prior output one tick stale (ordinary Jacobi lag, like
+    `:neighbor-cache`).
 
    THE QUEUE IS THE SINGLE DRAIN PATH (owner decision §7.1): every voxel
    edit — band retargets here, sculpt/mine/construct/collision edits in
@@ -41,12 +42,23 @@
    accumulated `law.voxel/edit-diff-schema` vector is the world's SAVE
    REPRESENTATION — continuous state read back every tick for seed+replay
    materialization, written by exactly one system, and precisely the kind
-   of per-tick-resident state the double-buffer component store exists
-   for. Ledger events are discrete occurrences consumed by handlers
-   (`emit-handoff-event` precedent); nothing CONSUMES a diff event — the
-   diffs themselves are the state. Demotion emits a diff per provenance
-   group per chunk, and ONLY for deviations from the regenerated seed:
-   untouched regions emit nothing because regenerate-from-seed covers them.
+    of per-tick-resident state the double-buffer component store exists
+    for. Ledger events are discrete occurrences consumed by handlers
+    (`emit-handoff-event` precedent); nothing CONSUMES a diff event — the
+    diffs themselves are the state. Demotion emits a diff per provenance
+    group per chunk, and ONLY for deviations from the regenerated seed:
+    untouched regions emit nothing because regenerate-from-seed covers them.
+
+    FIELD-DIFFS ARE THE MACRO HALF OF THE SAME STORY (§7.3 EXTENDED
+    2026-07-22, card voxel-field-bias-persistence): every sculpt op the
+    fold applies to the field appends one `law.voxel/field-diff-schema`
+    record — the op verbatim plus the fold tick — to
+    `c/voxel-field-diffs`, in fold order. The op IS the diff: replay
+    re-applies the same pure `domain.voxel.sculpt/apply-op` in stream
+    order and reproduces the bias bit-for-bit, so a load
+    (`domain.voxel.load`) is regenerate seed + replay field-diffs +
+    replay voxel diffs, and no cross-session field/band divergence
+    survives it.
 
    Reads the observer, the committed world's `c/planet-candidate` /
    `c/position`, and its own four components. Never writes `c/matter-state`
@@ -87,6 +99,17 @@
     (throw (ex-info "domain.voxel.focus: emitted diff fails law.voxel/edit-diff-schema"
                     {:diff diff})))
   diff)
+
+(defn- validate-field-diff!
+  "Throw `ex-info` when `fdiff` fails `law.voxel/field-diff-schema` —
+   the `validate-diff!` precedent applied to the macro half of the save
+   stream: a malformed field-diff would corrupt every load's field
+   replay, so fail at construction, not at replay."
+  [fdiff]
+  (when-not (voxel/field-diff? fdiff)
+    (throw (ex-info "domain.voxel.focus: emitted field-diff fails law.voxel/field-diff-schema"
+                    {:field-diff fdiff})))
+  fdiff)
 
 (defn- step-retarget-demote
   "One demote chunk of a `:retarget` job: fold up to
@@ -214,7 +237,8 @@
 
 (defn voxel-focus-system
   "The `:voxel-focus` write-set system (double-buffer fan-out). Sole writer
-   of `#{c/voxel-field c/voxel-band c/voxel-edit-queue c/voxel-edit-diffs}`.
+   of `#{c/voxel-field c/voxel-band c/voxel-edit-queue c/voxel-edit-diffs
+   c/voxel-field-diffs}`.
    `:writes` is sourced from the registry so the declaration and the
    emitter cannot drift (the `:focus-zone` precedent). Emits NOTHING when
    no world is committed — the whole subsystem is gated on the crossed
@@ -241,12 +265,19 @@
                 band0   (ecs/get-component world eid c/voxel-band)
                 queue0  (or (ecs/get-component world eid c/voxel-edit-queue) [])
                 diffs0  (or (ecs/get-component world eid c/voxel-edit-diffs) [])
+                field-diffs0 (or (ecs/get-component world eid c/voxel-field-diffs) [])
                 ;; Voxel 4: paid sculpt ops arrive one Jacobi tick stale on
                 ;; the producer-suffixed request channel and fold into the
-                ;; two columns this system owns — the field (biased) and the
-                ;; queue (derived local edits enqueued under the band).
+                ;; three columns this system owns — the field (biased), the
+                ;; queue (derived local edits enqueued under the band), and
+                ;; the field-diff stream (one record per folded op, stamped
+                ;; with the fold tick: the op IS the diff, §7.3 extended).
                  ops     (ecs/get-component world eid c/voxel-sculpt-request)
-                 {:keys [field jobs]} (sculpt/fold-ops seed band0 ops)
+                 {:keys [field jobs field-diffs]} (sculpt/fold-ops seed band0 ops)
+                 field-diffs' (into field-diffs0
+                                    (comp (map #(assoc % :tick (long (or (:tick world) 0))))
+                                          (map validate-field-diff!))
+                                    field-diffs)
                  ;; Voxel 5: collision carve plans arrive one Jacobi tick
                  ;; stale on the producer-suffixed request channel and fold
                  ;; into `:apply-edits` jobs, provenance `:collision`; melt/
@@ -285,5 +316,8 @@
               (assoc c/voxel-edit-queue {eid queue'})
 
               (not (identical? diffs0 diffs'))
-              (assoc c/voxel-edit-diffs {eid diffs'}))))
+              (assoc c/voxel-edit-diffs {eid diffs'})
+
+              (not (identical? field-diffs0 field-diffs'))
+              (assoc c/voxel-field-diffs {eid field-diffs'}))))
         {}))})
