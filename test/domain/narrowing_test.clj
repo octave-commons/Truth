@@ -176,6 +176,20 @@
              (get (:binding (step {:focused-eids [7]})) 7))
           "absent signals default to neutral"))))
 
+(deftest focus-targets-only-the-world-it-is-aimed-at
+  (testing "two simultaneously-visible candidates, both well within the
+            attention-shell immediate radius but only one within world-scale
+            range of the focus position: only the targeted world accrues"
+    (let [[w0 obs-eid] (world-with-observer)
+          [w1 targeted] (spawn-candidate w0 (sp/vec3 0.0 0.0 0.0))
+          [w2 other]    (spawn-candidate w1 (sp/vec3 (* 5.0 law/world-focus-radius) 0.0 0.0))
+          ws (run-system w2)
+          binding (get-in ws [c/binding obs-eid])]
+      (is (= law/accrual-rate (get binding targeted))
+          "focus aimed at the targeted world's position accrues binding on it")
+      (is (nil? (get binding other))
+          "the other candidate, outside world-scale range of the focus, does not accrue even though it is still well inside the whole-system attention shell"))))
+
 (deftest single-writer-preserved
   (testing "c/binding and c/binding-scar have exactly one writer across the
             whole registry; the invariant still holds"

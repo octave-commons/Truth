@@ -4,7 +4,8 @@
    kanban/tasks/narrowing-binding-mechanic.md; design
    docs/designs/the-first-narrowing-star-to-planet.md §2)."
   (:require
-   [malli.core :as m]))
+   [malli.core :as m]
+   [law.stellar :as law-stellar]))
 
 ;; --- Schemas ----------------------------------------------------------------
 
@@ -126,6 +127,28 @@
 (def ^:const focus-intensity-floor 0.5)
 ;; Observer :focus-intensity at or above which focus counts as SUSTAINED
 ;; (Focus, Q, held). Below the floor the observer is glancing, not falling.
+
+(def ^:const world-focus-radius
+  "Overlap radius (m) for 'the observer's focus is ON this specific world',
+   consumed by `domain.narrowing/focus-overlap?` (NOT the observer's
+   `:attention-shell :immediate-r`, which is the unrelated whole-system
+   `:focus-zone` regional-cell radius — ~4.0e15 m / ~26,700 AU — reusing it
+   here made binding accrue on every candidate world at once, passively,
+   regardless of where the player actually pointed; see
+   kanban/tasks/narrowing-worldscale-overlap-gate.md).
+
+   Sized to planetary distances, one AU (`law.stellar/au`): the characteristic
+   scale of a single world's own local neighborhood (an Earth-Sun distance),
+   four orders of magnitude tighter than the old system-wide shell and small
+   compared to the ~0.1-30 AU span candidate worlds occupy across the disk
+   (`domain.planet-formation.seed/min-planet-orbit-radius-au` /
+   `planet-seeding-outer-au`), so a focus aimed at one world's position does
+   not also reach a neighboring candidate. No richer per-candidate world/orbit
+   radius is available where this predicate reads: `binding-system` only reads
+   each candidate's `c/position`, not its full `c/planet-candidate` record (no
+   physical radius field exists there either) — a fixed, honestly-labelled
+   distance is the simplest scale that is not a lie about what data backs it."
+  law-stellar/au)
 
 (def ^:const capture-threshold 0.85)
 ;; Binding at which the world reaches capture (design §3): the point past which

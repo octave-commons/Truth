@@ -7,12 +7,15 @@
    `binding-step` is the pure one-tick update over the observer's `c/binding`
    map {world-eid -> [0,1]}:
 
-   - ACCRUES while the observer's attention-shell immediate radius overlaps a
-     candidate world AND focus is sustained. The only focus/attention signals
-     that exist today are the observer's `:focus-position`, `:focus-intensity`,
-     and `:attention-shell` (there is no per-world Focus (Q) verb yet — see
-     GAPS in the `:binding` system docstring), so 'sustained focus on world W'
-     is modelled as: focus-position within the immediate radius of W, with
+   - ACCRUES while the observer's focus overlaps a candidate world's OWN
+     world-scale radius (`law.narrowing/world-focus-radius`, NOT the
+     system-wide `:attention-shell :immediate-r` used by `:focus-zone` — see
+     kanban/tasks/narrowing-worldscale-overlap-gate.md) AND focus is
+     sustained. The only focus/attention signals that exist today are the
+     observer's `:focus-position` and `:focus-intensity` (there is no
+     per-world Focus (Q) verb yet — see GAPS in the `:binding` system
+     docstring), so 'sustained focus on world W' is modelled as:
+     focus-position within `world-focus-radius` of W, with
      `:focus-intensity` at or above `law.narrowing/focus-intensity-floor`.
      Accrual is small per tick, so binding only builds under focus that STAYS.
    - Rate scales with habitability/resolution and in-world resonance IF such
@@ -86,7 +89,11 @@
 
 (defn focus-overlap?
   "True when `world-pos` lies within `radius` of the observer's `focus-pos` —
-   the attention-shell immediate-radius overlap test of design §2.1."
+   the world-scale overlap test of design §2.1. Callers pass
+   `law.narrowing/world-focus-radius` (a candidate's own planetary scale), NOT
+   the observer's `:attention-shell :immediate-r` (the unrelated whole-system
+   `:focus-zone` regional-cell radius) — see
+   kanban/tasks/narrowing-worldscale-overlap-gate.md."
   [focus-pos world-pos radius]
   (<= (sp/dist focus-pos world-pos) (double radius)))
 
@@ -184,9 +191,11 @@
    on the singleton observer entity, keyed by candidate-world eid.
 
    Reads the frozen snapshot only: the observer component (focus position,
-   focus intensity, attention shell), its own prior one-tick-stale
+   focus intensity — NOT the attention shell, which is the unrelated
+   `:focus-zone` regional-cell radius), its own prior one-tick-stale
    `c/binding`/`c/binding-scar` output (ordinary Jacobi lag, like
-   `:neighbor-cache`), and every candidate world's position.
+   `:neighbor-cache`), and every candidate world's position, tested against
+   `law.narrowing/world-focus-radius`.
 
    GAPS (machinery the card assumes that does not exist yet — intentionally
    NOT built here):
@@ -207,10 +216,9 @@
      (if-let [obs-eid (player/observer-entity world)]
        (let [obs        (ecs/get-component world obs-eid c/observer)
              focus      (or (:focus-position obs) [0.0 0.0 0.0])
-             r          (or (get-in obs [:attention-shell :immediate-r])
-                            (player/probability-collapse-radius obs))
              focused    (if (focus-sustained? obs)
-                          (filterv #(focus-overlap? focus (ecs/get-component world % c/position) r)
+                          (filterv #(focus-overlap? focus (ecs/get-component world % c/position)
+                                                     law/world-focus-radius)
                                    (candidate-worlds world))
                           [])
              {:keys [binding scars]}
