@@ -31,7 +31,7 @@
 (def density      :component/density)       ;; kg/m^3
 (def pressure     :component/pressure)      ;; pascal
 (def composition  :component/composition)   ;; {:H 0.7346 :He 0.2485 ...} mass fractions
-(def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map}
+(def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map} — WARNING: below ~100 K :solid is H/He-dominated sigmoid leak, NOT a grain inventory; consumers wanting accretable condensate must filter gas-formers (see planet-formation seeder)
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
 (def matter-state :component/matter-state)  ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :planet :protostar :star :stellar-remnant
 

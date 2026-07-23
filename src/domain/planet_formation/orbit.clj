@@ -68,8 +68,12 @@
   (+ (pfph/equilibrium-temperature luminosity r albedo) planet-greenhouse-warming))
 
 (defn build-planet-spec
-  "Build a planet seed spec from computed orbital and physical properties.\n   `planet` keys: :r, :mass-kg, :ptype, :tick.\n   `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening."
-  [{:keys [r mass-kg ptype tick star]}
+  "Build a planet seed spec from computed orbital and physical properties.
+   `planet` keys: :r, :mass-kg, :ptype, :composition (the local-disk-derived
+   element map from `domain.planet-formation.composition/planet-composition`),
+   :tick, :star.
+   `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening."
+  [{:keys [r mass-kg ptype composition tick star]}
    {:keys [L-star pos vel axis M-star softening]}]
   (let [dens (pfc/planet-material-density-by-type ptype)
         rad (sphere-radius mass-kg dens)
@@ -84,7 +88,7 @@
      :matter-state :planet
      :body-kind :body/planet
      :planet-type ptype
-     :composition (pfc/planet-composition ptype)
+     :composition composition
      :temperature (surface-temperature L-star r planet-bond-albedo)
      :extra-components {c/planet-type ptype
                         c/angular-momentum (orbital-angular-momentum mass-kg rel-pos rel-vel)}}))

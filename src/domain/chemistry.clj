@@ -104,19 +104,40 @@
 
 ;; --- Phase determination -----------------------------------------------------
 
+(defn solid-fraction
+  "Smooth condensed (solid) fraction of an element at `temperature` (K) whose
+   50%-condensation temperature is `tc` (K): the logistic
+
+     s(T) = 1 / (1 + exp((T − Tc) / ΔT)),  ΔT = law.composition/condensation-width
+
+   s(Tc) = 0.5 (half condensed), s → 1 for T ≪ Tc, s → 0 for T ≫ Tc. Replaces
+   the hard `(< T Tc)` step (spec §6.1, decision §10.3): real condensation is
+   a nucleation-and-growth process spread over ~ΔT around Tc, so an element at
+   T ≈ Tc is split proportionally between phases, not all-or-nothing."
+  [temperature tc]
+  (/ 1.0 (+ 1.0 (math/exp (/ (- (double temperature) (double tc))
+                             lcomp/condensation-width)))))
+
 (defn partition-solids
   "Partition a composition map into solid and gas phases at `temperature` (K)
    using the Lodders condensation sequence (law.composition/condensation-
-   temperatures). Returns `{:solid element-map :gas element-map}` with both
-   maps normalized independently so each sums to 1.0."
+   temperatures) and the sigmoid `solid-fraction` (spec §6.1): each element's
+   mass fraction v is split into v·s (solid) and v·(1−s) (gas), so an element
+   near its Tc contributes to BOTH phases and the split conserves element mass
+   exactly. Returns `{:solid element-map :gas element-map}` with both maps
+   normalized independently so each sums to 1.0. Derived on demand, never
+   cached (decision §10.2)."
   [composition temperature]
   (let [temp (double temperature)
         [solid gas]
         (reduce-kv (fn [[s g] k v]
-                     (let [tc (double (get lcomp/condensation-temperatures k 50.0))]
-                       (if (< temp tc)
-                         [(assoc s k v) g]
-                         [s (assoc g k v)])))
+                     (let [tc (double (get lcomp/condensation-temperatures k 50.0))
+                           fs (solid-fraction temp tc)
+                           v  (double v)
+                           vs (* v fs)
+                           vg (* v (- 1.0 fs))]
+                       [(if (pos? vs) (assoc s k vs) s)
+                        (if (pos? vg) (assoc g k vg) g)]))
                    [{} {}]
                    composition)]
     {:solid (lcomp/normalize solid)
@@ -126,25 +147,29 @@
   "Return the fractional bulk categories `{:gas :rock :metal :ice}` for a
    composition at `temperature`, normalized to sum to 1.0.
 
-   Each element's mass fraction is classed by whether it is condensed at
-   `temperature` (Lodders `Tc`): condensed C/N/O → ice, Fe/Ni → metal, other
-   rock-formers → rock; everything gaseous (and condensed gas-formers like frozen
-   H/He/Ne, which have no solid category) → gas. Derives fractions from the
-   original composition — NOT from `partition-solids`, whose :solid/:gas maps are
-   each independently normalized and so cannot report the solid/gas split."
+   Each element's mass fraction is split by the sigmoid `solid-fraction`
+   (spec §6.1): the condensed share is classed by condensate kind — C/N/O →
+   ice, Fe/Ni → metal, other rock-formers → rock, frozen gas-formers (H/He/Ne,
+   no solid category) → gas — and the uncondensed share is always gas. Derives
+   fractions from the original composition — NOT from `partition-solids`,
+   whose :solid/:gas maps are each independently normalized and so cannot
+   report the solid/gas split."
   [composition temperature]
   (let [temp  (double temperature)
         total (double (reduce + 0.0 (vals composition)))
         classify (fn [k]
-                   (let [tc (double (get lcomp/condensation-temperatures k 50.0))]
-                     (if (< temp tc)
-                       (condp contains? k
-                         lcomp/ice-formers :ice
-                         #{:Fe :Ni} :metal
-                         lcomp/rock-formers :rock
-                         :gas) ;; frozen gas-former
-                       :gas)))
-        sums (reduce-kv (fn [m k v] (update m (classify k) + (double v)))
+                   (condp contains? k
+                     lcomp/ice-formers :ice
+                     #{:Fe :Ni} :metal
+                     lcomp/rock-formers :rock
+                     :gas)) ;; frozen gas-former
+        sums (reduce-kv (fn [m k v]
+                          (let [tc (double (get lcomp/condensation-temperatures k 50.0))
+                                fs (solid-fraction temp tc)
+                                v  (double v)]
+                            (-> m
+                                (update (classify k) + (* v fs))
+                                (update :gas + (* v (- 1.0 fs))))))
                         {:gas 0.0 :rock 0.0 :metal 0.0 :ice 0.0}
                         composition)]
     (if (pos? total)

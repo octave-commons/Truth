@@ -8,6 +8,7 @@
    [domain.stellar.seeder :as seeder]
    [domain.stellar.structure :as structure]
    [domain.planet-formation :as pf]
+   [domain.chemistry      :as chem]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [law.composition       :as lcomp]
@@ -266,6 +267,52 @@
                 (str "beyond snow line → giant, got " (:planet-type spec)))
             (is (= :terrestrial (:planet-type spec))
                 (str "inside snow line → terrestrial, got " (:planet-type spec)))))))))
+
+(deftest planet-composition-comes-from-local-disk-condensates
+  (testing "the seed's bulk composition is the disk's condensed inventory at the
+            formation radius, not a static per-type table (spec §6.5, decision §9.1)"
+    (let [inside  (pf/planet-composition lcomp/solar-composition 500.0 6.0e24 0.0)
+          outside (pf/planet-composition lcomp/solar-composition 100.0 6.0e24 0.0)
+          giant   (pf/planet-composition lcomp/solar-composition 100.0 6.0e24 1.0e27)]
+      (is (lcomp/composition-sums-to-unity? inside))
+      (is (lcomp/composition-sums-to-unity? outside))
+      (is (lcomp/composition-sums-to-unity? giant))
+      (testing "inside the snow line: rock/metal core, almost no H/He or water"
+        (is (> (+ (:Fe inside 0.0) (:Si inside 0.0) (:Mg inside 0.0)) 0.3))
+        (is (< (:H inside 0.0) 1e-3))
+        (is (< (:O inside 0.0) 1e-2) "water is vapor at 500 K — absent from the core"))
+      (testing "beyond the snow line: ices (O C N) join the condensed solids"
+        (is (> (:O outside 0.0) 0.1))
+        (is (> (:O outside 0.0) (:O inside 0.0))))
+      (testing "a runaway giant's captured envelope makes it H/He dominated"
+        (is (> (+ (:H giant 0.0) (:He giant 0.0)) 0.9))))))
+
+(deftest seeded-planet-composition-follows-formation-radius
+  (testing "each seeded planet's composition is the LOCAL disk's condensed
+            inventory: rock/metal inside the snow line, ice-bearing beyond it"
+    (let [[w star] (build-disk-world {})
+          res (pf/planet-seeds w star)
+          snow (pf/snow-line-radius law/solar-luminosity)
+          star-pos (ecs/get-component w star c/position)]
+      (is (seq (:spawns res)))
+      (doseq [[_ spec] (:spawns res)]
+        (let [r (sp/dist (:position spec) star-pos)
+              comp (:composition spec)
+              h-he (+ (:H comp 0.0) (:He comp 0.0))
+              cats (chem/bulk-categories comp (:temperature spec))]
+          (is (lcomp/composition-sums-to-unity? comp)
+              "seeded composition is a normalized element map")
+          (cond
+            (> h-he 0.5)
+            (is (> r snow)
+                (str "runaway gas capture only happens beyond the snow line ("
+                     (/ r au) " AU)"))
+            (> r snow)
+            (is (> (:ice cats) 0.01)
+                (str "planet at " (/ r au) " AU (beyond snow line) carries ice"))
+            :else
+            (is (> (+ (:rock cats) (:metal cats)) 0.5)
+                (str "planet at " (/ r au) " AU (inside snow line) is rock/metal-rich"))))))))
 
 (deftest terrestrials-stay-small-on-a-massive-disk
   (testing "isolation mass caps inner rocky planets — a massive (0.05 M☉) disk

@@ -192,6 +192,18 @@
 
 ;; --- Condensation sequence (Lodders 2003) -----------------------------------
 
+(def ^:const condensation-width
+  "Sigmoid width ΔT (K) of the condensation transition used by
+   `domain.chemistry/solid-fraction` (nebular-chemistry spec §6.1, decision
+   §10.3). Condensation is grain nucleation and growth spread over a
+   temperature interval, not a cliff at Tc: laboratory and nebular-analog
+   condensates appear over tens of kelvin around the 50% point
+   (docs/research/physics/nebular-chemistry-metal-enrichment.md §4.3). A
+   constant absolute width (not Tc-relative) keeps the transition sharp for
+   refractories and correctly wide for the most volatile species, whose low
+   Tc would otherwise compress the interval to nothing."
+  30.0)
+
 (def condensation-temperatures
   "50% condensation temperatures (K) for elements from a solar-composition gas
    at 10⁻⁴ bar, following Lodders (2003). Used to derive `c/comp-condensed`.

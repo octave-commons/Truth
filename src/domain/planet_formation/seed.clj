@@ -61,16 +61,18 @@
       (let [disk-regime (or (ecs/get-component world star c/disk-regime)
                             {:solid-surface-density 0.0 :snow-line (pfph/snow-line-radius L-star)})
             snow-line (double (:snow-line disk-regime))
-            Z (lcomp/metallicity (or (ecs/get-component world star c/composition)
-                                     lcomp/solar-composition))
+            disk-composition (or (ecs/get-component world star c/composition)
+                                 lcomp/solar-composition)
+            Z (lcomp/metallicity disk-composition)
             r-in (max (* min-planet-orbit-radius-au law/au)
                       (* 3.0 (double (or (ecs/get-component world star c/radius) 1.0e9))))
             r-out (* planet-seeding-outer-au law/au)]
-        {:disk-age disk-age :maturity maturity :M-star M-star :L-star L-star
-         :disk-m disk-m :disk-L disk-L :star-pos star-pos :star-v star-v
-         :star-axis star-axis :snow-line snow-line :Z Z :r-in r-in :r-out r-out
-         :s0 (pfph/mmsn-sigma0 disk-m r-in r-out)
-         :annuli (make-annuli r-in r-out)}))))
+         {:disk-age disk-age :maturity maturity :M-star M-star :L-star L-star
+          :disk-m disk-m :disk-L disk-L :star-pos star-pos :star-v star-v
+          :star-axis star-axis :snow-line snow-line :Z Z :r-in r-in :r-out r-out
+          :disk-composition disk-composition
+          :s0 (pfph/mmsn-sigma0 disk-m r-in r-out)
+          :annuli (make-annuli r-in r-out)}))))
 
 (defn- annulus-physics
   "Compute physical quantities for one annulus: area, surface densities,
@@ -107,7 +109,7 @@
   [world star]
   (when-let [ctx (seed-context world star)]
     (let [{:keys [M-star L-star disk-m disk-L star-pos star-v star-axis
-                  snow-line Z s0 annuli disk-age]} ctx]
+                  snow-line Z s0 annuli disk-age disk-composition]} ctx]
       (loop [anns annuli
              spawns []
              disk-m' disk-m
@@ -119,9 +121,16 @@
                 phys (annulus-physics ann M-star s0 snow-line Z)
                 r (:r phys)]
             (if (seed-viable? phys disk-age occupied)
-              (let [mass-kg (:mass-kg (pfph/planet-mass phys disk-m'))
+              (let [{:keys [mass-kg core-m gas-m]} (pfph/planet-mass phys disk-m')
                     ptype (pfc/planet-type r (:sigma-solid phys) snow-line (/ mass-kg law/solar-mass))
+                    ;; Local midplane temperature at the formation radius: the
+                    ;; same blackbody the snow-line model uses (albedo 0), so
+                    ;; T(r) = 170 K exactly at the snow line and the condensed
+                    ;; inventory flips ice-bearing there (decision §9.1).
+                    disk-temp (pfph/equilibrium-temperature L-star r 0.0)
+                    composition (pfc/planet-composition disk-composition disk-temp core-m gas-m)
                     spec (pfo/build-planet-spec {:r r :mass-kg mass-kg :ptype ptype
+                                                 :composition composition
                                                  :tick (:tick world) :star star}
                                                 {:L-star L-star :pos star-pos :vel star-v
                                                  :axis star-axis :M-star M-star

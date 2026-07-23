@@ -1,12 +1,13 @@
 ---
-uuid: "nebular-chemistry-and-composition-spec"
-title: "Nebular Chemistry and Composition Spec"
-status: "ready"
-priority: "P1"
-labels: ["specs", "em", "chemistry"]
-created_at: "2026-07-06T16:24:25.290930634Z"
-source: "kanban/tasks/render-material-color-element-keys.md"
 category: "specs"
+labels: ["specs", "em", "chemistry"]
+write-id: "1784772546286-0.hsxq8fmct7hlnesmyxl"
+source: "kanban/tasks/render-material-color-element-keys.md"
+title: "Nebular Chemistry and Composition Spec"
+priority: "P1"
+status: "done"
+uuid: "nebular-chemistry-and-composition-spec"
+created_at: "2026-07-06T16:24:25.290930634Z"
 ---
 
 # Nebular Chemistry and Composition Spec
@@ -185,4 +186,8 @@ The partition is derived every tick but has **no readers** today. M2 gives it co
 
 ---
 Triage 2026-07-10 (stays ready): PARTIAL — M0 element-resolved composition substrate + M2 render/consumer done & tested. Remaining ready slice: §6.1 sigmoid solid-fraction (currently hard step in chemistry/partition-solids) + §6.5 planet composition from c/comp-condensed at formation radius (currently static pfc/planet-composition table).
+
+Triage 2026-07-22: differentiation sibling card done (5bc368a). Picking up the remaining slice per 2026-07-10 triage: §6.1 sigmoid solid-fraction (replace hard step, ΔT≈30K) + §6.5 planet composition from c/comp-condensed at formation radius (replace static pfc/planet-composition table). Dispatching impl agent. ready -> in_progress.
+
+Remaining slice complete + reviewed 2026-07-22 — CARD COMPLETE. Sigmoid condensation s(T)=1/(1+exp((T-Tc)/30K)) replaces the hard step in partition-solids AND bulk-categories (render/hydro/classifier consumers get smoothness, no regressions; no consumer depended on step sharpness). Planet seeding: local midplane T via the same blackbody as the snow line (T=170K exactly at the split — radial model kept), core = normalized ACCRETABLE condensate from c/comp-condensed (gas-former filter at the accretion boundary — review confirmed physically correct site: absolute 30K sigmoid leaks ~6.5% H at 100K, filtered species stay in the disk, mass conservation intact), envelope mass-weighted core-m/gas-m via blend-compositions. Static table fully deleted. Review PASS-WITH-NITS, meaningful nits fixed (per-mille->percent docstring; comp-condensed grain-inventory warning on the component). Suite 777/14372 green; architecture green; write-conflicts {}. in_progress -> done.
 ---

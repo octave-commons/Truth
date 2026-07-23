@@ -127,7 +127,10 @@
       Double/POSITIVE_INFINITY)))
 
 (defn planet-mass
-  "Compute final planet mass from core mass and possible runaway gas envelope."
+  "Compute final planet mass from core mass and possible runaway gas envelope.
+   Returns `{:giant? :mass-kg :core-m :gas-m}` — the core/envelope split lets
+   the seeder mass-weight the planet's composition between condensed solids
+   (core) and captured nebular gas (envelope)."
   [{:keys [core-m beyond?]} disk-m]
   (let [giant? (and beyond? (>= core-m critical-core-mass-kg))
         gas-m (if giant?
@@ -138,4 +141,4 @@
         mass-kg (-> (+ core-m gas-m)
                     (max (* min-seed-mass-solar law/solar-mass))
                     (min disk-m (* max-seed-mass-solar law/solar-mass)))]
-    {:giant? giant? :mass-kg mass-kg}))
+    {:giant? giant? :mass-kg mass-kg :core-m core-m :gas-m gas-m}))
