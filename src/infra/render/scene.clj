@@ -9,7 +9,8 @@
    [infra.render.scene.setup :as setup]
    [infra.render.scene.bodies :as bodies]
    [infra.render.scene.particles :as particles]
-   [infra.render.scene.hud :as hud]))
+   [infra.render.scene.hud :as hud]
+   [infra.render.scene.voxel :as voxel]))
 
 ;; --- LOD constants ----------------------------------------------------------
 
@@ -37,6 +38,10 @@
 (def phase0-bodies-from-world bodies/phase0-bodies-from-world)
 (def phase0-bodies+fields bodies/phase0-bodies+fields)
 (def bodies-from-world bodies/bodies-from-world)
+
+;; --- Voxel band render path --------------------------------------------------
+
+(def voxel-cube-shapes voxel/voxel-cube-shapes)
 
 ;; --- Scene drawing ----------------------------------------------------------
 

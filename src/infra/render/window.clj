@@ -147,13 +147,14 @@
    :volume-program (rvolume/create-volume-program)})
 
 (defn- render-offscreen-scene
-  [mesh camera width height {:keys [body line hud sprite particle]} fbo
+  [mesh cube-mesh camera width height {:keys [body line hud sprite particle]} fbo
    bodies hud-rects hud-text volume render-origin]
   (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER (:fbo fbo))
   (rscene/render-scene {:body-program body :line-program line :hud-program hud
                         :sprite-program sprite :particle-program particle
                         :hud hud-rects :hud-text hud-text :volume volume
-                        :mesh-world mesh :camera camera :width width :height height
+                        :mesh-world mesh :cube-mesh cube-mesh
+                        :camera camera :width width :height height
                         :bodies bodies :t 0.0 :render-origin render-origin})
   (rvolume/delete-volume volume))
 
@@ -186,6 +187,7 @@
          _         (rvolume/reset-volume-cache!)
          programs  (make-programs)
          mesh      (rmesh/upload-mesh (rmesh/make-sphere-mesh 3))
+         cube-mesh (rmesh/upload-mesh (rmesh/make-cube-mesh))
          fbo       (create-fbo width height)
          w0        @world-atom
          phase0?   (phase0-world? w0)
@@ -200,7 +202,7 @@
          hud-text  (when phase0? (rhud/hud-text-from-world w))
          volume    (rvolume/frame-volume {:ctx ctx :world w :program (:volume-program programs)
                                             :res (or volume-res :medium) :cfg volume-config})]
-     (render-offscreen-scene mesh camera width height programs fbo bodies hud hud-text volume render-origin)
+     (render-offscreen-scene mesh cube-mesh camera width height programs fbo bodies hud hud-text volume render-origin)
      (GL11/glFlush)
      (write-png-flipped path width height)
      (cleanup-offscreen window)

@@ -42,6 +42,7 @@
 ;; ---------------------------------------------------------------------------
 
 (def make-sphere-mesh "Build an indexed sphere mesh." mesh/make-sphere-mesh)
+(def make-cube-mesh "Build a unit cube mesh for voxel band cells." mesh/make-cube-mesh)
 (def upload-mesh "Upload a mesh to GPU buffers." mesh/upload-mesh)
 (def subdivisions-for-screen-size "Adaptive sphere subdivisions from on-screen diameter." mesh/subdivisions-for-screen-size)
 
@@ -65,6 +66,7 @@
 (def body-render-color "Choose the final rendered color for a body." color/body-render-color)
 (def body-appearance "Compute the full appearance descriptor for a body." color/body-appearance)
 (def coherence-color "Map observer coherence to a color." color/coherence-color)
+(def voxel-material-color "Map a voxel band material keyword to a base color." color/voxel-material-color)
 
 (def surface-flat "Flat shading material." color/surface-flat)
 (def surface-star "Star surface material." color/surface-star)
@@ -102,6 +104,7 @@
 ;; ---------------------------------------------------------------------------
 
 (def bodies-from-world "Extract renderable bodies from the world." scene/bodies-from-world)
+(def voxel-cube-shapes "Extract voxel-band cube render shapes from the world." scene/voxel-cube-shapes)
 (def phase0-bodies-from-world "Extract Phase 0 bodies from the world." scene/phase0-bodies-from-world)
 (def phase0-bodies+fields "Extract Phase 0 bodies plus their field lines." scene/phase0-bodies+fields)
 (def render-scene "Render the full scene for a frame." scene/render-scene)

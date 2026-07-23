@@ -165,6 +165,33 @@
                      (* (double ice) (nth ice-c i))))
           [0 1 2])))
 
+(def ^:private voxel-material-colors
+  "Base RGB per `law.voxel/seed-materials` keyword — distinguishable material
+   colours for the voxel band render path (`infra.render.scene.voxel`).
+   Basalt/ore/ice reuse the same rock/metal/ice hues `composition->material-
+   color` uses (so a voxel and its parent body read as the same substance);
+   granite (lighter, feldspar-pale rock) and regolith (dusty, sun-bleached
+   rock) are new tones distinct from basalt so the four rock-family materials
+   stay tellable apart on a resolved band."
+  {:basalt   [0.30 0.30 0.34]
+   :granite  [0.72 0.66 0.60]
+   :ore      [0.42 0.40 0.40]
+   :ice      [0.75 0.85 0.95]
+   :regolith [0.55 0.50 0.44]})
+
+(def ^:private voxel-material-default-color
+  "Fallback colour for a voxel `:material` outside `voxel-material-colors`
+   (the schema's set is deliberately open, design §7.4) — a neutral rock-grey
+   so an unrecognised category still reads as solid terrain, not an error."
+  [0.5 0.5 0.5])
+
+(defn voxel-material-color
+  "RGB colour for a voxel band cell's `:material` keyword. Any keyword outside
+   `law.voxel/seed-materials`' named examples (the schema's open set) falls
+   back to a neutral rock-grey."
+  [material]
+  (get voxel-material-colors material voxel-material-default-color))
+
 (defn body-render-color
   "Surface colour of a resolved body: its composition (material) colour when
    cold, crossfading to its thermal blackbody colour as it heats past ~1000 K.

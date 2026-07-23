@@ -69,16 +69,22 @@
      :view       (cam/look-at (:position camera) (:target camera) (sp/vec3 0.0 0.0 1.0))}))
 
 (defn- partition-renderables
-  "Split bodies into particles, lines, solid bodies, and sprite proxies."
+  "Split bodies into particles, lines, solid bodies, sprite proxies, and
+   voxel-band cubes. Voxel cubes are pulled out BEFORE `classify-body-lod` —
+   the band only ever materializes under close focus, so its cells are
+   always drawn as true-scale cubes, never demoted to the sprite LOD fallback
+   distant/tiny bodies get."
   [bodies camera _width height]
   (let [particles (filterv #(= :particle (:render-mode %)) bodies)
         lines     (filterv #(= :line (:render-mode %)) bodies)
-        solids    (remove #(#{:particle :line} (:render-mode %)) bodies)
+        voxels    (filterv #(= :voxel-cube (:render-mode %)) bodies)
+        solids    (remove #(#{:particle :line :voxel-cube} (:render-mode %)) bodies)
         [solids-lod sprites] (bodies/classify-body-lod solids camera height nil)]
     {:particles particles
      :lines     lines
      :solids    solids-lod
-     :sprites   sprites}))
+     :sprites   sprites
+     :voxels    voxels}))
 
 (defn- render-volume-pass
   "Full-screen volumetric fog pass."
@@ -168,6 +174,32 @@
             :surfaceType (int (or (:surface body) 0))})))
       (GL30/glBindVertexArray 0))))
 
+(defn- render-voxel-cubes-pass
+  "Voxel band render pass (kanban/tasks/voxel-band-render-path.md): draws
+   every resolved `c/voxel-band` cell as a solid cube, reusing the shared
+   body material (`body-material`) and the same per-instance draw loop
+   `render-solids-pass` uses, but with `cube-mesh`
+   (`infra.render.mesh/make-cube-mesh`) instead of the sphere mesh. Cubes
+   never oblate/rotate (they are already axis-aligned in the body's own
+   frame) and use `surface-flat` (surfaceType 0) so the shared shader's
+   procedural surface generators (granulation, bands, ...) never fire — a
+   cube just shows its material colour."
+  [body-program cube-mesh proj view camera voxels]
+  (passes/set-blend! :none)
+  (when (and (seq voxels) cube-mesh)
+    (let [mat (assoc (body-material body-program proj view camera) :mesh cube-mesh)]
+      (doseq [v voxels]
+        (material/draw-material!
+         mat
+         {:model (rmath/model-matrix (:position v) (double (:radius v)))
+          ;; glow 0.15 matches the ambient the ordinary (non-star, non-
+          ;; protostar) planet body case uses (bodies.clj) — cubes read as
+          ;; lit terrain rather than near-black silhouettes with no sun in
+          ;; frame.
+          :color (:color v) :accent [0.0 0.0 0.0] :glow 0.15
+          :seed 0.0 :surfaceType (int rcolor/surface-flat)}))
+      (GL30/glBindVertexArray 0))))
+
 (defn- render-sprites-pass
   "Point-sprite LOD fallback for distant bodies."
   [sprite-program proj view sprites]
@@ -198,22 +230,25 @@
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
    `bodies` is a sequence of render maps; `:render-mode` may be :particle,
-   :body, :line, or :sprite. Optional `:render-origin` shifts the camera and all
+   :body, :line, :sprite, or :voxel-cube (the resolved voxel band, drawn with
+   `cube-mesh` instead of the sphere `mesh-world`). Optional `:render-origin`
+   shifts the camera and all
    positions into a camera-relative coordinate system, fixing single-precision
    jitter when zoomed in on a body far from the world origin."
   [{:keys [body-program line-program sprite-program particle-program hud-program hud hud-text volume
-           mesh-world camera width height bodies t render-origin]}]
+           mesh-world cube-mesh camera width height bodies t render-origin]}]
   (render-scene-setup width height)
   (let [origin  (or render-origin [0.0 0.0 0.0])
         camera' (shift-camera camera origin)
         bodies' (shift-bodies bodies origin)
         volume' (shift-volume volume origin)
         {:keys [projection view]} (camera-matrices camera' width height)
-        {:keys [particles lines solids sprites]} (partition-renderables bodies' camera' width height)]
+        {:keys [particles lines solids sprites voxels]} (partition-renderables bodies' camera' width height)]
     (render-volume-pass volume' camera' width height)
     (render-particles-pass particle-program projection view camera' t particles)
     (render-lines-pass line-program projection view lines)
     (render-solids-pass body-program mesh-world projection view camera' solids)
+    (render-voxel-cubes-pass body-program cube-mesh projection view camera' voxels)
     (render-sprites-pass sprite-program projection view sprites)
     (render-hud-pass hud-program hud hud-text width height)))
 

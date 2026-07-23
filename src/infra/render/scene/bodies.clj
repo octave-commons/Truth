@@ -14,7 +14,8 @@
    [infra.render.color :as rcolor]
    [infra.render.units :as units]
    [infra.render.scene.particles :as particles]
-   [infra.render.scene.hud :as hud]))
+   [infra.render.scene.hud :as hud]
+   [infra.render.scene.voxel :as voxel]))
 
 ;; --- Level-of-detail: distant bodies fall back to screen-space sprites ------
 
@@ -170,8 +171,9 @@
   [ctx world]
   (let [_focus (player-focus-level world)]
     (into
-     (into (hud/player-overlay-shapes ctx world)
-           (cell-cloud-shapes ctx world))
+     (into (into (hud/player-overlay-shapes ctx world)
+                 (cell-cloud-shapes ctx world))
+           (voxel/voxel-cube-shapes ctx world))
      (mapcat
       (fn [eid]
         (let [state   (ecs/get-component world eid c/matter-state)

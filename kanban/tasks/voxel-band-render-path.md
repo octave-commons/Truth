@@ -1,7 +1,7 @@
 ---
 uuid: "voxel-band-render-path"
 title: "Voxel band render path — draw the surface, not a sphere"
-status: "todo"
+status: "review"
 priority: "P1"
 labels: ["render", "voxel", "integration-debt"]
 created_at: "2026-07-23T00:00:00Z"

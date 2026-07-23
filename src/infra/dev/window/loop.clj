@@ -75,7 +75,9 @@
                (or (nil? mesh)
                    (not= subdivisions requested-subdivisions))
                (assoc :mesh (render/upload-mesh (render/make-sphere-mesh subdivisions))
-                      :requested-subdivisions nil))))))
+                      :requested-subdivisions nil)
+               (nil? (:cube-mesh cfg))
+               (assoc :cube-mesh (render/upload-mesh (render/make-cube-mesh))))))))
 
 (defn- handle-screenshot-request [world-atom config-atom]
   (when-let [{:keys [path result opts]} (:screenshot-request @config-atom)]
@@ -408,6 +410,7 @@
                                 :hud-text hud-text
                                 :volume volume
                                 :mesh-world (:mesh cfg)
+                                :cube-mesh (:cube-mesh cfg)
                                 :camera cam
                                 :width fb-w
                                 :height fb-h
