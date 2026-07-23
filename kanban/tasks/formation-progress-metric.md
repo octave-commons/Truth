@@ -1,7 +1,7 @@
 ---
 uuid: "formation-progress-metric"
 title: "Formation-progress metric (fraction of nebula mass bound in star + planets)"
-status: "todo"
+status: "done"
 priority: "P2"
 labels: ["domain", "physics", "spark-redesign"]
 created_at: "2026-07-23T00:00:00Z"

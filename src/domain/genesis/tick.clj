@@ -196,6 +196,7 @@
     (cond-> (assoc world3
                    :genesis/complexity complexity
                    :genesis/stats      stats
+                   :genesis/formation-progress (summary/formation-progress world2 summ)
                    :genesis/sim-time   (+ (:genesis/sim-time world3) dt)
                    :genesis/_prev-summary summ)
       pacing (assoc :genesis/time-scale    (:rate pacing)

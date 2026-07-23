@@ -82,6 +82,10 @@
    (~10 K) toward fusion ignition (~1e7 K), on a log-temperature ramp."
   summary/thermal-progress)
 
+(def formation-progress
+  "Fraction of the original nebula mass now bound into stars and planets, in [0,1]."
+  summary/formation-progress)
+
 (def center-of-mass
   "Mass-weighted centre of mass of every positioned body, or [0 0 0] when empty."
   summary/center-of-mass)
