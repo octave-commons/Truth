@@ -1,7 +1,7 @@
 ---
 uuid: "narrowing-tether-default-camera-modes"
 title: "Narrowing: tether actuates in default camera modes (not just :manual)"
-status: "todo"
+status: "review"
 priority: "P1"
 labels: ["render", "camera", "narrowing", "integration-debt"]
 created_at: "2026-07-23T00:00:00Z"

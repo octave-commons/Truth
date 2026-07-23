@@ -192,3 +192,12 @@
 ;; of drifting forever on leftover spring velocity. Above this floor, damping
 ;; is set to the CRITICAL value for the current effective k (2*sqrt(k)) so the
 ;; approach is monotonic at every engagement level — no overshoot/oscillation.
+
+(def ^:const spark-standoff-factor 1.15)
+;; De-occlusion fix (narrowing-tether-default-camera-modes): the spring's
+;; TARGET is offset this many world radii from the bound world's center
+;; toward the camera (domain.narrowing/standoff-position), so a fully-settled
+;; spark sits just outside the true-scale sphere's near surface instead of
+;; spring-settling at the exact center, where it renders depth-occluded
+;; behind the body. 1.15 clears the surface with a small margin without
+;; visibly detaching the spark from the world it is bound to.

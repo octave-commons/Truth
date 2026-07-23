@@ -28,10 +28,15 @@
      frame tightens always works.
 
    GAPS (honest slice notes):
-   - Actuation is wired in the dev window's :manual mode only. The tracking
-     modes (:track-largest-cluster / :fit-all / :follow-selection) overwrite
-     target and distance every frame, so a tether pull there would be erased;
-     reconciling tether with auto-modes is a later card.
+   - This namespace's own `tether-step` is still actuated in :manual mode
+     only (`infra.dev.window.loop`). :fit-all and :follow-selection instead
+     reconcile with binding INSIDE `infra.camera.navigation.tracking`
+     (`blend-toward-binding`, narrowing-tether-default-camera-modes): their
+     own auto-target/distance is blended toward the same bound-world frame
+     this fn computes, by the same `tether-strength`, so the pull is not
+     erased. :track-largest-cluster deliberately does not reconcile — a
+     cluster-of-mass framing and a single bound world are different framings
+     by design.
    - The tether reads the ONE deepest-bound world. Pre-capture oscillation
      between two near-equal candidates would seesaw the pull; the zero-sum
      decay in domain.narrowing makes that state transient, so no smoothing of
@@ -54,8 +59,11 @@
 (def ^:const frame-margin
   "Desired orbit distance at full engagement, in world render radii: close
    enough that the bound world fills the frame, far enough not to clip (the
-   min-approach floor of 2.5 radii still applies via tracking/min-approach-distance)."
-  4.0)
+   min-approach floor of 2.5 radii still applies via tracking/min-approach-distance).
+   Delegates to `tracking/frame-margin`, shared with the auto camera modes'
+   bind-blend (narrowing-tether-default-camera-modes) so :manual and the auto
+   modes agree on how close 'fully bound' frames the world."
+  tracking/frame-margin)
 
 (defn tether-strength
   "Tether engagement in [0,1] for a binding depth `b`: `b / capture-threshold`

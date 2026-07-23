@@ -7,6 +7,8 @@
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
+   [domain.ecs.components :as c]
+   [domain.ecs.core :as ecs]
    [domain.orbital.system :as orbital]
    [domain.narrowing :as narrowing]
    [domain.physics.cache :as pcache]
@@ -293,11 +295,28 @@
               ;; player/drift above — a player-experienced motion, not a
               ;; simulated body. `input-active?` (WASD flying this frame) wins
               ;; outright, same rule the camera tether follows.
+              ;;
+              ;; De-occlusion (narrowing-tether-default-camera-modes, req 3):
+              ;; the spring target is `domain.narrowing/standoff-position`
+              ;; offset from the body's exact center toward the camera's
+              ;; (previous-frame) world position, so a fully-settled spark
+              ;; sits just outside the near surface — visible — instead of at
+              ;; the center, where it renders depth-occluded behind the
+              ;; true-scale sphere. One-frame-stale camera reading is an
+              ;; ordinary Jacobi-style lag, harmless for a continuous offset.
               _         (let [db         (narrowing/deepest-binding w)
                               target-eid (first db)
                               strength   (if db (narrowing/tether-strength (second db)) 0.0)
-                              target-pos (when target-eid
-                                           ((pcache/predicted-position-fn w) target-eid))]
+                              raw-target (when target-eid
+                                           ((pcache/predicted-position-fn w) target-eid))
+                              cam-world  (when raw-target
+                                           (mapv #(* (double %) cam/phase0-view-scale)
+                                                 (:position @camera-atom)))
+                              target-pos (when raw-target
+                                           (narrowing/standoff-position
+                                            raw-target
+                                            (ecs/get-component w target-eid c/radius)
+                                            cam-world))]
                           (swap! world-atom player/update-observer
                                  #(narrowing/observer-motion-step
                                    % {:target-pos target-pos
@@ -344,11 +363,11 @@
               _         (when (and (:selection @config-atom) (nil? sel))
                           (swap! config-atom #(menu/apply-action % [:ui/select-entity nil])))
               _         (let [screenable (filter #(and (= :body (:render-mode %))
-                                                          (:position %)
-                                                          (:radius %)) bodies)
+                                                       (:position %)
+                                                       (:radius %)) bodies)
                               max-screen-diam (if (seq screenable)
-                                                  (apply max (map #(render/body-screen-diameter % cam fb-h 60.0) screenable))
-                                                  0)
+                                                (apply max (map #(render/body-screen-diameter % cam fb-h 60.0) screenable))
+                                                0)
                               requested (render/subdivisions-for-screen-size max-screen-diam)]
                           (swap! config-atom assoc :requested-subdivisions requested))
               _         (when-let [shape (and sel (inspect/selected-shape bodies sel))]

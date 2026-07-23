@@ -246,6 +246,28 @@
                          :input-active? true})]
       (is (= start after) "player input wins outright; the spring never runs this frame"))))
 
+;; --- De-occlusion standoff (narrowing-tether-default-camera-modes, req 3) ---
+
+(deftest standoff-offsets-toward-camera-outside-radius
+  (testing "the standoff point sits on the segment from center toward `toward`,
+            just outside the body's radius"
+    (let [center (sp/vec3 0.0 0.0 0.0)
+          toward (sp/vec3 1.0e9 0.0 0.0)
+          radius 1.0e7
+          standoff (narrowing/standoff-position center radius toward)]
+      (is (> (sp/dist center standoff) radius)
+          "standoff clears the body's surface")
+      (is (< (sp/dist center standoff) (sp/dist center toward))
+          "standoff stays well short of the camera, not out at its distance")
+      (is (< (abs (- (nth standoff 1) 0.0)) 1.0e-6)
+          "offset is purely along the center->toward axis (y unaffected here)"))))
+
+(deftest standoff-falls-back-to-center-when-degenerate
+  (testing "no radius, or `toward` coincident with `center`, leaves the point unmoved"
+    (let [center (sp/vec3 1.0 2.0 3.0)]
+      (is (= center (narrowing/standoff-position center 0.0 (sp/vec3 9.0 9.0 9.0))))
+      (is (= center (narrowing/standoff-position center 1.0e7 center))))))
+
 (deftest single-writer-preserved
   (testing "c/binding and c/binding-scar have exactly one writer across the
             whole registry; the invariant still holds"

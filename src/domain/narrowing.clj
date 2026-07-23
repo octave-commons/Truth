@@ -218,16 +218,16 @@
              focus      (or (:focus-position obs) [0.0 0.0 0.0])
              focused    (if (focus-sustained? obs)
                           (filterv #(focus-overlap? focus (ecs/get-component world % c/position)
-                                                     law/world-focus-radius)
+                                                    law/world-focus-radius)
                                    (candidate-worlds world))
                           [])
              {:keys [binding scars]}
              (binding-step {:binding (or (ecs/get-component world obs-eid c/binding) {})
                             :scars   (or (ecs/get-component world obs-eid c/binding-scar) {})
                             :focused-eids focused})]
-          {c/binding      {obs-eid binding}
-           c/binding-scar {obs-eid scars}})
-        {}))})
+         {c/binding      {obs-eid binding}
+          c/binding-scar {obs-eid scars}})
+       {}))})
 
 ;; --- Spark<->world spring tether (spark-planet-binding, approach B) -----------
 ;; The observer ("spark") is NOT an ECS body; its state is the singleton
@@ -260,6 +260,28 @@
     (let [binding (ecs/get-component world obs-eid c/binding)]
       (when (seq binding)
         (apply max-key (fn [[_ b]] (double b)) binding)))))
+
+(defn standoff-position
+  "A point offset from `center` toward `toward` by `radius *
+   law/spark-standoff-factor` world meters — the minimal de-occlusion fix for
+   the bound spark (spark-planet-binding's deferred gap): spring-settling
+   exactly at a bound world's CENTER leaves the spark's sprite depth-occluded
+   behind the true-scale sphere, since nothing draws it in front. Using this
+   as the spring TARGET instead keeps the settled spark just outside the
+   world's near surface toward `toward` (the caller passes the camera's
+   world position, so the spark settles on the camera-facing side and stays
+   visible), rather than the sphere's exact center.
+
+   Falls back to `center` unmodified when `radius` is non-positive or
+   `toward` coincides with `center` (no direction to offset along, e.g. no
+   camera reading yet)."
+  [center radius toward]
+  (let [r (double (or radius 0.0))
+        d (sp/v- toward center)
+        len (sp/len d)]
+    (if (or (<= r 0.0) (< len 1.0e-6))
+      center
+      (sp/v+ center (sp/v* d (/ (* r law/spark-standoff-factor) len))))))
 
 (defn spring-accel
   "Spring acceleration (m/s^2) pulling the spark from `pos` (with current
