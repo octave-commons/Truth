@@ -12,7 +12,10 @@
    [infra.render.volume :as volume]
    [infra.render.input :as input]
    [infra.render.scene :as scene]
-   [infra.render.window :as window]))
+   [infra.render.window :as window]
+   [infra.render.asset :as asset]
+   [infra.render.passes :as passes]
+   [infra.render.material :as material]))
 
 ;; ---------------------------------------------------------------------------
 ;; Window / context lifecycle
@@ -118,3 +121,31 @@
 ;; ---------------------------------------------------------------------------
 
 (def model-matrix "Build a model matrix for a body transform." math/model-matrix)
+
+;; ---------------------------------------------------------------------------
+;; GL resource lifecycle (programs, meshes, textures)
+;; ---------------------------------------------------------------------------
+
+(def asset-program-id "Cached GL program id for a program name, or nil." asset/program-id)
+(def mesh! "Get-or-create a cached mesh entry, uploading on a cache miss." asset/mesh!)
+(def texture! "Get-or-create a cached texture entry, uploading on a cache miss." asset/texture!)
+(def invalidate-assets! "Invalidate every program/mesh/texture cache." asset/invalidate-all!)
+(def dispose-asset! "Tear down one cached program, mesh, or texture." asset/dispose-asset!)
+(def dispose-assets! "Full GL teardown of every cached asset." asset/dispose-all!)
+
+;; ---------------------------------------------------------------------------
+;; Pass state
+;; ---------------------------------------------------------------------------
+
+(def set-blend! "Set the pass blend mode (:alpha :additive :none)." passes/set-blend!)
+(def set-depth-write! "Enable/disable depth-buffer writes for the pass." passes/set-depth-write!)
+(def set-depth-test! "Enable/disable the depth test for the pass." passes/set-depth-test!)
+(def set-cull! "Set face culling for the pass (:back :front :none)." passes/set-cull!)
+(def bind-uniforms! "Set a map of uniform name -> value on the bound program." passes/bind-uniforms!)
+
+;; ---------------------------------------------------------------------------
+;; Materials
+;; ---------------------------------------------------------------------------
+
+(def material "Construct a material record {:program :uniforms :mesh :blend :depth}." material/material)
+(def draw-material! "Draw one instance of a material record." material/draw-material!)

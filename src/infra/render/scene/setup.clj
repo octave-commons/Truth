@@ -13,6 +13,8 @@
    [infra.render.color :as rcolor]
    [infra.render.hud :as rhud]
    [infra.render.volume :as rvolume]
+   [infra.render.passes :as passes]
+   [infra.render.material :as material]
    [infra.render.scene.bodies :as bodies]
    [shape.spatial :as sp])
   (:import
@@ -92,14 +94,12 @@
   [particle-program proj view camera t particles]
   (when (and particle-program (pos? (int particle-program)) (seq particles))
     (GL20/glUseProgram particle-program)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation particle-program "projection") false proj)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation particle-program "view") false view)
     (let [[cx cy cz] (:position camera)]
-      (GL20/glUniform3f (GL20/glGetUniformLocation particle-program "cameraPos") (float cx) (float cy) (float cz)))
-    (GL20/glUniform1f (GL20/glGetUniformLocation particle-program "time") (float t))
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+      (passes/bind-uniforms! particle-program
+                             {:projection proj :view view
+                              :cameraPos [cx cy cz] :time t}))
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (GL32/glEnable GL32/GL_PROGRAM_POINT_SIZE)
     (let [pm (rmesh/upload-particle-mesh (rmesh/make-particle-mesh particles))]
       (GL30/glBindVertexArray (:vao pm))
@@ -108,19 +108,17 @@
       (GL15/glDeleteBuffers (:vbo pm))
       (GL30/glDeleteVertexArrays (:vao pm)))
     (GL32/glDisable GL32/GL_PROGRAM_POINT_SIZE)
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)))
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)))
 
 (defn- render-lines-pass
   "Field line and reticle line pass."
   [line-program proj view lines]
   (when (and line-program (pos? (int line-program)) (seq lines))
     (GL20/glUseProgram line-program)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation line-program "projection") false proj)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation line-program "view") false view)
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+    (passes/bind-uniforms! line-program {:projection proj :view view})
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (GL11/glLineWidth 1.5)
     (let [lm (rmesh/upload-particle-mesh (rmesh/make-particle-mesh lines))]
       (GL30/glBindVertexArray (:vao lm))
@@ -128,22 +126,31 @@
       (GL30/glBindVertexArray 0)
       (GL15/glDeleteBuffers (:vbo lm))
       (GL30/glDeleteVertexArrays (:vao lm)))
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)))
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)))
+
+(defn- body-material
+  "Material record for the solid-sphere body pass: opaque, depth-tested,
+   `projection`/`view`/`cameraPos` fixed for the frame; per-body `model`,
+   `color`, `accent`, `glow`, `seed`, `surfaceType` are supplied per draw via
+   `draw-material!`'s `extra-uniforms`."
+  [body-program proj view camera]
+  (let [[cx cy cz] (:position camera)]
+    (material/material
+     {:program body-program
+      :uniforms {:projection proj :view view :cameraPos [cx cy cz]}
+      :mesh nil ;; assigned per draw call below (world sphere mesh varies by LOD)
+      :blend :none
+      :depth {:write? true :test? true}})))
 
 (defn- render-solids-pass
-  "Solid body sphere pass."
+  "Solid body sphere pass. Each body draws as one instance of the shared body
+   material with its own model matrix, color, and surface uniforms layered on
+   top via `draw-material!`'s `extra-uniforms`."
   [body-program mesh-world proj view camera solids]
-  (GL11/glDisable GL11/GL_BLEND)
+  (passes/set-blend! :none)
   (when (seq solids)
-    (GL20/glUseProgram body-program)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "projection") false proj)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "view") false view)
-    (let [cam-pos (:position camera)
-          [cx cy cz] cam-pos
-          cam-loc (GL20/glGetUniformLocation body-program "cameraPos")]
-      (GL20/glUniform3f cam-loc (float cx) (float cy) (float cz))
-      (GL30/glBindVertexArray (:vao mesh-world))
+    (let [mat (assoc (body-material body-program proj view camera) :mesh mesh-world)]
       (doseq [body solids]
         (let [model (if-let [ob (:oblateness body)]
                       (rmath/model-matrix (:position body)
@@ -154,13 +161,11 @@
               [r g b] (or (:color body) (rcolor/body-color (:kind body)))
               [ar ag ab] (or (:accent body) [0.0 0.0 0.0])
               glow (double (or (:glow body) 0.1))]
-          (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation body-program "model") false model)
-          (GL20/glUniform3f (GL20/glGetUniformLocation body-program "color") (float r) (float g) (float b))
-          (GL20/glUniform3f (GL20/glGetUniformLocation body-program "accent") (float ar) (float ag) (float ab))
-          (GL20/glUniform1f (GL20/glGetUniformLocation body-program "glow") (float glow))
-          (GL20/glUniform1f (GL20/glGetUniformLocation body-program "seed") (float (or (:seed body) 0.0)))
-          (GL20/glUniform1i (GL20/glGetUniformLocation body-program "surfaceType") (int (or (:surface body) 0)))
-          (GL11/glDrawArrays GL11/GL_TRIANGLES 0 (:count mesh-world))))
+          (material/draw-material!
+           mat
+           {:model model :color [r g b] :accent [ar ag ab] :glow glow
+            :seed (double (or (:seed body) 0.0))
+            :surfaceType (int (or (:surface body) 0))})))
       (GL30/glBindVertexArray 0))))
 
 (defn- render-sprites-pass
@@ -168,11 +173,9 @@
   [sprite-program proj view sprites]
   (when (and sprite-program (pos? (int sprite-program)) (seq sprites))
     (GL20/glUseProgram sprite-program)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation sprite-program "projection") false proj)
-    (GL20/glUniformMatrix4fv (GL20/glGetUniformLocation sprite-program "view") false view)
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+    (passes/bind-uniforms! sprite-program {:projection proj :view view})
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (GL32/glEnable GL32/GL_PROGRAM_POINT_SIZE)
     (let [sm (rmesh/upload-sprite-mesh (rmesh/make-sprite-mesh sprites))]
       (GL30/glBindVertexArray (:vao sm))
@@ -181,8 +184,8 @@
       (GL15/glDeleteBuffers (:vbo sm))
       (GL30/glDeleteVertexArrays (:vao sm)))
     (GL32/glDisable GL32/GL_PROGRAM_POINT_SIZE)
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)))
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)))
 
 (defn- render-hud-pass
   "2D HUD overlay pass."
@@ -190,7 +193,7 @@
   (rhud/render-hud hud-program hud)
   (rhud/render-text hud-program hud-text width height)
   (GL20/glUseProgram 0)
-  (GL11/glDisable GL11/GL_BLEND))
+  (passes/set-blend! :none))
 
 (defn render-scene
   "Render a frame with volumetric fog particles and glowing 3D massive bodies.
