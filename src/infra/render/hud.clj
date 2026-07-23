@@ -9,7 +9,8 @@
    [domain.ecs.components :as c]
    [domain.intervention :as intervention]
    [infra.render.color :as color]
-   [infra.render.input :as rinput])
+   [infra.render.input :as rinput]
+   [infra.render.passes :as passes])
   (:import
    (org.lwjgl.opengl GL11 GL15 GL20 GL30)
    (org.lwjgl.stb STBEasyFont)
@@ -25,9 +26,8 @@
   [hud-program rects]
   (when (and hud-program (pos? (int hud-program)) (seq rects))
     (GL20/glUseProgram hud-program)
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (let [loc (GL20/glGetUniformLocation hud-program "hudColor")]
       (doseq [{:keys [x0 y0 x1 y1 color]} rects]
         (let [[r g b a] color
@@ -47,8 +47,8 @@
           (GL30/glBindVertexArray 0)
           (GL15/glDeleteBuffers vbo)
           (GL30/glDeleteVertexArrays vao))))
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)
     (GL20/glUseProgram 0)))
 
 (defn- text->ndc-tris
@@ -86,9 +86,8 @@
   [hud-program lines width height]
   (when (and hud-program (pos? (int hud-program)) (seq lines))
     (GL20/glUseProgram hud-program)
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (let [loc (GL20/glGetUniformLocation hud-program "hudColor")]
       (doseq [{:keys [text x y color scale] :or {scale 2.0 color [1.0 1.0 1.0 1.0]}} lines]
         (when (seq text)
@@ -110,8 +109,8 @@
             (GL30/glBindVertexArray 0)
             (GL15/glDeleteBuffers vbo)
             (GL30/glDeleteVertexArrays vao)))))
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)
     (GL20/glUseProgram 0)))
 
 (defn- format-elapsed
@@ -212,6 +211,50 @@
      {:text (format "focus: %.0f%%" (* 100.0 (double (or (:focus-intensity obs) 0.5))))
       :x 16.0 :y (- h 26.0) :scale 1.5 :color [0.65 0.80 0.95 0.85]}]))
 
+(def ^:const binding-bar-length
+  "Character width of the binding bar rendered in `binding-readout-entry`."
+  20)
+
+(defn- binding-bar
+  "A `[####----]`-style ASCII bar for `b` in [0,1], `binding-bar-length` wide."
+  [b]
+  (let [filled (long (math/round (* binding-bar-length (double b))))]
+    (str "[" (apply str (repeat filled \#)) (apply str (repeat (- binding-bar-length filled) \-)) "]")))
+
+(defn- committed-world-eid
+  "The eid of the world whose `c/commitment-state` is `:committed`, or nil.
+   Mirrors `domain.narrowing`'s private `committed-world-eid` — read-only,
+   no domain change (The First Narrowing, child B)."
+  [world]
+  (some (fn [[eid m]] (when (= :committed (get m c/commitment-state)) eid))
+        (ecs/all-of world c/commitment-state)))
+
+(defn- binding-readout-entry
+  "HUD line for the observer's gravitational binding to candidate worlds
+   (`c/binding`, The First Narrowing child A/B — `domain.narrowing`).
+
+   - When some world already carries `c/commitment-state :committed`, shows a
+     distinct 'world committed' readout instead of a live percentage — the
+     commitment horizon is write-once and irreversible, so this readout never
+     reverts once shown.
+   - Otherwise, when the observer's `c/binding` map is non-empty, shows the
+     DEEPEST (max-value) candidate world's binding as an ASCII bar + percent.
+   - nil with no observer, no binding, and no commitment — purely additive,
+     read-only against the ECS world."
+  [world height]
+  (when-let [eid (player/observer-entity world)]
+    (let [h (double height)
+          y (- h 118.0)]
+      (if (committed-world-eid world)
+        {:text "world committed"
+         :x 16.0 :y y :scale 1.6 :color [1.0 0.85 0.55 0.95]}
+        (let [binding (or (ecs/get-component world eid c/binding) {})]
+          (when (seq binding)
+            (let [[_ b] (apply max-key val binding)
+                  b     (double b)]
+              {:text (format "binding %s %.0f%%" (binding-bar b) (* 100.0 b))
+               :x 16.0 :y y :scale 1.5 :color [0.95 0.75 0.55 0.85]})))))))
+
 (defn- notif-entry
   "A transient centered notification, fading over 200 ticks."
   [world notif width height]
@@ -265,8 +308,9 @@
 (defn observer-hud-text
   "Player HUD: quanta/state (bottom-left), observation note + quest (bottom-center),
    event notifications (center), ambient narrator line (low viewport float),
-   controls hint (bottom-right). `height` anchors everything to the framebuffer
-   size. Empty without an observer."
+   gravitational-binding readout (bottom-left, above quanta — see
+   `binding-readout-entry`), controls hint (bottom-right). `height` anchors
+   everything to the framebuffer size. Empty without an observer."
   [world width height]
   (if-let [obs (player/get-observer world)]
     (let [state   (player/decoherence-state obs)
@@ -276,6 +320,7 @@
           base    (observer-base-text obs state width height)
           n-line  (notif-entry world notif width height)
           a-line  (ambient-line-entry world width height)
+          b-line  (binding-readout-entry world height)
           w       (double width)
           h       (double height)]
       (cond-> base
@@ -287,6 +332,7 @@
                       :scale 1.4 :color [0.70 0.85 0.95 0.70]})
         n-line (conj n-line)
         a-line (conj a-line)
+        b-line (conj b-line)
         true   (conj (controls-help-line width height))))
     []))
 

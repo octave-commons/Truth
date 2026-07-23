@@ -265,6 +265,32 @@
       (is (some #(re-find #"Msun" (:text %)) lines) "mass line present")
       (is (= [] (r/hud-text-from-world (ecs/empty-world)))))))
 
+(deftest test-observer-hud-binding-and-commitment-readout
+  (testing "Non-empty c/binding surfaces the deepest world's percentage"
+    (let [w0  (genesis/create-world {:gas-count 10})
+          eid (player/observer-entity w0)
+          w   (ecs/put-component w0 eid c/binding {101 0.3 102 0.72})
+          lines (r/observer-hud-text w 800 600)]
+      (is (some #(re-find #"binding.*72%" (:text %)) lines)
+          "deepest (max) binding world's percentage is shown, not the shallower one")
+      (is (not-any? #(re-find #"committed" (:text %)) lines)
+          "no commitment readout before any world is committed")))
+  (testing "c/commitment-state :committed switches to the committed readout"
+    (let [w0  (genesis/create-world {:gas-count 10})
+          eid (player/observer-entity w0)
+          w   (-> w0
+                  (ecs/put-component eid c/binding {101 0.9})
+                  (ecs/put-component 101 c/commitment-state :committed))
+          lines (r/observer-hud-text w 800 600)]
+      (is (some #(re-find #"committed" (:text %)) lines)
+          "committed readout appears once c/commitment-state is written")
+      (is (not-any? #(re-find #"90%" (:text %)) lines)
+          "the live percentage readout is replaced, not shown alongside")))
+  (testing "Empty c/binding and no commitment yields no binding readout line"
+    (let [w (genesis/create-world {:gas-count 10})]
+      (is (not-any? #(re-find #"binding|committed" (:text %))
+                    (r/observer-hud-text w 800 600))))))
+
 (deftest test-focus-input-moves-and-resizes
   (testing "handle-input drives the observer focus (the player's controls)"
     (let [w   (genesis/create-world {:gas-count 10})
