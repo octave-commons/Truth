@@ -8,6 +8,7 @@
    [clojure.math :as math] [clojure.set]
    [domain.ecs.core        :as ecs]
    [domain.ecs.components   :as c]
+   [law.chemistry           :as lchem]
    [law.composition         :as lcomp]
    [law.atmosphere          :as atmosphere]
    [law.stellar             :as law]))
@@ -261,15 +262,197 @@
 
 ;; --- Differentiation ---------------------------------------------------------
 
-(defn differentiate-composition
-  "Model gravitational differentiation of a molten/hot body."
-  [composition temperature _radius]
-  (if (> temperature 1500)
-    {:core (select-keys composition [:Fe :Ni])
-     :mantle (select-keys composition [:Si :Mg :O :Al])
-     :crust (select-keys composition [:Si :O :Al :Ca :Na])
-     :atmosphere (select-keys composition [:H :He :N :O])}
-    {:mixed composition}))
+(def ^:private oxygen-per-silicon
+  "Mass of oxygen bound per unit mass of silicon in silicate rock (SiO₂:
+   2·15.999/28.085). Used to split the oxygen budget between rock and free
+   oxygen/water."
+  (/ (* 2.0 (get-in element-properties [:O :mass]))
+     (get-in element-properties [:Si :mass])))
+
+(def ^:private oxygen-per-carbon
+  "Mass of oxygen bound per unit mass of carbon as CO/CO₂ (CO: 15.999/12.011 —
+   the conservative single-O bound)."
+  (/ (get-in element-properties [:O :mass])
+     (get-in element-properties [:C :mass])))
+
+(defn- oxygen-partition
+  "Split the oxygen mass fraction of `composition` into
+   `{:tied-c :tied-si :free}`: oxygen bound to carbon (CO/CO₂), oxygen bound to
+   silicon (silicate rock), and the remainder available as free oxygen/water
+   (spec §2.2). Carbon claims first, then silicon; never negative."
+  [composition]
+  (let [o   (double (get composition :O 0.0))
+        c   (double (get composition :C 0.0))
+        si  (double (get composition :Si 0.0))
+        tied-c  (min o (* oxygen-per-carbon c))
+        tied-si (min (- o tied-c) (* oxygen-per-silicon si))
+        free    (max 0.0 (- o tied-c tied-si))]
+    {:tied-c tied-c :tied-si tied-si :free free}))
+
+(defn material-groups
+  "Disjoint bulk material groups of an element composition (spec §2.2, adapted
+   to the element-resolved model): `{:volatiles :silicates :metals :organics}`
+   mass fractions, each atom counted exactly once so the groups sum to the
+   composition total.
+
+   - `:metals`    Fe + Ni (core material)
+   - `:silicates` Si + O tied to Si, plus the other lithophile rock-formers
+                  (Mg Al Ca Na S Li7)
+   - `:organics`  C + O tied to C (the prebiotic carbon budget)
+   - `:volatiles` H He D He3 Ne + N + free oxygen (gas + ice inventory)"
+  [composition]
+  (let [{:keys [tied-c tied-si free]} (oxygen-partition composition)
+        g (fn [& ks] (reduce (fn [acc k] (+ acc (double (get composition k 0.0)))) 0.0 ks))]
+    {:volatiles (+ (g :H :He :D :He3 :Ne :N) free)
+     :silicates (+ (g :Si :Mg :Al :Ca :Na :S :Li7) tied-si)
+     :metals    (g :Fe :Ni)
+     :organics  (+ (g :C) tied-c)}))
+
+(defn volatile-fraction
+  "The volatile mass fraction of `composition`: H/He + ices + free oxygen +
+   organics, single-counted (`:volatiles` + `:organics` of `material-groups`).
+   This is the spec §2.2 volatile row (H + He + H₂O-proxy + CO/CO₂-proxy) made
+   disjoint so it can be multiplied by mass without double-counting."
+  [composition]
+  (let [{:keys [volatiles organics]} (material-groups composition)]
+    (+ volatiles organics)))
+
+(defn volatile-budget
+  "Volatile inventory of a body in kg: `volatile-fraction` × `mass`. Feeds the
+   M5 habitability handoff as `:volatile-budget-kg`."
+  [composition mass]
+  (* (volatile-fraction composition) (double (or mass 0.0))))
+
+(defn layer-fractions
+  "Equilibrium differentiated layer partition of a fully molten body:
+   `{:core :mantle :volatile}` mass fractions — core = metals (Fe+Ni sink),
+   mantle = silicates/rock, volatile = H/He + ices + organics (rises or
+   escapes, spec §5 table). Normalized so the three fractions sum to exactly
+   1.0: the layers are a partition of the body's mass, so total layer mass
+   equals body mass."
+  [composition]
+  (let [{:keys [metals silicates volatiles organics]} (material-groups composition)
+        volatile (+ volatiles organics)
+        total    (+ metals silicates volatile)]
+    (if (pos? total)
+      (let [inv (/ 1.0 total)]
+        {:core (* metals inv) :mantle (* silicates inv) :volatile (* volatile inv)})
+      {:core 0.0 :mantle 0.0 :volatile 0.0})))
+
+(defn- volatile-layer-composition
+  "Element map of the volatile layer (H He D He3 Ne C N + free oxygen),
+   normalized to sum to 1. The surface of a fully differentiated body."
+  [composition]
+  (let [free (:free (oxygen-partition composition))]
+    (lcomp/normalize
+     (cond-> (select-keys composition [:H :He :D :He3 :Ne :C :N])
+       (pos? free) (assoc :O free)))))
+
+(defn differentiate-layers
+  "One-tick differentiation step for a molten body (malleability > 0.8). The
+   layer partition itself is the composition's equilibrium `layer-fractions` —
+   the mass is always somewhere, so fractions always sum to 1 — while
+   `:degree` eases 0 → 1 over `law.chemistry/differentiation-timescale` and
+   `:surface-composition` interpolates from the bulk composition (degree 0,
+   uniform) toward the volatile-layer composition (degree 1, segregated).
+   `current` is the body's previous c/differentiated-layers value (nil when
+   freshly molten)."
+  [composition current dt]
+  (let [{:keys [core mantle volatile]} (layer-fractions composition)
+        degree  (min 1.0 (+ (double (or (:degree current) 0.0))
+                            (/ (double dt) lchem/differentiation-timescale)))
+        crust   (volatile-layer-composition composition)
+        ks      (into (set (keys composition)) (keys crust))
+        surface (reduce (fn [m k]
+                          (let [b (double (get composition k 0.0))
+                                s (double (get crust k 0.0))
+                                v (+ (* (- 1.0 degree) b) (* degree s))]
+                            (if (pos? v) (assoc m k v) m)))
+                        {} ks)]
+    {:core-fraction     core
+     :mantle-fraction   mantle
+     :volatile-fraction volatile
+     :degree            degree
+     :surface-composition (lcomp/normalize surface)}))
+
+(defn strip-volatiles
+  "Drive volatiles off a merged body whose post-impact temperature is `t` (K).
+   Above `law.chemistry/ice-volatile-loss-temperature` the ice-volatile
+   inventory (C + its bound O, N, free oxygen) is lost; above
+   `hhe-volatile-loss-temperature` all primordial H/He (H He D He3 Ne) is lost
+   as well. Returns `{:composition renormalized :lost-fraction f}` where `f` is
+   the fraction of the body's total mass that escaped (0.0 below both
+   thresholds). Oxygen bound into silicate rock always stays."
+  [composition t]
+  (let [temp (double t)
+        {:keys [tied-c free]} (oxygen-partition composition)
+        ice? (>= temp lchem/ice-volatile-loss-temperature)
+        hhe? (>= temp lchem/hhe-volatile-loss-temperature)
+        drop-ks (cond-> []
+                  hhe? (into [:H :He :D :He3 :Ne])
+                  ice? (into [:C :N]))
+        dropped (reduce (fn [acc k] (+ acc (double (get composition k 0.0)))) 0.0 drop-ks)
+        lost-o  (if ice? (+ tied-c free) 0.0)
+        lost    (+ dropped lost-o)]
+    (if (pos? lost)
+      {:composition   (lcomp/normalize
+                       (cond-> (apply dissoc composition drop-ks)
+                         ice? (-> (assoc :O (max 0.0 (- (double (get composition :O 0.0))
+                                                        lost-o)))
+                                  (as-> m (if (pos? (:O m)) m (dissoc m :O))))))
+       :lost-fraction lost}
+      {:composition composition :lost-fraction 0.0})))
+
+(def ^:private non-differentiating-states
+  "Matter states that never differentiate: diffuse gas and stars (plasma, not
+   density-layered rock). Mirrors the classifier's planet-candidate set."
+  #{:nebula :star :protostar :stellar-remnant})
+
+(defn differentiation-system
+  "Write-set emitter: SOLE writer of `c/differentiated-layers` and
+   `c/volatile-budget` (chemistry spec §5, §7 Phase 3-4).
+
+   Every body with composition + mass gets its `c/volatile-budget` refreshed
+   (kg of H/He + ices + free oxygen + organics) — cold future planets included,
+   since the M5 handoff reads it. Bodies whose temperature puts them above
+   `law.chemistry/differentiation-malleability-min` (molten, spec §3) advance
+   their `c/differentiated-layers` one tick (`differentiate-layers`); cold
+   bodies are simply not written — a body without the component is
+   undifferentiated, and a body that cools below the threshold keeps its last
+   layer record frozen. Runs as a Jacobi fan-out emitter reading the
+   integrator-owned temperature/composition one tick stale — the
+   'after thermal-system' ordering of spec §7 Phase 3 is satisfied because
+   temperature is now integrator-owned (the :thermal system is retired) and
+   every fan-out read is one tick stale by construction."
+  [dt]
+  {:id     :differentiation
+   :writes #{c/differentiated-layers c/volatile-budget}
+   :reads  #{c/matter-state c/composition c/mass c/temperature
+             c/differentiated-layers}
+   :run
+   (fn [world]
+     (let [eids (ecs/entities-with world c/matter-state c/composition c/mass)
+           budget-cell
+           (into {}
+                 (map (fn [eid]
+                        [eid (volatile-budget (ecs/get-component world eid c/composition)
+                                              (ecs/get-component world eid c/mass))]))
+                 eids)
+           layer-cell
+           (into {}
+                 (keep (fn [eid]
+                         (let [state (ecs/get-component world eid c/matter-state)
+                               temp  (double (or (ecs/get-component world eid c/temperature) 0.0))]
+                           (when (and (not (contains? non-differentiating-states state))
+                                      (> (law/malleability temp)
+                                         lchem/differentiation-malleability-min))
+                             [eid (differentiate-layers
+                                   (ecs/get-component world eid c/composition)
+                                   (ecs/get-component world eid c/differentiated-layers)
+                                   dt)]))))
+                 eids)]
+       (cond-> (if (empty? budget-cell) {} {c/volatile-budget budget-cell})
+         (seq layer-cell) (assoc c/differentiated-layers layer-cell))))})
 
 ;; --- Prebiotic chemistry -----------------------------------------------------
 

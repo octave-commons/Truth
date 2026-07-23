@@ -827,6 +827,8 @@
      :orbit-stable?           (boolean (ecs/get-component world eid c/orbit-stable))
      :atmosphere-class        (ecs/get-component world eid c/atmosphere-class)
      :retained-species        (or (ecs/get-component world eid c/retained-species) #{})
+     :volatile-budget-kg      (ecs/get-component world eid c/volatile-budget)
+     :differentiated-layers   (ecs/get-component world eid c/differentiated-layers)
      :bulk-composition        (or (ecs/get-component world eid c/composition) {})
      :angular-momentum        (or (ecs/get-component world eid c/angular-momentum) [0.0 0.0 0.0])
      :rotation-axis           (or (ecs/get-component world eid c/rotation-axis) [0.0 0.0 1.0])
@@ -862,13 +864,13 @@
    output after the fold — see this namespace's Phase 4 section docstring
    for why events are never dispatched from inside a write-set `:run`."
   []
-  {:id     :handoff
-   :writes #{c/planet-candidate}
-   :reads  #{c/matter-state c/mass c/composition c/position c/velocity
-             c/radius c/luminosity c/material-class c/thermal-band
-             c/orbit-stable c/atmosphere-class c/retained-species
-             c/angular-momentum c/rotation-axis c/oblateness c/b-field
-             c/spin c/absorb-merge}
+    {:id     :handoff
+    :writes #{c/planet-candidate}
+    :reads  #{c/matter-state c/mass c/composition c/position c/velocity
+              c/radius c/luminosity c/material-class c/thermal-band
+              c/orbit-stable c/atmosphere-class c/retained-species
+              c/angular-momentum c/rotation-axis c/oblateness c/b-field
+              c/spin c/absorb-merge c/volatile-budget c/differentiated-layers}
    :run
    (fn [world]
      (if-let [star (stable-star world)]

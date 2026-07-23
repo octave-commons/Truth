@@ -57,6 +57,18 @@
 (def atmosphere-class :component/atmosphere-class) ;; :none :thin :substantial :thick
 (def retained-species :component/retained-species) ;; #{:H2 :He :H2O :N2 :CO2}
 
+;; --- Differentiation & volatile budget (chemistry spec §5-§6) ----------------
+;; `differentiated-layers` is the density-separated layer partition of a molten
+;; body (law.chemistry/differentiated-layers-schema); layer fractions sum to 1,
+;; so total layer mass equals body mass exactly. `volatile-budget` is the
+;; body's volatile inventory in kg (H/He + ices + free oxygen + organics) — the
+;; number the M5 habitability handoff carries as `:volatile-budget-kg`.
+;; Malleability is NOT a component: it is pure-derived from temperature via
+;; law.stellar/malleability. Sole writer of both: the `:differentiation`
+;; fan-out system (domain.chemistry/differentiation-system).
+(def differentiated-layers :component/differentiated-layers)
+(def volatile-budget       :component/volatile-budget) ;; kg
+
 ;; --- Handoff / planet-candidate record (M5 handoff Phase 4) -----------------
 ;; The full `:planet-candidate` output record (parent kanban/tasks/ecology-
 ;; water-gate-snowline.md §5), assembled once a candidate body meets the §2

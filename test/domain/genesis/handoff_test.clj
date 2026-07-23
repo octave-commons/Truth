@@ -90,13 +90,14 @@
           record   (classifier/build-candidate-record world star-map planet)]
       (is (true? (schema/planet-candidate? record))
           (str "record failed schema: " record))
-      (is (= (set (keys record))
-             #{:planet-id :star-id :material-class :thermal-band
-               :equilibrium-temperature :semi-major-axis :eccentricity
-               :orbit-stable? :atmosphere-class :retained-species
-               :bulk-composition :angular-momentum :rotation-axis
-               :oblateness :surface-gravity :core-dynamo? :magnetic-field
-               :formation-events}))
+       (is (= (set (keys record))
+              #{:planet-id :star-id :material-class :thermal-band
+                :equilibrium-temperature :semi-major-axis :eccentricity
+                :orbit-stable? :atmosphere-class :retained-species
+                :volatile-budget-kg :differentiated-layers
+                :bulk-composition :angular-momentum :rotation-axis
+                :oblateness :surface-gravity :core-dynamo? :magnetic-field
+                :formation-events}))
       (is (= planet (:planet-id record)))
       (is (= star (:star-id record))))))
 

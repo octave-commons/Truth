@@ -119,14 +119,14 @@
     ;; and reads `c/absorb-merge` as the "system not yet settled" proxy — a
     ;; pending, unresolved collision merge in flight. See
     ;; kanban/tasks/ecology-m5-phase4-handoff-event.md.
-   {:id     :handoff
-    :ns     'domain.stellar.classifier
-    :reads  #{c/matter-state c/mass c/composition c/position c/velocity
-              c/radius c/luminosity c/material-class c/thermal-band
-              c/orbit-stable c/atmosphere-class c/retained-species
-              c/angular-momentum c/rotation-axis c/oblateness c/b-field
-              c/spin c/absorb-merge}
-    :writes #{c/planet-candidate}}
+    {:id     :handoff
+     :ns     'domain.stellar.classifier
+     :reads  #{c/matter-state c/mass c/composition c/position c/velocity
+               c/radius c/luminosity c/material-class c/thermal-band
+               c/orbit-stable c/atmosphere-class c/retained-species
+               c/angular-momentum c/rotation-axis c/oblateness c/b-field
+               c/spin c/absorb-merge c/volatile-budget c/differentiated-layers}
+     :writes #{c/planet-candidate}}
 
      ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
      ;; small physical seed instead of promoting the whole parcel. Emits the spawn
@@ -350,6 +350,19 @@
     :ns     'domain.chemistry
     :reads  #{c/matter-state c/composition c/temperature c/mass}
     :writes #{c/comp-burn}}
+
+    ;; Differentiation + volatile budget (chemistry spec §5, §7 Phase 3-4):
+    ;; molten bodies (malleability > 0.8) advance their core/mantle/volatile
+    ;; layer partition; EVERY body with composition+mass gets its volatile
+    ;; budget (kg) refreshed for the M5 handoff. Jacobi fan-out emitter —
+    ;; reads the integrator-owned temperature one tick stale (the :thermal
+    ;; system is retired; 'runs after thermal' is the ordinary fan-out lag).
+    ;; Sole writer of both components.
+   {:id     :differentiation
+    :ns     'domain.chemistry
+    :reads  #{c/matter-state c/composition c/mass c/temperature
+              c/differentiated-layers}
+    :writes #{c/differentiated-layers c/volatile-budget}}
 
    {:id     :regime
     :ns     'domain.regime

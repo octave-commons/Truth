@@ -134,6 +134,8 @@
    [:orbit-stable?           :boolean]
    [:atmosphere-class        keyword?] ;; law.atmosphere/atmosphere-class-schema
    [:retained-species        set?]     ;; law.atmosphere/retained-species-schema
+   [:volatile-budget-kg {:optional true} [:maybe number?]] ;; kg, law.chemistry/volatile-budget-schema (nil until :differentiation first writes)
+   [:differentiated-layers {:optional true} [:maybe map?]] ;; law.chemistry/differentiated-layers-schema (nil while undifferentiated)
    [:bulk-composition        map?]     ;; {:H double :He double :O double ...} mass fractions
    [:angular-momentum        vector?]  ;; [Lx Ly Lz] kg m²/s
    [:rotation-axis           vector?]  ;; unit [nx ny nz]

@@ -63,6 +63,10 @@
    (fusion/stellar-sed-system)
    (fusion/atmosphere-shells-system)
    (chemistry/nucleosynthesis-system dt)
+   ;; Differentiation + volatile budget: reads the integrator-owned temperature
+   ;; one tick Jacobi-stale (the retired :thermal system's successor), so it
+   ;; effectively runs after temperature is settled each tick (spec §7 Phase 3).
+   (chemistry/differentiation-system dt)
    (fusion/deuterium-depletion-system)
    (wind/stellar-wind-system)
    (wind/wind-ablation-system)

@@ -8,6 +8,7 @@
    [domain.chemistry :as chemistry]
    [domain.stellar.thermodynamics :as thermo]
    [domain.integrator.base :as base]
+   [domain.integrator.temperature :as itemp]
    [law.stellar :as law]
    [shape.spatial :as sp]))
 
@@ -78,6 +79,29 @@
           (let [inv (/ 1.0 total-m)]
             (reduce-kv (fn [m k v] (assoc m k (* v inv))) {} comp-acc)))))))
 
+(defn- merge-volatile-loss
+  "Volatile blow-off plan for merge survivor `eid` (chemistry spec §7 Phase 4):
+   `{:composition :lost-fraction}` from the mass-weighted blend and the
+   post-impact temperature (`domain.integrator.temperature/merged-temperature`
+   — the same temperature the integrator writes, so the gate and the heating
+   can never disagree). Above the law.chemistry thresholds the ice-volatile
+   and/or H/He inventory is stripped and the composition renormalized; below
+   them the blend passes through with `:lost-fraction` 0.0. nil when no merge
+   packets target `eid`."
+  [world eid]
+  (when-let [blended (absorb-comp-blend world eid)]
+    (chemistry/strip-volatiles
+     blended
+     (double (or (itemp/merged-temperature world eid)
+                 (ecs/get-component world eid c/temperature)
+                 0.0)))))
+
+(defn- volatile-loss-fraction
+  "Fraction of the merged body's total mass driven off as volatiles by a hot
+   merge this tick; 0.0 for gentle/cold merges and non-merge entities."
+  [world eid]
+  (double (or (:lost-fraction (merge-volatile-loss world eid)) 0.0)))
+
 (defn- ablated-bodies
   "Return {eid true} for bound bodies whose new mass would fall at or below
    `law/ablation-floor`. Bound states are every resolved matter-state except
@@ -105,6 +129,18 @@
   (let [eids      (base/due-entities world (ecs/entities-with world c/mass))
         absorbs   (merge (get-in world [:components c/absorb-accrete] {})
                          (get-in world [:components c/absorb-merge] {}))
+        new-mass  (fn [eid]
+                    (let [m0        (double (ecs/get-component world eid c/mass))
+                          dm        (base/sum-scalar-influences world eid base/mass-flux-sources)
+                          dm-a      (absorb-mass-delta world eid)
+                          dm-wind   (double (or (:wind-heating/mass-loss
+                                                 (ecs/get-component world eid c/wind-heating))
+                                                0.0))
+                          dm-t      (+ dm dm-a (- dm-wind))
+                          ;; hot merges drive off volatiles: the escaped mass
+                          ;; leaves with the stripped composition (core-ws).
+                          lost      (* (volatile-loss-fraction world eid) (+ m0 dm-a))]
+                      (max 0.0 (- (+ m0 dm-t) lost))))
         cell      (into {}
                         (keep (fn [eid]
                                 (let [dm        (base/sum-scalar-influences world eid base/mass-flux-sources)
@@ -114,7 +150,7 @@
                                                             0.0))
                                       dm-t      (+ dm dm-a (- dm-wind))]
                                   (when-not (zero? dm-t)
-                                    [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-t))]))))
+                                    [eid (new-mass eid)]))))
                         eids)
         ;; Absorb packets may target entities that lacked a scalar mass-flux
         ;; influence but still gained mass. Ensure they are included.
@@ -123,7 +159,7 @@
                                 (when-not (contains? cell eid)
                                   (let [dm-a (absorb-mass-delta world eid)]
                                     (when-not (zero? dm-a)
-                                      [eid (max 0.0 (+ (double (ecs/get-component world eid c/mass)) dm-a))])))))
+                                      [eid (new-mass eid)])))))
                         (keys absorbs))
         depleted  (depleted-donors world 0.0)
         ablated   (ablated-bodies world law/ablation-floor (merge cell extra))
@@ -158,16 +194,19 @@
    entities are updated when `:lod/throttle-ticks?` is true.
 
    Absorb-merge packets from collision merges are blended BEFORE burn/depletion:
-   the mass-weighted composition of the survivor and the absorbed body."
+   the mass-weighted composition of the survivor and the absorbed body, with
+   volatiles driven off first when the post-impact temperature crosses the
+   law.chemistry blow-off thresholds (the escaped mass is debited in mass-ws)."
   [world]
   (let [burns (get-in world [:components c/comp-burn] {})
         deps  (get-in world [:components c/comp-depletion] {})
         merge-eids (set (keys (get-in world [:components c/absorb-merge] {})))
-        ;; blend compositions from merge packets first
+        ;; blend compositions from merge packets first, then strip volatiles
+        ;; driven off by the impact heating (hot merges only; cold merges blend)
         merged-comps (when (seq merge-eids)
                        (persistent!
                         (reduce (fn [acc eid]
-                                  (if-let [cmp (absorb-comp-blend world eid)]
+                                  (if-let [cmp (:composition (merge-volatile-loss world eid))]
                                     (assoc! acc eid cmp)
                                     acc))
                                 (transient {}) merge-eids)))
