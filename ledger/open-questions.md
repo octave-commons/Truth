@@ -89,3 +89,33 @@ orbit-stability = 3 analytic gates (peri floor, 100 AU apo cap, 10-Hill sibling
 separation) vs each body's dominant-attractor. Gates 1&2 pass from the numbers;
 Q11 probe running to decide: Hill-packing (6 planets in 1.6-9 AU) vs wrong/nil parent.
 Subagents A/B/C all abandoned (stalled on background probes); orchestrator driving directly.
+
+## MILESTONE (2026-07-24 ~17:40): first planet-candidate in sim history
+Two root-cause fixes this session unblocked candidate emergence (seed 42):
+- b7909fa spawn-seam stale-anchor: 0/12 -> 6/12 planets survive formation era.
+- 3542b2c Hill-ejecta gate: exclude unbound bodies from orbit-stability sibling
+  set -> all 6 orbit-stable -> eid 1010 eligible -> c/planet-candidate [1010] WRITTEN.
+Suite 873/15468 green. The binding->commitment->voxel loop is now REACHABLE.
+
+## Over-luminosity resolved: it's a deliberate toy (Q12/Q14, A15/A16)
+star-luminosity is a toy clamp ([1e26,1e29]W, mass-independent, all stars ~261 Lsun),
+NOT a bug. 1010's temperate 342K is a toy artifact. CLEAN single-function seam =>
+LOW lock-in (downstream gates are physical K). Owner: toy OK as provisional, focus
+gameplay loop now, don't lock in. Real model carded: stellar-mass-luminosity-real-model.md.
+GUARD: key gameplay on the semantic gate (c/planet-candidate), not on "1010 is at 9 AU".
+
+## Deferred / open follow-ups
+- Residual scattering: 6/12 planets (inner 0.13-0.5 AU + outer) still eject.
+  Becomes CRITICAL when real luminosity lands (true HZ ~0.1-0.2 AU = inner planets).
+- Real stellar M-L model (carded, research-first, deferred behind gameplay loop).
+- disc.clj / regime.clj still use most-massive central-star (A102) — real, low-pri.
+
+## Subagent note
+All 3 sonnet subagents stalled by backgrounding multi-minute genesis probes;
+orchestrator drove the diagnosis directly with synchronous file-redirected probes.
+Lesson: subagents on this repo must run genesis probes in FOREGROUND.
+
+## NOW: gameplay loop focus (owner 2026-07-24)
+Next: verify fly -> bind -> commit -> voxel end-to-end against candidate 1010.
+Live pm2 window (gates-of-truth-dev) runs STALE code (pre b7909fa/3542b2c) — needs
+restart or nREPL reload to run the new physics. (Restart = fresh nebula; confirm first.)
