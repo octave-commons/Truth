@@ -68,9 +68,14 @@
 (def ^:const default-dark-matter-scale-factor orbital/default-dark-matter-scale-factor)
 
 ;; Functions
+(def compact-matter-states orbital/compact-matter-states)
+(def ^:const softening-cutoff-fraction orbital/softening-cutoff-fraction)
+(def body-softening orbital/body-softening)
+(def pair-softening orbital/pair-softening)
 (def substellar-mass-class orbital/substellar-mass-class)
 (def ideal-gas-pressure orbital/ideal-gas-pressure)
 (def softened-circular-speed orbital/softened-circular-speed)
+(def newtonian-circular-speed orbital/newtonian-circular-speed)
 (def hill-radius orbital/hill-radius)
 (def isolation-mass orbital/isolation-mass)
 (def virial-speed orbital/virial-speed)

@@ -19,6 +19,7 @@
    [domain.ecs.registry :as reg]
    [domain.ecs.tick :as tick]
    [domain.genesis :as genesis]
+   [domain.integrator.base :as base]
    [domain.integrator.core :as intcore]
    [domain.player :as player]
    [domain.stellar.geometry :as geometry]
@@ -144,20 +145,102 @@
     (is (= [:integrator] (get (reg/writers-by-component reg/systems) c/mass)))
     (is (= [:structure] (get (reg/writers-by-component reg/systems) c/radius)))))
 
-;; --- WASD drift composes with gravity -----------------------------------------
+;; --- WASD flight is an acceleration channel, never a position write -----------
 
-(deftest drift-writes-the-position-column-only
-  (testing "manual flight translates c/position directly and leaves c/velocity
-            to the integrator — thrust and gravity add, nothing fights"
+(deftest drift-is-gone
+  (testing "the position teleport was deleted (flight-no-jump-accel): no var,
+            and the player input path carries no c/position writer"
+    (is (nil? (resolve 'domain.player.focus/drift)))
+    (is (nil? (resolve 'domain.player/drift)))
+    (is (= [:integrator] (get (reg/writers-by-component reg/systems) c/position))
+        "the integrator is the sole c/position writer")
+    (is (= [:player-thrust] (get (reg/writers-by-component reg/systems) c/accel-thrust))
+        "the thrust channel has exactly one writer")
+    (is (some #(= c/accel-thrust %) (get-in base/influence-registry [:velocity :accumulate]))
+        "the integrator sums the thrust channel like any other force")))
+
+(deftest thrust-system-emits-on-the-spark-only
+  (testing "the write-set carries c/accel-thrust on the observer entity only,
+            thrust direction × D·(1−f)/dt² plus damping −v·(1−f)/dt — sized so
+            terminal v·dt = D (displacement per tick) at ANY dilated dt"
     (let [[w eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
-          w (ecs/put-component w eid c/velocity (sp/vec3 7.0 0.0 0.0))
-          w' (player/drift w (sp/vec3 0.0 1.0e15 0.0) 0.5)]
-      (is (= [0.0 5.0e14 0.0] (player/observer-position w'))
-          "position moved by velocity * dt")
-      (is (= [7.0 0.0 0.0] (ecs/get-component w' eid c/velocity))
-          "velocity column untouched by input — gravity's integral is preserved")
-      (is (not (contains? (player/get-observer w') :position))
-          "still no shadow position in the observer map"))))
+          w (ecs/put-component w eid c/velocity (sp/vec3 1.0e13 0.0 0.0))
+          w (assoc w :sim/dt 1.0e12 :tick 1)
+          [w b] (ecs/spawn w)
+          w (ecs/put-components w b {c/position (sp/vec3 1.0e15 0.0 0.0) c/mass 1.0e28})
+          w (player/set-thrust w [0.0 1.0 0.0])
+          ws ((:run (player/thrust-acceleration-system)) w)
+          dt 1.0e12
+          D player/default-displacement-per-tick
+          f player/default-damping-retention
+           ;; a = dir·(D·(1−f)/dt²) − v·((1−f)/dt) = [−0.3, 9e-9, 0] m/s²
+          expected [-0.3 (/ (* D (- 1.0 f)) (* dt dt)) 0.0]
+          applied (tick/apply-write-set w ws)]
+      (is (= {c/accel-thrust {eid (get-in applied [:components c/accel-thrust eid])}} ws)
+          "one channel, one entity — the write-set shape")
+      (is (every? #(< (abs %) 1.0e-9) (sp/v- (ecs/get-component applied eid c/accel-thrust) expected))
+          "thrust plus damping, displacement-normalized")
+      (is (nil? (ecs/get-component applied b c/accel-thrust))
+          "no other body feels player thrust")
+      (is (= (sp/vec3 0.0 0.0 0.0) (player/observer-position applied))
+          "the emitter writes NO position — the integrator owns motion")
+      (is (every? #(< (abs %) 1.0e-9)
+                  (sp/v- (base/sum-vec-influences applied eid base/accel-sources) expected))
+          "the channel lands in the integrator's acceleration sum"))))
+
+(deftest thrust-terminal-displacement-is-dt-invariant
+  (testing "THE dilation invariant (the 2026-07-23 live fling pinned): at any
+            :sim/dt, a held key drives terminal v·dt = D — the spark's
+            displacement per tick is dilation-independent. A fixed Δv per tick
+            would make displacement ∝ dt (physics-dt-unit-mismatch); that
+            choice flung the spark 8e24 m in one tick at dt=4.1e9."
+    (doseq [dt [1.0e7 4.1e9 1.0e12 5.0e12]]
+      (let [[w eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
+            w (assoc w :sim/dt dt)
+            w (player/set-thrust w [1.0 0.0 0.0])
+            ws ((:run (player/thrust-acceleration-system)) w)
+            a (first (get-in ws [c/accel-thrust eid]))
+            D player/default-displacement-per-tick
+            f player/default-damping-retention
+            ;; terminal: v_t = a·dt/(1−f) ⇒ displacement per tick = v_t·dt
+            disp-terminal (* (/ (* a dt) (- 1.0 f)) dt)]
+        (is (< (abs (- disp-terminal D)) (* 1.0e-9 D))
+            (str "terminal displacement per tick = D at dt=" dt
+                 " (got " disp-terminal ")"))))))
+
+(deftest thrust-clears-when-input-releases
+  (testing "dropping :player/thrust leaves only the damping term, and a world
+            with no observer emits an empty channel (auto-clear)"
+    (let [[w eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
+          w (ecs/put-component w eid c/velocity (sp/vec3 0.0 0.0 1.0e13))
+          w (assoc w :sim/dt 1.0e12)
+          w (player/set-thrust w nil)
+          ws ((:run (player/thrust-acceleration-system)) w)
+          applied (tick/apply-write-set w ws)]
+      (is (every? #(< (abs %) 1.0e-9)
+                  (sp/v- (ecs/get-component applied eid c/accel-thrust) [0.0 0.0 -0.3]))
+          "coast-down: −v·(1−f)/dt only")
+      (is (= {c/accel-thrust {}} ((:run (player/thrust-acceleration-system)) (ecs/empty-world)))
+          "no observer → an empty channel (auto-clear)"))))
+
+(deftest focus-follow-pins-focus-to-the-mote
+  (testing "manual-mode focus rides the spark's c/position plus the player
+            offset; radius/intensity preserved; the body is never moved"
+    (let [[w _eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 2.0e15 0.0 0.0))
+          obs (player/get-observer w)
+          w' (player/focus-follow w [1.5e10 0.0 0.0])]
+      (is (= [2.000015e15 0.0 0.0] (:focus-position (player/get-observer w')))
+          "focus = mote position + offset")
+      (is (= (:focus-radius obs) (:focus-radius (player/get-observer w'))))
+      (is (= (:focus-intensity obs) (:focus-intensity (player/get-observer w'))))
+      (is (= (sp/vec3 2.0e15 0.0 0.0) (player/observer-position w'))
+          "focus-follow reads c/position, never writes it")
+      (testing "a nudge is a new offset — auto-follow and nudge commute, the
+                nudge always lands (the resolution order)"
+        (let [w'' (player/focus-follow w [3.0e10 0.0 0.0])]
+          (is (= [2.00003e15 0.0 0.0] (:focus-position (player/get-observer w''))))))
+      (testing "worlds without an observer pass through"
+        (is (= (ecs/empty-world) (player/focus-follow (ecs/empty-world) [1.0 0.0 0.0])))))))
 
 ;; --- Load-time repair hook ----------------------------------------------------
 

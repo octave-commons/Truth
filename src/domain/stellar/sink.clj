@@ -124,26 +124,76 @@
   (let [n (double (max 1 (or gas-count 1000)))]
     (max feeding-zone-factor (/ 500.0 (math/pow n (/ 1.0 3.0))))))
 
+(def ^:const disk-formation-radius
+  "Effective centrifugal radius (m) at which captured material joins a
+   protostar/star disk — 10 AU. Material falling from the Bondi/capture radius
+   (~10⁴ AU) carries far too much angular momentum to form a compact
+   protoplanetary disk; in reality it sheds that angular momentum to the
+   collapsing envelope (shocks, gravitational torques) and lands at ~1–10 AU.
+   This is the project's single decision on what survives capture: BOTH capture
+   channels renormalize to this radius — the gradual BHL gas channel
+   (domain.mass-transfer/donor-flux) and the whole-parcel absorb channel
+   (`absorb-packet`). Do not introduce a second value."
+  1.5e12)
+
+(defn disk-angular-momentum-from-radius
+  "Angular momentum vector for mass `m` placed in a Keplerian disk at `radius`
+   around a mass `M` sink: |L| = m·√(G·M·radius). Direction follows the
+   captured parcel's raw orbital angular momentum about the sink (`dpos`,
+   `v-rel`); if that is zero, default to +z.
+
+   The shed difference between the parcel's raw capture-scale orbital L and
+   this formation-scale L is carried off by envelope torques during infall
+   (sub-grid) — deliberately NOT deposited in the sink's bulk spin or the disk;
+   storing it would spin protostars toward breakup and re-inflate derived disk
+   radii to the clump scale (the kAU-disk birth defect,
+   kanban/tasks/sink-absorb-angular-momentum-renormalization.md). This mirrors
+   the BHL channel's accounting, where the donor gas keeps its orbital motion
+   and only formation-scale L is deposited."
+  [m M radius dpos v-rel]
+  (let [j (Math/sqrt (* law/G (double M) (double radius)))
+        L-raw (thermo/orbital-angular-momentum 1.0 dpos v-rel)
+        L-len (sp/len L-raw)
+        target-L (* (double m) j)]
+    (if (pos? L-len)
+      (sp/v* L-raw (/ target-L L-len))
+      [0.0 0.0 target-L])))
+
 (defn- absorb-packet
-  "Build one absorb-accrete packet for a parcel being swallowed by a sink."
-  [world sink-p sink-v disk-former? eid]
+  "Build one absorb-accrete packet for a parcel being swallowed by a sink.
+
+   Linear momentum accounting is untouched: the packet carries the parcel's raw
+   `:velocity`/`:mass` and the integrator's COM-preserving blend applies them
+   exactly as before. Only the DISK-route angular-momentum term is
+   renormalized: a disk-routed packet stores formation-scale L
+   (`disk-angular-momentum-from-radius` at `disk-formation-radius`, 10 AU)
+   instead of the raw capture-scale m·(r_rel × v_rel) (capture happens at the
+   Bondi/feeding radius, ~10⁴ AU, whose j²/(GM) ≈ 10³–10⁵ AU birthed the
+   kAU-disk defect). The shed L rides off with the collapsing envelope
+   (sub-grid torques — see `disk-angular-momentum-from-radius`); non-disk-route
+   packets (solid bodies merged straight into the sink's bulk) keep the raw
+   orbital L, which correctly spins up the bulk."
+  [world sink-p sink-v sink-m disk-former? eid]
   (let [m (double (or (ecs/get-component world eid c/mass) 0.0))
         v (or (ecs/get-component world eid c/velocity) [0 0 0])
         p (or (ecs/get-component world eid c/position) [0 0 0])
         pstate (ecs/get-component world eid c/matter-state)
         r-rel (sp/v- p sink-p)
         v-rel (sp/v- v sink-v)
-        L-p (thermo/orbital-angular-momentum m r-rel v-rel)]
+        ;; Diffuse gas and small planetesimals are routed through the disk around a
+        ;; protostar/star so they can participate in viscous accretion and planet
+        ;; formation. Swallowed gas-giant embryos, brown dwarfs, and protostellar
+        ;; fragments are merged directly into the sink (spec Part 1a competitive
+        ;; accretion — fragments are swallowed, not re-disked).
+        disk-route (and disk-former?
+                        (or (= :nebula pstate)
+                            (= :planetesimal pstate)))
+        L-p (if disk-route
+              (disk-angular-momentum-from-radius m sink-m disk-formation-radius r-rel v-rel)
+              (thermo/orbital-angular-momentum m r-rel v-rel))]
     {:mass m :velocity v :position p
      :angular-momentum L-p
-     ;; Diffuse gas and small planetesimals are routed through the disk around a
-     ;; protostar/star so they can participate in viscous accretion and planet
-     ;; formation. Swallowed gas-giant embryos, brown dwarfs, and protostellar
-     ;; fragments are merged directly into the sink (spec Part 1a competitive
-     ;; accretion — fragments are swallowed, not re-disked).
-     :disk-route (and disk-former?
-                      (or (= :nebula pstate)
-                          (= :planetesimal pstate)))}))
+     :disk-route disk-route}))
 
 (defn- absorb-packets
   "Build the absorb-accrete packet vector for the parcels a sink swallows this
@@ -161,9 +211,10 @@
   [world sink-eid parcels]
   (let [sink-p (or (ecs/get-component world sink-eid c/position) [0 0 0])
         sink-v (or (ecs/get-component world sink-eid c/velocity) [0 0 0])
+        sink-m (double (or (ecs/get-component world sink-eid c/mass) 0.0))
         sink-state (ecs/get-component world sink-eid c/matter-state)
         disk-former? (contains? #{:protostar :star} sink-state)]
-    (mapv #(absorb-packet world sink-p sink-v disk-former? %) parcels)))
+    (mapv #(absorb-packet world sink-p sink-v sink-m disk-former? %) parcels)))
 
 (declare imf-accretion-bias stellar-feedback-temperature hash01 feedback-radius)
 

@@ -13,10 +13,12 @@
    [law.field :as lfield]))
 
 (defn- seeded-world
-  "A small deterministic world of gas particles for cache/parity tests."
+  "A small deterministic world of gas particles for cache/parity tests.
+   Declares :sim/softening (the species-rule world ε the SoA :eps array is
+   filled from) to match the 1e14 softening the gravity arguments below use."
   ([] (seeded-world 20))
   ([n]
-   (let [base (ecs/empty-world)]
+   (let [base (assoc (ecs/empty-world) :sim/softening 1e14)]
      (reduce (fn [w i]
                (first (seeder/spawn-clump
                        w {:position [(double (* i 1e14)) 0.0 0.0]
@@ -189,6 +191,7 @@
                           :radius 1e13
                           :matter-state :nebula}))
           w0    (-> (ecs/empty-world)
+                    (assoc :sim/softening 1e14)
                     (ecs/put-component eid-a c/position [0.0 0.0 0.0])
                     (ecs/put-component eid-a c/velocity [0.0 0.0 0.0])
                     (ecs/put-component eid-a c/mass 1e28)

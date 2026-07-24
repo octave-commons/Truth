@@ -103,6 +103,39 @@
       (/ (* j j) (* law/G M))
       0.0)))
 
+(defn tidal-dominance-radius
+  "Largest orbital radius (m) around a host of `host-mass` where the host's
+   Newtonian pull still dominates the local tidal field by `dominance-factor`
+   (the integrator's sub-step gate uses 100× — see
+   domain.integrator.kinematics/substep-dominance-factor):
+
+       G·M_h / r²  >  dominance-factor × a_tidal(r)
+
+   Tidal approximation: each perturber i contributes the leading-order
+   differential (tidal) acceleration across an orbit of radius r ≪ d_i,
+       a_tidal,i(r) ≈ 2·G·m_i·r / d_i³,
+   summed over all perturbers. The dominance inequality is then linear in r³:
+       r_max = ∛( M_h / (2·dominance-factor × Σᵢ mᵢ/dᵢ³) ).
+   Gas parcels AND resolved bodies both count as perturbers — in the embedded
+   phase the enclosing clump's own tide is the field that fails the dominance
+   gate (docs/research/physics/cluster-dispersal-integration-heating.md §3.3).
+   `perturbers` is a seq of {:mass kg :dist m} pairs. Returns +∞ when there
+   are no perturbers (no tide → no cap)."
+  [host-mass dominance-factor perturbers]
+  (let [M (double (or host-mass 0.0))
+        f (double (or dominance-factor 100.0))
+        s (reduce (fn [acc {:keys [mass dist]}]
+                    (let [m (double (or mass 0.0))
+                          d (double (or dist 0.0))]
+                      (if (and (pos? m) (pos? d))
+                        (+ acc (/ m (* d d d)))
+                        acc)))
+                  0.0
+                  perturbers)]
+    (if (and (pos? M) (pos? s))
+      (math/cbrt (/ M (* 2.0 f s)))
+      Double/POSITIVE_INFINITY)))
+
 (def ^:const disk-viscous-alpha
   "Shakura-Sunyaev viscosity parameter. When the disk is self-gravitating,
    gravitoturbulence and global spiral modes can drive effective α up to ~0.1.
@@ -146,18 +179,26 @@
       1.0e13))) ;; fallback: ~300 kyr
 
 (def ^:const min-fragment-orbit-periods
-  "A fragment (planet embryo / binary companion) must be placed on an orbit whose
-   period spans at least this many integration steps. Below it the leapfrog step
-   (`x' = x + v·dt`) overshoots the whole orbit in one tick, so the integrator
-   flings the fragment off on a near-straight line at its Keplerian speed instead
-   of letting it orbit — the 'debris flung everywhere' ejection. 50 steps/orbit
-   keeps the orbit resolved and the fragment bound." 50.0)
+  "Resolution target (steps per orbit) used by `resolvable-orbit-radius`.
+   RETIRED from spawn placement: fragments are compact bodies sub-stepped by the
+   integrator (multi-timescale design §3), so placement no longer needs the
+   global bulk `dt` as its resolution basis — spawn now uses the physical disk
+   radius with the dt-independent `domain.stellar.disc-evolution/fragment-
+   placement-floor-m` (design §3.5). Retained as a diagnostic (and for the
+   `domain.stellar.structure` re-export): it still answers 'what radius would
+   the GLOBAL dt need to resolve this orbit in 50 steps?', which is what the
+   sub-stepper's K budget replaces." 50.0)
 
 (defn resolvable-orbit-radius
   "Smallest orbital radius around mass `M` whose period is ≥ `min-periods`·`dt`.
-   T = 2π√(r³/GM) ≥ min-periods·dt  ⇒  r ≥ ∛(GM·(min-periods·dt / 2π)²). A fragment
-   placed at this radius (on a circular orbit) is bound AND resolvable at the
-   current timestep, so it stays in the system rather than being ejected."
+   T = 2π√(r³/GM) ≥ min-periods·dt  ⇒  r ≥ ∛(GM·(min-periods·dt / 2π)²).
+
+   Diagnostic only — no longer consulted at fragment spawn. Evaluated at the
+   global bulk `dt` (~80 yr live) it yields ~162 AU, which shoved every fragment
+   beyond the 100-AU apoapsis gate; see kanban/tasks/fragment-placement-
+   decouple-dt.md. Spawn placement is now the physical disk radius floored at
+   `domain.stellar.disc-evolution/fragment-placement-floor-m` (0.3 AU), with the
+   integrator's sub-stepping supplying the resolution this floor used to buy."
   [M dt min-periods]
   (let [M  (double (or M 0.0))
         dt (double (or dt 0.0))

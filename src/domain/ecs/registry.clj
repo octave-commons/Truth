@@ -125,14 +125,14 @@
     ;; and reads `c/absorb-merge` as the "system not yet settled" proxy — a
     ;; pending, unresolved collision merge in flight. See
     ;; kanban/tasks/ecology-m5-phase4-handoff-event.md.
-    {:id     :handoff
-     :ns     'domain.stellar.classifier
-     :reads  #{c/matter-state c/mass c/composition c/position c/velocity
-               c/radius c/luminosity c/material-class c/thermal-band
-               c/orbit-stable c/atmosphere-class c/retained-species
-               c/angular-momentum c/rotation-axis c/oblateness c/b-field
-               c/spin c/absorb-merge c/volatile-budget c/differentiated-layers}
-     :writes #{c/planet-candidate}}
+   {:id     :handoff
+    :ns     'domain.stellar.classifier
+    :reads  #{c/matter-state c/mass c/composition c/position c/velocity
+              c/radius c/luminosity c/material-class c/thermal-band
+              c/orbit-stable c/atmosphere-class c/retained-species
+              c/angular-momentum c/rotation-axis c/oblateness c/b-field
+              c/spin c/absorb-merge c/volatile-budget c/differentiated-layers}
+    :writes #{c/planet-candidate}}
 
      ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
      ;; small physical seed instead of promoting the whole parcel. Emits the spawn
@@ -178,7 +178,7 @@
     :ns     'domain.integrator
     :reads  #{c/position c/velocity c/mass c/radius c/body-kind
               c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer
-              c/accel-warp c/accel-dark-matter c/frame-offset
+              c/accel-warp c/accel-dark-matter c/accel-thrust c/frame-offset
               c/matter-state c/density c/luminosity c/sed-bands c/composition
               c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk
@@ -195,6 +195,17 @@
     :ns     'domain.player
     :reads  #{c/position c/mass c/observer}
     :writes #{c/accel-observer}}
+
+   ;; Manual-flight thrust + proto flight-assist damping on the spark (card
+   ;; flight-no-jump-accel): reads the input direction off the `:player/thrust`
+   ;; world key (the `:genesis/interventions` precedent — world keys are not
+   ;; declarable here) and the spark's own c/velocity for the damping term.
+   ;; Sole writer of accel.thrust; the integrator sums it like any other
+   ;; force. Replaces the deleted drift position-teleport.
+   {:id     :player-thrust
+    :ns     'domain.player.flight
+    :reads  #{c/velocity c/observer c/accel-thrust}
+    :writes #{c/accel-thrust}}
 
    ;; Player heat source/sink: emits the per-body temperature ease the integrator
    ;; applies (was the serial apply-thermal-interventions). Sole writer.
@@ -429,10 +440,10 @@
    ;; scar tally. Reads its own prior output one tick stale (ordinary Jacobi
    ;; lag, like :neighbor-cache). Binding is exposed as data the :focus-zone
    ;; promotion/demotion machinery could read later; it does not rewire it.
-    {:id     :binding
-     :ns     'domain.narrowing
-     :reads  #{c/observer c/position c/planet-candidate c/binding c/binding-scar}
-     :writes #{c/binding c/binding-scar}}
+   {:id     :binding
+    :ns     'domain.narrowing
+    :reads  #{c/observer c/position c/planet-candidate c/binding c/binding-scar}
+    :writes #{c/binding c/binding-scar}}
 
     ;; The First Narrowing, child B: the commitment horizon. Reads the
     ;; observer's one-tick-stale c/binding (Jacobi output of :binding) and the
@@ -445,11 +456,11 @@
     ;; :event/world-commitment ledger event is appended serially post-fold by
     ;; domain.genesis.tick/emit-commitment-event, reacting to the
     ;; c/commitment-state marker (the emit-handoff-event precedent).
-    {:id     :commitment
-     :ns     'domain.narrowing
-     :reads  #{c/observer c/binding c/planet-candidate c/commitment-state
-               c/palette c/time-lock}
-     :writes #{c/commitment-state c/palette c/time-lock}}
+   {:id     :commitment
+    :ns     'domain.narrowing
+    :reads  #{c/observer c/binding c/planet-candidate c/commitment-state
+              c/palette c/time-lock}
+    :writes #{c/commitment-state c/palette c/time-lock}}
 
     ;; Voxel 3: the focus-driven voxel band on the committed world. Reads
     ;; the observer's focus, the committed world's candidate record and
@@ -469,14 +480,14 @@
     ;; Voxel 5: also reads `c/voxel-carve-request` (one tick stale, the
     ;; collision-carve request channel) and folds its plans + melt/vapor
     ;; cooling into `:apply-edits` jobs, provenance `:collision`.
-    {:id     :voxel-focus
-     :ns     'domain.voxel.focus
-     :reads  #{c/observer c/position c/planet-candidate c/commitment-state
-               c/voxel-field c/voxel-band c/voxel-edit-queue
-               c/voxel-edit-diffs c/voxel-field-diffs c/voxel-sculpt-request
-               c/voxel-carve-request}
-     :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
-               c/voxel-edit-diffs c/voxel-field-diffs}}
+   {:id     :voxel-focus
+    :ns     'domain.voxel.focus
+    :reads  #{c/observer c/position c/planet-candidate c/commitment-state
+              c/voxel-field c/voxel-band c/voxel-edit-queue
+              c/voxel-edit-diffs c/voxel-field-diffs c/voxel-sculpt-request
+              c/voxel-carve-request}
+    :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
+              c/voxel-edit-diffs c/voxel-field-diffs}}
 
     ;; Voxel 4: god-scale sculpting (design planetary-voxel-substrate.md
     ;; §5 tier 1). Translates the paid ops on the `:voxel/sculpt-ops`
@@ -485,10 +496,10 @@
     ;; the `:voxel-focus` fold consumes one Jacobi tick later. Sole writer
     ;; of `c/voxel-sculpt-request`; reads its own prior output one tick
     ;; stale to auto-clear drained requests.
-    {:id     :voxel-sculpt
-     :ns     'domain.voxel.sculpt
-     :reads  #{c/commitment-state c/voxel-sculpt-request}
-     :writes #{c/voxel-sculpt-request}}
+   {:id     :voxel-sculpt
+    :ns     'domain.voxel.sculpt
+    :reads  #{c/commitment-state c/voxel-sculpt-request}
+    :writes #{c/voxel-sculpt-request}}
 
     ;; Voxel 5: collision shock → voxel carving (design
     ;; planetary-voxel-substrate.md §6). Classifies absorb-merge packets
@@ -498,12 +509,12 @@
     ;; Sole writer of `c/voxel-carve-request`; reads its own prior output
     ;; one tick stale for the `:seen` idempotency set (the absorb-merge
     ;; channel is sticky — collision-detection never clears it).
-    {:id     :voxel-carve
-     :ns     'domain.voxel.carve
-     :reads  #{c/commitment-state c/planet-candidate c/voxel-field
-               c/voxel-band c/absorb-merge c/position c/velocity
-               c/voxel-carve-request}
-     :writes #{c/voxel-carve-request}}
+   {:id     :voxel-carve
+    :ns     'domain.voxel.carve
+    :reads  #{c/commitment-state c/planet-candidate c/voxel-field
+              c/voxel-band c/absorb-merge c/position c/velocity
+              c/voxel-carve-request}
+    :writes #{c/voxel-carve-request}}
 
     ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position

@@ -102,10 +102,11 @@
   [camera input dt settings]
   (nav/flight-move camera input dt settings))
 
-(defn observer-move-velocity
-  "Physical velocity [m/s] for the observer from camera-relative input."
-  [camera input settings]
-  (nav/observer-move-velocity camera input settings))
+(defn thrust-direction
+  "Unit thrust direction (world axes) for the spark from camera-relative
+   input, or nil when no flight key is held."
+  [camera input]
+  (nav/thrust-direction camera input))
 
 (defn min-approach-distance
   "Closest orbit distance [ru] the camera may take to a body of render radius

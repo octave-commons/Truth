@@ -20,12 +20,13 @@
    filter (radius queries are inclusive and include the self-particle, just like
    the scans they replace), so swapping the index in changes performance only,
    not results."
-  (:require
-   [clojure.math :as math] [domain.ecs.core          :as ecs]
-   [domain.ecs.components    :as c]
-   [domain.ecs.parallel      :as par]
-   [domain.gravity.barnes-hut :as bh]
-   [shape.spatial :as sp]))
+   (:require
+    [clojure.math :as math] [domain.ecs.core          :as ecs]
+    [domain.ecs.components    :as c]
+    [domain.ecs.parallel      :as par]
+    [domain.gravity.barnes-hut :as bh]
+    [law.stellar.orbital      :as law-orbital]
+    [shape.spatial :as sp]))
 
 (declare build-grid grid-within-radius grid-nearest grid-nearest-dist)
 
@@ -55,17 +56,25 @@
     [0.0 0.0 0.0]))
 
 (defn- build-spatial-item
-  "Project one entity into a spatial-index item."
+  "Project one entity into a spatial-index item. Carries the species
+   softening :eps (law-orbital/body-softening over the world's
+   :sim/softening) so the shared Barnes–Hut tree can aggregate per-node
+   ε-max for the per-pair gravity kernel
+   (kanban/tasks/compact-pair-softening.md)."
   [world eid]
   (when (some? (ecs/get-component world eid c/radius))
-    {:id           eid
-     :position     (ecs/get-component world eid c/position)
-     :mass         (ecs/get-component world eid c/mass)
-     :radius       (ecs/get-component world eid c/radius)
-     :matter-state (ecs/get-component world eid c/matter-state)
-     :density      (ecs/get-component world eid c/density)
-     :pressure     (ecs/get-component world eid c/pressure)
-     :b-field      (ecs/get-component world eid c/b-field)}))
+    (let [ms     (ecs/get-component world eid c/matter-state)
+          radius (ecs/get-component world eid c/radius)]
+      {:id           eid
+       :position     (ecs/get-component world eid c/position)
+       :mass         (ecs/get-component world eid c/mass)
+       :radius       radius
+       :matter-state ms
+       :eps          (law-orbital/body-softening ms radius
+                                                 (double (or (:sim/softening world) 0.0)))
+       :density      (ecs/get-component world eid c/density)
+       :pressure     (ecs/get-component world eid c/pressure)
+       :b-field      (ecs/get-component world eid c/b-field)})))
 
 (defn- build-grid-from-items
   "Build a uniform grid from `items` when non-empty."

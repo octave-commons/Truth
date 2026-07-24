@@ -42,6 +42,9 @@
   [dt]
   [(intervention/warp-acceleration-system)
    (player/observer-acceleration-system)
+   ;; flight-no-jump-accel: manual-flight thrust + damping on the spark,
+   ;; summed by the integrator like any other force (replaces drift).
+   (player/thrust-acceleration-system)
    (dark-matter/dark-matter-acceleration-system)
    (intervention/thermal-intervention-system)
    (integ/integrator-system dt)])
@@ -81,31 +84,31 @@
   "Collision, promotion, sink, disk, mass transfer, LOD, magnetosphere, ecology,
    debris, and neighbor cache."
   []
-   [(collision/collision-detection-system)
-    (fusion/fusion-promotion-system)
-    (sink/sink-formation-system)
-    (disc-evolution/disk-evolution-system)
-    (mt/mass-transfer-system)
-    (cache/neighbor-cache-system)
-    (lod/lod-scheduler)
-    (em/magnetosphere-coupling-system)
-    (ecology/ecology-system)
-    (debris/debris-reaper-system)
-      (promotion/focus-zone-system)
-      (narrowing/binding-system)
-      (narrowing/commitment-system)
+  [(collision/collision-detection-system)
+   (fusion/fusion-promotion-system)
+   (sink/sink-formation-system)
+   (disc-evolution/disk-evolution-system)
+   (mt/mass-transfer-system)
+   (cache/neighbor-cache-system)
+   (lod/lod-scheduler)
+   (em/magnetosphere-coupling-system)
+   (ecology/ecology-system)
+   (debris/debris-reaper-system)
+   (promotion/focus-zone-system)
+   (narrowing/binding-system)
+   (narrowing/commitment-system)
       ;; Voxel 4: god-scale sculpting — translates the paid ops on the
       ;; `:voxel/sculpt-ops` world key into the `c/voxel-sculpt-request`
       ;; channel the voxel-focus fold consumes one Jacobi tick later.
-       (voxel-sculpt/sculpt-system)
+   (voxel-sculpt/sculpt-system)
        ;; Voxel 5: collision shock → voxel carving. Classifies absorb-merge
        ;; packets on the committed world into `c/voxel-carve-request` carve
        ;; plans the voxel-focus fold consumes one Jacobi tick later.
-       (voxel-carve/carve-system)
+   (voxel-carve/carve-system)
       ;; Voxel 3: the committed world's focus band. Runs after :commitment
       ;; and :handoff, whose outputs (c/commitment-state, c/planet-
       ;; candidate) it reads one tick Jacobi-stale.
-      (voxel-focus/voxel-focus-system)])
+   (voxel-focus/voxel-focus-system)])
 
 (defn physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer
@@ -118,10 +121,9 @@
    EXCLUDES `recenter`, which is not a system at all any more: the integrator
    subtracts the one-tick-stale COM frame-offset (a world scalar set in
    tick-world) from every new position (spec §6)."
-  [{:keys [sim/G sim/theta sim/dt sim/softening sim/cutoff] :as _params}]
-  (let [soft (or softening 1e14)
-        cut  (or cutoff (* 0.1 soft))]
-    (into [(orbital/gravity-acceleration G theta soft cut)
+  [{:keys [sim/G sim/theta sim/dt sim/softening] :as _params}]
+  (let [soft (or softening 1e14)]
+    (into [(orbital/gravity-acceleration G theta soft)
            (mfd/merged-hydro-em-system dt)]
           (concat (physics-force-systems dt)
                   (physics-transform-systems)

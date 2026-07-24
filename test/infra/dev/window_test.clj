@@ -71,31 +71,37 @@
                       empty-world camera ctx :fit-all)]
           (is (= empty-world world')))))))
 
-(deftest drift-intent-drains-before-tick-publish
-  (testing "WASD drift enqueued through the IntentAtom is drained on the sim
-            thread BEFORE the tick — the sim thread is the sole writer of the
-            spark's c/position and no drift is lost between the sim's deref
-            and its publish (card-4 review, finding 1)"
+(deftest flight-intents-drain-before-tick-publish
+  (testing "manual-flight intents (thrust direction + focus-follow) enqueued
+            through the IntentAtom are drained on the sim thread BEFORE the
+            tick — the sim thread is the sole writer of the world and no
+            intent is lost between the sim's deref and its publish
+            (flight-no-jump-accel; the drift position teleport is gone)"
     (let [[w _]   (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
           world-atom (atom w)
           queue   (java.util.concurrent.ConcurrentLinkedQueue.)
-          intents (loop/->IntentAtom queue world-atom)
-          v       [1.0e15 0.0 0.0]]
+          intents (loop/->IntentAtom queue world-atom)]
       (testing "the render thread's swap! enqueues; it never mutates the world"
-        (swap! intents (fn [w] (player/drift w v 0.5)))
-        (is (= [0.0 0.0 0.0] (player/observer-position @world-atom))))
-      (testing "sim iteration 1: drain applies the drift, then publish"
+        (swap! intents player/set-thrust [0.0 1.0 0.0])
+        (swap! intents player/focus-follow [1.5e10 0.0 0.0])
+        (is (nil? (:player/thrust @world-atom)))
+        (is (= [0.0 0.0 0.0] (:focus-position (player/get-observer @world-atom)))))
+      (testing "sim iteration 1: drain applies both intents, then publish"
         (let [w0 (@#'infra.dev.window.loop/drain-intents @world-atom queue)]
-          ;; a second frame of drift lands mid-tick, between drain and publish
-          (swap! intents (fn [w] (player/drift w v 0.25)))
+          ;; a mid-tick thrust release lands between drain and publish
+          (swap! intents player/set-thrust nil)
           (reset! world-atom w0)
-          (is (= [5.0e14 0.0 0.0] (player/observer-position @world-atom))
-              "first drift applied exactly once")))
-      (testing "sim iteration 2: the mid-tick drift survives to the next drain"
+          (is (= [0.0 1.0 0.0] (:player/thrust @world-atom))
+              "thrust direction recorded exactly once")
+          (is (= [1.5e10 0.0 0.0] (:focus-position (player/get-observer @world-atom)))
+              "focus rides the mote position plus the nudge offset")
+          (is (= [0.0 0.0 0.0] (player/observer-position @world-atom))
+              "NEITHER intent touched the spark's c/position — the integrator owns motion")))
+      (testing "sim iteration 2: the mid-tick release survives to the next drain"
         (let [w1 (@#'infra.dev.window.loop/drain-intents @world-atom queue)]
           (reset! world-atom w1)
-          (is (= [7.5e14 0.0 0.0] (player/observer-position @world-atom))
-              "queued displacement accumulates — nothing silently discarded"))))))
+          (is (nil? (:player/thrust @world-atom))
+              "release clears the channel — the damping term then coasts the mote down"))))))
 
 (deftest dump-error-artifacts-graceful-on-failure
   (testing "if writing fails the function returns an error map instead of throwing"

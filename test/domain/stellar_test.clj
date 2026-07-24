@@ -835,6 +835,79 @@
       (is (zero? (double (or (ecs/get-component w3 sink-eid c/disk-mass) 0.0)))
           "Disk-mass unchanged (disk-evolution applies absorb-accrete next barrier)"))))
 
+(deftest test-absorb-packet-disk-route-renormalizes-angular-momentum
+  (testing "Disk-routed absorb packets carry formation-scale (10 AU) angular momentum,
+            NOT the raw capture-scale orbital L — the kAU-disk birth-defect fix
+            (kanban/tasks/sink-absorb-angular-momentum-renormalization.md)."
+    (let [M (* 1.0 law/solar-mass)
+          r-cap (* 1.4e4 law/au) ;; Bondi capture radius, ~1 M☉ protostar in cold gas
+          v-cap (math/sqrt (/ (* law/G M) r-cap)) ;; bound (circular) approach at capture
+          base (ecs/empty-world)
+          [w1 sink-eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass M
+                                                  :radius 1e12
+                                                  :temperature 1000.0
+                                                  :matter-state :protostar})
+          w1 (ecs/put-component w1 sink-eid c/accretion-radius (* 2.0 r-cap))
+          [w2 _deb] (seeder/spawn-clump w1 {:position [r-cap 0.0 0.0]
+                                           :velocity [0.0 v-cap 0.0]
+                                           :mass 1e27
+                                           :radius 1e10
+                                           :temperature 50.0
+                                           :matter-state :planetesimal})
+          w3 (sink/sink-formation-system w2)
+          pkt (first (ecs/get-component w3 sink-eid c/absorb-accrete))
+          L (:angular-momentum pkt)
+          j (/ (sp/len L) 1e27)
+          r-derived (/ (* j j) (* law/G M))
+          j-raw (* r-cap v-cap)
+          r-raw (/ (* j-raw j-raw) (* law/G M))]
+      (is (some? pkt) "Debris within the feeding zone is absorbed")
+      (is (true? (:disk-route pkt)) "Protostar sink disk-routes the debris")
+      (is (<= r-derived (* 100.0 law/au))
+          "Derived r-disk is formation-scale (the formation-placement-v2 gate band)")
+      (is (< (abs (- r-derived sink/disk-formation-radius))
+             (* 0.01 sink/disk-formation-radius))
+          "Derived r-disk matches the shared 10 AU formation radius")
+      (is (> r-raw (* 1.0e3 law/au))
+          "The raw capture L would have implied a kAU disk (the defect)")
+      (is (> (/ r-raw (max 1.0 r-derived)) 100.0)
+          "Renormalization shrinks the implied disk radius by orders of magnitude")
+      (is (pos? (nth L 2))
+          "Renormalized L keeps the parcel's orbital direction (+z for this geometry)"))))
+
+(deftest test-absorb-packet-com-accounting-unchanged
+  (testing "The packet still carries the parcel's raw mass/velocity/position for the
+            integrator's COM-preserving blend — only the disk-route L term was
+            renormalized. Non-disk-route packets keep the raw orbital L (it
+            correctly spins up the sink's bulk)."
+    (let [base (ecs/empty-world)
+          ;; A non-disk-forming sink (:planetesimal) swallowing a smaller solid body
+          [w1 sink-eid] (seeder/spawn-clump base {:position [0.0 0.0 0.0]
+                                                  :velocity [0.0 0.0 0.0]
+                                                  :mass 2e28
+                                                  :radius 1e12
+                                                  :temperature 50.0
+                                                  :matter-state :planetesimal})
+          w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
+          [w2 _deb] (seeder/spawn-clump w1 {:position [1e12 0.0 0.0]
+                                           :velocity [10.0 300.0 0.0]
+                                           :mass 1e27
+                                           :radius 1e10
+                                           :temperature 50.0
+                                           :matter-state :planetesimal})
+          w3 (sink/sink-formation-system w2)
+          pkt (first (ecs/get-component w3 sink-eid c/absorb-accrete))
+          L-raw (thermo/orbital-angular-momentum 1e27 [1e12 0.0 0.0] [10.0 300.0 0.0])]
+      (is (some? pkt) "Debris within the feeding zone is absorbed")
+      (is (false? (:disk-route pkt)) "Non-disk-forming sink merges directly (no disk route)")
+      (is (= 1e27 (:mass pkt)) "Packet mass is the parcel mass, unchanged")
+      (is (= [10.0 300.0 0.0] (:velocity pkt)) "Packet velocity is the raw parcel velocity (COM blend input)")
+      (is (= [1e12 0.0 0.0] (:position pkt)) "Packet position is the raw parcel position")
+      (is (= L-raw (:angular-momentum pkt))
+          "Non-disk-route packet keeps the raw orbital angular momentum"))))
+
 ;; --- Fusion promotion barrier ------------------------------------------------
 
 (deftest test-fusion-promotion-sets-luminosity

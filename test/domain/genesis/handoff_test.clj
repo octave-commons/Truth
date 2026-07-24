@@ -114,3 +114,100 @@
           "no candidate exists yet, so handoff-system writes nothing")
       (is (empty? (event/events-of-kind w :event/phase0-handoff)))
       (is (= :sterile (:type (arc/genesis-ending w)))))))
+
+;; --- multi-timescale card 4: per-body dominant attractor ---------------------
+
+(defn- two-star-world
+  "A 2 M_sun primary at the origin and a 0.5 M_sun secondary 1000 AU away —
+    the primary is `central-star`, but a planet at 1 AU from the secondary is
+    gravitationally BOUND to the secondary (and hyperbolic w.r.t. the primary).
+    Returns {:world :primary :secondary}."
+  []
+  (let [base           (ecs/empty-world)
+        [w primary]    (ecs/spawn base)
+        [w secondary]  (ecs/spawn w)
+        w (-> w
+              (ecs/put-components
+               primary
+               {c/matter-state :star
+                c/mass         (* 2.0 law/solar-mass)
+                c/radius       law/solar-radius
+                c/luminosity   (* 8.0 law/solar-luminosity)
+                c/position     [0.0 0.0 0.0]
+                c/velocity     [0.0 0.0 0.0]
+                c/composition  {:H 0.71 :He 0.27 :metals 0.02}
+                c/temperature  6000.0})
+              (ecs/put-components
+               secondary
+               {c/matter-state :star
+                c/mass         (* 0.5 law/solar-mass)
+                c/radius       (* 0.5 law/solar-radius)
+                c/luminosity   (* 0.4 law/solar-luminosity)
+                c/position     [(* 1000.0 law/au) 0.0 0.0]
+                c/velocity     [0.0 0.0 0.0]
+                c/composition  {:H 0.71 :He 0.27 :metals 0.02}
+                c/temperature  4000.0}))]
+    {:world w :primary primary :secondary secondary}))
+
+(deftest dominant-attractor-picks-nearest-bound-star
+  (testing "multi-timescale card 4: a planet orbiting the LIGHTER nearby star
+            is governed by it, not by the most-massive star across the cloud —
+            and a body bound to no star gets no parent"
+    (let [{:keys [world primary secondary]} (two-star-world)
+          stars (classifier/stellar-bodies world)
+          v-b (law/newtonian-circular-speed (* 0.5 law/solar-mass) law/au)
+          [w planet] (ecs/spawn world)
+          w (ecs/put-components
+             w planet
+             {c/matter-state :planet
+              c/mass         law/earth-mass
+              c/position     [(+ (* 1000.0 law/au) law/au) 0.0 0.0]
+              c/velocity     [0.0 v-b 0.0]})]
+      (is (= secondary (:id (classifier/dominant-attractor w planet stars)))
+          "bound to the secondary: energy u²/2−μ/r < 0 there, hyperbolic w.r.t. the primary")
+      (let [[w unbound] (ecs/spawn w)
+            w (ecs/put-components
+               w unbound
+               {c/matter-state :planet
+                c/mass         law/earth-mass
+                c/position     [(* 500.0 law/au) 0.0 0.0]
+                c/velocity     [0.0 1.0e6 0.0]})]
+        (is (nil? (classifier/dominant-attractor w unbound stars))
+            "1000 km/s at 500 AU is hyperbolic w.r.t. both stars — no parent, not a candidate"))
+      (is (= primary (:id (classifier/central-star w)))
+          "central-star is unchanged: still the system primary (most massive)"))))
+
+(deftest handoff-uses-each-bodys-own-parent-star
+  (testing "the handoff gate + record evaluate the candidate against ITS OWN
+            dominant attractor: a fully-eligible planet around the secondary
+            is admitted with :star-id = the secondary, even though
+            `central-star` is the primary"
+    (let [{:keys [world secondary]} (two-star-world)
+          v-b (law/newtonian-circular-speed (* 0.5 law/solar-mass) law/au)
+          [w planet] (ecs/spawn world)
+          w (-> w
+                (ecs/put-components
+                 planet
+                 {c/matter-state      :planet
+                  c/mass               law/earth-mass
+                  c/radius             6.371e6
+                  c/position           [(+ (* 1000.0 law/au) law/au) 0.0 0.0]
+                  c/velocity           [0.0 v-b 0.0]
+                  c/composition        {:Fe 0.32 :Ni 0.02 :Si 0.30 :Mg 0.20
+                                        :O 0.10 :H 0.05 :He 0.01}
+                  c/material-class     :rocky
+                  c/thermal-band       :temperate
+                  c/orbit-stable       true
+                  c/atmosphere-class   :thin
+                  c/retained-species   #{:N2}
+                  c/angular-momentum   [0.0 0.0 1.0e30]
+                  c/rotation-axis      [0.0 0.0 1.0]
+                  c/spin               [0.0 0.0 7.29e-5]}))
+          ws ((:run (classifier/handoff-system)) w)
+          record (get-in ws [c/planet-candidate planet])]
+      (is (some? record)
+          "the planet is eligible — evaluated against its own parent, not the primary")
+      (is (= secondary (:star-id record))
+          "the record names the secondary as the parent star")
+      (is (< (:eccentricity record) 0.4)
+          "elements against the true parent: circular spawn, e ≈ 0"))))

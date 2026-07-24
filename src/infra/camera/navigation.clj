@@ -58,10 +58,11 @@
   [camera input dt settings]
   (input/flight-move camera input dt settings))
 
-(defn observer-move-velocity
-  "Physical velocity [m/s] for the observer from camera-relative input."
-  [camera input settings]
-  (input/observer-move-velocity camera input settings))
+(defn thrust-direction
+  "Unit thrust direction (world axes) for the spark from camera-relative
+   input, or nil when no flight key is held."
+  [camera input]
+  (input/thrust-direction camera input))
 
 ;; ---------------------------------------------------------------------------
 ;; Settings

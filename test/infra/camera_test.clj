@@ -190,22 +190,22 @@
       (is (> (sp/dist (:target f) (:target c-far))
              (sp/dist (:target n) (:target c-near)))))))
 
-(deftest test-observer-move-velocity
-  (testing "Observer velocity aligns with camera horizontal basis"
-    (let [settings (cam/default-camera-settings)
-          c (cam/make-camera 10.0)
-          v-fwd (cam/observer-move-velocity c {:forward 1.0 :right 0.0} settings)
-          v-rgt (cam/observer-move-velocity c {:forward 0.0 :right 1.0} settings)
-          v-none (cam/observer-move-velocity c {:forward 0.0 :right 0.0} settings)
-          {:keys [forward right]} (cam/camera-move-basis c)
-          speed (:move-speed settings)]
-      (is (= [0.0 0.0 0.0] v-none))
-      (is (< (abs (- (first v-fwd) (* speed (first forward)))) 1.0)
-          "forward velocity matches camera forward direction scaled by move speed")
-      (is (< (abs (- (first v-rgt) (* speed (first right)))) 1.0)
-          "strafe velocity matches camera right direction scaled by move speed")
-      (is (not (zero? (nth v-fwd 2))) "forward velocity follows the pitched look direction (has z)")
-      (is (zero? (nth v-rgt 2)) "strafe velocity stays horizontal (no vertical z)"))))
+(deftest test-thrust-direction
+  (testing "Thrust direction aligns with the camera aim basis and is unit-length"
+    (let [c (cam/make-camera 10.0)
+          d-fwd (cam/thrust-direction c {:forward 1.0 :right 0.0 :up 0.0})
+          d-rgt (cam/thrust-direction c {:forward 0.0 :right 1.0 :up 0.0})
+          d-up  (cam/thrust-direction c {:forward 0.0 :right 0.0 :up 1.0})
+          d-dn  (cam/thrust-direction c {:forward 0.0 :right 0.0 :up -1.0})
+          d-none (cam/thrust-direction c {:forward 0.0 :right 0.0 :up 0.0})
+          {:keys [forward right]} (cam/camera-move-basis c)]
+      (is (nil? d-none) "no flight key held → no thrust (channel clears)")
+      (is (< (sp/dist forward d-fwd) 1.0e-12) "W thrusts along the full camera look direction")
+      (is (< (sp/dist right d-rgt) 1.0e-12) "D strafes along the level camera-right axis")
+      (is (< (sp/dist [0.0 0.0 1.0] d-up) 1.0e-12) "Space thrusts along world up")
+      (is (< (sp/dist [0.0 0.0 -1.0] d-dn) 1.0e-12) "Left-Ctrl thrusts along world down")
+      (is (< (abs (- 1.0 (sp/len (cam/thrust-direction c {:forward 1.0 :right 1.0 :up 1.0})))) 1.0e-12)
+          "combined input is normalized — diagonal flight is not faster"))))
 
 ;; --- The binding tether (The First Narrowing, child C) ---------------------
 

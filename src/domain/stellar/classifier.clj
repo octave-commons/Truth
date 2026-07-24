@@ -408,6 +408,29 @@
    material/thermal classification: diffuse gas and the central star itself."
   #{:nebula :star :protostar :stellar-remnant})
 
+(defn- star-record
+  "The `{:id :matter-state :position :velocity :mass :radius :luminosity}`
+   map for one star entity, or nil when data is incomplete."
+  [world eid]
+  (when-let [pos (ecs/get-component world eid c/position)]
+    (when-let [mass (ecs/get-component world eid c/mass)]
+      {:id         eid
+       :matter-state (ecs/get-component world eid c/matter-state)
+       :position   pos
+       :velocity   (or (ecs/get-component world eid c/velocity) [0.0 0.0 0.0])
+       :mass       (double mass)
+       :radius     (double (or (ecs/get-component world eid c/radius) 0.0))
+       :luminosity (double (or (ecs/get-component world eid c/luminosity) 0.0))})))
+
+(defn stellar-bodies
+  "Every `:star`/`:protostar` entity in `world` (the candidate parent
+   population), as eids. One scan per tick, shared by all per-body parent
+   lookups — never a per-body re-scan."
+  [world]
+  (filterv #(contains? #{:star :protostar}
+                       (ecs/get-component world % c/matter-state))
+           (ecs/entities-with world c/matter-state c/mass)))
+
 (defn central-star
   "The most massive :star or :protostar in `world`, as
    `{:id :matter-state :position :velocity :mass :radius :luminosity}`, or
@@ -418,20 +441,45 @@
    and `:matter-state` feed the M5 Phase 4 handoff gate
    (`domain.stellar.classifier/handoff-system`), which needs to know the
    star's own entity id (for `:planet-candidate`'s `:star-id`) and whether
-   it has actually reached `:star` (not merely `:protostar`)."
+   it has actually reached `:star` (not merely `:protostar`).
+
+   NOTE (multi-timescale card 4): this is the SYSTEM-level primary only —
+   retained for the system-level handoff criterion (a :star exists) and
+   legacy callers. Per-body orbit/thermal/eligibility evaluation uses
+   `dominant-attractor`: in a multi-star field a planet is governed by its
+   NEAREST BOUND star, not the biggest star across the cloud."
   [world]
-  (let [candidates (filterv #(contains? #{:star :protostar}
-                                        (ecs/get-component world % c/matter-state))
-                            (ecs/entities-with world c/matter-state c/mass))]
+  (let [candidates (stellar-bodies world)]
     (when (seq candidates)
       (let [eid (apply max-key #(ecs/get-component world % c/mass) candidates)]
-        {:id         eid
-         :matter-state (ecs/get-component world eid c/matter-state)
-         :position   (ecs/get-component world eid c/position)
-         :velocity   (or (ecs/get-component world eid c/velocity) [0.0 0.0 0.0])
-         :mass       (double (or (ecs/get-component world eid c/mass) 0.0))
-         :radius     (double (or (ecs/get-component world eid c/radius) 0.0))
-         :luminosity (double (or (ecs/get-component world eid c/luminosity) 0.0))}))))
+        (star-record world eid)))))
+
+(defn dominant-attractor
+  "The star `eid` is governed by: the `:star`/`:protostar` with the lowest
+   bound two-body specific energy relative to the body (ε = u²/2 − μ/r < 0,
+   unsoftened μ — the velocity pairing rule, design §3.5: classified planets
+   are the sub-stepped population, which lives under the integrator's exact
+   Newtonian drift). Ties broken by distance. Returns the `star-record` map,
+   or nil when the body is bound to no star (a hyperbolic interloper is
+   legitimately not a planet-candidate — multi-timescale card 4)."
+  [world eid stars]
+  (when-let [pos (ecs/get-component world eid c/position)]
+    (let [vel (or (ecs/get-component world eid c/velocity) [0.0 0.0 0.0])]
+      (->> stars
+           (remove #(= % eid))
+           (keep #(star-record world %))
+           (keep (fn [star]
+                   (let [r-vec (sp/v- pos (:position star))
+                         v-vec (sp/v- vel (:velocity star))
+                         r (sp/len r-vec)
+                         mu (* law/G (:mass star))]
+                     (when (pos? r)
+                       (let [energy (- (/ (sp/len2 v-vec) 2.0) (/ mu r))]
+                         (when (neg? energy)
+                           {:star star :energy energy :r r}))))))
+           (sort-by (juxt :energy :r))
+           first
+           :star))))
 
 (defn- classify-body-material
   [world eid]
@@ -466,10 +514,11 @@
       {:position pos :mass mass})))
 
 (defn- classify-body-stability
-  "Run the analytic orbit-stability proxy for one candidate against the
-   central `star` and every OTHER candidate in `candidates` (a map of
-   eid -> `{:position :mass}`). nil (omitted from the write-set) when the star
-   or this body's own velocity/mass/position are not yet resolvable."
+  "Run the analytic orbit-stability proxy for one candidate against its
+   dominant-attractor `star` (per-body parent, card 4) and every OTHER
+   candidate in `candidates` (a map of eid -> `{:position :mass}`). nil
+   (omitted from the write-set) when the star or this body's own
+   velocity/mass/position are not yet resolvable."
   [world star eid candidates]
   (when star
     (when-let [pos (ecs/get-component world eid c/position)]
@@ -621,30 +670,41 @@
              c/velocity c/radius c/luminosity}
    :run
    (fn [world]
-     (let [star (central-star world)
+     (let [stars (stellar-bodies world)
            eids (filterv #(not (contains? non-classifiable-states
                                           (ecs/get-component world % c/matter-state)))
                          (ecs/entities-with world c/matter-state c/mass))
+           ;; Multi-timescale card 4: every per-body verdict (thermal band,
+           ;; orbit stability, equilibrium temperature) is evaluated against
+           ;; the body's OWN dominant attractor, not the system-primary
+           ;; `central-star` — in a multi-star field the primary is the wrong
+           ;; parent for most bodies.
+           body-parents (into {} (keep (fn [eid]
+                                    (when-let [p (dominant-attractor world eid stars)]
+                                      [eid p])))
+                         eids)
            materials (into {} (keep (fn [eid]
                                       (when-let [mclass (classify-body-material world eid)]
                                         [eid mclass])))
                            eids)
            thermals (into {} (keep (fn [eid]
                                      (when-let [band (classify-body-thermal
-                                                      world star eid (get materials eid :mixed))]
+                                                      world (get body-parents eid) eid
+                                                      (get materials eid :mixed))]
                                        [eid band])))
-                          eids)
+                           eids)
            candidates (into {} (keep (fn [eid]
                                        (when-let [snap (candidate-snapshot world eid)]
                                          [eid snap])))
                             eids)
            stabilities (into {} (keep (fn [eid]
-                                        (when-some [ok (classify-body-stability world star eid candidates)]
+                                        (when-some [ok (classify-body-stability
+                                                        world (get body-parents eid) eid candidates)]
                                           [eid ok])))
                              eids)
            atmospheres (into {} (keep (fn [eid]
                                         (when-let [verdict (classify-body-atmosphere
-                                                            world star eid
+                                                            world (get body-parents eid) eid
                                                             (get materials eid)
                                                             (get thermals eid))]
                                           [eid verdict])))
@@ -873,11 +933,25 @@
               c/spin c/absorb-merge c/volatile-budget c/differentiated-layers}
    :run
    (fn [world]
-     (if-let [star (stable-star world)]
-       (let [eids     (ecs/entities-with world c/material-class)
-             eligible (filterv #(eligible-candidate? world star %) eids)]
+     (if-let [_primary (stable-star world)]
+       (let [stars (stellar-bodies world)
+             eids  (ecs/entities-with world c/material-class)
+             ;; Multi-timescale card 4: eligibility and the candidate record
+             ;; are evaluated against each body's OWN dominant attractor
+             ;; (restricted to bodies whose parent has actually reached :star
+             ;; — parent §2 criterion 1 reads "bound to the star"); the
+             ;; system-level `stable-star` above only gates "a :star exists".
+             body-parents (into {} (keep (fn [eid]
+                                      (when-let [p (dominant-attractor world eid stars)]
+                                        (when (= :star (:matter-state p))
+                                          [eid p]))))
+                           eids)
+             eligible (filterv #(and (contains? body-parents %)
+                                     (eligible-candidate? world (get body-parents %) %))
+                               eids)]
          (if (and (seq eligible) (system-settled? world))
            {c/planet-candidate
-            (into {} (map (fn [eid] [eid (build-candidate-record world star eid)])) eligible)}
+            (into {} (map (fn [eid] [eid (build-candidate-record
+                                          world (get body-parents eid) eid)])) eligible)}
            {}))
        {}))})

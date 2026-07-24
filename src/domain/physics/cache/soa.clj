@@ -6,6 +6,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [law.field :as lf]
+   [law.stellar.orbital :as law-orbital]
    [shape.spatial :as sp]))
 
 (def ^:private pred-accel-sources
@@ -29,12 +30,17 @@
 
 (defn- fill-physics-soa!
   "Fill SoA arrays from projected entities and force maps.
-   Writes the disjoint index range [start, end)."
-  [all       ^objects eids ^doubles mass ^doubles radius
+   Writes the disjoint index range [start, end).
+   The :eps array is the per-entity softening from the species rule
+   (law-orbital/body-softening): c/radius for resolved compact bodies,
+   `world-soft` for gas/stateless entities (matter-state is looked up per
+   entity from the world's component cell — entities MAY lack it; they are
+   not projected out)."
+  [all       ^objects eids ^doubles mass ^doubles radius ^doubles eps
       ^doubles px ^doubles py ^doubles pz
       ^doubles vx ^doubles vy ^doubles vz
       ^doubles pxp ^doubles pyp ^doubles pzp
-      dt accel-maps dv-maps start end]
+      {:keys [dt ms-cell world-soft accel-maps dv-maps]} start end]
   (loop [i (long start)]
     (when (< i end)
       (let [[eid comps] (nth all i)
@@ -42,12 +48,14 @@
             [vx0 vy0 vz0] (comps c/velocity)
             [ax ay az] (sum-force-vectors eid accel-maps)
             [dvx dvy dvz] (sum-force-vectors eid dv-maps)
+            rad (double (or (comps c/radius) 0.0))
             vpx (+ (double vx0) (* (double ax) dt) (double dvx))
             vpy (+ (double vy0) (* (double ay) dt) (double dvy))
             vpz (+ (double vz0) (* (double az) dt) (double dvz))]
         (aset eids i eid)
         (aset mass i (double (or (comps c/mass) 0.0)))
-        (aset radius i (double (or (comps c/radius) 0.0)))
+        (aset radius i rad)
+        (aset eps i (law-orbital/body-softening (get ms-cell eid) rad world-soft))
         (aset px i (double x))
         (aset py i (double y))
         (aset pz i (double z))
@@ -74,6 +82,7 @@
   {:eids (object-array n)
    :mass (double-array n)
    :radius (double-array n)
+   :eps (double-array n)
    :px (double-array n)
    :py (double-array n)
    :pz (double-array n)
@@ -86,21 +95,21 @@
 
 (defn- fill-physics-soa-arrays!
   "Fill `arrays` from `all` for the range [start, end)."
-  [all arrays dt accel-maps dv-maps start end]
-  (let [{:keys [eids mass radius px py pz vx vy vz
+  [all arrays fill-env start end]
+  (let [{:keys [eids mass radius eps px py pz vx vy vz
                 px-pred py-pred pz-pred]} arrays]
-    (fill-physics-soa! all eids mass radius px py pz vx vy vz
+    (fill-physics-soa! all eids mass radius eps px py pz vx vy vz
                        px-pred py-pred pz-pred
-                       dt accel-maps dv-maps start end)))
+                       fill-env start end)))
 
 (defn- fill-physics-soa-parallel!
   "Fill `arrays` in parallel chunks of 256 rows."
-  [all n arrays dt accel-maps dv-maps]
+  [all n arrays fill-env]
   (let [chunk-size 256
         futs (mapv (fn [start]
                      (future
                        (fill-physics-soa-arrays!
-                        all arrays dt accel-maps dv-maps
+                        all arrays fill-env
                         start (min n (+ start chunk-size)))))
                    (range 0 n chunk-size))]
     (run! deref futs)))
@@ -115,11 +124,15 @@
   "Populate `arrays` from `world` and return a validated SoA map."
   [world all n arrays]
   (let [dt (double (or (:sim/dt world) 0.0))
+        world-soft (double (or (:sim/softening world) 0.0))
+        ms-cell (get-in world [:components c/matter-state])
         accel-maps (mapv #(get-in world [:components %] {}) pred-accel-sources)
-        dv-maps (mapv #(get-in world [:components %] {}) pred-dv-sources)]
+        dv-maps (mapv #(get-in world [:components %] {}) pred-dv-sources)
+        fill-env {:dt dt :ms-cell ms-cell :world-soft world-soft
+                  :accel-maps accel-maps :dv-maps dv-maps}]
     (if (< n 512)
-      (fill-physics-soa-arrays! all arrays dt accel-maps dv-maps 0 n)
-      (fill-physics-soa-parallel! all n arrays dt accel-maps dv-maps))
+      (fill-physics-soa-arrays! all arrays fill-env 0 n)
+      (fill-physics-soa-parallel! all n arrays fill-env))
     (let [soa (make-physics-soa-from-arrays arrays n)]
       (validate-physics-soa! world soa)
       soa)))
@@ -132,9 +145,12 @@
    gravity and motion-integration kernels. It is rebuilt every tick from a single
    `ecs/all-of` projection. Also carries drift-predicted positions
    (:px-pred/:py-pred/:pz-pred) so force emitters evaluate at the position the
-   kick will land on next tick. Validation runs by default but is skipped when
-   `:genesis/validate-soa?` is explicitly false. The cache is transient world
-   plumbing, not an ECS component."
+   kick will land on next tick, and the per-entity softening :eps from the
+   species rule (law.stellar.orbital/body-softening — c/radius for compact
+   bodies, :sim/softening for gas; a world without :sim/softening softens its
+   gas at 0, so production worlds must declare it). Validation runs by default
+   but is skipped when `:genesis/validate-soa?` is explicitly false. The cache
+   is transient world plumbing, not an ECS component."
   [world]
   (let [all (vec (ecs/all-of world c/position c/velocity c/mass c/radius))
         n (count all)

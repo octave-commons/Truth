@@ -134,9 +134,11 @@
    The spark's own position is NEVER written here: since spark-redesign
    card 4 the spark is a gravity-bound ECS body whose `c/position` column is
    the single source of truth, advanced by the integrator (gravity) and by
-   `domain.player.focus/drift` (manual flight) — camera modes follow the
-   body, they do not puppet it. Only `:focus-position` (a pure attention
-   point) rides the camera target."
+   the `c/accel-thrust` influence channel (manual flight, card
+   flight-no-jump-accel) — camera modes follow the body, they do not puppet
+   it. In `:manual` mode the focus-follow intent (card focus-follows-pilot)
+   pins `:focus-position` to the mote instead; only in tracking modes does
+   `:focus-position` (a pure attention point) ride the camera target."
   [world camera ctx mode]
   (if-let [obs (player/get-observer world)]
     (if (= :manual mode)
@@ -266,32 +268,38 @@
               drive-input (when (= :manual (:mode cam-settings))
                             (let [ks @keys-atom]
                               {:forward (cond (ks GLFW/GLFW_KEY_W) 1.0 (ks GLFW/GLFW_KEY_S) -1.0 :else 0.0)
-                               :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)}))
+                               :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)
+                               :up      (cond (ks GLFW/GLFW_KEY_SPACE) 1.0 (ks GLFW/GLFW_KEY_LEFT_CONTROL) -1.0 :else 0.0)}))
               input-active? (boolean (and drive-input
                                           (or (not= 0.0 (:forward drive-input))
-                                              (not= 0.0 (:right drive-input)))))
-              _         (when input-active?
-                          (let [velocity (cam/observer-move-velocity @camera-atom drive-input cam-settings)]
-                            ;; Manual flight rides the INTENT QUEUE, never the
-                            ;; world-atom directly: this thread's world-atom is
-                            ;; an IntentAtom (infra.dev.window.lifecycle), so
-                            ;; this swap! enqueues world->world' and the SIM
-                            ;; thread applies it in drain-intents BEFORE the
-                            ;; tick — the sim thread is the sole writer of the
-                            ;; spark's c/position (:motion system + drained
-                            ;; intents), and no drift can be lost between the
-                            ;; sim's deref and its publish. One intent writes
-                            ;; the column (domain.player.focus/drift) and then
-                            ;; pins the attention focus to the moved spark.
-                            ;; Gravity composes underneath via the integrator —
-                            ;; no spring, no puppet (spark-redesign card 4).
-                            (swap! world-atom
-                                   (fn [w]
-                                     (let [w' (player/drift w velocity wall-dt)]
-                                       (if-let [pos (player/observer-position w')]
-                                         (player/update-observer w'
-                                                                 (fn [o] (player/set-focus o pos (:focus-radius o) (:focus-intensity o))))
-                                         w'))))))
+                                              (not= 0.0 (:right drive-input))
+                                              (not= 0.0 (:up drive-input)))))
+              _         (when drive-input
+                          ;; Manual flight rides the INTENT QUEUE, never the
+                          ;; world-atom directly: this thread's world-atom is
+                          ;; an IntentAtom (infra.dev.window.lifecycle), so
+                          ;; these swap!s enqueue world->world' fns the SIM
+                          ;; thread applies in drain-intents BEFORE the tick.
+                          ;; flight-no-jump-accel: input is now a thrust
+                          ;; DIRECTION on the :player/thrust world key — the
+                          ;; :player-thrust fan-out system turns it into the
+                          ;; c/accel-thrust influence channel (+ damping), and
+                          ;; the integrator stays the sole writer of
+                          ;; c/position/c/velocity. The drift position
+                          ;; teleport is gone; there is no second writer.
+                          (swap! world-atom player/set-thrust
+                                 (cam/thrust-direction @camera-atom drive-input))
+                          ;; focus-follows-pilot (design §7.5): in manual mode
+                          ;; the attention focus rides the mote — c/position
+                          ;; plus the player's persistent arrow-nudge
+                          ;; :focus-offset — so flying up to a planet accrues
+                          ;; binding without dropping to a debug view.
+                          (swap! world-atom player/focus-follow
+                                 (:focus-offset cfg [0.0 0.0 0.0])))
+              _         (when (and (not drive-input) (:player/thrust w))
+                          ;; Left manual mode with a key held: clear the
+                          ;; channel or the spark would thrust forever.
+                          (swap! world-atom player/set-thrust nil))
               w         @world-atom
               _         (swap! camera-atom cam/update-camera-for-world w cam-settings)
               _         (when (= :manual (:mode cam-settings))
@@ -349,7 +357,7 @@
                                 (inspect/intervention-overlay-shapes ctx w))
               card      (when sel (inspect/inspector-card ctx w sel bodies))
               controls  (render/controls-hud w fb-w fb-h)
-              view-bar  (render/view-bar-hud cfg cam fb-w fb-h)
+              view-bar  (render/view-bar-hud cfg cam fb-w fb-h w)
               bodies    (if (seq overlay) (into (vec bodies) overlay) bodies)
               hud       (-> (vec (render/hud-rects-from-world w))
                             (into (:rects controls))

@@ -50,7 +50,12 @@
 (def fusion-sustaining? constants/fusion-sustaining?)
 
 ;; Orbital-dynamics computations
+(def compact-matter-states dynamics/compact-matter-states)
+(def ^:const softening-cutoff-fraction dynamics/softening-cutoff-fraction)
+(def body-softening dynamics/body-softening)
+(def pair-softening dynamics/pair-softening)
 (def softened-circular-speed dynamics/softened-circular-speed)
+(def newtonian-circular-speed dynamics/newtonian-circular-speed)
 (def hill-radius dynamics/hill-radius)
 (def isolation-mass dynamics/isolation-mass)
 (def virial-speed dynamics/virial-speed)

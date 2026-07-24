@@ -72,12 +72,18 @@
    `planet` keys: :r, :mass-kg, :ptype, :composition (the local-disk-derived
    element map from `domain.planet-formation.composition/planet-composition`),
    :tick, :star.
-   `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening."
+   `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening (accepted for
+   caller compatibility; unused — the spawn speed is Newtonian, not softened)."
   [{:keys [r mass-kg ptype composition tick star]}
    {:keys [L-star pos vel axis M-star softening]}]
-  (let [dens (pfc/planet-material-density-by-type ptype)
+  (let [_ softening
+        dens (pfc/planet-material-density-by-type ptype)
         rad (sphere-radius mass-kg dens)
-        v-circ (law/softened-circular-speed M-star r softening)
+        ;; Newtonian circular speed: spawned :planets are sub-stepped by the
+        ;; integrator's Wisdom–Holman path (exact Newtonian drift), so the
+        ;; spawn velocity must pair with that law, not the softened field
+        ;; (design §3.5 pairing rule).
+        v-circ (law/newtonian-circular-speed M-star r)
         [position velocity] (circular-orbit-state r v-circ pos vel axis star tick)
         rel-pos (sp/v- position pos)
         rel-vel (sp/v- velocity vel)]

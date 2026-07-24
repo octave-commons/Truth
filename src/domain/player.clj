@@ -3,6 +3,7 @@
    resource. This namespace is a thin facade over the split player sub-modules."
   (:require
    [domain.player.economy :as economy]
+   [domain.player.flight :as flight]
    [domain.player.focus :as focus]
    [domain.player.influence :as influence]
    [domain.player.state :as state]
@@ -68,10 +69,22 @@
 (def ^{:doc "Broaden focus radius and lower intensity."}
   widen-focus focus/widen-focus)
 
-;; --- Movement ---------------------------------------------------------------
+;; --- Manual flight (flight-no-jump-accel: acceleration channels, never position writes) ---
 
-(def ^{:doc "Manual flight: translate the spark's c/position by velocity * dt (world -> world)."}
-  drift focus/drift)
+(def ^{:doc "Target spark displacement (m) per tick at full thrust, terminal speed — dilation-proof sizing (physics-dt-unit-mismatch). Live knob: :genesis/spark-flight-displacement."}
+  default-displacement-per-tick flight/default-displacement-per-tick)
+
+(def ^{:doc "Fraction of the spark's velocity retained per tick by the always-on proto flight-assist. Live knob: :genesis/spark-damping-retention."}
+  default-damping-retention flight/default-damping-retention)
+
+(def ^{:doc "Serial intent: record/clear the player's manual-flight thrust direction on the :player/thrust world key."}
+  set-thrust flight/set-thrust)
+
+(def ^{:doc "Write-set system (sole writer of c/accel-thrust): manual-flight thrust + proto flight-assist damping on the spark."}
+  thrust-acceleration-system flight/thrust-acceleration-system)
+
+(def ^{:doc "Manual-mode focus-follow: pin :focus-position to the spark's c/position plus the player's offset (world -> world)."}
+  focus-follow focus/focus-follow)
 
 ;; --- Influence: the dark halo -----------------------------------------------
 

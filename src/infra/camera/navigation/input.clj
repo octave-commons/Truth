@@ -99,24 +99,29 @@
             (update :target sp/v+ dx)
             update-camera-position)))))
 
-(defn observer-move-velocity
-  "Physical velocity [m/s] for the observer from camera-relative input.
+(defn thrust-direction
+  "Unit thrust direction (world axes) for the spark from camera-relative
+   input, or nil when no flight key is held.
 
-   `input` is a map {:forward signed :right signed} where +1 means the positive
-   key is held (W or D) and -1 means the negative key (S or A). `settings`
-   provides :move-speed in m/s. Multiply by `dt` to obtain displacement.
-
-   Forward flies along the camera's full look direction (FPS-style), so W/S move
-   the mote toward / away from wherever the camera is aimed."
-  [camera input settings]
+   `input` is a map {:forward signed :right signed :up signed} where +1 means
+   the positive key is held (W, D, or Space) and -1 the negative (S, A, or
+   Left-Ctrl). Forward flies along the camera's full look direction
+   (FPS-style — the Wave 0 camera-aim basis; body-frame thrust waits for
+   orientation, design docs/designs/spark-flight-and-camera.md §3.1); strafe
+   is kept level; vertical is the world z axis (up vector [0 0 1], §5.3
+   coordinate discipline)."
+  [camera input]
   (let [fwd-input (double (:forward input 0.0))
-        rgt-input (double (:right input 0.0))]
-    (if (and (zero? fwd-input) (zero? rgt-input))
-      [0.0 0.0 0.0]
+        rgt-input (double (:right input 0.0))
+        up-input  (double (:up input 0.0))]
+    (when-not (and (zero? fwd-input) (zero? rgt-input) (zero? up-input))
       (let [{:keys [forward right]} (camera-move-basis camera)
-            speed (double (:move-speed settings 3.0e15))]
-        (sp/v+ (sp/v* forward (* speed fwd-input))
-               (sp/v* right (* speed rgt-input)))))))
+            d (sp/v+ (sp/v+ (sp/v* forward fwd-input)
+                            (sp/v* right rgt-input))
+                     [0.0 0.0 up-input])
+            l (sp/len d)]
+        (when (pos? l)
+          (sp/v* d (/ 1.0 l)))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Camera modes and settings
@@ -135,7 +140,6 @@
    :fit-percentile 0.90
    :manual-yaw -90.0
    :manual-pitch -20.0
-   :move-speed 3.0e15
    ;; Mouse look degrees-per-pixel and scroll-zoom render-units-per-notch.
    ;; Adjustable live from the View panel (infra.menu) or the REPL.
    :look-sensitivity 0.01

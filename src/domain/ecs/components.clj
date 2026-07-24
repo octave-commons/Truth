@@ -145,6 +145,14 @@
 ;; edge (kanban/tasks/dark-matter-static-halo.md). Distinct single-writer
 ;; channel from accel.gravity (mutual N-body self-gravity).
 (def accel-dark-matter :component/accel.dark-matter) ;; [ax ay az] static halo pull toward origin
+;; `accel.thrust` is the player's manual-flight thrust + flight-assist damping
+;; on the SPARK entity only (domain.player.flight, card flight-no-jump-accel):
+;; the WASD/vertical input direction carried on the `:player/thrust` world key
+;; (the `:genesis/interventions` precedent) plus the always-on velocity-
+;; proportional damping, expressed as one acceleration the integrator sums.
+;; Replaces the deleted domain.player.focus/drift position teleport — the
+;; integrator stays the sole writer of c/position/c/velocity.
+(def accel-thrust   :component/accel.thrust)   ;; [ax ay az] player manual-flight thrust + damping (spark only)
 
 ;; --- Influence contributions (unified-integrator inputs) --------------------
 ;; The single integrator (domain.ecs.integrator) is the sole writer of physical

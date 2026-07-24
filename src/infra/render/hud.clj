@@ -9,7 +9,9 @@
    [domain.ecs.components :as c]
    [domain.intervention :as intervention]
    [domain.gravity.dark-matter :as dark-matter]
+   [domain.voxel.sculpt :as sculpt]
    [law.stellar :as law]
+   [law.voxel :as voxel]
    [infra.render.color :as color]
    [infra.render.input :as rinput]
    [infra.render.passes :as passes])
@@ -342,12 +344,34 @@
     []))
 
 (defn- afford-colors
-  "Text colours for an action row given the spark's quanta and the action's cost:
-   bright/green when affordable, dimmed/red when not."
-  [agency cost]
-  (if (>= (double agency) (double cost))
+  "Text colours for an action row: bright/green when the action is available
+   AND affordable, dimmed/red otherwise."
+  [amount cost available?]
+  (if (and available? (>= (double amount) (double cost)))
     {:label [0.88 0.95 1.0 0.98] :cost [0.65 1.0 0.78 0.98]}
     {:label [0.55 0.50 0.55 0.70] :cost [1.0 0.50 0.45 0.85]}))
+
+(defn- action-row-state
+  "The currency amount, cost, and availability of one `action-palette` entry
+   in `world`: `:kind` entries spend Agency and are always placeable;
+   `:sculpt` entries spend Resonance and are keyed off the world's
+   `c/palette` phase — lit only when the planetary palette is active and the
+   verb's ability is armed (the same gate `domain.voxel.sculpt/request-op`
+   enforces, surfaced on the legend so an unarmed key reads dim instead of
+   silently no-oping)."
+  [world a]
+  (let [obs (player/get-observer world)]
+    (if-let [verb (:sculpt a)]
+      (let [obs-eid (player/observer-entity world)
+            palette (when obs-eid (ecs/get-component world obs-eid c/palette))
+            ability (get voxel/sculpt-verb->ability verb)]
+        {:amount     (double (or (:resonance obs) 0.0))
+         :cost       (sculpt/op-cost verb (:magnitude a))
+         :available? (boolean (and (= :planetary (:active palette))
+                                   (contains? (set (vals (:slots palette))) ability)))})
+      {:amount     (double (or (:agency obs) 0.0))
+       :cost       (intervention/cost-of (:kind a))
+       :available? true})))
 
 (defn controls-hud
   "The teaching layer. Renders the paid-action palette (bottom-right) straight
@@ -355,8 +379,7 @@
    ring colour and the row lit by whether the spark can afford it — plus a
    one-line passive-controls legend. Returns {:rects :text}."
   [world width height]
-  (let [agency (double (or (:agency (player/get-observer world)) 0.0))
-        w (double width) h (double height)
+  (let [w (double width) h (double height)
         scale 1.9 line-h 22.0 pad 12.0
         rows (count rinput/action-palette)
         panel-w 252.0
@@ -372,10 +395,10 @@
                 :scale 1.6 :color [0.70 0.82 1.0 0.95]}
         action-text
         (mapcat
-         (fn [i {:keys [keycap label kind accent]}]
-           (let [cost (intervention/cost-of kind)
+         (fn [i {:keys [keycap label accent] :as a}]
+           (let [{:keys [amount cost available?]} (action-row-state world a)
                  y    (+ y0 pad (* (inc i) line-h))
-                 {lc :label cc :cost} (afford-colors agency cost)]
+                 {lc :label cc :cost} (afford-colors amount cost available?)]
              [{:text keycap :x (+ x0 pad)        :y y :scale scale :color (conj (vec accent) 1.0)}
               {:text label  :x (+ x0 pad 52.0)   :y y :scale scale :color lc}
               {:text (format "%.0fq" (double cost)) :x (+ x0 pad 176.0) :y y :scale scale :color cc}]))
@@ -385,16 +408,27 @@
     {:rects [rect]
      :text  (into [header passive] action-text)}))
 
+(defn- spark-speed
+  "The spark's live speed (m/s) from its `c/velocity` column, 0.0 when
+   absent — the thrust model's honest readout (flight-no-jump-accel replaced
+   the fixed `:move-speed` teleport knob)."
+  [world]
+  (if-let [eid (player/observer-entity world)]
+    (if-let [v (ecs/get-component world eid c/velocity)]
+      (math/sqrt (reduce + 0.0 (map (fn [x] (* (double x) (double x))) v)))
+      0.0)
+    0.0))
+
 (defn view-bar-hud
   "Top-left status bar separating the active view/camera from the simulation.
 
-   Shows current camera mode, orbit distance, move speed, and whether the view
-   is user-driven or tracking the world."
-  [camera-settings camera width height]
+   Shows current camera mode, orbit distance, the spark's live speed, and
+   whether the view is user-driven or tracking the world."
+  [camera-settings camera width height world]
   (let [w (double width) h (double height)
         mode (:mode camera-settings :manual)
         dist (:distance camera 50.0)
-        speed (:move-speed camera-settings 3.0e15)
+        speed (spark-speed world)
         tracking? (not= :manual mode)
         label (case mode
                 :manual "3RD PERSON"
@@ -416,7 +450,7 @@
         dist-line {:text (format "dist: %.1f" dist)
                    :x (+ x0 pad) :y (+ y0 pad line-h) :scale 1.4
                    :color [0.78 0.92 1.0 0.9]}
-        speed-line {:text (format "move: %.2e m/s" (double speed))
+        speed-line {:text (format "spark: %.2e m/s" (double speed))
                     :x (+ x0 pad) :y (+ y0 pad (* 2.0 line-h)) :scale 1.4
                     :color [0.70 0.82 1.0 0.85]}]
     {:rects [rect]

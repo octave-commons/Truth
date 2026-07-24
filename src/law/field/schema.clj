@@ -114,6 +114,11 @@
    [:n :int]
    [:mass [:fn double-array?]]
    [:radius [:fn double-array?]]
+   ;; Per-entity Plummer softening length from the species rule
+   ;; (law.stellar.orbital.dynamics/body-softening): c/radius for resolved
+   ;; compact bodies, the world :sim/softening for gas/stateless entities
+   ;; (kanban/tasks/compact-pair-softening.md).
+   [:eps [:fn double-array?]]
    [:px [:fn double-array?]]
    [:py [:fn double-array?]]
    [:pz [:fn double-array?]]
