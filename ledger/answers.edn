@@ -111,3 +111,9 @@
             "candidate_gate.out: star 491 :luminosity 1.0E29 (= ceiling), 0.279 Msun"
             "fusion.clj:54 fusion system is sole c/luminosity writer, applies thermo/star-luminosity"]
  :refs [13]}
+{:id 16 :ts "2026-07-24T18:40:00Z" :answers-q [] :owner "claude"
+ :answer "LOCK-IN ASSESSMENT (owner guard 2026-07-24): the toy luminosity is a CLEAN, single-function seam -> LOW lock-in. thermo/star-luminosity is the sole toy input to c/luminosity (via fusion fan-out, sole writer). Everything downstream is real physics in SI/Kelvin: classifier/equilibrium-temperature (grey-body Stefan-Boltzmann), thermal-band (physical K 150/250/350/450), candidate gate (150-400 K). Swapping the toy = replacing ONE function; gates stay in Kelvin. GUARD for current gameplay-loop work: key gameplay on the SEMANTIC gate (c/planet-candidate, thermal-band label), NOT on 'the temperate planet is at ~9 AU' (a toy artifact; true M-dwarf HZ is ~0.1-0.2 AU). Deferred real model carded: kanban/tasks/stellar-mass-luminosity-real-model.md (research-first, cross-linked to residual-scattering: do NOT land real luminosity before inner-planet survival or candidates vanish). Satisfies owner condition: toy OK because a research-grounded real-model task now exists on the board."
+ :evidence ["classifier.clj:389-404 thermal-band physical K; :764-768 candidate 150-400K"
+            "classifier.clj:378 equilibrium-temperature physical; fusion.clj:54 sole c/luminosity writer"
+            "kanban/tasks/stellar-mass-luminosity-real-model.md created"]
+ :refs [15]}
