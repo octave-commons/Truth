@@ -56,3 +56,29 @@ sculpt op is invisible (only trustable via REPL dump of
 - HUD legend (`controls-hud`) renders all seven rows from the same palette;
   sculpt rows show the Resonance op-cost and are lit only when the world's
   `c/palette` is `:planetary` with the verb's ability armed.
+
+## Verification pass (2026-07-24)
+
+Re-verified against the branch; dispatch intact (`T`/`Shift+T`/`Y` →
+`request-op`, no keycap collisions, palette-gated HUD rows all covered in
+`test/infra/render/input_test.clj`). Full suite green (879 tests / 15486
+assertions, 0 failures).
+
+**Stale docstring fixed:** `domain.voxel.sculpt`'s ns docstring still
+declared "KNOWN GAP … no keymap dispatches `request-op` yet" — the gap this
+card closed. It now records the actual keymap. Left as a docstring rather
+than deleted so the gate reasoning survives.
+
+**Seam covered:** added to `test/domain/pilot_resolve_seam_test.clj` — the
+half that matters for "fly to it and resolve it" is that `request-op`
+derives its `:anchor` from `(:focus-position obs)`, which manual mode pins
+to the mote, so WHERE you fly is WHERE you sculpt. Now asserted: approach
+the world's +x face and the anchor points +x; approach +z and it points +z
+(and the two differ, so it is not a constant). Also asserted that an
+uncommitted world makes a keypress a no-op that spends no Resonance — the
+loop really is fly → commit → sculpt.
+
+**Not green:** `bin/analyze --strict` fails on 4 pre-existing HARD breaches
+in unrelated namespaces, owned by `epic-static-analysis-cleanup`. Not caused
+by this card. `src/infra/render/input.clj` is clean in both the breach and
+cljfmt lists.

@@ -83,3 +83,30 @@ with auto-follow, always lands), step rescaled 3e15 → 0.1 ×
 world-focus-radius (~0.1 AU). Tracking modes keep the camera-target sync.
 Live: focus rides the spark at ~1-tick lag (verified diff ~2e12 m at
 1e26-scale positions during the flight-fling investigation).
+
+## Verification pass (2026-07-24)
+
+Re-verified against the branch; implementation intact. Full suite green
+(879 tests / 15486 assertions, 0 failures). Neither this card's files
+(`src/domain/player/focus.clj`, `src/infra/render/input.clj`) appear in the
+`bin/analyze --strict` HARD-breach list or the cljfmt drift list.
+
+**Gap found and closed:** every LINK was unit-tested but the SEAM was not —
+nothing asserted that the `:focus-position` `focus-follow` writes lands
+inside the radius the binding gate actually tests
+(`law.narrowing/world-focus-radius`, ~1 AU — NOT the 4.0e15 m attention
+shell). That is a scale coincidence, and it is exactly the failure mode
+`narrowing-worldscale-overlap-gate` was written to fix. New
+`test/domain/pilot_resolve_seam_test.clj` feeds `focus-follow`'s real output
+to the real `binding-system`: a mote 2 AU out accrues nothing, flown to
+0.5 AU the same world binds, and parked it climbs monotonically. It also
+pins the arrow-step rescale as a regression (the old 3.0e15 m step is
+asserted to MISS) and pins that a freshly spawned spark's default
+`:focus-intensity` 0.5 sits exactly ON `focus-intensity-floor` 0.5 — lower
+that default and flying at a planet silently stops resolving forever.
+
+**Not green:** `bin/analyze --strict` fails, but for 4 pre-existing HARD
+breaches in unrelated namespaces (`domain.stellar.classifier`,
+`law.stellar`, `derive-edits`, `voxel-focus-system`) owned by
+`epic-static-analysis-cleanup` (which documents this exact baseline). Not
+caused by this card and not fixable within it.
