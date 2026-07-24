@@ -74,3 +74,7 @@
  :question "Star 491 is 0.279 Msun but reports 261 Lsun (should be ~0.01 Lsun) and 0.46 Rsun — a stellar over-luminosity bug that currently WARMS the planets into the temperate/hot bands. Fix it (would make outer planets cold again, likely re-blocking on temperature) or leave it and track separately, given it is incidentally helping candidate temperatures?"
  :context "Secondary finding from the candidate-gate probe. Fixing it interacts with the temperature gate for candidate emergence."
  :refs []}
+{:id 13 :ts "2026-07-24T16:40:00Z" :origin "stability-gate breakdown" :owner "claude" :audience :user :status :open
+ :question "orbit-stable is blocked only by ejected planets (at 100k+ AU) poisoning the Hill sibling test. Fix approach? (A) exclude unbound bodies from the stability sibling set — minimal, correct, likely yields the first candidate (1010); (B) fix the residual scattering so ejecta don't exist — bigger, also raises survivor count; (C) both."
+ :context "A9/A10. A is a correct gate fix AND independently right (hyperbolic ejecta are not co-orbiting siblings). B is the deferred residual-scattering work. This is implement-with-review; decision gates which subagent/task fires next."
+ :refs []}
