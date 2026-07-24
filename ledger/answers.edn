@@ -68,3 +68,7 @@
  :evidence ["scratchpad/probe_fling_postfix.clj + /tmp/probe_fling_postfix.out: eids 1005-1010 BOUND (energy -1.15e7 to -4.08e7) at 1.6-9.3 AU; eids 1001-1004,1011,1012 UNBOUND (energy +1.68e7 to +7.83e8) at 9,317-65,692 AU, same tick 4100, same seed 42, fix applied"
             "tick-4040 gate-pass diagnostics (probe_fling.out) already showed ratio 1-60 (well under substep-dominance-factor=100) for these eids even at spawn -- consistent with real multi-star chaos, not purely a residual anchor bug"]
  :refs [200 201]}
+{:id 8 :ts "2026-07-24T15:00:00Z" :answers-q [202] :owner "aaron (user)"
+ :answer "Neither residual-scattering-now nor close-as-new-card directly; chose the third path: CHECK CANDIDATE EMERGENCE. Run seed-42 and test whether any of the 6 bound survivors clears the full gate (e<0.4 + orbit-stable + 150-400K temp band) -> c/planet-candidate. This is the north star and tells us whether the residual scattering matters. Residual scattering deferred (revisit if the check shows we need the inner planets)."
+ :evidence ["AskUserQuestion 2026-07-24: 'Check candidate emergence (Recommended)'"]
+ :refs []}

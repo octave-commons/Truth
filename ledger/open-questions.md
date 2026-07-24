@@ -72,3 +72,10 @@ RESULT: seed-42 bound planets 0/12 → 6/12 at tick 4100 (card done-bar met).
 RESIDUAL (q202, USER decision): inner 1001-1004 + outer 1011-1012 still flung —
 likely genuine 4-star scattering (dominance ratio 1-60 < 100x). Pursue now or new card?
 - Subagent B: DONE. Subagent A: dormant. IDs 200-299 used by B.
+
+## Candidate-emergence check (2026-07-24 ~15:00, subagent C, IDs 300-399)
+User chose: check candidate emergence (north star) over chasing residual scattering.
+C tracing full gate (e<0.4 + orbit-stable + 150-400K temp) for the 6 survivors
+(eids 1005-1010, 1.6-9.3 AU). Cheap-gate-first (temp), no blind long runs.
+Hypothesis to confirm/refute: 0.28 Msun star's HZ ~0.1-0.2 AU => 1.6-9.3 AU
+survivors too COLD => need inner planets => residual scattering becomes critical.
