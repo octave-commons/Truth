@@ -1,0 +1,24 @@
+;; Answers ledger — append-only, numbered. Each answer references the question id(s)
+;; it resolves via :answers-q. Mirrors receipts.edn shape.
+;; Keys: :id (monotonic int) :ts :answers-q [int...] :owner :answer :evidence [...] :refs
+;; Never edit or delete past lines.
+{:id 1 :ts "2026-07-24T00:00:00Z" :answers-q [5] :owner "claude"
+ :answer "Yes. clojure -M:test on the current dirty tree: Ran 871 tests containing 15457 assertions. 0 failures, 0 errors. The uncommitted formation-survival diff is green (matches intro claim 871/15457)."
+ :evidence ["clojure -M:test exit 0" "871 tests / 15457 assertions / 0 failures"]
+ :refs []}
+{:id 2 :ts "2026-07-24T00:00:00Z" :answers-q [1] :owner "aaron (user)"
+ :answer "Commit it first. Claude verifies (suite green, A1) and commits the trio so there is a clean base + rollback point. Path-scoped; do not absorb unrelated dirt destructively."
+ :evidence ["AskUserQuestion 2026-07-24: 'Commit it first (I verify + commit)'"]
+ :refs []}
+{:id 3 :ts "2026-07-24T00:00:00Z" :answers-q [2] :owner "aaron (user)"
+ :answer "Priority = (a) direct-merge L renormalization. Finish the sink fix; prime suspect for the t~4100 kAU-birth population the v2 gate didn't stop."
+ :evidence ["AskUserQuestion 2026-07-24: '(a) direct-merge L renormalization'"]
+ :refs [6]}
+{:id 4 :ts "2026-07-24T00:00:00Z" :answers-q [3] :owner "aaron (user)"
+ :answer "Investigate + implement WITH review. Subagents may edit src/test to implement fixes, but each change is reviewed by Claude/user before commit; tests must stay green. Subagents must ask questions relentlessly (append to questions.edn)."
+ :evidence ["AskUserQuestion 2026-07-24: 'Investigate + implement with review'"]
+ :refs []}
+{:id 5 :ts "2026-07-24T00:00:00Z" :answers-q [4] :owner "aaron (user)"
+ :answer "Yes — push for candidate emergence. Keep driving formation-survival physics until a world clears e<0.4 + temp-band + orbit-stable and becomes a c/planet-candidate."
+ :evidence ["AskUserQuestion 2026-07-24: 'Yes — push for candidate emergence'"]
+ :refs []}

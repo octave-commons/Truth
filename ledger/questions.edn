@@ -1,0 +1,32 @@
+;; Questions ledger — append-only, numbered. Mirrors receipts.edn shape.
+;; Keys: :id (monotonic int) :ts :origin :owner :audience (:user|:exploration)
+;;       :status (:open|:answered|:superseded) :question :context :refs [answer-ids|files]
+;; Never edit or delete past lines. Answers live in ledger/answers.edn keyed by :answers-q.
+{:id 1 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :user :status :open
+ :question "The formation-survival trio is a ~2500-line uncommitted diff across 45 files on branch spark-gravity-bound-body (HEAD = spark card 4). Commit + verify it before building further, or keep working on top of the dirty tree?"
+ :context "Working tree touches integrator, sink, disc-evolution, classifier, kepler, gravity/barnes-hut, +tests. Concurrent opencode agent may own this dirt. Fork-tax guidance forbids blanket staging."
+ :refs []}
+{:id 2 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :user :status :open
+ :question "Which thread is the priority next step: (a) direct-merge L renormalization (finish the sink fix), (b) 1024 post-birth stripping autopsy, or (c) pause coding and fly the live pm2 window to observe the new physics?"
+ :context "Intro offered these three. (a) is small + finishes card sink-absorb-angular-momentum-renormalization. (b) informs a survival gate. (c) is verification, not code."
+ :refs []}
+{:id 3 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :user :status :open
+ :question "How autonomous should the sonnet subagents be: research/investigate + write findings only, or allowed to modify src/ and test/ and commit?"
+ :context "User asked for medium-effort sonnet subagents that ask questions relentlessly. Physics changes are high-blast-radius per the blocker card."
+ :refs []}
+{:id 4 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :user :status :open
+ :question "Is the north star still 'produce >=1 c/planet-candidate under normal sim so the binding->commitment->voxel loop becomes reachable'? Survival rate is 1/25, up from 0. Do we push for candidate emergence, or is 1/25 enough to switch to the player-facing loop?"
+ :context "planet-orbit-circularization-blocker is the acknowledged upstream gate for the whole spark-flight/voxel roadmap."
+ :refs []}
+{:id 5 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :exploration :status :answered
+ :question "Does the full test suite pass with the uncommitted formation-survival diff applied?"
+ :context "Verifying the dirty tree before deciding to build on it."
+ :refs [1]}
+{:id 6 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :exploration :status :open
+ :question "What/where is the 'direct-merge packet channel' that keeps raw capture-radius L, and does it feed absorb-packet or a separate sink path? The sink-absorb card cites sink.clj:136 for whole-parcel absorbs — is the t~4100 kAU population from that path or another?"
+ :context "Intro thread (a). sink-absorb-angular-momentum-renormalization card is in review; card 1 renormalized only disk-route packets."
+ :refs []}
+{:id 7 :ts "2026-07-24T00:00:00Z" :origin "session review" :owner "claude" :audience :exploration :status :open
+ :question "What is the velocity/energy timeline of body 1024 from bound 32.4-AU birth to stripping within 500 ticks? Is the stripper the identified sibling star, and is it a WH-split close-encounter degradation (design §4 note) or a real physical tide?"
+ :context "Intro thread (b). Probe data in scratchpad/trio.edn; autopsy likely informs a survival gate."
+ :refs []}
