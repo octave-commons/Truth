@@ -79,3 +79,13 @@ C tracing full gate (e<0.4 + orbit-stable + 150-400K temp) for the 6 survivors
 (eids 1005-1010, 1.6-9.3 AU). Cheap-gate-first (temp), no blind long runs.
 Hypothesis to confirm/refute: 0.28 Msun star's HZ ~0.1-0.2 AU => 1.6-9.3 AU
 survivors too COLD => need inner planets => residual scattering becomes critical.
+
+## Candidate check result (2026-07-24 ~16:00, orchestrator-run probe)
+Gate table (seed 42, tick 4100, eids 1005-1010): all :planet, warm/hot (342-799K),
+e 0.12-0.55. TEMPERATURE REFUTED as blocker (star 491 = 261 Lsun @ 0.28 Msun, an
+over-luminosity bug that warms them; Q12 for the user). THE WALL: c/orbit-stable
+false for ALL 6, incl 1010 (e=0.165, 342K temperate, apo 12.5 AU). 0 candidates.
+orbit-stability = 3 analytic gates (peri floor, 100 AU apo cap, 10-Hill sibling
+separation) vs each body's dominant-attractor. Gates 1&2 pass from the numbers;
+Q11 probe running to decide: Hill-packing (6 planets in 1.6-9 AU) vs wrong/nil parent.
+Subagents A/B/C all abandoned (stalled on background probes); orchestrator driving directly.

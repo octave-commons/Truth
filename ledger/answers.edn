@@ -72,3 +72,9 @@
  :answer "Neither residual-scattering-now nor close-as-new-card directly; chose the third path: CHECK CANDIDATE EMERGENCE. Run seed-42 and test whether any of the 6 bound survivors clears the full gate (e<0.4 + orbit-stable + 150-400K temp band) -> c/planet-candidate. This is the north star and tells us whether the residual scattering matters. Residual scattering deferred (revisit if the check shows we need the inner planets)."
  :evidence ["AskUserQuestion 2026-07-24: 'Check candidate emergence (Recommended)'"]
  :refs []}
+{:id 9 :ts "2026-07-24T16:00:00Z" :answers-q [10] :owner "claude"
+ :answer "Temperature hypothesis REFUTED. Gate table (seed 42, tick 4100, eids 1005-1010): all 6 are :planet :rocky/:mixed, warm-to-hot (342-799K), NOT frozen — because star 491 reports 261 Lsun at 0.279 Msun (physically impossible for an M-dwarf, ~0.01 Lsun expected; an over-luminosity bug that happens to warm the planets). eccentricities 0.117-0.552 (1009=0.117, 1010=0.165, 1008=0.215 under the 0.4 cap; 1005=0.55, 1006=0.46 over). THE BINDING CONSTRAINT: orbit-stable=false for ALL 6, including eid 1010 which passes eccentricity (0.165) AND temp (342K :temperate) AND apoapsis cap (12.5 AU < 100). eligible-candidate?=false for all; zero c/planet-candidate written. So the wall between '6 survive' and '>=1 candidate' is c/orbit-stable never being set true. SECONDARY BUG: star luminosity 261 Lsun @ 0.28 Msun is wrong (over-luminous)."
+ :evidence ["$CLAUDE_JOB_DIR/tmp/candidate_gate.out (seed 42 tick 4100)"
+            "eid 1010: e=0.165, T=342K :temperate, apo 12.5 AU, orbit-stable false, eligible false"
+            "star 491: 0.279 Msun but 261 Lsun, 0.46 Rsun"]
+ :refs []}

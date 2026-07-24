@@ -66,3 +66,11 @@
  :question "Do any of the 6 spawn-seam-fix survivors (seed 42, bound at 1.6-9.3 AU around 0.28 Msun star 491) ever become a c/planet-candidate? Trace the FULL gate per body: eccentricity vs candidate-max-eccentricity (0.4), c/orbit-stable, equilibrium temperature vs 150-400K band, eligible-candidate?. Which gate blocks, with numbers?"
  :context "North star (A5). Suspicion: 0.28 Msun star's HZ is ~0.1-0.2 AU, so 1.6-9.3 AU survivors are likely too COLD (frozen) — which would mean we need the INNER planets (1001-1004, currently scattered) to survive, looping back to residual scattering. Check temp FIRST (cheap) before any long run."
  :refs []}
+{:id 11 :ts "2026-07-24T16:00:00Z" :origin "candidate-gate probe" :owner "claude" :audience :exploration :status :open
+ :question "Why is c/orbit-stable never true, even for eid 1010 (e=0.165, T=342K, apo 12.5 AU — passes ecc/temp/apoapsis)? Is it a time/observation-window criterion not yet met at tick 4100, a system not firing in the tick pipeline, or another gate (periapsis floor, Hill/mutual stability)?"
+ :context "orbit-stable is THE wall to candidate emergence (A9). Read domain.orbital.stability + whoever writes c/orbit-stable + classifier/eligible-candidate?."
+ :refs []}
+{:id 12 :ts "2026-07-24T16:00:00Z" :origin "candidate-gate probe" :owner "claude" :audience :user :status :open
+ :question "Star 491 is 0.279 Msun but reports 261 Lsun (should be ~0.01 Lsun) and 0.46 Rsun — a stellar over-luminosity bug that currently WARMS the planets into the temperate/hot bands. Fix it (would make outer planets cold again, likely re-blocking on temperature) or leave it and track separately, given it is incidentally helping candidate temperatures?"
+ :context "Secondary finding from the candidate-gate probe. Fixing it interacts with the temperature gate for candidate emergence."
+ :refs []}
