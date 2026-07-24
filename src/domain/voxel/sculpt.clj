@@ -41,10 +41,12 @@
    `intervention/expire-interventions` precedent), so each op folds
    exactly once (one Jacobi tick later, in `:voxel-focus`).
 
-   KNOWN GAP (honest, same posture as Narrowing A): the palette VERBS are
-   still infra-side — no keymap dispatches `request-op` yet (the Phase 0
-   keymap is `infra.render.input/action-palette`). The domain-side
-   actuation path here is the contract that infra card wires to. A second
+   KEYMAP (gap CLOSED by kanban/tasks/voxel-sculpt-verb-palette-wiring.md):
+   `infra.render.input/action-palette` now dispatches `request-op` —
+   `T` = :uplift, `Shift+T` = :volcanism, `Y` = :erosion, each at
+   magnitude 0.5, enqueued as a serial pre-tick intent exactly like
+   `domain.intervention/place`. The gates below still do all the work, so a
+   press before commitment is a no-op that charges nothing. A second
     gap: field biases live on the cached `c/voxel-field` and were NOT part of
     the §7.3 field-seed + edit-diff save story (diffs record voxel
     deviations, not field bias) — CLOSED by card
