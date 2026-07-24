@@ -76,6 +76,52 @@
       (is (= :temperate (get-in ws [c/thermal-band planet])))
       (is (nil? (get-in ws [c/material-class star]))))))
 
+(deftest orbit-stability-ignores-unbound-ejecta-in-sibling-set
+  (testing "a bound planet stays orbit-stable when a distant UNBOUND massive
+            body (ejected brown-dwarf) is present — such a body is not a
+            co-orbiting sibling and its huge distance-scaled Hill radius must
+            not poison the Hill close-approach gate (candidate-emergence bug,
+            2026-07-24: eid 191 brown-dwarf at 1.4e5 AU forced orbit-stable
+            false for every real inner planet)."
+    (let [base       (ecs/empty-world)
+          [w star]   (ecs/spawn base)
+          [w planet] (ecs/spawn w)
+          [w bd]     (ecs/spawn w)
+          v-circ     (Math/sqrt (/ (* law/G law/solar-mass) law/au))
+          w (-> w
+                (ecs/put-components star {c/matter-state :star
+                                          c/mass law/solar-mass
+                                          c/radius 6.957e8
+                                          c/luminosity law/solar-luminosity
+                                          c/position [0.0 0.0 0.0]
+                                          c/velocity [0.0 0.0 0.0]
+                                          c/composition {:H 0.71 :He 0.27 :metals 0.02}
+                                          c/temperature 5778.0})
+                ;; bound, near-circular at 1 AU: passes periapsis/apoapsis gates
+                (ecs/put-components planet {c/matter-state :planet
+                                            c/mass law/earth-mass
+                                            c/position [law/au 0.0 0.0]
+                                            c/velocity [0.0 v-circ 0.0]
+                                            c/composition {:Fe 0.32 :Ni 0.02 :Si 0.30
+                                                           :Mg 0.20 :O 0.10 :H 0.05 :He 0.01}
+                                            c/temperature 288.0})
+                ;; UNBOUND brown-dwarf flung to 1e5 AU at 5 km/s (escape there
+                ;; from 1 Msun is ~133 m/s) — no dominant-attractor. Without the
+                ;; fix its Hill radius (~2.6e4 AU) × 10 spuriously overlaps the
+                ;; planet 1e5 AU away and forces orbit-stable false.
+                (ecs/put-components bd {c/matter-state :brown-dwarf
+                                        c/mass (* 0.05 law/solar-mass)
+                                        c/position [(* 1.0e5 law/au) 0.0 0.0]
+                                        c/velocity [0.0 5000.0 0.0]
+                                        c/composition {:H 0.75 :He 0.24 :O 0.01}
+                                        c/temperature 800.0}))
+          sys (classifier/classification-system)
+          ws  ((:run sys) w)]
+      (is (true? (get-in ws [c/orbit-stable planet]))
+          "the bound circular planet is orbit-stable despite the unbound ejecta")
+      (is (nil? (get-in ws [c/orbit-stable bd]))
+          "the unbound brown-dwarf has no dominant-attractor -> omitted from the verdict"))))
+
 ;; --- atmosphere-class (M5 handoff Phase 3) ----------------------------------
 ;; See kanban/tasks/ecology-m5-phase3-atmosphere-retention.md and the
 ;; grounding research note docs/research/atmosphere/planetary-atmosphere-

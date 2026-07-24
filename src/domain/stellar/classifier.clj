@@ -693,9 +693,19 @@
                                                       (get materials eid :mixed))]
                                        [eid band])))
                            eids)
+           ;; The Hill close-approach test (orbit-stability gate 3) must see only
+           ;; genuine co-orbiting sibling candidates, i.e. bodies BOUND to a star
+           ;; (`body-parents` = those with a dominant-attractor). An UNBOUND body
+           ;; — a hyperbolic ejected planet or brown-dwarf flung to 10^5 AU —
+           ;; carries a Hill radius ∝ its orbital distance (R_H = a·(m/3M)^⅓), so
+           ;; at 1.4×10^5 AU it spans ~5×10^4 AU and its 10-R_H exclusion zone
+           ;; (~5×10^5 AU) spuriously "overlaps" every real inner planet, forcing
+           ;; c/orbit-stable false for the whole system. Such a body is not a
+           ;; co-orbiting sibling and cannot threaten a bound orbit; exclude it.
            candidates (into {} (keep (fn [eid]
-                                       (when-let [snap (candidate-snapshot world eid)]
-                                         [eid snap])))
+                                       (when (contains? body-parents eid)
+                                         (when-let [snap (candidate-snapshot world eid)]
+                                           [eid snap]))))
                             eids)
            stabilities (into {} (keep (fn [eid]
                                         (when-some [ok (classify-body-stability
