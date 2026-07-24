@@ -73,7 +73,16 @@
    element map from `domain.planet-formation.composition/planet-composition`),
    :tick, :star.
    `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening (accepted for
-   caller compatibility; unused — the spawn speed is Newtonian, not softened)."
+   caller compatibility; unused — the spawn speed is Newtonian, not softened).
+
+   Also returns `:spawn-parent star` + `:rel-position`/`:rel-velocity` (the
+   orbit state relative to the star) alongside the absolute :position/
+   :velocity — needed because `materialize-lifecycle` runs AFTER
+   `step-physics`, so the star has already moved (10s of AU/tick in the
+   formation-era cluster) by the time this spec becomes an entity;
+   `domain.genesis.bootstrap/spawn-entity` re-anchors on the parent's CURRENT
+   state using these, the spawn-seam analogue of design
+   `docs/designs/multi-timescale-integration.md` §3.0's stale-anchor fix."
   [{:keys [r mass-kg ptype composition tick star]}
    {:keys [L-star pos vel axis M-star softening]}]
   (let [_ softening
@@ -89,6 +98,9 @@
         rel-vel (sp/v- velocity vel)]
     {:position position
      :velocity velocity
+     :spawn-parent star
+     :rel-position rel-pos
+     :rel-velocity rel-vel
      :mass mass-kg
      :radius rad
      :matter-state :planet

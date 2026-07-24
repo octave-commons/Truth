@@ -7,6 +7,7 @@
    [domain.stellar.disc :as disc]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.structure :as structure]
+   [domain.genesis :as genesis]
    [domain.planet-formation :as pf]
    [domain.chemistry      :as chem]
    [domain.ecs.core       :as ecs]
@@ -344,3 +345,51 @@
       (is (seq giants) "at least one body seeds beyond the ice line")
       (is (some #(> (/ (:mass %) law/earth-mass) 10.0) giants)
           "at least one giant grows past ~10 M⊕ via runaway gas accretion"))))
+
+;; --- Spawn-seam staleness: the star moves before materialize-lifecycle -----
+;; `domain.genesis.tick/tick-physics` runs `step-physics` (the integrator
+;; INCLUDED) BEFORE `materialize-lifecycle`. In the formation-era cluster a
+;; star can move 10s of AU in a single tick — the same order as the whole
+;; seeded orbit (design `docs/designs/multi-timescale-integration.md` §3.0).
+;; A spec built from the star's PRE-tick position/velocity and materialized
+;; unchanged into the POST-tick world (where the star has already moved) is
+;; the "fling machine" reborn at the spawn seam: the planet is born already
+;; many AU from its actual parent, with a velocity that pairs with nothing —
+;; an instant ejection with no raw-Euler integrator tick involved.
+
+(deftest planet-spawn-survives-parent-motion-within-the-birth-tick
+  (testing "a planet-seeds spec materializes bound to the star's CURRENT
+            (post-step-physics) position/velocity, not its stale pre-tick one"
+    (let [[w star] (build-disk-world {})
+          res      (pf/planet-seeds w star)
+          _        (is (seq (:spawns res)) "the fixture must actually seed something")
+          ;; Populate the spawn-request exactly as domain.stellar.disc-evolution
+          ;; does, then simulate the star having ALREADY advanced this tick
+          ;; (the ordering `step-physics` → `materialize-lifecycle` guarantees
+          ;; in production) by moving it a large-but-formation-era-realistic
+          ;; distance before materializing.
+          w        (ecs/put-component w star c/spawn-request-planet
+                                      (mapv second (:spawns res)))
+          star-pos0 (ecs/get-component w star c/position)
+          shift     [(* 20.0 au) 0.0 0.0] ;; ~20 AU: within the design's cited 5–20 AU/tick range
+          new-star-v [3000.0 0.0 0.0]     ;; a real, nonzero post-move velocity too
+          w        (-> w
+                       (ecs/put-component star c/position (sp/v+ star-pos0 shift))
+                       (ecs/put-component star c/velocity new-star-v))
+          w2       (genesis/materialize-lifecycle w)
+          star-pos1 (ecs/get-component w2 star c/position)
+          star-v1   (ecs/get-component w2 star c/velocity)
+          M        (double (ecs/get-component w2 star c/mass))
+          planets  (remove #(= % star) (ecs/entities-with w2 c/matter-state c/mass c/position))
+          planets  (filter #(= :planet (ecs/get-component w2 % c/matter-state)) planets)]
+      (is (seq planets) "materialize-lifecycle actually creates the requested planets")
+      (doseq [eid planets]
+        (let [pos (ecs/get-component w2 eid c/position)
+              vel (ecs/get-component w2 eid c/velocity)
+              r   (sp/dist pos star-pos1)
+              v   (sp/len (sp/v- vel star-v1))
+              energy (- (* 0.5 v v) (/ (* law/G M) r))]
+          (is (neg? energy)
+              (str "planet at " (/ r au) " AU should be BOUND to the star's "
+                   "current state (E=" energy "); a stale anchor births it "
+                   "already unbound")))))))
