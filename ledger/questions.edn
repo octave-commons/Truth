@@ -78,3 +78,7 @@
  :question "orbit-stable is blocked only by ejected planets (at 100k+ AU) poisoning the Hill sibling test. Fix approach? (A) exclude unbound bodies from the stability sibling set — minimal, correct, likely yields the first candidate (1010); (B) fix the residual scattering so ejecta don't exist — bigger, also raises survivor count; (C) both."
  :context "A9/A10. A is a correct gate fix AND independently right (hyperbolic ejecta are not co-orbiting siblings). B is the deferred residual-scattering work. This is implement-with-review; decision gates which subagent/task fires next."
  :refs []}
+{:id 14 :ts "2026-07-24T18:00:00Z" :origin "over-luminosity investigation" :owner "claude" :audience :exploration :status :open
+ :question "Why does star 491 (0.279 Msun, 0.46 Rsun) report luminosity 261 Lsun (should be ~0.008 Lsun for an M-dwarf)? Stefan-Boltzmann back-solve: L=4piR^2 sigma T^4 with R=0.46 Rsun and L=261 Lsun implies T~34000 K — so the derived effective temperature is ~10x too hot. Trace the luminosity + temperature + radius derivation in the stellar structure code; likely the virial(M,R) temperature (CLAUDE.md gotcha) with a too-small radius."
+ :context "A13/A14. Determines whether eid 1010's candidacy is physically real. Files: domain.stellar.structure + law.stellar."
+ :refs []}

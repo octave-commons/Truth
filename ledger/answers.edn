@@ -101,3 +101,13 @@
  :evidence ["star 491: 0.279 Msun, 261 Lsun, 0.46 Rsun (candidate_gate.out)"
             "1010 at 9 AU = 342K only because of 261 Lsun; at true ~0.01 Lsun it would be ~30K frozen"]
  :refs [12]}
+{:id 14 :ts "2026-07-24T18:00:00Z" :answers-q [12] :owner "aaron (user)"
+ :answer "Investigate the over-luminosity FIRST (before accepting the candidate or fixing scattering). Determine why a 0.279 Msun star radiates 261 Lsun, whether the candidate is physically real or an artifact, and whether fixing it re-blocks candidates."
+ :evidence ["AskUserQuestion 2026-07-24: 'Investigate the over-luminosity first'"]
+ :refs []}
+{:id 15 :ts "2026-07-24T18:20:00Z" :answers-q [12 14] :owner "claude"
+ :answer "NOT A BUG — a deliberate toy-model clamp. thermo/star-luminosity (src/domain/stellar/thermodynamics.clj:200-216) computes toy fusion power (fusion-rate * (4/3)pi r^3), multiplies by 1e50, and CLAMPS to [1e26, 1e29] W. Docstring: 'scale from the toy fusion power to a range that makes nearby debris/planets visibly hot (~hundreds of K) without boiling the whole nebula.' Star 491's luminosity is exactly 1.0E29 W = 261 Lsun = the clamp CEILING (confirmed in candidate_gate.out star dump). Real stellar mass-luminosity relation is NOT modeled: any star whose toy raw*1e50 exceeds 1e29 pins to 1e29, so ALL fusing stars are ~261 Lsun regardless of mass (0.28 Msun or 2 Msun alike). So eid 1010's temperate 342K is a consequence of an intentional playability scaling, not a virial/radius error. NOT a virial-temperature bug (the CLAUDE.md gotcha) — the temperature path is separate; this is the luminosity scaling. Implication: 'fixing' it = replacing the toy with a real mass-luminosity/stellar-structure model (large blast radius), which would refreeze the outer survivors (true M-dwarf L~0.008 Lsun -> 1010 at 9 AU ~30K) and reopen the candidate blocker (only inner ~0.1-0.2 AU planets, the ones that still scatter, would be in the true HZ)."
+ :evidence ["src/domain/stellar/thermodynamics.clj:200-216 star-luminosity: (max 1e26 (min 1e29 (* raw 1e50))), docstring states the toy-scaling intent"
+            "candidate_gate.out: star 491 :luminosity 1.0E29 (= ceiling), 0.279 Msun"
+            "fusion.clj:54 fusion system is sole c/luminosity writer, applies thermo/star-luminosity"]
+ :refs [13]}
