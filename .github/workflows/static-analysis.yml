@@ -33,7 +33,25 @@ jobs:
         with:
           cli: latest
           clj-kondo: latest
-          clojure-lsp: latest
+          # NOTE: do NOT add `clojure-lsp:` here. This action has no such input —
+          # it emits "##[warning]Unexpected input(s) 'clojure-lsp'" and IGNORES it,
+          # which is why clojure-lsp was never actually installed in CI even though
+          # the workflow appeared to ask for it. Installed explicitly below instead.
+
+      # Pinned, not `latest`: this gate's contract is "same source in => same
+      # findings out" (docs/STATIC-ANALYSIS.md), and a floating clojure-lsp can
+      # change the unused-public-var set under us. Matches the version the tree was
+      # driven to zero against on 2026-07-25. Bump deliberately.
+      - name: Install clojure-lsp
+        env:
+          CLOJURE_LSP_VERSION: 2025.08.25-14.21.46
+        run: |
+          set -euo pipefail
+          curl -sSfLo /tmp/clojure-lsp-install \
+            https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install
+          chmod +x /tmp/clojure-lsp-install
+          sudo /tmp/clojure-lsp-install --version "$CLOJURE_LSP_VERSION"
+          clojure-lsp --version
 
       - uses: actions/setup-node@v4
         with:

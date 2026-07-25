@@ -309,6 +309,44 @@ One reviewer finding **not** acted on: four `domain.ecology.state` predicates
 family. Re-checked — `habitable?` (3 callers) and `living?` (2) are live, so the
 "family with holes" justification for `^:export` holds.
 
+### The preflight earned its keep on the first CI run (2026-07-25)
+
+PR #3's `analyze` job failed with `✘ cannot run the gate: clojure-lsp not found on
+PATH`. Cause:
+
+```
+##[warning]Unexpected input(s) 'clojure-lsp', valid inputs are
+['lein', 'boot', 'tools-deps', 'cli', 'cmd-exe-workaround', 'bb',
+ 'clj-kondo', 'cljfmt', 'cljstyle', 'zprint', 'github-token', 'invalidate-cache']
+```
+
+`DeLaGuardo/setup-clojure@13.0` has **no `clojure-lsp` input.** The workflow had asked
+for it since the file was written; the action warned and ignored it. **clojure-lsp was
+never installed in CI, ever.**
+
+Which means: before the preflight, `bin/analyze` in CI ran
+`clojure-lsp diagnostics 2>/dev/null | grep …`, got nothing because the binary did not
+exist, printed "none", and passed the dead-code tier — on every run. The tier was
+decorative. Had this tier been promoted to blocking *without* the preflight, CI would
+have gone green on a check that was not running.
+
+This is the **third** instance of the same pattern in this one epic, and it is the
+pattern worth remembering:
+
+| # | looked configured | actually |
+|---|---|---|
+| 1 | `static-analysis` ran on every push and failed | nothing required it to pass |
+| 2 | `.lsp/config.edn` written and working locally | `.gitignore` ignored all of `.lsp/`, so CI would never see it |
+| 3 | workflow requested `clojure-lsp: latest` | input does not exist; silently ignored; binary never installed |
+
+Each was invisible while the tool it governed was advisory. Promoting the tiers is what
+forced all three into the open — which is the argument for promoting them.
+
+Fixed: clojure-lsp is installed by an explicit step, **pinned** to
+`2025.08.25-14.21.46` (the version the tree was driven to zero against) rather than
+`latest`, because this gate's contract is "same source in => same findings out" and a
+floating linter can change the finding set under us.
+
 ### §10 Open items — deliberately not done, with reasons
 
 1. ~~Branch protection.~~ **DONE 2026-07-25** — see the Correction section below.
