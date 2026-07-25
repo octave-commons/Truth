@@ -377,12 +377,25 @@ all three were invisible to the test suite because they passed unconditionally.
 ### §10 Open items — deliberately not done, with reasons
 
 1. ~~Branch protection.~~ **DONE 2026-07-25** — see the Correction section below.
-2. **`bin/bench :ecs :gravity :hydro` not run.** CLAUDE.md treats performance as a
-   correctness property and the `clojure.math` sweep touched hot paths
-   (`voxel/carve.clj`, `interior.clj`, `voxel/band.clj`). The substitution was
-   verified safe *by construction* against the Clojure 1.11.1 source — the fns are
-   `:inline` and `clojure.math/PI` is `^{:const true}`, so no var deref or boxing is
-   introduced — but that is an argument, not a measurement. **Run it before merging.**
+2. **`bin/bench :ecs :gravity :hydro` RUN 2026-07-25** — exit 0, 56 measurements, no
+   errors. Barnes-Hut (the group covering this change's structural edit to a hot path)
+   scales sanely: `build-tree` 236 µs / 1.1 ms / 2.5 ms at 100 / 1000 / 2000 bodies,
+   per-body `acceleration` 8.2 / 20.3 / 27.5 µs, and the θ sweep is monotone
+   (55.9 / 19.7 / 13.3 / 5.2 µs at θ = 0.3 / 0.5 / 0.7 / 1.0). SPH: `sph-density`
+   71 ns/particle, `density-system` 111 µs / 466 µs / 918 µs at 100 / 500 / 1000 —
+   linear, as it should be.
+
+   **Two caveats, stated rather than buried:**
+   - **There is no stored baseline in the repo**, so this is a *plausibility* check,
+     not a regression comparison. Nothing here can prove "unchanged" — only "not
+     obviously broken, and scaling as the algorithm predicts". Worth a follow-up:
+     `bin/bench` should be able to write and diff a baseline.
+   - **The `clojure.math` sweep is NOT covered by any bench group.** The swept files
+     are `voxel/carve.clj`, `interior.clj`, `voxel/band.clj`, `voxel/sculpt.clj`, and
+     no group exercises them. So the sweep's safety still rests entirely on the
+     construction argument (the fns are `:inline`, `clojure.math/PI` is
+     `^{:const true}`, so no var deref or boxing is introduced) — which is sound, but
+     it is an argument, not a measurement, and this bench run does not change that.
 3. **`clojure -M:run demo` cannot be run.** `src/infra/main.clj` does not exist in
    `HEAD`; the `:run` alias has dangled since `0a9343a`, unrelated to this work. The
    render path was verified instead by loading every render/dev namespace, by
