@@ -32,7 +32,13 @@ jobs:
         uses: DeLaGuardo/setup-clojure@13.0
         with:
           cli: latest
-          clj-kondo: latest
+          # Pinned, not `latest`, for the same reason as clojure-lsp below: a newer
+          # clj-kondo finds NEW things, which is good but must be a deliberate bump,
+          # not a surprise mid-PR. Floating `latest` already caused exactly that —
+          # v2026.07.24 flagged a `:condition-always-true` that the local v2025.07.28
+          # did not, so the tree was "0 warnings" locally and red in CI. Bump this
+          # knowingly, fix what the new version finds, then commit both together.
+          clj-kondo: 2026.07.24
           # NOTE: do NOT add `clojure-lsp:` here. This action has no such input —
           # it emits "##[warning]Unexpected input(s) 'clojure-lsp'" and IGNORES it,
           # which is why clojure-lsp was never actually installed in CI even though

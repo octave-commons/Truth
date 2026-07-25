@@ -347,6 +347,33 @@ Fixed: clojure-lsp is installed by an explicit step, **pinned** to
 `latest`, because this gate's contract is "same source in => same findings out" and a
 floating linter can change the finding set under us.
 
+### Linter versions must be PINNED, or "zero" means nothing (2026-07-25)
+
+Second CI failure, different cause, same lesson. `analyze` went red with:
+
+```
+test/shape/spatial_test.clj:36:11: warning: Condition always true
+```
+
+The tree was at 0 warnings locally and 1 in CI, because the workflow asked for
+`clj-kondo: latest`: CI ran **v2026.07.24**, local had **v2025.07.28**, and the newer
+version implements a check the older one does not.
+
+A gate whose tools float cannot honour this suite's stated contract — "same source in
+=> same findings out". A `latest` linter means the gate's verdict depends on *when* it
+ran, so a PR can be green at 09:00 and red at 17:00 with no commit in between. Both
+`clj-kondo` and `clojure-lsp` are now pinned in the workflow, with the reason inline:
+bump them deliberately, fix whatever the new version finds, and commit the bump and the
+fixes together.
+
+**And the finding was real, not version noise.** `(is (spatial/octant bb center))` —
+`octant` returns one of eight keywords, all truthy, so that assertion could never fail.
+The test *meant* to check the documented tie-break (a point lying on all three dividing
+planes resolves positive on every axis via `>=`), so it now asserts
+`(= :octant/ppp (spatial/octant bb center))`. That is the **third** vacuous assertion
+this epic has found, after `(distinct? (vals by-material))` and the `condp` default —
+all three were invisible to the test suite because they passed unconditionally.
+
 ### §10 Open items — deliberately not done, with reasons
 
 1. ~~Branch protection.~~ **DONE 2026-07-25** — see the Correction section below.

@@ -33,7 +33,13 @@
     (let [bb     (spatial/aabb (spatial/vec3 -1.0 -1.0 -1.0)
                                (spatial/vec3  1.0  1.0  1.0))
           center (spatial/center bb)]
-      (is (spatial/octant bb center))
+      ;; The centre lies exactly on all three dividing planes, which `octant`'s
+      ;; docstring resolves with `>=` — positive on every axis. Asserting that
+      ;; explicitly, because the previous form here was `(is (spatial/octant bb
+      ;; center))`: `octant` always returns one of the eight keywords, all truthy,
+      ;; so it could never fail (clj-kondo `:condition-always-true`).
+      (is (= :octant/ppp (spatial/octant bb center))
+          "a point on all three planes goes positive on each axis, deterministically")
       (is (= :octant/ppp (spatial/octant bb (spatial/vec3 0.5 0.5 0.5))))
       (is (= :octant/ppm (spatial/octant bb (spatial/vec3 0.5 0.5 -0.5))))
       (is (= :octant/mpm (spatial/octant bb (spatial/vec3 -0.5 0.5 -0.5))))
