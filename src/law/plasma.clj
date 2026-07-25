@@ -298,3 +298,5 @@
          (< F critical-xuv-flux-si)           :energy-limited
          (< F (* 10.0 critical-xuv-flux-si))  :recombination-limited
          :else                                 :blow-off)))))
+
+(defn ratchet-probe [count] (inc count))
