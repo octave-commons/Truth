@@ -88,7 +88,7 @@
     ;; the authentic formation state machine (Jeans+mass+ignition) with throttled
     ;; condensation. Subsumes the old classify system, jeans-collapse, and fusion.
    {:id     :classifier
-    :ns     'domain.stellar.classifier
+    :ns     'domain.stellar.classifier.state
     :reads  #{c/matter-state c/mass c/radius c/density c/temperature
               c/pressure c/composition c/promotion-signal c/disc-tag}
     :writes #{c/matter-state c/accretion-radius}}
@@ -110,7 +110,7 @@
     ;; because each reuses the same candidate scan and central-star lookup,
     ;; keeping reads minimal and write-conflicts empty.
    {:id     :classification
-    :ns     'domain.stellar.classifier
+    :ns     'domain.stellar.classifier.planet
     :reads  #{c/matter-state c/mass c/composition c/temperature c/position
               c/velocity c/radius c/luminosity}
     :writes #{c/material-class c/thermal-band c/orbit-stable
@@ -126,7 +126,7 @@
     ;; pending, unresolved collision merge in flight. See
     ;; kanban/tasks/ecology-m5-phase4-handoff-event.md.
    {:id     :handoff
-    :ns     'domain.stellar.classifier
+    :ns     'domain.stellar.classifier.candidate
     :reads  #{c/matter-state c/mass c/composition c/position c/velocity
               c/radius c/luminosity c/material-class c/thermal-band
               c/orbit-stable c/atmosphere-class c/retained-species

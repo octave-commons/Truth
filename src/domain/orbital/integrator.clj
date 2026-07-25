@@ -24,14 +24,3 @@
       (leapfrog-drift dt)
       (leapfrog-kick accel-fn dt)))
 
-(defn step-all
-  "Advance all bodies by one Leapfrog step.
-   accel-fn-for: (fn [tree body] -> vec3 acceleration)
-   Builds a fresh Barnes–Hut tree once per tick."
-  [bodies build-tree-fn accel-fn-for ^double dt]
-  (let [tree (build-tree-fn bodies)]
-    (mapv (fn [body]
-            (leapfrog-step body
-                           (fn [b] (accel-fn-for tree b))
-                           dt))
-          bodies)))

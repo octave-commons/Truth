@@ -94,7 +94,7 @@
    :slots  {1 :atmosphere 2 :hydrography 3 :tectonics
             4 :orbit 5 :biosphere 6 :culture}})
 
-(def phase-1-unlock-costs
+(def ^:export phase-1-unlock-costs
   "Resonance unlock cost per Phase 1 palette ability (§4.4). Data for the
    allocation/respec card; nothing consumes it yet."
   {:atmosphere 0 :hydrography 0 :tectonics 1 :orbit 1 :biosphere 2 :culture 2})

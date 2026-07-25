@@ -49,13 +49,7 @@
 (def ^{:doc "Deduct `cost` resonance, clamped at zero."}
   spend-resonance economy/spend-resonance)
 
-(def ^{:doc "Update observer coherence from drain, regen, and witnessed events."}
-  apply-coherence economy/apply-coherence)
-
 ;; --- Observation / focus ----------------------------------------------------
-
-(def ^{:doc "How strongly the observer's attention resolves reality."}
-  observation-effect focus/observation-effect)
 
 (def ^{:doc "Radius within which attention collapses probability into matter."}
   probability-collapse-radius focus/probability-collapse-radius)

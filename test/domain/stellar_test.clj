@@ -9,7 +9,7 @@
    [domain.stellar.fusion :as fusion]
    [domain.stellar.thermodynamics :as thermo]
    [domain.stellar.collapse :as collapse]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.stellar.sink :as sink]
    [domain.stellar.structure :as structure]
    [domain.em      :as em]
@@ -157,8 +157,8 @@
           hot      (assoc cold :temperature 2.0e7)         ;; still fusing
           gas-mass 1.0e28
           msun     1.989e30
-          cold-at  (fn [f] (classifier/classify-next-state (assoc cold :mass (* f msun)) gas-mass))
-          hot-at   (fn [f] (classifier/classify-next-state (assoc hot  :mass (* f msun)) gas-mass))]
+          cold-at  (fn [f] (cls-state/classify-next-state (assoc cold :mass (* f msun)) gas-mass))
+          hot-at   (fn [f] (cls-state/classify-next-state (assoc hot  :mass (* f msun)) gas-mass))]
       ;; hysteresis: a still-fusing star does NOT demote on mass alone
       (is (= :star (hot-at 0.05)) "a still-fusing star keeps burning despite mass loss")
       ;; once fusion has ceased, a star collapses to a degenerate remnant
@@ -175,9 +175,9 @@
                   :radius 1.0e9 :temperature 1.0e5 :pressure 1.0e13
                   :composition {:H 0.7 :He 0.28 :metals 0.02}}
           gas-mass 1.0e28]
-      (is (= :stellar-remnant (classifier/classify-next-state region gas-mass))
+      (is (= :stellar-remnant (cls-state/classify-next-state region gas-mass))
           "protostar below D-burning mass becomes remnant")
-      (is (not= :nebula (classifier/classify-next-state region gas-mass))
+      (is (not= :nebula (cls-state/classify-next-state region gas-mass))
           "protostar never re-dissolves to gas"))))
 
 (deftest test-brown-dwarf-demotes-to-remnant
@@ -186,9 +186,9 @@
                   :radius 1.0e9 :temperature 1.0e5 :pressure 1.0e13
                   :composition {:H 0.7 :He 0.28 :metals 0.02}}
           gas-mass 1.0e28]
-      (is (= :stellar-remnant (classifier/classify-next-state region gas-mass))
+      (is (= :stellar-remnant (cls-state/classify-next-state region gas-mass))
           "brown dwarf below D-burning mass becomes remnant")
-      (is (not= :nebula (classifier/classify-next-state region gas-mass))
+      (is (not= :nebula (cls-state/classify-next-state region gas-mass))
           "brown dwarf never re-dissolves to gas"))))
 
 (deftest test-remnant-stays-terminal
@@ -197,7 +197,7 @@
                   :radius 1.0e8 :temperature 1.0e4 :pressure 1.0e10
                   :composition {:H 0.7 :He 0.28 :metals 0.02}}
           gas-mass 1.0e28]
-      (is (= :stellar-remnant (classifier/classify-next-state region gas-mass))))))
+      (is (= :stellar-remnant (cls-state/classify-next-state region gas-mass))))))
 
 (deftest test-total-ablation-despawns-bound-body
   (testing "A bound body whose mass drops to the ablation floor is marked consumed-ablation and despawned"
@@ -533,7 +533,7 @@
                                             :velocity [0.0 0.0 0.0]
                                             :mass 1.1e30   ;; above star-mass-threshold
                                             :radius 1e14})
-          w2      (classifier/classify-system w)]
+          w2      (cls-state/classify-system w)]
       (is (= :protostar (ecs/get-component w2 eid c/matter-state)))
       (is (= 1e15 (ecs/get-component w2 eid c/accretion-radius))
           "feeding zone is 10× the pre-contraction radius so protostars keep growing"))))
@@ -721,7 +721,7 @@
           ;; Compute sink zones and classify with isolation check
           zones (sink/sink-exclusion-zones w2)
           region (thermo/entity->region w2 parcel-eid)
-          next-state (classifier/classify-next-state region 1e25 zones)]
+          next-state (cls-state/classify-next-state region 1e25 zones)]
       (is (= :nebula next-state) "Parcel inside sink radius stays :nebula")))
   (testing "A Jeans-unstable parcel OUTSIDE sinks condenses normally"
     (let [base (ecs/empty-world)
@@ -744,7 +744,7 @@
                  (ecs/put-component parcel-eid c/pressure (law/ideal-gas-pressure 1e-6 10.0)))
           zones (sink/sink-exclusion-zones w2)
           region (thermo/entity->region w2 parcel-eid)
-          next-state (classifier/classify-next-state region 1e25 zones)]
+          next-state (cls-state/classify-next-state region 1e25 zones)]
       (is (= :condensed-core next-state) "Parcel outside sink radius condenses to :condensed-core"))))
 
 (deftest test-sink-formation-does-not-absorb-gas
@@ -851,11 +851,11 @@
                                                   :matter-state :protostar})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius (* 2.0 r-cap))
           [w2 _deb] (seeder/spawn-clump w1 {:position [r-cap 0.0 0.0]
-                                           :velocity [0.0 v-cap 0.0]
-                                           :mass 1e27
-                                           :radius 1e10
-                                           :temperature 50.0
-                                           :matter-state :planetesimal})
+                                            :velocity [0.0 v-cap 0.0]
+                                            :mass 1e27
+                                            :radius 1e10
+                                            :temperature 50.0
+                                            :matter-state :planetesimal})
           w3 (sink/sink-formation-system w2)
           pkt (first (ecs/get-component w3 sink-eid c/absorb-accrete))
           L (:angular-momentum pkt)
@@ -892,11 +892,11 @@
                                                   :matter-state :planetesimal})
           w1 (ecs/put-component w1 sink-eid c/accretion-radius 5e12)
           [w2 _deb] (seeder/spawn-clump w1 {:position [1e12 0.0 0.0]
-                                           :velocity [10.0 300.0 0.0]
-                                           :mass 1e27
-                                           :radius 1e10
-                                           :temperature 50.0
-                                           :matter-state :planetesimal})
+                                            :velocity [10.0 300.0 0.0]
+                                            :mass 1e27
+                                            :radius 1e10
+                                            :temperature 50.0
+                                            :matter-state :planetesimal})
           w3 (sink/sink-formation-system w2)
           pkt (first (ecs/get-component w3 sink-eid c/absorb-accrete))
           L-raw (thermo/orbital-angular-momentum 1e27 [1e12 0.0 0.0] [10.0 300.0 0.0])]

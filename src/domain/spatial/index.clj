@@ -20,13 +20,13 @@
    filter (radius queries are inclusive and include the self-particle, just like
    the scans they replace), so swapping the index in changes performance only,
    not results."
-   (:require
-    [clojure.math :as math] [domain.ecs.core          :as ecs]
-    [domain.ecs.components    :as c]
-    [domain.ecs.parallel      :as par]
-    [domain.gravity.barnes-hut :as bh]
-    [law.stellar.orbital      :as law-orbital]
-    [shape.spatial :as sp]))
+  (:require
+   [clojure.math :as math] [domain.ecs.core          :as ecs]
+   [domain.ecs.components    :as c]
+   [domain.ecs.parallel      :as par]
+   [domain.gravity.barnes-hut :as bh]
+   [law.stellar.orbital.dynamics :as law-dyn]
+   [shape.spatial :as sp]))
 
 (declare build-grid grid-within-radius grid-nearest grid-nearest-dist)
 
@@ -57,7 +57,7 @@
 
 (defn- build-spatial-item
   "Project one entity into a spatial-index item. Carries the species
-   softening :eps (law-orbital/body-softening over the world's
+   softening :eps (law-dyn/body-softening over the world's
    :sim/softening) so the shared Barnes–Hut tree can aggregate per-node
    ε-max for the per-pair gravity kernel
    (kanban/tasks/compact-pair-softening.md)."
@@ -70,8 +70,8 @@
        :mass         (ecs/get-component world eid c/mass)
        :radius       radius
        :matter-state ms
-       :eps          (law-orbital/body-softening ms radius
-                                                 (double (or (:sim/softening world) 0.0)))
+       :eps          (law-dyn/body-softening ms radius
+                                             (double (or (:sim/softening world) 0.0)))
        :density      (ecs/get-component world eid c/density)
        :pressure     (ecs/get-component world eid c/pressure)
        :b-field      (ecs/get-component world eid c/b-field)})))
@@ -105,16 +105,6 @@
            :genesis/spatial-items items
            :genesis/frame-offset com)))
 
-(defn- point-aabb-dist2
-  "Squared distance from point `p` to axis-aligned box `bb` (0 if inside)."
-  [bb [px py pz]]
-  (let [[ax ay az] (:aabb-min bb)
-        [bx by bz] (:aabb-max bb)
-        dx (cond (< px ax) (- ax px) (> px bx) (- px bx) :else 0.0)
-        dy (cond (< py ay) (- ay py) (> py by) (- py by) :else 0.0)
-        dz (cond (< pz az) (- az pz) (> pz bz) (- pz bz) :else 0.0)]
-    (+ (* dx dx) (* dy dy) (* dz dz))))
-
 (defn within-radius
   "Every item within distance `r` of `pos` (inclusive). Includes an item AT `pos`
    (the self-particle); callers that must exclude self filter by `:eid`. Prunes
@@ -129,7 +119,7 @@
          [px py pz] pos]
      (letfn [(walk [node acc]
                (if (or (nil? node)
-                       (> (point-aabb-dist2 (:aabb node) pos) r2))
+                       (> (sp/point-aabb-dist2 (:aabb node) pos) r2))
                  acc
                  (if (bh/leaf-node? node)
                    (reduce (fn [a b]
@@ -157,7 +147,7 @@
         best-id (volatile! nil)
         [px py pz] pos]
     (letfn [(walk [node]
-              (when (and node (< (point-aabb-dist2 (:aabb node) pos) (double @best)))
+              (when (and node (< (sp/point-aabb-dist2 (:aabb node) pos) (double @best)))
                 (if (bh/leaf-node? node)
                   (doseq [b (:bodies node)]
                     (when (not= (:id b) self-eid)

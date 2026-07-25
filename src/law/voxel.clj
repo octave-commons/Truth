@@ -7,6 +7,7 @@
    velocities m/s. Schemas only: no behavior, no systems, no components.
    Slices 2-6 of the epic build on these types."
   (:require
+   [clojure.math :as math]
    [malli.core :as m]
    [law.composition :as comp]))
 
@@ -257,7 +258,7 @@
    chunks of this size at enqueue/step time, so the 2 ms cap holds for band
    churn exactly as it does for later sculpt/mine/collision edits — a big
    retarget visibly sweeps over several ticks."
-  (long (Math/floor (/ (- edit-budget-ms-per-tick edit-cost-base-ms)
+  (long (math/floor (/ (- edit-budget-ms-per-tick edit-cost-base-ms)
                        edit-cost-per-voxel-ms))))
 
 (def max-edits-per-job

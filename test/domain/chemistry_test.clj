@@ -1,6 +1,7 @@
 (ns domain.chemistry-test
   "Tests for explicit element composition helpers in domain.chemistry."
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest testing is]]
    [domain.chemistry :as chem]
    [law.composition :as lcomp]))
@@ -51,8 +52,8 @@
 
 (deftest solid-fraction-honors-30k-width
   (testing "at T = Tc ± ΔT the logistic sits at 1/(1+e^∓1) ≈ 0.731 / 0.269"
-    (let [expected-high (/ 1.0 (+ 1.0 (Math/exp -1.0)))
-          expected-low  (/ 1.0 (+ 1.0 (Math/exp 1.0)))]
+    (let [expected-high (/ 1.0 (+ 1.0 (math/exp -1.0)))
+          expected-low  (/ 1.0 (+ 1.0 (math/exp 1.0)))]
       (is (< (abs (- (chem/solid-fraction 140.0 170.0) expected-high)) 1e-12))
       (is (< (abs (- (chem/solid-fraction 200.0 170.0) expected-low)) 1e-12)))))
 

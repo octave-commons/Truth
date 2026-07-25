@@ -36,6 +36,7 @@
    correctness property): a deeper band narrows, a wider band shallows —
    attention is the resource and the voxel budget is its exchange rate."
   (:require
+   [clojure.math :as math]
    [law.composition :as comp]
    [law.interior :as law-int]
    [law.voxel :as voxel]
@@ -48,7 +49,7 @@
 (def ^:private half-diagonal-m
   "Half the voxel body diagonal (m): the radius that bounds one voxel from
    its centre."
-  (* e (/ (Math/sqrt 3.0) 2.0)))
+  (* e (/ (math/sqrt 3.0) 2.0)))
 
 ;; --- Small vec helpers (body-centric, allocation-light where hot) --------------
 
@@ -86,7 +87,7 @@
    ice-formers, convergent margins the metals)."
   [cell]
   (let [dpe   (:density-per-element cell)
-        total (reduce + 0.0 (map (fn [[k v]] (double v)) (sort-by key dpe)))
+        total (reduce + 0.0 (map (fn [[_ v]] (double v)) (sort-by key dpe)))
         share (fn [els] (if (pos? total)
                           (/ (reduce + 0.0 (map (fn [el] (double (get dpe el 0.0)))
                                                 (sort els)))
@@ -221,24 +222,24 @@
             shell-th   (- R (:inner-radius shell))
             effect     (* (double (:coherence obs)) (double (:focus-intensity obs)))
             min-edges  (double voxel/focus-band-min-horizontal-edges)
-            max-layers (long (Math/floor (/ (double voxel/focus-band-max-voxels)
-                                            (* Math/PI (+ min-edges 0.5) (+ min-edges 0.5)))))
+            max-layers (long (math/floor (/ (double voxel/focus-band-max-voxels)
+                                            (* math/PI (+ min-edges 0.5) (+ min-edges 0.5)))))
             max-depth  (* e (max min-edges (dec max-layers)))
             depth      (-> (* voxel/focus-band-depth-reference-m effect)
                            (min (max e shell-th) max-depth)
                            (max (min e shell-th)))
-            layers     (inc (long (Math/floor (/ (+ depth (* 0.5 e)) e))))
+            layers     (inc (long (math/floor (/ (+ depth (* 0.5 e)) e))))
             h-min      (* e min-edges)
             h-cap      (* e (max min-edges
-                                 (- (Math/sqrt (/ (double voxel/focus-band-max-voxels)
-                                                  (* Math/PI layers)))
+                                 (- (math/sqrt (/ (double voxel/focus-band-max-voxels)
+                                                  (* math/PI layers)))
                                     0.5)))
             h-r        (-> (* (double (:focus-radius obs)) (double (:coherence obs)))
                            (min h-cap)
                            (max (min h-min h-cap)))
             half-d     (/ depth 2.0)
             region     {:center (mapv double (sp/v- anchor (sp/v* dir half-d)))
-                        :radius (double (+ (Math/sqrt (+ (* h-r h-r) (* half-d half-d)))
+                        :radius (double (+ (math/sqrt (+ (* h-r h-r) (* half-d half-d)))
                                            e))}]
         {:dir     dir
          :anchor  anchor
@@ -266,9 +267,9 @@
         h-r2   (* h-r h-r)
         [cx cy cz] (get-in spec [:region :center])
         rad    (double (get-in spec [:region :radius]))
-        i0 (long (Math/floor (/ (- cx rad) e)))  i1 (long (Math/floor (/ (+ cx rad) e)))
-        j0 (long (Math/floor (/ (- cy rad) e)))  j1 (long (Math/floor (/ (+ cy rad) e)))
-        k0 (long (Math/floor (/ (- cz rad) e)))  k1 (long (Math/floor (/ (+ cz rad) e)))
+        i0 (long (math/floor (/ (- cx rad) e)))  i1 (long (math/floor (/ (+ cx rad) e)))
+        j0 (long (math/floor (/ (- cy rad) e)))  j1 (long (math/floor (/ (+ cy rad) e)))
+        k0 (long (math/floor (/ (- cz rad) e)))  k1 (long (math/floor (/ (+ cz rad) e)))
         out (transient [])]
     (loop [i i0]
       (when (<= i i1)

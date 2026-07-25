@@ -78,14 +78,6 @@
   (let [ws (run-system world)]
     [(tick/apply-write-set world ws) ws]))
 
-(defn- run-ticks
-  "Fold `n` ticks of the system. Each step is computed once."
-  [world n]
-  (loop [w world i 0]
-    (if (< i n)
-      (recur (first (run-tick w)) (inc i))
-      w)))
-
 (defn- run-until-drained
   "Fold ticks until the committed world's edit queue is empty (the band
    retarget has fully materialized / folded), or `max-ticks` is exceeded —

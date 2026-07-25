@@ -16,7 +16,7 @@
    [domain.physics.cache :as pcache]
    [domain.spatial.index :as spatial]
    [domain.intervention :as intervention]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.player :as player]
    [domain.pacing :as pacing]
    [domain.ecology :as ecology]
@@ -82,9 +82,9 @@
           t-commitment (time-n #(gtick/emit-commitment-event w2) 20 5)
           t-summary (time-n #(summary/system-summary w2) 10 3)
           summ (summary/system-summary w2)
-          t-complexity (time-n #(classifier/complexity-score summ) 20 5)
+          t-complexity (time-n #(cls-state/complexity-score summ) 20 5)
           t-stats (time-n #(summary/stats-of w2 summ) 10 3)
-          t-pacing (time-n #(pacing/pace w2 (classifier/complexity-score summ)) 10 3)
+          t-pacing (time-n #(pacing/pace w2 (cls-state/complexity-score summ)) 10 3)
           t-phase-events (time-n #(ecology/emit-phase-events w2 w1) 10 3)
           t-tick-world (time-n #(gtick/tick-world w) 10 3)
 

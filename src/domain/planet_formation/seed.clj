@@ -67,12 +67,12 @@
             r-in (max (* min-planet-orbit-radius-au law/au)
                       (* 3.0 (double (or (ecs/get-component world star c/radius) 1.0e9))))
             r-out (* planet-seeding-outer-au law/au)]
-         {:disk-age disk-age :maturity maturity :M-star M-star :L-star L-star
-          :disk-m disk-m :disk-L disk-L :star-pos star-pos :star-v star-v
-          :star-axis star-axis :snow-line snow-line :Z Z :r-in r-in :r-out r-out
-          :disk-composition disk-composition
-          :s0 (pfph/mmsn-sigma0 disk-m r-in r-out)
-          :annuli (make-annuli r-in r-out)}))))
+        {:disk-age disk-age :maturity maturity :M-star M-star :L-star L-star
+         :disk-m disk-m :disk-L disk-L :star-pos star-pos :star-v star-v
+         :star-axis star-axis :snow-line snow-line :Z Z :r-in r-in :r-out r-out
+         :disk-composition disk-composition
+         :s0 (pfph/mmsn-sigma0 disk-m r-in r-out)
+         :annuli (make-annuli r-in r-out)}))))
 
 (defn- annulus-physics
   "Compute physical quantities for one annulus: area, surface densities,

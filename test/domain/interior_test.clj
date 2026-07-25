@@ -2,7 +2,7 @@
   "Voxel 2: planet-candidate -> macro geology field seed
    (kanban/tasks/planet-candidate-to-voxel-seed.md). Fixtures are full
    `:planet-candidate` records in the shape
-   `domain.stellar.classifier/build-candidate-record` emits; assertions on
+   `domain.stellar.classifier.candidate/build-candidate-record` emits; assertions on
    determinism, mass conservation, thermal/environment agreement, and
    slice-1 law schema conformance of every emitted record."
   (:require

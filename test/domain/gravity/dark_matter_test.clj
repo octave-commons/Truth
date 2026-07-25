@@ -80,7 +80,7 @@
         (reg/format-conflicts (reg/write-conflicts reg/systems))))
   (testing "the integrator reads accel.dark-matter so the halo pull is integrated"
     (is (contains? (->> reg/systems (filter #(= :integrator (:id %))) first :reads)
-                    c/accel-dark-matter))))
+                   c/accel-dark-matter))))
 
 ;; --- acceptance signal: bound vs. escape --------------------------------------
 

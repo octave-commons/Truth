@@ -8,7 +8,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [domain.orbital.stability :as stability]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.planet :as cls-planet]
    [law.stellar :as law]))
 
 (def ^:private softening
@@ -81,7 +81,7 @@
                                               c/composition {:Fe 0.32 :Ni 0.02 :Si 0.30
                                                              :Mg 0.20 :O 0.10 :H 0.05 :He 0.01}
                                               c/temperature 288.0}))
-        sys      (classifier/classification-system)
+        sys      (cls-planet/classification-system)
         ws       ((:run sys) w)]
     (testing "sole writer of material-class, thermal-band, orbit-stable,
               atmosphere-class, AND retained-species"

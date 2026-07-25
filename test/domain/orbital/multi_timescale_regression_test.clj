@@ -31,21 +31,21 @@
    the failure mode pre-fix declares within a handful of ticks, and 2000 ticks
    post-fix is ~2x the 10^3 floor with K~142 sub-steps each. Reversibility
    runs 100 ticks each way."
-   (:require
-    [clojure.math :as math]
-    [clojure.test :refer [deftest is testing]]
-    [domain.ecs.components :as c]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.tick :as tick]
-    [domain.integrator.kinematics :as kinematics]
-    [domain.orbital.kepler :as kep]
-    [domain.orbital.stability :as stability]
-    [domain.orbital.system :as orbital]
-    [domain.physics.cache.soa :as pcache-soa]
-    [domain.spatial.index :as spatial]
-    [domain.stellar.seeder :as seeder]
-    [law.stellar :as law]
-    [shape.spatial :as sp]))
+  (:require
+   [clojure.math :as math]
+   [clojure.test :refer [deftest is testing]]
+   [domain.ecs.components :as c]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.tick :as tick]
+   [domain.integrator.kinematics :as kinematics]
+   [domain.orbital.kepler :as kep]
+   [domain.orbital.stability :as stability]
+   [domain.orbital.system :as orbital]
+   [domain.physics.cache.soa :as pcache-soa]
+   [domain.spatial.index :as spatial]
+   [domain.stellar.seeder :as seeder]
+   [law.stellar :as law]
+   [shape.spatial :as sp]))
 
 ;; --- Live-scale pacing constants (mirror the dev world, blocker card) -------
 

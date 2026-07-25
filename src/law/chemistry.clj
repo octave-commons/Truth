@@ -55,11 +55,11 @@
 
 ;; --- Schemas ------------------------------------------------------------------
 
-(def malleability-schema
+(def ^:export malleability-schema
   "Malleability m ∈ [0,1]: 0 brittle/cold, 1 molten (spec §3)."
   [:double {:min 0.0 :max 1.0}])
 
-(def material-group-schema
+(def ^:export material-group-schema
   "Disjoint bulk material groups derived from an element composition map
    (`domain.chemistry/material-groups`): each mass fraction in [0,1], groups
    summing to ≈ 1. `:organics` is C plus its CO/CO₂-bound oxygen; `:volatiles`
@@ -106,7 +106,7 @@
 
 ;; --- Contracts -----------------------------------------------------------------
 
-(def differentiated-layers-contract
+(def ^:export differentiated-layers-contract
   (contract/->contract
    {:id       ::differentiated-layers
     :shape-id ::chemical-state
@@ -115,7 +115,7 @@
     :name     "Differentiated Layers"
     :description "Density-separated core/mantle/volatile layer partition of a molten body."}))
 
-(def volatile-budget-contract
+(def ^:export volatile-budget-contract
   (contract/->contract
    {:id       ::volatile-budget
     :shape-id ::chemical-state

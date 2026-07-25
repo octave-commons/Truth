@@ -252,13 +252,3 @@
     (render-sprites-pass sprite-program projection view sprites)
     (render-hud-pass hud-program hud hud-text width height)))
 
-(defn render-bodies
-  "Backward-compatible single-pass renderer for solid-color spheres."
-  [{:keys [program mesh-world camera width height bodies]}]
-  (render-scene {:body-program program
-                 :mesh-world mesh-world
-                 :camera camera
-                 :width width
-                 :height height
-                 :bodies (remove #(= :particle (:render-mode %)) bodies)
-                 :t 0.0}))

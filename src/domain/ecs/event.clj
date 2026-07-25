@@ -88,11 +88,6 @@
       (handler world' event)
       world')))
 
-(defn dispatch-all
-  "Dispatch a seq of events in order."
-  [world events]
-  (reduce dispatch world events))
-
 (defn events-since
   "All raw events in the world ledger at or after tick t."
   [world t]

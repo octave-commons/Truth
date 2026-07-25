@@ -97,28 +97,11 @@
 ;; Query
 ;; ---------------------------------------------------------------------------
 
-(defn entries-for
-  "All ledger entries involving entity eid."
-  [^Ledger ledger eid]
-  (filter #(contains? (get-in % [:event :entities]) eid)
-          (:entries ledger)))
-
-(defn entries-of-kind
-  "All ledger entries of a given event kind."
-  [^Ledger ledger kind]
-  (filter #(= (get-in % [:event :kind]) kind)
-          (:entries ledger)))
-
 (defn entries-between
   "All ledger entries with tick in [from-tick to-tick] inclusive."
   [^Ledger ledger from-tick to-tick]
   (filter #(<= from-tick (:tick %) to-tick)
           (:entries ledger)))
-
-(defn events-since
-  "Convenience: raw events since tick t."
-  [^Ledger ledger t]
-  (map :event (filter #(>= (:tick %) t) (:entries ledger))))
 
 ;; ---------------------------------------------------------------------------
 ;; Chain verification

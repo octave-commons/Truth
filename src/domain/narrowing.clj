@@ -80,7 +80,7 @@
   "Specific escape energy GM/R (J/kg) of a world with `mass` (kg) and `radius`
    (m) — its potential-well depth, the M5 surface-gravity estimate one
    R-factor up. 0.0 when `radius` is missing or non-positive (mirrors
-   domain.stellar.classifier/surface-gravity's degenerate case)."
+   domain.stellar.classifier.candidate/surface-gravity's degenerate case)."
   [mass radius]
   (let [r (double (or radius 0.0))]
     (if (pos? r)
@@ -262,6 +262,10 @@
 
 ;; --- Commitment horizon (child B) --------------------------------------------
 
+;; Intentional: `ready-to-commit?` is a PREDICATE, not a conversion function —
+;; nothing is converted from `ready` to `commit`. The suggested `ready->commit?`
+;; would read as a conversion that does not exist.
+#_{:splint/disable [naming/conversion-functions]}
 (defn ready-to-commit?
   "True when the capture gate's readiness half holds for `world-eid`: the arc
    has reached planet formation (`:arc/genesis-planets-formed` or

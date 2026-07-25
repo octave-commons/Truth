@@ -39,7 +39,7 @@
   #{:gravity-hydro :mhd-dominated :gravitationally-unstable
     :radiation-dominated :convective :stable-disc :unstable-no-fragment :tectonically-dead})
 
-(def disc-regime-tags
+(def ^:export disc-regime-tags
   "Regime tags specific to rotationally-supported discs (Part 3)."
   #{:stable-disc :gravitationally-unstable :unstable-no-fragment})
 
@@ -65,11 +65,11 @@
   {:b-field bounded-b-field?
    :regime  regime-tag?})
 
-(def hydro-accel-schema
+(def ^:export hydro-accel-schema
   "Pressure-gradient acceleration vector a = -∇p/ρ in m/s²."
   finite-vec3?)
 
-(def magnetic-torque-schema
+(def ^:export magnetic-torque-schema
   "Torque density vector τ = r × f from the Lorentz force, in N/m²."
   finite-vec3?)
 
@@ -135,11 +135,11 @@
   "Predicate: does `value` satisfy `law.field/physics-soa-schema`?"
   (m/validator physics-soa-schema))
 
-(def toomre-q-schema
+(def ^:export toomre-q-schema
   "Toomre Q parameter for a disc annulus: a positive finite number."
   finite-number?)
 
-(def cool-dyn-ratio-schema
+(def ^:export cool-dyn-ratio-schema
   "Cooling-time to dynamical-time ratio t_cool / Ω⁻¹: a positive finite number."
   finite-number?)
 
@@ -167,7 +167,7 @@
 
 ;; --- Dual-representation / focus zones (Phase 1) ----------------------------
 
-(def field-zone-schema
+(def ^:export field-zone-schema
   "Zone tag for the dual-representation fidelity of an entity."
   #{:immediate :regional :global})
 
@@ -183,7 +183,7 @@
    [:temperature [:and :double [:>= 0]]]
    [:composition [:map-of :keyword :double]]])
 
-(def attention-shell-schema
+(def ^:export attention-shell-schema
   "Observer focus radii: immediate and regional attention shells."
   [:map
    [:immediate-r [:and :double [:> 0]]]
@@ -211,7 +211,7 @@
    [:angular-momentum {:optional true} [:tuple :double :double :double]]
    [:extra-components {:optional true} [:map-of :keyword :any]]])
 
-(def promotion-spawn-spec?
+(def ^:export promotion-spawn-spec?
   "Predicate: does `value` satisfy `law.field/promotion-spawn-spec-schema`?"
   (m/validator promotion-spawn-spec-schema))
 
@@ -221,7 +221,7 @@
    the other `consumed.*` markers."
   :boolean)
 
-(def consumed-demote?
+(def ^:export consumed-demote?
   "Predicate: does `value` satisfy `law.field/consumed-demote-schema`?"
   (m/validator consumed-demote-schema))
 
@@ -230,7 +230,7 @@
    the regional cell a promoted clump was sampled from."
   [:and :int [:>= 0]])
 
-(def promoted-from-cell?
+(def ^:export promoted-from-cell?
   "Predicate: does `value` satisfy `law.field/promoted-from-cell-schema`?"
   (m/validator promoted-from-cell-schema))
 
@@ -265,12 +265,12 @@
                  (< (Math/abs (- a b))
                     (* (max (Math/abs a) (Math/abs b) 1.0) tol))))]
      (and (rel-close? (mass before) (mass after))
-           (every? (fn [[a b]] (rel-close? a b)) (map vector (momentum before) (momentum after)))
-           (every? (fn [[a b]] (rel-close? a b)) (map vector (angmom before) (angmom after)))))))
+          (every? (fn [[a b]] (rel-close? a b)) (map vector (momentum before) (momentum after)))
+          (every? (fn [[a b]] (rel-close? a b)) (map vector (angmom before) (angmom after)))))))
 
 ;; --- Contract ---------------------------------------------------------------
 
-(def field-cell-contract
+(def ^:export field-cell-contract
   (contract/->contract
    {:id          :law.field/field-cell
     :shape-id    :law.field/field-cell

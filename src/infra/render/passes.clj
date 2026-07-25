@@ -28,7 +28,7 @@
 (defn- gl-uniform3f! [loc a b c] (GL20/glUniform3f loc (float a) (float b) (float c)))
 (defn- gl-uniform4f! [loc a b c d] (GL20/glUniform4f loc (float a) (float b) (float c) (float d)))
 (defn- gl-uniform-matrix4fv! [loc m] (GL20/glUniformMatrix4fv loc false m))
-(defn- gl-uniform-location [program name] (GL20/glGetUniformLocation program name))
+(defn- gl-uniform-location [program uname] (GL20/glGetUniformLocation program uname))
 
 ;; ---------------------------------------------------------------------------
 ;; Blend / depth / cull state
@@ -77,8 +77,8 @@
    Array uniforms and samplers are out of scope — pass their locations
    explicitly via `bind-uniforms!` callers that already know the shape (e.g.
    the volume pass's light arrays)."
-  [program name v]
-  (let [loc (gl-uniform-location program name)
+  [program uname v]
+  (let [loc (gl-uniform-location program uname)
         v   (if (number? v) v (vec v))]
     (cond
       (and (sequential? v) (= 16 (count v))) (gl-uniform-matrix4fv! loc (float-array v))
@@ -92,5 +92,5 @@
    `program`. Dispatches the GL call shape from the value's own shape (see
    `set-uniform!`); `program` must already be current (`glUseProgram`)."
   [program uniforms]
-  (doseq [[name v] uniforms]
-    (set-uniform! program (clojure.core/name name) v)))
+  (doseq [[uname v] uniforms]
+    (set-uniform! program (name uname) v)))

@@ -435,8 +435,6 @@
       (is (< (:scatter-scale cfg) 2.0) "scatter is reduced from the old 2.5")
       (is (> (:kappa cfg) 0.045) "absorption is raised from the old 0.045"))))
 
-
-
 (deftest test-regional-cell-renders-as-dim-cloud
   (testing "a demoted (regional statistical) cell is visible as a dimmed probability-cloud sprite"
     (let [ledger {:mass 1.0e24

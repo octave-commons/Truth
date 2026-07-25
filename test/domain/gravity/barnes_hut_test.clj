@@ -1,5 +1,6 @@
 (ns domain.gravity.barnes-hut-test
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest is testing]]
    [shape.spatial :as spatial]
    [domain.gravity.barnes-hut :as bh]))
@@ -272,7 +273,7 @@
           ;; no :eps on these bodies → ε_pair = scalar soft, 10 ≫ 0.1·1e-4.
           dx    -10.0
           d2    (+ (* dx dx) (* soft soft))
-          inv-r (* d2 (Math/sqrt d2))
+          inv-r (* d2 (math/sqrt d2))
           scale (/ (* G 1.0e6) inv-r)
           expected [(* dx scale) 0.0 0.0]]
       (is (= expected

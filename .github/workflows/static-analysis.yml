@@ -1,8 +1,22 @@
 name: static-analysis
 
 # Deterministic, rule-based code-quality gate. Mirrors `bin/analyze --strict`.
-# Blocking: clj-kondo errors, structural HARD breaches, architecture invariants.
-# Advisory (reported, non-blocking): Splint, cljfmt, jscpd, dead-code.
+#
+# ALL SIX tools block as of 2026-07-25: clj-kondo errors AND warnings, structural
+# HARD breaches, Splint, clojure-lsp dead code, cljfmt, and jscpd above the
+# `threshold` in .jscpd.json — plus the architecture invariants. Every one was at
+# zero when it was promoted. See docs/STATIC-ANALYSIS.md > The gating contract.
+#
+# This workflow was already correct before that change and is not the thing that was
+# broken: it ran on every push to `main` and failed 33 consecutive times between
+# 2026-07-10 and 2026-07-21, and every one of those pushes landed anyway. The failure
+# mode was DIRECT PUSHES by an admin, not merged PRs — there has only ever been one
+# PR (#1) and it targeted a feature branch, not `main`.
+#
+# Fixed 2026-07-25: `main` now requires the `analyze` check with `enforce_admins: true`,
+# so a red run blocks everyone including admins. Verified by a throwaway PR whose merge
+# was refused ("the base branch policy prohibits the merge"). See
+# kanban/tasks/static-analysis-regression-2026-07-24.md.
 on:
   push:
     branches: [main]
@@ -34,7 +48,7 @@ jobs:
             ~/.clojure
           key: deps-${{ hashFiles('deps.edn') }}
 
-      # Blocking gate: bugs + structural decay (HARD thresholds).
+      # Blocking gate: all six tools (see the header).
       - name: Static analysis (strict)
         run: ./bin/analyze --strict
 

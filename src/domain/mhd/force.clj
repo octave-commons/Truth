@@ -224,10 +224,3 @@
                        c/torque-em (persistent! torque)
                        (keys (get-in world [:components c/torque-em]))))))})
 
-(defn merged-hydro-em-force
-  "Convenience function for tests: compute the merged force cell result for a
-   single entity map. Returns `[accel-pressure accel-lorentz torque-em]`."
-  [dt world data]
-  (let [[_ a-p a-l t] (hydro-em-force-cell dt (assoc data
-                                                     :neighbors (neighbors-for-data world data)))]
-    [a-p a-l t]))

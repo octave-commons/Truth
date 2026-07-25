@@ -18,7 +18,7 @@
    [:tick :int]
    [:context :map]])
 
-(def narrative-state-schema
+(def ^:export narrative-state-schema
   "Observer-side narrative state. `:mood` is the current ambience;
    `:last-line` is the most recent ambient utterance (surfaced as a subtle
    viewport float and the Narrator menu's 'Last line'); the other keys are
@@ -29,6 +29,6 @@
    [:topics [:set :keyword]]
    [:last-line {:optional true} utterance-schema]])
 
-(def topic-schema
+(def ^:export topic-schema
   "Narrative topic tags. Reserved for Phase 2+ embedded phrasing."
   #{:collapse :ignition :disc :planet :decoherence :drift})

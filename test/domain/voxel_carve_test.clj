@@ -14,6 +14,7 @@
    write-set boundary), written directly into the frozen fixture world,
    the same way voxel tests inject `c/voxel-edit-queue`."
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
@@ -44,7 +45,7 @@
    a ~2400-voxel carve, two queue chunks (the multi-tick drain), with
    ~20 melt voxels and ~13 vapor voxels. Classifier numbers pinned in
    `classifier-decision-table` below."
-  (* (/ 4.0 3.0) Math/PI 34.0 34.0 34.0 7800.0))
+  (* (/ 4.0 3.0) math/PI 34.0 34.0 34.0 7800.0))
 
 (defn- world-with-committed-planet
   "An empty world with an observer and one committed world entity at the
@@ -143,8 +144,8 @@
             D_tc ≈ 15.2 km, melt ≈ 5.1e9 m³, complex crater. Tolerances are
             the transcription check, NOT the error bars: K1 is a factor-1.5
             constant (diameters ±40%) and melt ±factor 2 in the literature."
-    (let [m-i (* (/ 4.0 3.0) Math/PI 500.0 500.0 500.0 7800.0)
-          imp {:m-i m-i :L 1000.0 :U 2.0e4 :theta (/ Math/PI 4.0) :rho-i 7800.0}
+    (let [m-i (* (/ 4.0 3.0) math/PI 500.0 500.0 500.0 7800.0)
+          imp {:m-i m-i :L 1000.0 :U 2.0e4 :theta (/ math/PI 4.0) :rho-i 7800.0}
           tgt {:M-t 5.97e24 :R-t 6.371e6 :g 9.81 :rho-t 2700.0 :Y 1.0e7
                :T 288.0 :material-class :rock}
           r   (carve/classify imp tgt)]
@@ -161,8 +162,8 @@
   (testing "strength regime: small/slow impactor into strong, low-g target —
             min(D_g, D_s) picks D_s (Holsapple 1993), shock :none below the
             melt threshold"
-    (let [m-i (* (/ 4.0 3.0) Math/PI 5.0 5.0 5.0 3000.0)
-          imp {:m-i m-i :L 10.0 :U 100.0 :theta (/ Math/PI 4.0) :rho-i 3000.0}
+    (let [m-i (* (/ 4.0 3.0) math/PI 5.0 5.0 5.0 3000.0)
+          imp {:m-i m-i :L 10.0 :U 100.0 :theta (/ math/PI 4.0) :rho-i 3000.0}
           tgt {:M-t 1.0e15 :R-t 1.0e4 :g 0.01 :rho-t 3000.0 :Y 1.0e7
                :T 200.0 :material-class :rock}
           r   (carve/classify imp tgt)]
@@ -172,7 +173,7 @@
       (is (zero? (:v-melt r)))))
 
   (testing "simple gravity crater: the system-test impactor classifies simple"
-    (let [imp {:m-i impact-mass :L 68.0 :U 3.0e4 :theta (/ Math/PI 2.0) :rho-i 7800.0}
+    (let [imp {:m-i impact-mass :L 68.0 :U 3.0e4 :theta (/ math/PI 2.0) :rho-i 7800.0}
           tgt {:M-t (:mass-kg field) :R-t radius-m :g 9.81 :rho-t 2800.0 :Y 1.0e7
                :T 288.0 :material-class :rock}
           r   (carve/classify imp tgt)]
@@ -187,15 +188,15 @@
                {:m-i impact-mass :L 68.0 :U 3.0e4 :theta theta :rho-i 7800.0})
           tgt {:M-t (:mass-kg field) :R-t radius-m :g 9.81 :rho-t 2800.0
                :Y 1.0e7 :T 288.0 :material-class :rock}
-          r45 (carve/classify (mk (/ Math/PI 4.0)) tgt)
-          r90 (carve/classify (mk (/ Math/PI 2.0)) tgt)]
+          r45 (carve/classify (mk (/ math/PI 4.0)) tgt)
+          r90 (carve/classify (mk (/ math/PI 2.0)) tgt)]
       (is (< (:d-tc r45) (:d-tc r90)))
       (is (< (Math/abs (- (/ (:v-melt r45) (:v-melt r90))
-                          (Math/sin (/ Math/PI 4.0))))
+                          (math/sin (/ math/PI 4.0))))
              1.0e-9))))
 
   (testing "ice target routes to the Kraus, Senft & Stewart 2011 CTH fits"
-    (let [imp {:m-i 1.0e9 :L 130.0 :U 1.0e4 :theta (/ Math/PI 2.0) :rho-i 9.17e2}
+    (let [imp {:m-i 1.0e9 :L 130.0 :U 1.0e4 :theta (/ math/PI 2.0) :rho-i 9.17e2}
           tgt {:M-t 1.0e22 :R-t 1.5e6 :g 1.3 :rho-t 1000.0 :Y 1.0e6
                :T 100.0 :material-class :ice}
           r   (carve/classify imp tgt)]
@@ -206,7 +207,7 @@
   (testing "sub-threshold ice impact: 6 km/s into ice melts (5–8 km/s band,
             ±50%) but vaporizes EXACTLY nothing — the Kraus vapor fit is
             valid only above 8 km/s and is gated on it"
-    (let [imp {:m-i 1.0e9 :L 130.0 :U 6.0e3 :theta (/ Math/PI 2.0) :rho-i 9.17e2}
+    (let [imp {:m-i 1.0e9 :L 130.0 :U 6.0e3 :theta (/ math/PI 2.0) :rho-i 9.17e2}
           tgt {:M-t 1.0e22 :R-t 1.5e6 :g 1.3 :rho-t 1000.0 :Y 1.0e6
                :T 100.0 :material-class :ice}
           r   (carve/classify imp tgt)]
@@ -232,15 +233,15 @@
             check (~3.3e2 J/kg for basalt at R = 100 m)."
     (let [R-t 100.0
           rho-t 2700.0
-          M-t (* (/ 4.0 3.0) Math/PI R-t R-t R-t rho-t)
+          M-t (* (/ 4.0 3.0) math/PI R-t R-t R-t rho-t)
           q*  (carve/disruption-q-star R-t rho-t :rock)
           U   5.0e3
           tgt {:M-t M-t :R-t R-t :g 0.03 :rho-t rho-t :Y 1.0e7
                :T 200.0 :material-class :rock}
           imp-at (fn [q-target]
                    (let [m-i (/ (* 2.0 q-target M-t) (* U U))]
-                         {:m-i m-i :L 10.0 :U U :theta (/ Math/PI 2.0)
-                          :rho-i 3000.0}))]
+                     {:m-i m-i :L 10.0 :U U :theta (/ math/PI 2.0)
+                      :rho-i 3000.0}))]
       (is (< (Math/abs (- q* 3.3e2)) (* 0.2 3.3e2))
           (str "Q*_D " q* " J/kg — Benz & Asphaug 1999 basalt @ 5 km/s, R=100 m"))
       (is (= :catastrophic-disruption
@@ -282,26 +283,26 @@
         (is (every? #(<= (count (:edits %)) voxel/max-edits-per-job) queue2)))
       (let [w3 (run-tick w2)
             w-done (run-until-drained w3 eid 50)
-              voxels (band-voxels w-done eid)
-              states (voxels-by-state w-done eid)
-              diffs  (ecs/get-component w-done eid c/voxel-edit-diffs)]
-          (testing "drained: excavation nils bowl voxels; melt floor tagged
+            voxels (band-voxels w-done eid)
+            states (voxels-by-state w-done eid)
+            diffs  (ecs/get-component w-done eid c/voxel-edit-diffs)]
+        (testing "drained: excavation nils bowl voxels; melt floor tagged
                     :melt cohesion 0; vapor core tagged :vapor"
-            (is (empty? (ecs/get-component w-done eid c/voxel-edit-queue)))
-            (is (< 100 (count (filter nil? (vals voxels))))
-                "a crater's worth of in-band voxels carved")
-            (is (pos? (long (get states :melt 0))) "melt floor tagged")
-            (is (every? #(= 0.0 (:cohesion %))
-                        (filter #(= :melt (:state %)) (filter some? (vals voxels)))))
-            (is (pos? (long (get states :vapor 0))) "vapor core suspended"))
-          (testing "the rim beyond the band appended collision-provenance
+          (is (empty? (ecs/get-component w-done eid c/voxel-edit-queue)))
+          (is (< 100 (count (filter nil? (vals voxels))))
+              "a crater's worth of in-band voxels carved")
+          (is (pos? (long (get states :melt 0))) "melt floor tagged")
+          (is (every? #(= 0.0 (:cohesion %))
+                      (filter #(= :melt (:state %)) (filter some? (vals voxels)))))
+          (is (pos? (long (get states :vapor 0))) "vapor core suspended"))
+        (testing "the rim beyond the band appended collision-provenance
                     diffs immediately (design §7.3 out-of-band path)"
-            (is (seq diffs))
-            (is (every? #(= :collision (:provenance %)) diffs))
-            (is (every? voxel/edit-diff? diffs)))
-          (testing "touched provenance in the band is :collision"
-            (is (every? #(= :collision %)
-                        (vals (:touched (ecs/get-component w-done eid c/voxel-band))))))))))
+          (is (seq diffs))
+          (is (every? #(= :collision (:provenance %)) diffs))
+          (is (every? voxel/edit-diff? diffs)))
+        (testing "touched provenance in the band is :collision"
+          (is (every? #(= :collision %)
+                      (vals (:touched (ecs/get-component w-done eid c/voxel-band))))))))))
 
 (deftest cooling-recools-melt-to-solid
   (let [[w eid _] (promote-fully)
@@ -363,12 +364,11 @@
       (is (nil? (get (band-voxels w eid) target-offset))
           "carved, not cooled-solid"))))
 
-
 (deftest sub-voxel-impact-no-ops
   (let [[w eid _] (promote-fully)
         before (band-voxels w eid)
         ;; L = 0.5 m iron at 30 km/s: D_tc ≈ 54 m < the 64 m voxel edge.
-        tiny-mass (* (/ 4.0 3.0) Math/PI 0.25 0.25 0.25 7800.0)
+        tiny-mass (* (/ 4.0 3.0) math/PI 0.25 0.25 0.25 7800.0)
         w (ecs/put-component w eid c/absorb-merge [(iron-packet tiny-mass 3.0e4)])
         w (run-ticks w 4)]
     (is (empty? (:plans (ecs/get-component w eid c/voxel-carve-request)))

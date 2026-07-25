@@ -118,6 +118,24 @@
    :max-eps -1.0
    :com      (sp/vec3 0.0 0.0 0.0)})
 
+(defn- child-leaf-bb
+  "The AABB the FIRST body inserted into an empty child of `bb` at `oct` gets:
+   the child octant, padded to `min-aabb-size` when it would otherwise be
+   degenerate.
+
+   ONE definition of that padding rule, used by both the serial insert path
+   (`insert-body-into-node`'s nil-child branch) and the parallel root dispatch
+   (`build-tree-parallel`). The two must agree or the parallel build stops
+   producing a tree equal to the serial one — which is exactly what
+   `build-tree-parallel`'s docstring promises."
+  [bb oct]
+  (let [child-bb (sp/child-aabb bb oct)
+        pad      [min-aabb-size min-aabb-size min-aabb-size]]
+    (if (< (sp/max-side child-bb) min-aabb-size)
+      (sp/aabb (sp/v- (:aabb-min child-bb) pad)
+               (sp/v+ (:aabb-max child-bb) pad))
+      child-bb)))
+
 (defn- insert-body-into-node
   "Insert body into node, subdividing as needed."
   ([node body] (insert-body-into-node node body 0))
@@ -143,14 +161,8 @@
              oct      (sp/octant bb pos)
              idx      (octant-index oct)
              child    (get (:children node) idx)
-             child-bb (sp/child-aabb bb oct)
              child'   (if (nil? child)
-                        (let [pad      [min-aabb-size min-aabb-size min-aabb-size]
-                              child-bb (if (< (sp/max-side child-bb) min-aabb-size)
-                                         (sp/aabb (sp/v- (:aabb-min child-bb) pad)
-                                                  (sp/v+ (:aabb-max child-bb) pad))
-                                         child-bb)]
-                          (leaf-node child-bb body))
+                        (leaf-node (child-leaf-bb bb oct) body)
                         (insert-body-into-node child body (inc depth)))]
          (assoc-in node [:children idx] child'))
 
@@ -160,6 +172,31 @@
 
 (defn- node-mass [node] (if node (double (:mass node)) 0.0))
 (defn- node-com  [node] (if node (:com node) (sp/vec3 0.0 0.0 0.0)))
+
+(defn- aggregated-node-fields
+  "The mass/COM/bound fields an internal node takes from its `children` inside
+   bounding box `bb`: total mass, mass-weighted centre of mass, and the max
+   radius / softening over the subtree.
+
+   ONE definition, walking the children in ONE order. `propagate-mass` (serial)
+   and `build-tree-parallel` (parallel root) both fold it, which is what makes
+   `build-tree-parallel`'s equality promise hold — the aggregation appeared
+   verbatim in both and drifting either one would break the equality silently
+   (jscpd; card kanban/tasks/static-analysis-jscpd-src-extractions.md)."
+  [children bb]
+  (let [total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children)]
+    {:children   children
+     :mass       total-mass
+     :aabb-side  (sp/max-side bb)
+     :max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children)
+     :max-eps    (reduce #(max %1 (node-max-eps %2)) -1.0 children)
+     :com        (safe-com (reduce (fn [acc child]
+                                     (sp/v+ acc (sp/v* (node-com child)
+                                                       (node-mass child))))
+                                   (sp/vec3 0.0 0.0 0.0)
+                                   children)
+                           total-mass
+                           bb)}))
 
 (defn propagate-mass
   "Walk tree bottom-up, computing total mass and center of mass."
@@ -171,24 +208,8 @@
     (leaf-node (:aabb node) (:bodies node))
 
     (internal-node? node)
-    (let [children'  (mapv propagate-mass (:children node))
-          total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
-          max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children')
-          max-eps    (reduce #(max %1 (node-max-eps %2)) -1.0 children')
-          com        (safe-com (reduce (fn [acc child]
-                                         (sp/v+ acc (sp/v* (node-com child)
-                                                           (node-mass child))))
-                                       (sp/vec3 0.0 0.0 0.0)
-                                       children')
-                               total-mass
-                               (:aabb node))]
-      (assoc node
-             :children children'
-             :mass     total-mass
-             :aabb-side (sp/max-side (:aabb node))
-             :max-radius max-radius
-             :max-eps max-eps
-             :com      com))
+    (merge node (aggregated-node-fields (mapv propagate-mass (:children node))
+                                        (:aabb node)))
 
     :else
     (throw (ex-info "propagate-mass: unknown node type"
@@ -199,17 +220,6 @@
    the root's eight octants and building + propagating each subtree on its own
    thread. Below it the serial insert loop wins (future overhead)."
   512)
-
-(defn- child-leaf-bb
-  "The AABB the FIRST body inserted into an empty child of `bb` at `oct` gets —
-   the same min-size padding rule as `insert-body-into-node`'s nil-child branch."
-  [bb oct]
-  (let [child-bb (sp/child-aabb bb oct)
-        pad      [min-aabb-size min-aabb-size min-aabb-size]]
-    (if (< (sp/max-side child-bb) min-aabb-size)
-      (sp/aabb (sp/v- (:aabb-min child-bb) pad)
-               (sp/v+ (:aabb-max child-bb) pad))
-      child-bb)))
 
 (defn- build-tree-parallel
   "Build the octree by partitioning `bodies` (order-preserving) into the root's
@@ -234,24 +244,8 @@
                                        (leaf-node (child-leaf-bb bb oct) (first grp))
                                        (rest grp))))))
                         all-octants groups)
-        children' (mapv deref futs)
-        total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
-        max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children')
-        max-eps    (reduce #(max %1 (node-max-eps %2)) -1.0 children')
-        com        (safe-com (reduce (fn [acc child]
-                                       (sp/v+ acc (sp/v* (node-com child)
-                                                         (node-mass child))))
-                                     (sp/vec3 0.0 0.0 0.0)
-                                     children')
-                             total-mass
-                             bb)]
-    (assoc root
-           :children  children'
-           :mass      total-mass
-           :aabb-side (sp/max-side bb)
-           :max-radius max-radius
-           :max-eps max-eps
-           :com       com)))
+        children' (mapv deref futs)]
+    (merge root (aggregated-node-fields children' bb))))
 
 (defn build-tree
   "Build a Barnes–Hut octree from a seq of Body records."

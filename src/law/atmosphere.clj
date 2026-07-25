@@ -54,7 +54,7 @@
   "Coarse Phase-0 atmosphere-retention bucket."
   [:enum :none :thin :substantial :thick])
 
-(def atmosphere-class?
+(def ^:export atmosphere-class?
   "Predicate: does `value` satisfy `atmosphere-class-schema`?"
   (m/validator atmosphere-class-schema))
 
@@ -63,7 +63,7 @@
    (Jeans) escape."
   [:set [:enum :H2 :He :H2O :N2 :CO2]])
 
-(def retained-species?
+(def ^:export retained-species?
   "Predicate: does `value` satisfy `retained-species-schema`?"
   (m/validator retained-species-schema))
 
@@ -75,7 +75,7 @@
 ;; of sqrt(3/2) ≈ 1.22, so reusing the parent spec's 3/6 thresholds against
 ;; an RMS v_th would silently shift the retention boundary by ~22% (research
 ;; note §3.4). This namespace is now the SINGLE place both `can-retain-gas?`
-;; and `domain.stellar.classifier/atmosphere-class` get `v_esc`/`v_th` from,
+;; and `domain.stellar.classifier.planet/atmosphere-class` get `v_esc`/`v_th` from,
 ;; standardized on RMS with thresholds re-derived against it (`h-he-retention-
 ;; ratio`, `heavy-retention-ratio` above).
 
@@ -86,14 +86,14 @@
   (math/sqrt (/ (* 2.0 constants/G (double mass)) (double radius))))
 
 (defn thermal-velocity-rms
-  "RMS thermal speed (m/s) of a species of molecular mass `species-mass` (kg)
+  "RMS thermal speed (m/s) of a species of molecular mass `m-species` (kg)
    at temperature `temperature` (K): v_th = sqrt(3 k_B T / m)."
-  [species-mass temperature]
-  (math/sqrt (/ (* 3.0 constants/k-B (double temperature)) (double species-mass))))
+  [m-species temperature]
+  (math/sqrt (/ (* 3.0 constants/k-B (double temperature)) (double m-species))))
 
 (defn retention-ratio
   "Jeans retention ratio r = v_esc/v_th(rms) for a body of `mass`/`radius`
-   at `temperature`, for a species of mass `species-mass` (kg). r>1 means
+   at `temperature`, for a species of mass `m-species` (kg). r>1 means
    escape velocity exceeds thermal speed; the bucket/species thresholds
    above translate this into a coarse verdict.
 
@@ -105,8 +105,8 @@
    zero divisor even for `Double` operands, unlike raw primitive double
    division (`x/0.0` at the bytecode level, which IEEE-754 defines as
    infinity)."
-  [mass radius temperature species-mass]
-  (let [v-th (thermal-velocity-rms species-mass temperature)]
+  [mass radius temperature m-species]
+  (let [v-th (thermal-velocity-rms m-species temperature)]
     (if (zero? v-th)
       Double/POSITIVE_INFINITY
       (/ (escape-velocity mass radius) v-th))))

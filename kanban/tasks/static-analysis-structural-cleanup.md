@@ -512,3 +512,7 @@ This spec is too large for a single PR or work session. It has been decomposed i
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — 0 HARD structural breaches + 0 undocumented; architecture-test green; docs/STATIC-ANALYSIS.md present. Soft warn-tier god-namespaces (law.stellar 52 vars etc.) remain as non-breaching nice-to-haves.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. 4 structural HARD breaches are back where this card left 0. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

@@ -138,7 +138,8 @@
                 :covers #{'domain.genesis 'domain.genesis.bootstrap 'domain.genesis.summary
                           'domain.genesis.systems 'domain.genesis.tick 'domain.arc
                           'domain.ecs.core 'domain.ecs.tick 'domain.ecs.components
-                          'domain.stellar.classifier 'domain.stellar.geometry
+                          'domain.stellar.classifier.state 'domain.stellar.classifier.planet
+                          'domain.stellar.classifier.candidate 'domain.stellar.geometry
                           'domain.stellar.temperature 'domain.stellar.fusion 'domain.stellar.wind
                           'domain.stellar.sink 'domain.stellar.disc-evolution 'domain.stellar.seeder
                           'domain.stellar.thermodynamics 'domain.stellar.structure 'domain.stellar.collapse

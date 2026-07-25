@@ -30,3 +30,7 @@ Clean up the largest visible noise category: unused local bindings, discarded va
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. 5 unused-binding warnings are back: `src/domain/interior.clj:463` (`kind`), `src/domain/voxel/band.clj:89`, `src/domain/voxel/carve.clj:322`, `src/domain/voxel/sculpt.clj:362`, `test/domain/pilot_resolve_seam_test.clj:200`. Note `interior.clj:463` must NOT be underscore-prefixed — the caller computes it and `law.voxel/resource-cell-schema` has no `:kind` key, which is the "coded but never ticked" case. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

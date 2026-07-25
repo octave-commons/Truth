@@ -18,6 +18,10 @@
     (/ (double luminosity) (* 4.0 math/PI r r))
     0.0))
 
+;; UNUSED-PENDING: Disc/stellar-structure physics implemented ahead of the system that consumes
+;; it — no write-set emitter reads these yet.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn radiation-equilibrium-temperature
   "Equilibrium temperature (K) of a grey-body at distance r from a star with
    the given luminosity, assuming a moderate albedo."

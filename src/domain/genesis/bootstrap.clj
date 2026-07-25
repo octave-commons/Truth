@@ -303,7 +303,7 @@
         extra (:extra-components spec)
         [w2 neweid] (seeder/spawn-clump
                      w (dissoc spec :extra-components
-                              :spawn-parent :rel-position :rel-velocity))]
+                               :spawn-parent :rel-position :rel-velocity))]
     (reduce-kv (fn [w k v] (ecs/put-component w neweid k v))
                w2 (or extra {}))))
 

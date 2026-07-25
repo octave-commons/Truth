@@ -138,7 +138,7 @@
   [^File dir]
   (let [edn (read-actor-edn dir)
         sessions (->> (list-directories (io/file dir "sessions"))
-                  (sort-by file-mtime >))
+                      (sort-by file-mtime >))
         inbox (io/file dir "inbox")
         outbox (io/file dir "outbox")
         sessions-with-status (map (fn [s]
@@ -152,7 +152,7 @@
                                        :mtime (file-mtime s)
                                        :log (or (some #(when (.exists (io/file s %)) %)
                                                       ["opencode-run.log" "eta-mu-run.log"])
-                                              "session.edn")}))
+                                                "session.edn")}))
                                   sessions)]
     {:id (name (:actor/id edn (keyword (.getName dir))))
      :name (or (:actor/name edn) (name (:actor/id edn)))

@@ -7,6 +7,11 @@
 
 (def ^:const snow-line-temperature 170.0)
 
+;; UNUSED-PENDING: Planet-formation physics reachable only through the `domain.planet-formation`
+;; facade until the seeder wires it; the facade alias was pruned as dead, which
+;; is what made this visible.
+;; See kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^:const proto-solar-metal-frac 0.015)
 
 (def ^:const ice-enhancement-factor 3.5)
@@ -46,6 +51,11 @@
   (double (or (:genesis/condensation-seed-mass-kg world)
               condensation-seed-mass-kg)))
 
+;; UNUSED-PENDING: Planet-formation physics reachable only through the `domain.planet-formation`
+;; facade until the seeder wires it; the facade alias was pruned as dead, which
+;; is what made this visible.
+;; See kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn sound-speed
   "Adiabatic sound speed c_s = √(γ k_B T / m_H) for a thin disc. m/s."
   [temperature]

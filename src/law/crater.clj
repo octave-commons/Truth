@@ -42,7 +42,7 @@
    within a range of 0.8 to 1.5' — diameters ±40%, volumes ±factor ~3."
   1.161)
 
-(def ^:const k1-gravity-water
+(def ^:export ^:const k1-gravity-water
   "Gravity-regime prefactor for water targets. Schmidt & Housen 1987 via
    Collins et al. 2005."
   1.365)
@@ -72,7 +72,7 @@
 (def ^:const exponent-U-gravity 0.44)   ;; Collins et al. 2005
 (def ^:const exponent-g-gravity -0.22)  ;; Collins et al. 2005
 
-(def ^:const transient-depth-factor
+(def ^:export ^:const transient-depth-factor
   "d_tc = D_tc/(2√2) — transient crater depth. Collins et al. 2005 eq. 25.
    UNUSED-PENDING: the complex-crater relaxation pass (widened rim,
    reduced final depth, central uplift) is a known simplification in
@@ -105,14 +105,14 @@
 (def ^:const complex-exponent-tc 1.13)  ;; Croft 1985
 (def ^:const complex-exponent-sc -0.13) ;; Croft 1985
 
-(def ^:const complex-depth-coeff
+(def ^:export ^:const complex-depth-coeff
   "d_fr[km] = 0.4·D_fr[km]^0.3 — complex final depth. Herrick et al. 1997
    Venus relation, via Collins et al. 2005. Published in KM.
    UNUSED-PENDING: complex-crater relaxation is a known simplification in
    `domain.voxel.carve/derive-edits` — see its docstring."
   0.4)
 
-(def ^:const complex-depth-exponent
+(def ^:export ^:const complex-depth-exponent
   "Herrick et al. 1997. UNUSED-PENDING: see `complex-depth-coeff`."
   0.3)
 
@@ -139,7 +139,7 @@
    Validity U > 12 km/s, comparable impactor/target densities. ±FACTOR 2."
   8.9e-12)
 
-(def ^:const melt-energy-granite-J-per-kg
+(def ^:export ^:const melt-energy-granite-J-per-kg
   "ε_m = 5.2 MJ/kg — specific energy of the Rankine–Hugoniot state whose
    isentropic release ends on the 1-bar liquidus (granite). Pierazzo et
    al. 1997."
@@ -223,7 +223,7 @@
 
 ;; --- Angle dependence ------------------------------------------------------------
 
-(def ^:const angle-default-rad
+(def ^:export ^:const angle-default-rad
   "Most probable impact angle: 45° (Shoemaker 1962). The fallback when an
    impact geometry carries no direction."
   0.7853982)
@@ -310,14 +310,14 @@
    disruption is beyond Voxel 5."
   [:enum :strength-crater :simple-crater :complex-crater])
 
-(def collision-regime-schema
+(def ^:export collision-regime-schema
   "Full classifier output vocabulary (research §3 decision table, branches
    1–8; merging/accretion branch 4 is the collision handler's merge path,
    not a classifier output)."
   [:enum :catastrophic-disruption :disruption-marginal :shattering
    :basin-magma-ocean :strength-crater :simple-crater :complex-crater])
 
-(def shock-disposition-schema
+(def ^:export shock-disposition-schema
   "Melt/vapor sub-classification inside the cratering regimes (research §3):
    `:none` below the melt threshold, `:melt` between melt and vapor
    thresholds, `:melt+vapor` at or above the vapor threshold."

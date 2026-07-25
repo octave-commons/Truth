@@ -133,12 +133,12 @@
 ;; --- volatile loss on hot merges (spec §7 Phase 4) -----------------------------
 
 (deftest volatiles-lost-in-hot-collision
-  (let [comp {:H 0.5 :He 0.3 :C 0.02 :O 0.05 :Si 0.08 :Fe 0.05}
-        [w eid] (spawn-body (ecs/empty-world) {:composition comp :mass 1.0e24})
+  (let [cmp {:H 0.5 :He 0.3 :C 0.02 :O 0.05 :Si 0.08 :Fe 0.05}
+        [w eid] (spawn-body (ecs/empty-world) {:composition cmp :mass 1.0e24})
         ;; impactor at 50 km/s → impact heating lifts the survivor past both
         ;; blow-off thresholds (~5000 K post-merge)
         pkt  {:mass 1.0e23 :velocity [5.0e4 0.0 0.0] :temperature 300.0
-              :composition comp}
+              :composition cmp}
         w    (ecs/put-component w eid c/absorb-merge [pkt])
         comp-ws (integ/composition-ws w)
         mass-ws (integ/mass-ws w)
@@ -158,12 +158,12 @@
       (let [naive-merge-mass 1.1e24]
         (is (< m1 naive-merge-mass) "mass loss beyond a plain inelastic merge")
         (is (< (abs (- m1 (* naive-merge-mass
-                             (- 1.0 (:lost-fraction (chem/strip-volatiles comp 5000.0))))))
+                             (- 1.0 (:lost-fraction (chem/strip-volatiles cmp 5000.0))))))
                (* 1.0e-6 naive-merge-mass))
             "lost kg = lost-fraction × total merged mass")))
     (testing "the volatile budget of the merged body collapses"
       (is (< (chem/volatile-budget merged m1)
-             (* 0.05 (chem/volatile-budget comp 1.1e24)))))))
+             (* 0.05 (chem/volatile-budget cmp 1.1e24)))))))
 
 (deftest gentle-collision-keeps-volatiles
   (let [comp-a {:H 0.5 :He 0.3 :C 0.02 :O 0.05 :Si 0.08 :Fe 0.05}

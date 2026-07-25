@@ -24,7 +24,7 @@
                   passes/gl-uniform3f!        (fn [loc a b c] (swap! log conj [:uniform3f loc a b c]))
                   passes/gl-uniform4f!        (fn [loc a b c d] (swap! log conj [:uniform4f loc a b c d]))
                   passes/gl-uniform-matrix4fv! (fn [loc m] (swap! log conj [:uniform-matrix4fv loc m]))
-                  passes/gl-uniform-location  (fn [program name] [program name])]
+                  passes/gl-uniform-location  (fn [program uname] [program uname])]
       (thunk))
     @log))
 

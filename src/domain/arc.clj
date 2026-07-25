@@ -169,7 +169,7 @@
 (defn phase0-handoff-succeeded?
   "True once the M5 handoff has fired — a `:event/phase0-handoff` event is on
    the ledger (`domain.genesis.tick/emit-handoff-event`, appended once
-   `domain.stellar.classifier/handoff-system`'s full §2 gate — stable star,
+   `domain.stellar.classifier.candidate/handoff-system`'s full §2 gate — stable star,
    at least one eligible candidate, dynamically settled — has been met at
    least once). This is the authoritative Phase 0 ending (parent
    kanban/tasks/ecology-water-gate-snowline.md §2, §6 Phase 4); it supersedes

@@ -298,10 +298,10 @@
       (is (seq (:spawns res)))
       (doseq [[_ spec] (:spawns res)]
         (let [r (sp/dist (:position spec) star-pos)
-              comp (:composition spec)
-              h-he (+ (:H comp 0.0) (:He comp 0.0))
-              cats (chem/bulk-categories comp (:temperature spec))]
-          (is (lcomp/composition-sums-to-unity? comp)
+              cmp (:composition spec)
+              h-he (+ (:H cmp 0.0) (:He cmp 0.0))
+              cats (chem/bulk-categories cmp (:temperature spec))]
+          (is (lcomp/composition-sums-to-unity? cmp)
               "seeded composition is a normalized element map")
           (cond
             (> h-he 0.5)

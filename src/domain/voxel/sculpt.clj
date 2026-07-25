@@ -56,6 +56,7 @@
     macro half of the save (the op IS the diff). Load = regenerate seed +
     replay field-diffs + replay voxel diffs (`domain.voxel.load`)."
   (:require
+   [clojure.math :as math]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
    [domain.ecs.registry :as reg]
@@ -198,7 +199,7 @@
                          (assoc :total-mass (double mass'))
                          (update :density-per-element
                                  (fn [dpe] (into {} (map (fn [[k v]] [k (double (* ratio (double v)))])
-                                                        dpe)))))))
+                                                         dpe)))))))
         donor'    (rescale donor (- (double (:total-mass donor)) moved))
         receiver' (rescale receiver (+ (double (:total-mass receiver)) moved))]
     (when-not (voxel/resource-cell? donor')
@@ -262,8 +263,8 @@
   "Tangent basis [t1 t2] at unit `anchor` — the column coordinates of the
    influence disc."
   [anchor]
-  (let [ref (if (< (Math/abs (nth anchor 0)) 0.9) [1.0 0.0 0.0] [0.0 1.0 0.0])
-        t1  (normalize (sp/cross anchor ref) [0.0 1.0 0.0])]
+  (let [seed (if (< (Math/abs (nth anchor 0)) 0.9) [1.0 0.0 0.0] [0.0 1.0 0.0])
+        t1   (normalize (sp/cross anchor seed) [0.0 1.0 0.0])]
     [t1 (sp/cross anchor t1)]))
 
 (defn- column-id
@@ -271,8 +272,8 @@
    basis [t1 t2]: [round(c·t1/e) round(c·t2/e)] — voxels sharing a column
    sit above one another along the anchor axis, up to grid quantization."
   [t1 t2 c]
-  [(long (Math/round (/ (sp/dot c t1) e)))
-   (long (Math/round (/ (sp/dot c t2) e)))])
+  [(long (math/round (/ (sp/dot c t1) e)))
+   (long (math/round (/ (sp/dot c t2) e)))])
 
 (defn- band-columns
   "The resolved, non-carved band voxels grouped by `column-id` under
@@ -346,7 +347,7 @@
   (let [mag    (double (:magnitude op))
         cols   (vals columns)
         donors (filter (fn [col] (<= (double (:perp (first col))) radius)) cols)
-        n-rec  (max 1 (long (Math/ceil (* voxel/sculpt-erosion-recipient-fraction
+        n-rec  (max 1 (long (math/ceil (* voxel/sculpt-erosion-recipient-fraction
                                           (double (count cols))))))
         recipients (->> cols
                         (sort-by (fn [col] [(- (double (:perp (first col))))
@@ -359,7 +360,7 @@
                                        (- 1.0 voxel/sculpt-donor-mass-floor-fraction))]
                             (assoc m (:offset top) dm)))
                         {} donors)
-        total  (reduce + 0.0 (map (fn [[k v]] (double v)) (sort removed)))
+        total  (reduce + 0.0 (map (fn [[_ v]] (double v)) (sort removed)))
         gain   (/ total (double (count recipients)) e3)]
     (reduce (fn [deltas col]
               (update deltas (:offset (first col)) (fnil + 0.0) gain))

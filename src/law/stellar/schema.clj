@@ -32,23 +32,23 @@
    :focus-level number? ;; 0.0 (statistical) to 1.0 (fully resolved)
    })
 
-(def angular-momentum-schema
+(def ^:export angular-momentum-schema
   "Specific angular momentum vector [Lx Ly Lz] in kg m²/s."
   vector?)
 
-(def spin-schema
+(def ^:export spin-schema
   "Body-fixed angular velocity vector [ωx ωy ωz] in rad/s."
   vector?)
 
-(def oblateness-schema
+(def ^:export oblateness-schema
   "Polar/equatorial axis ratio c/a. 1 is spherical; smaller values are flatter discs."
   (some-fn nil? #(and (number? %) (<= 0.0 % 1.0))))
 
-(def rotation-axis-schema
+(def ^:export rotation-axis-schema
   "Unit vector [nx ny nz] along the body's angular momentum / spin axis."
   vector?)
 
-(def accretion-radius-schema
+(def ^:export accretion-radius-schema
   "Gravitational feeding-zone radius (m) of a star-forming body. Larger than the
    photosphere: it is the capture radius within which gas is accreted, and it
    does NOT shrink when the photosphere contracts. nil for ordinary gas clumps."
@@ -67,7 +67,7 @@
    above 1e25 kg), or `:mixed` (none of the above strongly)."
   [:enum :rocky :icy :gaseous :mixed])
 
-(def material-class?
+(def ^:export material-class?
   "Predicate: does `value` satisfy `material-class-schema`?"
   (m/validator material-class-schema))
 
@@ -77,7 +77,7 @@
    `:temperate` (250-350K), `:warm` (350-450K), `:hot` (>450K)."
   [:enum :frozen :cold :temperate :warm :hot])
 
-(def thermal-band?
+(def ^:export thermal-band?
   "Predicate: does `value` satisfy `thermal-band-schema`?"
   (m/validator thermal-band-schema))
 
@@ -93,7 +93,7 @@
    candidate."
   :boolean)
 
-(def orbit-stable?
+(def ^:export orbit-stable?
   "Predicate: does `value` satisfy `orbit-stable-schema`?"
   (m/validator orbit-stable-schema))
 
@@ -112,7 +112,7 @@
 ;; kanban/tasks/ecology-water-gate-snowline.md §5) and the `:event/phase0-
 ;; handoff` ledger event that carries a batch of them. See
 ;; kanban/tasks/ecology-m5-phase4-handoff-event.md and
-;; `domain.stellar.classifier/handoff-system` /
+;; `domain.stellar.classifier.candidate/handoff-system` /
 ;; `domain.genesis.tick/emit-handoff-event`.
 
 (def planet-candidate-schema
@@ -155,7 +155,7 @@
    `:planet-candidate` records that met the handoff gate this tick."
   [:map [:candidates [:sequential planet-candidate-schema]]])
 
-(def phase0-handoff-event?
+(def ^:export phase0-handoff-event?
   "Predicate: does `value` satisfy `phase0-handoff-event-schema`?"
   (m/validator phase0-handoff-event-schema))
 
@@ -179,7 +179,7 @@
     :name     "Matter State"
     :description "Physical state of matter from nebula to planet"}))
 
-(def nebula-cloud-contract
+(def ^:export nebula-cloud-contract
   (contract/->contract
    {:id       :law.stellar/nebula-cloud
     :shape-id :law.stellar/nebular-region
@@ -188,7 +188,7 @@
     :name     "Nebula Cloud"
     :description "Statistical representation of nebular gas cloud"}))
 
-(def stellar-system-contract
+(def ^:export stellar-system-contract
   (contract/->contract
    {:id       :law.stellar/stellar-system
     :shape-id :law.stellar/star-system

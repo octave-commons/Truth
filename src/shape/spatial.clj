@@ -177,6 +177,23 @@
       :octant/mmp (->AABB [min-x min-y cz] [cx cy max-z])
       :octant/mmm (->AABB [min-x min-y min-z] [cx cy cz]))))
 
+(defn point-aabb-dist2
+  "Squared distance from point `[px py pz]` to axis-aligned box `bb` (0 if the
+   point is inside).
+
+   `bb` is any map with `:aabb-min`/`:aabb-max` vec3s — the shape Barnes-Hut
+   octree nodes and spatial-grid cells both carry, which is why this takes the
+   map rather than an `AABB` record. Extracted from byte-identical private
+   copies in `domain.physics.collision` and `domain.spatial.index` (jscpd; card
+   kanban/tasks/static-analysis-jscpd-src-extractions.md)."
+  [bb [px py pz]]
+  (let [[ax ay az] (:aabb-min bb)
+        [bx by bz] (:aabb-max bb)
+        dx (cond (< px ax) (- ax px) (> px bx) (- px bx) :else 0.0)
+        dy (cond (< py ay) (- ay py) (> py by) (- py by) :else 0.0)
+        dz (cond (< pz az) (- az pz) (> pz bz) (- pz bz) :else 0.0)]
+    (+ (* dx dx) (* dy dy) (* dz dz))))
+
 ;; --- Bodies -----------------------------------------------------------------
 
 (defrecord Body

@@ -15,14 +15,6 @@
 ;; Camera record constructors
 ;; ---------------------------------------------------------------------------
 
-(def ->Camera
-  "Positional constructor for the Camera record."
-  input/->Camera)
-
-(def map->Camera
-  "Map constructor for the Camera record."
-  input/map->Camera)
-
 ;; ---------------------------------------------------------------------------
 ;; Local motion and input
 ;; ---------------------------------------------------------------------------

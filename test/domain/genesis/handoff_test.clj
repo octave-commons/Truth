@@ -9,7 +9,8 @@
    [domain.ecs.components :as c]
    [domain.ecs.event :as event]
    [domain.genesis :as genesis]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.candidate :as cls-cand]
+   [domain.stellar.classifier.planet :as cls-planet]
    [law.stellar :as law]
    [law.stellar.schema :as schema]))
 
@@ -67,7 +68,7 @@
             criteria hold, and the serial ledger step then appends
             :event/phase0-handoff"
     (let [{:keys [world planet]} (world-with-star-and-candidate)
-          sys   (classifier/handoff-system)
+          sys   (cls-cand/handoff-system)
           ws    ((:run sys) world)]
       (is (= :handoff (:id sys)))
       (is (= #{c/planet-candidate} (:writes sys)))
@@ -86,18 +87,18 @@
   (testing "the built :planet-candidate record satisfies the full parent §5
             schema — every required key is present with the right shape"
     (let [{:keys [world star planet]} (world-with-star-and-candidate)
-          star-map (classifier/central-star world)
-          record   (classifier/build-candidate-record world star-map planet)]
+          star-map (cls-planet/central-star world)
+          record   (cls-cand/build-candidate-record world star-map planet)]
       (is (true? (schema/planet-candidate? record))
           (str "record failed schema: " record))
-       (is (= (set (keys record))
-              #{:planet-id :star-id :material-class :thermal-band
-                :equilibrium-temperature :semi-major-axis :eccentricity
-                :orbit-stable? :atmosphere-class :retained-species
-                :volatile-budget-kg :differentiated-layers
-                :bulk-composition :angular-momentum :rotation-axis
-                :oblateness :surface-gravity :core-dynamo? :magnetic-field
-                :formation-events}))
+      (is (= (set (keys record))
+             #{:planet-id :star-id :material-class :thermal-band
+               :equilibrium-temperature :semi-major-axis :eccentricity
+               :orbit-stable? :atmosphere-class :retained-species
+               :volatile-budget-kg :differentiated-layers
+               :bulk-composition :angular-momentum :rotation-axis
+               :oblateness :surface-gravity :core-dynamo? :magnetic-field
+               :formation-events}))
       (is (= planet (:planet-id record)))
       (is (= star (:star-id record))))))
 
@@ -108,7 +109,7 @@
             never emits :event/phase0-handoff, and its ending is :sterile"
     (let [w (assoc (genesis/create-world {:gas-count 20})
                    :arc/current :arc/genesis-planets-formed)
-          sys (classifier/handoff-system)
+          sys (cls-cand/handoff-system)
           ws  ((:run sys) w)]
       (is (empty? (get ws c/planet-candidate {}))
           "no candidate exists yet, so handoff-system writes nothing")
@@ -154,7 +155,7 @@
             is governed by it, not by the most-massive star across the cloud —
             and a body bound to no star gets no parent"
     (let [{:keys [world primary secondary]} (two-star-world)
-          stars (classifier/stellar-bodies world)
+          stars (cls-planet/stellar-bodies world)
           v-b (law/newtonian-circular-speed (* 0.5 law/solar-mass) law/au)
           [w planet] (ecs/spawn world)
           w (ecs/put-components
@@ -163,7 +164,7 @@
               c/mass         law/earth-mass
               c/position     [(+ (* 1000.0 law/au) law/au) 0.0 0.0]
               c/velocity     [0.0 v-b 0.0]})]
-      (is (= secondary (:id (classifier/dominant-attractor w planet stars)))
+      (is (= secondary (:id (cls-planet/dominant-attractor w planet stars)))
           "bound to the secondary: energy u²/2−μ/r < 0 there, hyperbolic w.r.t. the primary")
       (let [[w unbound] (ecs/spawn w)
             w (ecs/put-components
@@ -172,9 +173,9 @@
                 c/mass         law/earth-mass
                 c/position     [(* 500.0 law/au) 0.0 0.0]
                 c/velocity     [0.0 1.0e6 0.0]})]
-        (is (nil? (classifier/dominant-attractor w unbound stars))
+        (is (nil? (cls-planet/dominant-attractor w unbound stars))
             "1000 km/s at 500 AU is hyperbolic w.r.t. both stars — no parent, not a candidate"))
-      (is (= primary (:id (classifier/central-star w)))
+      (is (= primary (:id (cls-planet/central-star w)))
           "central-star is unchanged: still the system primary (most massive)"))))
 
 (deftest handoff-uses-each-bodys-own-parent-star
@@ -203,7 +204,7 @@
                   c/angular-momentum   [0.0 0.0 1.0e30]
                   c/rotation-axis      [0.0 0.0 1.0]
                   c/spin               [0.0 0.0 7.29e-5]}))
-          ws ((:run (classifier/handoff-system)) w)
+          ws ((:run (cls-cand/handoff-system)) w)
           record (get-in ws [c/planet-candidate planet])]
       (is (some? record)
           "the planet is eligible — evaluated against its own parent, not the primary")

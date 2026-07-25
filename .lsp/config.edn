@@ -1,0 +1,85 @@
+;; clojure-lsp — project-wide dead-code analysis for Gates of Truth.
+;;
+;; Read by the `clojure-lsp diagnostics` call in bin/analyze section 4 and by
+;; editor integrations. `.clj-kondo/config.edn` remains the source of truth for
+;; lint RULES; this file only narrows clojure-lsp's `unused-public-var`
+;; reachability analysis where that analysis is structurally blind.
+;;
+;; POLICY — only FALSE POSITIVES belong here. A var that is genuinely unreached
+;; gets deleted, or gets an `UNUSED-PENDING` marker plus a kanban card if it is
+;; incomplete-but-intended (see docs/STATIC-ANALYSIS.md). Silencing real
+;; deadness here is the exact regression
+;; kanban/tasks/static-analysis-regression-2026-07-24.md exists to stop.
+;;
+;; NOT excluded, deliberately:
+;;   - `test/`. All 33 test findings were macro output, and ZERO hand-written
+;;     test vars were flagged — so the macro-scoped exclusion below is strictly
+;;     better than a path exclusion, and keeps future dead test code visible.
+{:linters
+ {:clojure-lsp/unused-public-var
+  {;; VERIFIED 2026-07-25, and it does NOT work: `:exclude-when-defined-by
+   ;; #{domain.ecs.dsl/defcomponent domain.ecs.dsl/defevent}` has no effect here.
+   ;; `.clj-kondo/hooks/ecs_dsl.clj` REWRITES those macro calls into plain
+   ;; `def`/`defn` forms, so clj-kondo's analysis records `:defined-by
+   ;; clojure.core/def` and the macro identity is gone by the time clojure-lsp
+   ;; reads it. Excluding `clojure.core/def` would exempt the entire codebase.
+   ;;
+   ;; So the three DSL test namespaces are excluded WHOLESALE below. That is a
+   ;; wider brush than intended and the cost is stated plainly: a genuinely dead
+   ;; hand-written var added to one of those three files would not be reported.
+   ;; It is still far narrower than excluding all of `test/`, and those three
+   ;; files exist ONLY to exercise the macros — every var in them today is
+   ;; expansion output (33 of 33 checked). Revisit if the hooks ever learn to
+   ;; preserve the defining macro.
+   :exclude #{;; The canonical `:component/*` vocabulary. Already a DOCUMENTED
+              ;; structural exception — `dev/smell_report.clj`'s
+              ;; `vocabulary-namespaces` set exempts this same namespace from the
+              ;; namespace-vars and missing-docstring thresholds, for the same
+              ;; reason: it defines shared vocabulary, and a component keyword
+              ;; with no consumer YET is a declared noun, not dead code. Verified
+              ;; per-var (card static-analysis-component-vocabulary-exception):
+              ;; both the var AND its keyword have zero hits outside the defining
+              ;; file, so nothing reaches them by indirection either.
+              domain.ecs.components
+
+              ;; domain.ecs.dsl macro-expansion output (see the note above).
+              domain.ecs.dsl-test
+              domain.ecs.ledger-test
+              domain.ecs.rewind-test
+
+              ;; The benchmark harness resolves these DYNAMICALLY by name —
+              ;; `(ns-resolve (the-ns ns) 'run)` at bench.clj:106,211 and
+              ;; `'profile-iterations` at :178 — so no static call site exists.
+              ;; Renaming either var silently breaks `bin/bench`; the names are
+              ;; the harness contract.
+              gates-of-truth.bench.collision/run
+              gates-of-truth.bench.ecs/run
+              gates-of-truth.bench.em/run
+              gates-of-truth.bench.em/profile-iterations
+              gates-of-truth.bench.gravity/run
+              gates-of-truth.bench.gravity/profile-iterations
+              gates-of-truth.bench.hydro/run
+              gates-of-truth.bench.hydro/profile-iterations
+              gates-of-truth.bench.phase0/run
+              gates-of-truth.bench.phase0/profile-iterations
+              gates-of-truth.bench.render/run
+              gates-of-truth.bench.spatial/run
+              gates-of-truth.bench.spatial/profile-iterations
+              gates-of-truth.bench.tick/run
+
+              ;; The live dev window's nREPL surface. CLAUDE.md documents these as the
+              ;; way to drive the running GLFW window from `127.0.0.1:7888`
+              ;; (`(w/reload-shaders!)`, `(w/take-screenshot! ...)`) — a human at a
+              ;; REPL prompt is the caller, so no static call site exists and never
+              ;; will. Deleting them would break the documented dev workflow.
+              infra.dev.window/service-state
+              infra.dev.window/service-info
+              infra.dev.window/reload-shaders!
+              infra.dev.window/reload-mesh!
+              infra.dev.window/reset-camera!
+              infra.dev.window/take-screenshot!
+
+              ;; `defprotocol` method: implemented via `extend-type`/`reify`, so
+              ;; clojure-lsp sees the method var itself as unreferenced even
+              ;; though the protocol is used.
+              domain.ecs.rewindable/snapshot}}}}

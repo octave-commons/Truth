@@ -34,7 +34,7 @@
    world key to `0.0` to disable the halo entirely."
   [world]
   (let [factor (double (or (:genesis/dark-matter-mass-factor world)
-                            law/default-dark-matter-mass-factor))
+                           law/default-dark-matter-mass-factor))
         neb-mass (double (or (:genesis/nebula-mass world) 0.0))]
     (* factor neb-mass)))
 
@@ -44,7 +44,7 @@
    `law/default-dark-matter-scale-factor` (~half the initial nebula radius)."
   [world]
   (let [factor (double (or (:genesis/dark-matter-scale-factor world)
-                            law/default-dark-matter-scale-factor))
+                           law/default-dark-matter-scale-factor))
         neb-r (double (or (:genesis/nebula-radius world) 0.0))]
     (* factor neb-r)))
 

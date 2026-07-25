@@ -41,7 +41,7 @@
 
 (defn- gl-use-program! [id] (GL20/glUseProgram id))
 (defn- gl-bind-vao! [vao] (GL30/glBindVertexArray vao))
-(defn- gl-draw-arrays! [mode count] (GL11/glDrawArrays mode 0 (int count)))
+(defn- gl-draw-arrays! [mode n] (GL11/glDrawArrays mode 0 (int n)))
 
 (defn draw-material!
   "Draw one instance of material record `mat`. `extra-uniforms` merges over

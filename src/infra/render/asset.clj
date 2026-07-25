@@ -130,16 +130,17 @@
 
 (defn dispose-asset!
   "Tear down a single cached asset. `kind` is `:program`, `:mesh`, or
-   `:texture`; `key` is the cache key (program name, mesh key, texture key)."
-  [kind key]
+   `:texture`; `cache-key` is the cache key (program name, mesh key, texture
+   key)."
+  [kind cache-key]
   (case kind
-    :program (shader/invalidate-program! key)
-    :mesh    (when-let [entry (get @mesh-cache-atom key)]
+    :program (shader/invalidate-program! cache-key)
+    :mesh    (when-let [entry (get @mesh-cache-atom cache-key)]
                (delete-mesh-gl! entry)
-               (swap! mesh-cache-atom dissoc key))
-    :texture (when-let [entry (get @texture-cache-atom key)]
+               (swap! mesh-cache-atom dissoc cache-key))
+    :texture (when-let [entry (get @texture-cache-atom cache-key)]
                (delete-texture-gl! entry)
-               (swap! texture-cache-atom dissoc key))
+               (swap! texture-cache-atom dissoc cache-key))
     nil))
 
 (defn dispose-all!

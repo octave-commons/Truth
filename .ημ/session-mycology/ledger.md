@@ -305,3 +305,12 @@
   spore: none
   receipt-refs: none
   note: Bash loops over git ls-files corrupted Unicode paths (e.g. .ημ) during manifest generation; switched to Python script. Receipt EDN append required matching comma-separated format. Targeted tests passed.
+- ts: 2026-07-25T13:08:13.939329411Z
+  session: /home/err/spaces/Truth
+  task: Static-analysis suite: drove 6 tools to zero and made the gate a ratchet
+  p-efficiency: 0.7
+  p-friction: 0.45
+  p-skill-candidate: 0.85
+  spore: none
+  receipt-refs: none
+  note: Two patterns worth spores: (1) a gate config in a conventionally-cached dir (.lsp/) is silently gitignored, so the gate passes locally and fails forever in CI -- check git check-ignore on every new config file before promoting a tool to blocking; (2) scoped symbol renames need a whole-scope re-audit, because a missed site does not error, it silently resolves to clojure.core (comp/count/name/field) and the test passes vacuously.

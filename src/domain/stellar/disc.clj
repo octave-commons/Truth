@@ -143,6 +143,10 @@
    but not so fast that the disk vanishes in one tick."
   0.05)
 
+;; UNUSED-PENDING: Disc/stellar-structure physics implemented ahead of the system that consumes
+;; it — no write-set emitter reads these yet.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^:const disk-sound-speed
   "Characteristic sound speed in a protoplanetary disk (m/s). ~300 m/s at 1 AU."
   300.0)
@@ -178,6 +182,10 @@
            (/ 0.01 disk-viscous-alpha)))
       1.0e13))) ;; fallback: ~300 kyr
 
+;; UNUSED-PENDING: Disc/stellar-structure physics implemented ahead of the system that consumes
+;; it — no write-set emitter reads these yet.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^:const min-fragment-orbit-periods
   "Resolution target (steps per orbit) used by `resolvable-orbit-radius`.
    RETIRED from spawn placement: fragments are compact bodies sub-stepped by the
@@ -189,6 +197,10 @@
    the GLOBAL dt need to resolve this orbit in 50 steps?', which is what the
    sub-stepper's K budget replaces." 50.0)
 
+;; UNUSED-PENDING: Disc/stellar-structure physics implemented ahead of the system that consumes
+;; it — no write-set emitter reads these yet.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn resolvable-orbit-radius
   "Smallest orbital radius around mass `M` whose period is ≥ `min-periods`·`dt`.
    T = 2π√(r³/GM) ≥ min-periods·dt  ⇒  r ≥ ∛(GM·(min-periods·dt / 2π)²).

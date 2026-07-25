@@ -151,7 +151,7 @@
    the BHL channel's accounting, where the donor gas keeps its orbital motion
    and only formation-scale L is deposited."
   [m M radius dpos v-rel]
-  (let [j (Math/sqrt (* law/G (double M) (double radius)))
+  (let [j (math/sqrt (* law/G (double M) (double radius)))
         L-raw (thermo/orbital-angular-momentum 1.0 dpos v-rel)
         L-len (sp/len L-raw)
         target-L (* (double m) j)]

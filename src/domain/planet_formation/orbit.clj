@@ -33,12 +33,7 @@
 (defn- orbital-angular-momentum
   "Orbital specific angular momentum L = m (r × v). Vector in kg m²/s."
   [mass position velocity]
-  (let [[x y z] position
-        [vx vy vz] velocity
-        m (double mass)]
-    [(* m (- (* y vz) (* z vy)))
-     (* m (- (* z vx) (* x vz)))
-     (* m (- (* x vy) (* y vx)))]))
+  (sp/v* (sp/cross position velocity) (double mass)))
 
 (defn- hash01
   "Deterministic [0,1) value from an integer key."

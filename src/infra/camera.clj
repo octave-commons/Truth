@@ -53,14 +53,6 @@
 ;; Camera record constructors
 ;; ---------------------------------------------------------------------------
 
-(def ->Camera
-  "Positional constructor for the Camera record."
-  nav/->Camera)
-
-(def map->Camera
-  "Map constructor for the Camera record."
-  nav/map->Camera)
-
 ;; ---------------------------------------------------------------------------
 ;; Camera movement and world tracking
 ;; ---------------------------------------------------------------------------
@@ -80,6 +72,12 @@
   [camera]
   (nav/camera-forward camera))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn observer-render-position
   "The observer (player spark/mote) position in render units, or the origin when
    there is no observer."
@@ -129,6 +127,12 @@
   [settings factor]
   (nav/adjust-fit-margin settings factor))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn bodies->render
   "Project ECS bodies into [[render-position mass] ...]."
   [world scale]

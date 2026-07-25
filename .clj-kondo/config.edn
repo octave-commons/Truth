@@ -26,7 +26,16 @@
   :unused-referred-var    {:level :warning} ; dead :refer
   :used-underscored-binding {:level :warning} ; using a binding you marked _unused
   :equals-true            {:level :warning}
-  :shadowed-var           {:level :warning} ; shadowing core/other vars hurts clarity
+  ;; `binding` is a first-class domain noun here, not an accidental shadow:
+  ;; component `c/binding`, `c/binding-scar`, schema `law.narrowing/binding?`,
+  ;; fns `binding-step`/`binding-system`/`deepest-binding`, and the write-set
+  ;; key `:binding` (see docs "The First Narrowing"). Locals are destructured
+  ;; straight out of maps keyed `:binding`, so renaming them desynchronises the
+  ;; code from the key it reads. And `clojure.core/binding` is a *macro* — a
+  ;; local of that name can never be accidentally invoked as the core form, so
+  ;; the shadow is inert.
+  :shadowed-var           {:level :warning ; shadowing core/other vars hurts clarity
+                           :exclude [binding]}
 
   ;; --- docstrings: AGENTS.md mandates one-line summary, blank line, detail ---
   ;; clj-kondo can't require a docstring's *presence* (dev/smell_report.clj
@@ -45,7 +54,24 @@
   ;; house style prefers when/when-let, which this does not penalise.
   :missing-else-branch    {:level :off}
   ;; Required-namespace sort order is cosmetic; cljfmt + LSP handle ordering.
-  :unsorted-required-namespaces {:level :off}}
+  :unsorted-required-namespaces {:level :off}
+  ;; This tree suppresses clojure-lsp's `unused-public-var` with
+  ;; `#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}` (the UNUSED-PENDING
+  ;; convention — see docs/STATIC-ANALYSIS.md). clj-kondo does not implement that
+  ;; linter, so it cannot tell whether such an ignore did anything, and it reports a
+  ;; false "Redundant ignore" on some of them (3 of the 33 as of 2026-07-25 —
+  ;; inconsistently, which is itself the tell).
+  ;;
+  ;; COST, stated honestly: exactly ONE ignore form in this tree targets a real
+  ;; clj-kondo linter — `#_{:clj-kondo/ignore [:unused-binding]}` at
+  ;; `src/domain/interior.clj:460`, guarding the UNUSED-PENDING `kind` parameter of
+  ;; `resource-cell`. With `:redundant-ignore` off, clj-kondo will NOT tell us if
+  ;; that one goes stale (i.e. if `kind` ever starts being used). That is a single
+  ;; known site with a docstring explaining itself, and it becomes moot the moment
+  ;; `:kind` is threaded into `law.voxel/resource-cell-schema` — at which point
+  ;; delete the marker. If a second clj-kondo-targeting ignore is ever added, revisit
+  ;; this: the trade stops being one-for-33.
+  :redundant-ignore      {:level :off}}
 
  ;; Teach clj-kondo the domain.ecs.dsl macros so the vars they generate
  ;; (->event ctors, name? preds, system/reaction bindings) resolve. Without

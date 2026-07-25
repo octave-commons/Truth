@@ -29,3 +29,7 @@ Remove genuinely unused private vars and imports that survived the correctness p
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. 2 unused private vars are back: `src/domain/physics/cache/neighbor.clj:144` `attach-r2` (superseded by `attach-pair-terms` at `:156`, a strict superset) and `test/domain/voxel_focus_test.clj:81` `run-ticks`. Plus an unused require at `src/infra/camera/navigation/tether.clj:52` (`shape.spatial`, orphaned when `blend-toward-binding` was removed). New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

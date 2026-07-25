@@ -68,7 +68,7 @@
     (when (seq merge-eids)
       (persistent!
        (reduce (fn [acc eid]
-                  (if-let [t (merged-temperature world eid)]
+                 (if-let [t (merged-temperature world eid)]
                    (assoc! acc eid t)
                    acc))
                (transient {}) merge-eids)))))

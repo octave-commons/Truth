@@ -21,17 +21,17 @@
    Covers gamma through radio. Not all bands are significant for all star types."
   [:gamma :xray :euv :fuv :nuv :vis :nir :mir :fir :radio])
 
-(def xuv-bands
+(def ^:export xuv-bands
   "The XUV (X-ray + EUV) bands that drive atmospheric escape.
    These are the high-energy bands responsible for photoionization and heating
    of planetary upper atmospheres."
   [:xray :euv])
 
-(def uv-bands
+(def ^:export uv-bands
   "UV bands (FUV + NUV) that affect photochemistry."
   [:fuv :nuv])
 
-(def climate-bands
+(def ^:export climate-bands
   "Bands relevant to planetary climate: visible + NIR (stellar heating)
    plus IR (atmospheric absorption)."
   [:vis :nir :mir :fir])
@@ -79,11 +79,11 @@
 
 ;; --- Physical constants for SED computation ---
 
-(def ^:const solar-teff
+(def ^:export ^:const solar-teff
   "Solar effective temperature (K)."
   5778.0)
 
-(def ^:const solar-logg
+(def ^:export ^:const solar-logg
   "Solar surface gravity log10(g) in cm/s²."
   4.44)
 
@@ -178,7 +178,7 @@
 
 ;; --- Contracts ---
 
-(def sed-band-contract
+(def ^:export sed-band-contract
   (contract/->contract
    {:id       ::sed-band
     :shape-id ::stellar-sed
@@ -187,7 +187,7 @@
     :name     "SED Band"
     :description "Single spectral energy distribution band with luminosity."}))
 
-(def sed-profile-contract
+(def ^:export sed-profile-contract
   (contract/->contract
    {:id       ::sed-profile
     :shape-id ::stellar-sed
@@ -196,7 +196,7 @@
     :name     "SED Profile"
     :description "Panchromatic spectral energy distribution for a single star."}))
 
-(def atmosphere-shell-contract
+(def ^:export atmosphere-shell-contract
   (contract/->contract
    {:id       ::atmosphere-shell
     :shape-id ::stellar-atmosphere
@@ -205,7 +205,7 @@
     :name     "Atmosphere Shell"
     :description "Single atmospheric layer of a stellar atmosphere."}))
 
-(def atmosphere-profile-contract
+(def ^:export atmosphere-profile-contract
   (contract/->contract
    {:id       ::atmosphere-profile
     :shape-id ::stellar-atmosphere
@@ -223,7 +223,7 @@
   (+ (double (:xray bands 0.0))
      (double (:euv bands 0.0))))
 
-(defn uv-luminosity
+(defn ^:export uv-luminosity
   "Sum of UV band luminosities (FUV + NUV) from an SED bands map.
    Drives photochemistry in planetary atmospheres."
   [bands]
@@ -244,7 +244,7 @@
   [bands]
   (reduce + 0.0 (map (fn [[_ v]] (double v)) bands)))
 
-(defn bands-sum-to-bolometric?
+(defn ^:export bands-sum-to-bolometric?
   "True if band luminosities sum to L_bol within 1% tolerance."
   [profile]
   (let [L-bol (double (:luminosity profile 0.0))

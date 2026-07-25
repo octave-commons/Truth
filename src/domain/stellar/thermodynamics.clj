@@ -24,12 +24,7 @@
 (defn orbital-angular-momentum
   "Orbital specific angular momentum L = m (r × v). Vector in kg m²/s."
   [mass position velocity]
-  (let [[x y z] position
-        [vx vy vz] velocity
-        m (double mass)]
-    [(* m (- (* y vz) (* z vy)))
-     (* m (- (* z vx) (* x vz)))
-     (* m (- (* x vy) (* y vx)))]))
+  (sp/v* (sp/cross position velocity) (double mass)))
 
 (defn spin-from-angular-momentum
   "Convert a body's total angular momentum vector to a spin vector ω = L/I,
@@ -190,6 +185,10 @@
       (* 1e-35 density X X (math/pow (/ temperature 1e7) 4)))
     0.0))
 
+;; UNUSED-PENDING: Disc/stellar-structure physics implemented ahead of the system that consumes
+;; it — no write-set emitter reads these yet.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn luminosity-from-fusion
   "Total luminosity emitted by a fusing body of given radius."
   [fusion-energy-rate radius]

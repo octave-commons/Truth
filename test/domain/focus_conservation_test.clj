@@ -24,43 +24,21 @@
    [domain.field :as field]
    [domain.genesis :as genesis]
    [domain.genesis.promotion :as promotion]
-   [domain.player :as player]
    [law.field.schema :as lf]
-   [shape.spatial :as sp]))
+   [shape.spatial :as sp]
+   [support.worlds :as support]))
 
-(def ^:private sample-ledger
-  {:mass 1.0e27
-   :velocity (sp/vec3 1.0 2.0 3.0)
-   :angular-momentum (sp/vec3 0.0 0.0 1.0e30)
-   :mean-b (sp/vec3 0.0 0.0 1.0e-9)
-   :temperature 15.0
-   :composition {:H 0.74 :He 0.24 :Z 0.02}})
-
-(defn- world-with-observer
-  "An empty world with an observer at the origin, attention shell overridden to
-   `immediate-r`."
-  [immediate-r]
-  (let [[w _eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))]
-    (player/update-observer w
-                            (fn [obs]
-                              (assoc obs
-                                     :focus-position (sp/vec3 0.0 0.0 0.0)
-                                     :attention-shell {:immediate-r immediate-r
-                                                       :regional-r (* 4.0 immediate-r)})))))
+(def ^:private sample-ledger support/sample-ledger)
+(def ^:private world-with-observer support/world-with-observer)
 
 (defn- run-system
-  "Run the focus-zone system's :run fn directly and return its write-set."
+  "Run the `:focus-zone` system's :run fn against `world`, returning its
+   write-set. Thin arity-1 shim over `support.worlds/run-system` so every call
+   site below reads the same as before the fixture extraction."
   [world]
-  ((:run (promotion/focus-zone-system)) world))
+  (support/run-system (promotion/focus-zone-system) world))
 
-(defn- apply-write-set
-  "Fold a write-set {component {eid value}} onto `world` as component writes —
-   the same landing `tick-physics` performs when it materializes a fan-out
-   write-set."
-  [world ws]
-  (reduce-kv (fn [w ct entries]
-               (reduce-kv (fn [w' eid v] (ecs/put-component w' eid ct v)) w entries))
-             world ws))
+(def ^:private apply-write-set support/apply-write-set)
 
 (deftest promotion-conserves-mass
   (testing "promoting a 1e27 kg cell: spawn spec mass == cell mass within

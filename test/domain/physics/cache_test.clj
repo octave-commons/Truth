@@ -237,6 +237,11 @@
                           [rx ry rz] (double (:r2 n)) h)))
                     "stored grad is bit-equal to an on-demand evaluation")))))))))
 
+;; Intentional: `(= 0 x)`, not `(zero? x)`. These assert on a map lookup that
+;; yields nil for a missing key: `(zero? nil)` THROWS, and `(zero? 0.0)` is true
+;; where `(= 0 0.0)` is false. `(= 0 x)` is the stronger assertion — the key
+;; exists AND holds integer zero — so the rewrite would weaken the test.
+#_{:splint/disable [style/eq-zero]}
 (deftest test-density-estimate-fresh-on-build
   (testing "A fresh build's density estimate is bit-equal to sph-density-from-cache"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)]
@@ -249,6 +254,11 @@
                  (hydro/sph-density-from-cache (:neighbors entry) (:h entry)))
               (str "estimate matches the consumer-side SPH sum for " eid)))))))
 
+;; Intentional: `(= 0 x)`, not `(zero? x)`. These assert on a map lookup that
+;; yields nil for a missing key: `(zero? nil)` THROWS, and `(zero? 0.0)` is true
+;; where `(= 0 0.0)` is false. `(= 0 x)` is the stronger assertion — the key
+;; exists AND holds integer zero — so the rewrite would weaken the test.
+#_{:splint/disable [style/eq-zero]}
 (deftest test-density-estimate-carried-when-quiet
   (testing "An unmoved parcel's estimate is carried forward within budget"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)
@@ -363,6 +373,11 @@
       (is (= (:h entry1) (:density-h entry1))
           "h reference updated at the recompute"))))
 
+;; Intentional: `(= 0 x)`, not `(zero? x)`. These assert on a map lookup that
+;; yields nil for a missing key: `(zero? nil)` THROWS, and `(zero? 0.0)` is true
+;; where `(= 0 0.0)` is false. `(= 0 x)` is the stronger assertion — the key
+;; exists AND holds integer zero — so the rewrite would weaken the test.
+#_{:splint/disable [style/eq-zero]}
 (deftest test-density-estimate-quiet-below-thresholds
   (testing "Sub-threshold h and mass drift with all other triggers quiet does NOT recompute"
     (let [w (-> (seeded-world 30) spatial/spatial-index cache/build-neighbor-cache)

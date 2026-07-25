@@ -45,13 +45,13 @@
   [neighbors h]
   (let [h   (double h)
         hh2 (* h h)]
-     (reduce (fn [rho n]
-               (let [r2 (double (:r2 n))]
-                 (if (and (< r2 hh2)
-                          (lf/hydro-em-active? (:matter-state n))
-                          (:mass n))
-                   (+ (double rho) (* (double (:mass n)) (kernel/kernel-r2 r2 h)))
-                   rho)))
+    (reduce (fn [rho n]
+              (let [r2 (double (:r2 n))]
+                (if (and (< r2 hh2)
+                         (lf/hydro-em-active? (:matter-state n))
+                         (:mass n))
+                  (+ (double rho) (* (double (:mass n)) (kernel/kernel-r2 r2 h)))
+                  rho)))
             0.0
             neighbors)))
 

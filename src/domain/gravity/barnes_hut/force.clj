@@ -4,7 +4,7 @@
    - acceleration-for-soa: G θ softening soa self-id -> {eid [ax ay az]}
 
    Per-pair softening (kanban/tasks/compact-pair-softening.md): every body
-   carries a species softening ε (law.stellar.orbital/body-softening — c/radius
+   carries a species softening ε (law.stellar.orbital.dynamics/body-softening — c/radius
    for resolved compact bodies, the world :sim/softening for gas/stateless).
    Each interaction — leaf pair or accepted node — uses ε_pair = max(ε_target,
    ε_source) with dead-zone 0.1·ε_pair. Bodies/nodes WITHOUT species ε
@@ -14,7 +14,7 @@
    [clojure.math :as math]
    [domain.ecs.parallel :as par]
    [domain.gravity.barnes-hut.tree :as tree]
-   [law.stellar.orbital :as law-orbital]))
+   [law.stellar.orbital.dynamics :as law-dyn]))
 
 ;; --- Acceleration evaluation ------------------------------------------------
 
@@ -27,7 +27,7 @@
 
 (def ^:private ^:const cutoff-fraction2
   "(0.1)² — the pair dead-zone is (softening-cutoff-fraction · ε_pair)²."
-  (* law-orbital/softening-cutoff-fraction law-orbital/softening-cutoff-fraction))
+  (* law-dyn/softening-cutoff-fraction law-dyn/softening-cutoff-fraction))
 
 (defn- pair-eps
   "ε_pair = max of two candidate ε values, where a negative entry means
@@ -227,7 +227,7 @@
    softening — LEGACY scalar Plummer length, applied to any body or tree node
               that carries no species :eps (default tiny; pass the world cloud
               spacing). Bodies projected by domain.orbital.system carry :eps
-              from law.stellar.orbital/body-softening; the pair rule
+              from law.stellar.orbital.dynamics/body-softening; the pair rule
               ε_pair = max(ε_i, ε_j) with dead-zone 0.1·ε_pair then governs
               (kanban/tasks/compact-pair-softening.md).
 

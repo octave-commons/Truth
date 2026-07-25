@@ -25,15 +25,6 @@
   ([scale camera viewport]
    (->RenderContext (double scale) camera viewport)))
 
-(defn valid-context?
-  "True when `ctx` is a RenderContext with positive scale and a viewport."
-  [ctx]
-  (and (instance? RenderContext ctx)
-       (pos? (:scale ctx))
-       (map? (:viewport ctx))
-       (pos? (:width (:viewport ctx)))
-       (pos? (:height (:viewport ctx)))))
-
 ;; ---------------------------------------------------------------------------
 ;; Position / scale transforms
 ;; ---------------------------------------------------------------------------
@@ -71,7 +62,7 @@
         (max (* 0.5 linear) (+ 0.01 log-r) 0.001))
       0.001)))
 
-(defn render->phys-radius
+(defn ^:export render->phys-radius
   "Approximate inverse of `phys->render-radius` for debug/tooling only. Not for
    physics."
   [_ctx r-render]

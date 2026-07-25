@@ -48,8 +48,7 @@
    [domain.narrowing :as narrowing]
    [infra.camera.navigation.input :as input]
    [infra.camera.navigation.tracking :as tracking]
-   [infra.camera.projection :as p]
-   [shape.spatial :as sp]))
+   [infra.camera.projection :as p]))
 
 (def ^:const tether-rate
   "Per-frame lerp rate of the tether pull at full engagement (strength 1.0).

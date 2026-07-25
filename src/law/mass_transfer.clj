@@ -10,39 +10,9 @@
    - kanban/tasks/gradual-mass-transfer-spec.md",
   (:require
    [clojure.math :as math]
-   [law.stellar  :as law]
-   [law.mass-transfer.schema :as schema]
-   [law.mass-transfer.validate :as validate]))
-
-;; --- Schemas / contracts / validators (re-exported) -------------------------
-
-(def accretion-radius-schema schema/accretion-radius-schema)
-(def accretion-rate-schema   schema/accretion-rate-schema)
-(def binary-pair-schema      schema/binary-pair-schema)
-(def roche-lobe-schema       schema/roche-lobe-schema)
-(def mass-transfer-rate-schema schema/mass-transfer-rate-schema)
-
-(def accretion-radius-contract schema/accretion-radius-contract)
-(def accretion-rate-contract   schema/accretion-rate-contract)
-(def binary-pair-contract      schema/binary-pair-contract)
-(def roche-lobe-contract       schema/roche-lobe-contract)
-(def mass-transfer-rate-contract schema/mass-transfer-rate-contract)
-
-(def validate-accretion-radius validate/validate-accretion-radius)
-(def validate-accretion-rate   validate/validate-accretion-rate)
-(def validate-binary-pair      validate/validate-binary-pair)
-(def validate-roche-lobe       validate/validate-roche-lobe)
-(def validate-mass-transfer-rate validate/validate-mass-transfer-rate)
+   [law.stellar  :as law]))
 
 ;; --- Physical constants -------------------------------------------------------
-
-(def ^:const earth-mass
-  "Earth mass in kg."
-  5.972e24)
-
-(def ^:const jupiter-mass
-  "Jupiter mass in kg."
-  1.898e27)
 
 (def ^:const default-accretion-fraction-cap
   "Maximum fraction of available donor gas mass that may move to a sink in one
@@ -54,13 +24,13 @@
    tick. Independent of the zone-level cap above."
   0.25)
 
-(def ^:const default-bondi-lambda
+(def ^:export ^:const default-bondi-lambda
   "Bondi eigenvalue for an isothermal gas (λ = e^{3/2}/4 ≈ 1.120). Used by
    Krumholz+2004; our simplified BHL formula bakes the λ² into the velocity
    denominator, so this is retained for compatibility checks."
   1.12)
 
-(def ^:const default-softening-factor
+(def ^:export ^:const default-softening-factor
   "Accretion radius is clamped to at least this fraction of the donor smoothing
    length / grid scale, so the sink always resolves the gas it is eating."
   0.5)
@@ -77,7 +47,7 @@
   "Order-unity prefactor in the Pols scaling for mass-transfer rate."
   10.0)
 
-(def ^:const ritter-isothermal-prefactor
+(def ^:export ^:const ritter-isothermal-prefactor
   "Scaled prefactor for the Ritter (1988) isothermal overflow rate."
   (* 2.0 math/PI (math/sqrt math/E)))
 
@@ -162,7 +132,7 @@
       (- (* 0.5 v-rel v-rel) (/ (* law/G M) r))
       0.0)))
 
-(defn bound-and-infalling?
+(defn ^:export bound-and-infalling?
   "True if the parcel is bound to the sink and moving toward it.
 
    `v-rad` is the radial velocity (positive = moving away)."
@@ -238,18 +208,18 @@
 
 ;; --- Conservation helpers -----------------------------------------------------
 
-(defn momentum-of-mass
+(defn ^:export momentum-of-mass
   "Linear momentum p = m · v (vector)."
   [mass velocity]
   (let [m (double (or mass 0.0))]
     (mapv #(* m (double %)) velocity)))
 
-(defn add-momentum
+(defn ^:export add-momentum
   "Component-wise vector addition of two momenta."
   [p1 p2]
   (mapv + p1 p2))
 
-(defn scale-momentum
+(defn ^:export scale-momentum
   "Scale a momentum vector by scalar s."
   [s p]
   (mapv #(* (double s) (double %)) p))

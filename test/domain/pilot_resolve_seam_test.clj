@@ -103,7 +103,7 @@
                                  [c/binding obs-eid]))))
                     w
                     (range 5))
-          depths (map #(get-in (ecs/get-component % obs-eid c/binding) [planet-eid] 0.0)
+          depths (map #(get (ecs/get-component % obs-eid c/binding) planet-eid 0.0)
                       bindings)]
       (is (apply < depths)
           (str "binding must increase monotonically while parked: " (vec depths)))
@@ -197,7 +197,7 @@
             means a keypress is a paid-nothing no-op, so the loop really is
             'fly there, commit, THEN sculpt'"
     (let [spark-pos (sp/vec3 (* 2.0 6.4e6) 0.0 0.0)
-          [w world-eid obs-eid] (committed-world-with-spark spark-pos)
+          [w world-eid _obs-eid] (committed-world-with-spark spark-pos)
           uncommitted (ecs/remove-component w world-eid c/commitment-state)
           before (:resonance (player/get-observer uncommitted))
           w' (-> uncommitted

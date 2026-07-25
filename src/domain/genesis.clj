@@ -15,17 +15,11 @@
    [domain.genesis.bootstrap :as bootstrap]
    [domain.genesis.tick :as tick]
    [domain.genesis.summary :as summary]
-   [domain.genesis.systems :as systems]
-   [domain.stellar.classifier :as classifier]))
+   [domain.genesis.systems :as systems]))
 
 (def create-world
   "Bootstrap a Phase 0 world ready to tick."
   bootstrap/create-world)
-
-(def seed-nebula
-  "Seed a cold, rotating, turbulent, self-gravitating gas cloud on the single ECS
-   world — `gas-count` equal-mass particles, no pre-placed core or planets."
-  bootstrap/seed-nebula)
 
 (def materialize-lifecycle
   "World-construction step (spec §5): spawn the entities requested by the fan-out
@@ -49,13 +43,6 @@
   "Emit per-body matter-state promotion events between `before` (pre-physics
    snapshot) and `after` (post-physics world)."
   tick/emit-promotion-events)
-
-(def handoff-system
-  "M5 handoff Phase 4 fan-out emitter (`domain.stellar.classifier/
-   handoff-system`): SOLE writer of `c/planet-candidate`, the full planet-
-   candidate output record (parent kanban/tasks/ecology-water-gate-
-   snowline.md §5), gated on the §2 handoff criteria."
-  classifier/handoff-system)
 
 (def emit-handoff-event
   "Append the `:event/phase0-handoff` ledger event once `world`'s

@@ -130,7 +130,7 @@
   "The nearest of `stars` (from `stellar-parents`) to `eid` by snapshot
    distance, or nil when none exists. Pure; reads the frozen world. This is
    deliberately NEAREST, not most-massive — the most-massive lookup in
-   `domain.stellar.classifier/central-star` is the worked counter-example
+   `domain.stellar.classifier.planet/central-star` is the worked counter-example
    (design §6)."
   [world eid stars]
   (when-let [x (ecs/get-component world eid c/position)]
@@ -301,7 +301,7 @@
    re-evaluates at each intermediate position; these stay frozen at their
    snapshot values across the K sub-steps (gravity dominates the encounter
    dynamics that flings)."
-  (into [] (remove #{c/accel-gravity} base/accel-sources)))
+  (vec (remove #{c/accel-gravity} base/accel-sources)))
 
 (defn gravity-at
   "Re-evaluate Barnes–Hut gravity on one body at an arbitrary intermediate

@@ -11,6 +11,7 @@
    Kernel tests attach the :eps the species law (law/body-softening) computes,
    as literals, so the kernels are tested independently of the law."
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
@@ -131,7 +132,7 @@
                            :g2)
               dx    -3.0e14
               d2    (+ (* dx dx) (* world-eps world-eps))
-              inv-r (* d2 (Math/sqrt d2))
+              inv-r (* d2 (math/sqrt d2))
               scale (/ (* law/G 1.0e28) inv-r)
               expected [(* dx scale) 0.0 0.0]]
           (is (= expected acc-map) "map path bit-identical")

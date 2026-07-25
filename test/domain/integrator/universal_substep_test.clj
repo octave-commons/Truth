@@ -40,6 +40,7 @@
    the reference holds r = 5.00 ± 0.10 AU and conserves E_J to 6 digits over
    the full 80 kyr the 1000-tick run now covers."
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
@@ -254,7 +255,7 @@
               e0 (first es-d)
               e-span (- (apply max es-d) (apply min es-d))
               t-total (* 1000.0 live-dt)
-              t-orb (* 2.0 Math/PI (Math/sqrt (/ (* orbit-radius orbit-radius orbit-radius) mu)))
+              t-orb (* 2.0 math/PI (math/sqrt (/ (* orbit-radius orbit-radius orbit-radius) mu)))
               expected-crossings (* 2.0 (/ t-total t-orb))]
           (println "[fling-test] max per-tick |Δv| over 1000 ticks:" max-dv
                    "m/s; max separation:" (/ max-r law/au)
@@ -295,7 +296,7 @@
           e-orb 0.6
           r-peri (* a-orb (- 1.0 e-orb))
           mu-orb (* law/G law/solar-mass)
-          v-ap (Math/sqrt (/ (* mu-orb (- 1.0 e-orb)) (* a-orb (+ 1.0 e-orb))))
+          v-ap (math/sqrt (/ (* mu-orb (- 1.0 e-orb)) (* a-orb (+ 1.0 e-orb))))
           [w star] (seeder/spawn-clump
                     (ecs/empty-world)
                     {:position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]

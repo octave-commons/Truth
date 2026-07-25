@@ -116,8 +116,8 @@
 
 (defn- resource-mass-sum
   "Total `:total-mass` across the field's resource cells."
-  [field]
-  (reduce + 0.0 (map (fn [cell] (double (:total-mass cell))) (:resources field))))
+  [fld]
+  (reduce + 0.0 (map (fn [cell] (double (:total-mass cell))) (:resources fld))))
 
 ;; --- 1. Uplift biases the field and drives derived local edits under the band ----
 
@@ -241,7 +241,7 @@
                            (map vector cells0 cells2))]
         (is (= 1 (count sped)) "exactly one upwelling cell was boosted")
         (is (== 2.0 (/ (double (:speed (second (first sped))))
-                       (double (:speed (first (first sped))))))
+                       (double (:speed (ffirst sped)))))
             "speed × (1 + lever × magnitude) = ×2 at magnitude 1"))
       (is (== mass0 mass2)
           "band mass EXACTLY invariant — no density was touched")

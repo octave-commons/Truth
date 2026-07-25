@@ -18,17 +18,6 @@
 (def phase-multicellular schema/phase-multicellular)
 (def phase-complex schema/phase-complex)
 
-(def phases schema/phases)
-(def phase? schema/phase?)
-(def ecology-phase? schema/ecology-phase?)
-(def unit-scalar? schema/unit-scalar?)
-(def positive-unit-scalar? schema/positive-unit-scalar?)
-(def transition-record? schema/transition-record?)
-(def ecology-schema schema/ecology-schema)
-(def ecology-extended-schema schema/ecology-extended-schema)
-(def ecology-contract schema/ecology-contract)
-(def ecology-extended-contract schema/ecology-extended-contract)
-
 ;; --- Phase ordering ---------------------------------------------------------
 
 (defn phase-index

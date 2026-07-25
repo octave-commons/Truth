@@ -12,7 +12,7 @@
    [domain.stellar.thermodynamics :as thermo]
    [domain.stellar.structure      :as structure]
    [domain.stellar.collapse       :as collapse]
-   [domain.stellar.classifier     :as classifier]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.stellar.sink           :as sink]
    [domain.stellar.disc           :as disc]
    [domain.spatial.index          :as spatial]
@@ -79,7 +79,7 @@
        (< (double (or (ecs/get-component world eid c/mass) 0.0)) law/opacity-limit-mass)
        (let [region (thermo/entity->region world eid)]
          (and (collapse/jeans-unstable? region)
-              (< (double (or (:density region) 0.0)) classifier/core-condensation-density)
+              (< (double (or (:density region) 0.0)) cls-state/core-condensation-density)
               (not (sink/within-existing-sink? (:position region) zones))))))
 
 (defn- local-density-max?
@@ -131,7 +131,7 @@
 (defn condensation-seeder-system
   "Fan-out emitter: when a :nebula parcel would condense to :planetesimal,
    instead spawn a small physical seed and debit that mass from the parent parcel.
-   Gated by `classifier/condense-tick?`, a one-shot `c/condensation-seeded` marker per parcel,
+   Gated by `cls-state/condense-tick?`, a one-shot `c/condensation-seeded` marker per parcel,
    a local-density-maximum filter, and a per-tick seed cap. The parent parcel stays
    :nebula; the seed materializes next tick and becomes a resolved sink. Growth
    after seeding is collisional / rare BHL capture, not a runaway channel."
@@ -143,7 +143,7 @@
    :writes #{c/spawn-request-condense c/mass-flux-condense c/condensation-seeded}
    :run
    (fn [world]
-     (when (classifier/condense-tick? world)
+     (when (cls-state/condense-tick? world)
        (let [gas-mass      (:genesis/gas-particle-mass world)
              zones         (sink/sink-exclusion-zones world)
              gas-r         (double (or (:genesis/gas-smoothing-radius world) 0.0))

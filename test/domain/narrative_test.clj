@@ -63,6 +63,11 @@
                                                 {:kind :event/stellar-ignition :tick 1}]
                                                :anticipation 0.8 :arc/genesis-ignition nil)))))
 
+;; Intentional: `(= 0 x)`, not `(zero? x)`. These assert on a map lookup that
+;; yields nil for a missing key: `(zero? nil)` THROWS, and `(zero? 0.0)` is true
+;; where `(= 0 0.0)` is false. `(= 0 x)` is the stronger assertion — the key
+;; exists AND holds integer zero — so the rewrite would weaken the test.
+#_{:splint/disable [style/eq-zero]}
 (deftest test-commitment-line-enqueued-once
   (testing "on :event/world-commitment the narrator stamps ONE ambient line"
     (let [w0  (-> (genesis/create-world {:gas-count 20})

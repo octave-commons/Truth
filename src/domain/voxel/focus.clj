@@ -63,19 +63,19 @@
    Reads the observer, the committed world's `c/planet-candidate` /
    `c/position`, and its own four components. Never writes `c/matter-state`
    or any other system's column."
-   (:require
-    [domain.ecs.components :as c]
-    [domain.ecs.core :as ecs]
-    [domain.ecs.registry :as reg]
-    [domain.ecs.tick :as tick]
-    [domain.interior :as interior]
-    [domain.player :as player]
-    [domain.voxel.band :as band]
-    [domain.voxel.carve :as carve]
-    [domain.voxel.queue :as queue]
-    [domain.voxel.sculpt :as sculpt]
-    [law.voxel :as voxel]
-    [shape.spatial :as sp]))
+  (:require
+   [domain.ecs.components :as c]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.registry :as reg]
+   [domain.ecs.tick :as tick]
+   [domain.interior :as interior]
+   [domain.player :as player]
+   [domain.voxel.band :as band]
+   [domain.voxel.carve :as carve]
+   [domain.voxel.queue :as queue]
+   [domain.voxel.sculpt :as sculpt]
+   [law.voxel :as voxel]
+   [shape.spatial :as sp]))
 
 ;; --- World lookups ---------------------------------------------------------------
 
@@ -127,7 +127,7 @@
        (when (some? spec)
          (assoc job :phase :promote :pending nil :voxel-count 0))]
       (let [pending  (or (:pending job) (vec (sort (keys (:voxels b)))))
-            taken    (into [] (take voxel/edit-chunk-voxels pending))
+            taken    (vec (take voxel/edit-chunk-voxels pending))
             left     (subvec pending (min (count pending) voxel/edit-chunk-voxels))
             replayed (band/replay-diffs (:diffs state))
             {:keys [voxels' touched' diffs]}
@@ -154,7 +154,7 @@
       (throw (ex-info "domain.voxel.focus: promote chunk over a band with a different spec — stale retarget was not replaced"
                       {:band-spec (:spec b) :job-spec spec})))
     (let [pending (or (:pending job) (band/band-offsets field spec))
-          taken   (into [] (take voxel/edit-chunk-voxels pending))
+          taken   (vec (take voxel/edit-chunk-voxels pending))
           left    (subvec pending (min (count pending) voxel/edit-chunk-voxels))
           fresh   (band/materialize field (:diffs state) taken)
           b'      (-> (or b {:spec spec :voxels {} :touched {}})
@@ -259,25 +259,25 @@
          (when-not position
            (throw (ex-info "domain.voxel.focus: committed world carries no c/position"
                            {:eid eid})))
-          (let [obs     (player/get-observer world)
-                field0  (ecs/get-component world eid c/voxel-field)
-                seed    (or field0 (interior/seed-field candidate))
-                band0   (ecs/get-component world eid c/voxel-band)
-                queue0  (or (ecs/get-component world eid c/voxel-edit-queue) [])
-                diffs0  (or (ecs/get-component world eid c/voxel-edit-diffs) [])
-                field-diffs0 (or (ecs/get-component world eid c/voxel-field-diffs) [])
+         (let [obs     (player/get-observer world)
+               field0  (ecs/get-component world eid c/voxel-field)
+               seed    (or field0 (interior/seed-field candidate))
+               band0   (ecs/get-component world eid c/voxel-band)
+               queue0  (or (ecs/get-component world eid c/voxel-edit-queue) [])
+               diffs0  (or (ecs/get-component world eid c/voxel-edit-diffs) [])
+               field-diffs0 (or (ecs/get-component world eid c/voxel-field-diffs) [])
                 ;; Voxel 4: paid sculpt ops arrive one Jacobi tick stale on
                 ;; the producer-suffixed request channel and fold into the
                 ;; three columns this system owns — the field (biased), the
                 ;; queue (derived local edits enqueued under the band), and
                 ;; the field-diff stream (one record per folded op, stamped
                 ;; with the fold tick: the op IS the diff, §7.3 extended).
-                 ops     (ecs/get-component world eid c/voxel-sculpt-request)
-                 {:keys [field jobs field-diffs]} (sculpt/fold-ops seed band0 ops)
-                 field-diffs' (into field-diffs0
-                                    (comp (map #(assoc % :tick (long (or (:tick world) 0))))
-                                          (map validate-field-diff!))
-                                    field-diffs)
+               ops     (ecs/get-component world eid c/voxel-sculpt-request)
+               {:keys [field jobs field-diffs]} (sculpt/fold-ops seed band0 ops)
+               field-diffs' (into field-diffs0
+                                  (comp (map #(assoc % :tick (long (or (:tick world) 0))))
+                                        (map validate-field-diff!))
+                                  field-diffs)
                  ;; Voxel 5: collision carve plans arrive one Jacobi tick
                  ;; stale on the producer-suffixed request channel and fold
                  ;; into `:apply-edits` jobs, provenance `:collision`; melt/
@@ -288,36 +288,36 @@
                  ;; bowl must end carved (nil), not resurrected to cooled
                  ;; :solid by a later-draining cooling edit (the queue is
                  ;; strict FIFO, later job wins per voxel).
-                 carve-req    (ecs/get-component world eid c/voxel-carve-request)
-                 carve-jobs   (carve/fold-plans field band0 (:plans carve-req))
-                 cooling-jobs (carve/cooling-jobs field band0
-                                                  (double (or (:sim/dt world) 0.0)))
-                 target  (when (and obs (:focus-position obs))
-                           (band/band-target obs field
-                                             (sp/v- (:focus-position obs) position)))
-                 queue1  (maybe-enqueue-retarget queue0 band0 target)
-                 queue2  (into queue1 (concat jobs cooling-jobs carve-jobs))
-                state'  (queue/drain {:band band0 :diffs diffs0 :queue queue2}
-                                     voxel/edit-budget-ms-per-tick
-                                     (fn [s job] (apply-job field (:tick world) s job)))
-                band'   (:band state')
-                queue'  (:queue state')
-                diffs'  (:diffs state')]
-            (cond-> {}
-              (or (nil? field0)
-                  (not (identical? seed field)))
-              (assoc c/voxel-field {eid field})
+               carve-req    (ecs/get-component world eid c/voxel-carve-request)
+               carve-jobs   (carve/fold-plans field band0 (:plans carve-req))
+               cooling-jobs (carve/cooling-jobs field band0
+                                                (double (or (:sim/dt world) 0.0)))
+               target  (when (and obs (:focus-position obs))
+                         (band/band-target obs field
+                                           (sp/v- (:focus-position obs) position)))
+               queue1  (maybe-enqueue-retarget queue0 band0 target)
+               queue2  (into queue1 (concat jobs cooling-jobs carve-jobs))
+               state'  (queue/drain {:band band0 :diffs diffs0 :queue queue2}
+                                    voxel/edit-budget-ms-per-tick
+                                    (fn [s job] (apply-job field (:tick world) s job)))
+               band'   (:band state')
+               queue'  (:queue state')
+               diffs'  (:diffs state')]
+           (cond-> {}
+             (or (nil? field0)
+                 (not (identical? seed field)))
+             (assoc c/voxel-field {eid field})
 
-              (not (identical? band0 band'))
-              (assoc c/voxel-band {eid (if (nil? band') tick/removed band')})
+             (not (identical? band0 band'))
+             (assoc c/voxel-band {eid (if (nil? band') tick/removed band')})
 
-              (or (not (identical? queue0 queue2))
-                  (not (identical? queue2 queue')))
-              (assoc c/voxel-edit-queue {eid queue'})
+             (or (not (identical? queue0 queue2))
+                 (not (identical? queue2 queue')))
+             (assoc c/voxel-edit-queue {eid queue'})
 
-              (not (identical? diffs0 diffs'))
-              (assoc c/voxel-edit-diffs {eid diffs'})
+             (not (identical? diffs0 diffs'))
+             (assoc c/voxel-edit-diffs {eid diffs'})
 
-              (not (identical? field-diffs0 field-diffs'))
-              (assoc c/voxel-field-diffs {eid field-diffs'}))))
-        {}))})
+             (not (identical? field-diffs0 field-diffs'))
+             (assoc c/voxel-field-diffs {eid field-diffs'}))))
+       {}))})

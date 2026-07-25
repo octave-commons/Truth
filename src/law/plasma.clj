@@ -40,7 +40,7 @@
    c_s ~ 10 km/s for T ~ 10⁴ K, mean molecular weight ~ 1 amu."
   1.0e4)
 
-(def ^:const critical-xuv-flux-cgs
+(def ^:export ^:const critical-xuv-flux-cgs
   "Critical XUV flux for regime transition (erg/cm²/s).
    Below this: energy-limited (Ṁ ∝ F^0.9).
    Above this: recombination-limited (Ṁ ∝ F^0.6).
@@ -135,7 +135,7 @@
   {:kind    event-kind?
    :payload map?})
 
-(def flare-payload-schema
+(def ^:export flare-payload-schema
   "Payload for a stellar flare event.
    Transient XUV enhancement with exponential decay."
   {:energy         positive-si?       ;; Joules — total flare energy
@@ -143,7 +143,7 @@
    :duration       positive-si?       ;; seconds — decay timescale
    :origin-star    (some-fn uuid? integer?)})
 
-(def cme-payload-schema
+(def ^:export cme-payload-schema
   "Payload for a coronal mass ejection.
    Dense, magnetized plasma cloud propagating outward."
   {:mass           positive-si?       ;; kg — CME mass
@@ -153,7 +153,7 @@
 
 ;; --- Contracts ---
 
-(def wind-profile-contract
+(def ^:export wind-profile-contract
   (contract/->contract
    {:id       ::wind-profile
     :shape-id ::stellar-wind
@@ -162,7 +162,7 @@
     :name     "Wind Profile"
     :description "Stellar wind characteristics (mass-loss rate, launch speed, ram pressure, ionization, coronal temperature) derived from coronal properties."}))
 
-(def plasma-wind-contract
+(def ^:export plasma-wind-contract
   (contract/->contract
    {:id       ::plasma-wind
     :shape-id ::wind-parcel
@@ -171,7 +171,7 @@
     :name     "Plasma Wind Parcel"
     :description "Ionized plasma parcel in stellar wind with ram pressure and B-field."}))
 
-(def atmosphere-escape-contract
+(def ^:export atmosphere-escape-contract
   (contract/->contract
    {:id       ::atmosphere-escape
     :shape-id ::planetary-escape
@@ -180,7 +180,7 @@
     :name     "Atmosphere Escape"
     :description "Planetary atmospheric escape regime and mass loss from XUV."}))
 
-(def event-source-contract
+(def ^:export event-source-contract
   (contract/->contract
    {:id       ::event-source
     :shape-id ::space-weather

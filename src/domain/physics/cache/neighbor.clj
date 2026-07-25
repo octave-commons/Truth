@@ -141,21 +141,9 @@
      :mass     (:mass item)
      :state    (:matter-state item)}))
 
-(defn- attach-r2
-  "Attach only the squared distance to a spatial-index item in the central
-   particle frame. Used by the cache builder; gradients are computed on demand
-   in the consumer systems to avoid storing two gradient vectors per neighbor."
-  [pos-c item]
-  (let [pos-n (:position item)
-        rx    (- (double (nth pos-c 0)) (double (nth pos-n 0)))
-        ry    (- (double (nth pos-c 1)) (double (nth pos-n 1)))
-        rz    (- (double (nth pos-c 2)) (double (nth pos-n 2)))
-        r2    (+ (* rx rx) (* ry ry) (* rz rz))]
-    (assoc item :r2 r2)))
-
 (defn- attach-pair-terms
   "Attach the shared pair products to a spatial-index item in the central
-   particle frame: `:r2` (squared distance, same arithmetic as `attach-r2`)
+   particle frame: `:r2` (the squared centre-to-centre distance)
    and — for hydro/EM-active neighbors with the fields the merged force
    consumer needs, inside the pair kernel h_ij = r_c + r_n — `:grad`, the
    kernel gradient ∇W_ij computed ONCE here so neither consumer re-walks the

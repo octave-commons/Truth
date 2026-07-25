@@ -150,6 +150,13 @@
                    (assoc profs id prof)
                    profs)))))))
 
+;; Intentional: `catch Throwable` in the worker future. Each worker MUST enqueue
+;; exactly one item or `fold-completion-order`'s `.take` hangs forever (see the
+;; NOTE at the catch site). Narrowing to `Exception` would let an `AssertionError`
+;; from a system's `assert`/`:pre` escape into the future and deadlock the tick
+;; instead of surfacing as a value the fold can report. Catching everything here
+;; is what makes the fan-out total.
+#_{:splint/disable [lint/catch-throwable]}
 (defn run-parallel
   "Run `systems` concurrently on the frozen `world`; fold their write-sets into
    the next world and return it.

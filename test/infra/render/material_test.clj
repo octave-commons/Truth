@@ -19,7 +19,7 @@
       (is (= {:write? true :test? true} (:depth mat)))))
   (testing "explicit blend/depth/uniforms are preserved"
     (let [mat (material/material {:program 7 :uniforms {:glow 0.5} :mesh {:vao 2 :count 6}
-                                   :blend :alpha :depth {:write? false}})]
+                                  :blend :alpha :depth {:write? false}})]
       (is (= :alpha (:blend mat)))
       (is (= {:write? false :test? true} (:depth mat)) "test? still defaults true"))))
 
@@ -42,7 +42,7 @@
   (let [log (atom [])]
     (with-redefs [material/gl-use-program! (fn [id] (swap! log conj [:use-program id]))
                   material/gl-bind-vao!    (fn [vao] (swap! log conj [:bind-vao vao]))
-                  material/gl-draw-arrays! (fn [mode count] (swap! log conj [:draw-arrays mode count]))
+                  material/gl-draw-arrays! (fn [mode n] (swap! log conj [:draw-arrays mode n]))
                   passes/set-blend!        (fn [mode] (swap! log conj [:set-blend mode]))
                   passes/set-depth-write!  (fn [w] (swap! log conj [:set-depth-write w]))
                   passes/set-depth-test!   (fn [t] (swap! log conj [:set-depth-test t]))
@@ -53,7 +53,7 @@
 (deftest test-draw-material-orchestrates-passes-and-asset
   (testing "draw-material! sets blend/depth, uses the program, binds uniforms, draws, and unbinds"
     (let [mat (material/material {:program 7 :uniforms {:seed 1.0}
-                                   :mesh {:vao 3 :count 60} :blend :alpha})
+                                  :mesh {:vao 3 :count 60} :blend :alpha})
           log (capture-draw! #(material/draw-material! mat {:model :M} GL11/GL_TRIANGLES))]
       (is (= [:set-blend :alpha] (first log)))
       (is (some #(= [:set-depth-write true] %) log))

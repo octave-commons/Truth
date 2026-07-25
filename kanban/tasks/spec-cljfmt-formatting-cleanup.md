@@ -1,12 +1,13 @@
 ---
-uuid: "spec-cljfmt-formatting-cleanup"
-title: "Spec: cljfmt Formatting Cleanup"
-status: "todo"
-priority: "P1"
-labels: ["specs"]
-created_at: "2026-07-08T02:24:29.818746740Z"
-source: "kanban/tasks/spec-cljfmt-formatting-cleanup.md"
 category: "specs"
+labels: ["specs"]
+write-id: "1784985271864-0.97vmm0zr86nklwuytz1"
+source: "kanban/tasks/spec-cljfmt-formatting-cleanup.md"
+title: "Spec: cljfmt Formatting Cleanup"
+priority: "P1"
+status: "done"
+uuid: "spec-cljfmt-formatting-cleanup"
+created_at: "2026-07-08T02:24:29.818746740Z"
 ---
 
 # Spec: cljfmt Formatting Cleanup
@@ -59,3 +60,15 @@ Because `cljfmt` is the last layer of formatting, it should run **after** the cl
 **Story points: 2**
 
 Rationale: Only 2 files (`src/infra/dev/actor_dashboard.clj` and `src/infra/dev/window.clj`) require formatting. The change is a one-time, machine-generated whitespace pass (`clojure -M:cljfmt fix src test`), so implementation effort is minimal. Risk of merge conflicts is low but non-zero because both files sit in the active `infra/dev/` path where UI and actor-dashboard work may be in flight. Two points cover the fix pass, diff review for macro/DSL safety, and test verification.
+
+---
+Triage 2026-07-24 — SUPERSEDED by `kanban/tasks/static-analysis-cljfmt-2026-07.md`. This card's "only 2 files" rationale is three revisions stale: `clojure -M:cljfmt check src test` now fails on **24 files**. It also duplicates `static-analysis-cljfmt-cleanup.md` (which states 7). Both folded into the one successor, which additionally sequences the pass LAST — 8 of the 24 files are rewritten by the Wave 1-3 work, so formatting first only creates churn.
+---
+
+---
+## Superseded / folded (2026-07-25)
+
+Duplicate of `kanban/tasks/static-analysis-cljfmt-cleanup.md`; both folded into
+`kanban/tasks/static-analysis-cljfmt-2026-07.md`, which did the work. See
+`kanban/tasks/static-analysis-regression-2026-07-24.md` §Wave 0.
+---

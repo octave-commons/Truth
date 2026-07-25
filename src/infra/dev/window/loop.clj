@@ -3,7 +3,18 @@
 
    The sim thread owns the world-atom; the render thread only reads it and
    enqueues input intents through an IntentAtom.  Error handlers in both threads
-   dump world+ledger artifacts and publish :ui/error-state for the renderer."
+   dump world+ledger artifacts and publish :ui/error-state for the renderer.
+
+   WHY `catch Throwable` EVERYWHERE (Splint `lint/catch-throwable` is disabled
+   per-form below, deliberately): every guard in this namespace is an OUTERMOST
+   frame/tick boundary whose entire job is \"never let the dev window die\" —
+   `sim-loop` dumps error artifacts and returns the previous world;
+   `render-error-frame!` catches *while drawing the error overlay itself*.
+   Narrowing to `Exception` would let an `AssertionError` (from a domain
+   `assert`/`:pre`) or an LWJGL `UnsatisfiedLinkError` kill the window silently,
+   which is exactly the failure this layer exists to make visible. These are the
+   only justified `catch Throwable` sites in the tree outside
+   `domain.ecs.tick/run-parallel`."
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
@@ -33,6 +44,9 @@
             "IntentAtom: world mutations must go through swap!/reset! (intents)")))
   (reset [_ v] (.add queue (constantly v)) v))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- drain-intents
   "Apply every queued intent to `w`, in arrival order.  An intent that throws or
    returns a non-map is dropped (logged) rather than corrupting the world."
@@ -75,6 +89,9 @@
                (nil? (:cube-mesh cfg))
                (assoc :cube-mesh (render/upload-mesh (render/make-cube-mesh))))))))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- handle-screenshot-request [world-atom config-atom]
   (when-let [{:keys [path result opts]} (:screenshot-request @config-atom)]
     (try
@@ -86,11 +103,20 @@
         (swap! config-atom dissoc :screenshot-request)))))
 
 (def ^:private default-tick-fn
-  "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo)."
-  (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
+  "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo).
+
+   Built once at load: `orbital-system`'s returned closure captures only the
+   numeric G/theta/dt/softening params — it holds no atom, cache, or RNG, and
+   rebuilds the Barnes-Hut tree per invocation — so hoisting construction out
+   of the per-tick path is behaviour-preserving (verified 2026-07-25 against
+   `domain.orbital.system/orbital-system`)."
+  (orbital/orbital-system 6.674e-11 0.5 0.5))
 
 (declare dump-error-artifacts! log-frame-error!)
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn sim-loop
   "The dedicated simulation thread: drain intents → tick → publish → pace."
   [{:keys [world-atom intent-queue config-atom stop-atom service-state]}]
@@ -163,6 +189,9 @@
   "Directory for world + ledger dumps captured on frame errors."
   (io/file "/tmp" "gates-of-truth" "dumps"))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- dump-error-artifacts!
   "Persist the current world and its event ledger to timestamped EDN files."
   [world]
@@ -193,6 +222,9 @@
                      tick (:world-path dump-paths) (:ledger-path dump-paths))))
   (.printStackTrace ^Throwable err))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- render-error-frame!
   "Draw a red error banner covering the top of the window."
   [window config-atom err tick]
@@ -236,6 +268,9 @@
     (Thread/sleep 16)
     (catch Throwable _ nil)))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- render-frame-once
   "Render one frame.  Returns truthy while the window should stay open."
   [{:keys [window world-atom camera-atom config-atom frame-atom time-atom
@@ -406,6 +441,9 @@
         (render-error-frame! window config-atom t tick))
       true)))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn window-loop
   "The render thread.  Receives the world only through `world-intents` — an
    IntentAtom whose deref reads the sim thread's latest published world and
@@ -426,17 +464,15 @@
                            :keys-atom ks
                            :config-atom config-atom
                            :world-atom world-intents})
-      (loop []
-        (when (and (not @stop-atom)
-                   (render-frame-once {:window window
-                                       :world-atom world-intents
-                                       :camera-atom camera-atom
-                                       :config-atom config-atom
-                                       :frame-atom frame-atom
-                                       :time-atom time-atom
-                                       :last-t-atom last-t-atom
-                                       :keys-atom ks}))
-          (recur))))
+      (while (and (not @stop-atom)
+                  (render-frame-once {:window window
+                                      :world-atom world-intents
+                                      :camera-atom camera-atom
+                                      :config-atom config-atom
+                                      :frame-atom frame-atom
+                                      :time-atom time-atom
+                                      :last-t-atom last-t-atom
+                                      :keys-atom ks}))))
     (catch Throwable t
       (swap! service-state assoc :error t)
       (throw t))))

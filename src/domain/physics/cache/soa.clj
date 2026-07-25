@@ -6,7 +6,7 @@
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
    [law.field :as lf]
-   [law.stellar.orbital :as law-orbital]
+   [law.stellar.orbital.dynamics :as law-dyn]
    [shape.spatial :as sp]))
 
 (def ^:private pred-accel-sources
@@ -32,15 +32,15 @@
   "Fill SoA arrays from projected entities and force maps.
    Writes the disjoint index range [start, end).
    The :eps array is the per-entity softening from the species rule
-   (law-orbital/body-softening): c/radius for resolved compact bodies,
+   (law-dyn/body-softening): c/radius for resolved compact bodies,
    `world-soft` for gas/stateless entities (matter-state is looked up per
    entity from the world's component cell — entities MAY lack it; they are
    not projected out)."
   [all       ^objects eids ^doubles mass ^doubles radius ^doubles eps
-      ^doubles px ^doubles py ^doubles pz
-      ^doubles vx ^doubles vy ^doubles vz
-      ^doubles pxp ^doubles pyp ^doubles pzp
-      {:keys [dt ms-cell world-soft accel-maps dv-maps]} start end]
+   ^doubles px ^doubles py ^doubles pz
+   ^doubles vx ^doubles vy ^doubles vz
+   ^doubles pxp ^doubles pyp ^doubles pzp
+   {:keys [dt ms-cell world-soft accel-maps dv-maps]} start end]
   (loop [i (long start)]
     (when (< i end)
       (let [[eid comps] (nth all i)
@@ -55,7 +55,7 @@
         (aset eids i eid)
         (aset mass i (double (or (comps c/mass) 0.0)))
         (aset radius i rad)
-        (aset eps i (law-orbital/body-softening (get ms-cell eid) rad world-soft))
+        (aset eps i (law-dyn/body-softening (get ms-cell eid) rad world-soft))
         (aset px i (double x))
         (aset py i (double y))
         (aset pz i (double z))
@@ -146,7 +146,7 @@
    `ecs/all-of` projection. Also carries drift-predicted positions
    (:px-pred/:py-pred/:pz-pred) so force emitters evaluate at the position the
    kick will land on next tick, and the per-entity softening :eps from the
-   species rule (law.stellar.orbital/body-softening — c/radius for compact
+   species rule (law.stellar.orbital.dynamics/body-softening — c/radius for compact
    bodies, :sim/softening for gas; a world without :sim/softening softens its
    gas at 0, so production worlds must declare it). Validation runs by default
    but is skipped when `:genesis/validate-soa?` is explicitly false. The cache

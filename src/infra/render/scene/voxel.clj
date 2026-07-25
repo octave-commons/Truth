@@ -72,7 +72,7 @@
   [ctx world]
   (if-let [eid (committed-band-eid world)]
     (let [body-pos (ecs/get-component world eid c/position)
-          voxels   (get-in (ecs/get-component world eid c/voxel-band) [:voxels])
+          voxels   (:voxels (ecs/get-component world eid c/voxel-band))
           half-ru  (units/phys->body-render-radius ctx half-edge-m)]
       (if (and body-pos (seq voxels))
         (into []

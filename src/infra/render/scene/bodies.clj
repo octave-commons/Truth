@@ -57,11 +57,11 @@
   (let [threshold (double (or threshold-pixels default-sprite-lod-threshold-pixels))
         ppr (pixels-per-radian height 60.0)]
     (reduce (fn [[solids sprites] shape]
-              (cond
-                (= :sprite (:render-mode shape))
+              (condp = (:render-mode shape)
+                :sprite
                 [solids (conj sprites shape)]
 
-                (= :body (:render-mode shape))
+                :body
                 (let [dist       (sp/dist (:position camera) (:position shape))
                       angular-diam (* 2.0 (/ (double (:radius shape)) (max dist 1.0e-12)))
                       pixel-diam (* angular-diam ppr)
@@ -81,7 +81,8 @@
                                                    :size size))])
                     [(conj solids shape) sprites]))
 
-                :else
+                ;; default: any other render-mode (:particle, :line, ...) is a
+                ;; solid the sprite LOD does not apply to.
                 [(conj solids shape) sprites]))
             [[] []]
             shapes)))

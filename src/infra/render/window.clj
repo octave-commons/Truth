@@ -6,7 +6,6 @@
    [infra.camera :as cam]
    [infra.render.shader :as sh]
    [infra.render.mesh :as rmesh]
-   [infra.render.input :as rinput]
    [infra.render.scene :as rscene]
    [infra.render.volume :as rvolume]
    [infra.render.hud :as rhud]
@@ -14,7 +13,7 @@
    [domain.orbital.system :as orbital]
    [domain.arc :as arc])
   (:import
-   (org.lwjgl.glfw GLFW Callbacks GLFWErrorCallback)
+   (org.lwjgl.glfw GLFW GLFWErrorCallback)
    (org.lwjgl.opengl GL GL11 GL30)
    (org.lwjgl.stb STBImageWrite)
    (org.lwjgl BufferUtils)
@@ -201,56 +200,10 @@
          hud       (when phase0? (rscene/hud-rects-from-world w))
          hud-text  (when phase0? (rhud/hud-text-from-world w))
          volume    (rvolume/frame-volume {:ctx ctx :world w :program (:volume-program programs)
-                                            :res (or volume-res :medium) :cfg volume-config})]
+                                          :res (or volume-res :medium) :cfg volume-config})]
      (render-offscreen-scene mesh cube-mesh camera width height programs fbo bodies hud hud-text volume render-origin)
      (GL11/glFlush)
      (write-png-flipped path width height)
      (cleanup-offscreen window)
      path)))
 
-(defn- render-one-frame!
-  "Render one frame of the legacy single-threaded window loop."
-  [window world-atom camera config-atom body-program line-program sprite-program particle-program mesh]
-  (GLFW/glfwPollEvents)
-  (swap! world-atom (orbital/orbital-system 6.674e-11 0.5 0.5))
-  (swap! camera cam/update-camera-for-world @world-atom @config-atom)
-  (let [bodies (rscene/bodies-from-world @world-atom)]
-    (rscene/render-scene {:body-program body-program
-                          :line-program line-program
-                          :sprite-program sprite-program
-                          :particle-program particle-program
-                          :mesh-world mesh
-                          :camera @camera
-                          :width 1280
-                          :height 720
-                          :bodies bodies
-                          :t 0.0}))
-  (GLFW/glfwSwapBuffers window)
-  (Thread/sleep 16))
-
-(defn run-window
-  "Legacy single-threaded window loop. Ticks a gravity demo and renders it."
-  [world-atom]
-  (println "Initializing GLFW...")
-  (init-glfw)
-  (let [width          1280
-        height         720
-        window         (create-window width height "Gates of Truth — 3D View")
-        camera         (atom (cam/make-camera))
-        ks             (atom {})
-        body-program   (create-program)
-        particle-program (create-particle-program)
-        line-program   (create-line-program)
-        sprite-program (create-sprite-program)
-        sphere         (rmesh/make-sphere-mesh 2)
-        mesh           (rmesh/upload-mesh sphere)
-        config-atom    (atom (cam/default-camera-settings))]
-    (println "Window created, entering render loop...")
-    (rinput/setup-input {:window window :camera-atom camera :keys-atom ks :config-atom config-atom})
-    (while (not (GLFW/glfwWindowShouldClose window))
-      (render-one-frame! window world-atom camera config-atom body-program line-program sprite-program particle-program mesh))
-    (println "Shutting down renderer...")
-    (GLFW/glfwDestroyWindow window)
-    (Callbacks/glfwFreeCallbacks window)
-    (GLFW/glfwTerminate)
-    (GLFW/glfwSetErrorCallback nil)))

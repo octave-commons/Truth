@@ -17,7 +17,6 @@
    [domain.chemistry :as chemistry]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [domain.hydro.common :as common]
    [domain.hydro.kernel :as kernel]
    [domain.hydro.density :as density]
    [domain.hydro.pressure :as pressure]))
@@ -25,10 +24,6 @@
 ;; ---------------------------------------------------------------------------
 ;; Kernel primitives (domain.hydro.kernel)
 ;; ---------------------------------------------------------------------------
-
-(def cubic-spline-dw-dq
-  "Derivative dW/dq of the cubic spline (M4) kernel in 3D, dimensionless."
-  kernel/cubic-spline-dw-dq)
 
 (def cubic-spline-w
   "Dimensionless cubic spline (M4) kernel W(q)."
@@ -70,10 +65,6 @@
   "Geometric SPH smoothing length given nearest-neighbour distance."
   density/smoothing-length-from-dist)
 
-(def smoothing-length
-  "Geometric SPH smoothing length from the world's spatial tree."
-  density/smoothing-length)
-
 (def density-system
   "SPH density pass: compute ρ_i for every `:nebula` particle."
   density/density-system)
@@ -101,18 +92,6 @@
 ;; ---------------------------------------------------------------------------
 ;; Shared utilities (domain.hydro.common)
 ;; ---------------------------------------------------------------------------
-
-(def sph-h-factor
-  "SPH smoothing length as a multiple of nearest-neighbour distance."
-  common/sph-h-factor)
-
-(def sph-h-min
-  "Absolute floor on the smoothing length (m)."
-  common/sph-h-min)
-
-(def hydro-active?
-  "Pressure-gradient dynamics matter for diffuse and contracting gas."
-  common/hydro-active?)
 
 ;; ---------------------------------------------------------------------------
 ;; Facade-only utilities

@@ -222,6 +222,11 @@
   "Character width of the binding bar rendered in `binding-readout-entry`."
   20)
 
+;; Intentional: `apply str` over a char seq, not `clojure.string/join`. The
+;; suggested rewrite pulls a `clojure.string` require into a render namespace to
+;; say "repeat a char N times" less directly, and single-arg `str/join` is
+;; slower than `apply str` on a char seq.
+#_{:splint/disable [style/apply-str]}
 (defn- binding-bar
   "A `[####----]`-style ASCII bar for `b` in [0,1], `binding-bar-length` wide."
   [b]

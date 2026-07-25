@@ -202,6 +202,12 @@
 
     cfg))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn escape-action
   "The menu :action an ESC press implies for the current shell state, or nil
    when there is nothing left to escape.
@@ -216,6 +222,12 @@
     (:selection cfg)        [:ui/select-entity nil]
     :else                   nil))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn confirm-close-hud
   "Centered quit-confirmation prompt over a `w`×`h` framebuffer, shown while
    `:ui/confirm-close?` is set (the OS close button was pressed). Returns

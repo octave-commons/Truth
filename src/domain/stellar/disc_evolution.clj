@@ -13,6 +13,10 @@
    [domain.planet-formation       :as pf]
    [shape.spatial                 :as sp]))
 
+;; UNUSED-PENDING: Disc/stellar-structure physics implemented ahead of the system that consumes
+;; it — no write-set emitter reads these yet.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^:const disk-formation-threshold
   "Minimum specific angular momentum (m²/s) for disk formation.
    Below this, material accretes directly. Above, a disk forms.
@@ -119,6 +123,47 @@
                                  {:mass mass :dist d}))))))
           perturbers)))
 
+(defn- hill-clamped-spawn-radius
+  "Spawn radius (m) for a fragment of the disk host at `eid`, Hill-clamped — or
+   `nil` when the clamp falls below the placement floor, in which case the spawn
+   is dropped this tick (logged) and the caller must return its working world
+   unchanged. NEVER violate `fragment-placement-floor-m`.
+
+   `radius-fraction` is the branch's share of the disk annulus (binary 0.5, GI
+   0.3) — that fraction and `branch` are the ONLY things the two fragment
+   branches disagree about. This is shared SAFETY logic: it was duplicated
+   verbatim across both branches, so fixing one silently left the other wrong
+   (jscpd; card kanban/tasks/static-analysis-jscpd-src-extractions.md ranked it
+   the highest drift risk of the six).
+
+   Takes a single map because the honest positional arity is 8, which is the
+   HARD parameter-bloat gate (`dev/smell_report.clj`)."
+  [{:keys [world' tick eid host-mass radius-fraction r-disk-m perturbers branch]}]
+  (let [;; Physical disk radius (the branch's share of the annulus), floored at
+        ;; 0.3 AU so fragments never land inside the physical placement floor
+        ;; where the sub-stepper's K clamp would bind (design §3.3/§3.5).
+        ;; Placement is decoupled from the global bulk dt — see
+        ;; `fragment-placement-floor-m`.
+        r-orbit-raw (max (* (double radius-fraction) (max 1.0e10 r-disk-m))
+                         fragment-placement-floor-m)
+        ;; Hill-stable clamp: cap the spawn radius where the host's pull still
+        ;; dominates the local tidal field by `hill-dominance-factor`
+        ;; (research §3.3).
+        r-hill-max  (disc/tidal-dominance-radius
+                     host-mass hill-dominance-factor
+                     (tidal-perturbers eid (ecs/get-component world' eid c/position)
+                                       perturbers))
+        r-orbit     (min r-orbit-raw r-hill-max)]
+    (if (< r-orbit fragment-placement-floor-m)
+      ;; The clamp crossed the floor in a tight tide: skip the spawn this tick
+      ;; (retry later) — never violate the floor.
+      (do (log-fragment-drop! tick eid :hill-clamp-below-floor
+                              {:branch branch
+                               :r-hill-max-m r-hill-max
+                               :floor-m fragment-placement-floor-m})
+          nil)
+      r-orbit)))
+
 (defn- put-tracked
   "`ecs/put-component` on disk-evolution's internal working world, recording the
    written cell in the `::disk-ws` write-set accumulator carried on the world
@@ -199,8 +244,8 @@
                              (put-tracked eid c/disk-mass (+ old-dm add-mass))
                              (put-tracked eid c/disk-angular-mom (sp/v+ old-L add-L))))
                        w)))
-                  world
-                  (keys dmf)))
+                 world
+                 (keys dmf)))
         ;; One cheap scan per tick shared by every disk host (never a per-disk
         ;; neighbour query — cf. kinematics/stellar-parents): every massive
         ;; body is a potential tidal perturber for the Hill-stable spawn
@@ -255,156 +300,127 @@
                                                             :luminosity L-star
                                                             :composition composition})
                                      (merge (get-in world [:test/disk-regime eid] {})))
-                       w' (-> w'
-                              (put-tracked eid c/disk-regime regime-map)
-                              (put-tracked eid c/disk-fragments-spawned fragments-spawned))
+                      w' (-> w'
+                             (put-tracked eid c/disk-regime regime-map)
+                             (put-tracked eid c/disk-fragments-spawned fragments-spawned))
                        ;; Post-viscous disk radius, shared by both fragmentation
                        ;; branches for the disk-scale gate and spawn placement.
-                       r-disk-now (disc/disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
+                      r-disk-now (disc/disk-radius (/ (sp/len disk-L') (max 1.0 disk-m')) M')
                        ;; Disk-scale gate (research §3.2): a "disk" beyond
                        ;; `max-fragmentation-disk-radius` is the still-collapsing
                        ;; clump, not a protostellar disk — fragmentation into it
                        ;; births unbound planets at kAU.
-                       disk-scale-ok? (<= r-disk-now max-fragmentation-disk-radius)]
+                      disk-scale-ok? (<= r-disk-now max-fragmentation-disk-radius)]
                    ;; Check for gravitational instability
                   (cond
                      ;; Binary formation: massive disk fragments into companion
-                     (> ratio binary-fragment-threshold)
-                     (if-not disk-scale-ok?
-                       (do (log-fragment-drop! (:tick world) eid :clump-scale-disk
-                                               {:branch :binary
-                                                :r-disk-m r-disk-now
-                                                :gate-m max-fragmentation-disk-radius})
-                           w')
-                       (let [companion-m (* 0.3 disk-m') ;; companion gets 30% of disk
+                    (> ratio binary-fragment-threshold)
+                    (if-not disk-scale-ok?
+                      (do (log-fragment-drop! (:tick world) eid :clump-scale-disk
+                                              {:branch :binary
+                                               :r-disk-m r-disk-now
+                                               :gate-m max-fragmentation-disk-radius})
+                          w')
+                      (let [companion-m (* 0.3 disk-m') ;; companion gets 30% of disk
                              ;; Place companion at half the disk radius, but never
-                             ;; inside the physical placement floor (0.3 AU) where
-                             ;; the sub-stepper's K clamp would bind (design §3.3).
-                             ;; Placement is decoupled from the global bulk dt —
-                             ;; see `fragment-placement-floor-m`.
-                             r-orbit-raw (max (* 0.5 (max 1.0e10 r-disk-now))
-                                              fragment-placement-floor-m)
-                             ;; Hill-stable clamp: cap the spawn radius where the
-                             ;; host's pull still dominates the local tidal field
-                             ;; by `hill-dominance-factor` (research §3.3).
-                             r-hill-max  (disc/tidal-dominance-radius
-                                          M' hill-dominance-factor
-                                          (tidal-perturbers eid (ecs/get-component w' eid c/position)
-                                                            spawn-perturbers))
-                             r-orbit     (min r-orbit-raw r-hill-max)]
-                         (if (< r-orbit fragment-placement-floor-m)
-                           ;; The clamp crossed the floor in a tight tide: skip
-                           ;; the spawn this tick (retry later) — never violate
-                           ;; the floor.
-                           (do (log-fragment-drop! (:tick world) eid :hill-clamp-below-floor
-                                                   {:branch :binary
-                                                    :r-hill-max-m r-hill-max
-                                                    :floor-m fragment-placement-floor-m})
-                               w')
-                           (let [;; Circular orbit speed in the SOFTENED field the
+                            r-orbit     (hill-clamped-spawn-radius
+                                         {:world' w' :tick (:tick world) :eid eid
+                                          :host-mass M' :radius-fraction 0.5
+                                          :r-disk-m r-disk-now
+                                          :perturbers spawn-perturbers
+                                          :branch :binary})]
+                        (if (nil? r-orbit)
+                          w'
+                          (let [;; Circular orbit speed in the SOFTENED field the
                                  ;; integrator applies — the unsoftened √(GM/r) at an
                                  ;; r-orbit inside the Plummer length ejected every
                                  ;; fragment at several × the cloud escape speed.
-                                 v-orbit     (law/softened-circular-speed M' r-orbit eps)
+                                v-orbit     (law/softened-circular-speed M' r-orbit eps)
                                  ;; Random orbital phase
-                                 angle       (* 2.0 math/PI (sink/hash01 (hash [eid (:tick world) :binary])))
-                                 pos         (ecs/get-component w' eid c/position)
-                                 offset      [(* r-orbit (math/cos angle))
-                                              (* r-orbit (math/sin angle))
-                                              0.0]
-                                 comp-pos    (sp/v+ pos offset)
-                                 comp-vel    (sp/v+ (ecs/get-component w' eid c/velocity)
-                                                    [(* (- v-orbit) (math/sin angle))
-                                                     (* v-orbit (math/cos angle))
-                                                     0.0])
+                                angle       (* 2.0 math/PI (sink/hash01 (hash [eid (:tick world) :binary])))
+                                pos         (ecs/get-component w' eid c/position)
+                                offset      [(* r-orbit (math/cos angle))
+                                             (* r-orbit (math/sin angle))
+                                             0.0]
+                                comp-pos    (sp/v+ pos offset)
+                                comp-vel    (sp/v+ (ecs/get-component w' eid c/velocity)
+                                                   [(* (- v-orbit) (math/sin angle))
+                                                    (* v-orbit (math/cos angle))
+                                                    0.0])
                                  ;; Emit spawn request (materialized next tick by materialize-lifecycle)
-                                 spawn-spec  {:position comp-pos :velocity comp-vel
-                                              :mass companion-m
-                                              :radius (geometry/sphere-radius companion-m 1.0e3)
-                                              :matter-state :protostar
-                                              :composition (or (ecs/get-component w' eid c/composition)
-                                                               law.composition/solar-composition)
-                                              :temperature 1000.0}
-                                 w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
+                                spawn-spec  {:position comp-pos :velocity comp-vel
+                                             :mass companion-m
+                                             :radius (geometry/sphere-radius companion-m 1.0e3)
+                                             :matter-state :protostar
+                                             :composition (or (ecs/get-component w' eid c/composition)
+                                                              law.composition/solar-composition)
+                                             :temperature 1000.0}
+                                w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
                                  ;; Update disk after fragmentation
-                                 w''' (-> w''
-                                          (put-tracked eid c/disk-mass (- disk-m' companion-m))
-                                          (put-tracked eid c/disk-angular-mom
-                                                       (sp/v* disk-L' (/ (- disk-m' companion-m)
-                                                                         (max 1.0 disk-m')))))]
-                             w'''))))
+                                w''' (-> w''
+                                         (put-tracked eid c/disk-mass (- disk-m' companion-m))
+                                         (put-tracked eid c/disk-angular-mom
+                                                      (sp/v* disk-L' (/ (- disk-m' companion-m)
+                                                                        (max 1.0 disk-m')))))]
+                            w'''))))
 
                      ;; GI fragment: fast-cooling disk spawns a gas-giant embryo only
-                     (and (> ratio disk-fragment-threshold)
-                          (= :fragmenting (:regime regime-map))
-                          (< fragments-spawned max-gi-fragments-per-disk))
-                     (if-not disk-scale-ok?
-                       (do (log-fragment-drop! (:tick world) eid :clump-scale-disk
-                                               {:branch :gi
-                                                :r-disk-m r-disk-now
-                                                :gate-m max-fragmentation-disk-radius})
-                           w')
-                       (let [embryo-m-raw (* 0.1 disk-m')
-                             embryo-m (min embryo-m-raw gi-fragment-mass-cap)
-                             ;; Physical disk radius (30% of the disk annulus), floored
-                             ;; at 0.3 AU — decoupled from the global bulk dt; the
-                             ;; integrator sub-steps compact fragments (design §3.5).
-                             r-orbit-raw (max (* 0.3 (max 1.0e10 r-disk-now))
-                                              fragment-placement-floor-m)
-                             ;; Hill-stable clamp: cap the spawn radius where the
-                             ;; host's pull still dominates the local tidal field
-                             ;; by `hill-dominance-factor` (research §3.3).
-                             r-hill-max  (disc/tidal-dominance-radius
-                                          M' hill-dominance-factor
-                                          (tidal-perturbers eid (ecs/get-component w' eid c/position)
-                                                            spawn-perturbers))
-                             r-orbit   (min r-orbit-raw r-hill-max)]
-                         (if (< r-orbit fragment-placement-floor-m)
-                           ;; The clamp crossed the floor in a tight tide: skip
-                           ;; the spawn this tick (retry later) — never violate
-                           ;; the floor.
-                           (do (log-fragment-drop! (:tick world) eid :hill-clamp-below-floor
-                                                   {:branch :gi
-                                                    :r-hill-max-m r-hill-max
-                                                    :floor-m fragment-placement-floor-m})
-                               w')
-                           (let [;; NEWTONIAN circular speed, not softened: the GI
+                    (and (> ratio disk-fragment-threshold)
+                         (= :fragmenting (:regime regime-map))
+                         (< fragments-spawned max-gi-fragments-per-disk))
+                    (if-not disk-scale-ok?
+                      (do (log-fragment-drop! (:tick world) eid :clump-scale-disk
+                                              {:branch :gi
+                                               :r-disk-m r-disk-now
+                                               :gate-m max-fragmentation-disk-radius})
+                          w')
+                      (let [embryo-m-raw (* 0.1 disk-m')
+                            embryo-m (min embryo-m-raw gi-fragment-mass-cap)
+                            r-orbit     (hill-clamped-spawn-radius
+                                         {:world' w' :tick (:tick world) :eid eid
+                                          :host-mass M' :radius-fraction 0.3
+                                          :r-disk-m r-disk-now
+                                          :perturbers spawn-perturbers
+                                          :branch :gi})]
+                        (if (nil? r-orbit)
+                          w'
+                          (let [;; NEWTONIAN circular speed, not softened: the GI
                                  ;; fragment spawns as :gas-giant and is sub-stepped
                                  ;; by the integrator's Wisdom–Holman path, whose drift
                                  ;; applies the exact Newtonian central term — the
                                  ;; spawn velocity must match that law (design §3.5
                                  ;; pairing rule; softened-circular here produced the
                                  ;; e≈1 near-radial plunge regression of 2026-07-23).
-                                 v-orbit   (law/newtonian-circular-speed M' r-orbit)
-                                 angle     (* 2.0 math/PI (sink/hash01 (hash [eid (:tick world) :planet])))
-                                 pos       (ecs/get-component w' eid c/position)
-                                 offset    [(* r-orbit (math/cos angle))
-                                            (* r-orbit (math/sin angle))
-                                            0.0]
-                                 epos      (sp/v+ pos offset)
-                                 evel      (sp/v+ (ecs/get-component w' eid c/velocity)
-                                                  [(* (- v-orbit) (math/sin angle))
-                                                   (* v-orbit (math/cos angle))
-                                                   0.0])
+                                v-orbit   (law/newtonian-circular-speed M' r-orbit)
+                                angle     (* 2.0 math/PI (sink/hash01 (hash [eid (:tick world) :planet])))
+                                pos       (ecs/get-component w' eid c/position)
+                                offset    [(* r-orbit (math/cos angle))
+                                           (* r-orbit (math/sin angle))
+                                           0.0]
+                                epos      (sp/v+ pos offset)
+                                evel      (sp/v+ (ecs/get-component w' eid c/velocity)
+                                                 [(* (- v-orbit) (math/sin angle))
+                                                  (* v-orbit (math/cos angle))
+                                                  0.0])
                                  ;; Emit spawn request (materialized next tick by materialize-lifecycle)
-                                 spawn-spec {:position epos :velocity evel
-                                             :mass embryo-m
-                                             :radius (geometry/sphere-radius embryo-m geometry/planet-material-density)
-                                             :matter-state :gas-giant
-                                             :composition (or (ecs/get-component w' eid c/composition)
-                                                              law.composition/solar-composition)
-                                             :temperature 300.0}
+                                spawn-spec {:position epos :velocity evel
+                                            :mass embryo-m
+                                            :radius (geometry/sphere-radius embryo-m geometry/planet-material-density)
+                                            :matter-state :gas-giant
+                                            :composition (or (ecs/get-component w' eid c/composition)
+                                                             law.composition/solar-composition)
+                                            :temperature 300.0}
 
-                                 w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
-                                 w''' (-> w''
-                                          (put-tracked eid c/disk-mass (- disk-m' embryo-m))
-                                          (put-tracked eid c/disk-angular-mom
-                                                       (sp/v* disk-L' (/ (- disk-m' embryo-m)
-                                                                         (max 1.0 disk-m'))))
-                                          (put-tracked eid c/disk-fragments-spawned (inc fragments-spawned)))]
-                             (if (>= embryo-m law/opacity-limit-mass)
-                               w'''
-                               w')))))
+                                w'' (put-tracked w' eid c/spawn-request-disk [spawn-spec])
+                                w''' (-> w''
+                                         (put-tracked eid c/disk-mass (- disk-m' embryo-m))
+                                         (put-tracked eid c/disk-angular-mom
+                                                      (sp/v* disk-L' (/ (- disk-m' embryo-m)
+                                                                        (max 1.0 disk-m'))))
+                                         (put-tracked eid c/disk-fragments-spawned (inc fragments-spawned)))]
+                            (if (>= embryo-m law/opacity-limit-mass)
+                              w'''
+                              w')))))
 
                     ;; Just viscous evolution, no fragmentation
                     :else w'))))))

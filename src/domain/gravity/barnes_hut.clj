@@ -30,10 +30,6 @@
   "Gravitational acceleration for every entity in the SoA cache."
   force/acceleration-for-soa)
 
-(def default-theta
-  "Default Barnes–Hut opening angle."
-  force/default-theta)
-
 (def default-softening
   "Plummer softening length."
   force/default-softening)

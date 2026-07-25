@@ -80,11 +80,11 @@
 
 ;; --- Baryon density (PDG 2025 + Yeh+2026) -----------------------------------
 
-(def ^:const eta-10
+(def ^:export ^:const eta-10
   "Baryon-to-photon ratio × 10¹⁰. Combined BBN+CMB constraint."
   6.12)
 
-(def ^:const omega-b-h2
+(def ^:export ^:const omega-b-h2
   "Baryon density parameter Ω_b h². From Planck CMB + BBN."
   0.02236)
 

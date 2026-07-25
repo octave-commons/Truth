@@ -72,7 +72,7 @@
 ;; --- Handoff / planet-candidate record (M5 handoff Phase 4) -----------------
 ;; The full `:planet-candidate` output record (parent kanban/tasks/ecology-
 ;; water-gate-snowline.md §5), assembled once a candidate body meets the §2
-;; per-planet handoff table. Sole writer: `domain.stellar.classifier/
+;; per-planet handoff table. Sole writer: `domain.stellar.classifier.candidate/
 ;; handoff-system`. Persists once written — a candidate that briefly stops
 ;; meeting the gate (e.g. a transient collision in flight) keeps its last
 ;; recorded contract rather than being retracted, mirroring how

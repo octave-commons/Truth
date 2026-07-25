@@ -28,7 +28,7 @@
    construction.)
 
    INPUT CONTRACT: the candidate is assumed to have passed the M5 handoff
-   gate (`domain.stellar.classifier/handoff-system`): bound orbit,
+   gate (`domain.stellar.classifier.candidate/handoff-system`): bound orbit,
    150–400 K equilibrium temperature, ≤95% H/He by mass, at least :thin
    atmosphere. In particular the bulk composition ALWAYS has >5% non-gas
    elements, so the resource-field renormalizations below never divide by
@@ -44,6 +44,7 @@
    first model; the §7 layer-thickness gap is documented in
    `law.interior`'s constants."
   (:require
+   [clojure.math :as math]
    [law.composition :as comp]
    [law.interior :as law]
    [law.stellar :as law-stellar]
@@ -64,7 +65,7 @@
 (defn- fract
   "Fractional part of `x` in [0,1)."
   [x]
-  (- (double x) (Math/floor (double x))))
+  (- (double x) (math/floor (double x))))
 
 (defn- ice-formers-mass-fraction
   "Total ice-formers mass fraction of composition map `m`. The reduction is
@@ -136,12 +137,12 @@
   (let [mclass (:material-class candidate)
         base   (get law/mean-density-reference mclass
                     (:mixed law/mean-density-reference))
-        ref    (get law/iron-fraction-reference mclass
+        fe-ref (get law/iron-fraction-reference mclass
                     (:mixed law/iron-fraction-reference))
         fe-ni  (+ (double (get-in candidate [:bulk-composition :Fe] 0.0))
                   (double (get-in candidate [:bulk-composition :Ni] 0.0)))]
     (+ (double base)
-       (* law/iron-density-lever (- fe-ni ref)))))
+       (* law/iron-density-lever (- fe-ni fe-ref)))))
 
 (defn derive-radius-m
   "Body radius (m) implied by surface gravity `g` (m/s²) and mean density
@@ -153,7 +154,7 @@
     (throw (ex-info "domain.interior/derive-radius-m: non-positive surface gravity"
                     {:surface-gravity g})))
   (/ (* 3.0 (double g))
-     (* 4.0 Math/PI law-stellar/G (double rho))))
+     (* 4.0 math/PI law-stellar/G (double rho))))
 
 (defn derive-mass-kg
   "Body mass (kg) from surface gravity and radius: M = gR²/G."
@@ -190,14 +191,14 @@
    `rho` (kg/m³) inside outer radius `radius-m` → layer map. Inner radius is
    solved from the spherical-shell volume, never allowed to swallow the
    whole body by construction of the caller's mass budget."
-  [name radius-m shell-mass rho t-surface band]
-  (let [r3    (Math/pow radius-m 3.0)
+  [layer-name radius-m shell-mass rho t-surface band]
+  (let [r3    (math/pow radius-m 3.0)
         dv    (/ (double shell-mass)
-                 (* (/ 4.0 3.0) Math/PI (double rho)))
-        inner (Math/cbrt (max 0.0 (- r3 dv)))
-        vol   (* (/ 4.0 3.0) Math/PI (- r3 (Math/pow inner 3.0)))
+                 (* (/ 4.0 3.0) math/PI (double rho)))
+        inner (math/cbrt (max 0.0 (- r3 dv)))
+        vol   (* (/ 4.0 3.0) math/PI (- r3 (math/pow inner 3.0)))
         depth (- radius-m (/ (+ radius-m inner) 2.0))]
-    {:name         name
+    {:name         layer-name
      :inner-radius (double inner)
      :outer-radius (double radius-m)
      :mass         (double shell-mass)
@@ -233,25 +234,25 @@
                      (min (* (double mass-kg) (ice-formers-mass-fraction bulk))
                           (* law/ice-density-reference
                              law/ice-shell-max-volume-fraction
-                             (/ 4.0 3.0) Math/PI (Math/pow radius-m 3.0)))
+                             (/ 4.0 3.0) math/PI (math/pow radius-m 3.0)))
                      (let [d (min (* law/crust-thickness-reference-m
                                      (get law/crust-thickness-band-factor band 1.0))
                                   (* law/shell-max-radius-fraction radius-m))
-                           r3 (Math/pow radius-m 3.0)
+                           r3 (math/pow radius-m 3.0)
                            ri (- radius-m d)
-                           vol (* (/ 4.0 3.0) Math/PI (- r3 (Math/pow ri 3.0)))]
+                           vol (* (/ 4.0 3.0) math/PI (- r3 (math/pow ri 3.0)))]
                        (* vol law/crust-density-reference)))
         shell     (shell-layer (if icy? :ice-shell :crust)
                                radius-m shell-mass
                                (if icy? law/ice-density-reference
-                                        law/crust-density-reference)
+                                   law/crust-density-reference)
                                t-surface band)
         remaining (- (double mass-kg) shell-mass)
         core-mass (* (min (core-mass-fraction candidate)
                           law/core-max-remaining-mass-fraction)
                      remaining)
-        core-r    (Math/cbrt (/ (* 3.0 core-mass)
-                                (* 4.0 Math/PI law/core-density-reference)))
+        core-r    (math/cbrt (/ (* 3.0 core-mass)
+                                (* 4.0 math/PI law/core-density-reference)))
         core      {:name         :core
                    :inner-radius 0.0
                    :outer-radius (double core-r)
@@ -262,8 +263,8 @@
         mantle-in  core-r
         mantle-out (:inner-radius shell)
         mantle-mass (- remaining core-mass)
-        mantle-vol (* (/ 4.0 3.0) Math/PI
-                      (- (Math/pow mantle-out 3.0) (Math/pow mantle-in 3.0)))
+        mantle-vol (* (/ 4.0 3.0) math/PI
+                      (- (math/pow mantle-out 3.0) (math/pow mantle-in 3.0)))
         mantle    {:name         :mantle
                    :inner-radius (double mantle-in)
                    :outer-radius (double mantle-out)
@@ -285,7 +286,7 @@
   [candidate t-surface]
   (let [l (sp/len (:rotation-axis candidate [0.0 0.0 1.0]))
         am (sp/len (:angular-momentum candidate [0.0 0.0 0.0]))]
-    (* 2.0 Math/PI (fract (+ l (/ am 1.0e34) (/ t-surface 137.0))))))
+    (* 2.0 math/PI (fract (+ l (/ am 1.0e34) (/ t-surface 137.0))))))
 
 (defn- axis-basis
   "Orthonormal basis [a u v] with `a` along the candidate's rotation axis
@@ -293,8 +294,8 @@
    Deterministic; degenerate axes fall back to +z."
   [candidate]
   (let [a   (normalize (:rotation-axis candidate [0.0 0.0 1.0]) [0.0 0.0 1.0])
-        ref (if (< (Math/abs (nth a 0)) 0.9) [1.0 0.0 0.0] [0.0 1.0 0.0])
-        u   (normalize (sp/cross a ref) [0.0 1.0 0.0])
+        seed (if (< (Math/abs (nth a 0)) 0.9) [1.0 0.0 0.0] [0.0 1.0 0.0])
+        u   (normalize (sp/cross a seed) [0.0 1.0 0.0])
         v   (sp/cross a u)]
     [a u v]))
 
@@ -304,10 +305,10 @@
    any n without a PRNG."
   [i n phase a u v]
   (let [y     (- 1.0 (/ (* 2.0 (+ (double i) 0.5)) (double n)))
-        r     (Math/sqrt (max 0.0 (- 1.0 (* y y))))
+        r     (math/sqrt (max 0.0 (- 1.0 (* y y))))
         theta (+ (* (double i) law/golden-angle-radians) phase)
-        c     (Math/cos theta)
-        s     (Math/sin theta)]
+        c     (math/cos theta)
+        s     (math/sin theta)]
     (mapv (fn [ac uc vc] (double (+ (* y ac) (* r (+ (* c uc) (* s vc))))))
           a u v)))
 
@@ -319,8 +320,8 @@
   [candidate]
   (let [g (double (:surface-gravity candidate))
         [lo hi] law/plate-count-bounds]
-    (-> (Math/round ^double (* law/plate-count-reference
-                               (Math/sqrt (/ g law/surface-gravity-reference))))
+    (-> (math/round ^double (* law/plate-count-reference
+                               (math/sqrt (/ g law/surface-gravity-reference))))
         (max lo)
         (min hi)
         int)))
@@ -330,7 +331,7 @@
    sqrt(g/g_ref) lever."
   [candidate]
   (let [band-factor (get law/tectonic-activity-band-factor (:thermal-band candidate) 1.0)
-        lever       (-> (Math/sqrt (/ (double (:surface-gravity candidate))
+        lever       (-> (math/sqrt (/ (double (:surface-gravity candidate))
                                       law/surface-gravity-reference))
                         (max (first law/plate-speed-gravity-lever-bounds))
                         (min (second law/plate-speed-gravity-lever-bounds)))]
@@ -349,15 +350,15 @@
    radius (equal-area packing), rotated by i × golden-angle. Qualitative
    macro geometry — plate boundaries are the seed later slices refine."
   [center axis i n radius-m]
-  (let [alpha (* 0.55 (Math/sqrt (/ (* 4.0 Math/PI) (double n))))
+  (let [alpha (* 0.55 (math/sqrt (/ (* 4.0 math/PI) (double n))))
         rot   (* (double i) law/golden-angle-radians)
         [t1 t2] (tangent-basis center axis)]
     (mapv (fn [k]
-            (let [phi (+ (* (double k) (/ Math/PI 3.0)) rot)
-                  off (sp/v+ (sp/v* center (dec (Math/cos alpha)))
-                             (sp/v* (sp/v+ (sp/v* t1 (Math/cos phi))
-                                           (sp/v* t2 (Math/sin phi)))
-                                    (Math/sin alpha)))
+            (let [phi (+ (* (double k) (/ math/PI 3.0)) rot)
+                  off (sp/v+ (sp/v* center (dec (math/cos alpha)))
+                             (sp/v* (sp/v+ (sp/v* t1 (math/cos phi))
+                                           (sp/v* t2 (math/sin phi)))
+                                    (math/sin alpha)))
                   p   (normalize (sp/v+ center off) center)]
               (mapv double (sp/v* p radius-m))))
           (range 6))))
@@ -454,15 +455,28 @@
                       normalize-shares)
       :background (normalize-shares solid))))
 
+;; Intentional: `kind` is UNUSED-PENDING (see the docstring) — the schema gap is
+;; the finding, not the binding. Underscoring it would hide a real design seam.
+#_{:clj-kondo/ignore [:unused-binding]}
 (defn- resource-cell
   "One resource cell at unit surface point `c` on a body of radius
    `radius-m`, holding `cell-mass` kg with element `shares`: region centre
    sits one cell-radius below the surface (the cell occupies the crust
    band), density-per-element is share × mass / region volume. Validates
-   `law.voxel/resource-cell-schema`."
+   `law.voxel/resource-cell-schema`.
+
+   UNUSED-PENDING `kind` — the caller (`seed-resource-cells`) genuinely
+   computes the enrichment kind (`:hotspot`/`:polar-ice`/`:downwelling`/
+   `:background`) and it is deliberately dropped here, because
+   `law.voxel/resource-cell-schema` (slice 1) carries no `:kind` key.
+   `domain.voxel.band/cell-material` therefore re-derives the material from
+   element content instead of reading it. Threading `:kind` through the
+   schema and retiring that inference is a design change, not a lint fix; see
+   `kanban/tasks/static-analysis-unused-pending-convention.md`. Keep the
+   parameter named so the seam stays visible at both ends."
   [kind c radius-m cell-mass shares]
   (let [r   (* radius-m law/resource-cell-radius-fraction)
-        vol (* (/ 4.0 3.0) Math/PI (Math/pow r 3.0))]
+        vol (* (/ 4.0 3.0) math/PI (math/pow r 3.0))]
     {:region {:center (mapv double (sp/v* c (- radius-m r)))
               :radius (double r)}
      :total-mass (double cell-mass)
@@ -543,7 +557,7 @@
    scheme).
 
    INPUT CONTRACT: `candidate` is a record that passed the M5 handoff gate
-   (`domain.stellar.classifier/handoff-system`). A `:gaseous` candidate can
+   (`domain.stellar.classifier.candidate/handoff-system`). A `:gaseous` candidate can
    clear that gate but has no solid surface to seed (design §4) — this
    throws rather than inventing a crust. `:mixed` candidates seed with the
    rocky template under the :mixed kind/kind conventions documented on

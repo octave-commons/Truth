@@ -196,7 +196,7 @@
         nearby-mass (reduce + 0 (map :mass nearby))]
     (> mass (* 100 nearby-mass)))) ;; dominates by factor of 100
 
-(defn planet?
+(defn ^:export planet?
   "Full astronomical definition of a planet."
   [body other-bodies]
   (and (constants/hydrostatic-equilibrium? body)

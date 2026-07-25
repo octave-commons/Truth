@@ -8,6 +8,7 @@
 
    See docs/specs/gradual-mass-transfer-realspec.md.",
   (:require
+   [clojure.math :as math]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.parallel    :as par]
@@ -27,9 +28,10 @@
 (def ^:private sink-states
   #{:condensed-core :planetesimal :gas-giant :brown-dwarf :protostar :star :planet})
 
-(def ^:private gas-pred
-  "Predicate matching nebula gas parcels."
-  #(= :nebula (:matter-state %)))
+(defn- gas-pred
+  "True when `entity` is a nebula gas parcel."
+  [entity]
+  (= :nebula (:matter-state entity)))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers
@@ -61,7 +63,7 @@
   "Deterministic [0,1) value from an integer key (for stable, non-random IMF /
    feedback acceptance — mirrors stellar's sink-formation hashing)."
   [n]
-  (/ (double (mod (* (+ 1 (long n)) 2654435761) 1000003)) 1000003.0))
+  (/ (double (mod (* (inc (long n)) 2654435761) 1000003)) 1000003.0))
 
 (defn- donor-mass
   "Mass of donor entity `eid` in `world`, or 0.0."
@@ -74,7 +76,7 @@
   (double (or (ecs/get-component world eid c/density)
               (let [m (donor-mass world eid)
                     r (double (or (ecs/get-component world eid c/radius) 1.0))]
-                (if (pos? r) (/ (* 3.0 m) (* 4.0 Math/PI r r r)) 0.0))
+                (if (pos? r) (/ (* 3.0 m) (* 4.0 math/PI r r r)) 0.0))
               0.0)))
 
 (defn- relative-velocity
@@ -392,7 +394,3 @@
                         c/disk-mass-flux c/disk-l-flux c/roche-lobe
                         c/mass-transfer-rate])))})
 
-(defn systems
-  "Compatibility alias. Returns a vector containing `mass-transfer-system`."
-  []
-  [(mass-transfer-system)])

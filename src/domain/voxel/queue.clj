@@ -106,9 +106,9 @@
     (when-not (voxel/voxel-edit? edit)
       (throw (ex-info "domain.voxel.queue/edits->jobs: edit fails law.voxel/voxel-edit-schema"
                       {:edit edit}))))
-  (mapv (fn [chunk]
+  (mapv (fn [batch]
           (cond-> {:kind       :apply-edits
-                   :edits      (vec chunk)
+                   :edits      (vec batch)
                    :provenance provenance}
             (some? region) (assoc :region region)))
         (partition-all voxel/max-edits-per-job edits)))

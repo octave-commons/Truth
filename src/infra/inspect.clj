@@ -59,11 +59,23 @@
   [{:keys [center r ctx color n]}]
   (overlay/halo-shapes {:center center :r r :ctx ctx :color color :n n}))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn velocity-arrow-shapes
   "An arrow from `center` along the body's world velocity, as :line segments."
   [center vel-world body-r ctx]
   (overlay/velocity-arrow-shapes center vel-world body-r ctx))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn overlay-radius
   "Halo radius for a body of render radius `r` at `center`."
   [{:keys [ctx center r k min-frac]}]
@@ -88,26 +100,6 @@
 ;; Formatting helpers
 ;; ---------------------------------------------------------------------------
 
-(def solar-mass
-  "Solar mass reference constant [kg]."
-  fmt/solar-mass)
-
-(def solar-radius
-  "Solar radius reference constant [m]."
-  fmt/solar-radius)
-
-(def solar-lum
-  "Solar luminosity reference constant [W]."
-  fmt/solar-lum)
-
-(def earth-mass
-  "Earth mass reference constant [kg]."
-  fmt/earth-mass)
-
-(def earth-radius
-  "Earth radius reference constant [m]."
-  fmt/earth-radius)
-
 (def au
   "Astronomical unit reference constant [m]."
   fmt/au)
@@ -127,6 +119,12 @@
   [state]
   (fmt/state-label state))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn state-color
   "RGBA colour for a matter-state keyword, used by the inspector card title."
   [state]

@@ -163,7 +163,7 @@
 (deftest binding-step-pure-contract
   (testing "the pure step: accrual clamps at 1.0, decay drops worlds at 0,
             signals scale accrual, and neutral signals are the default"
-    (let [step (fn [m] (narrowing/binding-step m))]
+    (let [step narrowing/binding-step]
       (is (= 1.0 (get (:binding (step {:binding {7 0.99} :focused-eids [7]})) 7))
           "accrual clamps at capture, never overshoots")
       (is (nil? (get (:binding (step {:binding {7 0.001}})) 7))

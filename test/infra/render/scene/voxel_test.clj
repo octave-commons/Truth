@@ -39,12 +39,12 @@
          (ecs/put-component eid c/position body-pos)
          (ecs/put-component eid c/commitment-state :committed)
          (ecs/put-component eid c/voxel-band
-                             {:spec {}
-                              :voxels {[0 0 0] (voxel :basalt)
-                                       [1 0 0] (voxel :ice)
-                                       [0 1 0] (voxel :ore)
-                                       [2 2 2] nil}
-                              :touched {}}))]))
+                            {:spec {}
+                             :voxels {[0 0 0] (voxel :basalt)
+                                      [1 0 0] (voxel :ice)
+                                      [0 1 0] (voxel :ore)
+                                      [2 2 2] nil}
+                             :touched {}}))]))
 
 (deftest voxel-cube-shapes-empty-cases
   (testing "no committed world at all -> no shapes"
@@ -78,7 +78,8 @@
         (is (= (rcolor/voxel-material-color :basalt) (get by-material :basalt)))
         (is (= (rcolor/voxel-material-color :ice) (get by-material :ice)))
         (is (= (rcolor/voxel-material-color :ore) (get by-material :ore)))
-        (is (distinct? (vals by-material)) "three different materials read as three different colors")))
+        (is (apply distinct? (vals by-material))
+            "three different materials read as three different colors")))
     (testing "every shape is a positioned, radius-carrying voxel-cube body shape"
       (is (every? #(= :voxel-cube (:render-mode %)) shapes))
       (is (every? #(pos? (double (:radius %))) shapes))

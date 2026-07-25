@@ -12,7 +12,7 @@
    [domain.physics.cache :as pcache]
    [domain.spatial.index :as spatial]
    [domain.intervention :as intervention]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.player :as player]
    [domain.pacing :as pacing]
    [domain.ecology :as ecology]
@@ -101,9 +101,10 @@
 
 ;; --- M5 handoff Phase 4: the :event/phase0-handoff ledger append ------------
 ;; See kanban/tasks/ecology-m5-phase4-handoff-event.md and parent
-;; kanban/tasks/ecology-water-gate-snowline.md §2, §5. `domain.stellar.
-;; classifier/handoff-system` is a genuine write-set fan-out emitter and the
-;; SOLE writer of `c/planet-candidate`, but — like `:event/collision` in
+;; kanban/tasks/ecology-water-gate-snowline.md §2, §5.
+;; `domain.stellar.classifier.candidate/handoff-system` is a genuine write-set
+;; fan-out emitter and the SOLE writer of `c/planet-candidate`, but — like
+;; `:event/collision` in
 ;; `domain.physics.collision/collision-detection-system`'s 0-arity fan-out
 ;; form — a ledger event dispatched from INSIDE a write-set `:run` only
 ;; mutates a scratch snapshot that gets diffed away at the component-type
@@ -180,7 +181,7 @@
   [world2 world1]
   (let [dt         (:sim/dt world1)
         summ       (summary/system-summary world2)
-        complexity (classifier/complexity-score summ)
+        complexity (cls-state/complexity-score summ)
         stats      (summary/stats-of world2 summ)
         obs        (player/get-observer world2)
         slipping?  (when obs (player/time-slip-threshold? obs complexity))

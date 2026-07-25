@@ -12,7 +12,7 @@
 (def ^:const phase-multicellular :multicellular)
 (def ^:const phase-complex       :complex)
 
-(def phases
+(def ^:export phases
   "Ordered ecology phase keywords."
   [phase-abiotic phase-prebiotic phase-prokaryotic
    phase-eukaryotic phase-multicellular phase-complex])
@@ -36,7 +36,7 @@
        (Double/isFinite (double x))
        (<= 0.0 (double x) 1.0)))
 
-(defn positive-unit-scalar?
+(defn ^:export positive-unit-scalar?
   "True if x is a finite double in (0,1]."
   [x]
   (and (number? x)
@@ -74,7 +74,7 @@
 
 ;; --- Contracts --------------------------------------------------------------
 
-(def ecology-contract
+(def ^:export ecology-contract
   (contract/->contract
    {:id       :law.ecology/ecology
     :shape-id :law.ecology/biosphere
@@ -83,7 +83,7 @@
     :name     "Toy Ecology"
     :description "Five-variable phase-driven toy biosphere state."}))
 
-(def ecology-extended-contract
+(def ^:export ecology-extended-contract
   (contract/->contract
    {:id       :law.ecology/ecology-extended
     :shape-id :law.ecology/biosphere

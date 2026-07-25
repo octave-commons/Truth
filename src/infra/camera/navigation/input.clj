@@ -158,6 +158,12 @@
   [settings factor]
   (update settings :fit-margin #(max 1.0 (min 4.0 (* % factor)))))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn min-approach-distance
   "Closest orbit distance [ru] the camera may take to a body of render radius
    `r-ru`: a couple of radii out so the globe fills the view without clipping,

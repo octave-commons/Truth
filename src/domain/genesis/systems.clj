@@ -7,7 +7,9 @@
    [domain.player :as player]
    [domain.integrator :as integ]
    [domain.stellar.geometry :as geometry]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.candidate :as cls-cand]
+   [domain.stellar.classifier.planet :as cls-planet]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.fusion :as fusion]
    [domain.chemistry :as chemistry]
@@ -59,9 +61,9 @@
   "Classifier, planet classification + M5 handoff, seeding, fusion,
    chemistry, wind, disc, and regime."
   [dt]
-  [(classifier/classifier-system)
-   (classifier/classification-system)
-   (classifier/handoff-system)
+  [(cls-state/classifier-system)
+   (cls-planet/classification-system)
+   (cls-cand/handoff-system)
    (seeder/condensation-seeder-system)
    (em/field-system dt)
    (fusion/fusion-system)

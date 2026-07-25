@@ -72,6 +72,7 @@
      merge handler conj-counts one packet) — rare, and the overwrite is
      the collision system's contract, not this namespace's."
   (:require
+   [clojure.math :as math]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
    [domain.ecs.registry :as reg]
@@ -98,13 +99,13 @@
 
 ;; --- Regime classifier (pure; research §3 decision table) -------------------------
 
-(defn coupling-parameter
+(defn ^:export coupling-parameter
   "C = a·U^μ·ρ_i^ν — the single scalar ordering late-stage crater flow
    (Holsapple & Schmidt 1987, JGR 92:B7). Debug/logging quantity; the
    classifier works from the dimensional fits below (the same fits with
    constants unfolded)."
   [{:keys [a U rho-i]} mu]
-  (* (double a) (Math/pow (double U) mu) (Math/pow (double rho-i) 0.40)))
+  (* (double a) (math/pow (double U) mu) (math/pow (double rho-i) 0.40)))
 
 (defn disruption-q-star
   "Q*_D (J/kg) of a target of radius `R-t` (m), density `rho-t` (kg/m³)
@@ -117,9 +118,9 @@
                                       :ice law/disruption-ice
                                       law/disruption-basalt)
         x (/ (double R-t) 0.01)]
-    (+ (* (double Q0-J-per-kg) (Math/pow x (double a)))
+    (+ (* (double Q0-J-per-kg) (math/pow x (double a)))
        (* (double B) 1.0e-7 (/ (double rho-t) 1000.0)
-          (Math/pow x (double b))))))
+          (math/pow x (double b))))))
 
 (defn transient-diameter-gravity
   "Gravity-regime transient crater diameter (m): the Collins, Melosh &
@@ -127,11 +128,11 @@
    sin^(1/3)θ. K1 is a FACTOR-1.5 constant (see `law.crater/k1-gravity-rock`)."
   [{:keys [L U theta rho-i]} {:keys [rho-t g]}]
   (* law/k1-gravity-rock
-     (Math/pow (/ (double rho-i) (double rho-t)) (/ 1.0 3.0))
-     (Math/pow (double L) law/exponent-L-gravity)
-     (Math/pow (double U) law/exponent-U-gravity)
-     (Math/pow (double g) law/exponent-g-gravity)
-     (Math/pow (Math/sin (double theta)) (/ 1.0 3.0))))
+     (math/pow (/ (double rho-i) (double rho-t)) (/ 1.0 3.0))
+     (math/pow (double L) law/exponent-L-gravity)
+     (math/pow (double U) law/exponent-U-gravity)
+     (math/pow (double g) law/exponent-g-gravity)
+     (math/pow (math/sin (double theta)) (/ 1.0 3.0))))
 
 (defn transient-diameter-strength
   "Strength-regime transient crater diameter (m): π_V = K_s·π_3^(−μ/2)
@@ -140,10 +141,10 @@
   [{:keys [m-i U theta]} {:keys [Y rho-t material-class]}]
   (let [mu (if (= :ice material-class) law/mu-ice law/mu-rock)]
     (* law/k-strength
-       (Math/pow (/ (double m-i) (double rho-t)) (/ 1.0 3.0))
-       (Math/pow (/ (double Y) (* (double rho-t) (double U) (double U)))
+       (math/pow (/ (double m-i) (double rho-t)) (/ 1.0 3.0))
+       (math/pow (/ (double Y) (* (double rho-t) (double U) (double U)))
                  (* -0.5 mu))
-       (Math/pow (Math/sin (double theta)) (/ 1.0 3.0)))))
+       (math/pow (math/sin (double theta)) (/ 1.0 3.0)))))
 
 (defn final-diameter
   "Final rim diameter (m) from transient diameter: simple craters
@@ -154,8 +155,8 @@
   (if (< (double d-tc) (double d-sc))
     (* law/simple-final-factor (double d-tc))
     (* 1000.0 law/complex-coeff
-       (Math/pow (/ (double d-tc) 1000.0) law/complex-exponent-tc)
-       (Math/pow (/ (double d-sc) 1000.0) law/complex-exponent-sc))))
+       (math/pow (/ (double d-tc) 1000.0) law/complex-exponent-tc)
+       (math/pow (/ (double d-sc) 1000.0) law/complex-exponent-sc))))
 
 (defn simple-complex-transition-m
   "Simple→complex transition diameter (m): D_sc = 3200·(9.81/g) — Dence
@@ -175,7 +176,7 @@
   [v-melt d-tc]
   (if (pos? (double d-tc))
     (/ (* 4.0 (double v-melt))
-       (* Math/PI (double d-tc) (double d-tc)))
+       (* math/PI (double d-tc) (double d-tc)))
     0.0))
 
 (defn melt-vapor-volumes
@@ -186,7 +187,7 @@
    KM/S there). Zero below the material's melt threshold. Error bars:
    melt ±factor 2; vapor ±factor 3 (see law.crater)."
   [{:keys [m-i U theta rho-i]} {:keys [material-class T rho-t]}]
-  (let [sin-t (Math/sin (double theta))]
+  (let [sin-t (math/sin (double theta))]
     (if (= :ice material-class)
       (if (< (double U) law/ice-melt-threshold-U)
         {:melt 0.0 :vapor 0.0}
@@ -202,12 +203,12 @@
                       0.0
                       (* v-p law/ice-vapor-coeff
                          (+ t-r law/ice-vapor-T-offset)
-                         (Math/pow u-km law/ice-vapor-U-exponent)
-                         (Math/pow sin-t law/ice-vapor-angle-exponent)))
+                         (math/pow u-km law/ice-vapor-U-exponent)
+                         (math/pow sin-t law/ice-vapor-angle-exponent)))
               v-mv  (* v-p law/ice-melt-coeff
                        (+ t-r law/ice-melt-T-offset)
-                       (Math/pow u-km law/ice-melt-U-exponent)
-                       (Math/pow sin-t law/ice-melt-angle-exponent))]
+                       (math/pow u-km law/ice-melt-U-exponent)
+                       (math/pow sin-t law/ice-melt-angle-exponent))]
           {:vapor (double v-vap)
            :melt  (double (max 0.0 (- v-mv v-vap)))}))
       (if (< (double U) law/melt-threshold-U-rock)
@@ -319,7 +320,7 @@
    (`law.crater/impactor-density-kg-per-m3`); `:iron` targets scale with
    the rock fits."
   [composition]
-  (let [total (reduce + 0.0 (map (fn [[k v]] (double v)) (sort-by key composition)))]
+  (let [total (reduce + 0.0 (map (fn [[_ v]] (double v)) (sort-by key composition)))]
     (if (pos? total)
       (let [share (fn [els] (/ (reduce + 0.0 (map (fn [el] (double (get composition el 0.0)))
                                                   (sort els)))
@@ -338,7 +339,7 @@
    |v̂_rel·n̂|, θ measured from horizontal), impactor diameter recovered
    from mass ÷ class density, and the target's bulk figures from the
    seeded macro field + candidate record."
-  [world target-eid packet field candidate band-info]
+  [world target-eid packet field candidate binf]
   (let [target-pos (or (ecs/get-component world target-eid c/position) [0.0 0.0 0.0])
         target-vel (or (ecs/get-component world target-eid c/velocity) [0.0 0.0 0.0])
         v-rel      (sp/v- (mapv double (:velocity packet)) (mapv double target-vel))
@@ -351,11 +352,11 @@
         sin-t      (if (> U 1.0e-12)
                      (min 1.0 (Math/abs (/ (sp/dot v-rel anchor) U)))
                      0.0)
-        theta      (Math/asin sin-t)
+        theta      (math/asin sin-t)
         imp-class  (impactor-material-class (:composition packet))
         rho-i      (double (get law/impactor-density-kg-per-m3 imp-class 3.0e3))
         m-i        (double (:mass packet))
-        L          (* 2.0 (Math/cbrt (/ (* 3.0 m-i) (* 4.0 Math/PI rho-i))))
+        L          (* 2.0 (math/cbrt (/ (* 3.0 m-i) (* 4.0 math/PI rho-i))))
         shell      (last (:layers field))
         tgt-class  (if (= :ice-shell (:name shell)) :ice :rock)
         R-t        (double (:radius-m field))
@@ -372,7 +373,7 @@
                               (:name shell) 1.0e7))
               :T (double (get-in field [:thermal :surface-temperature] 288.0))
               :material-class tgt-class
-              :band band-info}}))
+              :band binf}}))
 
 ;; --- Carve edit derivation (pure: plan + field + voxels -> ordered edits) -----------
 
@@ -383,7 +384,7 @@
   [anchor surface-point d-tc d-exc t-melt]
   (let [half-col (/ (+ (double d-exc) (double t-melt)) 2.0)]
     {:center (mapv double (sp/v- surface-point (sp/v* anchor half-col)))
-     :radius (double (+ (Math/sqrt (+ (* (/ (double d-tc) 2.0) (/ (double d-tc) 2.0))
+     :radius (double (+ (math/sqrt (+ (* (/ (double d-tc) 2.0) (/ (double d-tc) 2.0))
                                       (* half-col half-col)))
                         e))}))
 
@@ -402,6 +403,97 @@
   (if (= :ice material)
     law/vapor-tag-temperature-ice-k
     law/vapor-tag-temperature-rock-k))
+
+(defn- crater-offsets
+  "Every voxel offset in the axis-aligned box of half-width `reach` around the
+   impact point `surface` — the candidate window `crater-cells` then filters.
+
+   A box, not a sphere: the paraboloid and melt-floor tests below are the real
+   geometry, so this only has to be a superset that is cheap to enumerate."
+  [surface reach]
+  (let [[sx sy sz] surface
+        span (fn [c] (range (long (math/floor (/ (- (double c) reach) e)))
+                            (inc (long (math/floor (/ (+ (double c) reach) e))))))]
+    (for [i (span sx) j (span sy) k (span sz)] [i j k])))
+
+(defn- crater-cells
+  "The offsets in `offsets` that fall inside the crater, tagged `:bowl` or
+   `:floor` with their cylindrical coordinates.
+
+   `geom` carries the resolved impact geometry — `:anchor` (unit surface
+   normal), `:R` (world radius, m), `:r-crater` (transient radius, m),
+   `:d-exc` (excavation depth, m) and `:t-melt` (melt-sheet thickness, m).
+   `:bowl` is inside the excavation paraboloid; `:floor` is the melt band
+   directly beneath it. Everything else is dropped."
+  [geom offsets]
+  (let [{:keys [anchor R r-crater d-exc t-melt]} geom]
+    (into []
+          (keep (fn [offset]
+                  (let [c    (band/voxel-center offset)
+                        s    (sp/dot c anchor)
+                        h    (- R s)
+                        perp (sp/len (sp/v- c (sp/v* anchor s)))]
+                    (cond
+                      ;; inside the excavation paraboloid
+                      (and (<= 0.0 h d-exc)
+                           (<= perp (* r-crater (math/sqrt (max 0.0 (- 1.0 (/ h d-exc)))))))
+                      {:offset offset :kind :bowl :perp perp :h h}
+
+                      ;; the melt floor band below the bowl
+                      (and (< d-exc h (+ d-exc (max t-melt e)))
+                           (<= perp r-crater))
+                      {:offset offset :kind :floor :perp perp :h h}
+
+                      :else nil))))
+          offsets)))
+
+(defn- vapor-melt-sets
+  "`[vapor-offsets melt-offsets]` — the innermost `:v-vapor` of `bowl` and the
+   deepest `:v-melt` of `floor`, both capped at the volume the plan budgets.
+
+   Vapor is selected innermost-first (`:perp` then `:h`) and melt
+   deepest-first (`:h` then `:perp`); `:offset` breaks ties so the selection is
+   deterministic run to run."
+  [plan bowl floor]
+  (let [pick (fn [cells budget-m3 key-fn]
+               (into #{}
+                     (map :offset)
+                     (take (min (count cells)
+                                (long (math/round (/ (double budget-m3) e3))))
+                           (sort-by key-fn cells))))]
+    [(pick bowl (:v-vapor plan) (fn [cell] [(:perp cell) (:h cell) (:offset cell)]))
+     (pick floor (:v-melt plan) (fn [cell] [(:h cell) (:perp cell) (:offset cell)]))]))
+
+(defn- cells->edits
+  "The `{offset edit}` map for `cells`: bowl voxels are removed (`:after nil`)
+   or tagged `:vapor`, melt-floor voxels are tagged `:melt`.
+
+   `live-voxel` resolves an offset to the voxel currently there (band voxel, or
+   the regenerated seed outside the band); it returns nil where the rock has
+   already been carved away, and those offsets are skipped — there is nothing
+   there to melt or vaporise."
+  [cells vapor-set melt-set live-voxel]
+  (into {}
+        (keep (fn [{:keys [offset kind]}]
+                (case kind
+                  :bowl
+                  (if (contains? vapor-set offset)
+                    (when-let [v (live-voxel offset)]
+                      [offset {:offset offset
+                               :after (assoc v
+                                             :state :vapor
+                                             :cohesion 0.0
+                                             :temperature (vapor-tag-temperature (:material v)))}])
+                    [offset {:offset offset :after nil}])
+                  :floor
+                  (when (contains? melt-set offset)
+                    (when-let [v (live-voxel offset)]
+                      [offset {:offset offset
+                               :after (assoc v
+                                             :state :melt
+                                             :cohesion 0.0
+                                             :temperature (melt-tag-temperature (:material v)))}])))))
+        cells))
 
 (defn derive-edits
   "The ordered voxel edits that carve `plan` into the world: the
@@ -439,85 +531,25 @@
   [plan field voxels]
   (if (< (double (:d-tc plan)) law/sub-voxel-diameter-m)
     []
-    (let [anchor     (:anchor plan)
-          R          (double (:radius-m field))
-          surface    (mapv double (sp/v* anchor R))
-          d-tc       (double (:d-tc plan))
-          d-exc      (double (:d-exc plan))
-          t-melt     (double (:melt-sheet-thickness plan))
-          r-crater   (/ d-tc 2.0)
-          reach      (+ (Math/sqrt (+ (* r-crater r-crater)
-                                      (* (+ d-exc t-melt) (+ d-exc t-melt))))
-                        e)
-          [sx sy sz] surface
-          offsets    (for [i (range (long (Math/floor (/ (- sx reach) e)))
-                                    (inc (long (Math/floor (/ (+ sx reach) e)))))
-                           j (range (long (Math/floor (/ (- sy reach) e)))
-                                    (inc (long (Math/floor (/ (+ sy reach) e)))))
-                           k (range (long (Math/floor (/ (- sz reach) e)))
-                                    (inc (long (Math/floor (/ (+ sz reach) e)))))]
-                       [i j k])
-          classify-cell
-          (fn [offset]
-            (let [c    (band/voxel-center offset)
-                  s    (sp/dot c anchor)
-                  h    (- R s)
-                  perp (sp/len (sp/v- c (sp/v* anchor s)))]
-              (cond
-                ;; inside the excavation paraboloid
-                (and (<= 0.0 h d-exc)
-                     (<= perp (* r-crater (Math/sqrt (max 0.0 (- 1.0 (/ h d-exc)))))))
-                {:offset offset :kind :bowl :perp perp :h h}
-
-                ;; the melt floor band below the bowl
-                (and (< d-exc h (+ d-exc (max t-melt e)))
-                     (<= perp r-crater))
-                {:offset offset :kind :floor :perp perp :h h}
-
-                :else nil)))
-          cells      (into [] (keep classify-cell) offsets)
-          bowl       (into [] (filter #(= :bowl (:kind %))) cells)
-          floor      (into [] (filter #(= :floor (:kind %))) cells)
-          n-vapor    (min (count bowl)
-                          (long (Math/round (/ (double (:v-vapor plan)) e3))))
-          vapor-set  (into #{}
-                           (map :offset)
-                           (take n-vapor
-                                 (sort-by (fn [cell] [(:perp cell) (:h cell) (:offset cell)])
-                                          bowl)))
-          n-melt     (min (count floor)
-                          (long (Math/round (/ (double (:v-melt plan)) e3))))
-          melt-set   (into #{}
-                           (map :offset)
-                           (take n-melt
-                                 (sort-by (fn [cell] [(:h cell) (:perp cell) (:offset cell)])
-                                          floor)))
+    (let [anchor   (:anchor plan)
+          R        (double (:radius-m field))
+          d-exc    (double (:d-exc plan))
+          t-melt   (double (:melt-sheet-thickness plan))
+          r-crater (/ (double (:d-tc plan)) 2.0)
+          floor-d  (+ d-exc t-melt)
+          reach    (+ (math/sqrt (+ (* r-crater r-crater) (* floor-d floor-d))) e)
+          geom     {:anchor anchor :R R :r-crater r-crater
+                    :d-exc d-exc :t-melt t-melt}
+          cells    (crater-cells geom (crater-offsets (mapv double (sp/v* anchor R))
+                                                      reach))
+          by-kind  (group-by :kind cells)
+          [vapor-set melt-set] (vapor-melt-sets plan (:bowl by-kind []) (:floor by-kind []))
           live-voxel (fn [offset]
                        (if (contains? voxels offset)
                          (get voxels offset)
                          (band/seed-voxel field (band/voxel-center offset))))
-          edits      (into {}
-                           (keep (fn [{:keys [offset kind]}]
-                                   (case kind
-                                     :bowl
-                                     (if (contains? vapor-set offset)
-                                       (when-let [v (live-voxel offset)]
-                                         [offset {:offset offset
-                                                  :after (assoc v
-                                                                :state :vapor
-                                                                :cohesion 0.0
-                                                                :temperature (vapor-tag-temperature (:material v)))}])
-                                       [offset {:offset offset :after nil}])
-                                     :floor
-                                     (when (and (contains? melt-set offset)
-                                                (some? (live-voxel offset)))
-                                       (let [v (live-voxel offset)]
-                                         [offset {:offset offset
-                                                  :after (assoc v
-                                                                :state :melt
-                                                                :cohesion 0.0
-                                                                :temperature (melt-tag-temperature (:material v)))}]))))
-                                 cells))]
+          edits    (cells->edits cells vapor-set melt-set live-voxel)]
+      ;; sorted-offset emission — the queue's replay-order discipline
       (mapv #(get edits %) (sort (keys edits))))))
 
 ;; --- Cooling (design §6 step 4; research §5.4) ---------------------------------------
@@ -535,9 +567,9 @@
    ns's header. `dt` is the simulation seconds elapsed this tick; zero or
    negative `dt` yields no edits. Ordered sorted-offset."
   [field voxels dt]
-  (if (not (pos? (double dt)))
+  (if-not (pos? (double dt))
     []
-    (let [decay (Math/exp (- (/ (double dt) law/melt-cooling-time-constant-s)))]
+    (let [decay (math/exp (- (/ (double dt) law/melt-cooling-time-constant-s)))]
       (into []
             (keep (fn [offset]
                     (when-let [v (get voxels offset)]
@@ -616,9 +648,9 @@
    {:plan | :report} — nil when the packet carries no impact energy
    (a zero-relative-velocity contact is the merge path's business, not a
    carving)."
-  [world target-eid packet field candidate band-info tick]
+  [world target-eid packet field candidate binf tick]
   (let [{:keys [anchor theta U imp tgt]}
-        (packet->classify-inputs world target-eid packet field candidate band-info)]
+        (packet->classify-inputs world target-eid packet field candidate binf)]
     (when (pos? (double U))
       (let [result (classify imp tgt)
             regime (:regime result)]
@@ -638,9 +670,9 @@
                          :melt-sheet-thickness (:t-melt result)
                          :impact-energy        (* 0.5 (double (:m-i imp)) U U)
                          :region               (crater-region anchor surface
-                                                                (:d-tc result)
-                                                                (:d-exc result)
-                                                                (:t-melt result))
+                                                              (:d-tc result)
+                                                              (:d-exc result)
+                                                              (:t-melt result))
                          :tick                 (long tick)}]
             (cond->
              (when (>= (:d-tc plan) law/sub-voxel-diameter-m)
@@ -732,7 +764,7 @@
                  ;; sub-catastrophic stop — wiping it one tick later would
                  ;; make the stop unobservable. Bounded by the collision
                  ;; count on the committed world (rare).
-                 reports' (into [] (distinct (concat (:disruptions prior) reports)))
+                 reports' (vec (distinct (concat (:disruptions prior) reports)))
                  seen'    (into seen0 fresh)]
              (if (and (empty? plans) (empty? reports') (= seen' seen0) (nil? prior))
                {}

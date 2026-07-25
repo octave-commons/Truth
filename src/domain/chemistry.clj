@@ -15,11 +15,21 @@
 
 ;; --- Element re-exports -------------------------------------------------------
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn solar-composition
   "Population-I (solar) element composition map."
   []
   lcomp/solar-composition)
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn primordial-composition
   "Primordial BBN element composition map."
   []
@@ -80,6 +90,11 @@
           (update :He (fnil + 0.0) dH))
       composition)))
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn enrich-composition
   "Add metals to a composition map. `delta-mz` is the added metal mass and
    `yield-map` maps element keywords to their fractional yield of that metal
@@ -188,6 +203,11 @@
    :gas        (:gas (partition-solids composition temperature))
    :categories (bulk-categories composition temperature)})
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn material-phase
   "Determine phase of material (gas, liquid, solid) based on conditions.
    This is a rough element-by-element estimate; `partition-solids` is preferred
@@ -204,6 +224,11 @@
 
 ;; --- Molecular formation (derived) ------------------------------------------
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn can-form-molecules?
   "Check if temperature allows molecular formation."
   [temperature _element1 _element2]
@@ -235,6 +260,11 @@
               :NH3 (min n (* h 0.33))
               :CH4 (min c (* h 0.25))}))))
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn bulk-composition-category
   "Categorize a body based on its bulk composition at a temperature.
    Returns one of `:gas-giant`, `:ice-giant`, `:rocky`, `:metallic`, `:mixed`."
@@ -250,6 +280,11 @@
 
 ;; --- Atmospheric retention ---------------------------------------------------
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn escape-velocity
   "Calculate escape velocity for a body. Thin wrapper over
    `law.atmosphere/escape-velocity` (v_esc = sqrt(2GM/R))."
@@ -261,8 +296,8 @@
 
    Uses the RMS thermal-velocity convention (`law.atmosphere/thermal-
    velocity-rms`, v_th = sqrt(3 k_B T / m)) with a uniform Jeans-ratio
-   threshold of 6 for every species. `domain.stellar.classifier/atmosphere-
-   class` (M5 handoff Phase 3) shares this exact v_th convention via
+   threshold of 6 for every species. `domain.stellar.classifier.planet/
+   atmosphere-class` (M5 handoff Phase 3) shares this exact v_th convention via
    `law.atmosphere` but uses species-differentiated thresholds (6 for H2/He,
    3 for heavier secondary volatiles) — see that ns and the research note
    docs/research/atmosphere/planetary-atmosphere-retention-classifier.md §3.4
@@ -274,6 +309,11 @@
                                                     temperature species-mass-kg)]
     (> jeans-parameter 6)))
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn potential-atmosphere
   "Determine what atmosphere a body can retain from its element composition."
   [body-mass body-radius composition temperature]
@@ -499,6 +539,11 @@
 
 ;; --- Stellar nucleosynthesis -------------------------------------------------
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn fusion-products
   "Calculate composition changes from fusion. Legacy helper; prefer `burn-step`
    for ECS-tick-safe H→He conversion."
@@ -511,6 +556,11 @@
           (update :He #(+ % he-produced))))
     initial-comp))
 
+;; UNUSED-PENDING: Chemistry evolution paths: composition tables and transformation fns exist,
+;; but no tick calls them — `domain.genesis/physics-systems-parallel` has no
+;; chemistry-evolution emitter yet. CLAUDE.md names this class explicitly.
+;; See kanban/tasks/phase-0-chemistry-differentiation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn supernova-enrichment
   "Model heavy element enrichment from stellar death."
   [composition stellar-mass]
