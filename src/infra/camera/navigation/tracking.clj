@@ -55,10 +55,11 @@
 
 (defn observer-render-position
   "The observer (player spark/mote) position in render units, or the origin when
-   there is no observer."
+   there is no observer. Reads the spark's `c/position` column — the single
+   source of truth since spark-redesign card 4."
   [world]
-  (if-let [obs (player/get-observer world)]
-    (mapv #(/ (double %) p/phase0-view-scale) (:position obs))
+  (if-let [pos (player/observer-position world)]
+    (mapv #(/ (double %) p/phase0-view-scale) pos)
     [0.0 0.0 0.0]))
 
 (defn bodies->render
@@ -121,35 +122,62 @@
   [r-ru]
   (max (* 2.5 (double (or r-ru 0.0))) 1.0e-7))
 
+(def ^:const frame-margin
+  "Desired orbit distance at full binding-tether engagement, in world render
+   radii — shared with the binding tether (`infra.camera.navigation.tether`)
+   so both agree on how close 'fully bound' frames the world."
+  4.0)
+
 ;; ---------------------------------------------------------------------------
 ;; Camera mode updates
 ;; ---------------------------------------------------------------------------
 
+(defn- lerp-toward
+  "Lerp `camera`'s :target toward `pos`, matching
+   `follow-selection-target`'s smoothing pattern — fast but continuous, never
+   a hard snap. Used to damp position jitter (e.g. the observer's spark
+   position) before it reaches the camera."
+  [camera pos t]
+  (vlerp (:target camera [0.0 0.0 0.0]) pos t))
+
 (defn update-camera-manual
-  "Re-centre the manual camera on the observer render position."
+  "Re-centre the manual camera on the observer render position.
+
+   Lerps toward the observer position rather than snapping — a hard `assoc`
+   here let spark-position jitter (physically integrated under the spark
+   redesign) pass straight through to the camera, producing visible bounce."
   [camera world]
   (-> camera
-      (assoc :target (observer-render-position world))
+      (assoc :target (lerp-toward camera (observer-render-position world) 0.35))
       input/update-camera-position))
 
 (defn- follow-selection-target
-  "Compute the target for :follow-selection. Snaps when close, lerps otherwise."
+  "Compute the target for :follow-selection: a continuous lerp toward the
+   body, faster when close, never a hard center-snap.
+
+   The old behaviour SNAPPED the target to the body's exact center once
+   within 1000 render units or 4 body radii — that instantaneous jump-then-
+   overlap is what made a bound spark flap in/out of the body sphere every
+   frame (spark-planet-binding's root cause). Close range now uses a fast
+   but still-continuous lerp rate instead of `target` itself, so the camera
+   settles smoothly onto the body without ever teleporting exactly onto it."
   [camera world settings eid]
   (let [pos (ecs/get-component world eid c/position)
         target (mapv #(/ (double %) p/phase0-view-scale) pos)
         r-ru (/ (double (or (ecs/get-component world eid c/radius) 0.0))
                 p/phase0-view-scale)
-        t (double (:smoothing settings 0.06))
-        close? (< (:distance camera) 1000.0)]
-    (if (or close?
-            (< (sp/dist (:target camera [0.0 0.0 0.0]) target)
-               (* 4.0 (max r-ru 1.0e-7))))
-      target
-      (vlerp (:target camera [0.0 0.0 0.0]) target (max t 0.15)))))
+        far-t (double (:smoothing settings 0.06))
+        cur (:target camera [0.0 0.0 0.0])
+        close? (or (< (:distance camera) 1000.0)
+                   (< (sp/dist cur target) (* 4.0 (max r-ru 1.0e-7))))
+        t (if close? (max far-t 0.35) (max far-t 0.15))]
+    (vlerp cur target t)))
 
 (defn update-camera-follow-selection
-  "Ride on the selected body, clamping orbit distance no closer than a couple of
-   radii. Falls back to manual behaviour when the selection is gone."
+  "Ride on the selected body, clamping orbit distance no closer than a couple
+   of radii — the player's own scroll-set distance is authoritative; this
+   only floors it so the camera cannot clip inside the body. Falls back to
+   manual behaviour when the selection is gone."
   [camera world settings]
   (let [eid (:follow-eid settings)]
     (if-not (and eid (ecs/get-component world eid c/position))

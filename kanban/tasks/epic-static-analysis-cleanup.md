@@ -162,4 +162,61 @@ This volume is dangerous. Every warning is a candidate for masking the next real
 Triage 2026-07-10 progress (bin/analyze ground truth): DONE — clj-kondo 0/0 (all 6 kondo cards), structural 0 HARD/0 undoc (structural-cleanup, decompose-mega, document-privatize, rationalize-genesis, split-stellar-disc-wind), jscpd reporting fixed. REMAINING — splint 18 warnings (~1-2pt, over-fragmented across 6 cards), dead-code 312 unused-public-var (suppress-vs-delete triage, the big one), cljfmt 7 files (~2pt, now Ready), then final-validation/final-gate capstones. Epic is ~80% done by card count.
 
 Triage 2026-07-10: ~80% complete; remaining splint/dead-code/cljfmt work tracked by children. Moved to breakdown as umbrella tracking.
+
+Triage 2026-07-24 — THE 2026-07-10 FOOTER ABOVE IS NO LONGER TRUE. It is kept as historical record, not deleted. The tree regressed and no card was reopened:
+
+| Tool | 2026-07-10 | 2026-07-24 |
+|------|-----------|-----------|
+| clj-kondo | 0 warnings / 0 errors | 50 warnings / 0 errors |
+| structural HARD | 0 | **4** |
+| Splint | 18 | 147 |
+| clojure-lsp unused-public-var | 312 | 353 |
+| jscpd clones | reporting fixed | 74 (1.86%) |
+| cljfmt | 7 files | 24 files |
+
+Root cause is not the findings, it is the gate: **every `static-analysis` CI run has failed since 2026-07-11** — eight consecutive, across `main` pushes and PRs — including PR #1 (`cae2668`), merged red. `.github/workflows/static-analysis.yml:39` runs `bin/analyze --strict` correctly; nothing requires it to pass. Two weeks of red let a genuinely broken conservation check sit on main (`src/law/field/schema.clj:195` — `#(rel-close? %1 %2)` over `(map vector ...)` receives one arg, so momentum and angular-momentum were never compared; fixed on `spark-gravity-bound-body` at `:268`).
+
+Owner decision 2026-07-24: the regressed children (`static-analysis-clj-kondo-*` ×6, `-decompose-mega-functions`, `-structural-cleanup`, `-split-stellar-core`) **stay `done` as history**; new cards carry the work. See `kanban/tasks/static-analysis-regression-2026-07-24.md` for the full breakdown and the thirteen children.
+
+Also recorded there, so it is not misread later: the four `rejected` Splint cards were rejected as **card consolidation only** ("18-warning remainder too small to justify separate cards"), not as a decision to skip Splint. §8 open question 2 is now answered — dead-code diagnostics stay advisory for now; cljfmt and clj-kondo warnings are promoted to blocking.
+
+Resolution 2026-07-25 — the table above is now cleared, and the gate is a real gate:
+
+| Tool | 2026-07-10 | 2026-07-24 | 2026-07-25 | gating |
+|------|-----------|-----------|-----------|--------|
+| clj-kondo | 0/0 | 50 warnings | **0/0** | errors **and warnings** block |
+| structural HARD | 0 | 4 | **0** | blocks (`--strict`) |
+| Splint | 18 | 147 | **0** | **blocks** |
+| clojure-lsp unused-public-var | 312 | 353 | **0** | **blocks** |
+| jscpd clones | reporting fixed | 74 (1.86%) | 65 (1.62%) | **blocks** above `.jscpd.json` `threshold` |
+| cljfmt | 7 files | 24 files | **0** | **blocks** |
+
+`bin/analyze --strict` exits 0. `clojure -M:test` holds at 879 tests / 15486
+assertions / 0 failures. Each newly-blocking class was verified to REFUSE an injected
+finding — the gate is not verified until it has refused something, and it has, four
+times.
+
+**§8 open question 2 is answered differently than the 2026-07-24 note assumed.**
+Dead-code diagnostics did NOT stay advisory: they went to zero, so they are blocking
+too, along with Splint and jscpd. Driving a tool to zero *before* promoting it is the
+whole mechanism — a gate promoted while findings remain is a gate that gets merged
+past, which is exactly what happened here.
+
+**The root cause is now CLOSED.** `main` is a protected branch requiring the `analyze`
+check with `enforce_admins: true` (applied 2026-07-25 with owner approval), and it was
+verified by refusal: a throwaway PR with a red `analyze` was rejected with "the base
+branch policy prohibits the merge".
+
+**Correction to the 2026-07-24 note above:** it says PR #1 (`cae2668`) merged red into
+`main`. It did not — PR #1 was `worktree-integration-seam-tests →
+spark-gravity-bound-body`, and it is the only PR this repo has ever had. The actual
+bypass was **33 consecutive direct pushes to `main`** by an admin between 2026-07-10
+and 2026-07-21, every one with `static-analysis` red. That is why `enforce_admins: true`
+was the load-bearing setting rather than an optional hardening: required status checks
+alone would not have blocked a single one of those 33.
+
+Note `main` is red on its own merits today (2 clj-kondo errors + structural HARD), so
+with protection live it is unpushable until this branch merges — which is what makes it
+green. Full detail: `kanban/tasks/static-analysis-regression-2026-07-24.md`.
+
 ---

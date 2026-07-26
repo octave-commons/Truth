@@ -28,16 +28,20 @@
 
 (defn player-overlay-shapes
   "Render shapes for the player's spark and focus volume: a bright point at the
-   observer position and a reticle ring at the focus, tinted by coherence."
+   observer position (the spark's `c/position` column — the single source of
+   truth) and a reticle ring at the focus, tinted by coherence."
   [ctx world]
   (if-let [obs (player/get-observer world)]
     (let [fpos  (units/world->render ctx (:focus-position obs))
           fr    (units/world->render ctx [(:focus-radius obs) 0.0 0.0])
-          spark (units/world->render ctx (:position obs))
+          spark (when-let [pos (player/observer-position world)]
+                  (units/world->render ctx pos))
           col   (rcolor/coherence-color (player/decoherence-state obs))]
-      (into [{:position spark :color [0.85 0.96 1.0]
-              :size (+ 28.0 (* 44.0 (double (:focus-intensity obs 0.5))))
-              :render-mode :particle}]
+      (into (if spark
+              [{:position spark :color [0.85 0.96 1.0]
+                :size (+ 28.0 (* 44.0 (double (:focus-intensity obs 0.5))))
+                :render-mode :particle}]
+              [])
             (ring-segments fpos (max 0.5 (first fr)) col 48)))
     []))
 

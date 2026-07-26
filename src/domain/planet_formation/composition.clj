@@ -2,6 +2,7 @@
   "Planet composition, material density, and type classification for the
    core-accretion seeder."
   (:require
+   [domain.chemistry :as chem]
    [law.composition :as lcomp]))
 
 (defn planet-type
@@ -17,20 +18,35 @@
       :else                            :terrestrial)))
 
 (defn planet-composition
-  "Return a plausible explicit-element composition map for a planet type.
-   Mass fractions are normalized to sum to 1.0."
-  [ptype]
-  (lcomp/normalize
-   (case ptype
-     :terrestrial {:H 0.05 :He 0.001 :O 0.25 :C 0.005 :N 0.005
-                   :Mg 0.15 :Si 0.16 :Al 0.02 :Ca 0.03 :Na 0.01
-                   :S 0.005 :Fe 0.30 :Ni 0.02}
-     :ice-giant   {:H 0.15 :He 0.05 :O 0.40 :C 0.05 :N 0.05
-                   :Mg 0.06 :Si 0.08 :Al 0.01 :Ca 0.01 :Na 0.005
-                   :S 0.005 :Fe 0.05 :Ni 0.005}
-     :gas-giant   {:H 0.70 :He 0.28 :O 0.005 :C 0.005
-                   :Fe 0.005 :Ni 0.005}
-     lcomp/primordial-composition)))
+  "Bulk composition of a planet seed formed from LOCAL disk material
+   (nebular-chemistry spec §6.5, decision §9.1) — never a per-type lookup.
+
+   The seed's refractory core is the disk's CONDENSED inventory at the local
+   midplane temperature `disk-temperature` (the same `partition-solids`
+   derivation that backs `c/comp-condensed`), restricted to ACCRETABLE
+   condensate: the gas-formers H/He/D/He3/Ne never freeze into grains in a
+   protoplanetary disk, and the sigmoid's finite ΔT would otherwise leak
+   percent-level nebular hydrogen (~6.5% of H mass at 100 K) into every
+   core — so they are
+   excluded from the solid inventory (a captured envelope still carries them
+   as gas). What remains is rock+metal inside the snow line, rock+metal+ice
+   beyond it. A runaway giant additionally captures `gas-m` kg of the local
+   nebular gas. `core-m`/`gas-m` (kg) mass-weight the blend, so the seeded
+   planet's element budget is exactly the disk material it formed from —
+   conservation holds by construction (`blend-compositions` normalizes).
+   Seeds form at a single annulus, so no cross-radius weighting is needed;
+   the split is core vs captured envelope.
+
+   Degenerate case: a disk with zero condensables at `disk-temperature` and
+   zero `gas-m` yields an empty map — unreachable through `planet-seeds`,
+   whose viability guard requires positive solid surface density."
+  [disk-composition disk-temperature core-m gas-m]
+  (let [{:keys [solid gas]} (chem/partition-solids disk-composition disk-temperature)
+        grains (lcomp/normalize
+                (into {}
+                      (remove (fn [[k _]] (contains? lcomp/gas-giants k)))
+                      solid))]
+    (chem/blend-compositions grains core-m gas gas-m)))
 
 (defn planet-material-density-by-type
   "Mean material density (kg/m³) for a planet type."

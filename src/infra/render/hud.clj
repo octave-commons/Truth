@@ -5,9 +5,16 @@
   (:require
    [clojure.math :as math] [domain.pacing :as pacing]
    [domain.player :as player]
+   [domain.ecs.core :as ecs]
+   [domain.ecs.components :as c]
    [domain.intervention :as intervention]
+   [domain.gravity.dark-matter :as dark-matter]
+   [domain.voxel.sculpt :as sculpt]
+   [law.stellar :as law]
+   [law.voxel :as voxel]
    [infra.render.color :as color]
-   [infra.render.input :as rinput])
+   [infra.render.input :as rinput]
+   [infra.render.passes :as passes])
   (:import
    (org.lwjgl.opengl GL11 GL15 GL20 GL30)
    (org.lwjgl.stb STBEasyFont)
@@ -23,9 +30,8 @@
   [hud-program rects]
   (when (and hud-program (pos? (int hud-program)) (seq rects))
     (GL20/glUseProgram hud-program)
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (let [loc (GL20/glGetUniformLocation hud-program "hudColor")]
       (doseq [{:keys [x0 y0 x1 y1 color]} rects]
         (let [[r g b a] color
@@ -45,8 +51,8 @@
           (GL30/glBindVertexArray 0)
           (GL15/glDeleteBuffers vbo)
           (GL30/glDeleteVertexArrays vao))))
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)
     (GL20/glUseProgram 0)))
 
 (defn- text->ndc-tris
@@ -84,9 +90,8 @@
   [hud-program lines width height]
   (when (and hud-program (pos? (int hud-program)) (seq lines))
     (GL20/glUseProgram hud-program)
-    (GL11/glEnable GL11/GL_BLEND)
-    (GL11/glBlendFunc GL11/GL_SRC_ALPHA GL11/GL_ONE_MINUS_SRC_ALPHA)
-    (GL11/glDepthMask false)
+    (passes/set-blend! :alpha)
+    (passes/set-depth-write! false)
     (let [loc (GL20/glGetUniformLocation hud-program "hudColor")]
       (doseq [{:keys [text x y color scale] :or {scale 2.0 color [1.0 1.0 1.0 1.0]}} lines]
         (when (seq text)
@@ -108,8 +113,8 @@
             (GL30/glBindVertexArray 0)
             (GL15/glDeleteBuffers vbo)
             (GL30/glDeleteVertexArrays vao)))))
-    (GL11/glDepthMask true)
-    (GL11/glDisable GL11/GL_BLEND)
+    (passes/set-depth-write! true)
+    (passes/set-blend! :none)
     (GL20/glUseProgram 0)))
 
 (defn- format-elapsed
@@ -179,7 +184,10 @@
              (int (nth imf-bins 0)) (int (nth imf-bins 1))
              (int (nth imf-bins 2)) (int (nth imf-bins 3))
              (int (nth imf-bins 4)) (int (nth imf-bins 5))
-             (int (nth imf-bins 6)) (int (nth imf-bins 7)))])),
+             (int (nth imf-bins 6)) (int (nth imf-bins 7)))
+     (format "DM halo M %.2f Msun  r %.2f AU"
+             (/ (dark-matter/halo-mass world) (double law/solar-mass))
+             (/ (dark-matter/halo-scale-radius world) (double law/au)))])),
 
 (defn hud-text-from-world
   "Top-left stats panel for a Phase 0 world: the adaptive clock (elapsed
@@ -210,6 +218,55 @@
      {:text (format "focus: %.0f%%" (* 100.0 (double (or (:focus-intensity obs) 0.5))))
       :x 16.0 :y (- h 26.0) :scale 1.5 :color [0.65 0.80 0.95 0.85]}]))
 
+(def ^:const binding-bar-length
+  "Character width of the binding bar rendered in `binding-readout-entry`."
+  20)
+
+;; Intentional: `apply str` over a char seq, not `clojure.string/join`. The
+;; suggested rewrite pulls a `clojure.string` require into a render namespace to
+;; say "repeat a char N times" less directly, and single-arg `str/join` is
+;; slower than `apply str` on a char seq.
+#_{:splint/disable [style/apply-str]}
+(defn- binding-bar
+  "A `[####----]`-style ASCII bar for `b` in [0,1], `binding-bar-length` wide."
+  [b]
+  (let [filled (long (math/round (* binding-bar-length (double b))))]
+    (str "[" (apply str (repeat filled \#)) (apply str (repeat (- binding-bar-length filled) \-)) "]")))
+
+(defn- committed-world-eid
+  "The eid of the world whose `c/commitment-state` is `:committed`, or nil.
+   Mirrors `domain.narrowing`'s private `committed-world-eid` — read-only,
+   no domain change (The First Narrowing, child B)."
+  [world]
+  (some (fn [[eid m]] (when (= :committed (get m c/commitment-state)) eid))
+        (ecs/all-of world c/commitment-state)))
+
+(defn- binding-readout-entry
+  "HUD line for the observer's gravitational binding to candidate worlds
+   (`c/binding`, The First Narrowing child A/B — `domain.narrowing`).
+
+   - When some world already carries `c/commitment-state :committed`, shows a
+     distinct 'world committed' readout instead of a live percentage — the
+     commitment horizon is write-once and irreversible, so this readout never
+     reverts once shown.
+   - Otherwise, when the observer's `c/binding` map is non-empty, shows the
+     DEEPEST (max-value) candidate world's binding as an ASCII bar + percent.
+   - nil with no observer, no binding, and no commitment — purely additive,
+     read-only against the ECS world."
+  [world height]
+  (when-let [eid (player/observer-entity world)]
+    (let [h (double height)
+          y (- h 118.0)]
+      (if (committed-world-eid world)
+        {:text "world committed"
+         :x 16.0 :y y :scale 1.6 :color [1.0 0.85 0.55 0.95]}
+        (let [binding (or (ecs/get-component world eid c/binding) {})]
+          (when (seq binding)
+            (let [[_ b] (apply max-key val binding)
+                  b     (double b)]
+              {:text (format "binding %s %.0f%%" (binding-bar b) (* 100.0 b))
+               :x 16.0 :y y :scale 1.5 :color [0.95 0.75 0.55 0.85]})))))))
+
 (defn- notif-entry
   "A transient centered notification, fading over 200 ticks."
   [world notif width height]
@@ -226,15 +283,45 @@
 (defn- controls-help-line
   "Bottom-right passive control legend."
   [width height]
-  {:text "focus rides camera   arrows: move focus (manual)   ,/.: narrow/widen   G: warp   L: life   space: drift"
+  {:text "focus rides camera   arrows: move focus (manual)   ,/.: narrow/widen   G: warp   L: life   WASD: fly"
    :x (- (double width) 460.0)
    :y (- (double height) 18.0)
    :scale 1.2
    :color [0.50 0.55 0.65 0.55]})
 
+(def ^:const ambient-line-fade-ticks
+  "How long an ambient narrator line floats in the viewport before it is gone.
+   Long and quiet: the line is an ambience, not a notification (the transient
+   centered event notification above fades in 200 ticks and stays a separate,
+   brighter channel)."
+  600)
+
+(defn- ambient-line-entry
+  "The most recent AMBIENT narrator line as a small, dim viewport float,
+   fading over ambient-line-fade-ticks. This is the felt surface of
+   law.narrative utterances with :attribution :ambient (The First Narrowing,
+   child C; ux-architecture.md 'Ambient line display: viewport float'). Never
+   addressed text, never a modal, never centred like the event notification:
+   it sits low and off to the side at low alpha. nil when there is no line,
+   the line is not ambient, or it has fully faded."
+  [world width height]
+  (when-let [eid (player/observer-entity world)]
+    (when-let [line (:last-line (ecs/get-component world eid c/narrative-state))]
+      (when (= :ambient (:attribution line))
+        (let [age   (- (long (or (:tick world) 0)) (long (:tick line)))
+              alpha (max 0.0 (- 0.55 (* 0.55 (/ (double age) ambient-line-fade-ticks))))]
+          (when (> alpha 0.03)
+            {:text  (:text line)
+             :x     (* (double width) 0.5)
+             :y     (* (double height) 0.72)
+             :scale 1.5
+             :color [0.80 0.72 0.85 ^double alpha]}))))))
+
 (defn observer-hud-text
   "Player HUD: quanta/state (bottom-left), observation note + quest (bottom-center),
-   event notifications (center), controls hint (bottom-right). `height` anchors
+   event notifications (center), ambient narrator line (low viewport float),
+   gravitational-binding readout (bottom-left, above quanta — see
+   `binding-readout-entry`), controls hint (bottom-right). `height` anchors
    everything to the framebuffer size. Empty without an observer."
   [world width height]
   (if-let [obs (player/get-observer world)]
@@ -244,6 +331,8 @@
           notif   (:arc/notification world)
           base    (observer-base-text obs state width height)
           n-line  (notif-entry world notif width height)
+          a-line  (ambient-line-entry world width height)
+          b-line  (binding-readout-entry world height)
           w       (double width)
           h       (double height)]
       (cond-> base
@@ -254,16 +343,40 @@
                       :x (- w 200.0) :y (- h 18.0)
                       :scale 1.4 :color [0.70 0.85 0.95 0.70]})
         n-line (conj n-line)
+        a-line (conj a-line)
+        b-line (conj b-line)
         true   (conj (controls-help-line width height))))
     []))
 
 (defn- afford-colors
-  "Text colours for an action row given the spark's quanta and the action's cost:
-   bright/green when affordable, dimmed/red when not."
-  [agency cost]
-  (if (>= (double agency) (double cost))
+  "Text colours for an action row: bright/green when the action is available
+   AND affordable, dimmed/red otherwise."
+  [amount cost available?]
+  (if (and available? (>= (double amount) (double cost)))
     {:label [0.88 0.95 1.0 0.98] :cost [0.65 1.0 0.78 0.98]}
     {:label [0.55 0.50 0.55 0.70] :cost [1.0 0.50 0.45 0.85]}))
+
+(defn- action-row-state
+  "The currency amount, cost, and availability of one `action-palette` entry
+   in `world`: `:kind` entries spend Agency and are always placeable;
+   `:sculpt` entries spend Resonance and are keyed off the world's
+   `c/palette` phase — lit only when the planetary palette is active and the
+   verb's ability is armed (the same gate `domain.voxel.sculpt/request-op`
+   enforces, surfaced on the legend so an unarmed key reads dim instead of
+   silently no-oping)."
+  [world a]
+  (let [obs (player/get-observer world)]
+    (if-let [verb (:sculpt a)]
+      (let [obs-eid (player/observer-entity world)
+            palette (when obs-eid (ecs/get-component world obs-eid c/palette))
+            ability (get voxel/sculpt-verb->ability verb)]
+        {:amount     (double (or (:resonance obs) 0.0))
+         :cost       (sculpt/op-cost verb (:magnitude a))
+         :available? (boolean (and (= :planetary (:active palette))
+                                   (contains? (set (vals (:slots palette))) ability)))})
+      {:amount     (double (or (:agency obs) 0.0))
+       :cost       (intervention/cost-of (:kind a))
+       :available? true})))
 
 (defn controls-hud
   "The teaching layer. Renders the paid-action palette (bottom-right) straight
@@ -271,8 +384,7 @@
    ring colour and the row lit by whether the spark can afford it — plus a
    one-line passive-controls legend. Returns {:rects :text}."
   [world width height]
-  (let [agency (double (or (:agency (player/get-observer world)) 0.0))
-        w (double width) h (double height)
+  (let [w (double width) h (double height)
         scale 1.9 line-h 22.0 pad 12.0
         rows (count rinput/action-palette)
         panel-w 252.0
@@ -288,10 +400,10 @@
                 :scale 1.6 :color [0.70 0.82 1.0 0.95]}
         action-text
         (mapcat
-         (fn [i {:keys [keycap label kind accent]}]
-           (let [cost (intervention/cost-of kind)
+         (fn [i {:keys [keycap label accent] :as a}]
+           (let [{:keys [amount cost available?]} (action-row-state world a)
                  y    (+ y0 pad (* (inc i) line-h))
-                 {lc :label cc :cost} (afford-colors agency cost)]
+                 {lc :label cc :cost} (afford-colors amount cost available?)]
              [{:text keycap :x (+ x0 pad)        :y y :scale scale :color (conj (vec accent) 1.0)}
               {:text label  :x (+ x0 pad 52.0)   :y y :scale scale :color lc}
               {:text (format "%.0fq" (double cost)) :x (+ x0 pad 176.0) :y y :scale scale :color cc}]))
@@ -301,16 +413,27 @@
     {:rects [rect]
      :text  (into [header passive] action-text)}))
 
+(defn- spark-speed
+  "The spark's live speed (m/s) from its `c/velocity` column, 0.0 when
+   absent — the thrust model's honest readout (flight-no-jump-accel replaced
+   the fixed `:move-speed` teleport knob)."
+  [world]
+  (if-let [eid (player/observer-entity world)]
+    (if-let [v (ecs/get-component world eid c/velocity)]
+      (math/sqrt (reduce + 0.0 (map (fn [x] (* (double x) (double x))) v)))
+      0.0)
+    0.0))
+
 (defn view-bar-hud
   "Top-left status bar separating the active view/camera from the simulation.
 
-   Shows current camera mode, orbit distance, move speed, and whether the view
-   is user-driven or tracking the world."
-  [camera-settings camera width height]
+   Shows current camera mode, orbit distance, the spark's live speed, and
+   whether the view is user-driven or tracking the world."
+  [camera-settings camera width height world]
   (let [w (double width) h (double height)
         mode (:mode camera-settings :manual)
         dist (:distance camera 50.0)
-        speed (:move-speed camera-settings 3.0e15)
+        speed (spark-speed world)
         tracking? (not= :manual mode)
         label (case mode
                 :manual "3RD PERSON"
@@ -332,7 +455,7 @@
         dist-line {:text (format "dist: %.1f" dist)
                    :x (+ x0 pad) :y (+ y0 pad line-h) :scale 1.4
                    :color [0.78 0.92 1.0 0.9]}
-        speed-line {:text (format "move: %.2e m/s" (double speed))
+        speed-line {:text (format "spark: %.2e m/s" (double speed))
                     :x (+ x0 pad) :y (+ y0 pad (* 2.0 line-h)) :scale 1.4
                     :color [0.70 0.82 1.0 0.85]}]
     {:rects [rect]

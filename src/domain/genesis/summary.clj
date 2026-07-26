@@ -95,6 +95,28 @@
                                    0
                                    (get-in world [:components c/disk-mass] {}))}))
 
+(defn formation-progress
+  "Fraction of the original nebula mass now bound into stars and planets, in [0,1].
+
+   Spark-redesign metric (kanban/tasks/formation-progress-metric.md): a single
+   scalar that drives the spark's resolution curve. Pure read off a precomputed
+   system summary `summ` and the world's `:genesis/nebula-mass`. Intermediate
+   matter-states (condensed-core, protostar, planetesimal, etc.) are
+   deliberately EXCLUDED — only `:star` and `:planet` count — so the signal
+   plateaus while mass climbs through intermediate states and steps at
+   promotion events; card 4 (spark resolution) must be designed knowing this.
+   (:resolved-fraction in `stats-of` already covers all-resolved-mass.)
+   Clamped to [0,1] for finite masses so an over-massive injected body can
+   never push it above 1. Returns 0.0 when the world carries no
+   `:genesis/nebula-mass`."
+  [world summ]
+  (let [bound (->> (concat (:stars summ) (:planets summ))
+                   (reduce (fn [acc r] (+ acc (double (or (:mass r) 0.0)))) 0.0))
+        neb   (double (or (:genesis/nebula-mass world) 0.0))]
+    (if (pos? neb)
+      (max 0.0 (min 1.0 (/ bound neb)))
+      0.0)))
+
 (defn system-summary
   "Tally the world's resolved matter into the shape used for complexity, phase
    detection, and habitability. Single-pass over entities with matter-state+mass."
@@ -123,16 +145,6 @@
                  (if (= :planet st) (conj planets r) planets)
                  (if (= :nebula st) resolved (conj resolved r))
                  (inc i)))))))
-
-(defn cached-system-summary
-  "Return a system summary, caching it on the world under :genesis/_summary-cache
-   so repeated reads in the same tick are O(1). The cache is invalidated by
-   `tick-world` advancing the tick."
-  [world]
-  (if-let [cached (get-in world [:genesis/_summary-cache (:tick world)])]
-    cached
-    (let [s (system-summary world)]
-      (assoc-in world [:genesis/_summary-cache (:tick world)] s))))
 
 (defn center-of-mass
   "Mass-weighted centre of mass of every positioned body, or [0 0 0] when empty.

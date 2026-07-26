@@ -38,18 +38,6 @@
   eos-system geometry/eos-system)
 
 ;; --- Temperature -------------------------------------------------------------
-(def ^{:doc "Re-export; see `domain.stellar.temperature/irradiance-at`."}
-  irradiance-at temperature/irradiance-at)
-
-(def ^{:doc "Re-export; see `domain.stellar.temperature/radiation-equilibrium-temperature`."}
-  radiation-equilibrium-temperature temperature/radiation-equilibrium-temperature)
-
-(def ^{:doc "Re-export; see `domain.stellar.temperature/radiation-heating-delta`."}
-  radiation-heating-delta temperature/radiation-heating-delta)
-
-(def ^{:doc "Re-export; see `domain.stellar.temperature/sed-heating-delta`."}
-  sed-heating-delta temperature/sed-heating-delta)
-
 (def ^{:doc "Re-export; see `domain.stellar.temperature/temperature-system`."}
   temperature-system temperature/temperature-system)
 
@@ -58,32 +46,8 @@
   stellar-merge-handler stellar-merge/stellar-merge-handler)
 
 ;; --- Disc / disk stability ---------------------------------------------------
-(def ^{:doc "Re-export; see `domain.stellar.disc/disk-radius`."}
-  disk-radius disc/disk-radius)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/disk-viscous-alpha`."}
-  disk-viscous-alpha disc/disk-viscous-alpha)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/disk-sound-speed`."}
-  disk-sound-speed disc/disk-sound-speed)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/disk-outer-temperature`."}
-  disk-outer-temperature disc/disk-outer-temperature)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/disk-viscous-timescale`."}
-  disk-viscous-timescale disc/disk-viscous-timescale)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/min-fragment-orbit-periods`."}
-  min-fragment-orbit-periods disc/min-fragment-orbit-periods)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/resolvable-orbit-radius`."}
-  resolvable-orbit-radius disc/resolvable-orbit-radius)
-
 (def ^{:doc "Re-export; see `domain.stellar.disc/toomre-q`."}
   toomre-q disc/toomre-q)
-
-(def ^{:doc "Re-export; see `domain.stellar.disc/cooling-time-ratio`."}
-  cooling-time-ratio disc/cooling-time-ratio)
 
 (def ^{:doc "Re-export; see `domain.stellar.disc/disc-regime`."}
   disc-regime disc/disc-regime)

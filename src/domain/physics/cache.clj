@@ -10,10 +10,6 @@
    [domain.physics.cache.neighbor :as neighbor]
    [domain.physics.cache.soa :as soa]))
 
-(def cache-active?
-  "Particles that participate in the shared SPH density/pressure or EM Lorentz pair loops."
-  neighbor/cache-active?)
-
 (def neighbor-cache-entry?
   "Predicate: does `value` satisfy the neighbor-cache entry schema?"
   neighbor/neighbor-cache-entry?)
@@ -21,14 +17,6 @@
 (def displacement-tolerance
   "Fraction of smoothing length a particle may move before its neighbor set must be requeried."
   neighbor/displacement-tolerance)
-
-(def max-displacement-squared
-  "Return the squared displacement threshold for smoothing length `h` and `tolerance`."
-  neighbor/max-displacement-squared)
-
-(def cache-entry-valid?
-  "True when `prev-entry`'s neighbor and nearest-neighbor identities can be reused for `eid` in `world`."
-  neighbor/cache-entry-valid?)
 
 (def neighbor-with-gradients
   "Attach pressure and curl gradients to a spatial-index item."

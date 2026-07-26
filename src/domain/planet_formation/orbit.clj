@@ -33,12 +33,7 @@
 (defn- orbital-angular-momentum
   "Orbital specific angular momentum L = m (r × v). Vector in kg m²/s."
   [mass position velocity]
-  (let [[x y z] position
-        [vx vy vz] velocity
-        m (double mass)]
-    [(* m (- (* y vz) (* z vy)))
-     (* m (- (* z vx) (* x vz)))
-     (* m (- (* x vy) (* y vx)))]))
+  (sp/v* (sp/cross position velocity) (double mass)))
 
 (defn- hash01
   "Deterministic [0,1) value from an integer key."
@@ -68,23 +63,45 @@
   (+ (pfph/equilibrium-temperature luminosity r albedo) planet-greenhouse-warming))
 
 (defn build-planet-spec
-  "Build a planet seed spec from computed orbital and physical properties.\n   `planet` keys: :r, :mass-kg, :ptype, :tick.\n   `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening."
-  [{:keys [r mass-kg ptype tick star]}
+  "Build a planet seed spec from computed orbital and physical properties.
+   `planet` keys: :r, :mass-kg, :ptype, :composition (the local-disk-derived
+   element map from `domain.planet-formation.composition/planet-composition`),
+   :tick, :star.
+   `host` keys: :L-star, :pos, :vel, :axis, :M-star, :softening (accepted for
+   caller compatibility; unused — the spawn speed is Newtonian, not softened).
+
+   Also returns `:spawn-parent star` + `:rel-position`/`:rel-velocity` (the
+   orbit state relative to the star) alongside the absolute :position/
+   :velocity — needed because `materialize-lifecycle` runs AFTER
+   `step-physics`, so the star has already moved (10s of AU/tick in the
+   formation-era cluster) by the time this spec becomes an entity;
+   `domain.genesis.bootstrap/spawn-entity` re-anchors on the parent's CURRENT
+   state using these, the spawn-seam analogue of design
+   `docs/designs/multi-timescale-integration.md` §3.0's stale-anchor fix."
+  [{:keys [r mass-kg ptype composition tick star]}
    {:keys [L-star pos vel axis M-star softening]}]
-  (let [dens (pfc/planet-material-density-by-type ptype)
+  (let [_ softening
+        dens (pfc/planet-material-density-by-type ptype)
         rad (sphere-radius mass-kg dens)
-        v-circ (law/softened-circular-speed M-star r softening)
+        ;; Newtonian circular speed: spawned :planets are sub-stepped by the
+        ;; integrator's Wisdom–Holman path (exact Newtonian drift), so the
+        ;; spawn velocity must pair with that law, not the softened field
+        ;; (design §3.5 pairing rule).
+        v-circ (law/newtonian-circular-speed M-star r)
         [position velocity] (circular-orbit-state r v-circ pos vel axis star tick)
         rel-pos (sp/v- position pos)
         rel-vel (sp/v- velocity vel)]
     {:position position
      :velocity velocity
+     :spawn-parent star
+     :rel-position rel-pos
+     :rel-velocity rel-vel
      :mass mass-kg
      :radius rad
      :matter-state :planet
      :body-kind :body/planet
      :planet-type ptype
-     :composition (pfc/planet-composition ptype)
+     :composition composition
      :temperature (surface-temperature L-star r planet-bond-albedo)
      :extra-components {c/planet-type ptype
                         c/angular-momentum (orbital-angular-momentum mass-kg rel-pos rel-vel)}}))

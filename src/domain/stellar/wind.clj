@@ -14,8 +14,6 @@
    [domain.stellar.thermodynamics :as thermo]
    [shape.spatial                 :as sp]))
 
-(def ^:const speed-of-light 2.99792458e8) ;; m/s
-
 (defn- wind-direction
   "A deterministic-but-varying outward unit vector for a wind ejection, seeded by
    entity id + tick (no Math/random — banned, it would break resume). Uniform-ish

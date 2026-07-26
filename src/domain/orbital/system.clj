@@ -8,19 +8,37 @@
    [domain.ecs.parallel    :as par]
    [domain.gravity.barnes-hut :as bh]
    [domain.orbital.integrator :as integrator]
+   [law.stellar            :as law]
    [shape.spatial          :as sp]))
 
 (defn- world->bodies
-  "Project ECS world into a seq of body maps for the Barnes-Hut tree."
-  [world]
+  "Project ECS world into a seq of body maps for the Barnes-Hut tree.
+   Attaches the species softening :eps (law/body-softening): c/radius for
+   resolved compact bodies, `softening` for gas/stateless entities.
+   matter-state is read per entity — entities MAY lack it (they soften at
+   the world ε) and are NOT projected out."
+  [world softening]
   (map (fn [[eid comps]]
          {:id       eid
           :mass     (comps c/mass)
           :radius   (comps c/radius)
           :kind     (comps c/body-kind)
           :position (comps c/position)
-          :velocity (comps c/velocity)})
+          :velocity (comps c/velocity)
+          :eps      (law/body-softening (ecs/get-component world eid c/matter-state)
+                                        (comps c/radius)
+                                        softening)})
        (ecs/all-of world c/position c/velocity c/mass c/radius c/body-kind)))
+
+(defn- with-pair-eps
+  "Attach the species softening :eps to a body map unless already present.
+   Spatial-index items carry :matter-state + :radius but not :eps."
+  [softening body]
+  (if (some? (:eps body))
+    body
+    (assoc body :eps (law/body-softening (:matter-state body)
+                                         (:radius body)
+                                         softening))))
 
 (defn- apply-body-back
   "Write updated position and velocity for eid back into world."
@@ -56,7 +74,7 @@
   ([G theta dt] (orbital-system G theta dt bh/default-softening))
   ([G theta dt softening]
    (fn [world]
-     (let [bodies  (world->bodies world)
+     (let [bodies  (world->bodies world softening)
            tree    (bh/build-tree bodies)
            updated (par/par-mapv
                     (fn [body]
@@ -80,13 +98,15 @@
   [c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer c/accel-warp])
 
 (defn- gravity-from-bodies
-  "Compute per-body gravity from the spatial tree and body/items."
-  [G theta softening cutoff tree bodies]
+  "Compute per-body gravity from the spatial tree and body/items, attaching
+   the species :eps each body's pair interactions soften with."
+  [G theta softening tree bodies]
   {c/accel-gravity
    (into {}
          (par/par-mapv
           (fn [body]
-            [(:id body) (bh/acceleration {:G G :theta theta :softening softening :cutoff cutoff :tree tree :body body})])
+            [(:id body) (bh/acceleration {:G G :theta theta :softening softening
+                                          :tree tree :body (with-pair-eps softening body)})])
           bodies))})
 
 (defn gravity-acceleration
@@ -97,18 +117,21 @@
    gravity builds an index-leaf Barnes-Hut tree directly from the SoA arrays and
    walks it reading source positions/masses straight from those arrays. The
    shared :genesis/spatial-tree (snapshot positions) still serves collision/sink/
-   neighbor queries unchanged. `cutoff` is a gravitational dead-zone radius."
-  ([G theta softening]
-   (gravity-acceleration G theta softening 0.0))
-  ([G theta softening cutoff]
-   {:id     :gravity
-    :writes #{c/accel-gravity}
-    :run    (fn [world]
-              (if-let [soa (:genesis/physics-soa world)]
-                {c/accel-gravity (bh/acceleration-for-soa {:G G :theta theta :softening softening :cutoff cutoff :soa soa :self-id nil})}
-                (let [tree (:genesis/spatial-tree world)
-                      bodies (:genesis/spatial-items world (world->bodies world))]
-                  (gravity-from-bodies G theta softening cutoff tree bodies))))}))
+   neighbor queries unchanged.
+
+   Softening is per-pair (kanban/tasks/compact-pair-softening.md):
+   ε_pair = max(ε_i, ε_j) from the species rule (law/body-softening), with
+   dead-zone 0.1·ε_pair — compact–compact pairs switch on inside the world
+   dead-zone; gas pairs behave exactly as the legacy scalar kernel."
+  [G theta softening]
+  {:id     :gravity
+   :writes #{c/accel-gravity}
+   :run    (fn [world]
+             (if-let [soa (:genesis/physics-soa world)]
+               {c/accel-gravity (bh/acceleration-for-soa {:G G :theta theta :softening softening :soa soa :self-id nil})}
+               (let [tree (:genesis/spatial-tree world)
+                     bodies (:genesis/spatial-items world (world->bodies world softening))]
+                 (gravity-from-bodies G theta softening tree bodies))))})
 
 (defn motion-integration
   "Write-set system: sum all acceleration contributions and advance the body by

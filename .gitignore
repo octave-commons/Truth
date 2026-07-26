@@ -1,6 +1,11 @@
 .cpcache/
 .clj-kondo/.cache/
-.lsp/
+# .lsp/ holds BOTH a cache and tracked config. `.lsp/config.edn` is the
+# clojure-lsp gate config (dead-code exclusions) and MUST be committed — the
+# `clojure-lsp` check in bin/analyze is blocking, so without this file CI sees
+# 350+ unused-public-var findings and fails every run.
+.lsp/*
+!.lsp/config.edn
 .nrepl-port
 hs_err_pid*.log
 debugging-*.jsonl

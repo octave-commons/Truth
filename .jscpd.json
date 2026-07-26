@@ -8,5 +8,30 @@
   "reporters": ["console", "json"],
   "output": "target/jscpd",
   "absolute": false,
-  "gitignore": true
+  "gitignore": true,
+  "threshold": 1.7,
+  "_comment_threshold": [
+    "RATCHET, not a target. Duplication is 1.62% as of 2026-07-25 — 65 clones,",
+    "800 duplicated of 49321 total lines — down from 1.86% / 74 clones. The",
+    "threshold sits just above that so the tree cannot get WORSE while the",
+    "remaining reduction is done. It is NOT a claim that 1.7% is good. Before",
+    "this the file had no threshold at all, so jscpd could never fail however",
+    "much duplication accumulated.",
+    "",
+    "Lower it as clones come out. Remaining work:",
+    "kanban/tasks/static-analysis-jscpd-test-fixtures.md (P3).",
+    "",
+    "Breakdown, counting each CLONE once (not once per endpoint — the console",
+    "per-file tallies double-count, which is how an earlier version of this note",
+    "got the arithmetic wrong): 58 of the 65 have BOTH ends inside test/, 7 have",
+    "both inside src/, none straddle. The test/ ones are physics namespaces that",
+    "still build their worlds inline; test/support/worlds.clj now exists as the",
+    "home for those fixtures.",
+    "",
+    "DO NOT chase the 8 clones between test/domain/em_lorentz_test.clj and",
+    "test/domain/mhd_force_test.clj. mhd_force_test asserts the merged hydro+EM",
+    "system matches the standalone Lorentz system, and that test is only",
+    "meaningful because the two paths are independently constructed. Sharing the",
+    "projection would make the equivalence proof partly tautological."
+  ]
 }

@@ -7,23 +7,33 @@
    [domain.ecology :as ecology]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.voxel.sculpt :as sculpt]
    [infra.camera :as cam]
    [infra.input :as input]
-   [domain.player :as player])
+   [law.narrowing :as law-narrowing])
   (:import
    (org.lwjgl.glfw GLFW GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback GLFWMouseButtonCallback)))
 
-(defn- move-focus-by
-  "Shift the observer's focus volume by `dpos` (world metres)."
-  [world dpos]
-  (if-let [obs (player/get-observer world)]
-    (input/handle-input world :move-focus (sp/v+ (:focus-position obs) dpos))
-    world))
+(def focus-nudge-step
+  "One arrow-press focus nudge, in world metres: 0.1 ×
+   `law.narrowing/world-focus-radius` (~0.1 AU ≈ 1.5e10 m) — scaled to the
+   binding-overlap radius so hand-aiming a planet is actually usable (the
+   old 3.0e15 m step was ~20,000× coarser than the radius it aims inside
+   of; card focus-follows-pilot)."
+  (* 0.1 law-narrowing/world-focus-radius))
 
 (def action-palette
   "The player's paid actions. `setup-input` dispatches key presses from this list
    and the HUD renders the legend from the same list, so a new action cannot be
-   wired without appearing on screen."
+   wired without appearing on screen.
+
+   Two dispatch shapes: `:kind` entries place a `domain.intervention` (agency,
+   Phase 0 genesis palette); `:sculpt` entries call
+   `domain.voxel.sculpt/request-op` at `(:magnitude entry)` (Resonance, Phase 1
+   planetary palette — the op itself gates on `c/palette`, card
+   voxel-sculpt-verb-palette-wiring). Sculpt keys: T/Shift+T are Tectonics
+   (uplift/volcanism — the G/Shift+G one-ability-two-verbs precedent), Y is
+   Hydrography (erosion); all free in the design §7 binding map."
   [{:label "Well"     :keycap "G"   :glfw GLFW/GLFW_KEY_G :shift? false :kind :warp/well
     :accent [0.45 0.85 1.0]  :hint "pull matter in"}
    {:label "Repulsor" :keycap "G+s" :glfw GLFW/GLFW_KEY_G :shift? true  :kind :warp/repulsor
@@ -31,7 +41,13 @@
    {:label "Heat"     :keycap "H"   :glfw GLFW/GLFW_KEY_H :shift? false :kind :heat/source
     :accent [1.0 0.45 0.25]  :hint "warm gas — resist collapse"}
    {:label "Cool"     :keycap "J"   :glfw GLFW/GLFW_KEY_J :shift? false :kind :heat/sink
-    :accent [0.6 0.85 1.0]   :hint "chill gas — trigger collapse"}])
+    :accent [0.6 0.85 1.0]   :hint "chill gas — trigger collapse"}
+   {:label "Uplift"   :keycap "T"   :glfw GLFW/GLFW_KEY_T :shift? false :sculpt :uplift :magnitude 0.5
+    :accent [0.85 0.55 0.30] :hint "thicken crust — tectonics"}
+   {:label "Volcano"  :keycap "T+s" :glfw GLFW/GLFW_KEY_T :shift? true  :sculpt :volcanism :magnitude 0.5
+    :accent [1.0 0.35 0.20]  :hint "melt delivery (shift+T)"}
+   {:label "Erode"    :keycap "Y"   :glfw GLFW/GLFW_KEY_Y :shift? false :sculpt :erosion :magnitude 0.5
+    :accent [0.40 0.75 0.90] :hint "export sediment — hydrography"}])
 
 (defn action-for-key
   "The palette entry a key/shift press triggers, or nil. Shift must match exactly
@@ -68,19 +84,25 @@
     (println "No living world yet.")))
 
 (defn- player-key
-  "Map a key press to a focus / drift / release action on the world's observer.
-   Arrows drift the focus volume, , / . narrow / widen it, Space releases the
-   spark to drift toward the system."
-  [world-atom k]
-  (let [step 3.0e15]
+  "Map a key press to a focus action. Arrows nudge the config's
+   `:focus-offset` — the persistent delta the manual-mode focus-follow law
+   adds to the mote's position (card focus-follows-pilot: nudges edit the
+   OFFSET, never the position, so they commute with auto-follow and always
+   land; in tracking modes the camera-target sync overwrites focus anyway).
+   `,` / `.` narrow / widen the focus volume. (The Space 'release' binding
+   was deleted with the spark spring — spark-redesign card 4 — and Space is
+   now the vertical thruster, design §7.)"
+  [config-atom world-atom k]
+  (let [step focus-nudge-step
+        nudge! (fn [dpos] (swap! config-atom update :focus-offset
+                                 (fn [off] (sp/v+ (or off [0.0 0.0 0.0]) dpos))))]
     (condp = k
-      GLFW/GLFW_KEY_LEFT   (swap! world-atom move-focus-by [(- step) 0.0 0.0])
-      GLFW/GLFW_KEY_RIGHT  (swap! world-atom move-focus-by [step 0.0 0.0])
-      GLFW/GLFW_KEY_UP     (swap! world-atom move-focus-by [0.0 0.0 (- step)])
-      GLFW/GLFW_KEY_DOWN   (swap! world-atom move-focus-by [0.0 0.0 step])
+      GLFW/GLFW_KEY_LEFT   (nudge! [(- step) 0.0 0.0])
+      GLFW/GLFW_KEY_RIGHT  (nudge! [step 0.0 0.0])
+      GLFW/GLFW_KEY_UP     (nudge! [0.0 0.0 (- step)])
+      GLFW/GLFW_KEY_DOWN   (nudge! [0.0 0.0 step])
       GLFW/GLFW_KEY_COMMA  (swap! world-atom input/handle-input :narrow-focus)
       GLFW/GLFW_KEY_PERIOD (swap! world-atom input/handle-input :widen-focus)
-      GLFW/GLFW_KEY_SPACE  (swap! world-atom input/handle-input :release)
       nil)))
 
 (defn- look-sensitivity
@@ -134,10 +156,17 @@
   (println "Camera reset"))
 
 (defn- dispatch-palette-action!
-  "Trigger an action request if `key` matches a palette entry at the given shift state."
-  [config-atom glfw-key shift?]
+  "Trigger the action a key/shift press maps to, if any. `:kind` entries
+   become an `:action-request` the window loop places as an intervention at
+   the focus point; `:sculpt` entries enqueue a
+   `domain.voxel.sculpt/request-op` intent directly (pure world→world', the
+   same serial pre-tick path) — the op gates itself on the world's
+   `c/palette` phase and Resonance, so a pre-commitment press is a no-op."
+  [config-atom world-atom glfw-key shift?]
   (when-let [a (action-for-key glfw-key shift?)]
-    (swap! config-atom assoc :action-request {:kind (:kind a)})))
+    (if-let [verb (:sculpt a)]
+      (swap! world-atom sculpt/request-op verb (:magnitude a))
+      (swap! config-atom assoc :action-request {:kind (:kind a)}))))
 
 (def ^:private config-key-handlers
   "Data table for camera/UI key presses. Each entry is {:handler :label :fmt}."
@@ -169,9 +198,9 @@
           (reset-camera! camera-atom config-atom))
         (when (= key GLFW/GLFW_KEY_L)
           (jump-to-living-world config-atom world-atom @camera-atom))
-        (dispatch-palette-action! config-atom key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT))))
+        (dispatch-palette-action! config-atom world-atom key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT))))
       (when world-atom
-        (player-key world-atom key)))))
+        (player-key config-atom world-atom key)))))
 
 (defn- cursor-callback
   "GLFW cursor position callback for look/orbit dragging."

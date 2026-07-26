@@ -21,11 +21,6 @@
   "Bootstrap a Phase 0 world ready to tick."
   bootstrap/create-world)
 
-(def seed-nebula
-  "Seed a cold, rotating, turbulent, self-gravitating gas cloud on the single ECS
-   world — `gas-count` equal-mass particles, no pre-placed core or planets."
-  bootstrap/seed-nebula)
-
 (def materialize-lifecycle
   "World-construction step (spec §5): spawn the entities requested by the fan-out
    lifecycle emitters (spawn-request.*), then reap every entity marked consumed.*."
@@ -49,6 +44,12 @@
    snapshot) and `after` (post-physics world)."
   tick/emit-promotion-events)
 
+(def emit-handoff-event
+  "Append the `:event/phase0-handoff` ledger event once `world`'s
+   `c/planet-candidate` component is non-empty (M5 handoff Phase 4, parent
+   §2, §5). Idempotent — a no-op once already recorded."
+  tick/emit-handoff-event)
+
 (def physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer fan-out."
   systems/physics-systems-parallel)
@@ -67,6 +68,10 @@
   "Smooth 0→1 measure of how far the system has climbed from cold nebular gas
    (~10 K) toward fusion ignition (~1e7 K), on a log-temperature ramp."
   summary/thermal-progress)
+
+(def formation-progress
+  "Fraction of the original nebula mass now bound into stars and planets, in [0,1]."
+  summary/formation-progress)
 
 (def center-of-mass
   "Mass-weighted centre of mass of every positioned body, or [0 0 0] when empty."

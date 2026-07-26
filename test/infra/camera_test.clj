@@ -5,8 +5,11 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.player :as player]
    [domain.stellar.seeder :as seeder]
    [infra.camera :as cam]
+   [infra.camera.navigation.tether :as tether]
+   [law.narrowing :as law]
    [shape.spatial :as sp]))
 
 (deftest test-update-camera-track-largest-cluster
@@ -36,8 +39,25 @@
       (is (= 0.0 (:mass cluster) (:radius cluster)))
       (is (= [0.0 0.0 0.0] (:center cluster))))))
 
-(deftest test-follow-selection-tracks-exactly-when-close
-  (testing "At planetary zoom the camera target snaps to and tracks the selected body"
+(deftest test-follow-selection-tracks-closely-when-close-without-snapping
+  (testing "At planetary zoom the camera target moves toward the selected body
+            continuously — no hard center-snap (that was the flicker root
+            cause fixed by narrowing-tether-default-camera-modes)"
+    (let [[w body-eid] (seeder/spawn-clump (ecs/empty-world)
+                                           {:position [1e15 0.0 0.0]
+                                            :mass 1e24
+                                            :radius 6e8
+                                            :matter-state :planet})
+          cam0 (assoc (cam/make-camera 10.0) :target [0.0 0.0 0.0])
+          settings (assoc (cam/default-camera-settings)
+                          :mode :follow-selection
+                          :follow-eid body-eid)
+          cam1 (cam/update-camera-for-world cam0 w settings)]
+      (is (not= [1.0 0.0 0.0] (:target cam1))
+          "no longer an exact teleport onto the body's center")
+      (is (< 0.0 (first (:target cam1)) 1.0)
+          "close range moves substantially toward the body in one frame, continuously")))
+  (testing "tracking a moving body while close continues to close the gap, never pinned exactly"
     (let [[w body-eid] (seeder/spawn-clump (ecs/empty-world)
                                            {:position [1e15 0.0 0.0]
                                             :mass 1e24
@@ -50,10 +70,9 @@
           cam1 (cam/update-camera-for-world cam0 w settings)
           w' (ecs/put-component w body-eid c/position [1.01e15 0.0 0.0])
           cam2 (cam/update-camera-for-world cam1 w' settings)]
-      (is (= [1.0 0.0 0.0] (:target cam1))
-          "camera snaps to selected body when already close")
-      (is (= [1.01 0.0 0.0] (:target cam2))
-          "camera tracks body exactly after it moves while close"))))
+      (is (< (sp/dist (:target cam2) [1.01 0.0 0.0])
+             (sp/dist (:target cam1) [1.01 0.0 0.0]))
+          "the target keeps closing on the moved body"))))
 
 (deftest test-follow-selection-lerps-when-far
   (testing "Far from the selected body the camera still smoothly approaches"
@@ -171,19 +190,141 @@
       (is (> (sp/dist (:target f) (:target c-far))
              (sp/dist (:target n) (:target c-near)))))))
 
-(deftest test-observer-move-velocity
-  (testing "Observer velocity aligns with camera horizontal basis"
-    (let [settings (cam/default-camera-settings)
-          c (cam/make-camera 10.0)
-          v-fwd (cam/observer-move-velocity c {:forward 1.0 :right 0.0} settings)
-          v-rgt (cam/observer-move-velocity c {:forward 0.0 :right 1.0} settings)
-          v-none (cam/observer-move-velocity c {:forward 0.0 :right 0.0} settings)
-          {:keys [forward right]} (cam/camera-move-basis c)
-          speed (:move-speed settings)]
-      (is (= [0.0 0.0 0.0] v-none))
-      (is (< (abs (- (first v-fwd) (* speed (first forward)))) 1.0)
-          "forward velocity matches camera forward direction scaled by move speed")
-      (is (< (abs (- (first v-rgt) (* speed (first right)))) 1.0)
-          "strafe velocity matches camera right direction scaled by move speed")
-      (is (not (zero? (nth v-fwd 2))) "forward velocity follows the pitched look direction (has z)")
-      (is (zero? (nth v-rgt 2)) "strafe velocity stays horizontal (no vertical z)"))))
+(deftest test-thrust-direction
+  (testing "Thrust direction aligns with the camera aim basis and is unit-length"
+    (let [c (cam/make-camera 10.0)
+          d-fwd (cam/thrust-direction c {:forward 1.0 :right 0.0 :up 0.0})
+          d-rgt (cam/thrust-direction c {:forward 0.0 :right 1.0 :up 0.0})
+          d-up  (cam/thrust-direction c {:forward 0.0 :right 0.0 :up 1.0})
+          d-dn  (cam/thrust-direction c {:forward 0.0 :right 0.0 :up -1.0})
+          d-none (cam/thrust-direction c {:forward 0.0 :right 0.0 :up 0.0})
+          {:keys [forward right]} (cam/camera-move-basis c)]
+      (is (nil? d-none) "no flight key held → no thrust (channel clears)")
+      (is (< (sp/dist forward d-fwd) 1.0e-12) "W thrusts along the full camera look direction")
+      (is (< (sp/dist right d-rgt) 1.0e-12) "D strafes along the level camera-right axis")
+      (is (< (sp/dist [0.0 0.0 1.0] d-up) 1.0e-12) "Space thrusts along world up")
+      (is (< (sp/dist [0.0 0.0 -1.0] d-dn) 1.0e-12) "Left-Ctrl thrusts along world down")
+      (is (< (abs (- 1.0 (sp/len (cam/thrust-direction c {:forward 1.0 :right 1.0 :up 1.0})))) 1.0e-12)
+          "combined input is normalized — diagonal flight is not faster"))))
+
+;; --- The binding tether (The First Narrowing, child C) ---------------------
+
+(defn- world-with-bound-planet
+  "A world with an observer and one planet at [1e16 0 0]; returns
+   [world obs-eid world-eid]."
+  []
+  (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
+        [w world-eid] (seeder/spawn-clump w {:position [1.0e16 0.0 0.0]
+                                             :mass 1.0e24 :radius 6.0e8
+                                             :matter-state :planet})]
+    [w obs-eid world-eid]))
+
+(deftest test-tether-strength-curve
+  (testing "strength is binding / capture-threshold, clamped to [0,1]"
+    (is (= 0.0 (tether/tether-strength 0.0)))
+    (is (= 0.5 (tether/tether-strength (* 0.5 law/capture-threshold))))
+    (is (= 1.0 (tether/tether-strength law/capture-threshold))
+        "fully engaged exactly at the capture threshold")
+    (is (= 1.0 (tether/tether-strength 1.0))
+        "clamped past the threshold — binding can deepen to 1.0 without overdrive")))
+
+(deftest test-tether-step-follows-binding-depth
+  (testing "no binding leaves the camera untouched; binding eases the frame toward the world"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          cam0 (assoc (cam/make-camera 100.0) :target [0.0 0.0 0.0])
+          cam-free (cam/tether-step cam0 w {:input-active? false})
+          w-bound (ecs/put-component w obs-eid c/binding
+                                     {world-eid (* 0.5 law/capture-threshold)})
+          cam1 (cam/tether-step cam0 w-bound {:input-active? false})]
+      (is (= cam0 cam-free) "no binding, no pull")
+      (is (> (first (:target cam1)) 0.0) "target eases toward the bound world")
+      (is (< (first (:target cam1)) 1.0)
+          "one frame is a gentle lerp step, not a snap (world sits 10 ru out)")
+      (is (< (:distance cam1) (:distance cam0)) "the frame tightens"))))
+
+(deftest test-tether-player-override
+  (testing "player input wins outright at any binding depth, even full capture"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid 1.0})
+          cam0 (assoc (cam/make-camera 100.0) :target [5.0 5.0 0.0])]
+      (is (= cam0 (cam/tether-step cam0 w-bound {:input-active? true}))
+          "while the player fights, the tether does not act"))))
+
+(deftest test-tether-no-jump-at-capture
+  (testing "the capture event is invisible to the tether: same binding, same step"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid law/capture-threshold})
+          w-committed (ecs/put-component w-bound world-eid c/commitment-state :committed)
+          cam0 (assoc (cam/make-camera 100.0) :target [0.0 0.0 0.0])]
+      (is (= (cam/tether-step cam0 w-bound {:input-active? false})
+             (cam/tether-step cam0 w-committed {:input-active? false}))
+          "commitment-state changes nothing — the tether reads binding only")))
+  (testing "camera position is continuous across the capture tick"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          cam0 (assoc (cam/make-camera 100.0) :target [0.0 0.0 0.0])
+          w-below (ecs/put-component w obs-eid c/binding
+                                     {world-eid (- law/capture-threshold 0.01)})
+          w-at (ecs/put-component w obs-eid c/binding {world-eid law/capture-threshold})
+          cam-below (cam/tether-step cam0 w-below {:input-active? false})
+          cam-at (cam/tether-step cam0 w-at {:input-active? false})
+          disp-below (sp/dist (:target cam-below) (:target cam0))
+          dist-step-below (abs (- (:distance cam-below) (:distance cam0)))
+          disp-at (sp/dist (:target cam-at) (:target cam0))
+          dist-step-at (abs (- (:distance cam-at) (:distance cam0)))]
+      (is (pos? disp-below))
+      (is (<= disp-at (* 1.05 disp-below))
+          "the capture-tick step is the same size as the step before it")
+      (is (<= dist-step-at (* 1.05 dist-step-below))
+          "distance tightening is continuous across the capture tick"))))
+
+;; --- Scroll-zoom stays authoritative in the auto modes -----------------------
+;; (camera-bind-blend-regression-fix: no auto-pull may override the player's
+;; own set distance while bound)
+
+(deftest test-fit-all-does-not-auto-pull-distance-while-bound
+  (testing "even at full binding engagement, :fit-all's own centroid framing
+            computes the same distance as when unbound — no auto-pull toward
+            the bound world's close-framing distance"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid law/capture-threshold})
+          settings (assoc (cam/default-camera-settings) :mode :fit-all)
+          cam0 (cam/make-camera 500.0)
+          cam-bound (cam/update-camera-for-world cam0 w-bound settings)
+          cam-unbound (cam/update-camera-for-world cam0 w settings)]
+      (is (= (:distance cam-bound) (:distance cam-unbound))
+          "a bind-blend would have lerped the bound result toward ~4 body radii
+           (2.4e-6 ru here), overriding the player's zoom; without it, binding
+           depth has no effect on :fit-all's distance computation"))))
+
+(deftest test-follow-selection-does-not-auto-pull-distance-while-bound
+  (testing "binding to a DIFFERENT world than the one being followed never
+            drags the followed body's clamped distance toward the bound
+            world's close-framing distance"
+    (let [[w obs-eid bound-eid decoy-eid]
+          (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) (sp/vec3 0.0 0.0 0.0))
+                [w bound-eid] (seeder/spawn-clump w {:position [1.0e16 0.0 0.0]
+                                                     :mass 1.0e24 :radius 6.0e8
+                                                     :matter-state :planet})
+                [w decoy-eid] (seeder/spawn-clump w {:position [-1.0e17 0.0 0.0]
+                                                     :mass 1.0e24 :radius 6.0e8
+                                                     :matter-state :planet})]
+            [w obs-eid bound-eid decoy-eid])
+          w-bound (ecs/put-component w obs-eid c/binding {bound-eid law/capture-threshold})
+          scroll-distance 500.0
+          cam0 (assoc (cam/make-camera scroll-distance) :target [0.0 0.0 0.0])
+          settings (assoc (cam/default-camera-settings)
+                          :mode :follow-selection :follow-eid decoy-eid)
+          cam1 (cam/update-camera-for-world cam0 w-bound settings)]
+      (is (= (:distance cam1) (:distance cam0))
+          "the player's own scroll distance (already above the min-approach
+           floor) passes through untouched, regardless of binding depth"))))
+
+(deftest test-tether-reengages-gently-after-a-fight
+  (testing "after the player releases input far from the world, the first resumed step is small"
+    (let [[w obs-eid world-eid] (world-with-bound-planet)
+          w-bound (ecs/put-component w obs-eid c/binding {world-eid 1.0})
+          cam-far (assoc (cam/make-camera 300.0) :target [-50.0 20.0 10.0])
+          cam1 (cam/tether-step cam-far w-bound {:input-active? false})
+          gap (sp/dist (:target cam-far) [10.0 0.0 0.0])]
+      (is (<= (sp/dist (:target cam1) (:target cam-far)) (* 1.001 tether/tether-rate gap))
+          "resumption moves at most the lerp fraction of the remaining gap — no lurch"))))

@@ -21,10 +21,26 @@
        :arglists '([b-field density])}
   alfven-speed field/alfven-speed)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "μ₀/4π exactly (T·m/A)"
        :const true}
   mu0-over-4pi field/mu0-over-4pi)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "Magnetic dipole moment m (A·m²) of a body whose surface field magnitude is\n   |b-field| at radius `radius`, aligned with `b-field`. From the on-axis dipole\n   relation B_pole = μ₀|m|/(2π R³) ⇒ m = (2π R³/μ₀)·B."
        :arglists '([b-field radius])}
   dipole-moment field/dipole-moment)
@@ -37,6 +53,14 @@
        :arglists '([p sources background])}
   net-field-at field/net-field-at)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "Like `net-field-at` but EXCLUDING the source whose position equals `self-pos`\n   (a body does not torque on its own field) — the field a body sees from all the\n   OTHERS. Background is omitted (a uniform field exerts no net force, only torque\n   handled separately)."
        :arglists '([self-pos sources])}
   external-field-at field/external-field-at)
@@ -50,6 +74,14 @@
                    [b-field old-density new-density anisotropy])}
   flux-freeze field/flux-freeze)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "Central pressure of a self-gravitating uniform sphere, P ≈ GM²/((4/3π)R⁴).\n   Duplicated from domain.stellar's formula to keep this namespace free of a\n   dependency on the stellar domain (em is upstream of stellar)."
        :arglists '([mass radius])}
   self-gravity-pressure field/self-gravity-pressure)
@@ -58,6 +90,14 @@
        :arglists '([{:keys [b-field mass radius]}])}
   magnetically-supported? field/magnetically-supported?)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "Floor on the per-tick resistive-decay factor: a body keeps at least this much\n   of its flux each tick. The decay timescale r²/η can fall below the (Myr-scale)\n   `dt` for a compact core, which would annihilate the flux in a single step and\n   defeat flux freezing — the same large-dt coupling hazard as the stellar wind.\n   Capping the per-tick loss keeps the decay gentle and dt-robust, so flux\n   freezing can amplify a contracting core's field (the physically observed\n   outcome: protostars have strong, amplified fields)."
        :const true}
   min-flux-retention field/min-flux-retention)
@@ -93,10 +133,26 @@
        :arglists '([b-field curl-b density])}
   lorentz-acceleration lorentz/lorentz-acceleration)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "Torque density τ = r × f about the origin, where f is the Lorentz force\n   density. N/m."
        :arglists '([position lorentz-force])}
   magnetic-torque lorentz/magnetic-torque)
 
+;; UNUSED-PENDING: inter-body EM field coupling is implemented but never ticked —
+;; no system reads these. The field SUBSTRATE is wired (`net-field-at`,
+;; `field-sources`, `flux-freeze` all have live callers); the body-to-body
+;; COUPLING on top of it is not. Their impls in `domain.em.field` /
+;; `domain.em.lorentz` are unconsumed too, so this is not facade indirection
+;; hiding a live var.
+;; See kanban/tasks/phase-0-protoplanetary-disc-implementation-spec.md §160
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^{:doc "Cap on magnetic-braking angular-momentum loss, as a fraction of L removed per\n   second of SIM-TIME (so the per-step cap is this × dt). ~1/τ_brake with a\n   braking timescale τ_brake ≈ 1e14 s (free-fall scale of a molecular cloud);\n   gentle enough that the cloud's spin survives the collapse rather than being\n   braked away in the first seconds of real time."
        :const true}
   braking-fraction-per-time lorentz/braking-fraction-per-time)

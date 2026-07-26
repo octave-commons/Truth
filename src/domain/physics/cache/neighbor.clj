@@ -35,6 +35,59 @@
    is the classic SPH neighbor-list skin criterion."
   0.1)
 
+;; --- Staleness-budgeted density estimate ------------------------------------
+;; The shared pair walk also maintains the SPH density estimate the Structure
+;; owner reads for gas parcels. Recomputing the estimate is lazy within the
+;; documented budget (law.field/density-stale-*): due on the first build, on
+;; any fresh spatial query (the neighbor identities changed), on accumulated
+;; displacement past fraction·h from the estimate's anchor, or on age reaching
+;; the max-ticks cap. The budget knobs resolve from world keys with law/
+;; defaults so benches and tests can force fresh mode (max-ticks 1).
+
+(defn- density-budget
+  "Resolve `[displacement-fraction max-ticks]` for the density staleness
+   budget: world-key overrides first, `law.field` defaults otherwise."
+  [world]
+  [(double (or (:genesis/density-stale-displacement-fraction world)
+               lf/density-stale-displacement-fraction))
+   (long (or (:genesis/density-stale-max-ticks world)
+             lf/density-stale-max-ticks))])
+
+(defn- density-refresh-due?
+  "True when a gas parcel's density estimate must be recomputed this tick.
+
+    `fresh-query?` marks entries whose neighbor identities were just re-queried
+   (a rebuilt estimate is mandatory — the sum's inputs changed identity, not
+   just value). Otherwise the estimate goes stale within budget: recomputed
+   when the parcel drifted more than `frac`·h_prev from the estimate's anchor
+   (h_prev is the smoothing length the stale estimate was computed at), when h
+   itself moved more than `frac` relative since the estimate — the kernel
+   self-term is ∝ h⁻³, so a few % of h-drift is the dominant estimate error
+   for quiet parcels, and it is also the signal that a neighbor is approaching
+   (interaction about to matter) — when the parcel's MASS moved more than
+   `frac` relative (the self-term is ∝ m; mass-transfer/ablation changes the
+   estimate    without moving the parcel), or when the estimate is `max-ticks` old. The
+   displacement threshold scales with `:density-h` — the kernel support the
+   stale estimate was actually summed over — not the identity skin's h: once
+   the parcel has moved a fraction of THAT support, the geometry the estimate
+   describes has honestly shifted."
+  [prev-entry pos h mass tick fresh-query? frac max-ticks]
+  (boolean
+   (or fresh-query?
+       (nil? (:density-estimate prev-entry))
+       (nil? (:density-h prev-entry))
+       (nil? (:density-m prev-entry))
+       (>= (- (long tick) (long (:density-tick prev-entry 0))) max-ticks)
+       (let [h-prev (double (:density-h prev-entry))]
+         (>= (Math/abs (- (double h) h-prev)) (* frac h-prev)))
+       (let [m-prev (double (:density-m prev-entry))]
+         (and (pos? m-prev)
+              (>= (Math/abs (- (double mass) m-prev)) (* frac m-prev))))
+       (let [h-est (double (:density-h prev-entry))
+             d     (* frac h-est)]
+         (>= (sp/len2 (sp/v- pos (:density-anchor prev-entry)))
+             (* d d))))))
+
 (defn max-displacement-squared
   "Return the squared displacement threshold for smoothing length `h` and
    `tolerance`. A cache entry is reused while |x_now − x_anchor|² < threshold."
@@ -78,31 +131,47 @@
 
    Only the fields actually required by the cache entry and reuse checks are
    fetched from the pre-built `item-by-id` map over `:genesis/spatial-items`,
-   avoiding all per-entity component lookups on the hot path."
+   avoiding all per-entity component lookups on the hot path. :mass feeds the
+   density estimate's mass-drift staleness trigger."
   [item-by-id eid]
   (let [item (item-by-id eid)]
     {:eid      eid
      :position (:position item)
      :radius   (:radius item)
+     :mass     (:mass item)
      :state    (:matter-state item)}))
 
-(defn- attach-r2
-  "Attach only the squared distance to a spatial-index item in the central
-   particle frame. Used by the cache builder; gradients are computed on demand
-   in the consumer systems to avoid storing two gradient vectors per neighbor."
-  [pos-c item]
+(defn- attach-pair-terms
+  "Attach the shared pair products to a spatial-index item in the central
+   particle frame: `:r2` (the squared centre-to-centre distance)
+   and — for hydro/EM-active neighbors with the fields the merged force
+   consumer needs, inside the pair kernel h_ij = r_c + r_n — `:grad`, the
+   kernel gradient ∇W_ij computed ONCE here so neither consumer re-walks the
+   kernel (receipts 2026-07-09: cache-side gradients beat consumer-side
+   recompute by ~11 ms). Pairs outside the kernel or missing fields carry no
+   `:grad`; consumers fall back to on-demand computation, which is bit-equal
+   for the same inputs."
+  [pos-c r-c item]
   (let [pos-n (:position item)
         rx    (- (double (nth pos-c 0)) (double (nth pos-n 0)))
         ry    (- (double (nth pos-c 1)) (double (nth pos-n 1)))
         rz    (- (double (nth pos-c 2)) (double (nth pos-n 2)))
-        r2    (+ (* rx rx) (* ry ry) (* rz rz))]
-    (assoc item :r2 r2)))
+        r2    (+ (* rx rx) (* ry ry) (* rz rz))
+        h     (+ (double r-c) (double (or (:radius item) 1.0)))]
+    (if (and (< r2 (* h h))
+             (lf/hydro-em-active? (:matter-state item))
+             (:density item)
+             (:pressure item)
+             (:mass item))
+      (assoc item :r2 r2 :grad (hydro/kernel-gradient [rx ry rz] r2 h))
+      (assoc item :r2 r2))))
 
 (defn neighbor-with-gradients
   "Attach pressure and curl gradients to a spatial-index item, both computed in
    the central-particle frame. Public so tests can construct matching gradients
    and legacy callers can build hand-rolled cache entries; the production cache
-   builder no longer stores gradients."
+   builder stores a single shared `:grad` per in-kernel pair instead (see
+   `attach-pair-terms`)."
   [pos-c r-c item]
   (let [pos-n (:position item)
         r-n   (double (or (:radius item) 1.0))
@@ -122,11 +191,11 @@
 
 (defn- assemble-cache-entry
   "Assemble a cache entry for `data` from raw spatial-index `items`, computing
-   r2 per neighbor in the central-particle frame. Kernel gradients are NOT stored
-   here; consumer systems compute them on demand with the standard pair smoothing
-   length h_ij = r_i + r_j.
+   the shared pair products (r2 and, for in-kernel hydro/EM pairs, the kernel
+   gradient) in ONE walk. Consumers read `:grad` instead of re-evaluating the
+   kernel; the standard pair smoothing length is h_ij = r_i + r_j.
 
-   `anchor` is the position at which the neighbor set was last actually
+    `anchor` is the position at which the neighbor set was last actually
    queried and `query-r` the radius it covered; displacement and kernel growth
    for reuse are measured against them.
 
@@ -136,13 +205,14 @@
    never leak into physics."
   [data h anchor query-r items]
   (let [pos  (:position data)
-        nbrs (mapv #(attach-r2 pos %)
+        r-c  (double (or (:radius data) 1.0))
+        nbrs (mapv #(attach-pair-terms pos r-c %)
                    (sort-by :id items))]
     {:position         pos
      :anchor-position  anchor
      :query-r          query-r
-     :h                h
-     :radius           (double (or (:radius data) 1.0))
+     :h                (double h)
+     :radius           r-c
      :state            (:state data)
      :neighbors        nbrs}))
 
@@ -150,7 +220,9 @@
   "Build one cache entry for `data` using the uniform grid for radius queries
    and the Barnes–Hut tree for the nearest-neighbor distance that sets h. The
    nearest neighbor's IDENTITY is stored as `:nn-id` so the refresh path can
-   recompute the distance to it in O(1) instead of re-descending the tree."
+   recompute the distance to it in O(1) instead of re-descending the tree.
+   A fresh spatial query always recomputes the gas density estimate (the
+   neighbor identities changed); see `build-or-refresh-cache-entry`."
   [world data]
   (let [pos     (:position data)
         r-c     (double (or (:radius data) 1.0))
@@ -241,29 +313,84 @@
   [world]
   (into {} (map (juxt :id identity)) (:genesis/spatial-items world)))
 
+(defn- carry-density-estimate
+  "Carry the previous entry's staleness-budgeted density estimate forward onto
+   a refreshed entry whose budget did NOT come due this tick."
+  [prev-entry entry]
+  (assoc entry
+         :density-estimate (:density-estimate prev-entry)
+         :density-anchor   (:density-anchor prev-entry)
+         :density-tick     (:density-tick prev-entry)
+         :density-h        (:density-h prev-entry)
+         :density-m        (:density-m prev-entry)))
+
+(defn- with-density-estimate
+  "Attach a FRESH density estimate to `entry`, summed from the entry's own
+   neighbor vector via `domain.hydro/sph-density-from-cache` — bit-equal to
+   the sum the Structure consumer would have computed — stamped with the
+   current position, tick, smoothing length, and parcel mass (the staleness
+   triggers' reference values)."
+  [entry mass tick]
+  (assoc entry
+         :density-estimate (hydro/sph-density-from-cache (:neighbors entry)
+                                                         (:h entry))
+         :density-anchor   (:position entry)
+         :density-tick     (long tick)
+         :density-h        (:h entry)
+         :density-m        (double (or mass 0.0))))
+
 (defn- build-or-refresh-cache-entry
   "Return `[eid entry]` for `eid`, reusing the previous entry when valid.
-   `prev-fn` returns the previous cache entry for an eid (or nil)."
-  [world full-rebuild? item-by-id prev-fn eid]
+   `prev-fn` returns the previous cache entry for an eid (or nil).
+
+   This is the ONE shared pair/neighbor walk of the tick: the entry it emits
+   carries the pair products every consumer reads — r2 and the kernel gradient
+   per in-kernel pair for the merged hydro/EM force, plus the staleness-
+   budgeted SPH density estimate for the Structure owner. The density budget
+   (`density-refresh-due?`, law.field/density-stale-* knobs) is decided here:
+   fresh queries always recompute; refreshed entries recompute on displacement,
+   h-drift, or age and otherwise carry the previous estimate forward unchanged
+   (skipping the density sum entirely on quiet ticks)."
+  [world full-rebuild? item-by-id prev-fn tick eid]
   (let [prev-entry (prev-fn eid)
-        reusable? (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
-        data (entity->cache-data item-by-id eid)]
+        reusable?  (and (not full-rebuild?) (cache-entry-valid? world prev-entry eid))
+        data       (entity->cache-data item-by-id eid)]
     (when (cache-active? (:state data))
-      (let [entry (or (when reusable? (refresh-cache-entry data prev-entry item-by-id))
-                      (build-cache-entry world data))]
+      (let [gas?             (= :nebula (:state data))
+            [frac max-ticks] (density-budget world)
+            refreshed        (when reusable?
+                               (refresh-cache-entry data prev-entry item-by-id))
+            entry            (or refreshed (build-cache-entry world data))
+            entry            (if gas?
+                               (if (density-refresh-due? prev-entry
+                                                         (:position entry)
+                                                         (:h entry)
+                                                         (:mass data)
+                                                         tick
+                                                         (nil? refreshed)
+                                                         frac max-ticks)
+                                 (with-density-estimate entry (:mass data) tick)
+                                 (carry-density-estimate prev-entry entry))
+                               entry)]
         (when (or (false? (:genesis/validate-neighbor-cache? world))
                   (neighbor-cache-entry? entry))
           [eid entry])))))
 
 (defn rebuild-neighbor-cache
-  "Build or refresh per-entity `c/neighbor-cache` entries.
+  "Build or refresh per-entity `c/neighbor-cache` entries — the ONE shared
+   pair/neighbor walk of the tick.
 
    Returns a write-set `{c/neighbor-cache {eid entry}}` suitable for the
    double-buffer fan-out. Reuses previous neighbor identities when valid,
    otherwise rebuilds with a real spatial query. A full rebuild is forced when
    `:genesis/invalidate-neighbor-cache?` is set or `tick` is a multiple of the
    configured interval. Entities no longer alive or hydro/EM-active are evicted
-   (absent from the write-set)."
+   (absent from the write-set).
+
+   Each entry carries the pair products all consumers read: per-neighbor `:r2`
+   and `:grad` (kernel gradient for in-kernel hydro/EM pairs), and for gas
+   parcels the staleness-budgeted `:density-estimate` (see
+   `density-refresh-due?`). Consumers never re-walk the neighbor set."
   [world tick]
   (if (:genesis/profile-subsystems? world)
     (let [t0 (System/nanoTime)
@@ -275,7 +402,7 @@
           prev-fn #(ecs/get-component world % c/neighbor-cache)
           eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
           t3 (System/nanoTime)
-          entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
+          entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn tick %) eids)
           t4 (System/nanoTime)
           new-cache (into {} (keep identity) entries)
           t5 (System/nanoTime)
@@ -296,7 +423,7 @@
           item-by-id (item-by-id-map world)
           prev-fn #(ecs/get-component world % c/neighbor-cache)
           eids (ecs/entities-with world c/matter-state c/position c/radius c/mass)
-          entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn %) eids)
+          entries (par/par-mapv #(build-or-refresh-cache-entry world full? item-by-id prev-fn tick %) eids)
           new-cache (into {} (keep identity) entries)
           prior (get-in world [:components c/neighbor-cache])
           removed (into {} (comp (remove #(contains? new-cache (key %)))
@@ -330,12 +457,16 @@
           (ecs/entities-with world c/neighbor-cache)))
 
 (defn neighbor-cache-system
-  "Fan-out system: build or refresh per-entity `c/neighbor-cache` entries.
+  "Fan-out system: build or refresh per-entity `c/neighbor-cache` entries —
+   the tick's ONE shared pair/neighbor walk.
 
    Reads the one-tick-stale `c/neighbor-cache` components from the frozen
-   snapshot to decide reuse, and emits the current tick's entries as a write-set.
-   Hydro and EM-Lorentz read the same stale snapshot entries, so all consumers
-   see the same one-tick Jacobi lag."
+   snapshot to decide reuse, and emits the current tick's entries as a
+   write-set. Hydro-EM, the Structure gas branch, and EM-Lorentz read the same
+   stale snapshot entries, so all consumers see the same one-tick Jacobi lag.
+   Sole writer of `c/neighbor-cache`; the entry's `:grad` pair terms and
+   staleness-budgeted `:density-estimate` ride the same component, so no
+   consumer re-walks the neighbor set and no second writer exists."
   []
   {:id     :neighbor-cache
    :ns     'domain.physics.cache.neighbor

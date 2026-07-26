@@ -17,29 +17,11 @@
 (def finite-number? schema/finite-number?)
 (def finite-vec3? schema/finite-vec3?)
 (def bounded-b-field? schema/bounded-b-field?)
-(def regime-tags schema/regime-tags)
-(def disc-regime-tags schema/disc-regime-tags)
-(def regime-tag? schema/regime-tag?)
 (def hydro-em-active? schema/hydro-em-active?)
-(def field-cell-schema schema/field-cell-schema)
-(def hydro-accel-schema schema/hydro-accel-schema)
-(def magnetic-torque-schema schema/magnetic-torque-schema)
-(def neighbor-cache-entry-schema schema/neighbor-cache-entry-schema)
 (def neighbor-cache-entry? schema/neighbor-cache-entry?)
-(def physics-soa-schema schema/physics-soa-schema)
 (def physics-soa? schema/physics-soa?)
-(def toomre-q-schema schema/toomre-q-schema)
-(def cool-dyn-ratio-schema schema/cool-dyn-ratio-schema)
-(def gas-sample-schema schema/gas-sample-schema)
 (def gas-sample? schema/gas-sample?)
-(def field-cell-contract schema/field-cell-contract)
-
 ;; --- Dual-representation / focus zones (Phase 1) ----------------------------
-
-(def field-zone-schema schema/field-zone-schema)
-(def statistical-cell-schema schema/statistical-cell-schema)
-(def attention-shell-schema schema/attention-shell-schema)
-(def promotion-invariant? schema/promotion-invariant?)
 
 ;; --- Physical constants -----------------------------------------------------
 
@@ -56,15 +38,40 @@
 (def ^:const alfven-mach-magnetized 1.0)
 ;; Alfvén-Mach below this → magnetic tension/pressure constrain the flow.
 
-(def ^:const min-neighbors-for-curl 5)
+(def ^:export ^:const min-neighbors-for-curl 5)
 ;; Minimum neighbor count required to attempt an SPH curl estimate. Isolated
 ;; particles have too noisy a curl for the Lorentz force to be meaningful.
 
-(def ^:const mach-supersonic 1.0)
+(def ^:export ^:const mach-supersonic 1.0)
 ;; Flow Mach above this → shocks, compressible turbulence.
 
 (def ^:const jeans-unstable 1.0)
 ;; L/λ_J at or above this → gravitationally unstable, tends to collapse.
+
+;; --- SPH density staleness budget -------------------------------------------
+;; The shared pair walk (domain.physics.cache.neighbor) refreshes the SPH
+;; density estimate lazily: the estimate a gas parcel's Structure owner reads
+;; may lag the current geometry within a documented budget. The estimate is
+;; recomputed on ANY of: a fresh neighbor query, parcel displacement past
+;; fraction·h from the estimate anchor, h drift past fraction relative (the
+;; kernel self-term is ∝ h⁻³), parcel mass drift past fraction relative (the
+;; self-term is ∝ m — mass-transfer moves density without moving the parcel),
+;; or age reaching max-ticks. Both knobs are world-overridable
+;; (:genesis/density-stale-displacement-fraction,
+;; :genesis/density-stale-max-ticks); setting max-ticks to 1 forces a fresh
+;; estimate every tick (the pre-budget behaviour, used as the windowed-
+;; equivalence reference).
+
+(def ^:const density-stale-displacement-fraction 0.05)
+;; Fraction of the parcel's smoothing length h it may drift from the position
+;; of the last density estimate before the estimate must be recomputed. Half
+;; the neighbor-cache identity skin (0.1·h): density refreshes at least as
+;; readily as the neighbor identities it sums over.
+
+(def ^:const density-stale-max-ticks 4)
+;; Hard cap on estimate age in ticks. Catches every drift source the
+;; displacement trigger cannot see (h shrinkage, neighbor field drift) so the
+;; lag is always bounded; 1 = recompute every tick (fresh mode).
 
 ;; --- Plasma / MHD helpers ---------------------------------------------------
 
@@ -129,10 +136,10 @@
 
 ;; --- Disc-regime thresholds (Part 3) ----------------------------------------
 
-(def ^:const toomre-q-stable 1.0)
+(def ^:export ^:const toomre-q-stable 1.0)
 ;; Toomre Q = c_s Ω / (π G Σ). Q > 1 ⇒ gravitationally stable against axisymmetric
 ;; perturbations; Q < 1 ⇒ the disc is unstable and can fragment.
 
-(def ^:const cooling-dynamical-ratio-fast 3.0)
+(def ^:export ^:const cooling-dynamical-ratio-fast 3.0)
 ;; Gammie (2001): fragmentation requires t_cool < 3 Ω⁻¹. If cooling is slower,
 ;; the disc heats up and stabilizes even when Q < 1.

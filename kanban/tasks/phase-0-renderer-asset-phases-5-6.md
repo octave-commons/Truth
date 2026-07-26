@@ -1,7 +1,7 @@
 ---
 uuid: "phase-0-renderer-asset-phases-5-6"
 title: "Phase 0 Renderer Asset Phases 5–6: Asset Cache, Passes, Materials"
-status: "ready"
+status: "review"
 priority: "P2"
 labels: ["specs", "phase0", "render"]
 created_at: "2026-07-10T12:00:00Z"

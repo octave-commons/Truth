@@ -80,11 +80,11 @@
 
 ;; --- Baryon density (PDG 2025 + Yeh+2026) -----------------------------------
 
-(def ^:const eta-10
+(def ^:export ^:const eta-10
   "Baryon-to-photon ratio × 10¹⁰. Combined BBN+CMB constraint."
   6.12)
 
-(def ^:const omega-b-h2
+(def ^:export ^:const omega-b-h2
   "Baryon density parameter Ω_b h². From Planck CMB + BBN."
   0.02236)
 
@@ -191,6 +191,18 @@
        (< (double (metallicity c)) 1e-4)))
 
 ;; --- Condensation sequence (Lodders 2003) -----------------------------------
+
+(def ^:const condensation-width
+  "Sigmoid width ΔT (K) of the condensation transition used by
+   `domain.chemistry/solid-fraction` (nebular-chemistry spec §6.1, decision
+   §10.3). Condensation is grain nucleation and growth spread over a
+   temperature interval, not a cliff at Tc: laboratory and nebular-analog
+   condensates appear over tens of kelvin around the 50% point
+   (docs/research/physics/nebular-chemistry-metal-enrichment.md §4.3). A
+   constant absolute width (not Tc-relative) keeps the transition sharp for
+   refractories and correctly wide for the most volatile species, whose low
+   Tc would otherwise compress the interval to nothing."
+  30.0)
 
 (def condensation-temperatures
   "50% condensation temperatures (K) for elements from a solar-composition gas

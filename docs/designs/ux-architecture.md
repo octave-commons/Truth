@@ -140,6 +140,28 @@ Phase 6:  [Spark becomes Self. Ontology becomes the avatar's name and city.]
 
 **Rule:** Resonance is the build currency; Agency is the action currency. Both are visible here, but only Resonance is allocated into slots.
 
+**Control doctrine (clarified 2026-07-23).** The real invariant is **role
+stability per key**, not a fixed count of verbs: if a key is used for movement it
+is *always* movement; if it fills an ability slot it is *always* that slot. What
+changes across phases is *what fills an ability slot* (via a tech tree), never a
+key's role. Keys stay **on-screen always** (the action palette already does this)
+so the player learns to expect them. There are three role-stable groups:
+
+- **Pilot** — `WASD` + 6DOF thrusters/roll/boost + flight-assist toggle; mouse
+  aims the mote, middle-mouse orbits the camera. Always movement.
+- **Focus/aim** — arrows + `,`/`.` move and size the attention reticle (the point
+  where abilities land and where binding/resolution accrue). Already wired. In
+  Phase 0 this must also follow the pilot while flying (see the flight design).
+- **Abilities** — the on-screen quanta hotbar: today `G` well · `Shift+G`
+  repulsor · `H` heat · `J` cool. Slots are role-stable; a **tech tree** fills and
+  later re-arms them (e.g. to sculpt verbs once a world resolves). The
+  slots-1–6 loadout above is this group's eventual form.
+
+The earlier `Q Focus / E Nudge / R Release` phrasing was aspirational language
+never bound in code (`nudge` is docs-only; `release` was deleted with the spark
+spring). Full flight/camera model, corrected binding map, and the focus-follows-
+pilot linchpin: `docs/designs/spark-flight-and-camera.md`.
+
 ---
 
 ### Phase

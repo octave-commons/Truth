@@ -8,12 +8,27 @@
 #   bin/analyze --strict   # CI mode: also fail on structural HARD breaches
 #   bin/analyze --fix      # auto-fix what is safely auto-fixable (cljfmt)
 #
-# Exit-gating tiers:
-#   BLOCKING (always)  clj-kondo *errors*   — real bugs
-#   BLOCKING (--strict) smell HARD breaches  — god namespaces / mega-functions
-#   ADVISORY (printed) clj-kondo warnings, Splint, cljfmt, jscpd, dead-code
-# Advisory tools are intentionally non-gating while the tree converges; flip one
-# to blocking by adding its name to FAIL below.
+# Exit-gating tiers (RATCHET — see the note below before relaxing any of these):
+#   BLOCKING (always)   clj-kondo errors AND warnings
+#   BLOCKING (always)   Splint warnings
+#   BLOCKING (always)   clojure-lsp unused-public-vars
+#   BLOCKING (always)   cljfmt formatting
+#   BLOCKING (--strict) smell HARD breaches — god namespaces / mega-functions
+#   ADVISORY (printed)  jscpd (gated separately by "threshold" in .jscpd.json)
+#
+# Every one of those was at ZERO on 2026-07-25, which is the only reason they are
+# blocking: a gate promoted while findings remain is a gate that gets merged past.
+# That already happened here: `static-analysis` failed on 33 consecutive pushes to
+# `main` between 2026-07-10 and 2026-07-21 and every one landed anyway, while twelve
+# kanban cards sat `done` with their findings back. Direct pushes, not merged PRs —
+# there has only ever been one PR, and it targeted a feature branch. See
+# kanban/tasks/static-analysis-regression-2026-07-24.md.
+#
+# So: if one of these fires, it is a BLOCKER, not a backlog item. Fix it, or add a
+# documented per-site suppression with its reason (docs/STATIC-ANALYSIS.md ›
+# Suppression conventions). If you genuinely cannot fix it, open a regression card
+# — do NOT demote the tier back to advisory, and never leave a card `done` whose
+# finding has returned.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
 
@@ -29,35 +44,92 @@ done
 FAIL=()      # collected blocking failures
 sec() { printf '\n\033[1;36m━━━ %s\033[0m\n' "$1"; }
 
+# Preflight. A gate that passes because its tool is absent is worse than no gate —
+# it reads green while checking nothing. Every BLOCKING tool must be present.
+# (jscpd is exempt: it needs node/npx and degrades to advisory by design, which the
+# jscpd section states explicitly.)
+require_tool() {
+  command -v "$1" >/dev/null 2>&1 || FAIL+=("$1 not found on PATH — gate cannot run")
+}
+for t in clj-kondo clojure clojure-lsp; do require_tool "$t"; done
+if [ "${#FAIL[@]}" -ne 0 ]; then
+  sec "verdict"
+  printf '\033[1;31m✘ cannot run the gate:\033[0m\n'
+  for f in "${FAIL[@]}"; do echo "  - $f"; done
+  exit 2
+fi
+
 ANALYSIS_CFG='{:output {:analysis {:var-definitions {:meta true} :arglists true} :format :edn}}'
 
 # 1 ── clj-kondo: correctness + anti-patterns (config in .clj-kondo/config.edn).
 sec "clj-kondo  (bugs / anti-patterns)"
 clj-kondo --lint src test
 kondo=$?   # 0 none · 2 warnings · 3 errors
-[ "$kondo" -eq 3 ] && FAIL+=("clj-kondo: errors present")
+case "$kondo" in
+  0) ;;
+  2) FAIL+=("clj-kondo: warnings present (tree was at 0)") ;;
+  3) FAIL+=("clj-kondo: errors present") ;;
+  # Anything else is clj-kondo itself failing (bad config, crash, 127). Do NOT
+  # fall through to success — an unrecognised exit means the check did not run.
+  *) FAIL+=("clj-kondo: unexpected exit $kondo — the lint did not run") ;;
+esac
 
 # 2 ── Structural smells: god namespaces, mega-functions, param bloat, fan-out.
 sec "structural smells  (dung heaps)"
 smell_args=(); [ "$STRICT" -eq 1 ] && smell_args+=(--strict)
-clj-kondo --lint src test --config "$ANALYSIS_CFG" 2>/dev/null \
-  | clojure -M dev/smell_report.clj "${smell_args[@]}"
+# Capture the analysis export first. Piping clj-kondo straight into smell_report
+# hides a clj-kondo failure: empty stdin scores zero smells and exits 0, so the
+# structural tier would pass precisely when it could not be evaluated. Same class
+# of bug as the PIPESTATUS one noted below, one stage earlier.
+analysis=$(mktemp)
+clj-kondo --lint src test --config "$ANALYSIS_CFG" 2>/dev/null >"$analysis"
+if [ ! -s "$analysis" ]; then
+  echo "  clj-kondo produced no analysis export — structural check could not run"
+  FAIL+=("structural: clj-kondo analysis export empty — the check did not run")
+fi
+clojure -M dev/smell_report.clj "${smell_args[@]}" <"$analysis"
+# PIPESTATUS[1], not $? — `set -o pipefail` makes $? the LAST NON-ZERO status in
+# the pipeline, and clj-kondo exits 2 whenever it has warnings. Using $? here
+# reported "structural: HARD threshold breached" on any kondo warning, whatever
+# the actual structure was (found 2026-07-24 with HARD breaches at 0).
 smell=$?
+rm -f "$analysis"
 [ "$STRICT" -eq 1 ] && [ "$smell" -ne 0 ] && FAIL+=("structural: HARD threshold breached")
 
-# 3 ── Splint: non-idiomatic forms (kibit successor). Advisory.
+# 3 ── Splint: non-idiomatic forms (kibit successor). BLOCKING (was 0).
 sec "Splint  (idiom anti-patterns)"
-clojure -M:splint || true
+clojure -M:splint
+splint=$?
+[ "$splint" -ne 0 ] && FAIL+=("Splint: warnings present (tree was at 0)")
 
-# 4 ── clojure-lsp: project-wide dead code (unused public vars). Advisory.
+# 4 ── clojure-lsp: project-wide dead code (unused public vars). BLOCKING (was 0).
 sec "clojure-lsp  (dead code: unused public vars)"
-dead=$(clojure-lsp diagnostics 2>/dev/null | grep -i 'unused-public-var')
-if [ -n "$dead" ]; then echo "$dead"; else echo "  none"; fi
+# Keep the raw output so "clean" is distinguishable from "never ran". Piping
+# straight into grep with stderr discarded made a missing/crashed clojure-lsp look
+# identical to a clean tree.
+lsp_raw=$(mktemp)
+clojure-lsp diagnostics >"$lsp_raw" 2>/dev/null
+lsp_status=$?
+dead=$(grep -i 'unused-public-var' "$lsp_raw")
+if [ -n "$dead" ]; then
+  echo "$dead"
+  FAIL+=("clojure-lsp: unused public vars present (tree was at 0)")
+elif [ ! -s "$lsp_raw" ] && [ "$lsp_status" -ne 0 ]; then
+  # No output AND a non-zero exit: it did not analyse anything.
+  echo "  clojure-lsp produced no output (exit $lsp_status) — dead-code check could not run"
+  FAIL+=("clojure-lsp: no output (exit $lsp_status) — the check did not run")
+else
+  echo "  none"
+fi
+rm -f "$lsp_raw"
 
-# 5 ── jscpd: copy-paste duplication. Advisory.
+# 5 ── jscpd: copy-paste duplication. Gated by "threshold" in .jscpd.json, which
+#      npx jscpd enforces itself (non-zero exit above it) — see that file for why
+#      the number is a ratchet at today's level rather than a target.
 sec "jscpd  (copy-paste duplication)"
 jscpd_err=$(mktemp)
 jscpd_out=$(npx --yes jscpd@4 2>"$jscpd_err")
+jscpd_status=$?   # non-zero once duplication crosses .jscpd.json's "threshold"
 if [ -z "$jscpd_out" ]; then
   echo "  jscpd unavailable (needs node/npx)"
   if [ -s "$jscpd_err" ]; then
@@ -67,17 +139,26 @@ else
   echo "$jscpd_out" | grep -E '^(Clone found|\s+.*\[.*\])'
   echo "$jscpd_out" | grep -E 'Found [0-9]+ clones'
   echo "$jscpd_out" | grep 'Total:' | awk -F '│' '{gsub(/^[ \t]+|[ \t]+$/, "", $7); gsub(/^[ \t]+|[ \t]+$/, "", $8); print "duplicated lines: " $7 ", duplicated tokens: " $8}'
+  # Reuse the exit code from the run above — re-invoking npx rescanned all 275
+  # files a second time purely to read $?, doubling the slowest step in the sweep
+  # and opening a window for the two runs to disagree if the tree changed between.
+  if [ "$jscpd_status" -ne 0 ]; then
+    FAIL+=("jscpd: duplication above the .jscpd.json threshold")
+  fi
 fi
 rm -f "$jscpd_err"
 
-# 6 ── cljfmt: formatting consistency. Advisory (use --fix to apply).
+# 6 ── cljfmt: formatting consistency. BLOCKING (was 0). --fix applies it.
 sec "cljfmt  (formatting)"
 if [ "$FIX" -eq 1 ]; then
   clojure -M:cljfmt fix src test && echo "  formatting applied."
 else
-  clojure -M:cljfmt check src test >/dev/null 2>&1 \
-    && echo "  all files formatted." \
-    || echo "  files need formatting — run: bin/analyze --fix"
+  if clojure -M:cljfmt check src test >/dev/null 2>&1; then
+    echo "  all files formatted."
+  else
+    echo "  files need formatting — run: bin/analyze --fix"
+    FAIL+=("cljfmt: files need formatting (tree was clean)")
+  fi
 fi
 
 # ── verdict ────────────────────────────────────────────────────────────────

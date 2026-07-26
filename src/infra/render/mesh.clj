@@ -57,6 +57,48 @@
     {:buffer fb
      :vertex-count (* 3 (count faces))}))
 
+(def ^:private unit-cube-verts
+  "Corners of a cube centered at the origin with half-extent 1.0 (so scaling
+   by `radius` in `infra.render.math/model-matrix` — the same convention
+   sphere bodies use, radius = distance from centre to the unit mesh — yields
+   a cube of edge `2 * radius`). [x y z] indexed 0-7 in the standard
+   binary-corner order."
+  (vec (for [x [-1.0 1.0] y [-1.0 1.0] z [-1.0 1.0]] [x y z])))
+
+(def ^:private cube-faces
+  "Two triangles per face covering the six axis-aligned faces of
+   `unit-cube-verts` by corner index (bit2=x bit1=y bit0=z, matching the
+   `for` nesting above). Face culling is never enabled for the body pass
+   (see `infra.render.scene.setup/render-solids-pass`) and the shared body
+   shader derives its pseudo-normal from the vertex position itself rather
+   than a cross-product face normal, so winding is not load-bearing here —
+   only full coverage of each face is."
+  [[0 1 3] [0 3 2]    ;; -x face (corners 0 1 2 3)
+   [4 6 7] [4 7 5]    ;; +x face (corners 4 5 6 7)
+   [0 4 5] [0 5 1]    ;; -y face (corners 0 1 4 5)
+   [2 3 7] [2 7 6]    ;; +y face (corners 2 3 6 7)
+   [0 2 6] [0 6 4]    ;; -z face (corners 0 2 4 6)
+   [1 5 7] [1 7 3]])  ;; +z face (corners 1 3 5 7)
+
+(defn make-cube-mesh
+  "Create a unit cube mesh (half-extent 1.0, 12 triangles, position-only
+   vertices) in the same non-indexed `{:buffer :vertex-count}` shape
+   `make-sphere-mesh` returns, so `upload-mesh` and the shared body shader
+   (which derives its normal from the local vertex position) work unchanged
+   for voxel cube instances (`infra.render.scene.voxel`)."
+  []
+  (let [face-verts (mapcat (fn [[i j k]]
+                             [(nth unit-cube-verts i)
+                              (nth unit-cube-verts j)
+                              (nth unit-cube-verts k)])
+                           cube-faces)
+        fb (BufferUtils/createFloatBuffer (* 3 (count cube-faces) 3))]
+    (doseq [[x y z] face-verts]
+      (.put fb (float x)) (.put fb (float y)) (.put fb (float z)))
+    (.flip fb)
+    {:buffer fb
+     :vertex-count (* 3 (count cube-faces))}))
+
 (defn upload-mesh
   "Upload a sphere mesh buffer to the GPU and return {:vao :vbo :count}."
   [{:keys [buffer vertex-count]}]

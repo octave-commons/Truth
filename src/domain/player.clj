@@ -3,6 +3,7 @@
    resource. This namespace is a thin facade over the split player sub-modules."
   (:require
    [domain.player.economy :as economy]
+   [domain.player.flight :as flight]
    [domain.player.focus :as focus]
    [domain.player.influence :as influence]
    [domain.player.state :as state]
@@ -42,13 +43,13 @@
 (def ^{:doc "Deduct `cost` agency, clamped at zero."}
   spend-agency economy/spend-agency)
 
-(def ^{:doc "Update observer coherence from drain, regen, and witnessed events."}
-  apply-coherence economy/apply-coherence)
+(def ^{:doc "True if the observer has at least `cost` resonance."}
+  can-afford-resonance? economy/can-afford-resonance?)
+
+(def ^{:doc "Deduct `cost` resonance, clamped at zero."}
+  spend-resonance economy/spend-resonance)
 
 ;; --- Observation / focus ----------------------------------------------------
-
-(def ^{:doc "How strongly the observer's attention resolves reality."}
-  observation-effect focus/observation-effect)
 
 (def ^{:doc "Radius within which attention collapses probability into matter."}
   probability-collapse-radius focus/probability-collapse-radius)
@@ -62,16 +63,22 @@
 (def ^{:doc "Broaden focus radius and lower intensity."}
   widen-focus focus/widen-focus)
 
-;; --- Movement ---------------------------------------------------------------
+;; --- Manual flight (flight-no-jump-accel: acceleration channels, never position writes) ---
 
-(def ^{:doc "Move the observer by velocity * dt."}
-  drift focus/drift)
+(def ^{:doc "Target spark displacement (m) per tick at full thrust, terminal speed — dilation-proof sizing (physics-dt-unit-mismatch). Live knob: :genesis/spark-flight-displacement."}
+  default-displacement-per-tick flight/default-displacement-per-tick)
 
-(def ^{:doc "Drift toward the focus at `speed`."}
-  approach-focus focus/approach-focus)
+(def ^{:doc "Fraction of the spark's velocity retained per tick by the always-on proto flight-assist. Live knob: :genesis/spark-damping-retention."}
+  default-damping-retention flight/default-damping-retention)
 
-(def ^{:doc "Drift along a gradient toward interesting regions."}
-  release-focus focus/release-focus)
+(def ^{:doc "Serial intent: record/clear the player's manual-flight thrust direction on the :player/thrust world key."}
+  set-thrust flight/set-thrust)
+
+(def ^{:doc "Write-set system (sole writer of c/accel-thrust): manual-flight thrust + proto flight-assist damping on the spark."}
+  thrust-acceleration-system flight/thrust-acceleration-system)
+
+(def ^{:doc "Manual-mode focus-follow: pin :focus-position to the spark's c/position plus the player's offset (world -> world)."}
+  focus-follow focus/focus-follow)
 
 ;; --- Influence: the dark halo -----------------------------------------------
 
@@ -120,6 +127,12 @@
 
 (def ^{:doc "Apply f to the observer map in the world."}
   update-observer state/update-observer)
+
+(def ^{:doc "The spark's physical position: the c/position column on the observer entity (single source of truth)."}
+  observer-position state/observer-position)
+
+(def ^{:doc "Load-time repair hook: seed the spark's ECS columns on pre-card-4 worlds (idempotent)."}
+  repair-observer-columns state/repair-observer-columns)
 
 (def ^{:doc "Spawn the singleton observer entity. Returns [world eid]."}
   spawn-observer state/spawn-observer)

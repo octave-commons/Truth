@@ -226,6 +226,8 @@
                :genesis/metallicity metallicity
                :genesis/observer-halo-mass-factor player/default-halo-mass-factor
                :genesis/influence-dv-cap player/default-influence-dv-cap
+               :genesis/dark-matter-mass-factor law/default-dark-matter-mass-factor
+               :genesis/dark-matter-scale-factor law/default-dark-matter-scale-factor
                :genesis/well-mass-factor intervention/default-well-mass-factor
                :genesis/well-radius intervention/default-radius
                :genesis/well-ttl intervention/default-ttl
@@ -257,22 +259,51 @@
 (def ^:private consumed-markers
   "Lifecycle reap markers; an entity carrying ANY is despawned at world-construction."
   [c/consumed-merge c/consumed-accrete c/consumed-escape
-   c/consumed-transfer c/consumed-ablation])
+   c/consumed-transfer c/consumed-ablation c/consumed-demote])
 
 (def ^:private spawn-request-components
   "Lifecycle spawn requests; each is {eid [seed-spec ...]} materialized into new
    entities at world-construction."
   [c/spawn-request-flare
    c/spawn-request-accretion c/spawn-request-shatter
-   c/spawn-request-disk c/spawn-request-planet c/spawn-request-condense])
+   c/spawn-request-disk c/spawn-request-planet c/spawn-request-condense
+   c/spawn-request-promotion])
+
+(defn- resolve-spawn-parent
+  "Re-anchor a spec's absolute `:position`/`:velocity` on its `:spawn-parent`
+   entity's CURRENT state, when the spec carries one (see
+   `domain.planet-formation.orbit/build-planet-spec`). `materialize-lifecycle`
+   runs AFTER `step-physics` (`domain.genesis.tick/tick-physics`), so `w` here
+   already reflects THIS tick's own integrator write for the parent — while
+   the spec's baked-in absolute `:position`/`:velocity` were computed against
+   the parent's PRE-tick frozen snapshot state. In the formation-era cluster a
+   star can move 10s of AU in a single tick (design
+   `docs/designs/multi-timescale-integration.md` §3.0), the same order as the
+   whole seeded orbit; using the stale absolute values would spawn the body
+   already many AU from its actual parent with a velocity that pairs with
+   nothing — an instant, silent ejection with no raw-Euler tick involved. A
+   no-op when the spec carries no `:spawn-parent`, or that entity no longer
+   resolves (defensive; the parent star should always still exist)."
+  [w spec]
+  (if-let [parent (:spawn-parent spec)]
+    (if-let [p-pos (ecs/get-component w parent c/position)]
+      (let [p-vel (or (ecs/get-component w parent c/velocity) [0.0 0.0 0.0])]
+        (assoc spec
+               :position (sp/v+ p-pos (get spec :rel-position [0.0 0.0 0.0]))
+               :velocity (sp/v+ p-vel (get spec :rel-velocity [0.0 0.0 0.0]))))
+      spec)
+    spec))
 
 (defn- spawn-entity
   "Materialize one spawn spec into a new entity, shifting its position by the
    current frame-offset so it lands in the same Galilean frame as its parents."
   [w spec]
-  (let [spec  (update spec :position sp/v- (or (:genesis/frame-offset w) [0.0 0.0 0.0]))
+  (let [spec  (-> (resolve-spawn-parent w spec)
+                  (update :position sp/v- (or (:genesis/frame-offset w) [0.0 0.0 0.0])))
         extra (:extra-components spec)
-        [w2 neweid] (seeder/spawn-clump w (dissoc spec :extra-components))]
+        [w2 neweid] (seeder/spawn-clump
+                     w (dissoc spec :extra-components
+                               :spawn-parent :rel-position :rel-velocity))]
     (reduce-kv (fn [w k v] (ecs/put-component w neweid k v))
                w2 (or extra {}))))
 

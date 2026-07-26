@@ -40,8 +40,10 @@
 (deftest gravity-emits-finite-accel-for-every-body
   (let [[w e0] (ecs/spawn (ecs/empty-world))
         [w e1] (ecs/spawn w)
-        w  (-> (body w e0 [-1.0e12 0.0 0.0] [0.0 0.0 0.0])
-               (body e1 [1.0e12 0.0 0.0] [0.0 0.0 0.0]))
+        ;; Stateless (gas-rule) bodies under softening 5e14: the pair dead-zone
+        ;; is 0.1·ε_pair = 5e13, so place the pair 2e15 m apart — outside it.
+        w  (-> (body w e0 [-1.0e15 0.0 0.0] [0.0 0.0 0.0])
+               (body e1 [1.0e15 0.0 0.0] [0.0 0.0 0.0]))
         w  (spatial/spatial-index w)
         sys (orbital/gravity-acceleration law/G 0.5 5.0e14)
         ws  ((:run sys) w)

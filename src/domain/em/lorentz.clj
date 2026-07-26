@@ -253,6 +253,12 @@
       [nbrs nil])
     [(idx/within-radius (:genesis/spatial-tree world) (:position data) h em-active-neighbor?) nil]))
 
+;; Intentional: `let` + `if`, not `if-let`. `skip?` is a BOOLEAN that the branch
+;; never reads — `if-let` exists to bind and then USE a value, so the rewrite
+;; would read as though `skip?` is consumed downstream. The name is doing real
+;; work: it labels a 6-line physics gate (finite B, positive density, magnetized
+;; beta AND Alfven-Mach) that would otherwise sit unnamed in the `if` head.
+#_{:splint/disable [lint/let-if]}
 (defn curl-estimate-from-cache
   "Estimate (∇ × B) for the Lorentz acceleration system using a pre-built
    neighbor-cache entry. Walks the cached neighbors once, skipping particles

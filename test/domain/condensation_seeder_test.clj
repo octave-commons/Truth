@@ -9,7 +9,7 @@
    [domain.genesis :as genesis]
    [domain.integrator :as integ]
    [domain.stellar.seeder :as seeder]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.stellar.structure :as structure]
    [domain.spatial.index]
    [law.stellar :as law]
@@ -31,9 +31,9 @@
 
 (defn- with-condense-tick
   "Return world with `:genesis/sim-time` and `:sim/dt` chosen to make
-   `classifier/condense-tick?` true."
+   `cls-state/condense-tick?` true."
   [w dt]
-  (assoc w :genesis/sim-time (- classifier/condense-interval (double dt))
+  (assoc w :genesis/sim-time (- cls-state/condense-interval (double dt))
          :sim/dt (double dt)))
 
 (deftest seeder-emits-seed-for-planetesimal-condensation
@@ -67,7 +67,7 @@
           [w eid] (ecs/spawn w)
           m (* 2.0 law/hydrogen-burning-mass)
           region (assoc (unstable-region m) :mass m :radius 1.0e14
-                        :density (* 10.0 classifier/core-condensation-density))
+                        :density (* 10.0 cls-state/core-condensation-density))
           w (-> (ecs/put-components w eid
                                     {c/matter-state :nebula
                                      c/mass m
@@ -81,7 +81,7 @@
                 (assoc :genesis/gas-particle-mass pm)
                 (with-condense-tick 2.0e11))
           ws ((:run (seeder/condensation-seeder-system)) w)]
-      (is (not= :planetesimal (classifier/classify-next-state region pm))
+      (is (not= :planetesimal (cls-state/classify-next-state region pm))
           "precondition: this is a big condense, not planetesimal")
       (is (nil? (get-in ws [c/spawn-request-condense eid]))
           "no spawn request for protostar-scale gas"))))
@@ -211,7 +211,7 @@
                                      c/position [0.0 0.0 0.0]})
                 (assoc :genesis/gas-particle-mass pm
                        :genesis/feeding-zone-factor structure/feeding-zone-factor))
-          ws ((:run (classifier/classifier-system)) w)]
+          ws ((:run (cls-state/classifier-system)) w)]
       (is (nil? (get-in ws [c/matter-state eid]))
           "parent parcel matter-state is unchanged"))))
 
@@ -221,7 +221,7 @@
           [w eid] (ecs/spawn w)
           m (* 2.0 law/hydrogen-burning-mass)
           region (assoc (unstable-region m) :mass m :radius 1.0e14
-                        :density (* 10.0 classifier/core-condensation-density))
+                        :density (* 10.0 cls-state/core-condensation-density))
           w (-> (ecs/put-components w eid
                                     {c/matter-state :nebula
                                      c/mass m
@@ -234,7 +234,7 @@
                 (assoc :genesis/gas-particle-mass m
                        :genesis/gas-smoothing-radius 1.0e14
                        :genesis/feeding-zone-factor structure/feeding-zone-factor))
-          ws ((:run (classifier/classifier-system)) w)]
+          ws ((:run (cls-state/classifier-system)) w)]
       (is (= :condensed-core (get-in ws [c/matter-state eid]))
           "massive, dense parcel collapses to condensed-core first")
       (is (some? (get-in ws [c/accretion-radius eid]))

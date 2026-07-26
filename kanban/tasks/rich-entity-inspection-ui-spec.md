@@ -1,7 +1,7 @@
 ---
 uuid: "rich-entity-inspection-ui-spec"
 title: "Rich Entity Inspection UI Spec"
-status: "todo"
+status: "ready"
 priority: "P1"
 labels: ["specs"]
 created_at: "2026-07-08T02:24:29.786435454Z"
@@ -182,11 +182,36 @@ Already exists; used for hierarchy.
 2. **No auto-expand on state change.** Instead, flash the header badge and add a transient highlight row in the Events pane.
 3. **Comparison mode is out of scope** for the first version; hierarchy switching is the substitute.
 
-## 15. Open questions
+## 15. Open questions — RESOLVED 2026-07-23 (Aaron, via board triage)
 
-1. Should `c/inspect-history` be written for all resolved bodies or only the selected/focused body?
-2. What is the performance cost of rendering the sparklines and raw ECS table every frame?
-3. Should the panel support collapse of individual panes to reduce visual clutter?
+1. **History scope: selected/focused body only.** `c/inspect-history` is sampled
+   only for the entity under inspection — not all resolved bodies. This keeps the
+   new per-tick write off the hot path (tick is already ~33 ms @1000 vs the
+   16.6 ms budget; see `perf-tick-residual-gap`). Sparklines populate from the
+   moment of selection; history resets on re-select. If "all bodies" history is
+   wanted later it becomes its own perf-scoped card, sampled by sim-time not raw
+   tick count (per the dt-scaling lesson in CLAUDE.md "Time model").
+2. Perf cost of sparkline/raw-ECS rendering: acceptable for a single selected
+   body; render-thread only, no per-frame allocation in the hot loop. Revisit
+   only if a frame-time regression shows up in the dev-window smoke.
+3. Per-pane collapse: out of scope for the core slice; Raw ECS stays
+   collapsed-by-default per §9. Add later if clutter warrants.
+
+## 16. Scope decision — core slice first (2026-07-23, Aaron)
+
+This card ships the **core slice** only. Deferred panes tracked in the follow-up
+card `rich-entity-inspection-ui-panes-2.md`.
+
+**In this card:**
+- `c/inspect-history` component + `domain.inspect-history` system (selected body only).
+- Panes: **Header, Composition, Sparkline, Raw ECS**.
+- `:ui/rich-inspector?` gate; old text card stays available.
+- Input-region participation (world interaction suppressed over the panel).
+- The 5 spec tests in §12 (adapt hierarchy test #4 → defer with the Hierarchy pane;
+  substitute a 5th test covering the selected-only history sampling if #4 moves out).
+
+**Deferred to follow-up:** Orbit pane (§6), Hierarchy pane (§7), Events pane (§8),
+comparison mode.
 
 ---
 2026-07-10: designated canonical rich-inspection card; duplicate rich-entity-inspection-ui rejected. Still OPEN — pane-based rich panel not yet built (inspector is text-only in infra/inspect/card.clj).

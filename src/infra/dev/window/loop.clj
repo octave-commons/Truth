@@ -3,7 +3,18 @@
 
    The sim thread owns the world-atom; the render thread only reads it and
    enqueues input intents through an IntentAtom.  Error handlers in both threads
-   dump world+ledger artifacts and publish :ui/error-state for the renderer."
+   dump world+ledger artifacts and publish :ui/error-state for the renderer.
+
+   WHY `catch Throwable` EVERYWHERE (Splint `lint/catch-throwable` is disabled
+   per-form below, deliberately): every guard in this namespace is an OUTERMOST
+   frame/tick boundary whose entire job is \"never let the dev window die\" —
+   `sim-loop` dumps error artifacts and returns the previous world;
+   `render-error-frame!` catches *while drawing the error overlay itself*.
+   Narrowing to `Exception` would let an `AssertionError` (from a domain
+   `assert`/`:pre`) or an LWJGL `UnsatisfiedLinkError` kill the window silently,
+   which is exactly the failure this layer exists to make visible. These are the
+   only justified `catch Throwable` sites in the tree outside
+   `domain.ecs.tick/run-parallel`."
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
@@ -33,6 +44,9 @@
             "IntentAtom: world mutations must go through swap!/reset! (intents)")))
   (reset [_ v] (.add queue (constantly v)) v))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- drain-intents
   "Apply every queued intent to `w`, in arrival order.  An intent that throws or
    returns a non-map is dropped (logged) rather than corrupting the world."
@@ -71,8 +85,13 @@
                (or (nil? mesh)
                    (not= subdivisions requested-subdivisions))
                (assoc :mesh (render/upload-mesh (render/make-sphere-mesh subdivisions))
-                      :requested-subdivisions nil))))))
+                      :requested-subdivisions nil)
+               (nil? (:cube-mesh cfg))
+               (assoc :cube-mesh (render/upload-mesh (render/make-cube-mesh))))))))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- handle-screenshot-request [world-atom config-atom]
   (when-let [{:keys [path result opts]} (:screenshot-request @config-atom)]
     (try
@@ -84,11 +103,20 @@
         (swap! config-atom dissoc :screenshot-request)))))
 
 (def ^:private default-tick-fn
-  "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo)."
-  (fn [w] ((orbital/orbital-system 6.674e-11 0.5 0.5) w)))
+  "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo).
+
+   Built once at load: `orbital-system`'s returned closure captures only the
+   numeric G/theta/dt/softening params — it holds no atom, cache, or RNG, and
+   rebuilds the Barnes-Hut tree per invocation — so hoisting construction out
+   of the per-tick path is behaviour-preserving (verified 2026-07-25 against
+   `domain.orbital.system/orbital-system`)."
+  (orbital/orbital-system 6.674e-11 0.5 0.5))
 
 (declare dump-error-artifacts! log-frame-error!)
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn sim-loop
   "The dedicated simulation thread: drain intents → tick → publish → pace."
   [{:keys [world-atom intent-queue config-atom stop-atom service-state]}]
@@ -126,20 +154,23 @@
 (declare sync-cursor-mode!)
 
 (defn- sync-observer-focus-to-camera
-  "In non-manual camera modes, snap the observer spark and its focus to the
-   camera target.  In manual mode leave the focus under player control."
+  "In non-manual camera modes, snap the observer's FOCUS to the camera
+   target.  In manual mode leave the focus under player control.
+
+   The spark's own position is NEVER written here: since spark-redesign
+   card 4 the spark is a gravity-bound ECS body whose `c/position` column is
+   the single source of truth, advanced by the integrator (gravity) and by
+   the `c/accel-thrust` influence channel (manual flight, card
+   flight-no-jump-accel) — camera modes follow the body, they do not puppet
+   it. In `:manual` mode the focus-follow intent (card focus-follows-pilot)
+   pins `:focus-position` to the mote instead; only in tracking modes does
+   `:focus-position` (a pure attention point) ride the camera target."
   [world camera ctx mode]
   (if-let [obs (player/get-observer world)]
     (if (= :manual mode)
       world
       (let [target (units/render->world ctx (:target camera))]
-        (player/put-observer
-         world
-         (-> obs
-             (assoc :position target)
-             (assoc :focus-position target)
-             (assoc :focus-radius (:focus-radius obs))
-             (assoc :focus-intensity (:focus-intensity obs))))))
+        (player/put-observer world (assoc obs :focus-position target))))
     world))
 
 (defn- sync-cursor-mode!
@@ -158,6 +189,9 @@
   "Directory for world + ledger dumps captured on frame errors."
   (io/file "/tmp" "gates-of-truth" "dumps"))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- dump-error-artifacts!
   "Persist the current world and its event ledger to timestamped EDN files."
   [world]
@@ -188,6 +222,9 @@
                      tick (:world-path dump-paths) (:ledger-path dump-paths))))
   (.printStackTrace ^Throwable err))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- render-error-frame!
   "Draw a red error banner covering the top of the window."
   [window config-atom err tick]
@@ -231,6 +268,9 @@
     (Thread/sleep 16)
     (catch Throwable _ nil)))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn- render-frame-once
   "Render one frame.  Returns truthy while the window should stay open."
   [{:keys [window world-atom camera-atom config-atom frame-atom time-atom
@@ -260,17 +300,45 @@
               fb-w      (max 1 (aget wbuf 0))
               fb-h      (max 1 (aget hbuf 0))
               cam-settings cfg
-              _         (when (= :manual (:mode cam-settings))
-                          (let [ks @keys-atom
-                                input {:forward (cond (ks GLFW/GLFW_KEY_W) 1.0 (ks GLFW/GLFW_KEY_S) -1.0 :else 0.0)
-                                       :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)}]
-                            (when (or (not= 0.0 (:forward input)) (not= 0.0 (:right input)))
-                              (let [velocity (cam/observer-move-velocity @camera-atom input cam-settings)]
-                                (swap! world-atom player/update-observer #(player/drift % velocity wall-dt))
-                                (swap! world-atom player/update-observer
-                                       (fn [o] (player/set-focus o (:position o) (:focus-radius o) (:focus-intensity o))))))))
+              drive-input (when (= :manual (:mode cam-settings))
+                            (let [ks @keys-atom]
+                              {:forward (cond (ks GLFW/GLFW_KEY_W) 1.0 (ks GLFW/GLFW_KEY_S) -1.0 :else 0.0)
+                               :right   (cond (ks GLFW/GLFW_KEY_D) 1.0 (ks GLFW/GLFW_KEY_A) -1.0 :else 0.0)
+                               :up      (cond (ks GLFW/GLFW_KEY_SPACE) 1.0 (ks GLFW/GLFW_KEY_LEFT_CONTROL) -1.0 :else 0.0)}))
+              input-active? (boolean (and drive-input
+                                          (or (not= 0.0 (:forward drive-input))
+                                              (not= 0.0 (:right drive-input))
+                                              (not= 0.0 (:up drive-input)))))
+              _         (when drive-input
+                          ;; Manual flight rides the INTENT QUEUE, never the
+                          ;; world-atom directly: this thread's world-atom is
+                          ;; an IntentAtom (infra.dev.window.lifecycle), so
+                          ;; these swap!s enqueue world->world' fns the SIM
+                          ;; thread applies in drain-intents BEFORE the tick.
+                          ;; flight-no-jump-accel: input is now a thrust
+                          ;; DIRECTION on the :player/thrust world key — the
+                          ;; :player-thrust fan-out system turns it into the
+                          ;; c/accel-thrust influence channel (+ damping), and
+                          ;; the integrator stays the sole writer of
+                          ;; c/position/c/velocity. The drift position
+                          ;; teleport is gone; there is no second writer.
+                          (swap! world-atom player/set-thrust
+                                 (cam/thrust-direction @camera-atom drive-input))
+                          ;; focus-follows-pilot (design §7.5): in manual mode
+                          ;; the attention focus rides the mote — c/position
+                          ;; plus the player's persistent arrow-nudge
+                          ;; :focus-offset — so flying up to a planet accrues
+                          ;; binding without dropping to a debug view.
+                          (swap! world-atom player/focus-follow
+                                 (:focus-offset cfg [0.0 0.0 0.0])))
+              _         (when (and (not drive-input) (:player/thrust w))
+                          ;; Left manual mode with a key held: clear the
+                          ;; channel or the spark would thrust forever.
+                          (swap! world-atom player/set-thrust nil))
               w         @world-atom
               _         (swap! camera-atom cam/update-camera-for-world w cam-settings)
+              _         (when (= :manual (:mode cam-settings))
+                          (swap! camera-atom cam/tether-step w {:input-active? input-active?}))
               cam       @camera-atom
               render-origin (:target cam)
               ctx       (units/make-context cam {:width fb-w :height fb-h})
@@ -307,11 +375,11 @@
               _         (when (and (:selection @config-atom) (nil? sel))
                           (swap! config-atom #(menu/apply-action % [:ui/select-entity nil])))
               _         (let [screenable (filter #(and (= :body (:render-mode %))
-                                                          (:position %)
-                                                          (:radius %)) bodies)
+                                                       (:position %)
+                                                       (:radius %)) bodies)
                               max-screen-diam (if (seq screenable)
-                                                  (apply max (map #(render/body-screen-diameter % cam fb-h 60.0) screenable))
-                                                  0)
+                                                (apply max (map #(render/body-screen-diameter % cam fb-h 60.0) screenable))
+                                                0)
                               requested (render/subdivisions-for-screen-size max-screen-diam)]
                           (swap! config-atom assoc :requested-subdivisions requested))
               _         (when-let [shape (and sel (inspect/selected-shape bodies sel))]
@@ -324,7 +392,7 @@
                                 (inspect/intervention-overlay-shapes ctx w))
               card      (when sel (inspect/inspector-card ctx w sel bodies))
               controls  (render/controls-hud w fb-w fb-h)
-              view-bar  (render/view-bar-hud cfg cam fb-w fb-h)
+              view-bar  (render/view-bar-hud cfg cam fb-w fb-h w)
               bodies    (if (seq overlay) (into (vec bodies) overlay) bodies)
               hud       (-> (vec (render/hud-rects-from-world w))
                             (into (:rects controls))
@@ -352,6 +420,7 @@
                                 :hud-text hud-text
                                 :volume volume
                                 :mesh-world (:mesh cfg)
+                                :cube-mesh (:cube-mesh cfg)
                                 :camera cam
                                 :width fb-w
                                 :height fb-h
@@ -372,6 +441,9 @@
         (render-error-frame! window config-atom t tick))
       true)))
 
+;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+;; namespace's header.
+#_{:splint/disable [lint/catch-throwable]}
 (defn window-loop
   "The render thread.  Receives the world only through `world-intents` — an
    IntentAtom whose deref reads the sim thread's latest published world and
@@ -392,17 +464,15 @@
                            :keys-atom ks
                            :config-atom config-atom
                            :world-atom world-intents})
-      (loop []
-        (when (and (not @stop-atom)
-                   (render-frame-once {:window window
-                                       :world-atom world-intents
-                                       :camera-atom camera-atom
-                                       :config-atom config-atom
-                                       :frame-atom frame-atom
-                                       :time-atom time-atom
-                                       :last-t-atom last-t-atom
-                                       :keys-atom ks}))
-          (recur))))
+      (while (and (not @stop-atom)
+                  (render-frame-once {:window window
+                                      :world-atom world-intents
+                                      :camera-atom camera-atom
+                                      :config-atom config-atom
+                                      :frame-atom frame-atom
+                                      :time-atom time-atom
+                                      :last-t-atom last-t-atom
+                                      :keys-atom ks}))))
     (catch Throwable t
       (swap! service-state assoc :error t)
       (throw t))))

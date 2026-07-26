@@ -1,12 +1,13 @@
 ---
-uuid: "phase-0-chemistry-differentiation-spec"
-title: "Phase 0 Chemistry & Differentiation Spec"
-status: "ready"
-priority: "P1"
-labels: ["specs", "phase0", "em", "chemistry"]
-created_at: "2026-07-02T19:35:28.966686229Z"
-source: "kanban/tasks/phase-0-chemistry-differentiation-spec.md"
 category: "specs"
+labels: ["specs", "phase0", "em", "chemistry"]
+write-id: "1784770449510-0.84cict3jgevw4yc6qeq"
+source: "kanban/tasks/phase-0-chemistry-differentiation-spec.md"
+title: "Phase 0 Chemistry & Differentiation Spec"
+priority: "P1"
+status: "done"
+uuid: "phase-0-chemistry-differentiation-spec"
+created_at: "2026-07-02T19:35:28.966686229Z"
 ---
 
 # Phase 0 Chemistry & Differentiation Spec
@@ -241,4 +242,8 @@ Next action: approve this spec, then write schemas, failing tests, and Phase 1 i
 
 ---
 Triage 2026-07-10 (stays ready): PARTIAL — Phases 1-2 (malleability + merge/shatter) done & tested. Remaining ready slice: differentiation-system + :component/differentiated-layers + :component/volatile-budget + volatile-loss-on-hot-merge (only pure helper differentiate-composition exists, never ticked).
+
+Triage 2026-07-22: voxel ladder paused at a good seam (owner call). Picking up the remaining slice per the 2026-07-10 triage: differentiation-system + c/differentiated-layers + c/volatile-budget + volatile-loss-on-hot-merge. Dispatching impl agent. ready -> in_progress.
+
+Remaining slice complete + reviewed 2026-07-22 — CARD COMPLETE. law.chemistry (schemas + cited constants: ice blow-off 700K [Ahrens 1993], H/He 1500K [Genda & Abe 2005], tau_diff ~1 Myr [Elkins-Tanton 2012]); domain.chemistry differentiation-system (sole writer of c/differentiated-layers + c/volatile-budget, wired after :nucleosynthesis, gated to planet-candidate matter-states; :degree progress channel; fractions partition mass exactly); volatile loss on hot merges INSIDE the merge fold (consumes c/absorb-merge like the existing blend + impact heating — review confirmed legitimate extension, NOT a special case; escaped mass debited in mass-ws, conservation proven m1 == m0 x (1-f)); handoff candidate record carries :volatile-budget-kg + :differentiated-layers (honest Jacobi read, no fork of retained-species). c/malleability deliberately NOT a component (pure-derived). Review PASS-WITH-NITS (whitespace noise; loose handoff types match neighbors; triple recompute fine at merge rates; 1-tick Jacobi overstatement inherent). Suite 768/14270 green; architecture green; write-conflicts {}. in_progress -> done. NOTE: the mineral taxonomy gap in the voxel doc (§7.4) now has law.chemistry vocabulary to build on.
 ---

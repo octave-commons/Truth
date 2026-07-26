@@ -5,6 +5,45 @@
    [clojure.math :as math]
    [law.stellar.orbital.constants :as constants]))
 
+(def ^:const compact-matter-states
+  "Matter states of RESOLVED COMPACT bodies for gravitational softening
+   (kanban/tasks/compact-pair-softening.md): a compact body is a point mass at
+   its physical radius, so its Plummer ε is c/radius — never the gas cloud's
+   smoothing length (GADGET per-species practice). Everything else — :nebula
+   gas parcels and stateless bodies — keeps the world softening."
+  #{:condensed-core :planetesimal :gas-giant :brown-dwarf
+    :protostar :star :planet :stellar-remnant})
+
+(def ^:const softening-cutoff-fraction
+  "The gravitational dead-zone radius as a fraction of the pair softening:
+   pairs closer than 0.1·ε_pair contribute zero acceleration. For gas pairs
+   (ε_pair = world ε) this is exactly the legacy scalar dead-zone."
+  0.1)
+
+(defn body-softening
+  "The Plummer softening length ε (m) of ONE body under the species rule
+   (kanban/tasks/compact-pair-softening.md):
+
+   - RESOLVED COMPACT body (matter-state ∈ `compact-matter-states`): c/radius —
+     the body is a point mass at its physical size (star ε ≈ 7e8 m, planet
+     ε ≈ 7e7 m), so compact–compact gravity switches on inside what used to be
+     the world dead-zone.
+   - :nebula gas parcel or stateless body: the world `:sim/softening` — the
+     cloud smoothing length, byte-identical to the legacy scalar kernel."
+  [matter-state radius world-softening]
+  (if (contains? compact-matter-states matter-state)
+    (double (or radius 0.0))
+    (double (or world-softening 0.0))))
+
+(defn pair-softening
+  "The momentum-symmetric pair softening ε_pair = max(ε_i, ε_j) (m).
+
+   A pair-symmetric ε keeps the pair force Newton's-third-law exact; an
+   asymmetric per-body ε would not. The pair dead-zone is
+   `softening-cutoff-fraction` · ε_pair."
+  [eps-i eps-j]
+  (max (double (or eps-i 0.0)) (double (or eps-j 0.0))))
+
 (defn softened-circular-speed
   "Circular-orbit speed (m/s) around mass `M` at radius `r` in the Plummer-
    softened gravity the integrator actually applies:
@@ -16,7 +55,16 @@
    body launched with this speed is bound and orbits at ANY radius. The
    unsoftened √(GM/r), by contrast, overshoots the softened field's grip by
    ~(ε/r)^{3/2} inside the softening length: a fragment placed at r ≪ ε with
-   Keplerian speed feels almost no pull and leaves the system ballistically."
+   Keplerian speed feels almost no pull and leaves the system ballistically.
+
+   PAIRING RULE (multi-timescale design §3.5): this is the spawn speed for
+   bodies on the symplectic-Euler path (gas, :protostar companions), whose
+   integrator applies the softened law. Sub-stepped compact bodies
+   (:planet/:gas-giant/:stellar-remnant) take the Wisdom–Holman path, whose
+   drift supplies the exact NEWTONIAN central term and strips the softened
+   parent pull from the kick — their spawn speed must be
+   `newtonian-circular-speed` or the drift reads the state as a near-radial
+   plunge (the e≈1 regression of 2026-07-23)."
   [M r softening]
   (let [M (double (or M 0.0))
         r (double (or r 0.0))
@@ -24,6 +72,23 @@
         d2 (+ (* r r) (* e e))]
     (if (and (pos? M) (pos? r) (pos? d2))
       (math/sqrt (/ (* constants/G M r r) (math/pow d2 1.5)))
+      0.0)))
+
+(defn newtonian-circular-speed
+  "Circular-orbit speed (m/s) around mass `M` at radius `r` in unsoftened
+   Newtonian gravity: v_c = √(GM/r).
+
+   The spawn speed for SUB-STEPPED compact bodies (:planet/:gas-giant/
+   :stellar-remnant): the Wisdom–Holman sub-stepper advances their relative
+   state with the exact Newtonian two-body term (μ = G·(M + m)), so a
+   consistent spawn is Newtonian-circular regardless of how large the world's
+   Plummer ε is. Bodies on the symplectic-Euler path must use
+   `softened-circular-speed` instead — see its docstring for the pairing rule."
+  [M r]
+  (let [M (double (or M 0.0))
+        r (double (or r 0.0))]
+    (if (and (pos? M) (pos? r))
+      (math/sqrt (/ (* constants/G M) r))
       0.0)))
 
 (defn hill-radius
@@ -103,6 +168,24 @@
       (/ (* constants/G M r) (math/pow d2 1.5))
       0.0)))
 
+(def ^:const default-dark-matter-mass-factor
+  "Default static-halo mass, as a multiple of `:genesis/nebula-mass`: the
+   dark-matter background is deliberately MORE massive than the collapsing
+   nebula (owner decision — kanban/tasks/dark-matter-static-halo.md) so the
+   well is deep enough to hold onto infall-momentum debris that would
+   otherwise fling past the system edge. First-pass guess, overridable per
+   world via `:genesis/dark-matter-mass-factor`; needs live-window tuning
+   against SPH collapse (too deep stalls accretion/disk formation)."
+  3.0)
+
+(def ^:const default-dark-matter-scale-factor
+  "Default static-halo Plummer scale radius, as a fraction of
+   `:genesis/nebula-radius` — about half the initial nebula radius, so the
+   halo's peak pull (at a/√2, see `plummer-acceleration`) sits well inside
+   the collapsing cloud. Overridable per world via
+   `:genesis/dark-matter-scale-factor`."
+  0.5)
+
 (defn orbital-cleared?
   "Test if a body has cleared its orbital neighborhood."
   [{:keys [mass orbital-radius]} other-bodies]
@@ -113,7 +196,7 @@
         nearby-mass (reduce + 0 (map :mass nearby))]
     (> mass (* 100 nearby-mass)))) ;; dominates by factor of 100
 
-(defn planet?
+(defn ^:export planet?
   "Full astronomical definition of a planet."
   [body other-bodies]
   (and (constants/hydrostatic-equilibrium? body)

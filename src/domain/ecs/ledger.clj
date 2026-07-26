@@ -8,20 +8,9 @@
            [events    ;; vector of event maps, append-only
             cursor])  ;; integer: index of next unread position (monotone)
 
-(defn empty-ledger
-  "Return a fresh empty ledger with cursor at zero."
-  []
-  (->Ledger [] 0))
-
 (defrecord Checkpoint
            [cursor    ;; ledger index at the point of checkpointing
             value])   ;; materialized aggregate value at cursor
-
-(defn append
-  "Append a single event to the ledger. Returns a new Ledger."
-  [^Ledger ledger event]
-  (->Ledger (conj (:events ledger) event)
-            (:cursor ledger)))
 
 (defn events-since
   "All events at or after `cursor`."

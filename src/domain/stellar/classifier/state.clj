@@ -1,13 +1,22 @@
-(ns domain.stellar.classifier
-  "Matter-state classification and the authentic formation state machine."
+(ns domain.stellar.classifier.state
+  "The authentic matter-state formation state machine and the `:classifier`
+   write-set system.
+
+   Split out of the former `domain.stellar.classifier` on 2026-07-24 (see
+   `kanban/tasks/static-analysis-split-classifier.md`): that namespace carried
+   three ECS systems and 62 vars. This one owns the matter-state axis —
+   complexity scoring, the Jeans/accretion/ignition ladder, and the
+   `:classifier` emitter that is the sole writer of `c/matter-state` and
+   `c/accretion-radius`. It depends on neither sibling."
   (:require
-   [clojure.math :as math] [law.stellar                  :as law]
+   [clojure.math                  :as math]
+   [law.stellar                   :as law]
    [domain.stellar.thermodynamics :as thermo]
-   [domain.stellar.collapse      :as collapse]
-   [domain.stellar.sink          :as sink]
-   [domain.ecs.core              :as ecs]
-   [domain.ecs.components        :as c]
-   [domain.profile               :as profile]))
+   [domain.stellar.collapse       :as collapse]
+   [domain.stellar.sink           :as sink]
+   [domain.ecs.core               :as ecs]
+   [domain.ecs.components         :as c]
+   [domain.profile                :as profile]))
 
 ;; --- Complexity / time scale ------------------------------------------------
 
@@ -103,6 +112,12 @@
     (>= m law/deuterium-burning-mass) :brown-dwarf
     :else                             (law/substellar-mass-class m)))
 
+;; Intentional: the two `:star` branches are two INDEPENDENT physical criteria
+;; for stardom (self-sustaining fusion OR mass above the H-burning limit), which
+;; is what the hysteresis docstring states. Collapsing them into one `or` would
+;; hide that either criterion alone suffices. Splint is right that the branches
+;; are redundant and wrong that the redundancy is a defect.
+#_{:splint/disable [lint/identical-branches]}
 (defn- star-next-state
   "Hysteresis: a star stays a star while fusion is self-sustaining or its mass
    remains above the H-burning limit; otherwise it collapses to a degenerate

@@ -98,13 +98,6 @@
       (math/sqrt (/ (* r r r) (* law/G m)))
       0.0)))
 
-(defn bulk-dynamical-time
-  "Dynamical time of the world's bulk cloud (`cloud-scale`). Shrinks as the cloud
-   contracts — the single signal that drives time dilation."
-  [world]
-  (let [{:keys [radius mass]} (cloud-scale world)]
-    (dynamical-time radius mass)))
-
 (defn complexity-dt-cap
   "Maximum per-tick step allowed for a given observable `complexity`. Higher
    complexity slows the clock so that articulated phases (protostars, stars,

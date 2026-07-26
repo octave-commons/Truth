@@ -32,3 +32,7 @@ Perform the most invasive local-rename pass after the tree is otherwise stable, 
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. 35 shadowed-var warnings are back — including `src/infra/render/passes.clj:95`, where the shadow has already forced a `clojure.core/name` workaround into live code, and `src/law/atmosphere.clj:91,108`, where the local `species-mass` is a double (kg) while the same-named var at `:21` is a map. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

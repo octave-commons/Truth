@@ -19,7 +19,7 @@
 ;; Source: cosmology/primordial-nucleosynthesis-yields.md §7
 ;; ============================================================================
 
-(def primordial-composition-system-spec
+(def ^:export primordial-composition-system-spec
   "System: primordial-composition-system
    Phase: 0 (world initialization, runs ONCE)
    Namespace: domain.stellar
@@ -49,7 +49,7 @@
 ;; Source: cosmology/primordial-nucleosynthesis-yields.md §8 (open question #2)
 ;; ---------------------------------------------------------------------------
 
-(def deuterium-depletion-system-spec
+(def ^:export deuterium-depletion-system-spec
   "System: deuterium-depletion-system
    Phase: 0 (runs every tick for :protostar and :star entities)
    Namespace: domain.stellar.fusion
@@ -92,7 +92,7 @@
 ;; Source: phase1-radiation-plasma-truth.md §2
 ;; ============================================================================
 
-(def stellar-sed-system-spec
+(def ^:export stellar-sed-system-spec
   "System: stellar-sed-system
    Phase: 1 (runs every tick for :star entities)
    Namespace: domain.stellar.fusion
@@ -135,7 +135,7 @@
 ;; Source: phase1-radiation-plasma-truth.md §3
 ;; ============================================================================
 
-(def atmosphere-shells-system-spec
+(def ^:export atmosphere-shells-system-spec
   "System: atmosphere-shells-system
    Phase: 1 (runs every tick for :star entities)
    Namespace: domain.plasma.atmosphere
@@ -172,7 +172,7 @@
 ;; Source: phase1-radiation-plasma-truth.md §5
 ;; ============================================================================
 
-(def stellar-wind-system-plasma-spec
+(def ^:export stellar-wind-system-plasma-spec
   "System: stellar-wind-system
    Phase: 1 (fan-out emitter)
    Namespace: domain.stellar.wind
@@ -212,7 +212,7 @@
 ;; Source: phase1-radiation-plasma-truth.md §4.2, §5.3
 ;; ============================================================================
 
-(def xuv-atmospheric-escape-system-spec
+(def ^:export xuv-atmospheric-escape-system-spec
   "System: xuv-atmospheric-escape-system
    Phase: 1 (runs every tick for :planet entities near stars)
    Namespace: domain.atmosphere
@@ -247,7 +247,7 @@
 ;; Source: phase1-radiation-plasma-truth.md §6
 ;; ============================================================================
 
-(def stellar-flare-xuv-spec
+(def ^:export stellar-flare-xuv-spec
   "System: stellar-flare-system (Phase 1 revision)
    Phase: 1 (runs when flare triggers)
    Namespace: domain.stellar.wind
@@ -279,7 +279,7 @@
 ;; Source: phase1-radiation-plasma-truth.md §7
 ;; ============================================================================
 
-(def lod-scheduler-spec
+(def ^:export lod-scheduler-spec
   "System: lod-scheduler
    Phase: 1 (runs every tick, before radiation systems)
    Namespace: domain.lod

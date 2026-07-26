@@ -53,14 +53,6 @@
 ;; Camera record constructors
 ;; ---------------------------------------------------------------------------
 
-(def ->Camera
-  "Positional constructor for the Camera record."
-  nav/->Camera)
-
-(def map->Camera
-  "Map constructor for the Camera record."
-  nav/map->Camera)
-
 ;; ---------------------------------------------------------------------------
 ;; Camera movement and world tracking
 ;; ---------------------------------------------------------------------------
@@ -80,6 +72,12 @@
   [camera]
   (nav/camera-forward camera))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn observer-render-position
   "The observer (player spark/mote) position in render units, or the origin when
    there is no observer."
@@ -102,10 +100,11 @@
   [camera input dt settings]
   (nav/flight-move camera input dt settings))
 
-(defn observer-move-velocity
-  "Physical velocity [m/s] for the observer from camera-relative input."
-  [camera input settings]
-  (nav/observer-move-velocity camera input settings))
+(defn thrust-direction
+  "Unit thrust direction (world axes) for the spark from camera-relative
+   input, or nil when no flight key is held."
+  [camera input]
+  (nav/thrust-direction camera input))
 
 (defn min-approach-distance
   "Closest orbit distance [ru] the camera may take to a body of render radius
@@ -128,6 +127,12 @@
   [settings factor]
   (nav/adjust-fit-margin settings factor))
 
+;; UNUSED-PENDING: UX/render surface with no caller yet. CLAUDE.md: `docs/designs/ux-architecture.md`
+;; is canonical for all user interaction, and much current UX/render code is
+;; acknowledged ad-hoc rather than design intent — these are on the wrong side of
+;; that gap, not abandoned.
+;; See docs/designs/ux-architecture.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn bodies->render
   "Project ECS bodies into [[render-position mass] ...]."
   [world scale]
@@ -155,3 +160,11 @@
    Camera."
   [camera world settings]
   (nav/update-camera-for-world camera world settings))
+
+(defn tether-step
+  "One frame of the binding camera tether (The First Narrowing, child C).
+   Pure: returns a new Camera. Player input wins; the pull follows binding
+   depth continuously, fully engaged by the capture threshold, so there is no
+   jump-cut at capture."
+  [camera world opts]
+  (nav/tether-step camera world opts))

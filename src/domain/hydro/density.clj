@@ -45,13 +45,13 @@
   [neighbors h]
   (let [h   (double h)
         hh2 (* h h)]
-     (reduce (fn [rho n]
-               (let [r2 (double (:r2 n))]
-                 (if (and (< r2 hh2)
-                          (lf/hydro-em-active? (:matter-state n))
-                          (:mass n))
-                   (+ (double rho) (* (double (:mass n)) (kernel/kernel-r2 r2 h)))
-                   rho)))
+    (reduce (fn [rho n]
+              (let [r2 (double (:r2 n))]
+                (if (and (< r2 hh2)
+                         (lf/hydro-em-active? (:matter-state n))
+                         (:mass n))
+                  (+ (double rho) (* (double (:mass n)) (kernel/kernel-r2 r2 h)))
+                  rho)))
             0.0
             neighbors)))
 
@@ -126,14 +126,19 @@
 
 (defn gas-structure
   "The GAS branch of the Structure owner: for every diffuse `:nebula` parcel,
-   the SPH density ρ_i = Σ_j m_j W at a GEOMETRIC smoothing length h = factor·d_nn
+    the SPH density ρ_i = Σ_j m_j W at a GEOMETRIC smoothing length h = factor·d_nn
    (see `smoothing-length`). Returns `[[eid density radius] ...]` with radius = h/2.
    Pure; reuses the same SPH machinery as the legacy `density-system` (which stays
    for the sequential path). For gas, density is primary (estimated from
    neighbours) and the radius is the smoothing length it implies.
 
-   Reads the shared spatial tree from :genesis/spatial-tree and filters query
-   results to hydro-active neighbors (`:nebula` and `:protostar`)."
+    Hot path: the shared pair walk (domain.physics.cache.neighbor) already
+   summed the density into the entry's staleness-budgeted `:density-estimate`
+   (law.field/density-stale-* knobs; the estimate may lag the current geometry
+   within that documented budget). This fn reads it in O(1) — no second
+   neighbor walk. Entries without an estimate (hand-built, legacy) fall back
+   to `sph-density-from-cache`; absent a cache entry the tree-query fallback
+   computes both from scratch."
   [world]
   (let [eids     (ecs/entities-with world c/matter-state c/position c/density
                                     c/pressure c/mass c/radius c/temperature)
@@ -143,7 +148,10 @@
      (fn [data]
        (if-let [entry (ecs/get-component world (:eid data) c/neighbor-cache)]
          (let [h (:h entry)]
-           [(:eid data) (sph-density-from-cache (:neighbors entry) h) (* 0.5 h)])
+           [(:eid data)
+            (or (:density-estimate entry)
+                (sph-density-from-cache (:neighbors entry) h))
+            (* 0.5 h)])
          (let [h    (smoothing-length data world)
                nbrs (idx/within-radius (:genesis/spatial-tree world) (:position data) h
                                        #(common/hydro-active? (:matter-state %)))

@@ -35,3 +35,7 @@ Fix the clj-kondo findings that can hide real bugs or break compilation: `unreso
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. Correctness-tier findings returned, and one reached main: `src/law/field/schema.clj:195,196` ("fn* is called with 1 arg but expects 2") were clj-kondo *errors* on `main` for two weeks. Not lint noise — `#(rel-close? %1 %2)` mapped over `(map vector ...)` receives one argument (the pair), so momentum and angular-momentum conservation were never actually compared. Fixed on `spark-gravity-bound-body` at `:268` with pair destructuring. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

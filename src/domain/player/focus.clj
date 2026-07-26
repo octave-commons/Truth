@@ -1,7 +1,8 @@
 (ns domain.player.focus
-  "Focus, observation effect, and movement."
+  "Focus, observation effect, and attention-follow laws."
   (:require
-   [shape.spatial :as sp]))
+   [shape.spatial :as sp]
+   [domain.player.state :as state]))
 
 (defn observation-effect "How strongly the observer's attention resolves reality." [{:keys [coherence focus-intensity]}] (* coherence focus-intensity))
 
@@ -13,13 +14,34 @@
 
 (defn widen-focus "Broaden focus radius and lower intensity." [{:keys [focus-radius focus-intensity], :as o} factor] (set-focus o (:focus-position o) (* focus-radius factor) (max 0.1 (/ focus-intensity factor))))
 
-(defn drift "Move the observer by velocity * dt." [observer velocity dt] (-> observer (assoc :drift-velocity velocity) (update :position (fn* [p1__246#] (sp/v+ p1__246# (sp/v* velocity dt))))))
+(defn focus-follow
+  "Manual-mode focus-follow (card focus-follows-pilot, design
+   docs/designs/spark-flight-and-camera.md §7.5): pin the observer's
+   `:focus-position` to the spark's `c/position` plus the player's
+   persistent `offset` (world metres — the arrow-nudge delta, owned by
+   infra config). The law is POSITION-ONLY, no aim/velocity lead: the
+   resolve pipeline keys off focus overlap, and the simplest law that
+   makes 'fly up to a planet' accrue binding is focus rides the mote;
+   lead/tuning is live-tweak territory and the chase camera (Wave 3
+   card 6).
 
-(defn- normalize-vec [v] (let [l (sp/len v)] (if (> l 0) (sp/v* v (/ 1.0 l)) v)))
+   Resolution order vs manual arrow nudges: there is NO competing writer
+   — a nudge edits the offset, not the position, so auto-follow and the
+   nudge commute and the nudge always lands (`:focus-position` keeps a
+   single writer per mode: this intent in :manual, the camera-target
+   sync in tracking modes).
 
-(defn approach-focus "Drift toward the focus at `speed` for `dt`." [{:keys [position focus-position], :as o} speed dt] (drift o (sp/v* (normalize-vec (sp/v- focus-position position)) speed) dt))
-
-(defn release-focus "Let the spark drift along a gradient toward interesting regions, faster when\n   coherence is low." [observer gradient-field] (let [g (gradient-field (:position observer)) speed (* 1.0E12 (- 1.0 (:coherence observer)))] (assoc observer :drift-velocity (sp/v* g speed))))
+   Pure world → world', applied serially pre-tick through the intent
+   queue. Never touches the spark's physical columns: reads `c/position`,
+   writes only the `c/observer` attention map."
+  [world offset]
+  (if-let [obs (state/get-observer world)]
+    (if-let [pos (state/observer-position world)]
+      (state/put-observer
+       world
+       (set-focus obs (sp/v+ pos offset) (:focus-radius obs) (:focus-intensity obs)))
+      world)
+    world))
 
 (defn decoherence-state "Return the coherence band label from :highly-coherent to :dissolved." [{:keys [coherence]}] (cond (> coherence 0.8) :highly-coherent (> coherence 0.5) :coherent (> coherence 0.2) :wavering (> coherence 0.05) :fading :else :dissolved))
 

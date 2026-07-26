@@ -33,3 +33,7 @@ Move the core stellar lifecycle systems and helpers out of `domain.stellar` into
 - No `domain/` namespace imports `infra/`.
 - `clojure -M:test` is green, including `test/architecture_test.clj`.
 - Removed or moved public APIs have `^:deprecated` aliases during transition.
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. `domain.stellar.classifier` is back over the gate at **62 vars** (hard: 60), grown +651 lines by the M5 handoff phases `c1b88c5`, `a73b483`, `e9f52c2` (2026-07-22). The breach is var-count, not loc. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

@@ -1,7 +1,8 @@
 (ns domain.ecs.components
   "Canonical component type keywords for Gates of Truth.
    No logic here — just the vocabulary.
-   Every system queries these exact keywords.")
+   Every system queries these exact keywords."
+  (:refer-clojure :exclude [binding]))
 
 ;; --- Spatial ----------------------------------------------------------------
 (def position  :component/position)
@@ -30,9 +31,53 @@
 (def density      :component/density)       ;; kg/m^3
 (def pressure     :component/pressure)      ;; pascal
 (def composition  :component/composition)   ;; {:H 0.7346 :He 0.2485 ...} mass fractions
-(def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map}
+(def comp-condensed :component/comp.condensed) ;; {:solid element-map :gas element-map} — WARNING: below ~100 K :solid is H/He-dominated sigmoid leak, NOT a grain inventory; consumers wanting accretable condensate must filter gas-formers (see planet-formation seeder)
 (def luminosity   :component/luminosity)    ;; watts (0 until fusion)
 (def matter-state :component/matter-state)  ;; :nebula :condensed-core :planetesimal :gas-giant :brown-dwarf :planet :protostar :star :stellar-remnant
+
+;; --- Planet classification (M5 handoff Phase 1) -----------------------------
+;; First structured "planet candidate" tags: composition/mass and two-body
+;; equilibrium temperature only — no orbit integration, no atmosphere physics.
+;; See kanban/tasks/ecology-m5-phase1-planet-classification.md.
+(def material-class :component/material-class) ;; :rocky :icy :gaseous :mixed
+(def thermal-band   :component/thermal-band)    ;; :frozen :cold :temperate :warm :hot
+
+;; --- Orbit stability (M5 handoff Phase 2) -----------------------------------
+;; Analytic stability proxy (periapsis/apoapsis/Hill-radius gates), NOT a
+;; 10 Myr two-body integration. See
+;; kanban/tasks/ecology-m5-phase2-orbit-stability.md.
+(def orbit-stable :component/orbit-stable?) ;; bool — analytic stability proxy
+
+;; --- Atmosphere retention (M5 handoff Phase 3) ------------------------------
+;; Coarse Jeans-escape-ratio classifier: how much atmosphere (if any) a
+;; candidate body retains, and which volatile species. Downstream of
+;; material-class/thermal-band (Phase 1). See
+;; kanban/tasks/ecology-m5-phase3-atmosphere-retention.md and
+;; docs/research/atmosphere/planetary-atmosphere-retention-classifier.md.
+(def atmosphere-class :component/atmosphere-class) ;; :none :thin :substantial :thick
+(def retained-species :component/retained-species) ;; #{:H2 :He :H2O :N2 :CO2}
+
+;; --- Differentiation & volatile budget (chemistry spec §5-§6) ----------------
+;; `differentiated-layers` is the density-separated layer partition of a molten
+;; body (law.chemistry/differentiated-layers-schema); layer fractions sum to 1,
+;; so total layer mass equals body mass exactly. `volatile-budget` is the
+;; body's volatile inventory in kg (H/He + ices + free oxygen + organics) — the
+;; number the M5 habitability handoff carries as `:volatile-budget-kg`.
+;; Malleability is NOT a component: it is pure-derived from temperature via
+;; law.stellar/malleability. Sole writer of both: the `:differentiation`
+;; fan-out system (domain.chemistry/differentiation-system).
+(def differentiated-layers :component/differentiated-layers)
+(def volatile-budget       :component/volatile-budget) ;; kg
+
+;; --- Handoff / planet-candidate record (M5 handoff Phase 4) -----------------
+;; The full `:planet-candidate` output record (parent kanban/tasks/ecology-
+;; water-gate-snowline.md §5), assembled once a candidate body meets the §2
+;; per-planet handoff table. Sole writer: `domain.stellar.classifier.candidate/
+;; handoff-system`. Persists once written — a candidate that briefly stops
+;; meeting the gate (e.g. a transient collision in flight) keeps its last
+;; recorded contract rather than being retracted, mirroring how
+;; matter-state promotions are never walked back.
+(def planet-candidate :component/planet-candidate) ;; the full :planet-candidate map, see law.stellar.schema/planet-candidate-schema
 
 ;; --- Field / MHD ------------------------------------------------------------
 ;; The electromagnetic layer. `b-field` is the magnetic field vector (tesla, SI)
@@ -93,6 +138,21 @@
 ;; distinct single-writer channel from accel.observer — observation is the free
 ;; gentle nudge, warp is the spent, stronger, transient force. Motion sums it.
 (def accel-warp     :component/accel.warp)     ;; [ax ay az] player warp-space force
+;; `accel.dark-matter` is the STATIC background halo (domain.gravity.dark-matter)
+;; — a very massive, large-scale-radius Plummer well centred on the world origin
+;; that never moves, collapses, or renders. Purely deepens the potential well so
+;; bodies keep their infall momentum bound instead of flinging past the system
+;; edge (kanban/tasks/dark-matter-static-halo.md). Distinct single-writer
+;; channel from accel.gravity (mutual N-body self-gravity).
+(def accel-dark-matter :component/accel.dark-matter) ;; [ax ay az] static halo pull toward origin
+;; `accel.thrust` is the player's manual-flight thrust + flight-assist damping
+;; on the SPARK entity only (domain.player.flight, card flight-no-jump-accel):
+;; the WASD/vertical input direction carried on the `:player/thrust` world key
+;; (the `:genesis/interventions` precedent) plus the always-on velocity-
+;; proportional damping, expressed as one acceleration the integrator sums.
+;; Replaces the deleted domain.player.focus/drift position teleport — the
+;; integrator stays the sole writer of c/position/c/velocity.
+(def accel-thrust   :component/accel.thrust)   ;; [ax ay az] player manual-flight thrust + damping (spark only)
 
 ;; --- Influence contributions (unified-integrator inputs) --------------------
 ;; The single integrator (domain.ecs.integrator) is the sole writer of physical
@@ -140,6 +200,7 @@
 (def spawn-request-disk      :component/spawn-request.disk)   ;; disk fragment spawns (binary/planet)
 (def spawn-request-planet    :component/spawn-request.planet) ;; sub-grid planet seeder (Part 4)
 (def spawn-request-condense  :component/spawn-request.condense) ;; small-body seed from gas condensation
+(def spawn-request-promotion :component/spawn-request.promotion) ;; promotion spawn spec, one per source regional cell (dual-representation, Phase 1)
 ;; Lifecycle markers, reaped/materialized at world-construction (spec §5). Each
 ;; consumed marker has a single owner so single-writer holds; the reaper removes
 ;; any entity carrying ANY consumed.* marker.
@@ -148,6 +209,7 @@
 (def consumed-escape :component/consumed.escape) ;; unbound debris past the system edge, reaped (debris-reaper)
 (def consumed-transfer :component/consumed.transfer) ;; donor drained below floor by gradual mass transfer, reaped (integrator)
 (def consumed-ablation :component/consumed.ablation) ;; bound body ablated below mass floor, reaped (integrator)
+(def consumed-demote :component/consumed.demote) ;; resolved body marked for aggregation into its source cell + despawn (demotion, dual-representation Phase 1)
 
 ;; Condensation seeding: one-shot marker per gas parcel so it does not seed
 ;; repeatedly, and the dedicated mass-flux influence the integrator folds.
@@ -170,6 +232,38 @@
 (def field-zone       :component/field-zone)        ;; :immediate | :regional | :global
 (def statistical-mass :component/statistical-mass) ;; kg, bookkeeping during promotion
 (def attention-shell  :component/attention-shell)    ;; {:immediate-r m :regional-r m}
+;; Stamped on a clump promoted out of a regional cell: the source cell's entity
+;; id (int), so demotion credits mass/velocity/angular-momentum back to the
+;; right cell without a spatial lookup.
+(def promoted-from-cell :component/promoted-from-cell)
+
+;; --- Narrowing / gravitational binding (The First Narrowing, child A) -------
+;; `binding` lives on the observer entity: {world-eid -> binding in [0,1]}, the
+;; continuous observer<->world coupling that is the mechanical substance of
+;; becoming gravitationally bound (docs/designs/the-first-narrowing-star-to-
+;; planet.md §2). `binding-scar` is the sunk-cost tally: {world-eid -> spent,
+;; never-refunded binding} left behind when binding to a world is lost before
+;; capture. Sole writer of both: the `:binding` fan-out system (domain.narrowing).
+(def binding      :component/binding)
+(def binding-scar :component/binding-scar)
+
+;; --- Commitment horizon (The First Narrowing, child B) ----------------------
+;; `commitment-state` marks a candidate world's relationship to the crossed
+;; horizon: `:committed` on the one captured world, `:inert` on every unchosen
+;; candidate — visible in the Entities list and Journal but no longer
+;; interactive (docs/designs/commitment-and-resonance.md §4.3). Nothing else in
+;; the codebase marks per-world interactivity today; this component IS that
+;; marker (gap noted on the card). Write-once: never cleared, never rewritten.
+;; `palette` lives on the observer entity: the six allocatable hotbar slots,
+;; re-armed IN PLACE from the Genesis palette to the Phase 1 planetary palette
+;; at capture (§4.4). Resonance is NOT part of it — Resonance lives in the
+;; observer component and carries over untouched. `time-lock` is stamped on
+;; the committed world when the planetary time-lock engages (§5.1).
+;; Sole writer of all three: the `:commitment` fan-out system
+;; (domain.narrowing/commitment-system).
+(def commitment-state :component/commitment-state) ;; :committed | :inert
+(def palette          :component/palette)          ;; {:active :slots {1..6 ability-kw}}
+(def time-lock        :component/time-lock)        ;; law.narrowing/time-lock-schema
 
 ;; --- Narrative presence (Phase 1) -------------------------------------------
 ;; Observer-side narrative state: current mood, last utterance tick, and the
@@ -215,6 +309,54 @@
 ;; --- Civilization -----------------------------------------------------------
 (def civilization :component/civilization)
 (def territory    :component/territory)
+
+;; --- Voxel substrate (Voxel 3: focus promotion/demotion) --------------------
+;; All five are written SOLELY by the `:voxel-focus` fan-out system
+;; (domain.voxel.focus); all live on the committed world entity (the band's
+;; lifecycle is exactly the world's committed lifetime — commitment is
+;; write-once, so one band per world, no spawn/despawn churn).
+;; `voxel-field`       the cached `domain.interior/seed-field` macro geology
+;;                     field — the deterministically regenerable seed the
+;;                     band materializes from and demotion diffs against.
+;; `voxel-band`        the resolved band: {:spec {:anchor :dir :h-r :depth-m
+;;                     :region} :voxels {[i j k] voxel} :touched {[i j k]
+;;                     provenance}} — present only while materialized.
+;; `voxel-edit-queue`  the deferred edit queue (ordered job vector) EVERY
+;;                     voxel edit drains through under the
+;;                     `law.voxel/edit-budget-ms-per-tick` cap (design §7.1).
+;; `voxel-edit-diffs`  ordered `law.voxel/edit-diff-schema` vector — the
+;;                     field-seed + edit-diff save representation (§7.3).
+;; `voxel-field-diffs` ordered `law.voxel/field-diff-schema` vector — the
+;;                     MACRO half of the same save story (§7.3 EXTENDED
+;;                     2026-07-22, card voxel-field-bias-persistence):
+;;                     every sculpt op that biased the field, in fold
+;;                     order, so load replays field-diffs before voxel
+;;                     diffs and no field/band divergence survives a load.
+(def voxel-field      :component/voxel.field)
+(def voxel-band       :component/voxel.band)
+(def voxel-edit-queue :component/voxel.edit-queue)
+(def voxel-edit-diffs :component/voxel.edit-diffs)
+(def voxel-field-diffs :component/voxel.field-diffs)
+
+;; `voxel-sculpt-request` lives on the committed world entity: the vector of
+;; PAID god-scale sculpt ops (`law.voxel/sculpt-op-schema`) awaiting the
+;; `:voxel-focus` fold — the producer-suffixed request channel Voxel 4 uses
+;; to reach the queue without writing another system's column (the accel.*
+;; influence-registry pattern: one writer per component, the consumer's
+;; :reads grows to fold it). Transient: re-emitted each tick from the
+;; `:voxel/sculpt-ops` world key by its sole writer, the `:voxel-sculpt`
+;; fan-out system (domain.voxel.sculpt), and auto-cleared when empty.
+(def voxel-sculpt-request :component/voxel.sculpt-request)
+
+;; `voxel-carve-request` lives on the committed world entity: the
+;; `law.crater/carve-request-schema` record — carve `:plans` awaiting the
+;; `:voxel-focus` fold, reported `:disruptions` (the sub-catastrophic stop),
+;; and the `:seen` absorb-merge packet idempotency set — written SOLELY by
+;; the `:voxel-carve` fan-out system (domain.voxel.carve, Voxel 5) from the
+;; sticky `absorb-merge` collision channel, and read one Jacobi tick stale
+;; by `:voxel-focus` (the producer-suffixed request-channel pattern, the
+;; voxel-sculpt-request precedent).
+(def voxel-carve-request :component/voxel.carve-request)
 
 ;; --- Render -----------------------------------------------------------------
 (def renderable   :component/renderable)

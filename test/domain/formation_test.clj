@@ -7,7 +7,9 @@
    [domain.stellar.disc :as disc]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.structure :as structure]
+   [domain.genesis :as genesis]
    [domain.planet-formation :as pf]
+   [domain.chemistry      :as chem]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [law.composition       :as lcomp]
@@ -267,6 +269,52 @@
             (is (= :terrestrial (:planet-type spec))
                 (str "inside snow line → terrestrial, got " (:planet-type spec)))))))))
 
+(deftest planet-composition-comes-from-local-disk-condensates
+  (testing "the seed's bulk composition is the disk's condensed inventory at the
+            formation radius, not a static per-type table (spec §6.5, decision §9.1)"
+    (let [inside  (pf/planet-composition lcomp/solar-composition 500.0 6.0e24 0.0)
+          outside (pf/planet-composition lcomp/solar-composition 100.0 6.0e24 0.0)
+          giant   (pf/planet-composition lcomp/solar-composition 100.0 6.0e24 1.0e27)]
+      (is (lcomp/composition-sums-to-unity? inside))
+      (is (lcomp/composition-sums-to-unity? outside))
+      (is (lcomp/composition-sums-to-unity? giant))
+      (testing "inside the snow line: rock/metal core, almost no H/He or water"
+        (is (> (+ (:Fe inside 0.0) (:Si inside 0.0) (:Mg inside 0.0)) 0.3))
+        (is (< (:H inside 0.0) 1e-3))
+        (is (< (:O inside 0.0) 1e-2) "water is vapor at 500 K — absent from the core"))
+      (testing "beyond the snow line: ices (O C N) join the condensed solids"
+        (is (> (:O outside 0.0) 0.1))
+        (is (> (:O outside 0.0) (:O inside 0.0))))
+      (testing "a runaway giant's captured envelope makes it H/He dominated"
+        (is (> (+ (:H giant 0.0) (:He giant 0.0)) 0.9))))))
+
+(deftest seeded-planet-composition-follows-formation-radius
+  (testing "each seeded planet's composition is the LOCAL disk's condensed
+            inventory: rock/metal inside the snow line, ice-bearing beyond it"
+    (let [[w star] (build-disk-world {})
+          res (pf/planet-seeds w star)
+          snow (pf/snow-line-radius law/solar-luminosity)
+          star-pos (ecs/get-component w star c/position)]
+      (is (seq (:spawns res)))
+      (doseq [[_ spec] (:spawns res)]
+        (let [r (sp/dist (:position spec) star-pos)
+              cmp (:composition spec)
+              h-he (+ (:H cmp 0.0) (:He cmp 0.0))
+              cats (chem/bulk-categories cmp (:temperature spec))]
+          (is (lcomp/composition-sums-to-unity? cmp)
+              "seeded composition is a normalized element map")
+          (cond
+            (> h-he 0.5)
+            (is (> r snow)
+                (str "runaway gas capture only happens beyond the snow line ("
+                     (/ r au) " AU)"))
+            (> r snow)
+            (is (> (:ice cats) 0.01)
+                (str "planet at " (/ r au) " AU (beyond snow line) carries ice"))
+            :else
+            (is (> (+ (:rock cats) (:metal cats)) 0.5)
+                (str "planet at " (/ r au) " AU (inside snow line) is rock/metal-rich"))))))))
+
 (deftest terrestrials-stay-small-on-a-massive-disk
   (testing "isolation mass caps inner rocky planets — a massive (0.05 M☉) disk
             must NOT produce a hundreds-of-Earth-mass terrestrial (the reported bug)"
@@ -297,3 +345,51 @@
       (is (seq giants) "at least one body seeds beyond the ice line")
       (is (some #(> (/ (:mass %) law/earth-mass) 10.0) giants)
           "at least one giant grows past ~10 M⊕ via runaway gas accretion"))))
+
+;; --- Spawn-seam staleness: the star moves before materialize-lifecycle -----
+;; `domain.genesis.tick/tick-physics` runs `step-physics` (the integrator
+;; INCLUDED) BEFORE `materialize-lifecycle`. In the formation-era cluster a
+;; star can move 10s of AU in a single tick — the same order as the whole
+;; seeded orbit (design `docs/designs/multi-timescale-integration.md` §3.0).
+;; A spec built from the star's PRE-tick position/velocity and materialized
+;; unchanged into the POST-tick world (where the star has already moved) is
+;; the "fling machine" reborn at the spawn seam: the planet is born already
+;; many AU from its actual parent, with a velocity that pairs with nothing —
+;; an instant ejection with no raw-Euler integrator tick involved.
+
+(deftest planet-spawn-survives-parent-motion-within-the-birth-tick
+  (testing "a planet-seeds spec materializes bound to the star's CURRENT
+            (post-step-physics) position/velocity, not its stale pre-tick one"
+    (let [[w star] (build-disk-world {})
+          res      (pf/planet-seeds w star)
+          _        (is (seq (:spawns res)) "the fixture must actually seed something")
+          ;; Populate the spawn-request exactly as domain.stellar.disc-evolution
+          ;; does, then simulate the star having ALREADY advanced this tick
+          ;; (the ordering `step-physics` → `materialize-lifecycle` guarantees
+          ;; in production) by moving it a large-but-formation-era-realistic
+          ;; distance before materializing.
+          w        (ecs/put-component w star c/spawn-request-planet
+                                      (mapv second (:spawns res)))
+          star-pos0 (ecs/get-component w star c/position)
+          shift     [(* 20.0 au) 0.0 0.0] ;; ~20 AU: within the design's cited 5–20 AU/tick range
+          new-star-v [3000.0 0.0 0.0]     ;; a real, nonzero post-move velocity too
+          w        (-> w
+                       (ecs/put-component star c/position (sp/v+ star-pos0 shift))
+                       (ecs/put-component star c/velocity new-star-v))
+          w2       (genesis/materialize-lifecycle w)
+          star-pos1 (ecs/get-component w2 star c/position)
+          star-v1   (ecs/get-component w2 star c/velocity)
+          M        (double (ecs/get-component w2 star c/mass))
+          planets  (remove #(= % star) (ecs/entities-with w2 c/matter-state c/mass c/position))
+          planets  (filter #(= :planet (ecs/get-component w2 % c/matter-state)) planets)]
+      (is (seq planets) "materialize-lifecycle actually creates the requested planets")
+      (doseq [eid planets]
+        (let [pos (ecs/get-component w2 eid c/position)
+              vel (ecs/get-component w2 eid c/velocity)
+              r   (sp/dist pos star-pos1)
+              v   (sp/len (sp/v- vel star-v1))
+              energy (- (* 0.5 v v) (/ (* law/G M) r))]
+          (is (neg? energy)
+              (str "planet at " (/ r au) " AU should be BOUND to the star's "
+                   "current state (E=" energy "); a stale anchor births it "
+                   "already unbound")))))))

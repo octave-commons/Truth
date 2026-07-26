@@ -49,6 +49,10 @@
      ;; queries (e.g. collision broad-phase). 0.0 when bodies carry no :radius
      ;; (gravity, which ignores this field).
      :max-radius (double (reduce max 0.0 (map #(double (or (:radius %) 0.0)) bodies)))
+     ;; Largest member softening length ε (law/body-softening), for the
+     ;; per-pair dead-zone/softening at node acceptance. -1.0 = no member
+     ;; carries species ε → the traversal's legacy scalar softening applies.
+     :max-eps (double (reduce max -1.0 (map #(double (or (:eps %) -1.0)) bodies)))
      :com    (safe-com (reduce (fn [acc b]
                                  (sp/v+ acc (sp/v* (:position b) (:mass b))))
                                (sp/vec3 0.0 0.0 0.0)
@@ -65,6 +69,7 @@
    :com      com})
 
 (defn- node-max-radius [node] (if node (double (or (:max-radius node) 0.0)) 0.0))
+(defn- node-max-eps [node] (if node (double (or (:max-eps node) -1.0)) -1.0))
 
 (defn internal-node?
   "True if `node` is an internal Barnes-Hut tree node."
@@ -110,7 +115,26 @@
    :children (vec (repeat 8 nil))
    :mass     0.0
    :max-radius 0.0
+   :max-eps -1.0
    :com      (sp/vec3 0.0 0.0 0.0)})
+
+(defn- child-leaf-bb
+  "The AABB the FIRST body inserted into an empty child of `bb` at `oct` gets:
+   the child octant, padded to `min-aabb-size` when it would otherwise be
+   degenerate.
+
+   ONE definition of that padding rule, used by both the serial insert path
+   (`insert-body-into-node`'s nil-child branch) and the parallel root dispatch
+   (`build-tree-parallel`). The two must agree or the parallel build stops
+   producing a tree equal to the serial one — which is exactly what
+   `build-tree-parallel`'s docstring promises."
+  [bb oct]
+  (let [child-bb (sp/child-aabb bb oct)
+        pad      [min-aabb-size min-aabb-size min-aabb-size]]
+    (if (< (sp/max-side child-bb) min-aabb-size)
+      (sp/aabb (sp/v- (:aabb-min child-bb) pad)
+               (sp/v+ (:aabb-max child-bb) pad))
+      child-bb)))
 
 (defn- insert-body-into-node
   "Insert body into node, subdividing as needed."
@@ -137,14 +161,8 @@
              oct      (sp/octant bb pos)
              idx      (octant-index oct)
              child    (get (:children node) idx)
-             child-bb (sp/child-aabb bb oct)
              child'   (if (nil? child)
-                        (let [pad      [min-aabb-size min-aabb-size min-aabb-size]
-                              child-bb (if (< (sp/max-side child-bb) min-aabb-size)
-                                         (sp/aabb (sp/v- (:aabb-min child-bb) pad)
-                                                  (sp/v+ (:aabb-max child-bb) pad))
-                                         child-bb)]
-                          (leaf-node child-bb body))
+                        (leaf-node (child-leaf-bb bb oct) body)
                         (insert-body-into-node child body (inc depth)))]
          (assoc-in node [:children idx] child'))
 
@@ -154,6 +172,31 @@
 
 (defn- node-mass [node] (if node (double (:mass node)) 0.0))
 (defn- node-com  [node] (if node (:com node) (sp/vec3 0.0 0.0 0.0)))
+
+(defn- aggregated-node-fields
+  "The mass/COM/bound fields an internal node takes from its `children` inside
+   bounding box `bb`: total mass, mass-weighted centre of mass, and the max
+   radius / softening over the subtree.
+
+   ONE definition, walking the children in ONE order. `propagate-mass` (serial)
+   and `build-tree-parallel` (parallel root) both fold it, which is what makes
+   `build-tree-parallel`'s equality promise hold — the aggregation appeared
+   verbatim in both and drifting either one would break the equality silently
+   (jscpd; card kanban/tasks/static-analysis-jscpd-src-extractions.md)."
+  [children bb]
+  (let [total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children)]
+    {:children   children
+     :mass       total-mass
+     :aabb-side  (sp/max-side bb)
+     :max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children)
+     :max-eps    (reduce #(max %1 (node-max-eps %2)) -1.0 children)
+     :com        (safe-com (reduce (fn [acc child]
+                                     (sp/v+ acc (sp/v* (node-com child)
+                                                       (node-mass child))))
+                                   (sp/vec3 0.0 0.0 0.0)
+                                   children)
+                           total-mass
+                           bb)}))
 
 (defn propagate-mass
   "Walk tree bottom-up, computing total mass and center of mass."
@@ -165,22 +208,8 @@
     (leaf-node (:aabb node) (:bodies node))
 
     (internal-node? node)
-    (let [children'  (mapv propagate-mass (:children node))
-          total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
-          max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children')
-          com        (safe-com (reduce (fn [acc child]
-                                         (sp/v+ acc (sp/v* (node-com child)
-                                                           (node-mass child))))
-                                       (sp/vec3 0.0 0.0 0.0)
-                                       children')
-                               total-mass
-                               (:aabb node))]
-      (assoc node
-             :children children'
-             :mass     total-mass
-             :aabb-side (sp/max-side (:aabb node))
-             :max-radius max-radius
-             :com      com))
+    (merge node (aggregated-node-fields (mapv propagate-mass (:children node))
+                                        (:aabb node)))
 
     :else
     (throw (ex-info "propagate-mass: unknown node type"
@@ -191,17 +220,6 @@
    the root's eight octants and building + propagating each subtree on its own
    thread. Below it the serial insert loop wins (future overhead)."
   512)
-
-(defn- child-leaf-bb
-  "The AABB the FIRST body inserted into an empty child of `bb` at `oct` gets —
-   the same min-size padding rule as `insert-body-into-node`'s nil-child branch."
-  [bb oct]
-  (let [child-bb (sp/child-aabb bb oct)
-        pad      [min-aabb-size min-aabb-size min-aabb-size]]
-    (if (< (sp/max-side child-bb) min-aabb-size)
-      (sp/aabb (sp/v- (:aabb-min child-bb) pad)
-               (sp/v+ (:aabb-max child-bb) pad))
-      child-bb)))
 
 (defn- build-tree-parallel
   "Build the octree by partitioning `bodies` (order-preserving) into the root's
@@ -226,22 +244,8 @@
                                        (leaf-node (child-leaf-bb bb oct) (first grp))
                                        (rest grp))))))
                         all-octants groups)
-        children' (mapv deref futs)
-        total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
-        max-radius (reduce #(max %1 (node-max-radius %2)) 0.0 children')
-        com        (safe-com (reduce (fn [acc child]
-                                       (sp/v+ acc (sp/v* (node-com child)
-                                                         (node-mass child))))
-                                     (sp/vec3 0.0 0.0 0.0)
-                                     children')
-                             total-mass
-                             bb)]
-    (assoc root
-           :children  children'
-           :mass      total-mass
-           :aabb-side (sp/max-side bb)
-           :max-radius max-radius
-           :com       com)))
+        children' (mapv deref futs)]
+    (merge root (aggregated-node-fields children' bb))))
 
 (defn build-tree
   "Build a Barnes–Hut octree from a seq of Body records."
@@ -268,8 +272,10 @@
 (defn- leaf-node-idx
   "Leaf node carrying integer indices into a SoA array rather than body maps.
    Mass/COM accumulation uses the same vector operations as `leaf-node` so the
-   SoA path is bit-identical to the body-map path for the same positions."
-  [bb idxs ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr]
+   SoA path is bit-identical to the body-map path for the same positions.
+   `eps-arr` is the per-entity softening array (nullable: caches built without
+   species ε mark :max-eps -1.0 → legacy scalar softening at traversal)."
+  [bb idxs ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr ^doubles eps-arr]
   (let [idxs (vec idxs)
         bodies (mapv (fn [i]
                        (let [ii (int i)]
@@ -284,6 +290,9 @@
      :aabb-side (sp/max-side bb)
      :idxs   idxs
      :mass   total
+     :max-eps (if eps-arr
+                (double (reduce (fn [m i] (max m (aget eps-arr (int i)))) -1.0 idxs))
+                -1.0)
      :com    (safe-com (reduce (fn [acc b]
                                  (sp/v+ acc (sp/v* (:position b) (:mass b))))
                                (sp/vec3 0.0 0.0 0.0)
@@ -326,9 +335,9 @@
 
 (defn- insert-idx-into-node
   "Insert index `idx` into node using position from SoA arrays."
-  ([node idx px-arr py-arr pz-arr mass-arr]
-   (insert-idx-into-node node idx px-arr py-arr pz-arr mass-arr 0))
-  ([node idx ^doubles px-arr ^doubles py-arr ^doubles pz-arr ^doubles mass-arr depth]
+  ([node idx px-arr py-arr pz-arr mass-arr eps-arr]
+   (insert-idx-into-node node idx px-arr py-arr pz-arr mass-arr eps-arr 0))
+  ([node idx ^doubles px-arr ^doubles py-arr ^doubles pz-arr ^doubles mass-arr ^doubles eps-arr depth]
    (let [pos [(aget px-arr (int idx))
               (aget py-arr (int idx))
               (aget pz-arr (int idx))]]
@@ -336,18 +345,18 @@
        (nil? node)
        (let [pad [min-aabb-size min-aabb-size min-aabb-size]]
          (leaf-node-idx (sp/aabb (sp/v- pos pad) (sp/v+ pos pad))
-                        [idx] mass-arr px-arr py-arr pz-arr))
+                        [idx] mass-arr px-arr py-arr pz-arr eps-arr))
 
        (leaf-node? node)
        (let [bb   (:aabb node)
              idxs (:idxs node)
              all  (conj idxs idx)]
          (if (or (>= depth max-insert-depth) (< (sp/max-side bb) min-aabb-size))
-           (leaf-node-idx bb all mass-arr px-arr py-arr pz-arr)
+           (leaf-node-idx bb all mass-arr px-arr py-arr pz-arr eps-arr)
            (let [internal  (empty-internal bb)
-                 internal' (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr (inc depth))
+                 internal' (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr eps-arr (inc depth))
                                    internal idxs)]
-             (insert-idx-into-node internal' idx px-arr py-arr pz-arr mass-arr (inc depth)))))
+             (insert-idx-into-node internal' idx px-arr py-arr pz-arr mass-arr eps-arr (inc depth)))))
 
        (internal-node? node)
        (let [bb       (:aabb node)
@@ -361,8 +370,8 @@
                                          (sp/aabb (sp/v- (:aabb-min child-bb) pad)
                                                   (sp/v+ (:aabb-max child-bb) pad))
                                          child-bb)]
-                          (leaf-node-idx child-bb [idx] mass-arr px-arr py-arr pz-arr))
-                        (insert-idx-into-node child idx px-arr py-arr pz-arr mass-arr (inc depth)))]
+                          (leaf-node-idx child-bb [idx] mass-arr px-arr py-arr pz-arr eps-arr))
+                        (insert-idx-into-node child idx px-arr py-arr pz-arr mass-arr eps-arr (inc depth)))]
          (assoc-in node [:children oidx] child'))
 
        :else
@@ -370,18 +379,19 @@
                        {:kind ::unknown-node-type :node node}))))))
 
 (defn- propagate-mass-idx
-  "Recompute mass/COM for a tree whose leaves carry SoA indices."
-  [node ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr]
+  "Recompute mass/COM/ε-max for a tree whose leaves carry SoA indices."
+  [node ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr ^doubles eps-arr]
   (cond
     (nil? node) nil
 
     (leaf-node? node)
-    (leaf-node-idx (:aabb node) (:idxs node) mass-arr px-arr py-arr pz-arr)
+    (leaf-node-idx (:aabb node) (:idxs node) mass-arr px-arr py-arr pz-arr eps-arr)
 
     (internal-node? node)
-    (let [children'  (mapv #(propagate-mass-idx % mass-arr px-arr py-arr pz-arr)
+    (let [children'  (mapv #(propagate-mass-idx % mass-arr px-arr py-arr pz-arr eps-arr)
                            (:children node))
           total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
+          max-eps    (reduce #(max %1 (node-max-eps %2)) -1.0 children')
           com        (safe-com (reduce (fn [acc child]
                                          (sp/v+ acc (sp/v* (node-com child)
                                                            (node-mass child))))
@@ -393,6 +403,7 @@
              :children children'
              :mass     total-mass
              :aabb-side (sp/max-side (:aabb node))
+             :max-eps max-eps
              :com      com))
 
     :else
@@ -402,7 +413,7 @@
 (defn- build-tree-parallel-idx
   "Parallel SoA tree build: partition indices by root octant and build each
    subtree in a future."
-  [bb idxs ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr]
+  [bb idxs ^doubles mass-arr ^doubles px-arr ^doubles py-arr ^doubles pz-arr ^doubles eps-arr]
   (let [root   (empty-internal bb)
         groups (reduce (fn [gs i]
                          (let [pos [(aget px-arr (int i))
@@ -416,14 +427,15 @@
                        (future
                          (when (seq grp)
                            (propagate-mass-idx
-                            (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr)
+                            (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr eps-arr)
                                     (leaf-node-idx (child-leaf-bb bb oct)
-                                                   [(first grp)] mass-arr px-arr py-arr pz-arr)
+                                                   [(first grp)] mass-arr px-arr py-arr pz-arr eps-arr)
                                     (rest grp))
-                            mass-arr px-arr py-arr pz-arr))))
+                            mass-arr px-arr py-arr pz-arr eps-arr))))
                      all-octants groups)
         children' (mapv deref futs)
         total-mass (reduce #(+ %1 (node-mass %2)) 0.0 children')
+        max-eps    (reduce #(max %1 (node-max-eps %2)) -1.0 children')
         com        (safe-com (reduce (fn [acc child]
                                        (sp/v+ acc (sp/v* (node-com child)
                                                          (node-mass child))))
@@ -435,6 +447,7 @@
            :children  children'
            :mass      total-mass
            :aabb-side (sp/max-side bb)
+           :max-eps max-eps
            :com       com)))
 
 (defn build-tree-from-soa
@@ -447,6 +460,7 @@
         ^doubles py-arr (or (:py-pred soa) (:py soa))
         ^doubles pz-arr (or (:pz-pred soa) (:pz soa))
         ^doubles mass-arr (:mass soa)
+        ^doubles eps-arr (:eps soa)
         n (:n soa)
         idxs (range n)]
     (assert-finite-soa-positions! soa px-arr py-arr pz-arr n)
@@ -454,15 +468,15 @@
       (zero? n) nil
       (= 1 n) (leaf-node-idx (sp/aabb [(aget px-arr 0) (aget py-arr 0) (aget pz-arr 0)]
                                       [(aget px-arr 0) (aget py-arr 0) (aget pz-arr 0)])
-                             [0] mass-arr px-arr py-arr pz-arr)
+                             [0] mass-arr px-arr py-arr pz-arr eps-arr)
       :else
       (let [bb (-> (bounding-aabb-for-soa px-arr py-arr pz-arr n)
                    (update :aabb-min #(sp/v+ % [-1e-6 -1e-6 -1e-6]))
                    (update :aabb-max #(sp/v+ % [1e-6 1e-6 1e-6])))]
         (if (>= n parallel-build-threshold)
-          (build-tree-parallel-idx bb idxs mass-arr px-arr py-arr pz-arr)
+          (build-tree-parallel-idx bb idxs mass-arr px-arr py-arr pz-arr eps-arr)
           (propagate-mass-idx
-           (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr)
+           (reduce #(insert-idx-into-node %1 %2 px-arr py-arr pz-arr mass-arr eps-arr)
                    (empty-internal bb)
                    idxs)
-           mass-arr px-arr py-arr pz-arr))))))
+           mass-arr px-arr py-arr pz-arr eps-arr))))))

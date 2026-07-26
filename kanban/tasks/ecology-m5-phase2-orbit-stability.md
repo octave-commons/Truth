@@ -1,13 +1,14 @@
 ---
-uuid: "ecology-m5-phase2-orbit-stability"
-title: "M5 Handoff Phase 2: orbit stability"
-status: "ready"
-priority: "P2"
-labels: ["phase0", "handoff", "epic-ecology-water-gate-snowline"]
-created_at: "2026-07-10T00:00:00Z"
-source: "kanban/tasks/ecology-m5-phase2-orbit-stability.md"
 category: "specs"
-estimate: 3
+labels: ["phase0", "handoff", "epic-ecology-water-gate-snowline"]
+write-id: "1784746480557-0.8j1q4p2672lux316c47"
+source: "kanban/tasks/ecology-m5-phase2-orbit-stability.md"
+title: "M5 Handoff Phase 2: orbit stability"
+priority: "P2"
+status: "done"
+estimate: "3"
+uuid: "ecology-m5-phase2-orbit-stability"
+created_at: "2026-07-10T00:00:00Z"
 ---
 
 # M5 Handoff Phase 2: orbit stability
@@ -35,4 +36,8 @@ integration behind the proxy proving too coarse).
 
 ---
 Triage 2026-07-10: scoped 3pt, analytic proxy only. Ready for implementation.
+
+Triage 2026-07-22 (Claude): Phase 1 landed (done); dispatching Sonnet impl agent for this analytic-proxy stability slice. ready -> in_progress.
+
+Implementation complete + independently verified 2026-07-22 (Claude). domain.orbital-stability-test + classification tests 10/19 green; architecture-test 6/23 green; full suite 652/13482 (was 648/13475) 0 failures; reg/write-conflicts {} via REPL. Landed: pure domain.orbital.stability/orbit-stability (vis-viva two-body elements; periapsis>R_star+5R_star, apoapsis<100AU, no approach within 10 Hill radii using law.stellar/hill-radius; unbound=unstable). Design: FOLDED into :classification system (now sole writer of orbit-stable? too) rather than a second system — reuses the same candidate scan + star lookup, keeps reads minimal, write-conflicts empty. softened-circular-speed used in test fixtures; plain vis-viva inside the proxy is valid since the periapsis floor sits outside any Plummer softening length (documented). Committed c1b88c5 on branch m5-ecology-handoff. in_progress -> done. Unblocks phase4 (with phase3).
 ---

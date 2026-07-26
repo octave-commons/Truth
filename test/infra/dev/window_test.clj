@@ -41,19 +41,20 @@
   (testing "The spark's focus follows the camera target in tracking modes, never the mouse."
     (let [world (genesis/create-world {:gas-count 3})
           obs   (player/get-observer world)
+          spark-pos (player/observer-position world)
           camera (cam/update-camera-for-world
                   (cam/make-camera) world
                   (assoc (cam/default-camera-settings) :mode :fit-all))
           ctx    (units/make-context camera {:width 1280 :height 720})
           target-world (units/render->world ctx (:target camera))]
-      (testing "non-manual mode snaps the spark position and focus to the camera target"
+      (testing "non-manual mode snaps the focus to the camera target — but NEVER the spark's position (a gravity-bound ECS column since card 4)"
         (let [world' (@#'infra.dev.window.loop/sync-observer-focus-to-camera
                       world camera ctx :fit-all)
               obs' (player/get-observer world')]
           (is (= target-world (:focus-position obs'))
               "focus is locked to the camera target in world metres")
-          (is (= target-world (:position obs'))
-              "spark position is also locked to the camera target")
+          (is (= spark-pos (player/observer-position world'))
+              "spark position is the c/position column, untouched by the camera")
           (is (= (:focus-radius obs) (:focus-radius obs'))
               "focus radius is preserved")
           (is (= (:focus-intensity obs) (:focus-intensity obs'))
@@ -69,6 +70,38 @@
               world' (@#'infra.dev.window.loop/sync-observer-focus-to-camera
                       empty-world camera ctx :fit-all)]
           (is (= empty-world world')))))))
+
+(deftest flight-intents-drain-before-tick-publish
+  (testing "manual-flight intents (thrust direction + focus-follow) enqueued
+            through the IntentAtom are drained on the sim thread BEFORE the
+            tick — the sim thread is the sole writer of the world and no
+            intent is lost between the sim's deref and its publish
+            (flight-no-jump-accel; the drift position teleport is gone)"
+    (let [[w _]   (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])
+          world-atom (atom w)
+          queue   (java.util.concurrent.ConcurrentLinkedQueue.)
+          intents (loop/->IntentAtom queue world-atom)]
+      (testing "the render thread's swap! enqueues; it never mutates the world"
+        (swap! intents player/set-thrust [0.0 1.0 0.0])
+        (swap! intents player/focus-follow [1.5e10 0.0 0.0])
+        (is (nil? (:player/thrust @world-atom)))
+        (is (= [0.0 0.0 0.0] (:focus-position (player/get-observer @world-atom)))))
+      (testing "sim iteration 1: drain applies both intents, then publish"
+        (let [w0 (@#'infra.dev.window.loop/drain-intents @world-atom queue)]
+          ;; a mid-tick thrust release lands between drain and publish
+          (swap! intents player/set-thrust nil)
+          (reset! world-atom w0)
+          (is (= [0.0 1.0 0.0] (:player/thrust @world-atom))
+              "thrust direction recorded exactly once")
+          (is (= [1.5e10 0.0 0.0] (:focus-position (player/get-observer @world-atom)))
+              "focus rides the mote position plus the nudge offset")
+          (is (= [0.0 0.0 0.0] (player/observer-position @world-atom))
+              "NEITHER intent touched the spark's c/position — the integrator owns motion")))
+      (testing "sim iteration 2: the mid-tick release survives to the next drain"
+        (let [w1 (@#'infra.dev.window.loop/drain-intents @world-atom queue)]
+          (reset! world-atom w1)
+          (is (nil? (:player/thrust @world-atom))
+              "release clears the channel — the damping term then coasts the mote down"))))))
 
 (deftest dump-error-artifacts-graceful-on-failure
   (testing "if writing fails the function returns an error map instead of throwing"

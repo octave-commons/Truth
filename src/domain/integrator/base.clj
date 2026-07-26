@@ -14,7 +14,8 @@
    plus its single-writer emitter. Non-additive fields (temperature, composition,
    spin) are derived by the per-field updaters below and documented in :derived."
   {:velocity         {:accumulate [c/accel-gravity c/accel-pressure c/accel-lorentz
-                                   c/accel-observer c/accel-warp]
+                                   c/accel-observer c/accel-warp c/accel-dark-matter
+                                   c/accel-thrust]
                       :compose :sum :scale :dt}
    :angular-momentum {:accumulate [c/torque-em c/torque-disk]
                       :compose :sum :scale :dt}
@@ -27,7 +28,7 @@
    :temperature      {:influences [c/heat-intervention]
                       :derived "virial (cores) / radiative (worlds) + intervention ease"}
    :composition      {:influences [c/comp-burn c/comp-depletion]
-                      :derived "comp.burn replaces, comp.depletion zeroes"}
+                      :derived "merge blend + volatile blow-off (hot merges), then comp.burn replaces, comp.depletion zeroes"}
    :position         {:influences [c/frame-offset]
                       :derived "x + v·dt − frame-offset (COM Galilean shift)"}
    :spin             {:derived "L / I (moment of inertia)"}})

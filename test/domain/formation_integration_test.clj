@@ -167,12 +167,22 @@
 
 (deftest persistent-cache-matches-full-rebuild
   (testing "10 ticks with persistent cache and full-rebuild produce identical worlds"
-    (let [base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0
+    (let [;; Fresh-density mode (max-ticks 1): this test is the byte-equivalence
+          ;; contract for persistent-cache identity reuse, NOT for the density
+          ;; staleness budget. The budget (perf-big5-shared-neighbor-pass,
+          ;; owner decision 2026-07-22) deliberately relaxes byte-equivalence —
+          ;; a carried estimate embeds the compute-time h/r2 and diverges from
+          ;; an always-fresh sum in the last ulp. Budget behaviour is pinned by
+          ;; domain.physics.cache-test's density-estimate tests and the
+          ;; windowed-equivalence contract in bench/gates_of_truth/bench/
+          ;; equivalence.clj.
+          base (-> (genesis/create-world {:gas-count 100 :spin 0.0 :turb 0.0
                                           :nebula-radius 2.0e16
                                           :n-seeds 5 :seed-r 0.18})
                    (assoc :sim/G 0.0
                           :genesis/adaptive-pacing? false
-                          :sim/dt 0.0))]
+                          :sim/dt 0.0
+                          :genesis/density-stale-max-ticks 1))]
       (loop [i 0
              persist base
              full    (assoc base :genesis/invalidate-neighbor-cache? true)]

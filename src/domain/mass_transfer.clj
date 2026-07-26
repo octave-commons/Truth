@@ -8,15 +8,14 @@
 
    See docs/specs/gradual-mass-transfer-realspec.md.",
   (:require
+   [clojure.math :as math]
    [domain.ecs.core       :as ecs]
    [domain.ecs.components  :as c]
    [domain.ecs.parallel    :as par]
    [domain.ecs.tick       :as tick]
    [domain.spatial.index   :as spatial]
    [domain.stellar.sink            :as sink]
-   [domain.stellar.thermodynamics :as thermo]
    [law.mass-transfer     :as lmt]
-   [law.stellar           :as lst]
    [shape.spatial         :as sp]))
 
 (def ^:private zero3 [0.0 0.0 0.0])
@@ -29,9 +28,10 @@
 (def ^:private sink-states
   #{:condensed-core :planetesimal :gas-giant :brown-dwarf :protostar :star :planet})
 
-(def ^:private gas-pred
-  "Predicate matching nebula gas parcels."
-  #(= :nebula (:matter-state %)))
+(defn- gas-pred
+  "True when `entity` is a nebula gas parcel."
+  [entity]
+  (= :nebula (:matter-state entity)))
 
 ;; ---------------------------------------------------------------------------
 ;; Helpers
@@ -63,7 +63,7 @@
   "Deterministic [0,1) value from an integer key (for stable, non-random IMF /
    feedback acceptance — mirrors stellar's sink-formation hashing)."
   [n]
-  (/ (double (mod (* (+ 1 (long n)) 2654435761) 1000003)) 1000003.0))
+  (/ (double (mod (* (inc (long n)) 2654435761) 1000003)) 1000003.0))
 
 (defn- donor-mass
   "Mass of donor entity `eid` in `world`, or 0.0."
@@ -76,7 +76,7 @@
   (double (or (ecs/get-component world eid c/density)
               (let [m (donor-mass world eid)
                     r (double (or (ecs/get-component world eid c/radius) 1.0))]
-                (if (pos? r) (/ (* 3.0 m) (* 4.0 Math/PI r r r)) 0.0))
+                (if (pos? r) (/ (* 3.0 m) (* 4.0 math/PI r r r)) 0.0))
               0.0)))
 
 (defn- relative-velocity
@@ -159,26 +159,12 @@
                          1.0e4)
                       (< (hash01 (hash [(:id %) sink-eid tick])) bias)))))
 
-(def ^:private disk-formation-radius
-  "Captured gas is placed at this centrifugal radius when routed to a
-   protostar/star disk. Gas falling from the Bondi radius (~10⁴ AU) carries far
-   too much angular momentum to form a compact protoplanetary disk; in reality it
-   loses angular momentum in the collapsing envelope and lands at ~1–10 AU. We
-   use 10 AU as the effective disk-formation radius."
-  1.5e12)
-
-(defn- disk-angular-momentum-from-radius
-  "Return angular momentum vector for mass `dm` placed in a Keplerian disk at
-   `radius` around a mass `M` sink. Direction follows the captured parcel's
-   orbital angular momentum around the sink; if that is zero, default to +z."
-  [dm M radius dpos v-rel]
-  (let [j (Math/sqrt (* lst/G M radius))
-        L-raw (thermo/orbital-angular-momentum 1.0 dpos v-rel)
-        L-len (sp/len L-raw)
-        target-L (* dm j)]
-    (if (pos? L-len)
-      (sp/v* L-raw (/ target-L L-len))
-      [0.0 0.0 target-L])))
+;; The disk-formation radius and its angular-momentum mapping live in
+;; domain.stellar.sink (`sink/disk-formation-radius`,
+;; `sink/disk-angular-momentum-from-radius`) — ONE shared helper for both
+;; capture channels (this gradual BHL channel and sink-formation's whole-parcel
+;; absorb), so captured gas always lands at the same 10 AU formation radius.
+;; See kanban/tasks/sink-absorb-angular-momentum-renormalization.md.
 
 (defn- donor-flux
   "Add flux for one donor parcel to the running write-set. If disk? is true,
@@ -193,7 +179,7 @@
     (if disk?
       (-> ws
           (add-disk! sink-eid dm
-                     (disk-angular-momentum-from-radius dm M disk-formation-radius r-rel v-rel))
+                     (sink/disk-angular-momentum-from-radius dm M sink/disk-formation-radius r-rel v-rel))
           (add-flux! donor-eid (- dm) zero3))
       (-> ws
           (add-flux! sink-eid dm (if (pos? M) (sp/v* v-donor (/ dm M)) zero3))
@@ -408,7 +394,3 @@
                         c/disk-mass-flux c/disk-l-flux c/roche-lobe
                         c/mass-transfer-rate])))})
 
-(defn systems
-  "Compatibility alias. Returns a vector containing `mass-transfer-system`."
-  []
-  [(mass-transfer-system)])

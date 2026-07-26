@@ -99,7 +99,9 @@
                         :position (comps c/position)
                         :velocity (comps c/velocity)})
                      (ecs/all-of world c/position c/velocity c/mass c/radius c/body-kind)))
-          soa (pcache/build-physics-soa world)
+          ;; The SoA cache reads the species-rule world softening from
+          ;; :sim/softening; declare it to match the gravity argument below.
+          soa (pcache/build-physics-soa (assoc world :sim/softening 1.0e14))
           world-with-soa (assoc world :genesis/spatial-tree tree :genesis/physics-soa (:genesis/physics-soa soa))
           world-without-soa (assoc world :genesis/spatial-tree tree)
           sys (sys/gravity-acceleration 6.674e-11 0.5 1.0e14)

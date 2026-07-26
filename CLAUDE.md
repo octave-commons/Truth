@@ -19,7 +19,7 @@ clojure -M:test -n domain.stellar-test       # one test namespace (cognitect tes
 clojure -M:test -v domain.stellar-test/a-var # one test var
 
 bin/analyze                                  # static analysis (clj-kondo, splint, smells, cljfmt, jscpd)
-bin/analyze --strict                         # CI mode — also fails on HARD structural breaches
+bin/analyze --strict                         # CI mode — all six tools gate; must exit 0
 bin/analyze --fix                            # auto-format with cljfmt
 
 bin/coverage --text                          # cloverage text summary (fast)
@@ -115,6 +115,34 @@ cannot validate body placement.
 
 `docs/designs/ux-architecture.md` is canonical for all user interaction; much
 current UX/render code is acknowledged ad-hoc, not design intent.
+
+## Static analysis is a gate, not a report
+
+`bin/analyze --strict` must exit 0, and as of 2026-07-25 it does: clj-kondo 0/0,
+Splint 0, clojure-lsp dead code 0, cljfmt clean, structural HARD 0, jscpd under
+threshold. All six tools are blocking.
+
+**A red `bin/analyze --strict` is a blocker, not a backlog item.** If you cannot fix
+a finding, file a regression card — do not demote the gate, and never leave a kanban
+card `done` whose finding has come back. That exact failure is why this paragraph
+exists: `static-analysis` failed on 33 consecutive pushes to `main` between
+2026-07-10 and 2026-07-21 and every one landed anyway, while twelve cards read `done`
+with their findings already back
+(`kanban/tasks/static-analysis-regression-2026-07-24.md`).
+
+`main` is now protected: the `analyze` check is required, with `enforce_admins: true`.
+You cannot push a red tree to `main`, and neither can the owner.
+
+Suppressing a finding is allowed and sometimes correct, but it always carries its
+reason **at the site**. Two markers, both documented in `docs/STATIC-ANALYSIS.md`:
+
+- `^:export` on a var that is deliberately public with no internal consumer —
+  `law/` schemas/contracts/constants, debug accessors, compat aliases.
+- `UNUSED-PENDING` + `#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}` + a
+  `kanban/tasks/…` reference, for the "coded but never ticked" features named under
+  Gotchas below. Verbose on purpose: pending work should read as pending.
+
+`;; Intentional:` + `#_{:splint/disable [rule]}` is the equivalent for Splint.
 
 ## Conventions
 

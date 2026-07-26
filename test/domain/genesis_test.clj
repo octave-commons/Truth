@@ -8,7 +8,7 @@
    [domain.pacing           :as pacing]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.thermodynamics :as thermo]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.stellar.collapse :as collapse]
    [domain.stellar.structure :as structure]
    [domain.chemistry        :as chemistry]
@@ -386,9 +386,9 @@
           region {:matter-state :nebula
                   :mass    (* 4.0 law/deuterium-burning-mass)
                   :radius  1.0e14
-                  :density (* 10.0 classifier/core-condensation-density)
+                  :density (* 10.0 cls-state/core-condensation-density)
                   :temperature 12.0}]
-      (is (not= :nebula (classifier/classify-next-state region gas-mass))
+      (is (not= :nebula (cls-state/classify-next-state region gas-mass))
           "precondition: this parcel condenses")
       (let [base (-> (genesis/create-world {:gas-count 4})
                      (assoc :genesis/gas-particle-mass gas-mass
@@ -398,7 +398,7 @@
                                    {c/matter-state :nebula c/mass (:mass region)
                                     c/radius (:radius region) c/density (:density region)
                                     c/temperature (:temperature region) c/position [0.0 0.0 0.0]})
-            ws ((:run (classifier/classifier-system)) w)
+            ws ((:run (cls-state/classifier-system)) w)
             new-state (get-in ws [c/matter-state eid])
             zone (get-in ws [c/accretion-radius eid])
             expected-zone (* structure/feeding-zone-factor

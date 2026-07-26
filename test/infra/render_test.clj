@@ -7,6 +7,7 @@
    [clojure.test :refer [deftest testing is]]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.field :as field]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.collapse :as collapse]
    [domain.genesis :as genesis]
@@ -221,6 +222,19 @@
       (is (= rocky-cold material) "a cold rocky body is its material colour")
       (is (not= rocky-hot material) "a hot body crossfades toward thermal colour"))))
 
+(deftest test-legacy-bodies-from-world-excludes-spark
+  (testing "the legacy bodies-from-world path never renders the spark as a
+            giant sphere (card-4 review, finding 5)"
+    (let [[w obs-eid] (player/spawn-observer (ecs/empty-world) [1.0e15 0.0 0.0])
+          [w body-eid] (seeder/spawn-clump w {:position [0.0 0.0 0.0]
+                                              :mass 1.0e24 :radius 6.0e8
+                                              :matter-state :planet})
+          bodies (rbodies/bodies-from-world w)]
+      (is (nil? (some #(when (= obs-eid (:entity %)) %) bodies))
+          "the spark is excluded — it has its own overlay")
+      (is (some #(when (= body-eid (:entity %)) %) bodies)
+          "ordinary bodies still project"))))
+
 ;; --- Player interface (spark, reticle, HUD, input) ---------------------------
 
 (deftest test-player-overlay-shapes
@@ -263,6 +277,32 @@
       (is (some #(re-find #"yr" (:text %)) lines) "clock line carries a time unit")
       (is (some #(re-find #"Msun" (:text %)) lines) "mass line present")
       (is (= [] (r/hud-text-from-world (ecs/empty-world)))))))
+
+(deftest test-observer-hud-binding-and-commitment-readout
+  (testing "Non-empty c/binding surfaces the deepest world's percentage"
+    (let [w0  (genesis/create-world {:gas-count 10})
+          eid (player/observer-entity w0)
+          w   (ecs/put-component w0 eid c/binding {101 0.3 102 0.72})
+          lines (r/observer-hud-text w 800 600)]
+      (is (some #(re-find #"binding.*72%" (:text %)) lines)
+          "deepest (max) binding world's percentage is shown, not the shallower one")
+      (is (not-any? #(re-find #"committed" (:text %)) lines)
+          "no commitment readout before any world is committed")))
+  (testing "c/commitment-state :committed switches to the committed readout"
+    (let [w0  (genesis/create-world {:gas-count 10})
+          eid (player/observer-entity w0)
+          w   (-> w0
+                  (ecs/put-component eid c/binding {101 0.9})
+                  (ecs/put-component 101 c/commitment-state :committed))
+          lines (r/observer-hud-text w 800 600)]
+      (is (some #(re-find #"committed" (:text %)) lines)
+          "committed readout appears once c/commitment-state is written")
+      (is (not-any? #(re-find #"90%" (:text %)) lines)
+          "the live percentage readout is replaced, not shown alongside")))
+  (testing "Empty c/binding and no commitment yields no binding readout line"
+    (let [w (genesis/create-world {:gas-count 10})]
+      (is (not-any? #(re-find #"binding|committed" (:text %))
+                    (r/observer-hud-text w 800 600))))))
 
 (deftest test-focus-input-moves-and-resizes
   (testing "handle-input drives the observer focus (the player's controls)"
@@ -395,4 +435,30 @@
       (is (< (:scatter-scale cfg) 2.0) "scatter is reduced from the old 2.5")
       (is (> (:kappa cfg) 0.045) "absorption is raised from the old 0.045"))))
 
-
+(deftest test-regional-cell-renders-as-dim-cloud
+  (testing "a demoted (regional statistical) cell is visible as a dimmed probability-cloud sprite"
+    (let [ledger {:mass 1.0e24
+                  :velocity [0.0 0.0 0.0]
+                  :angular-momentum [0.0 0.0 0.0]
+                  :mean-b [0.0 0.0 0.0]
+                  :temperature 300.0
+                  :composition {:silicate 1.0}}
+          [w cell-eid] (field/spawn-regional-cell (ecs/empty-world) ledger [2.0e15 0.0 0.0])
+          shapes (rbodies/phase0-bodies-from-world w)
+          cloud  (some #(when (= cell-eid (:entity %)) %) shapes)]
+      (is (some? cloud) "the cell contributes a shape — demotion is visible in-frame")
+      (is (= :sprite (:render-mode cloud)) "rendered through the existing sprite path")
+      (is (= :statistical-cell (:kind cloud)))
+      (is (= [2.0 0.0 0.0] (:position cloud))
+          "true-scale projection: 2e15 m is 2 ru at the Phase 0 view scale")
+      (is (every? #(<= 0.0 % 0.31) (:color cloud))
+          "dimmed: the cloud keeps its hue but most of its light is gone")))
+  (testing "resolved bodies are untouched by the cell path"
+    (let [[w body-eid] (seeder/spawn-clump (ecs/empty-world)
+                                           {:position [1.0e15 0.0 0.0]
+                                            :mass 1.0e24 :radius 6.0e8
+                                            :matter-state :planet})
+          shapes (rbodies/phase0-bodies-from-world w)
+          body   (some #(when (= body-eid (:entity %)) %) shapes)]
+      (is (some? body))
+      (is (= :body (:render-mode body)) "a resolved world still renders as a body, not a cloud"))))

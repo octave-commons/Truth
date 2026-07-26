@@ -1,13 +1,14 @@
 ---
-uuid: "static-analysis-splint-idiom-cleanup"
-title: "Splint idiom cleanup"
-status: "ready"
-priority: "P2"
-estimate: "2"
-labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
-created_at: "2026-07-07T00:00:00Z"
-source: "kanban/tasks/static-analysis-splint-idiom-cleanup.md"
 category: "specs"
+labels: ["specs", "static-analysis", "epic-static-analysis-cleanup", "cleanup"]
+write-id: "1784985269880-0.nwudvqw98peyz99d2zh"
+source: "kanban/tasks/static-analysis-splint-idiom-cleanup.md"
+title: "Splint idiom cleanup"
+priority: "P2"
+status: "done"
+estimate: "2"
+uuid: "static-analysis-splint-idiom-cleanup"
+created_at: "2026-07-07T00:00:00Z"
 ---
 
 # Spec: Splint Idiom Cleanup
@@ -409,4 +410,27 @@ Triage 2026-07-10: CONSOLIDATED — this is now the single splint residual card 
 Triage 2026-07-10: 18 warnings remain; scope collapsed to a single residual pass. Moved to breakdown to resize/re-scope to ~2pt and absorb over-fragmented sub-cards.
 
 Triage 2026-07-10: scope collapsed to ~2pt residual (18 warnings). Estimate updated to 2. Moved to ready.
+---
+
+---
+Triage 2026-07-24 — COUNT STALE, superseded by `kanban/tasks/static-analysis-splint-sweep-2026-07.md`. Splint reports **147 warnings, not 18** — the residual grew back with the voxel and M5 work. Shape of the regrowth: **112 are `style/prefer-clj-math`** concentrated in 13 files (`voxel/carve.clj` 37, `interior.clj` 33, `voxel_carve_test.clj` 15, `voxel/band.clj` 13), which is stragglers against a house convention **75 files already follow** — not a new idiom being imposed. Verified safe against the Clojure 1.11.1 source: the fns are `:inline` and `clojure.math/PI` is `^{:const true}`, so there is no hot-loop cost.
+
+Recording for the record, since four sibling cards carry `status: rejected` and could be misread as a policy decision: `-splint-math`, `-splint-arithmetic-control`, `-splint-naming-structure` and `-splint-final-gate` were rejected as **card consolidation only** ("18-warning remainder too small to justify separate cards"). Splint was never descoped. This card remained the owner and still is.
+
+Two findings the successor card carries that a bulk sweep would get wrong: `lint/fn-wrapper` at `src/infra/dev/window/loop.clj:90` is **not** an eta-reduction (it moves `orbital-system` from per-tick to namespace-load time) and must be rejected; and `test/infra/render/scene/voxel_test.clj:81` is a **real bug, not style** — single-arg `distinct?` always returns true, so that assertion has never tested anything.
+---
+
+---
+## Superseded (2026-07-25)
+
+Superseded by `kanban/tasks/static-analysis-splint-sweep-2026-07.md`, which did the
+work. This card's count of 18 was stale — the real figure was 147, of which 112 were
+`style/prefer-clj-math`.
+
+Splint is now at **0 warnings** and is a BLOCKING tool in `bin/analyze`.
+
+Recorded because it is easy to misread: the four `rejected` Splint child cards
+(`-splint-math`, `-splint-arithmetic-control`, `-splint-naming-structure`,
+`-splint-final-gate`) were rejected as **card consolidation only** — "18-warning
+remainder too small to justify separate cards" — never as a decision to skip Splint.
 ---

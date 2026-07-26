@@ -7,7 +7,9 @@
    [domain.player :as player]
    [domain.integrator :as integ]
    [domain.stellar.geometry :as geometry]
-   [domain.stellar.classifier :as classifier]
+   [domain.stellar.classifier.candidate :as cls-cand]
+   [domain.stellar.classifier.planet :as cls-planet]
+   [domain.stellar.classifier.state :as cls-state]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.fusion :as fusion]
    [domain.chemistry :as chemistry]
@@ -22,8 +24,14 @@
    [domain.lod :as lod]
    [domain.ecology :as ecology]
    [domain.debris :as debris]
+   [domain.genesis.promotion :as promotion]
+   [domain.narrowing :as narrowing]
+   [domain.voxel.focus :as voxel-focus]
+   [domain.voxel.sculpt :as voxel-sculpt]
+   [domain.voxel.carve :as voxel-carve]
    [domain.orbital.system :as orbital]
    [domain.mhd.force :as mfd]
+   [domain.gravity.dark-matter :as dark-matter]
    [domain.physics.cache :as cache]))
 
 ;; Ongoing physics that is not specific to formation moved to its proper owner:
@@ -36,6 +44,10 @@
   [dt]
   [(intervention/warp-acceleration-system)
    (player/observer-acceleration-system)
+   ;; flight-no-jump-accel: manual-flight thrust + damping on the spark,
+   ;; summed by the integrator like any other force (replaces drift).
+   (player/thrust-acceleration-system)
+   (dark-matter/dark-matter-acceleration-system)
    (intervention/thermal-intervention-system)
    (integ/integrator-system dt)])
 
@@ -46,15 +58,22 @@
    (geometry/eos-system)])
 
 (defn- ^:private physics-formation-systems
-  "Classifier, seeding, fusion, chemistry, wind, disc, and regime."
+  "Classifier, planet classification + M5 handoff, seeding, fusion,
+   chemistry, wind, disc, and regime."
   [dt]
-  [(classifier/classifier-system)
+  [(cls-state/classifier-system)
+   (cls-planet/classification-system)
+   (cls-cand/handoff-system)
    (seeder/condensation-seeder-system)
    (em/field-system dt)
    (fusion/fusion-system)
    (fusion/stellar-sed-system)
    (fusion/atmosphere-shells-system)
    (chemistry/nucleosynthesis-system dt)
+   ;; Differentiation + volatile budget: reads the integrator-owned temperature
+   ;; one tick Jacobi-stale (the retired :thermal system's successor), so it
+   ;; effectively runs after temperature is settled each tick (spec §7 Phase 3).
+   (chemistry/differentiation-system dt)
    (fusion/deuterium-depletion-system)
    (wind/stellar-wind-system)
    (wind/wind-ablation-system)
@@ -76,7 +95,22 @@
    (lod/lod-scheduler)
    (em/magnetosphere-coupling-system)
    (ecology/ecology-system)
-   (debris/debris-reaper-system)])
+   (debris/debris-reaper-system)
+   (promotion/focus-zone-system)
+   (narrowing/binding-system)
+   (narrowing/commitment-system)
+      ;; Voxel 4: god-scale sculpting — translates the paid ops on the
+      ;; `:voxel/sculpt-ops` world key into the `c/voxel-sculpt-request`
+      ;; channel the voxel-focus fold consumes one Jacobi tick later.
+   (voxel-sculpt/sculpt-system)
+       ;; Voxel 5: collision shock → voxel carving. Classifies absorb-merge
+       ;; packets on the committed world into `c/voxel-carve-request` carve
+       ;; plans the voxel-focus fold consumes one Jacobi tick later.
+   (voxel-carve/carve-system)
+      ;; Voxel 3: the committed world's focus band. Runs after :commitment
+      ;; and :handoff, whose outputs (c/commitment-state, c/planet-
+      ;; candidate) it reads one tick Jacobi-stale.
+   (voxel-focus/voxel-focus-system)])
 
 (defn physics-systems-parallel
   "The transform systems as NATIVE write-set systems for the double-buffer
@@ -89,10 +123,9 @@
    EXCLUDES `recenter`, which is not a system at all any more: the integrator
    subtracts the one-tick-stale COM frame-offset (a world scalar set in
    tick-world) from every new position (spec §6)."
-  [{:keys [sim/G sim/theta sim/dt sim/softening sim/cutoff] :as _params}]
-  (let [soft (or softening 1e14)
-        cut  (or cutoff (* 0.1 soft))]
-    (into [(orbital/gravity-acceleration G theta soft cut)
+  [{:keys [sim/G sim/theta sim/dt sim/softening] :as _params}]
+  (let [soft (or softening 1e14)]
+    (into [(orbital/gravity-acceleration G theta soft)
            (mfd/merged-hydro-em-system dt)]
           (concat (physics-force-systems dt)
                   (physics-transform-systems)

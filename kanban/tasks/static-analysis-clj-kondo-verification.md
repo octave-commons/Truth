@@ -32,3 +32,7 @@ Drive clj-kondo to zero and lock in the result so the project cannot regress.
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo section empty (0/0); suppressions locked.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. Verification did not hold. clj-kondo went from 0/0 to 50 warnings, and CI has been red continuously since 2026-07-11 without anyone acting on it. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

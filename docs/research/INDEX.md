@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-07-08 (neighbor-cache + curl optimization notebook added)
+**Last updated:** 2026-07-23 (multi-timescale N-body integration notebook added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -69,6 +69,7 @@ New ECS component keywords added to `domain.ecs.components`:
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
 | xuv-escape-regime-transition.md | validated | 1 | R = t_rec/t_flow controls transition; F_crit ~ 10⁴ erg/cm²/s | Murray-Clay+2009, Owen & Alvarez 2016, Lampón+2021 |
+| planetary-atmosphere-retention-classifier.md | draft | 0 (M5 Phase 3) | Coarse per-planet atmosphere-class classifier grounded in Jeans λ (blow-off <2-3, boil-off ~15-35, safe 10-80+) and the Zahnle & Catling 2017 cosmic shoreline (I∝v_esc⁴); toy model shows Moon/Mercury land near the shoreline boundary (matches real ambiguity, not a bug) and flags a v_th convention mismatch between the kanban spec and `domain.chemistry/can-retain-gas?` | Volkov+2011, Zahnle & Catling 2017, Fossati+2017, Kubyshkina+2018 |
 
 **Actor:** truth-research-atmosphere
 **Schedule:** Every 48h
@@ -96,6 +97,8 @@ New ECS component keywords added to `domain.ecs.components`:
 | formation-rendering-coupling.md | draft | 0 | ECS-to-renderer pure projection; physics-coupled size/color/luminosity; observer-centric LOD (voxel→sprite→point); real-time volumetric ray-marching/photon-mapping literature; promotion path to `law/render-projection` and `infra.render` tests | Gislason 2013; Leria & Neyret 2020; Nadeau+2000; Krieger+2025; Sagrista 2024; Lawlor & Genetti 2011; Kajiya & Von Herzen 1984; Max 1995; Protoplanet Express 2023; Unity Entities Graphics 2024; Bevy VisibilityRange 2024; UntoldEngine LOD 2024 |
 | nebula-to-life-fsm.md | draft (dispatched) | 0 → 5 | Coupled FSM stack (Matter, Role, Environment, Atmosphere/EM, Biosphere), guard precedence, modifier catalog | Planetary science taxonomy, exoplanet characterization |
 | phase0-handoff-projection.md | draft (dispatched) | 0 | Projection functions from rich FSM state to compact :planet-candidate record; domain.genesis/handoff-system design | Kopparapu HZ, Seager taxonomy, XUV escape regimes |
+| multi-timescale-integration-jacobi-ecs.md | validated | 0 | WH/Kepler sub-stepping inside kinematics :run fixes e→1 decoherence; freeze K at tick entry; rungs are optimization-only; GADGET block-step + Dehnen-Read reversibility rules mapped to single-barrier ECS | Wisdom & Holman 1991, Rein & Tamayo 2015, Springel 2005, Dehnen & Read 2023, Rein+2024, Makino & Aarseth 1992 |
+| cluster-dispersal-integration-heating.md | validated | 0 | Dispersal = physical (virial ≫ 1) + dt-dependent heating (+48% E at 2× dt); planets BORN unbound at kAU (clump-scale r-disk); Euler fallthrough = one-tick fling machine; fix ranking: universal sub-stepping > placement v2 > star sub-stepping > pacing | probe runs base+coarse, Dehnen & Read 2023, Springel 2005 |
 
 **Actor:** truth-research-physics
 **Schedule:** Every 48h

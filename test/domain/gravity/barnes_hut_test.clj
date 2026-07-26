@@ -1,5 +1,6 @@
 (ns domain.gravity.barnes-hut-test
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest is testing]]
    [shape.spatial :as spatial]
    [domain.gravity.barnes-hut :as bh]))
@@ -7,13 +8,16 @@
 (def ^:const G 6.67408e-11)
 
 (defn- bodies->soa
-  "Build a minimal `:genesis/physics-soa` cache from body maps."
+  "Build a minimal `:genesis/physics-soa` cache from body maps. The :eps
+   array defaults to -1.0 (no species data → legacy scalar softening), so
+   fixtures that never set :eps exercise the pre-pair-law kernel exactly."
   [bodies]
   (let [n (count bodies)]
     {:eids   (vec (map :id bodies))
      :n      n
      :mass   (double-array (map :mass bodies))
      :radius (double-array (map #(or (:radius %) 0.0) bodies))
+     :eps    (double-array (map #(double (or (:eps %) -1.0)) bodies))
      :px     (double-array (map #(double (nth (:position %) 0)) bodies))
      :py     (double-array (map #(double (nth (:position %) 1)) bodies))
      :pz     (double-array (map #(double (nth (:position %) 2)) bodies))
@@ -119,38 +123,71 @@
       (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta 0.5 :softening 1.0e-4 :soa soa :self-id nil}) :lonely))))))
 
 (deftest test-body-map-gravity-cutoff
-  (testing "Pairs inside the cutoff radius contribute zero acceleration"
-    (let [heavy (spatial/->body
-                 {:id 1 :mass 1.0e30 :radius 1.0e9 :kind :body/star
-                  :position (spatial/vec3 0.0 0.0 0.0)
-                  :velocity (spatial/vec3 0.0 0.0 0.0)})
-          probe (spatial/->body
-                 {:id 2 :mass 1.0 :radius 1.0e6 :kind :body/gas
-                  :position (spatial/vec3 1.0e10 0.0 0.0)
-                  :velocity (spatial/vec3 0.0 0.0 0.0)})
-          tree (bh/build-tree [heavy probe])
+  (testing "Pairs inside the pair dead-zone (0.1·ε_pair) contribute zero acceleration"
+    (let [heavy {:id 1 :mass 1.0e30 :radius 1.0e9 :kind :body/star :eps 1.0e8
+                 :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          probe {:id 2 :mass 1.0 :radius 1.0e6 :kind :body/gas :eps 1.0e8
+                 :position [5.0e6 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          theta 0.5]
+      (is (= [0.0 0.0 0.0]
+             (bh/acceleration {:G G :theta theta :softening 1.0e8
+                               :tree (bh/build-tree [heavy probe]) :body probe}))
+          "5e6 < 0.1·ε_pair (1e7) → inside the dead zone, no gravity")
+      (let [far (assoc probe :position [1.0e10 0.0 0.0])]
+        (is (not= [0.0 0.0 0.0]
+                  (bh/acceleration {:G G :theta theta :softening 1.0e8
+                                    :tree (bh/build-tree [heavy far]) :body far}))
+            "1e10 ≫ 0.1·ε_pair → gravity on")))))
+
+(deftest test-cutoff-legacy-scalar-default
+  (testing "Bodies without species :eps soften at the scalar :softening, so the
+            dead-zone is 0.1·softening — the legacy scalar kernel exactly"
+    (let [heavy {:id 1 :mass 1.0e30 :radius 1.0e9 :kind :body/star
+                 :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
+          probe {:id 2 :mass 1.0 :radius 1.0e6 :kind :body/gas
+                 :position [5.0e6 0.0 0.0] :velocity [0.0 0.0 0.0]}
           theta 0.5
-          soft 1.0e8
-          cutoff 2.0e10]
-      (is (= [0.0 0.0 0.0] (bh/acceleration {:G G :theta theta :softening soft :cutoff cutoff :tree tree :body probe}))
-          "probe inside dead zone feels no gravity")
-      (is (not= [0.0 0.0 0.0] (bh/acceleration {:G G :theta theta :softening soft :cutoff 0.0 :tree tree :body probe}))
-          "probe without cutoff feels gravity"))))
+          soft  1.0e8]
+      (is (= [0.0 0.0 0.0]
+             (bh/acceleration {:G G :theta theta :softening soft
+                               :tree (bh/build-tree [heavy probe]) :body probe}))
+          "5e6 < 0.1·soft (1e7) → dead zone")
+      (let [far (assoc probe :position [1.0e10 0.0 0.0])]
+        (is (not= [0.0 0.0 0.0]
+                  (bh/acceleration {:G G :theta theta :softening soft
+                                    :tree (bh/build-tree [heavy far]) :body far}))
+            "1e10 ≫ 1e7 → gravity on")))))
 
 (deftest test-soa-gravity-cutoff
-  (testing "SoA path also suppresses gravity inside the cutoff radius"
-    (let [heavy {:id :heavy :mass 1.0e30 :radius 1.0e9 :kind :body/star
+  (testing "SoA path also suppresses gravity inside the pair dead-zone"
+    (let [heavy {:id :heavy :mass 1.0e30 :radius 1.0e9 :kind :body/star :eps 1.0e8
                  :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
-          probe {:id :probe :mass 1.0 :radius 1.0e6 :kind :body/gas
-                 :position [5.0e9 0.0 0.0] :velocity [0.0 0.0 0.0]}
-          soa (bodies->soa [heavy probe])
+          probe {:id :probe :mass 1.0 :radius 1.0e6 :kind :body/gas :eps 1.0e8
+                 :position [5.0e6 0.0 0.0] :velocity [0.0 0.0 0.0]}
           theta 0.5
-          soft 1.0e8
-          cutoff 1.0e10]
-      (is (= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta theta :softening soft :cutoff cutoff :soa soa :self-id nil}) :probe))
-          "SoA probe inside dead zone feels no gravity")
-      (is (not= [0.0 0.0 0.0] (get (bh/acceleration-for-soa {:G G :theta theta :softening soft :cutoff 0.0 :soa soa :self-id nil}) :probe))
-          "SoA probe without cutoff feels gravity"))))
+          soft 1.0e8]
+      (is (= [0.0 0.0 0.0]
+             (get (bh/acceleration-for-soa {:G G :theta theta :softening soft
+                                            :soa (bodies->soa [heavy probe]) :self-id nil})
+                  :probe))
+          "SoA probe inside the pair dead-zone feels no gravity")
+      (let [far (assoc probe :position [5.0e9 0.0 0.0])]
+        (is (not= [0.0 0.0 0.0]
+                  (get (bh/acceleration-for-soa {:G G :theta theta :softening soft
+                                                 :soa (bodies->soa [heavy far]) :self-id nil})
+                       :probe))
+            "SoA probe outside the pair dead-zone feels gravity")))
+    (testing "an SoA cache without species :eps (all -1.0) uses the scalar
+              softening dead-zone, byte-identical to the legacy kernel"
+      (let [heavy {:id :heavy :mass 1.0e30 :radius 1.0e9 :kind :body/star
+                   :position [0.0 0.0 0.0] :velocity [0.0 0.0 0.0]}
+            probe {:id :probe :mass 1.0 :radius 1.0e6 :kind :body/gas
+                   :position [5.0e9 0.0 0.0] :velocity [0.0 0.0 0.0]}]
+        (is (= [0.0 0.0 0.0]
+               (get (bh/acceleration-for-soa {:G G :theta 0.5 :softening 1.0e11
+                                              :soa (bodies->soa [heavy probe]) :self-id nil})
+                    :probe))
+            "5e9 < 0.1·1e11 → dead zone under the legacy scalar")))))
 
 (deftest test-non-finite-position-throws-not-stack-overflow
   (testing "A NaN or Infinite body position throws a descriptive ex-info from
@@ -219,7 +256,8 @@
       (is (every? #(Double/isFinite (double %)) (get accs :tiny))))))
 
 (deftest test-cutoff-preserves-distant-gravity
-  (testing "Cutoff does not affect bodies separated by more than the dead zone"
+  (testing "Pairs separated by more than the 0.1·ε_pair dead-zone feel the full
+            softened force"
     (let [sun   (spatial/->body
                  {:id 1 :mass 1.0e6 :radius 1.0 :kind :body/star
                   :position (spatial/vec3 0.0 0.0 0.0)
@@ -231,8 +269,13 @@
           tree  (bh/build-tree [sun earth])
           theta 0.1
           soft  1.0e-4
-          cutoff 1.0]
-      (is (< (spatial/dist (bh/acceleration {:G G :theta theta :softening soft :cutoff 0.0 :tree tree :body earth})
-                           (bh/acceleration {:G G :theta theta :softening soft :cutoff cutoff :tree tree :body earth}))
-             1.0e-9)
-          "distant bodies are unaffected by a cutoff smaller than their separation"))))
+          ;; Hand-computed Plummer value, mirroring the kernel arithmetic:
+          ;; no :eps on these bodies → ε_pair = scalar soft, 10 ≫ 0.1·1e-4.
+          dx    -10.0
+          d2    (+ (* dx dx) (* soft soft))
+          inv-r (* d2 (math/sqrt d2))
+          scale (/ (* G 1.0e6) inv-r)
+          expected [(* dx scale) 0.0 0.0]]
+      (is (= expected
+             (bh/acceleration {:G G :theta theta :softening soft :tree tree :body earth}))
+          "distant bodies feel the full softened Plummer force"))))

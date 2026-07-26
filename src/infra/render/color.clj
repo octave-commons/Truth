@@ -31,6 +31,29 @@
   (let [t (get regime-tint regime [1.0 1.0 1.0])]
     (mapv (fn [c m] (max 0.0 (min 1.0 (* (double c) (double m))))) color t)))
 
+(defn- sample-ramp
+  "RGB at position `x` on a colour ramp `stops`, a seq of `[x r g b]` sorted by
+   `x`. Piecewise-linear between the bracketing stops; `x` at or past the last
+   stop clamps to that stop's colour.
+
+   Extracted from `temp-color` / `disk-temp-color` / `gas-temp-color`, which
+   carried this interpolator verbatim three times (jscpd; card
+   kanban/tasks/static-analysis-jscpd-src-extractions.md). Each ramp still owns
+   its own log-scaling of temperature onto `x` — that is where the ramps
+   genuinely differ."
+  [stops x]
+  (loop [stops stops]
+    (let [[x0 r0 g0 b0] (first stops)
+          nxt           (second stops)]
+      (cond
+        (nil? nxt)        [r0 g0 b0]
+        (> x (first nxt)) (recur (rest stops))
+        :else (let [[x1 r1 g1 b1] nxt
+                    f (/ (- x x0) (max 1e-9 (- x1 x0)))]
+                [(+ r0 (* (- r1 r0) f))
+                 (+ g0 (* (- g1 g0) f))
+                 (+ b0 (* (- b1 b0) f))])))))
+
 (def ^:private temp-stops
   ;; [x r g b] — colour ramp keyed on normalized log-temperature
   ;; 10 K … 1e8 K covers diffuse gas through hot stars
@@ -49,17 +72,7 @@
    in orange-yellow, cold nebula gas in violet-blue."
   [t]
   (let [x (max 0.0 (min 1.0 (/ (- (math/log10 (max 1.0 (double (or t 10.0)))) 1.0) 7.0)))]
-    (loop [stops temp-stops]
-      (let [[x0 r0 g0 b0] (first stops)
-            nxt           (second stops)]
-        (cond
-          (nil? nxt)          [r0 g0 b0]
-          (> x (first nxt))   (recur (rest stops))
-          :else (let [[x1 r1 g1 b1] nxt
-                      f (/ (- x x0) (max 1e-9 (- x1 x0)))]
-                  [(+ r0 (* (- r1 r0) f))
-                   (+ g0 (* (- g1 g0) f))
-                   (+ b0 (* (- b1 b0) f))]))))))
+    (sample-ramp temp-stops x)))
 
 (def ^:private disk-temp-stops
   ;; [x r g b] — warm disk ramp: cool outer disk is green, warming inward
@@ -81,17 +94,7 @@
   [t]
   (let [log-t (math/log10 (max 50.0 (double (or t 50.0))))
         x     (max 0.0 (min 1.0 (/ (- log-t 1.7) 1.6)))]
-    (loop [stops disk-temp-stops]
-      (let [[x0 r0 g0 b0] (first stops)
-            nxt           (second stops)]
-        (cond
-          (nil? nxt)          [r0 g0 b0]
-          (> x (first nxt))   (recur (rest stops))
-          :else (let [[x1 r1 g1 b1] nxt
-                      f (/ (- x x0) (max 1e-9 (- x1 x0)))]
-                  [(+ r0 (* (- r1 r0) f))
-                   (+ g0 (* (- g1 g0) f))
-                   (+ b0 (* (- b1 b0) f))]))))))
+    (sample-ramp disk-temp-stops x)))
 
 (def ^:private gas-temp-stops
   ;; [x r g b] — gas ramp.  Cold nebula gas reads as blue-violet,
@@ -113,17 +116,7 @@
    still use the full `temp-color` ramp, so they render as white/blue sparks."
   [t]
   (let [x (max 0.0 (min 0.76 (/ (- (math/log10 (max 1.0 (double (or t 10.0)))) 1.0) 7.0)))]
-    (loop [stops gas-temp-stops]
-      (let [[x0 r0 g0 b0] (first stops)
-            nxt           (second stops)]
-        (cond
-          (nil? nxt)          [r0 g0 b0]
-          (> x (first nxt))   (recur (rest stops))
-          :else (let [[x1 r1 g1 b1] nxt
-                      f (/ (- x x0) (max 1e-9 (- x1 x0)))]
-                  [(+ r0 (* (- r1 r0) f))
-                   (+ g0 (* (- g1 g0) f))
-                   (+ b0 (* (- b1 b0) f))]))))))
+    (sample-ramp gas-temp-stops x)))
 
 (defn body-brightness
   "Perceived brightness multiplier for a resolved body. Stars scale with
@@ -164,6 +157,33 @@
                      (* (double metal) (nth metal-c i))
                      (* (double ice) (nth ice-c i))))
           [0 1 2])))
+
+(def ^:private voxel-material-colors
+  "Base RGB per `law.voxel/seed-materials` keyword — distinguishable material
+   colours for the voxel band render path (`infra.render.scene.voxel`).
+   Basalt/ore/ice reuse the same rock/metal/ice hues `composition->material-
+   color` uses (so a voxel and its parent body read as the same substance);
+   granite (lighter, feldspar-pale rock) and regolith (dusty, sun-bleached
+   rock) are new tones distinct from basalt so the four rock-family materials
+   stay tellable apart on a resolved band."
+  {:basalt   [0.30 0.30 0.34]
+   :granite  [0.72 0.66 0.60]
+   :ore      [0.42 0.40 0.40]
+   :ice      [0.75 0.85 0.95]
+   :regolith [0.55 0.50 0.44]})
+
+(def ^:private voxel-material-default-color
+  "Fallback colour for a voxel `:material` outside `voxel-material-colors`
+   (the schema's set is deliberately open, design §7.4) — a neutral rock-grey
+   so an unrecognised category still reads as solid terrain, not an error."
+  [0.5 0.5 0.5])
+
+(defn voxel-material-color
+  "RGB colour for a voxel band cell's `:material` keyword. Any keyword outside
+   `law.voxel/seed-materials`' named examples (the schema's open set) falls
+   back to a neutral rock-grey."
+  [material]
+  (get voxel-material-colors material voxel-material-default-color))
 
 (defn body-render-color
   "Surface colour of a resolved body: its composition (material) colour when

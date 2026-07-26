@@ -20,25 +20,11 @@
 (def bar-h widgets/bar-h)
 (def domains widgets/domains)
 (def col-bar widgets/col-bar)
-(def col-panel widgets/col-panel)
-(def col-btn widgets/col-btn)
-(def col-active widgets/col-active)
-(def col-inactive widgets/col-inactive)
-(def col-locked widgets/col-locked)
-(def col-accent widgets/col-accent)
-(def col-value widgets/col-value)
-(def col-dim widgets/col-dim)
-
 (def view-rows widgets/view-rows)
 (def spark-knobs widgets/spark-knobs)
 
 (def apply-action widgets/apply-action)
 (def world-action widgets/world-action)
-(def escape-action widgets/escape-action)
-(def confirm-close-hud widgets/confirm-close-hud)
-
-(def entity-list panels/entity-list)
-
 (defn menu-hud
   "Lay out the top bar and the open sub-view panel for the current `cfg` and
    `world` over an `w`×`h` framebuffer. Returns {:rects :text :hits :regions}."

@@ -66,8 +66,10 @@
 
 (defn- hydro-em-force-cell
   "Compute [eid accel-pressure accel-lorentz torque-em] for one hydro/EM-active
-   entity. Walks the neighbors once, computes the pair kernel gradient once, and
-   accumulates both the pressure-gradient acceleration and the curl estimate.
+   entity. Walks the neighbor list once — reading the kernel gradient the
+   shared pair walk precomputed (`:grad`, domain.physics.cache.neighbor)
+   instead of re-evaluating the kernel — and accumulates both the
+   pressure-gradient acceleration and the curl estimate.
 
    The curl/Lorentz branch is skipped when the local field is not dynamically
    significant: β ≥ `law.field/beta-magnetized` AND ℳ_A ≥
@@ -121,11 +123,16 @@
                   r2   (double (:r2 n))]
               (if (>= r2 h2)
                 (recur (inc i) ax-p ay-p az-p cx cy cz)
-                (let [np  (:position n)
-                      rx  (- px (double (nth np 0)))
-                      ry  (- py (double (nth np 1)))
-                      rz  (- pz (double (nth np 2)))
-                      [gx gy gz] (kernel/kernel-gradient [rx ry rz] r2 h)
+                (let [;; The shared pair walk (domain.physics.cache.neighbor)
+                      ;; precomputed ∇W_ij for in-kernel pairs with identical
+                      ;; arithmetic; the on-demand recompute below is the cold
+                      ;; path (cache absent) and is bit-equal for the same r2/h.
+                      [gx gy gz] (or (:grad n)
+                                     (let [np  (:position n)
+                                           rx  (- px (double (nth np 0)))
+                                           ry  (- py (double (nth np 1)))
+                                           rz  (- pz (double (nth np 2)))]
+                                       (kernel/kernel-gradient [rx ry rz] r2 h)))
                       rhoj (double (:density n))
                       pj   (double (:pressure n))
                       term-p (+ (/ pressure (* density density))
@@ -217,10 +224,3 @@
                        c/torque-em (persistent! torque)
                        (keys (get-in world [:components c/torque-em]))))))})
 
-(defn merged-hydro-em-force
-  "Convenience function for tests: compute the merged force cell result for a
-   single entity map. Returns `[accel-pressure accel-lorentz torque-em]`."
-  [dt world data]
-  (let [[_ a-p a-l t] (hydro-em-force-cell dt (assoc data
-                                                     :neighbors (neighbors-for-data world data)))]
-    [a-p a-l t]))

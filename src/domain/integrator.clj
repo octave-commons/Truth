@@ -3,7 +3,6 @@
   (:require
    [domain.ecs.components :as c]
    [domain.profile :as profile]
-   [domain.integrator.base :as base]
    [domain.integrator.core :as core]
    [domain.integrator.kinematics :as kinematics]
    [domain.integrator.temperature :as temperature]))
@@ -11,11 +10,6 @@
 ;; ---------------------------------------------------------------------------
 ;; Re-exports from domain.integrator.base
 ;; ---------------------------------------------------------------------------
-
-(def influence-registry
-  "Declarative map: each additive physical field → the influence components that
-   contribute to it."
-  base/influence-registry)
 
 ;; ---------------------------------------------------------------------------
 ;; Re-exports from domain.integrator.core
@@ -25,41 +19,17 @@
   "Mass write-set. m' = max(0, m + Σ mass-flux.* + Σ absorb-mass)."
   core/mass-ws)
 
-(def ionization-ws
-  "Ionization-fraction write-set."
-  core/ionization-ws)
-
 (def composition-ws
   "Composition write-set."
   core/composition-ws)
-
-(def comp-condensed-ws
-  "Condensed composition partition write-set."
-  core/comp-condensed-ws)
-
-(def rotation-ws
-  "Angular momentum + spin write-set."
-  core/rotation-ws)
 
 ;; ---------------------------------------------------------------------------
 ;; Re-exports from domain.integrator.kinematics
 ;; ---------------------------------------------------------------------------
 
-(def kinematics-ws
-  "Position + velocity write-set."
-  kinematics/kinematics-ws)
-
-(def kinematics-ws-soa
-  "SoA-aware position + velocity write-set."
-  kinematics/kinematics-ws-soa)
-
 ;; ---------------------------------------------------------------------------
 ;; Re-exports from domain.integrator.temperature
 ;; ---------------------------------------------------------------------------
-
-(def temperature-ws
-  "Temperature write-set."
-  temperature/temperature-ws)
 
 ;; ---------------------------------------------------------------------------
 ;; Phase orchestration

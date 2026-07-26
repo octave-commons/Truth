@@ -38,12 +38,14 @@
    invariant — it exists only to enumerate systems and validate disjointness."
   [;; The Structure owner: shape + compactness. radius and density are one
    ;; geometric fact, so one system owns the pair (branching on matter-state:
-   ;; gas SPH / solid material density / KH oblate contraction). Subsumes the
+   ;; gas SPH / solid material density / KH oblate contraction — plus the
+   ;; body-kind :spark resolve branch, spark-redesign card 4). Subsumes the
    ;; radius+density writes of the old density-system, jeans-collapse, collapse.
    {:id     :structure
     :ns     'domain.stellar.geometry
     :reads  #{c/matter-state c/mass c/radius c/density c/position c/temperature
-              c/pressure c/oblateness c/angular-momentum}
+              c/pressure c/oblateness c/angular-momentum c/neighbor-cache
+              c/body-kind}
     :writes #{c/radius c/density c/oblateness c/rotation-axis}}
 
     ;; Pressure is a pure equation of state P = ρ k_B T / m_H — every former
@@ -66,9 +68,13 @@
     :writes #{c/accel-pressure c/accel-lorentz c/torque-em}}
 
     ;; Neighbor cache: fan-out builder for the SPH kernel + curl/pressure-grad
-    ;; values shared by hydro and EM-Lorentz. One-tick-stale Jacobi lag — the
-    ;; cache is built from the frozen input world and read by consumers in the
-    ;; same tick's parallel fan-out. Replaces the world-key `:genesis/neighbor-cache`
+    ;; values shared by hydro and EM-Lorentz — the tick's ONE shared pair walk.
+    ;; Each entry carries the pair products every consumer reads (per-neighbor
+    ;; r2 and in-kernel :grad, plus the staleness-budgeted :density-estimate
+    ;; the Structure gas branch consumes), so :hydro-em and :structure never
+    ;; re-walk the neighbor set. One-tick-stale Jacobi lag — the cache is built
+    ;; from the frozen input world and read by consumers in the same tick's
+    ;; parallel fan-out. Replaces the world-key `:genesis/neighbor-cache`
     ;; and the serial `future` pre-phase in `step-physics`.
    {:id     :neighbor-cache
     :ns     'domain.physics.cache.neighbor
@@ -82,10 +88,51 @@
     ;; the authentic formation state machine (Jeans+mass+ignition) with throttled
     ;; condensation. Subsumes the old classify system, jeans-collapse, and fusion.
    {:id     :classifier
-    :ns     'domain.stellar.classifier
+    :ns     'domain.stellar.classifier.state
     :reads  #{c/matter-state c/mass c/radius c/density c/temperature
               c/pressure c/composition c/promotion-signal c/disc-tag}
     :writes #{c/matter-state c/accretion-radius}}
+
+    ;; M5 handoff Phases 1 + 2 + 3: material + thermal classification, the
+    ;; analytic orbit-stability proxy, AND atmosphere retention. SOLE writer
+    ;; of material-class, thermal-band, orbit-stable, atmosphere-class, AND
+    ;; retained-species — pure composition/mass + two-body equilibrium-
+    ;; temperature tags, periapsis/apoapsis/Hill-radius gates, and a coarse
+    ;; Jeans-escape-ratio atmosphere verdict for planet-candidate bodies
+    ;; (parent kanban/tasks/ecology-water-gate-snowline.md §3.1-3.3, §4).
+    ;; Orbit stability is a snapshot proxy, NOT a 10 Myr two-body integration
+    ;; (see kanban/tasks/ecology-m5-phase2-orbit-stability.md); atmosphere
+    ;; retention is a one-shot formation-time verdict against thermal escape
+    ;; only, NOT the ongoing per-tick XUV mass-loss the `:atmosphere-escape`
+    ;; system below models (see kanban/tasks/ecology-m5-phase3-atmosphere-
+    ;; retention.md and docs/research/atmosphere/planetary-atmosphere-
+    ;; retention-classifier.md). All three phases are folded into one system
+    ;; because each reuses the same candidate scan and central-star lookup,
+    ;; keeping reads minimal and write-conflicts empty.
+   {:id     :classification
+    :ns     'domain.stellar.classifier.planet
+    :reads  #{c/matter-state c/mass c/composition c/temperature c/position
+              c/velocity c/radius c/luminosity}
+    :writes #{c/material-class c/thermal-band c/orbit-stable
+              c/atmosphere-class c/retained-species}}
+
+    ;; M5 handoff Phase 4: the `:planet-candidate` output record + handoff
+    ;; gate (parent kanban/tasks/ecology-water-gate-snowline.md §2, §5). SOLE
+    ;; writer of `c/planet-candidate`. Reuses the material-class/thermal-band/
+    ;; orbit-stable/atmosphere-class/retained-species already written by
+    ;; `:classification` above (one Jacobi-lag tick stale, same as every
+    ;; other cross-system read in this fan-out) rather than re-deriving them,
+    ;; and reads `c/absorb-merge` as the "system not yet settled" proxy — a
+    ;; pending, unresolved collision merge in flight. See
+    ;; kanban/tasks/ecology-m5-phase4-handoff-event.md.
+   {:id     :handoff
+    :ns     'domain.stellar.classifier.candidate
+    :reads  #{c/matter-state c/mass c/composition c/position c/velocity
+              c/radius c/luminosity c/material-class c/thermal-band
+              c/orbit-stable c/atmosphere-class c/retained-species
+              c/angular-momentum c/rotation-axis c/oblateness c/b-field
+              c/spin c/absorb-merge c/volatile-budget c/differentiated-layers}
+    :writes #{c/planet-candidate}}
 
      ;; Seed-and-grow condensation: :nebula → :planetesimal transitions spawn a
      ;; small physical seed instead of promoting the whole parcel. Emits the spawn
@@ -112,6 +159,16 @@
     :reads  #{c/position c/mass}
     :writes #{c/accel-warp}}
 
+   ;; Spark-redesign card 1: the static dark-matter halo. A very massive,
+   ;; large-scale-radius Plummer well fixed at the world origin (which the
+   ;; integrator's COM frame-offset keeps pinned to the barycenter) — it does
+   ;; not collapse, move, or render, purely deepening the well so bodies stay
+   ;; bound. A self-contained emitter, trivial like :gravity and :warp.
+   {:id     :dark-matter
+    :ns     'domain.gravity.dark-matter
+    :reads  #{c/position}
+    :writes #{c/accel-dark-matter}}
+
    ;; The single integrator (domain.integrator): sole writer of position +
    ;; velocity (and, as the unified-physical-state migration lands,
    ;; mass/angular-momentum/spin/temperature/composition). Sums every accel.*
@@ -121,7 +178,7 @@
     :ns     'domain.integrator
     :reads  #{c/position c/velocity c/mass c/radius c/body-kind
               c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer
-              c/accel-warp c/frame-offset
+              c/accel-warp c/accel-dark-matter c/accel-thrust c/frame-offset
               c/matter-state c/density c/luminosity c/sed-bands c/composition
               c/heat-intervention c/comp-burn c/comp-depletion c/temperature
               c/angular-momentum c/spin c/torque-em c/torque-disk
@@ -138,6 +195,17 @@
     :ns     'domain.player
     :reads  #{c/position c/mass c/observer}
     :writes #{c/accel-observer}}
+
+   ;; Manual-flight thrust + proto flight-assist damping on the spark (card
+   ;; flight-no-jump-accel): reads the input direction off the `:player/thrust`
+   ;; world key (the `:genesis/interventions` precedent — world keys are not
+   ;; declarable here) and the spark's own c/velocity for the damping term.
+   ;; Sole writer of accel.thrust; the integrator sums it like any other
+   ;; force. Replaces the deleted drift position-teleport.
+   {:id     :player-thrust
+    :ns     'domain.player.flight
+    :reads  #{c/velocity c/observer c/accel-thrust}
+    :writes #{c/accel-thrust}}
 
    ;; Player heat source/sink: emits the per-body temperature ease the integrator
    ;; applies (was the serial apply-thermal-interventions). Sole writer.
@@ -310,6 +378,19 @@
     :reads  #{c/matter-state c/composition c/temperature c/mass}
     :writes #{c/comp-burn}}
 
+    ;; Differentiation + volatile budget (chemistry spec §5, §7 Phase 3-4):
+    ;; molten bodies (malleability > 0.8) advance their core/mantle/volatile
+    ;; layer partition; EVERY body with composition+mass gets its volatile
+    ;; budget (kg) refreshed for the M5 handoff. Jacobi fan-out emitter —
+    ;; reads the integrator-owned temperature one tick stale (the :thermal
+    ;; system is retired; 'runs after thermal' is the ordinary fan-out lag).
+    ;; Sole writer of both components.
+   {:id     :differentiation
+    :ns     'domain.chemistry
+    :reads  #{c/matter-state c/composition c/mass c/temperature
+              c/differentiated-layers}
+    :writes #{c/differentiated-layers c/volatile-budget}}
+
    {:id     :regime
     :ns     'domain.regime
     :reads  #{c/matter-state c/density c/temperature c/b-field c/disc-tag}
@@ -338,7 +419,104 @@
     :reads  #{c/matter-state c/position c/velocity c/mass}
     :writes #{c/consumed-escape}}
 
-   ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
+   ;; Player Focus dual-representation: promotes overlapping regional cells
+   ;; into resolved clumps, and demotes previously-promoted clumps that have
+   ;; left the immediate focus radius back into their source cell. One system
+   ;; because both directions write c/statistical-mass. c/field-zone is set
+   ;; only at spawn time (via the spawn spec's :extra-components, like
+   ;; c/matter-state/c/body-kind on every other spawn-request.* type) rather
+   ;; than through this system's per-tick write-set, but is declared here as
+   ;; the sole owner since no other system ever writes it.
+   {:id     :focus-zone
+    :ns     'domain.genesis.promotion
+    :reads  #{c/observer c/position c/field-zone c/statistical-mass
+              c/matter-state c/mass c/velocity c/angular-momentum
+              c/promoted-from-cell c/radius c/temperature c/composition c/b-field}
+    :writes #{c/field-zone c/statistical-mass c/spawn-request-promotion c/consumed-demote}}
+
+   ;; The First Narrowing, child A: gravitational binding. Reads the observer's
+   ;; focus/attention state and every candidate world's position, and writes the
+   ;; observer's {world-eid -> [0,1]} coupling plus its permanent sunk-cost
+   ;; scar tally. Reads its own prior output one tick stale (ordinary Jacobi
+   ;; lag, like :neighbor-cache). Binding is exposed as data the :focus-zone
+   ;; promotion/demotion machinery could read later; it does not rewire it.
+   {:id     :binding
+    :ns     'domain.narrowing
+    :reads  #{c/observer c/position c/planet-candidate c/binding c/binding-scar}
+    :writes #{c/binding c/binding-scar}}
+
+    ;; The First Narrowing, child B: the commitment horizon. Reads the
+    ;; observer's one-tick-stale c/binding (Jacobi output of :binding) and the
+    ;; M5 planet-candidate records; on capture writes the write-once commitment
+    ;; marker (:committed on the captured world, :inert on unchosen
+    ;; candidates), the re-armed Phase 1 planetary palette on the observer, and
+    ;; the planetary time-lock record on the committed world. Also reads its
+    ;; own prior output (idempotency) and the `:arc/current` world key for the
+    ;; readiness gate — world keys are not declarable here. The canonical
+    ;; :event/world-commitment ledger event is appended serially post-fold by
+    ;; domain.genesis.tick/emit-commitment-event, reacting to the
+    ;; c/commitment-state marker (the emit-handoff-event precedent).
+   {:id     :commitment
+    :ns     'domain.narrowing
+    :reads  #{c/observer c/binding c/planet-candidate c/commitment-state
+              c/palette c/time-lock}
+    :writes #{c/commitment-state c/palette c/time-lock}}
+
+    ;; Voxel 3: the focus-driven voxel band on the committed world. Reads
+    ;; the observer's focus, the committed world's candidate record and
+    ;; position (one tick Jacobi-stale, like every cross-system read), and
+    ;; its own five columns one tick stale. Sole writer of all five: the
+    ;; field seed cache, the resolved band, the deferred edit queue, the
+    ;; accumulated edit-diff save representation, and the accumulated
+    ;; field-diff stream (the macro half of the §7.3 save story — card
+    ;; voxel-field-bias-persistence). Band retargets and
+    ;; demotion fold-back drain through the budgeted queue
+    ;; (law.voxel/edit-budget-ms-per-tick) — one system because promotion
+    ;; and demotion write the same columns (the :focus-zone precedent).
+    ;; Voxel 4: also reads `c/voxel-sculpt-request` (one tick stale, the
+    ;; producer-suffixed request channel) and folds the paid sculpt ops
+    ;; into the field it owns + the queue it owns + the field-diff stream
+    ;; it owns (the op IS the diff — appended in fold order).
+    ;; Voxel 5: also reads `c/voxel-carve-request` (one tick stale, the
+    ;; collision-carve request channel) and folds its plans + melt/vapor
+    ;; cooling into `:apply-edits` jobs, provenance `:collision`.
+   {:id     :voxel-focus
+    :ns     'domain.voxel.focus
+    :reads  #{c/observer c/position c/planet-candidate c/commitment-state
+              c/voxel-field c/voxel-band c/voxel-edit-queue
+              c/voxel-edit-diffs c/voxel-field-diffs c/voxel-sculpt-request
+              c/voxel-carve-request}
+    :writes #{c/voxel-field c/voxel-band c/voxel-edit-queue
+              c/voxel-edit-diffs c/voxel-field-diffs}}
+
+    ;; Voxel 4: god-scale sculpting (design planetary-voxel-substrate.md
+    ;; §5 tier 1). Translates the paid ops on the `:voxel/sculpt-ops`
+    ;; world key (the `:genesis/interventions` precedent — world keys are
+    ;; not declarable here) into the producer-suffixed request component
+    ;; the `:voxel-focus` fold consumes one Jacobi tick later. Sole writer
+    ;; of `c/voxel-sculpt-request`; reads its own prior output one tick
+    ;; stale to auto-clear drained requests.
+   {:id     :voxel-sculpt
+    :ns     'domain.voxel.sculpt
+    :reads  #{c/commitment-state c/voxel-sculpt-request}
+    :writes #{c/voxel-sculpt-request}}
+
+    ;; Voxel 5: collision shock → voxel carving (design
+    ;; planetary-voxel-substrate.md §6). Classifies absorb-merge packets
+    ;; on the committed world (the durable collision record — the ledger
+    ;; event is diffed away at the write-set boundary) through the
+    ;; `law.crater` scaling laws into carve plans / disruption reports.
+    ;; Sole writer of `c/voxel-carve-request`; reads its own prior output
+    ;; one tick stale for the `:seen` idempotency set (the absorb-merge
+    ;; channel is sticky — collision-detection never clears it).
+   {:id     :voxel-carve
+    :ns     'domain.voxel.carve
+    :reads  #{c/commitment-state c/planet-candidate c/voxel-field
+              c/voxel-band c/absorb-merge c/position c/velocity
+              c/voxel-carve-request}
+    :writes #{c/voxel-carve-request}}
+
+    ;; recenter is no longer a system: the integrator subtracts a one-tick-stale
    ;; COM frame-offset (a world scalar set in tick-world) from every new position
    ;; — a pure Galilean shift, not a post-fold position write (spec §6).
    ])

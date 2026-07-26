@@ -61,16 +61,6 @@
                [1.0 0.0 0.0]
                (sp/v* r (/ 1.0 l))))})
 
-(defn- point-aabb-dist2
-  "Squared distance from point `p` to axis-aligned box `bb` (0 if inside)."
-  [bb [px py pz]]
-  (let [[ax ay az] (:aabb-min bb)
-        [bx by bz] (:aabb-max bb)
-        dx (cond (< px ax) (- ax px) (> px bx) (- px bx) :else 0.0)
-        dy (cond (< py ay) (- ay py) (> py by) (- py by) :else 0.0)
-        dz (cond (< pz az) (- az pz) (> pz bz) (- pz bz) :else 0.0)]
-    (+ (* dx dx) (* dy dy) (* dz dz))))
-
 (defn- collect-overlaps
   "Walk the Barnes–Hut octree, collecting every body whose sphere literally
    overlaps query body `q` (excluding itself). A node is pruned the moment its
@@ -84,7 +74,7 @@
   (if (nil? node)
     acc
     (let [reach (+ (double q-radius) (double (or (:max-radius node) 0.0)))]
-      (if (> (point-aabb-dist2 (:aabb node) (:position q)) (* reach reach))
+      (if (> (sp/point-aabb-dist2 (:aabb node) (:position q)) (* reach reach))
         acc
         (if (bh/leaf-node? node)
           (reduce (fn [a b]

@@ -1,0 +1,39 @@
+;; Splint — idiom / anti-pattern linting for Gates of Truth.
+;;
+;; Read by the `:splint` alias (see deps.edn) and by bin/analyze.
+;;
+;; POLICY: no rule is disabled globally. Splint ships with sensible defaults and
+;; a blanket `{:enabled false}` here would silently exempt every future site of
+;; that rule — which is precisely the failure mode
+;; kanban/tasks/static-analysis-regression-2026-07-24.md exists to stop.
+;;
+;; Suppressions are PER-FORM and carry their reason at the site:
+;;
+;;   ;; Intentional: <why this rule is wrong here>
+;;   #_{:splint/disable [lint/catch-throwable]}
+;;   (defn ...)
+;;
+;; A form-level marker covers findings nested anywhere inside that form, so one
+;; marker on a `defn` suffices for several sites in its body. Note that ns-level
+;; `{:splint/disable [...]}` metadata is NOT honoured by splint 1.24.0 — verified
+;; 2026-07-25; do not reach for it.
+;;
+;; The suppressions live at:
+;;   src/infra/dev/window/loop.clj      lint/catch-throwable ×8 (render-loop
+;;                                      guards; rationale in the ns docstring)
+;;   src/domain/ecs/tick.clj            lint/catch-throwable (worker future must
+;;                                      always .put or the fold deadlocks)
+;;   src/domain/em/lorentz.clj          lint/let-if (bound value is a never-read
+;;                                      boolean naming a physics gate)
+;;   src/domain/stellar/classifier/state.clj
+;;                                      lint/identical-branches (two independent
+;;                                      physical criteria for stardom)
+;;   src/domain/narrowing.clj           naming/conversion-functions (false
+;;                                      positive on a predicate)
+;;   src/infra/render/hud.clj           style/apply-str ×2 (char-seq repeat)
+;;   test/domain/narrative_test.clj     style/eq-zero (nil-safe, stronger)
+;;   test/domain/physics/cache_test.clj style/eq-zero ×3 (ditto)
+;;
+;; If you add a suppression, add it to that list. If you find one that no longer
+;; applies, delete the marker rather than leaving it as cover.
+{}

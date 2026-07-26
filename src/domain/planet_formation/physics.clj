@@ -7,6 +7,11 @@
 
 (def ^:const snow-line-temperature 170.0)
 
+;; UNUSED-PENDING: Planet-formation physics reachable only through the `domain.planet-formation`
+;; facade until the seeder wires it; the facade alias was pruned as dead, which
+;; is what made this visible.
+;; See kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (def ^:const proto-solar-metal-frac 0.015)
 
 (def ^:const ice-enhancement-factor 3.5)
@@ -46,6 +51,11 @@
   (double (or (:genesis/condensation-seed-mass-kg world)
               condensation-seed-mass-kg)))
 
+;; UNUSED-PENDING: Planet-formation physics reachable only through the `domain.planet-formation`
+;; facade until the seeder wires it; the facade alias was pruned as dead, which
+;; is what made this visible.
+;; See kanban/tasks/protoplanetary-disk-and-planet-formation-spec.md
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn sound-speed
   "Adiabatic sound speed c_s = √(γ k_B T / m_H) for a thin disc. m/s."
   [temperature]
@@ -127,7 +137,10 @@
       Double/POSITIVE_INFINITY)))
 
 (defn planet-mass
-  "Compute final planet mass from core mass and possible runaway gas envelope."
+  "Compute final planet mass from core mass and possible runaway gas envelope.
+   Returns `{:giant? :mass-kg :core-m :gas-m}` — the core/envelope split lets
+   the seeder mass-weight the planet's composition between condensed solids
+   (core) and captured nebular gas (envelope)."
   [{:keys [core-m beyond?]} disk-m]
   (let [giant? (and beyond? (>= core-m critical-core-mass-kg))
         gas-m (if giant?
@@ -138,4 +151,4 @@
         mass-kg (-> (+ core-m gas-m)
                     (max (* min-seed-mass-solar law/solar-mass))
                     (min disk-m (* max-seed-mass-solar law/solar-mass)))]
-    {:giant? giant? :mass-kg mass-kg}))
+    {:giant? giant? :mass-kg mass-kg :core-m core-m :gas-m gas-m}))

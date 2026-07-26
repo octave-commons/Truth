@@ -9,12 +9,17 @@
    [law.stellar :as law]
    [shape.spatial :as sp]))
 
-(defn- absorb-temp-delta
+(defn merged-temperature
   "Temperature change for `eid` from absorb-merge packets: mass-weighted
    temperature blend plus impact heating (kinetic energy → thermal). Returns the
    final blended temperature, or nil if no merge packets target this entity.
    The impact heating formula is ΔT = E_lost · m_H / (M_total · 2.5 · k_B),
-   matching the serial merge handler (stellar.clj:1837)."
+   matching the serial merge handler (stellar.clj:1837).
+
+   Public: `domain.integrator.core` reads the same post-impact temperature to
+   gate volatile blow-off on hot merges (chemistry spec §7 Phase 4) — the
+   temperature the integrator writes is exactly the temperature that decides
+   what the collision strips."
   [world eid]
   (let [pkts (filter :temperature (base/absorb-packets-for world eid))]
     (when (seq pkts)
@@ -63,7 +68,7 @@
     (when (seq merge-eids)
       (persistent!
        (reduce (fn [acc eid]
-                 (if-let [t (absorb-temp-delta world eid)]
+                 (if-let [t (merged-temperature world eid)]
                    (assoc! acc eid t)
                    acc))
                (transient {}) merge-eids)))))

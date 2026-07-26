@@ -6,9 +6,12 @@
    One tick reads a frozen snapshot of world N and produces world N+1. Every
    system runs concurrently on its own thread, reading ONLY the frozen snapshot
    and returning a WRITE-SET — the changes it makes to the component types it
-   exclusively owns. The write-sets are folded into the next world at a single
-   end-of-tick barrier. Because no system observes another's same-tick writes,
-   system order is irrelevant and the fan-out is lock-free.
+   exclusively owns. Write-sets fold on the caller thread in COMPLETION order
+   (overlapping the parallel tail — see `fold-completion-order`); single-writer
+   disjointness makes the fold commutative, and conflict reports are sorted
+   back to declaration order, so the barrier semantics are unchanged. Because
+   no system observes another's same-tick writes, system order is irrelevant
+   and the fan-out is lock-free.
 
    A write-set is `{component-type {entity-id value-or-`removed`}}` — the same
    shape as the world's `:components` store, so folding is a plain merge. The
@@ -110,18 +113,78 @@
 ;; Parallel fan-out
 ;; ---------------------------------------------------------------------------
 
+(defn- fold-completion-order
+  "Fold write-sets as they ARRIVE on `q` (completion order), overlapping the
+   serial fold with the tail of still-running systems. Returns the next world.
+
+   Correct under the `:throw` conflict policy it is used with: write-sets are
+   disjoint (verified before returning), and `apply-write-set` over disjoint
+   component types commutes, so completion-order folding yields the same world
+   as declaration-order folding. `:genesis/_profile` fragments are stripped
+   from the fold and merged afterwards in DECLARATION order (`order`), keeping
+   even benchmark diagnostics byte-identical to the ordered fold.
+
+   A system failure arrives as the thrown Throwable itself (never put back on
+   the queue) and is re-raised here as the same ExecutionException a future
+   deref would have produced, so the caller's error path is unchanged."
+  [world ^java.util.concurrent.LinkedBlockingQueue q order n]
+  (loop [w world, n n, labeled [], profs {}]
+    (if (zero? n)
+      (let [conflicts (colliding-ctypes
+                       (sort-by (comp (zipmap order (range)) first) labeled))]
+        (when (seq conflicts)
+          (throw (ex-info "write-set conflict — single-writer violated at runtime"
+                          {:conflicts conflicts})))
+        (reduce (fn [w id]
+                  (if-let [prof (get profs id)]
+                    (update w :genesis/_profile (fnil merge-with + {}) prof)
+                    w))
+                w order))
+      (let [[id res] (.take q)]
+        (if (instance? Throwable res)
+          (throw (java.util.concurrent.ExecutionException. ^Throwable res))
+          (recur (apply-write-set w (dissoc res :genesis/_profile))
+                 (dec n)
+                 (conj labeled [id res])
+                 (if-let [prof (:genesis/_profile res)]
+                   (assoc profs id prof)
+                   profs)))))))
+
+;; Intentional: `catch Throwable` in the worker future. Each worker MUST enqueue
+;; exactly one item or `fold-completion-order`'s `.take` hangs forever (see the
+;; NOTE at the catch site). Narrowing to `Exception` would let an `AssertionError`
+;; from a system's `assert`/`:pre` escape into the future and deadlock the tick
+;; instead of surfacing as a value the fold can report. Catching everything here
+;; is what makes the fan-out total.
+#_{:splint/disable [lint/catch-throwable]}
 (defn run-parallel
   "Run `systems` concurrently on the frozen `world`; fold their write-sets into
    the next world and return it.
 
    Each system's `:run` receives the SAME immutable `world` and must return a
    write-set touching only its `:writes`. One `future` per system; the only
-   synchronization is the deref barrier. Does NOT advance `:tick` or apply
-   discrete events — the caller owns the barrier phase (events, recenter, swap)."
+   synchronization is the deref barrier. Under the default `:throw` conflict
+   policy the fold runs IN COMPLETION ORDER on the calling thread
+   (`fold-completion-order`), overlapping the serial fold with the tail of the
+   still-running systems instead of starting cold at the barrier — same world,
+   less wall-clock. `:last-wins` (transitional) keeps declaration-order
+   deref+fold, since resolution order IS its semantics. Does NOT advance
+   `:tick` or apply discrete events — the caller owns the barrier phase
+   (events, recenter, swap)."
   [world systems & {:keys [on-conflict] :or {on-conflict :throw}}]
-  (let [futs  (mapv (fn [{:keys [id run]}] [id (future (run world))]) systems)
-        wsets (mapv (fn [[id f]] [id (deref f)]) futs)]
-    (fold world wsets :on-conflict on-conflict)))
+  (if-not (= on-conflict :throw)
+    (let [futs  (mapv (fn [{:keys [id run]}] [id (future (run world))]) systems)
+          wsets (mapv (fn [[id f]] [id (deref f)]) futs)]
+      (fold world wsets :on-conflict on-conflict))
+    (let [q (java.util.concurrent.LinkedBlockingQueue.)]
+      (doseq [{:keys [id run]} systems]
+        ;; NOTE: each worker enqueues exactly one item, so `.take` in
+        ;; fold-completion-order always reaches n. If a worker thread were
+        ;; interrupted before its `.put`, the fold would hang — nothing in
+        ;; this codebase interrupts these threads (futures are never
+        ;; cancelled); keep it that way.
+        (future (.put q [id (try (run world) (catch Throwable t t))])))
+      (fold-completion-order world q (mapv :id systems) (count systems)))))
 
 (defn run-sequential
   "Reference implementation: fold write-sets in order on a single thread. Same

@@ -15,13 +15,13 @@
 
 (defn prebiotic? "True if the ecology is in the :prebiotic phase." [{:keys [phase]}] (= phase le/phase-prebiotic))
 
-(defn prokaryotic? "True if the ecology is in the :prokaryotic phase." [{:keys [phase]}] (= phase le/phase-prokaryotic))
+(defn ^:export prokaryotic? "True if the ecology is in the :prokaryotic phase." [{:keys [phase]}] (= phase le/phase-prokaryotic))
 
-(defn eukaryotic? "True if the ecology is in the :eukaryotic phase." [{:keys [phase]}] (= phase le/phase-eukaryotic))
+(defn ^:export eukaryotic? "True if the ecology is in the :eukaryotic phase." [{:keys [phase]}] (= phase le/phase-eukaryotic))
 
-(defn multicellular? "True if the ecology is in the :multicellular phase." [{:keys [phase]}] (= phase le/phase-multicellular))
+(defn ^:export multicellular? "True if the ecology is in the :multicellular phase." [{:keys [phase]}] (= phase le/phase-multicellular))
 
-(defn complex? "True if the ecology is in the :complex phase." [{:keys [phase]}] (= phase le/phase-complex))
+(defn ^:export complex? "True if the ecology is in the :complex phase." [{:keys [phase]}] (= phase le/phase-complex))
 
 (defn tick-moisture "Moisture gains when temp < 0.6, loses when temp ≥ 0.6." [{:keys [moisture temp]}] (math/clamp01 (if (< (double temp) 0.6) (+ moisture le/moisture-gain-rate) (- moisture le/moisture-loss-rate))))
 

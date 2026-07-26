@@ -39,7 +39,7 @@
   #{:gravity-hydro :mhd-dominated :gravitationally-unstable
     :radiation-dominated :convective :stable-disc :unstable-no-fragment :tectonically-dead})
 
-(def disc-regime-tags
+(def ^:export disc-regime-tags
   "Regime tags specific to rotationally-supported discs (Part 3)."
   #{:stable-disc :gravitationally-unstable :unstable-no-fragment})
 
@@ -65,11 +65,11 @@
   {:b-field bounded-b-field?
    :regime  regime-tag?})
 
-(def hydro-accel-schema
+(def ^:export hydro-accel-schema
   "Pressure-gradient acceleration vector a = -∇p/ρ in m/s²."
   finite-vec3?)
 
-(def magnetic-torque-schema
+(def ^:export magnetic-torque-schema
   "Torque density vector τ = r × f from the Lorentz force, in N/m²."
   finite-vec3?)
 
@@ -81,7 +81,11 @@
    actually queried and :query-r the radius that query covered — the reuse
    skin is measured against them. :nn-id (optional) remembers the nearest
    neighbor's identity so the refresh path can rederive the smoothing length
-   without a tree descent."
+   without a tree descent. Optional :density-estimate/:density-anchor/
+   :density-tick carry the staleness-budgeted SPH density the shared pair walk
+   computes (law.field/density-stale-* budget knobs); per-neighbor maps may
+   carry :grad, the pair kernel gradient ∇W_ij at h_ij = r_i + r_j, precomputed
+   once per in-kernel pair for the merged hydro/EM consumer."
   [:map
    [:position [:tuple :double :double :double]]
    [:anchor-position [:tuple :double :double :double]]
@@ -89,7 +93,12 @@
    [:h [:and :double [:> 0]]]
    [:neighbors [:vector [:map]]]
    [:gradients {:optional true} [:vector [:tuple :double :double :double]]]
-   [:curl-gradients {:optional true} [:vector [:tuple :double :double :double]]]])
+   [:curl-gradients {:optional true} [:vector [:tuple :double :double :double]]]
+   [:density-estimate {:optional true} [:and :double [:>= 0]]]
+   [:density-anchor {:optional true} [:tuple :double :double :double]]
+   [:density-tick {:optional true} :int]
+   [:density-h {:optional true} [:and :double [:> 0]]]
+   [:density-m {:optional true} [:and :double [:>= 0]]]])
 
 (def neighbor-cache-entry?
   "Predicate: does `value` satisfy the neighbor-cache entry schema?"
@@ -105,6 +114,11 @@
    [:n :int]
    [:mass [:fn double-array?]]
    [:radius [:fn double-array?]]
+   ;; Per-entity Plummer softening length from the species rule
+   ;; (law.stellar.orbital.dynamics/body-softening): c/radius for resolved
+   ;; compact bodies, the world :sim/softening for gas/stateless entities
+   ;; (kanban/tasks/compact-pair-softening.md).
+   [:eps [:fn double-array?]]
    [:px [:fn double-array?]]
    [:py [:fn double-array?]]
    [:pz [:fn double-array?]]
@@ -121,11 +135,11 @@
   "Predicate: does `value` satisfy `law.field/physics-soa-schema`?"
   (m/validator physics-soa-schema))
 
-(def toomre-q-schema
+(def ^:export toomre-q-schema
   "Toomre Q parameter for a disc annulus: a positive finite number."
   finite-number?)
 
-(def cool-dyn-ratio-schema
+(def ^:export cool-dyn-ratio-schema
   "Cooling-time to dynamical-time ratio t_cool / Ω⁻¹: a positive finite number."
   finite-number?)
 
@@ -153,7 +167,7 @@
 
 ;; --- Dual-representation / focus zones (Phase 1) ----------------------------
 
-(def field-zone-schema
+(def ^:export field-zone-schema
   "Zone tag for the dual-representation fidelity of an entity."
   #{:immediate :regional :global})
 
@@ -169,11 +183,70 @@
    [:temperature [:and :double [:>= 0]]]
    [:composition [:map-of :keyword :double]]])
 
-(def attention-shell-schema
+(def ^:export attention-shell-schema
   "Observer focus radii: immediate and regional attention shells."
   [:map
    [:immediate-r [:and :double [:> 0]]]
    [:regional-r [:and :double [:> 0]]]])
+
+;; --- Promotion/demotion lifecycle markers (Player Focus, child A) -----------
+;; The regional-cell substrate the focus-zone system (child B) will consume:
+;; `spawn-request-promotion` seed specs, the `consumed-demote` reap marker, and
+;; `promoted-from-cell` back-pointer. Schemas only — nothing ticks yet.
+
+(def promotion-spawn-spec-schema
+  "One seed spec carried by `c/spawn-request-promotion`, as
+   `domain.stellar.seeder/spawn-clump` expects (spec §5), plus an optional
+   `:extra-components` map applied to the spawned entity after materialization
+   — used to stamp `c/promoted-from-cell` with the source cell's entity id."
+  [:map
+   [:position [:tuple :double :double :double]]
+   [:velocity {:optional true} [:tuple :double :double :double]]
+   [:mass [:and :double [:> 0]]]
+   [:radius [:and :double [:> 0]]]
+   [:temperature {:optional true} [:and :double [:>= 0]]]
+   [:composition {:optional true} [:map-of :keyword :double]]
+   [:matter-state {:optional true} :keyword]
+   [:body-kind {:optional true} :keyword]
+   [:angular-momentum {:optional true} [:tuple :double :double :double]]
+   [:extra-components {:optional true} [:map-of :keyword :any]]])
+
+(def ^:export promotion-spawn-spec?
+  "Predicate: does `value` satisfy `law.field/promotion-spawn-spec-schema`?"
+  (m/validator promotion-spawn-spec-schema))
+
+(def consumed-demote-schema
+  "The `c/consumed.demote` marker: a resolved body flagged for aggregation into
+   its source cell and despawn at world-construction. A bare boolean flag, like
+   the other `consumed.*` markers."
+  :boolean)
+
+(def ^:export consumed-demote?
+  "Predicate: does `value` satisfy `law.field/consumed-demote-schema`?"
+  (m/validator consumed-demote-schema))
+
+(def promoted-from-cell-schema
+  "The `c/promoted-from-cell` back-pointer: a non-negative entity id (int) of
+   the regional cell a promoted clump was sampled from."
+  [:and :int [:>= 0]])
+
+(def ^:export promoted-from-cell?
+  "Predicate: does `value` satisfy `law.field/promoted-from-cell-schema`?"
+  (m/validator promoted-from-cell-schema))
+
+(def regional-cell-schema
+  "An ECS regional cell entity: the statistical-mass ledger, the :regional
+   field-zone tag, and a position — and, by construction, no `c/matter-state`
+   key, so it stays structurally invisible to gravity/hydro/classifier/
+   integrator (all of which filter on `c/matter-state`)."
+  [:map
+   [:statistical-mass statistical-cell-schema]
+   [:field-zone [:= :regional]]
+   [:position [:tuple :double :double :double]]])
+
+(def regional-cell?
+  "Predicate: does `value` satisfy `law.field/regional-cell-schema`?"
+  (m/validator regional-cell-schema))
 
 (defn promotion-invariant?
   "Return true if the promoted/demoted set conserves total mass, linear momentum,
@@ -192,12 +265,12 @@
                  (< (Math/abs (- a b))
                     (* (max (Math/abs a) (Math/abs b) 1.0) tol))))]
      (and (rel-close? (mass before) (mass after))
-          (every? #(rel-close? %1 %2) (map vector (momentum before) (momentum after)))
-          (every? #(rel-close? %1 %2) (map vector (angmom before) (angmom after)))))))
+          (every? (fn [[a b]] (rel-close? a b)) (map vector (momentum before) (momentum after)))
+          (every? (fn [[a b]] (rel-close? a b)) (map vector (angmom before) (angmom after)))))))
 
 ;; --- Contract ---------------------------------------------------------------
 
-(def field-cell-contract
+(def ^:export field-cell-contract
   (contract/->contract
    {:id          :law.field/field-cell
     :shape-id    :law.field/field-cell

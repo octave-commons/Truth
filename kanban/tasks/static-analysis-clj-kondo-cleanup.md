@@ -350,3 +350,7 @@ This work is tracked as a parent kanban card (`kanban/tasks/static-analysis-clj-
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — clj-kondo 0 errors / 0 warnings.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. clj-kondo is back to 50 warnings (0 errors) from 0/0 at the 2026-07-10 triage, accumulated across the voxel, M5-handoff and narrowing work. New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

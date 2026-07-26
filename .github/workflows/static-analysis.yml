@@ -1,8 +1,22 @@
 name: static-analysis
 
 # Deterministic, rule-based code-quality gate. Mirrors `bin/analyze --strict`.
-# Blocking: clj-kondo errors, structural HARD breaches, architecture invariants.
-# Advisory (reported, non-blocking): Splint, cljfmt, jscpd, dead-code.
+#
+# ALL SIX tools block as of 2026-07-25: clj-kondo errors AND warnings, structural
+# HARD breaches, Splint, clojure-lsp dead code, cljfmt, and jscpd above the
+# `threshold` in .jscpd.json — plus the architecture invariants. Every one was at
+# zero when it was promoted. See docs/STATIC-ANALYSIS.md > The gating contract.
+#
+# This workflow was already correct before that change and is not the thing that was
+# broken: it ran on every push to `main` and failed 33 consecutive times between
+# 2026-07-10 and 2026-07-21, and every one of those pushes landed anyway. The failure
+# mode was DIRECT PUSHES by an admin, not merged PRs — there has only ever been one
+# PR (#1) and it targeted a feature branch, not `main`.
+#
+# Fixed 2026-07-25: `main` now requires the `analyze` check with `enforce_admins: true`,
+# so a red run blocks everyone including admins. Verified by a throwaway PR whose merge
+# was refused ("the base branch policy prohibits the merge"). See
+# kanban/tasks/static-analysis-regression-2026-07-24.md.
 on:
   push:
     branches: [main]
@@ -18,8 +32,32 @@ jobs:
         uses: DeLaGuardo/setup-clojure@13.0
         with:
           cli: latest
-          clj-kondo: latest
-          clojure-lsp: latest
+          # Pinned, not `latest`, for the same reason as clojure-lsp below: a newer
+          # clj-kondo finds NEW things, which is good but must be a deliberate bump,
+          # not a surprise mid-PR. Floating `latest` already caused exactly that —
+          # v2026.07.24 flagged a `:condition-always-true` that the local v2025.07.28
+          # did not, so the tree was "0 warnings" locally and red in CI. Bump this
+          # knowingly, fix what the new version finds, then commit both together.
+          clj-kondo: 2026.07.24
+          # NOTE: do NOT add `clojure-lsp:` here. This action has no such input —
+          # it emits "##[warning]Unexpected input(s) 'clojure-lsp'" and IGNORES it,
+          # which is why clojure-lsp was never actually installed in CI even though
+          # the workflow appeared to ask for it. Installed explicitly below instead.
+
+      # Pinned, not `latest`: this gate's contract is "same source in => same
+      # findings out" (docs/STATIC-ANALYSIS.md), and a floating clojure-lsp can
+      # change the unused-public-var set under us. Matches the version the tree was
+      # driven to zero against on 2026-07-25. Bump deliberately.
+      - name: Install clojure-lsp
+        env:
+          CLOJURE_LSP_VERSION: 2025.08.25-14.21.46
+        run: |
+          set -euo pipefail
+          curl -sSfLo /tmp/clojure-lsp-install \
+            https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install
+          chmod +x /tmp/clojure-lsp-install
+          sudo /tmp/clojure-lsp-install --version "$CLOJURE_LSP_VERSION"
+          clojure-lsp --version
 
       - uses: actions/setup-node@v4
         with:
@@ -34,7 +72,7 @@ jobs:
             ~/.clojure
           key: deps-${{ hashFiles('deps.edn') }}
 
-      # Blocking gate: bugs + structural decay (HARD thresholds).
+      # Blocking gate: all six tools (see the header).
       - name: Static analysis (strict)
         run: ./bin/analyze --strict
 

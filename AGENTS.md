@@ -166,6 +166,37 @@ watching is OFF, so it does NOT auto-reload on edits:
 - It owns port 7888; "Address already in use" from `clj -M:dev` just means the
   pm2 instance is already up.
 
+## Static Analysis Gate
+
+`bin/analyze --strict` must exit 0. All six tools gate as of 2026-07-25 (clj-kondo
+errors *and* warnings, Splint, clojure-lsp dead code, cljfmt, structural HARD, and
+jscpd against the `threshold` in `.jscpd.json`). Every one was at zero when it was
+promoted.
+
+**A red gate is a blocker, not a backlog item.** If you cannot fix a finding, file a
+regression card — never demote a tier back to advisory, and never leave a kanban card
+`done` whose finding has returned. This is written down because the opposite happened:
+`static-analysis` failed on 33 consecutive pushes to `main` between 2026-07-10 and
+2026-07-21 and every one landed anyway, while twelve cards read `done` with their
+findings already back (`kanban/tasks/static-analysis-regression-2026-07-24.md`).
+
+Since 2026-07-25 `main` is protected — the `analyze` check is required and
+`enforce_admins: true`, so a red tree cannot reach `main` by any route, PR or direct
+push, for anyone.
+
+Suppressions are allowed, and each carries its reason at the site:
+
+| marker | for |
+|---|---|
+| `^:export` | a var deliberately public with no internal consumer (`law/` schemas, contracts, constants; debug accessors; compat aliases) |
+| `UNUSED-PENDING` + `#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}` + a `kanban/tasks/…` link | "coded but never ticked" features — deliberately verbose |
+| `;; Intentional:` + `#_{:splint/disable [rule]}` | a Splint rule that is wrong at that site |
+
+Config-level exclusions live in `.lsp/config.edn` / `.clj-kondo/config.edn` /
+`.splint.edn`, also with inline reasons, and only for genuine false positives.
+Full detail and the verified list of which suppression mechanisms actually work:
+`docs/STATIC-ANALYSIS.md` › Suppression conventions.
+
 ## Actor Dashboard
 
 A web dashboard monitors every ημ actor under `.eta-mu/actors/`, including

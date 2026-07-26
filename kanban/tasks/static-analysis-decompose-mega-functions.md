@@ -32,3 +32,7 @@ Extract helpers and decompose the 11 HARD mega-functions (≥80 LOC) that are no
 ---
 Triage 2026-07-10 (accepted→done): DONE per bin/analyze ground truth — 0 functions >=80 LOC (HARD); only warn-tier (>=40) remain — done-when HARD<=2 satisfied.
 ---
+
+---
+Regression notice 2026-07-24 — this card remains `done` (history is not rewritten), but **its finding has returned**. Two HARD mega-functions are back: `derive-edits` (`src/domain/voxel/carve.clj:406`) and `voxel-focus-system` (`src/domain/voxel/focus.clj:238`), both in files created after this card closed. Note the metric itself is also wrong — it counts docstrings as code (`dev/smell_report.clj:110`). New work: `kanban/tasks/static-analysis-regression-2026-07-24.md`. Do not read this `done` as evidence the tree is clean; verify with `bin/analyze --strict`.
+---

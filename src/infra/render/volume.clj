@@ -11,7 +11,8 @@
    [infra.render.shader :as sh]
    [infra.render.field :as rfield]
    [infra.render.units :as units]
-   [infra.render.color :as color])
+   [infra.render.color :as color]
+   [infra.render.passes :as passes])
   (:import
    (org.lwjgl.opengl GL11 GL12 GL13 GL15 GL20 GL30)
    (org.lwjgl BufferUtils)))
@@ -184,16 +185,15 @@
   (GL13/glActiveTexture GL13/GL_TEXTURE0)
   (GL11/glBindTexture GL12/GL_TEXTURE_3D tex)
   (GL20/glUniform1i (GL20/glGetUniformLocation program "volume") (int 0))
-  (GL11/glEnable GL11/GL_BLEND)
-  (GL11/glBlendFunc GL11/GL_ONE GL11/GL_ONE_MINUS_SRC_ALPHA)
-  (GL11/glDepthMask false)
+  (passes/set-blend! :additive)
+  (passes/set-depth-write! false)
   (GL30/glBindVertexArray quad-vao)
   (GL11/glDrawArrays GL11/GL_TRIANGLES 0 6))
 
 (defn- unbind-volume-quad
   []
   (GL30/glBindVertexArray 0)
-  (GL11/glDepthMask true)
+  (passes/set-depth-write! true)
   (GL11/glBindTexture GL12/GL_TEXTURE_3D 0))
 
 (defn render-volume

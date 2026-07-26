@@ -1,12 +1,13 @@
 ---
-uuid: "exposed-tunables-and-settings-menu-spec"
-title: "Exposed Tunables and Settings Menu"
-status: "draft"
-priority: "P1"
-labels: ["specs", "phase0", "player", "ui", "settings"]
-created_at: "2026-07-09T21:00:00.000000000Z"
-source: "kanban/tasks/exposed-tunables-and-settings-menu-spec.md"
 category: "specs"
+labels: ["specs", "phase0", "player", "ui", "settings"]
+write-id: "1784745420047-0.0flndf6wvd7vknprgz7j"
+source: "kanban/tasks/exposed-tunables-and-settings-menu-spec.md"
+title: "Exposed Tunables and Settings Menu"
+priority: "P1"
+status: "breakdown"
+uuid: "exposed-tunables-and-settings-menu-spec"
+created_at: "2026-07-09T21:00:00.000000000Z"
 ---
 
 # Exposed Tunables and Settings Menu Spec
@@ -252,3 +253,7 @@ Phase 4: shader tunables
 9. `src/infra/render/scene/setup.clj`
 10. `src/infra/menu/widgets.clj`
 11. `kanban/tasks/start-menu-save-game-spec.md` (companion: persistence layer)
+
+---
+Triage 2026-07-22 (Claude, decision from Aaron): promoted from non-canonical 'draft' to breakdown. Rationale: this is largely a defaults-registry refactor (domain.defaults single-source-of-truth + world/options merge + Settings panel) with high feel-value and no new physics. Next step: break into child cards along the spec's own phasing — (1) domain.defaults registry + migrate constants; (2) live world-overrides plumbing; (3) Settings UI panel + presets; (4) shader-uniform tunables. Companion save-game spec is iceboxed until this lands (Phase 1-2 are its prerequisite).
+---
