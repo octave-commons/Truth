@@ -52,7 +52,9 @@
     :coverage {:extra-paths ["test" "bench"]
                :extra-deps {cloverage/cloverage {:mvn/version "1.2.4"}
                             nrepl/nrepl {:mvn/version "1.0.0"}
-                            criterium/criterium {:mvn/version "0.4.6"}}
+                            criterium/criterium {:mvn/version "0.4.6"}
+                            org.commonmark/commonmark {:mvn/version "0.21.0"}
+                            org.commonmark/commonmark-ext-gfm-tables {:mvn/version "0.21.0"}}
                :main-opts ["-m" "cloverage.coverage"]}
    ;; --- Mutation testing (Heretic; EXPERIMENTAL) -----------------------------
    ;; Heretic (github.com/parenstech/heretic) maps tests→code via ClojureStorm,
