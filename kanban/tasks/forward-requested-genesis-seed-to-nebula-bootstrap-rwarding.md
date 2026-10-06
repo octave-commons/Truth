@@ -3,7 +3,7 @@ category: "tasks"
 labels: "hygiene, regression, genesis"
 parent: "formation-placement-v2"
 type: "task"
-write-id: "1791311697649-0.vxqjn3ipzjl705mau4n"
+write-id: "1791311841213-0.8pj19xmdhn4e5yf1hoz"
 points: "2"
 title: "Forward requested genesis seed to nebula bootstrap"
 priority: "P1"
@@ -59,3 +59,7 @@ wait for root's test checkpoint before implementation. Then run the focused
 tests and existing seed-contract/architecture checks, style checks, and rerun
 the same evidence probe. Full test/strict canonical review gates run on the
 final committed source; previous exact-head review outcomes are not reused.
+
+---
+Red checkpoint ready on source 56f2a19d02085b3f2e86c9926b837bc990859ef8: new public-entry-point test/domain/genesis_seed_test.clj runs 2 tests / 7 assertions, 2 expected failures, 0 errors. Both failures are precisely seed41 versus seed43 positions and velocities being identical. Repeatability, omitted seed equals explicit42, four gas parcels, total mass4e30, unchanged mass/state/composition controls pass. Test-file clj-kondo is 0 errors/0 warnings and diffcheck passes. Log: .ημ/diagnostics/playable-foundation/natural-formation-observation/seed-forwarding-red.log. A first unmatched-parenthesis test-read attempt was corrected and retained separately as seed-forwarding-test-read-check.log; it is not regression evidence. No implementation changes yet; awaiting root red commit before forwarding seed through existing options/RNG, with default42 explicitly preserved to avoid passing nil to seed-nebula.
+---
