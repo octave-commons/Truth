@@ -1,0 +1,11 @@
+
+Running tests in #{"test"}
+
+Testing infra.render.passes-test
+
+Testing infra.render.shader-test
+
+Testing infra.render.trail-test
+
+Ran 17 tests containing 72 assertions.
+0 failures, 0 errors.

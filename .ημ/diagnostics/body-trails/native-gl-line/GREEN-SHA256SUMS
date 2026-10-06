@@ -1,0 +1,12 @@
+3f6a4d17b9c22d90002d39ac3a7e6263c735f04ed911911140351df40ef5d15e  .ημ/diagnostics/body-trails/native-gl-line/GREEN-CLOSED-FILES.txt
+af0e7f4bf0fd553c9979cd21598955ec4022bd56d44b0acf1b5a89fa45d49c3d  .ημ/diagnostics/body-trails/native-gl-line/green-board-comment.log
+634e15a690d504b96bf8f1dedde0f2568da312bf5df3a9c70e04efa534c313eb  .ημ/diagnostics/body-trails/native-gl-line/green-focused-end.json
+d20b0a1b19261f1918578b0b3a6255c4f2556d3a636a15335250453b8c446c77  .ημ/diagnostics/body-trails/native-gl-line/green-focused-start.json
+59182daf6ab43a0f9b63fee887827c2024967d9f4b67b8e59f35beba75a0234e  .ημ/diagnostics/body-trails/native-gl-line/green-focused.log
+350c8ca4627a9d8606897466b43ec8ecb1996149c6981ab119ed23138d9d1c06  .ημ/diagnostics/body-trails/native-gl-line/green-native-end.json
+fdb55e93feedb14467a7e1279afb69288a10892b85dbabfe832d9fb313e31e64  .ημ/diagnostics/body-trails/native-gl-line/green-native-start.json
+9c97745c01bef95dd3ef67627738f981ad4d20db37fdf152003e10c3055b6da2  .ημ/diagnostics/body-trails/native-gl-line/green-native.log
+9940b1d8b0689a1abcc7bd93b84243b8535b070af0b1fcb9df01cebb726e7c37  .ημ/diagnostics/body-trails/native-gl-line/green-receipt-append.log
+1f149c24bbaae33c0ae38d8e99375d6c0d62cf6c272862d913f79a19bcd3c55e  .ημ/diagnostics/body-trails/native-gl-line/green-static.json
+7c0d44ba6e9c3cf82598323b1711d9a6022f3fc075a7fa13af27104ff20ba44b  .ημ/diagnostics/body-trails/native-gl-line/green-verdict.md
+a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7  src/infra/render/scene/setup.clj

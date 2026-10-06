@@ -1,0 +1,50 @@
+[
+  {
+    "command": [
+      "clojure",
+      "-M:cljfmt",
+      "check",
+      "src/infra/render/scene/setup.clj",
+      "test-native"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 10.073434829711914,
+    "output": "All source files formatted correctly\n"
+  },
+  {
+    "command": [
+      "clojure",
+      "-Sdeps",
+      "{:aliases {:native-style {:extra-deps {io.github.noahtheduke/splint {:mvn/version \"1.24.0\"}} :main-opts [\"-m\" \"noahtheduke.splint\" \"src/infra/render/scene/setup.clj\" \"test-native\"]}}}",
+      "-M:native-style"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 17.02994656562805,
+    "output": "Linting took 542ms, checked 2 files, 0 style warnings\n"
+  },
+  {
+    "command": [
+      "clj-kondo",
+      "--lint",
+      "src/infra/render/scene/setup.clj",
+      "test-native"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 0.06504273414611816,
+    "output": "linting took 51ms, errors: 0, warnings: 0\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 0.015557289123535156,
+    "output": ""
+  }
+]

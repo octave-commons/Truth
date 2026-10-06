@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "render", "spark-flight"]
-write-id: "1791319943760-0.1lhzm9r9kqykter6p71d"
+write-id: "1791320218651-0.e3v9k5z3l94n01oc5a2"
 source: "kanban/tasks/body-trails-ringbuffer.md"
 title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
 priority: "P2"
@@ -71,4 +71,8 @@ Native line-pass RED checkpoint prepared on integrated source 400ba3a (current H
 Independent private-Xvfb production-pass test: 1 test, 9 assertions, 2 expected failures, zero errors; both legacy/default-alpha and fading-alpha lines return GL1281 while actual nonblack pixels, real shader compilation, context flags, and readback checks pass. No production source modification; git diff HEAD -- src is empty. Native suite is explicitly invoked outside the headless test path, with all six static tools receiving its source path. Final native fmt/Splint and kondo checks pass. First heap-start failure and broader tool-style failure are preserved as non-passing probes; unrelated existing dev/smell_report style forms were not rewritten or suppressed.
 
 Closed evidence: .ημ/diagnostics/body-trails/native-gl-line/red-verdict.md, red-2.log, source-provenance.json, copied owner callback attribution/restoration with hashes, and CLOSED-FILES.txt / SHA256SUMS. Root owns RED commit before a minimal explicit1.0 line-width repair; no context/profile/opacity/render-path change proposed. Card remains in_progress; no native gameplay completion or review transition claimed.
+
+The native line-pass defect is GREEN above RED checkpoint923fd6d: the only production change is explicit GL11/glLineWidth1.0 with a context-restriction comment. Context selection, real shader/alpha/mesh/draw path and cleanup are unchanged. The same private-Xvfb regression passes1 test/9 assertions with zero failures/errors and actual pixels for both legacy and fading lines. Focused passes/shader/trail tests pass17 tests/72 assertions. A requested nonexistent mesh-test namespace was not selected and is not counted; real line packing is covered in trail-test. Changed-source/native fmt, Splint and kondo are clean; independent source review found no blocker. All owned JVMs reaped.
+
+Evidence is .ημ/diagnostics/body-trails/native-gl-line/green-verdict.md plus complete green-native/green-focused logs/start/end metadata and green-static.json. Separate GREEN-CLOSED-FILES.txt and GREEN-SHA256SUMS preserve the earlier RED manifest unchanged. Root owns final source commit/full strict gate. This repairs the confirmed preexisting native GL error, not the entire gameplay acceptance; active ordinary-world source reload and visible fading/readability remain separately observed by its owner. Card stays in_progress.
 ---
