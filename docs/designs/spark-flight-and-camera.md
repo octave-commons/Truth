@@ -71,6 +71,11 @@ a_total = a_gravity                       ; existing (Barnes–Hut, halo, dark-m
 
 ### 3.2 Rotational (new substrate)
 
+Rotational integration research and concrete convention/time-step contracts:
+[Spark rotation integration](../research/physics/spark-rotation-integration.md).
+This tracked note grounds the orientation card and records the unavailable
+original research file without claiming to reconstruct it.
+
 ```
 τ_total = τ_thrust(input)                 ; new: pitch/yaw/roll from mouse + keys
         + (FA-on ? τ_damp : 0)            ; new: angular-velocity damping
