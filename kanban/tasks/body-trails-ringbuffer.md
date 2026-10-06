@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "render", "spark-flight"]
-write-id: "1791320218651-0.e3v9k5z3l94n01oc5a2"
+write-id: "1791320987280-0.felku5fd2dss0e3scaq"
 source: "kanban/tasks/body-trails-ringbuffer.md"
 title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
 priority: "P2"
@@ -75,4 +75,10 @@ Closed evidence: .ημ/diagnostics/body-trails/native-gl-line/red-verdict.md, re
 The native line-pass defect is GREEN above RED checkpoint923fd6d: the only production change is explicit GL11/glLineWidth1.0 with a context-restriction comment. Context selection, real shader/alpha/mesh/draw path and cleanup are unchanged. The same private-Xvfb regression passes1 test/9 assertions with zero failures/errors and actual pixels for both legacy and fading lines. Focused passes/shader/trail tests pass17 tests/72 assertions. A requested nonexistent mesh-test namespace was not selected and is not counted; real line packing is covered in trail-test. Changed-source/native fmt, Splint and kondo are clean; independent source review found no blocker. All owned JVMs reaped.
 
 Evidence is .ημ/diagnostics/body-trails/native-gl-line/green-verdict.md plus complete green-native/green-focused logs/start/end metadata and green-static.json. Separate GREEN-CLOSED-FILES.txt and GREEN-SHA256SUMS preserve the earlier RED manifest unchanged. Root owns final source commit/full strict gate. This repairs the confirmed preexisting native GL error, not the entire gameplay acceptance; active ordinary-world source reload and visible fading/readability remain separately observed by its owner. Card stays in_progress.
+
+2026-10-06 closed ordinary-world native evidence and same-world GL repair validation. Bundle .ημ/diagnostics/focus-input/native-400ba3a/ contains source/run manifest,91 verified hashes, four full-window MP4/GIF pairs, actual history/projection readbacks and bounded renderer observations. Snapshot11 at tick4641 has24 planets/two stars plus Spark:27 histories with63 samples each,1701 requested/rendered segments and0 dropped. Snapshot18 at8342 has36 planets/three stars plus Spark:40 histories,2519 segments,0 dropped, alpha0..0.85. Actual line program12/hash -1142320420 matches compiled source. Normal D motion leaves a visible cyan Spark trail; later manual screenshots show disappearance after release/history aging. Large cyan dipole loops are magnetic fields, not motion trails. Field loops and inspection text still obscure fine star/planet fading; do not claim their full player-readable orbital-path acceptance is closed.
+
+Initial native GL samples returned1281. The bounded owning-thread KHR_debug callback named GL_INVALID_VALUE in glLineWidth and was restored/freed. Root RED923fd6d and GREENab02026 are the separate production native regression evidence. Namespace-only setup reload from launch22f762f to merged85f307f occurred at ticks11485->11486 in identical world atom1675959387. First post-reload sample2400 retained[1281,0], consistent with undrained earlier state (inference). Fourteen later sampled frames2430..2820 each returned[0], with no later nonzero sample and no probe/UI/service error. Original render callable restored at closure.
+
+Software llvmpipe wide-view interval:1.284 achieved FPS and6.865 sim ticks/s; close inspection:5.351 FPS and8.509 ticks/s. Renderer-call wall durations include swap/sleep. Capture, sim, clients, diagnostic overhead and later root gates overlapped, so these are not isolated performance/GPU results. Pure mature-world writer/projection/packing costs are separately labeled and never applied writes. Operator Escape interrupted the initial loop; verified same-world lifecycle recovery, stale-window leak and host-config reset are explicitly recorded. Full visual readability and clock-dependent trail acceptance remain open; card remains in_progress.
 ---

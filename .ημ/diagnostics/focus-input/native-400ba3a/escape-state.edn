@@ -1,0 +1,1 @@
+{:tick 5492, :world-identity 1675959387, :render-alive? false, :service-keys (:thread :sim-thread :stop :world :world-intents :camera :config :window), :error nil, :stop false}

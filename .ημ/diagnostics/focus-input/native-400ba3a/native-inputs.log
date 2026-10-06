@@ -1,0 +1,25 @@
+2026-10-06T20:36:07.636374551Z xdotool windowfocus --sync 2097159 key r
+2026-10-06T20:36:25.668565644Z xdotool keydown Right
+2026-10-06T20:36:53.290095877Z xdotool keyup Right
+2026-10-06T20:36:54.975593922Z xdotool key comma
+2026-10-06T20:37:14.144027831Z xdotool keydown period
+2026-10-06T20:37:24.369631022Z xdotool keyup period
+2026-10-06T20:38:09.179852111Z xdotool key Tab mousemove 274 13 mousedown 1 sleep 0.12 mouseup 1
+2026-10-06T20:38:25.774004982Z xdotool mousemove 1201 389 mousedown 1 sleep 0.12 mouseup 1
+2026-10-06T20:39:05.200502645Z xdotool mousemove 1117 389 mousedown 1 sleep 0.12 mouseup 1
+2026-10-06T20:39:37.586581370Z xdotool mousemove 274 13 mousedown 1 sleep 0.12 mouseup 1 key Tab keydown w sleep 2 keyup w
+2026-10-06T20:45:16.888522872Z xdotool mousemove 274 13 mousedown 1 sleep 2 mouseup 1
+2026-10-06T20:46:07.420025890Z xdotool key Escape
+2026-10-06T20:48:54.003156661Z xdotool keyup w a s d Right Left Up Down comma period space Control_L
+2026-10-06T20:49:49.530665803Z xdotool windowfocus --sync 2097165 keydown d sleep 4 keyup d
+2026-10-06T20:50:31.791569711Z xdotool key Tab mousemove 180 13 sleep 2 mousedown 1 sleep 1 mouseup 1
+2026-10-06T20:51:10.414490263Z xdotool mousemove 180 13 sleep 2 mousedown 1 sleep 2 mouseup 1
+2026-10-06T20:51:34.813009385Z xdotool mousemove 1000 101 sleep 2 mousedown 1 sleep 1 mouseup 1 sleep 2 mousemove 180 13 sleep 2 mousedown 1 sleep 1 mouseup 1
+2026-10-06T20:51:49.681303894Z xdotool mousemove 650 340 click --repeat 20 --delay 100 4
+2026-10-06T20:52:08.427344544Z xdotool mousemove 650 340 click --repeat 12 --delay 100 4
+2026-10-06T20:52:26.332484826Z xdotool click --repeat 24 --delay 100 4
+2026-10-06T20:53:02.060728141Z xdotool mousemove 180 13 sleep 2 mousedown 1 sleep 1 mouseup 1
+2026-10-06T20:53:24.355013669Z xdotool mousemove 1000 255 sleep 2 mousedown 1 sleep 1 mouseup 1 sleep 2 mousemove 180 13 sleep 2 mousedown 1 sleep 1 mouseup 1
+2026-10-06T20:59:57.608586583Z xdotool key r
+2026-10-06T20:59:59.327301046Z xdotool keydown d sleep 10 keyup d
+2026-10-06T21:01:34.502077167Z xdotool mousemove 1100 330 sleep 2 mousedown 1 sleep 1 mouseup 1
