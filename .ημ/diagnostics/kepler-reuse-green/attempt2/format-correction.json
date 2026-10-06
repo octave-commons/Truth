@@ -1,0 +1,24 @@
+{
+  "changes": [
+    {
+      "path": "test/domain/orbital/kepler_workload.clj",
+      "before_sha256": "9029fa5439faff5ad58a26d61f3df3c4ddb105faf40e435f2ebdf66c207675ee",
+      "after_sha256": "6670f44ad9d9559b50fbc686953877f059c806eaae79e0548409daddb1cf67a3",
+      "indentation_only": true,
+      "changed_lines": [
+        161
+      ]
+    },
+    {
+      "path": "test/domain/orbital/kepler_reuse_test.clj",
+      "before_sha256": "fc2d1edc5a9b7c3d3914cd425ff8c970a1114ccd7f8abbfbbe6052e7cd98c148",
+      "after_sha256": "7a9bdb25e80d2435e1a463d526714d6aaa5dce1bfd656599f040c616bff8a845",
+      "indentation_only": true,
+      "changed_lines": [
+        56
+      ]
+    }
+  ],
+  "baseline_manifest": "Unchanged and bound to a96dfd7. Its test-file hashes describe pre-format source recoverable from that commit; fixture and workload semantics remain unchanged.",
+  "solver_changed_by_formatting": false
+}

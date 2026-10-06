@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-kepler-cost",
+  "command": [
+    "clojure",
+    "-Sdeps",
+    "{:aliases {:kepler-evidence {:extra-paths [\"test\" \".\u03b7\u03bc/diagnostics/kepler-cost\"] :main-opts [\"-m\" \"evidence.kepler\"]}}}",
+    "-M:bench:kepler-evidence",
+    "propagation-cost",
+    "/home/err/spaces/foresight/.worktrees/truth-kepler-cost/.\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/01-attempt2.edn"
+  ],
+  "JAVA_OPTS": "-Xms256m -Xmx2g",
+  "pid": 4168743,
+  "start_utc": "2026-10-06T23:35:50.310608+00:00",
+  "end_utc": "2026-10-06T23:36:45.396787+00:00",
+  "wall_seconds": 55.086149789000046,
+  "exit": 0,
+  "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+  "sha256": {
+    "src/domain/orbital/kepler.clj": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+    "test/fixtures/kepler-reuse-b402939.edn": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+    "test/domain/orbital/kepler_workload.clj": "6670f44ad9d9559b50fbc686953877f059c806eaae79e0548409daddb1cf67a3",
+    "test/domain/orbital/kepler_reuse_test.clj": "7a9bdb25e80d2435e1a463d526714d6aaa5dce1bfd656599f040c616bff8a845",
+    ".\u03b7\u03bc/diagnostics/kepler-cost/evidence/kepler.clj": "78b3bbd395b631b933a3896594ad2ab72b8161b3d1459da22cf24ec30a3d2fa8"
+  }
+}

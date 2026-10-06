@@ -1,0 +1,39 @@
+{
+  "encoding": "gzip",
+  "compression_level": 9,
+  "mtime": 0,
+  "files": [
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/01-attempt2-cpu-before.json.gz",
+      "stored_sha256": "876cf9518da3900fa1409852c4e72f58b9cfcc4b41a0fbbf454f0f5f2d212aff",
+      "raw_sha256": "c86f9bb747aad3ecd77566480aa8043518bfbd500ec1821d393fc32bf15004ef",
+      "stored_bytes": 12077,
+      "raw_bytes": 121504,
+      "decompression_byte_equal": true
+    },
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/01-attempt2-cpu-after.json.gz",
+      "stored_sha256": "9a1602d48c62b89ace7366d0f480ef36edc2428c41cba8ca5ba2afa6a7c3a6f8",
+      "raw_sha256": "1932840491078e70d7e42643c3df59a3110c2e9f51e9dbf12d00ac840043100c",
+      "stored_bytes": 12146,
+      "raw_bytes": 122095,
+      "decompression_byte_equal": true
+    },
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/02-baseline-cpu-before.json.gz",
+      "stored_sha256": "faef7319e11e4bce4c3d280895c2a663f71f03d182a4dbfa322b2190044066e2",
+      "raw_sha256": "ae2daf40464697da1548cb888e4aa43a54b7b1dc84cb262d0a6245502039c666",
+      "stored_bytes": 12146,
+      "raw_bytes": 122105,
+      "decompression_byte_equal": true
+    },
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/02-baseline-cpu-after.json.gz",
+      "stored_sha256": "afbb193a22e74e3785119d86adc7e5e2a09c9f50286f8d904a40a1604d543360",
+      "raw_sha256": "19ea4c707f205f429c28a8c17878dea2c039837061d17a6d70dac15d94511486",
+      "stored_bytes": 12005,
+      "raw_bytes": 120882,
+      "decompression_byte_equal": true
+    }
+  ]
+}

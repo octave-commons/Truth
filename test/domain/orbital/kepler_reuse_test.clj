@@ -53,7 +53,7 @@
     (testing (name id)
       (let [forward (kepler/propagate mu r v dt)
             backward (kepler/propagate mu (:position forward)
-                                         (sp/v* (:velocity forward) -1.0) dt)]
+                                       (sp/v* (:velocity forward) -1.0) dt)]
         (is (< (/ (sp/dist (:position backward) r) (sp/len r)) 1.0e-7))
         (is (< (/ (sp/dist (:velocity backward) (sp/v* v -1.0)) (sp/len v)) 1.0e-7))))))
 

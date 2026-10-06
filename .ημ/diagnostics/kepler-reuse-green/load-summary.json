@@ -1,0 +1,264 @@
+{
+  "01-propagation-cost": {
+    "wall_seconds": 52.31203201899916,
+    "machine_busy_fraction": 0.15281435658724807,
+    "other_surviving_process_cpu": [
+      {
+        "pid": "16981",
+        "comm": "ChatGPT",
+        "cpu_seconds": 10.68,
+        "average_cores": 0.20415953247851545
+      },
+      {
+        "pid": "17341",
+        "comm": "ChatGPT",
+        "cpu_seconds": 7.0,
+        "average_cores": 0.1338124276544577
+      },
+      {
+        "pid": "65971",
+        "comm": "Isolated Web Co",
+        "cpu_seconds": 3.09,
+        "average_cores": 0.05906862877889633
+      },
+      {
+        "pid": "17382",
+        "comm": "codex",
+        "cpu_seconds": 1.64,
+        "average_cores": 0.031350340193330085
+      },
+      {
+        "pid": "65187",
+        "comm": "firefox",
+        "cpu_seconds": 1.18,
+        "average_cores": 0.02255695209032287
+      },
+      {
+        "pid": "15757",
+        "comm": "plasmashell",
+        "cpu_seconds": 1.1,
+        "average_cores": 0.021027667202843353
+      },
+      {
+        "pid": "2710",
+        "comm": "Xorg",
+        "cpu_seconds": 0.74,
+        "average_cores": 0.014145885209185529
+      },
+      {
+        "pid": "16830",
+        "comm": "ChatGPT",
+        "cpu_seconds": 0.61,
+        "average_cores": 0.011660797267031314
+      },
+      {
+        "pid": "2020048",
+        "comm": "mongod",
+        "cpu_seconds": 0.61,
+        "average_cores": 0.011660797267031314
+      },
+      {
+        "pid": "4066",
+        "comm": "dockerd",
+        "cpu_seconds": 0.58,
+        "average_cores": 0.011087315434226494
+      },
+      {
+        "pid": "8626",
+        "comm": "mongod",
+        "cpu_seconds": 0.56,
+        "average_cores": 0.010704994212356617
+      },
+      {
+        "pid": "7315",
+        "comm": "mongod",
+        "cpu_seconds": 0.41,
+        "average_cores": 0.007837585048332521
+      },
+      {
+        "pid": "2584",
+        "comm": "containerd",
+        "cpu_seconds": 0.36,
+        "average_cores": 0.0068817819936578244
+      },
+      {
+        "pid": "2020277",
+        "comm": "java",
+        "cpu_seconds": 0.3,
+        "average_cores": 0.005734818328048187
+      },
+      {
+        "pid": "3964307",
+        "comm": "node",
+        "cpu_seconds": 0.3,
+        "average_cores": 0.005734818328048187
+      },
+      {
+        "pid": "7392",
+        "comm": "bun",
+        "cpu_seconds": 0.28,
+        "average_cores": 0.005352497106178309
+      },
+      {
+        "pid": "9755",
+        "comm": "java",
+        "cpu_seconds": 0.23,
+        "average_cores": 0.00439669405150361
+      },
+      {
+        "pid": "3546",
+        "comm": "java",
+        "cpu_seconds": 0.19,
+        "average_cores": 0.0036320516077638517
+      },
+      {
+        "pid": "7468",
+        "comm": "redis-server",
+        "cpu_seconds": 0.19,
+        "average_cores": 0.0036320516077638517
+      },
+      {
+        "pid": "3375",
+        "comm": "java",
+        "cpu_seconds": 0.17,
+        "average_cores": 0.0032497303858939727
+      }
+    ],
+    "paused_native_cpu_seconds": {
+      "3083624": 0.0,
+      "2372912": 0.0
+    },
+    "limitation": "Matched persistent processes only; short-lived processes that start/end inside the interval are absent; benchmark child is absent from endpoint census."
+  },
+  "02-phase0-cost": {
+    "wall_seconds": 58.82251504600572,
+    "machine_busy_fraction": 0.41130387872059293,
+    "other_surviving_process_cpu": [
+      {
+        "pid": "16981",
+        "comm": "ChatGPT",
+        "cpu_seconds": 17.58,
+        "average_cores": 0.29886515369583383
+      },
+      {
+        "pid": "17341",
+        "comm": "ChatGPT",
+        "cpu_seconds": 11.79,
+        "average_cores": 0.20043345631819573
+      },
+      {
+        "pid": "65971",
+        "comm": "Isolated Web Co",
+        "cpu_seconds": 6.23,
+        "average_cores": 0.10591182636661235
+      },
+      {
+        "pid": "15757",
+        "comm": "plasmashell",
+        "cpu_seconds": 2.3,
+        "average_cores": 0.03910067426054709
+      },
+      {
+        "pid": "17382",
+        "comm": "codex",
+        "cpu_seconds": 2.15,
+        "average_cores": 0.036550630287033155
+      },
+      {
+        "pid": "16830",
+        "comm": "ChatGPT",
+        "cpu_seconds": 1.85,
+        "average_cores": 0.03145054234000527
+      },
+      {
+        "pid": "65187",
+        "comm": "firefox",
+        "cpu_seconds": 1.55,
+        "average_cores": 0.02635045439297739
+      },
+      {
+        "pid": "2710",
+        "comm": "Xorg",
+        "cpu_seconds": 1.47,
+        "average_cores": 0.024990430940436622
+      },
+      {
+        "pid": "2020048",
+        "comm": "mongod",
+        "cpu_seconds": 1.01,
+        "average_cores": 0.0171702960883272
+      },
+      {
+        "pid": "8626",
+        "comm": "mongod",
+        "cpu_seconds": 0.98,
+        "average_cores": 0.016660287293624412
+      },
+      {
+        "pid": "4066",
+        "comm": "dockerd",
+        "cpu_seconds": 0.84,
+        "average_cores": 0.014280246251678069
+      },
+      {
+        "pid": "7315",
+        "comm": "mongod",
+        "cpu_seconds": 0.65,
+        "average_cores": 0.011050190551893744
+      },
+      {
+        "pid": "2584",
+        "comm": "containerd",
+        "cpu_seconds": 0.61,
+        "average_cores": 0.01037017882562336
+      },
+      {
+        "pid": "7392",
+        "comm": "bun",
+        "cpu_seconds": 0.52,
+        "average_cores": 0.008840152441514995
+      },
+      {
+        "pid": "2020277",
+        "comm": "java",
+        "cpu_seconds": 0.52,
+        "average_cores": 0.008840152441514995
+      },
+      {
+        "pid": "9755",
+        "comm": "java",
+        "cpu_seconds": 0.42,
+        "average_cores": 0.0071401231258390345
+      },
+      {
+        "pid": "7468",
+        "comm": "redis-server",
+        "cpu_seconds": 0.4,
+        "average_cores": 0.006800117262703843
+      },
+      {
+        "pid": "3546",
+        "comm": "java",
+        "cpu_seconds": 0.29,
+        "average_cores": 0.004930085015460286
+      },
+      {
+        "pid": "15417",
+        "comm": "picom",
+        "cpu_seconds": 0.29,
+        "average_cores": 0.004930085015460286
+      },
+      {
+        "pid": "3375",
+        "comm": "java",
+        "cpu_seconds": 0.26,
+        "average_cores": 0.0044200762207574976
+      }
+    ],
+    "paused_native_cpu_seconds": {
+      "3083624": 0.0,
+      "2372912": 0.0
+    },
+    "limitation": "Matched persistent processes only; short-lived processes that start/end inside the interval are absent; benchmark child is absent from endpoint census."
+  }
+}

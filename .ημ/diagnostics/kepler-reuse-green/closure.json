@@ -1,0 +1,34 @@
+{
+  "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+  "validated_source_hashes": {
+    "src/domain/orbital/kepler.clj": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+    "test/domain/orbital/kepler_workload.clj": "6670f44ad9d9559b50fbc686953877f059c806eaae79e0548409daddb1cf67a3",
+    "test/domain/orbital/kepler_reuse_test.clj": "7a9bdb25e80d2435e1a463d526714d6aaa5dce1bfd656599f040c616bff8a845",
+    "test/fixtures/kepler-reuse-b402939.edn": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4"
+  },
+  "full_tests": {
+    "tests": 940,
+    "assertions": 16537,
+    "failures": 0,
+    "errors": 0,
+    "exit": 0
+  },
+  "strict": {
+    "stages": 6,
+    "exit": 0
+  },
+  "claim": "Repeated measured allocated-byte reduction in fixed public propagation batches only; no general elapsed-time, compact-throughput, native-FPS or initial-nebula-budget improvement established.",
+  "root_owns_publication": true,
+  "baseline_original_cpu_duplicates_excluded": true,
+  "attempt1_frozen_hashes_verified": 22,
+  "baseline_measurement_commit": "a96dfd7346ba9e052488da85d45df285319317a7",
+  "baseline_test_formatting": "Historical baseline manifest remains bound to original source at a96dfd7; final two test indentation corrections are recorded separately.",
+  "root_lifecycle_files": [
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/hardware-native-pause-root.json",
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/hardware-native-resume-root.json",
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/hardware-native-pause-root.json",
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/hardware-native-resume-root.json",
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/native-pause-root.json",
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/native-resume-root.json"
+  ]
+}

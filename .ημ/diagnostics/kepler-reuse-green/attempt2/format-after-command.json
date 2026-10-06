@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "clojure",
+    "-M:cljfmt",
+    "check",
+    "src/domain/orbital/kepler.clj",
+    "test/domain/orbital/kepler_workload.clj",
+    "test/domain/orbital/kepler_reuse_test.clj"
+  ],
+  "JAVA_OPTS": "-Xms256m -Xmx2g",
+  "start_utc": "2026-10-06T23:23:27.918649+00:00",
+  "end_utc": "2026-10-06T23:23:34.332829+00:00",
+  "wall_seconds": 6.41417301799811,
+  "exit": 0
+}

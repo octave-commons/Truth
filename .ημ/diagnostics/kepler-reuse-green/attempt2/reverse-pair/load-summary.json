@@ -1,0 +1,264 @@
+{
+  "01-attempt2": {
+    "wall_seconds": 55.086149789000046,
+    "machine_busy_fraction": 0.2996926571791274,
+    "other_surviving_process_cpu": [
+      {
+        "pid": "16981",
+        "comm": "ChatGPT",
+        "cpu_seconds": 19.1,
+        "average_cores": 0.34672962392833656
+      },
+      {
+        "pid": "17341",
+        "comm": "ChatGPT",
+        "cpu_seconds": 17.84,
+        "average_cores": 0.3238563607791374
+      },
+      {
+        "pid": "17382",
+        "comm": "codex",
+        "cpu_seconds": 8.1,
+        "average_cores": 0.14704240595913748
+      },
+      {
+        "pid": "65971",
+        "comm": "Isolated Web Co",
+        "cpu_seconds": 7.1,
+        "average_cores": 0.1288890225073921
+      },
+      {
+        "pid": "16830",
+        "comm": "ChatGPT",
+        "cpu_seconds": 3.1,
+        "average_cores": 0.05627548870041064
+      },
+      {
+        "pid": "15757",
+        "comm": "plasmashell",
+        "cpu_seconds": 2.27,
+        "average_cores": 0.04120818043546198
+      },
+      {
+        "pid": "3954592",
+        "comm": "kworker/u89:1-flush-259:0",
+        "cpu_seconds": 1.71,
+        "average_cores": 0.031042285702484577
+      },
+      {
+        "pid": "2710",
+        "comm": "Xorg",
+        "cpu_seconds": 1.66,
+        "average_cores": 0.03013461652989731
+      },
+      {
+        "pid": "65187",
+        "comm": "firefox",
+        "cpu_seconds": 1.59,
+        "average_cores": 0.028863879688275137
+      },
+      {
+        "pid": "2020048",
+        "comm": "mongod",
+        "cpu_seconds": 1.02,
+        "average_cores": 0.018516451120780274
+      },
+      {
+        "pid": "8626",
+        "comm": "mongod",
+        "cpu_seconds": 0.94,
+        "average_cores": 0.017064180444640645
+      },
+      {
+        "pid": "4066",
+        "comm": "dockerd",
+        "cpu_seconds": 0.93,
+        "average_cores": 0.016882646610123193
+      },
+      {
+        "pid": "2814",
+        "comm": "opencode",
+        "cpu_seconds": 0.86,
+        "average_cores": 0.015611909768501016
+      },
+      {
+        "pid": "3964273",
+        "comm": "kworker/u89:13-flush-259:0",
+        "cpu_seconds": 0.77,
+        "average_cores": 0.013978105257843933
+      },
+      {
+        "pid": "20161",
+        "comm": "ChatGPT",
+        "cpu_seconds": 0.67,
+        "average_cores": 0.012162766912669397
+      },
+      {
+        "pid": "2584",
+        "comm": "containerd",
+        "cpu_seconds": 0.65,
+        "average_cores": 0.01179969924363449
+      },
+      {
+        "pid": "7315",
+        "comm": "mongod",
+        "cpu_seconds": 0.63,
+        "average_cores": 0.01143663157459958
+      },
+      {
+        "pid": "7392",
+        "comm": "bun",
+        "cpu_seconds": 0.57,
+        "average_cores": 0.010347428567494859
+      },
+      {
+        "pid": "29482",
+        "comm": "codex-code-mode",
+        "cpu_seconds": 0.53,
+        "average_cores": 0.009621293229425044
+      },
+      {
+        "pid": "2020277",
+        "comm": "java",
+        "cpu_seconds": 0.49,
+        "average_cores": 0.00889515789135523
+      }
+    ],
+    "paused_native_cpu_seconds": {
+      "4070721": 0.0,
+      "2372912": 0.0
+    },
+    "limitation": "Matched persistent processes only; short-lived processes that start/end inside the interval are absent; benchmark child is absent from endpoint census."
+  },
+  "02-baseline": {
+    "wall_seconds": 54.83266221300437,
+    "machine_busy_fraction": 0.3003222233410533,
+    "other_surviving_process_cpu": [
+      {
+        "pid": "16981",
+        "comm": "ChatGPT",
+        "cpu_seconds": 18.96,
+        "average_cores": 0.34577930807640705
+      },
+      {
+        "pid": "17341",
+        "comm": "ChatGPT",
+        "cpu_seconds": 15.76,
+        "average_cores": 0.28741993118587417
+      },
+      {
+        "pid": "17382",
+        "comm": "codex",
+        "cpu_seconds": 7.43,
+        "average_cores": 0.1355031782177059
+      },
+      {
+        "pid": "65971",
+        "comm": "Isolated Web Co",
+        "cpu_seconds": 6.99,
+        "average_cores": 0.12747876389525767
+      },
+      {
+        "pid": "2637093",
+        "comm": "node",
+        "cpu_seconds": 3.36,
+        "average_cores": 0.06127734573505947
+      },
+      {
+        "pid": "16830",
+        "comm": "ChatGPT",
+        "cpu_seconds": 2.8,
+        "average_cores": 0.05106445477921622
+      },
+      {
+        "pid": "15757",
+        "comm": "plasmashell",
+        "cpu_seconds": 2.31,
+        "average_cores": 0.04212817519285339
+      },
+      {
+        "pid": "3815825",
+        "comm": "kworker/u89:6-flush-259:0",
+        "cpu_seconds": 1.75,
+        "average_cores": 0.03191528423701014
+      },
+      {
+        "pid": "65187",
+        "comm": "firefox",
+        "cpu_seconds": 1.71,
+        "average_cores": 0.03118579202587848
+      },
+      {
+        "pid": "2710",
+        "comm": "Xorg",
+        "cpu_seconds": 1.68,
+        "average_cores": 0.030638672867529734
+      },
+      {
+        "pid": "8626",
+        "comm": "mongod",
+        "cpu_seconds": 1.2,
+        "average_cores": 0.021884766333949812
+      },
+      {
+        "pid": "2020048",
+        "comm": "mongod",
+        "cpu_seconds": 1.16,
+        "average_cores": 0.02115527412281815
+      },
+      {
+        "pid": "4066",
+        "comm": "dockerd",
+        "cpu_seconds": 0.88,
+        "average_cores": 0.01604882864489653
+      },
+      {
+        "pid": "2814",
+        "comm": "opencode",
+        "cpu_seconds": 0.84,
+        "average_cores": 0.015319336433764867
+      },
+      {
+        "pid": "3895018",
+        "comm": "kworker/u89:16-ext4-rsv-conversion",
+        "cpu_seconds": 0.7,
+        "average_cores": 0.012766113694804055
+      },
+      {
+        "pid": "7315",
+        "comm": "mongod",
+        "cpu_seconds": 0.67,
+        "average_cores": 0.012218994536455313
+      },
+      {
+        "pid": "7392",
+        "comm": "bun",
+        "cpu_seconds": 0.6,
+        "average_cores": 0.010942383166974906
+      },
+      {
+        "pid": "2584",
+        "comm": "containerd",
+        "cpu_seconds": 0.56,
+        "average_cores": 0.010212890955843247
+      },
+      {
+        "pid": "4173004",
+        "comm": "node",
+        "cpu_seconds": 0.54,
+        "average_cores": 0.009848144850277416
+      },
+      {
+        "pid": "2020277",
+        "comm": "java",
+        "cpu_seconds": 0.53,
+        "average_cores": 0.009665771797494501
+      }
+    ],
+    "paused_native_cpu_seconds": {
+      "4070721": 0.0,
+      "2372912": 0.0
+    },
+    "limitation": "Matched persistent processes only; short-lived processes that start/end inside the interval are absent; benchmark child is absent from endpoint census."
+  }
+}

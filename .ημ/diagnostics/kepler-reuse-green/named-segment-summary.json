@@ -1,0 +1,1176 @@
+{
+  "500": {
+    ":gravity": {
+      "samples": 5,
+      "mean_ms": 4.325,
+      "min_ms": 3.327,
+      "max_ms": 6.741,
+      "values_ms": [
+        4.57,
+        6.741,
+        3.327,
+        3.425,
+        3.562
+      ]
+    },
+    ":hydro-em": {
+      "samples": 5,
+      "mean_ms": 4.6606000000000005,
+      "min_ms": 3.72,
+      "max_ms": 6.328,
+      "values_ms": [
+        4.733,
+        6.328,
+        4.314,
+        4.208,
+        3.72
+      ]
+    },
+    ":warp": {
+      "samples": 5,
+      "mean_ms": 0.0058000000000000005,
+      "min_ms": 0.004,
+      "max_ms": 0.007,
+      "values_ms": [
+        0.007,
+        0.007,
+        0.006,
+        0.005,
+        0.004
+      ]
+    },
+    ":observer-accel": {
+      "samples": 5,
+      "mean_ms": 0.242,
+      "min_ms": 0.189,
+      "max_ms": 0.318,
+      "values_ms": [
+        0.288,
+        0.318,
+        0.198,
+        0.217,
+        0.189
+      ]
+    },
+    ":player-thrust": {
+      "samples": 5,
+      "mean_ms": 0.01,
+      "min_ms": 0.006,
+      "max_ms": 0.02,
+      "values_ms": [
+        0.01,
+        0.02,
+        0.007,
+        0.006,
+        0.007
+      ]
+    },
+    ":dark-matter": {
+      "samples": 5,
+      "mean_ms": 0.18259999999999998,
+      "min_ms": 0.115,
+      "max_ms": 0.258,
+      "values_ms": [
+        0.251,
+        0.258,
+        0.148,
+        0.141,
+        0.115
+      ]
+    },
+    ":thermal-intervention": {
+      "samples": 5,
+      "mean_ms": 0.0042,
+      "min_ms": 0.003,
+      "max_ms": 0.006,
+      "values_ms": [
+        0.006,
+        0.006,
+        0.003,
+        0.003,
+        0.003
+      ]
+    },
+    ":integrator": {
+      "samples": 5,
+      "mean_ms": 4.5174,
+      "min_ms": 3.869,
+      "max_ms": 5.971,
+      "values_ms": [
+        5.971,
+        4.71,
+        3.869,
+        3.88,
+        4.157
+      ]
+    },
+    ":rotation-integrator": {
+      "samples": 5,
+      "mean_ms": 0.0794,
+      "min_ms": 0.043,
+      "max_ms": 0.212,
+      "values_ms": [
+        0.212,
+        0.05,
+        0.045,
+        0.047,
+        0.043
+      ]
+    },
+    ":structure": {
+      "samples": 5,
+      "mean_ms": 3.0696,
+      "min_ms": 2.486,
+      "max_ms": 4.537,
+      "values_ms": [
+        4.537,
+        2.83,
+        2.486,
+        2.788,
+        2.707
+      ]
+    },
+    ":eos": {
+      "samples": 5,
+      "mean_ms": 0.1576,
+      "min_ms": 0.133,
+      "max_ms": 0.183,
+      "values_ms": [
+        0.183,
+        0.178,
+        0.158,
+        0.136,
+        0.133
+      ]
+    },
+    ":motion-trail": {
+      "samples": 5,
+      "mean_ms": 0.291,
+      "min_ms": 0.21,
+      "max_ms": 0.476,
+      "values_ms": [
+        0.476,
+        0.275,
+        0.252,
+        0.242,
+        0.21
+      ]
+    },
+    ":classifier": {
+      "samples": 5,
+      "mean_ms": 0.8556,
+      "min_ms": 0.639,
+      "max_ms": 1.549,
+      "values_ms": [
+        1.549,
+        0.64,
+        0.807,
+        0.639,
+        0.643
+      ]
+    },
+    ":classification": {
+      "samples": 5,
+      "mean_ms": 0.1502,
+      "min_ms": 0.111,
+      "max_ms": 0.226,
+      "values_ms": [
+        0.226,
+        0.17,
+        0.132,
+        0.111,
+        0.112
+      ]
+    },
+    ":handoff": {
+      "samples": 5,
+      "mean_ms": 0.0682,
+      "min_ms": 0.05,
+      "max_ms": 0.099,
+      "values_ms": [
+        0.099,
+        0.079,
+        0.061,
+        0.05,
+        0.052
+      ]
+    },
+    ":condensation-seeder": {
+      "samples": 5,
+      "mean_ms": 0.028,
+      "min_ms": 0.004,
+      "max_ms": 0.121,
+      "values_ms": [
+        0.121,
+        0.007,
+        0.004,
+        0.004,
+        0.004
+      ]
+    },
+    ":field": {
+      "samples": 5,
+      "mean_ms": 0.5304,
+      "min_ms": 0.316,
+      "max_ms": 1.003,
+      "values_ms": [
+        1.003,
+        0.377,
+        0.316,
+        0.331,
+        0.625
+      ]
+    },
+    ":fusion": {
+      "samples": 5,
+      "mean_ms": 0.7354,
+      "min_ms": 0.548,
+      "max_ms": 1.175,
+      "values_ms": [
+        1.175,
+        0.739,
+        0.653,
+        0.548,
+        0.562
+      ]
+    },
+    ":stellar-sed": {
+      "samples": 5,
+      "mean_ms": 0.0668,
+      "min_ms": 0.051,
+      "max_ms": 0.097,
+      "values_ms": [
+        0.097,
+        0.073,
+        0.061,
+        0.051,
+        0.052
+      ]
+    },
+    ":atmosphere-shells": {
+      "samples": 5,
+      "mean_ms": 0.062,
+      "min_ms": 0.049,
+      "max_ms": 0.086,
+      "values_ms": [
+        0.086,
+        0.066,
+        0.059,
+        0.049,
+        0.05
+      ]
+    },
+    ":nucleosynthesis": {
+      "samples": 5,
+      "mean_ms": 0.2112,
+      "min_ms": 0.164,
+      "max_ms": 0.3,
+      "values_ms": [
+        0.3,
+        0.217,
+        0.208,
+        0.164,
+        0.167
+      ]
+    },
+    ":differentiation": {
+      "samples": 5,
+      "mean_ms": 0.4592,
+      "min_ms": 0.39,
+      "max_ms": 0.573,
+      "values_ms": [
+        0.573,
+        0.473,
+        0.468,
+        0.39,
+        0.392
+      ]
+    },
+    ":deuterium-depletion": {
+      "samples": 5,
+      "mean_ms": 0.1146,
+      "min_ms": 0.09,
+      "max_ms": 0.147,
+      "values_ms": [
+        0.139,
+        0.147,
+        0.104,
+        0.09,
+        0.093
+      ]
+    },
+    ":stellar-wind": {
+      "samples": 5,
+      "mean_ms": 0.131,
+      "min_ms": 0.082,
+      "max_ms": 0.281,
+      "values_ms": [
+        0.281,
+        0.122,
+        0.087,
+        0.083,
+        0.082
+      ]
+    },
+    ":wind-ablation": {
+      "samples": 5,
+      "mean_ms": 0.0846,
+      "min_ms": 0.024,
+      "max_ms": 0.301,
+      "values_ms": [
+        0.301,
+        0.047,
+        0.026,
+        0.025,
+        0.024
+      ]
+    },
+    ":stellar-flare": {
+      "samples": 5,
+      "mean_ms": 0.016,
+      "min_ms": 0.002,
+      "max_ms": 0.071,
+      "values_ms": [
+        0.071,
+        0.003,
+        0.002,
+        0.002,
+        0.002
+      ]
+    },
+    ":xuv-atmospheric-escape": {
+      "samples": 5,
+      "mean_ms": 0.0778,
+      "min_ms": 0.056,
+      "max_ms": 0.146,
+      "values_ms": [
+        0.146,
+        0.063,
+        0.066,
+        0.056,
+        0.058
+      ]
+    },
+    ":disc-identification": {
+      "samples": 5,
+      "mean_ms": 0.063,
+      "min_ms": 0.053,
+      "max_ms": 0.088,
+      "values_ms": [
+        0.088,
+        0.057,
+        0.062,
+        0.053,
+        0.055
+      ]
+    },
+    ":regime": {
+      "samples": 5,
+      "mean_ms": 0.37120000000000003,
+      "min_ms": 0.253,
+      "max_ms": 0.659,
+      "values_ms": [
+        0.659,
+        0.318,
+        0.302,
+        0.253,
+        0.324
+      ]
+    },
+    ":collision-detection": {
+      "samples": 5,
+      "mean_ms": 0.353,
+      "min_ms": 0.295,
+      "max_ms": 0.436,
+      "values_ms": [
+        0.436,
+        0.295,
+        0.388,
+        0.325,
+        0.321
+      ]
+    },
+    ":fusion-promotion": {
+      "samples": 5,
+      "mean_ms": 0.6556,
+      "min_ms": 0.534,
+      "max_ms": 0.911,
+      "values_ms": [
+        0.911,
+        0.534,
+        0.676,
+        0.571,
+        0.586
+      ]
+    },
+    ":sink-formation": {
+      "samples": 5,
+      "mean_ms": 0.1072,
+      "min_ms": 0.068,
+      "max_ms": 0.248,
+      "values_ms": [
+        0.248,
+        0.074,
+        0.078,
+        0.068,
+        0.068
+      ]
+    },
+    ":disk-evolution": {
+      "samples": 5,
+      "mean_ms": 0.1342,
+      "min_ms": 0.095,
+      "max_ms": 0.232,
+      "values_ms": [
+        0.232,
+        0.095,
+        0.124,
+        0.12,
+        0.1
+      ]
+    },
+    ":mass-transfer": {
+      "samples": 5,
+      "mean_ms": 0.1924,
+      "min_ms": 0.136,
+      "max_ms": 0.371,
+      "values_ms": [
+        0.371,
+        0.141,
+        0.169,
+        0.145,
+        0.136
+      ]
+    },
+    ":neighbor-cache": {
+      "samples": 5,
+      "mean_ms": 3.1414,
+      "min_ms": 2.163,
+      "max_ms": 6.527,
+      "values_ms": [
+        6.527,
+        2.163,
+        2.6,
+        2.237,
+        2.18
+      ]
+    },
+    ":lod-scheduler": {
+      "samples": 5,
+      "mean_ms": 0.0792,
+      "min_ms": 0.061,
+      "max_ms": 0.111,
+      "values_ms": [
+        0.111,
+        0.062,
+        0.097,
+        0.065,
+        0.061
+      ]
+    },
+    ":magnetosphere-coupling": {
+      "samples": 5,
+      "mean_ms": 0.2308,
+      "min_ms": 0.152,
+      "max_ms": 0.469,
+      "values_ms": [
+        0.469,
+        0.169,
+        0.172,
+        0.192,
+        0.152
+      ]
+    },
+    ":ecology": {
+      "samples": 5,
+      "mean_ms": 0.007,
+      "min_ms": 0.004,
+      "max_ms": 0.013,
+      "values_ms": [
+        0.008,
+        0.013,
+        0.005,
+        0.005,
+        0.004
+      ]
+    },
+    ":debris-reaper": {
+      "samples": 5,
+      "mean_ms": 0.4408,
+      "min_ms": 0.31,
+      "max_ms": 0.748,
+      "values_ms": [
+        0.748,
+        0.437,
+        0.333,
+        0.376,
+        0.31
+      ]
+    },
+    ":focus-zone": {
+      "samples": 5,
+      "mean_ms": 0.12459999999999999,
+      "min_ms": 0.038,
+      "max_ms": 0.419,
+      "values_ms": [
+        0.419,
+        0.06,
+        0.063,
+        0.043,
+        0.038
+      ]
+    },
+    ":binding": {
+      "samples": 5,
+      "mean_ms": 0.0536,
+      "min_ms": 0.017,
+      "max_ms": 0.192,
+      "values_ms": [
+        0.192,
+        0.019,
+        0.019,
+        0.021,
+        0.017
+      ]
+    },
+    ":commitment": {
+      "samples": 5,
+      "mean_ms": 0.033600000000000005,
+      "min_ms": 0.007,
+      "max_ms": 0.137,
+      "values_ms": [
+        0.137,
+        0.007,
+        0.009,
+        0.008,
+        0.007
+      ]
+    },
+    ":voxel-sculpt": {
+      "samples": 5,
+      "mean_ms": 0.0144,
+      "min_ms": 0.003,
+      "max_ms": 0.06,
+      "values_ms": [
+        0.06,
+        0.003,
+        0.003,
+        0.003,
+        0.003
+      ]
+    },
+    ":voxel-carve": {
+      "samples": 5,
+      "mean_ms": 0.0034000000000000002,
+      "min_ms": 0.003,
+      "max_ms": 0.005,
+      "values_ms": [
+        0.005,
+        0.003,
+        0.003,
+        0.003,
+        0.003
+      ]
+    },
+    ":voxel-focus": {
+      "samples": 5,
+      "mean_ms": 0.013600000000000001,
+      "min_ms": 0.002,
+      "max_ms": 0.057,
+      "values_ms": [
+        0.057,
+        0.002,
+        0.004,
+        0.003,
+        0.002
+      ]
+    }
+  },
+  "1000": {
+    ":gravity": {
+      "samples": 5,
+      "mean_ms": 6.6656,
+      "min_ms": 5.964,
+      "max_ms": 7.729,
+      "values_ms": [
+        6.616,
+        6.364,
+        7.729,
+        6.655,
+        5.964
+      ]
+    },
+    ":hydro-em": {
+      "samples": 5,
+      "mean_ms": 8.7692,
+      "min_ms": 7.489,
+      "max_ms": 10.189,
+      "values_ms": [
+        9.156,
+        10.189,
+        9.091,
+        7.921,
+        7.489
+      ]
+    },
+    ":warp": {
+      "samples": 5,
+      "mean_ms": 0.0046,
+      "min_ms": 0.004,
+      "max_ms": 0.005,
+      "values_ms": [
+        0.005,
+        0.005,
+        0.005,
+        0.004,
+        0.004
+      ]
+    },
+    ":observer-accel": {
+      "samples": 5,
+      "mean_ms": 0.313,
+      "min_ms": 0.279,
+      "max_ms": 0.362,
+      "values_ms": [
+        0.3,
+        0.303,
+        0.362,
+        0.279,
+        0.321
+      ]
+    },
+    ":player-thrust": {
+      "samples": 5,
+      "mean_ms": 0.0066,
+      "min_ms": 0.006,
+      "max_ms": 0.007,
+      "values_ms": [
+        0.006,
+        0.006,
+        0.007,
+        0.007,
+        0.007
+      ]
+    },
+    ":dark-matter": {
+      "samples": 5,
+      "mean_ms": 0.2228,
+      "min_ms": 0.203,
+      "max_ms": 0.258,
+      "values_ms": [
+        0.207,
+        0.215,
+        0.258,
+        0.203,
+        0.231
+      ]
+    },
+    ":thermal-intervention": {
+      "samples": 5,
+      "mean_ms": 0.0026,
+      "min_ms": 0.002,
+      "max_ms": 0.003,
+      "values_ms": [
+        0.002,
+        0.003,
+        0.002,
+        0.003,
+        0.003
+      ]
+    },
+    ":integrator": {
+      "samples": 5,
+      "mean_ms": 6.893,
+      "min_ms": 5.889,
+      "max_ms": 7.567,
+      "values_ms": [
+        6.661,
+        7.068,
+        7.28,
+        5.889,
+        7.567
+      ]
+    },
+    ":rotation-integrator": {
+      "samples": 5,
+      "mean_ms": 0.0446,
+      "min_ms": 0.041,
+      "max_ms": 0.056,
+      "values_ms": [
+        0.042,
+        0.043,
+        0.056,
+        0.041,
+        0.041
+      ]
+    },
+    ":structure": {
+      "samples": 5,
+      "mean_ms": 7.1676,
+      "min_ms": 6.287,
+      "max_ms": 8.027,
+      "values_ms": [
+        7.799,
+        6.3,
+        8.027,
+        6.287,
+        7.425
+      ]
+    },
+    ":eos": {
+      "samples": 5,
+      "mean_ms": 0.3,
+      "min_ms": 0.213,
+      "max_ms": 0.582,
+      "values_ms": [
+        0.224,
+        0.258,
+        0.223,
+        0.213,
+        0.582
+      ]
+    },
+    ":motion-trail": {
+      "samples": 5,
+      "mean_ms": 0.40359999999999996,
+      "min_ms": 0.289,
+      "max_ms": 0.816,
+      "values_ms": [
+        0.289,
+        0.316,
+        0.29,
+        0.307,
+        0.816
+      ]
+    },
+    ":classifier": {
+      "samples": 5,
+      "mean_ms": 1.3078,
+      "min_ms": 0.927,
+      "max_ms": 2.43,
+      "values_ms": [
+        1.018,
+        1.128,
+        1.036,
+        0.927,
+        2.43
+      ]
+    },
+    ":classification": {
+      "samples": 5,
+      "mean_ms": 0.2366,
+      "min_ms": 0.163,
+      "max_ms": 0.452,
+      "values_ms": [
+        0.192,
+        0.187,
+        0.189,
+        0.163,
+        0.452
+      ]
+    },
+    ":handoff": {
+      "samples": 5,
+      "mean_ms": 0.0988,
+      "min_ms": 0.074,
+      "max_ms": 0.179,
+      "values_ms": [
+        0.074,
+        0.086,
+        0.078,
+        0.077,
+        0.179
+      ]
+    },
+    ":condensation-seeder": {
+      "samples": 5,
+      "mean_ms": 0.005,
+      "min_ms": 0.004,
+      "max_ms": 0.009,
+      "values_ms": [
+        0.004,
+        0.004,
+        0.004,
+        0.004,
+        0.009
+      ]
+    },
+    ":field": {
+      "samples": 5,
+      "mean_ms": 0.5502,
+      "min_ms": 0.417,
+      "max_ms": 0.686,
+      "values_ms": [
+        0.417,
+        0.578,
+        0.437,
+        0.633,
+        0.686
+      ]
+    },
+    ":fusion": {
+      "samples": 5,
+      "mean_ms": 2.3648000000000002,
+      "min_ms": 0.808,
+      "max_ms": 8.163,
+      "values_ms": [
+        0.97,
+        1.049,
+        0.808,
+        0.834,
+        8.163
+      ]
+    },
+    ":stellar-sed": {
+      "samples": 5,
+      "mean_ms": 0.2342,
+      "min_ms": 0.07,
+      "max_ms": 0.836,
+      "values_ms": [
+        0.086,
+        0.088,
+        0.07,
+        0.091,
+        0.836
+      ]
+    },
+    ":atmosphere-shells": {
+      "samples": 5,
+      "mean_ms": 0.213,
+      "min_ms": 0.071,
+      "max_ms": 0.76,
+      "values_ms": [
+        0.08,
+        0.082,
+        0.072,
+        0.071,
+        0.76
+      ]
+    },
+    ":nucleosynthesis": {
+      "samples": 5,
+      "mean_ms": 0.7842,
+      "min_ms": 0.241,
+      "max_ms": 2.825,
+      "values_ms": [
+        0.307,
+        0.305,
+        0.243,
+        0.241,
+        2.825
+      ]
+    },
+    ":differentiation": {
+      "samples": 5,
+      "mean_ms": 1.8721999999999999,
+      "min_ms": 0.58,
+      "max_ms": 6.669,
+      "values_ms": [
+        0.756,
+        0.737,
+        0.58,
+        0.619,
+        6.669
+      ]
+    },
+    ":deuterium-depletion": {
+      "samples": 5,
+      "mean_ms": 0.3942,
+      "min_ms": 0.129,
+      "max_ms": 1.394,
+      "values_ms": [
+        0.156,
+        0.158,
+        0.129,
+        0.134,
+        1.394
+      ]
+    },
+    ":stellar-wind": {
+      "samples": 5,
+      "mean_ms": 0.2772,
+      "min_ms": 0.089,
+      "max_ms": 0.97,
+      "values_ms": [
+        0.115,
+        0.115,
+        0.089,
+        0.097,
+        0.97
+      ]
+    },
+    ":wind-ablation": {
+      "samples": 5,
+      "mean_ms": 0.0712,
+      "min_ms": 0.02,
+      "max_ms": 0.269,
+      "values_ms": [
+        0.023,
+        0.023,
+        0.02,
+        0.021,
+        0.269
+      ]
+    },
+    ":stellar-flare": {
+      "samples": 5,
+      "mean_ms": 0.0034,
+      "min_ms": 0.002,
+      "max_ms": 0.009,
+      "values_ms": [
+        0.002,
+        0.002,
+        0.002,
+        0.002,
+        0.009
+      ]
+    },
+    ":xuv-atmospheric-escape": {
+      "samples": 5,
+      "mean_ms": 0.23,
+      "min_ms": 0.075,
+      "max_ms": 0.81,
+      "values_ms": [
+        0.096,
+        0.09,
+        0.075,
+        0.079,
+        0.81
+      ]
+    },
+    ":disc-identification": {
+      "samples": 5,
+      "mean_ms": 0.2372,
+      "min_ms": 0.071,
+      "max_ms": 0.845,
+      "values_ms": [
+        0.098,
+        0.093,
+        0.071,
+        0.079,
+        0.845
+      ]
+    },
+    ":regime": {
+      "samples": 5,
+      "mean_ms": 1.4404,
+      "min_ms": 0.414,
+      "max_ms": 5.303,
+      "values_ms": [
+        0.432,
+        0.623,
+        0.43,
+        0.414,
+        5.303
+      ]
+    },
+    ":collision-detection": {
+      "samples": 5,
+      "mean_ms": 1.6286,
+      "min_ms": 0.461,
+      "max_ms": 6.002,
+      "values_ms": [
+        0.591,
+        0.584,
+        0.461,
+        0.505,
+        6.002
+      ]
+    },
+    ":fusion-promotion": {
+      "samples": 5,
+      "mean_ms": 2.3188,
+      "min_ms": 0.89,
+      "max_ms": 7.482,
+      "values_ms": [
+        1.152,
+        1.092,
+        0.89,
+        0.978,
+        7.482
+      ]
+    },
+    ":sink-formation": {
+      "samples": 5,
+      "mean_ms": 0.1012,
+      "min_ms": 0.086,
+      "max_ms": 0.109,
+      "values_ms": [
+        0.109,
+        0.108,
+        0.086,
+        0.097,
+        0.106
+      ]
+    },
+    ":disk-evolution": {
+      "samples": 5,
+      "mean_ms": 0.1694,
+      "min_ms": 0.139,
+      "max_ms": 0.191,
+      "values_ms": [
+        0.191,
+        0.181,
+        0.139,
+        0.156,
+        0.18
+      ]
+    },
+    ":mass-transfer": {
+      "samples": 5,
+      "mean_ms": 0.177,
+      "min_ms": 0.15,
+      "max_ms": 0.205,
+      "values_ms": [
+        0.205,
+        0.201,
+        0.15,
+        0.171,
+        0.158
+      ]
+    },
+    ":neighbor-cache": {
+      "samples": 5,
+      "mean_ms": 7.504,
+      "min_ms": 6.174,
+      "max_ms": 8.59,
+      "values_ms": [
+        6.174,
+        8.59,
+        7.802,
+        7.548,
+        7.406
+      ]
+    },
+    ":lod-scheduler": {
+      "samples": 5,
+      "mean_ms": 0.1104,
+      "min_ms": 0.083,
+      "max_ms": 0.149,
+      "values_ms": [
+        0.086,
+        0.149,
+        0.083,
+        0.141,
+        0.093
+      ]
+    },
+    ":magnetosphere-coupling": {
+      "samples": 5,
+      "mean_ms": 0.2736,
+      "min_ms": 0.205,
+      "max_ms": 0.377,
+      "values_ms": [
+        0.223,
+        0.344,
+        0.219,
+        0.377,
+        0.205
+      ]
+    },
+    ":ecology": {
+      "samples": 5,
+      "mean_ms": 0.005,
+      "min_ms": 0.004,
+      "max_ms": 0.008,
+      "values_ms": [
+        0.004,
+        0.008,
+        0.004,
+        0.005,
+        0.004
+      ]
+    },
+    ":debris-reaper": {
+      "samples": 5,
+      "mean_ms": 0.617,
+      "min_ms": 0.431,
+      "max_ms": 0.956,
+      "values_ms": [
+        0.476,
+        0.956,
+        0.448,
+        0.774,
+        0.431
+      ]
+    },
+    ":focus-zone": {
+      "samples": 5,
+      "mean_ms": 0.0404,
+      "min_ms": 0.032,
+      "max_ms": 0.055,
+      "values_ms": [
+        0.037,
+        0.055,
+        0.032,
+        0.042,
+        0.036
+      ]
+    },
+    ":binding": {
+      "samples": 5,
+      "mean_ms": 0.0202,
+      "min_ms": 0.017,
+      "max_ms": 0.026,
+      "values_ms": [
+        0.017,
+        0.026,
+        0.018,
+        0.019,
+        0.021
+      ]
+    },
+    ":commitment": {
+      "samples": 5,
+      "mean_ms": 0.008,
+      "min_ms": 0.006,
+      "max_ms": 0.012,
+      "values_ms": [
+        0.007,
+        0.012,
+        0.006,
+        0.008,
+        0.007
+      ]
+    },
+    ":voxel-sculpt": {
+      "samples": 5,
+      "mean_ms": 0.0032,
+      "min_ms": 0.003,
+      "max_ms": 0.004,
+      "values_ms": [
+        0.003,
+        0.004,
+        0.003,
+        0.003,
+        0.003
+      ]
+    },
+    ":voxel-carve": {
+      "samples": 5,
+      "mean_ms": 0.0032,
+      "min_ms": 0.003,
+      "max_ms": 0.004,
+      "values_ms": [
+        0.003,
+        0.004,
+        0.003,
+        0.003,
+        0.003
+      ]
+    },
+    ":voxel-focus": {
+      "samples": 5,
+      "mean_ms": 0.0034000000000000002,
+      "min_ms": 0.002,
+      "max_ms": 0.006,
+      "values_ms": [
+        0.002,
+        0.004,
+        0.002,
+        0.006,
+        0.003
+      ]
+    }
+  }
+}

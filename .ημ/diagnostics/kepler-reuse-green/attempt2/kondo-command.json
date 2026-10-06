@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "clj-kondo",
+    "--lint",
+    "src/domain/orbital/kepler.clj"
+  ],
+  "exit": 0
+}

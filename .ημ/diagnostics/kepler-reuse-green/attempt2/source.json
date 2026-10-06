@@ -1,0 +1,7 @@
+{
+  "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+  "solver_sha256": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+  "oracle_sha256": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+  "change": "Restore original bracket F; inline unchanged Newton residual and conditional derivative with shared local z/c2/c3. No negative-dt repair.",
+  "functional_load_limit": "Native hardware launch may overlap; no timing/performance inference from focused suite."
+}

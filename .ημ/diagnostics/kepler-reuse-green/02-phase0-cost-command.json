@@ -1,0 +1,16 @@
+{
+  "command": [
+    "clojure",
+    "-Sdeps",
+    "{:aliases {:kepler-evidence {:extra-paths [\"test\" \".\u03b7\u03bc/diagnostics/kepler-cost\"] :main-opts [\"-m\" \"evidence.kepler\"]}}}",
+    "-M:bench:kepler-evidence",
+    "phase0-cost",
+    ".\u03b7\u03bc/diagnostics/kepler-reuse-green/after-phase0.edn"
+  ],
+  "exit": 0,
+  "pid": 3969971,
+  "start_utc": "2026-10-06T22:59:45.366255+00:00",
+  "end_utc": "2026-10-06T23:00:44.188763+00:00",
+  "wall_seconds": 58.82251504600572,
+  "JAVA_OPTS": "-Xms256m -Xmx2g"
+}

@@ -129,13 +129,20 @@
         sqmu (math/sqrt mu)
         target (* sqmu dt)
         s (math/signum target)
-        F (fn [chi]
-            (let [z (* alpha chi chi)
-                  [c2 c3] (stumpff z)]
-              (- (+ (* chi chi chi c3)
-                    (* (/ rv sqmu) chi chi c2)
-                    (* r0n chi (- 1.0 (* z c3))))
-                 target)))
+        F (fn residual
+            ([chi]
+             (let [z (* alpha chi chi)
+                   [c2 c3] (stumpff z)]
+               (residual chi z c2 c3)))
+            ([chi z c2 c3]
+             (- (+ (* chi chi chi c3)
+                   (* (/ rv sqmu) chi chi c2)
+                   (* r0n chi (- 1.0 (* z c3))))
+                target)))
+        dF (fn [chi z c2 c3]
+             (+ (* chi chi c2)
+                (* (/ rv sqmu) chi (- 1.0 (* z c3)))
+                (* r0n (- 1.0 (* z c2)))))
         chi0 (cond
                (> alpha 1.0e-12) (* sqmu dt alpha)
                (< alpha -1.0e-12)
@@ -171,10 +178,7 @@
         ;; Share only this chi's terms; the derivative remains conditional.
         (let [z (* alpha chi chi)
               [c2 c3] (stumpff z)
-              fchi (- (+ (* chi chi chi c3)
-                         (* (/ rv sqmu) chi chi c2)
-                         (* r0n chi (- 1.0 (* z c3))))
-                      target)]
+              fchi (F chi z c2 c3)]
           (cond
             (<= (abs fchi) (* 1.0e-10 (+ 1.0 (abs target)))) chi
             (>= i 128)
@@ -185,10 +189,7 @@
             (let [[lo' hi'] (if (pos? (* s fchi))
                               (if (pos? s) [lo chi] [chi hi])
                               (if (pos? s) [chi hi] [lo chi]))
-                  dfchi (+ (* chi chi c2)
-                           (* (/ rv sqmu) chi (- 1.0 (* z c3)))
-                           (* r0n (- 1.0 (* z c2))))
-                  newton (- chi (/ fchi dfchi))
+                  newton (- chi (/ fchi (dF chi z c2 c3)))
                   chi' (if (and (> newton (min lo' hi')) (< newton (max lo' hi')))
                          newton
                          (* 0.5 (+ lo' hi')))]

@@ -1,0 +1,25 @@
+--- a/test/domain/orbital/kepler_workload.clj
++++ b/test/domain/orbital/kepler_workload.clj
+@@ -158,7 +158,7 @@
+   "Advance the real compact workload; retain each frozen/published world."
+   [path scenario]
+   (vec (take (inc compact-steps) (iterate (partial compact-step path)
+-                                         (compact-world scenario)))))
++                                          (compact-world scenario)))))
+ 
+ (defn compact-observation
+   "Capture all component columns and IDs; transient runtime caches are not EDN."
+--- a/test/domain/orbital/kepler_reuse_test.clj
++++ b/test/domain/orbital/kepler_reuse_test.clj
+@@ -53,7 +53,7 @@
+     (testing (name id)
+       (let [forward (kepler/propagate mu r v dt)
+             backward (kepler/propagate mu (:position forward)
+-                                         (sp/v* (:velocity forward) -1.0) dt)]
++                                       (sp/v* (:velocity forward) -1.0) dt)]
+         (is (< (/ (sp/dist (:position backward) r) (sp/len r)) 1.0e-7))
+         (is (< (/ (sp/dist (:velocity backward) (sp/v* v -1.0)) (sp/len v)) 1.0e-7))))))
+ 
+test/domain/orbital/kepler_workload.clj has incorrect formatting
+test/domain/orbital/kepler_reuse_test.clj has incorrect formatting
+2 file(s) formatted incorrectly

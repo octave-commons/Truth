@@ -386,3 +386,12 @@
   spore: none
   receipt-refs: perf-tick-residual-gap-to-60fps,2026-10-06T22:51:53.914533Z
   note: Preserve an existing numerical defect as an explicit outcome when the admitted slice promises identity. Verify real compact dominance so fallback cannot masquerade as solver coverage. Strict EDN readback correctly rejected a metrics record; encode only its named type plus every field, keep the failed attempt, and do not relax the physics oracle. Named isolated system costs and mature-orbit work do not establish initial-nebula critical path or native FPS. No spore created or promoted.
+- ts: 2026-10-06T23:45:30.239162Z
+  session: /home/err/spaces/foresight/.worktrees/truth-kepler-cost
+  task: Qualify same-iteration Kepler reuse without laundering mixed performance results
+  p-efficiency: 0.83
+  p-friction: 0.42
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,a96dfd7346ba9e052488da85d45df285319317a7,2026-10-06T23:45:30.239162Z
+  note: Fewer transcendental evaluations can still allocate more when primitive locals cross boxed function boundaries. Measure branches and actual compact folds, preserve the failed candidate, and use one reverse pair to resolve the claim. Repeated allocated-byte reductions justify an allocation-only conclusion when timing intervals overlap and compact/CPU directions vary. Keep source-pinned fixtures immutable; record formatting-only test hash changes separately. No new spore or promotion.
