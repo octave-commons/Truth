@@ -1,0 +1,137 @@
+
+Running tests in #{"test"}
+
+Testing infra.dev.focus-cadence-test
+
+FAIL in (held-or-error-paused-ticks-still-prepare-attention-without-motion) (focus_cadence_test.clj:185)
+expected: (= (sp/v+ (player/observer-position world) offset) (focus-position (last published)))
+  actual: (not (= [8.975872242E10 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (held-or-error-paused-ticks-still-prepare-attention-without-motion) (focus_cadence_test.clj:185)
+expected: (= (sp/v+ (player/observer-position world) offset) (focus-position (last published)))
+  actual: (not (= [8.975872242E10 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (current-mode-resolves-queued-camera-focus) (focus_cadence_test.clj:159)
+current manual mode wins after an already queued tracking-frame intent
+expected: (= (player/observer-position (second inputs)) (focus-position (second inputs)))
+  actual: (not (= [3.7399467675E11 0.0 0.0] [8.0E15 0.0 0.0]))
+
+FAIL in (current-offset-follows-drained-input-without-resetting-focus-shape) (focus_cadence_test.clj:137)
+updated host offset lands without needing another render frame
+expected: (= (sp/v+ (player/observer-position input) offset) (focus-position input))
+  actual: (not (= [3.8895446382E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (current-offset-follows-drained-input-without-resetting-focus-shape) (focus_cadence_test.clj:137)
+updated host offset lands without needing another render frame
+expected: (= (sp/v+ (player/observer-position input) offset) (focus-position input))
+  actual: (not (= [6.8815020522E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (attention-failure-is-contained-without-losing-drained-changes) (focus_cadence_test.clj:201)
+the failed update remains visible
+expected: (re-find #"focus failure probe" errors)
+  actual: (not (re-find #"focus failure probe" ""))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:104)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+each frozen consumer snapshot uses the current Spark position
+expected: (= (player/observer-position input) (focus-position input))
+  actual: (not (= [3.7399467675E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:106)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+expected: (narrowing/focus-overlap? (focus-position input) (ecs/get-component input planet c/position) law/world-focus-radius)
+  actual: (not (narrowing/focus-overlap? [7.479893535E10 0.0 0.0] [2.991957414E11 0.0 0.0] 1.495978707E11))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:104)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+each frozen consumer snapshot uses the current Spark position
+expected: (= (player/observer-position input) (focus-position input))
+  actual: (not (= [6.7319041815E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:106)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+expected: (narrowing/focus-overlap? (focus-position input) (ecs/get-component input planet c/position) law/world-focus-radius)
+  actual: (not (narrowing/focus-overlap? [7.479893535E10 0.0 0.0] [5.983914828E11 0.0 0.0] 1.495978707E11))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:104)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+each frozen consumer snapshot uses the current Spark position
+expected: (= (player/observer-position input) (focus-position input))
+  actual: (not (= [9.7238615955E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:106)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+expected: (narrowing/focus-overlap? (focus-position input) (ecs/get-component input planet c/position) law/world-focus-radius)
+  actual: (not (narrowing/focus-overlap? [7.479893535E10 0.0 0.0] [8.975872242E11 0.0 0.0] 1.495978707E11))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:110)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+binding accrues every actual tick, observed [0.02 0.018000000000000002 0.016 0.014]
+expected: (< (abs (- (* n law/accrual-rate) depth)) 1.0E-12)
+  actual: (not (< 0.022 1.0E-12))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:110)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+binding accrues every actual tick, observed [0.02 0.018000000000000002 0.016 0.014]
+expected: (< (abs (- (* n law/accrual-rate) depth)) 1.0E-12)
+  actual: (not (< 0.044 1.0E-12))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:110)
+co-moving bodies, per-fold frame translation [0.0 0.0 0.0]
+binding accrues every actual tick, observed [0.02 0.018000000000000002 0.016 0.014]
+expected: (< (abs (- (* n law/accrual-rate) depth)) 1.0E-12)
+  actual: (not (< 0.066 1.0E-12))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:104)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+each frozen consumer snapshot uses the current Spark position
+expected: (= (player/observer-position input) (focus-position input))
+  actual: (not (= [3.36595209075E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:106)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+expected: (narrowing/focus-overlap? (focus-position input) (ecs/get-component input planet c/position) law/world-focus-radius)
+  actual: (not (narrowing/focus-overlap? [7.479893535E10 0.0 0.0] [2.61796273725E11 0.0 0.0] 1.495978707E11))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:104)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+each frozen consumer snapshot uses the current Spark position
+expected: (= (player/observer-position input) (focus-position input))
+  actual: (not (= [5.983914828E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:106)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+expected: (narrowing/focus-overlap? (focus-position input) (ecs/get-component input planet c/position) law/world-focus-radius)
+  actual: (not (narrowing/focus-overlap? [7.479893535E10 0.0 0.0] [5.2359254745E11 0.0 0.0] 1.495978707E11))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:104)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+each frozen consumer snapshot uses the current Spark position
+expected: (= (player/observer-position input) (focus-position input))
+  actual: (not (= [8.60187756525E11 0.0 0.0] [7.479893535E10 0.0 0.0]))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:106)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+expected: (narrowing/focus-overlap? (focus-position input) (ecs/get-component input planet c/position) law/world-focus-radius)
+  actual: (not (narrowing/focus-overlap? [7.479893535E10 0.0 0.0] [7.85388821175E11 0.0 0.0] 1.495978707E11))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:110)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+binding accrues every actual tick, observed [0.02 0.018000000000000002 0.016 0.014]
+expected: (< (abs (- (* n law/accrual-rate) depth)) 1.0E-12)
+  actual: (not (< 0.022 1.0E-12))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:110)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+binding accrues every actual tick, observed [0.02 0.018000000000000002 0.016 0.014]
+expected: (< (abs (- (* n law/accrual-rate) depth)) 1.0E-12)
+  actual: (not (< 0.044 1.0E-12))
+
+FAIL in (no-render-flight-keeps-binding-consumers-aligned) (focus_cadence_test.clj:110)
+co-moving bodies, per-fold frame translation [3.7399467675E10 0.0 0.0]
+binding accrues every actual tick, observed [0.02 0.018000000000000002 0.016 0.014]
+expected: (< (abs (- (* n law/accrual-rate) depth)) 1.0E-12)
+  actual: (not (< 0.066 1.0E-12))
+
+Ran 6 tests containing 70 assertions.
+24 failures, 0 errors.

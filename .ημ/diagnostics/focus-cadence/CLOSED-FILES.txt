@@ -1,0 +1,12 @@
+red-board-comment.json
+red-end.json
+red-start.json
+red-static-1.log
+red-static-2.log
+red-static-3.log
+red-static-4.log
+red-static.json
+red-verdict.md
+red.log
+CLOSED-FILES.txt
+SHA256SUMS
