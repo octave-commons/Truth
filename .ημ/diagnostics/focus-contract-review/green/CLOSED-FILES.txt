@@ -1,0 +1,13 @@
+CLOSED-FILES.txt
+SHA256SUMS
+VERDICT.md
+board-comment.json
+command.json
+diff-check.log
+docstring-followup.json
+final-source.diff
+focused.log
+kondo.log
+result.json
+source.diff
+static.json

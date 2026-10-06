@@ -1,0 +1,71 @@
+diff --git a/docs/designs/spark-flight-and-camera.md b/docs/designs/spark-flight-and-camera.md
+index 122722b..1e6e98b 100644
+--- a/docs/designs/spark-flight-and-camera.md
++++ b/docs/designs/spark-flight-and-camera.md
+@@ -330,6 +330,14 @@ guard: a failed update is dropped, preserving prior changes and loop operation.
+ Attention is prepared on held/error-paused iterations too, without physical
+ advancement.
+ 
++The host offset crosses the named Malli `law.narrowing/focus-offset?` boundary
++inside that guard before `player/focus-follow`: exactly three finite numeric
++coordinates, retaining list/vector support and the absent-key zero default.
++An explicit nil, malformed shape or nonfinite coordinate is rejected visibly;
++the drained world survives unchanged, without clamping the host setting.
++The [boundary RED](../../.ημ/diagnostics/focus-contract-review/red/VERDICT.md)
++records nonfinite attention corruption that the exception guard alone missed.
++
+ Grounding: the actual host-loop regression uses the production integrator and
+ binding system with co-moving bodies half an AU apart. Render-only follow made
+ binding decay after the first tick under both zero and nonzero frame shifts;
+diff --git a/src/infra/dev/window/loop.clj b/src/infra/dev/window/loop.clj
+index 5468cc1..aeac801 100644
+--- a/src/infra/dev/window/loop.clj
++++ b/src/infra/dev/window/loop.clj
+@@ -26,7 +26,8 @@
+    [infra.render.shader :as sh]
+    [infra.render.units :as units]
+    [infra.menu :as menu]
+-   [infra.camera :as cam])
++   [infra.camera :as cam]
++   [law.narrowing :as narrowing])
+   (:import
+    (org.lwjgl.glfw GLFW)
+    (org.lwjgl.opengl GL11 GL15 GL30)))
+@@ -134,7 +135,11 @@
+               cfg @config-atom
+               w0  (cond-> (drain-intents @world-atom intent-queue)
+                     (= :manual (:mode cfg :manual))
+-                    (apply-intent #(player/focus-follow % (:focus-offset cfg [0.0 0.0 0.0]))))
++                    (apply-intent #(let [offset (:focus-offset cfg [0.0 0.0 0.0])]
++                                     (when-not (narrowing/focus-offset? offset)
++                                       (throw (ex-info "Invalid focus-offset: expected three finite coordinates"
++                                                       {:focus-offset offset})))
++                                     (player/focus-follow % offset))))
+               w1  (if (:ui/error-state cfg)
+                     w0
+                     (let [tick-fn (:tick-fn cfg default-tick-fn)
+diff --git a/src/law/narrowing.clj b/src/law/narrowing.clj
+index cb92162..c6b5df3 100644
+--- a/src/law/narrowing.clj
++++ b/src/law/narrowing.clj
+@@ -5,10 +5,20 @@
+    docs/designs/the-first-narrowing-star-to-planet.md §2)."
+   (:require
+    [malli.core :as m]
++   [law.field.schema :as field]
+    [law.stellar :as law-stellar]))
+ 
+ ;; --- Schemas ----------------------------------------------------------------
+ 
++(def focus-offset-schema
++  "Three finite world-metre coordinates supplied by the host for manual focus.
++   Retains the existing finite-vector contract's list and vector support."
++  [:fn field/finite-vec3?])
++
++(def focus-offset?
++  "Compiled Malli validator for the host-to-domain manual focus boundary."
++  (m/validator focus-offset-schema))
++
+ (def binding-schema
+   "The `c/binding` component on the observer entity: a map from candidate-world
+    entity id (int) to binding strength in [0,1]. 0 = no coupling, 1 = capture."

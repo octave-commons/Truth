@@ -395,3 +395,21 @@
   spore: none
   receipt-refs: perf-tick-residual-gap-to-60fps,a96dfd7346ba9e052488da85d45df285319317a7,2026-10-06T23:45:30.239162Z
   note: Fewer transcendental evaluations can still allocate more when primitive locals cross boxed function boundaries. Measure branches and actual compact folds, preserve the failed candidate, and use one reverse pair to resolve the claim. Repeated allocated-byte reductions justify an allocation-only conclusion when timing intervals overlap and compact/CPU directions vary. Keep source-pinned fixtures immutable; record formatting-only test hash changes separately. No new spore or promotion.
+- ts: 2026-10-06T23:32:01.867863432Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-contract-review
+  task: Draft real boundary regressions for the reviewed host focus-offset contract
+  p-efficiency: 0.92
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,review5435441692
+  note: An existing catch guard does not validate data: extra coordinates and NaN can enter pure focus logic without throwing. Exercise the actual serial host boundary and preserve queued state, then test recovery; avoid substituting a missing-symbol-only RED. Keep historical card evidence intact and append an explicit current-contract supersession through Rheos. No new spore warranted.
+- ts: 2026-10-06T23:46:41.986746938Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-contract-review
+  task: Close named focus-offset boundary repair with source-bound RED/GREEN evidence
+  p-efficiency: 0.96
+  p-friction: 0.08
+  p-skill-candidate: 0.1
+  spore: none
+  receipt-refs: focus-follows-pilot,2b30e5055bc793e4c9152425356f535ba3e5d2f6
+  note: Reuse the existing finite-vector predicate behind a named compiled Malli law, and invoke it before the domain call inside established containment. Real boundary tests catch silent NaN and extra-coordinate acceptance that exception tests miss. Record a post-test docstring correction separately, then bind full qualification to final source. Existing skills suffice; no new spore.

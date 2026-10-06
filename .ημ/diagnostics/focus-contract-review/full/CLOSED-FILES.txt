@@ -1,0 +1,9 @@
+CLOSED-FILES.txt
+SHA256SUMS
+VERDICT.md
+attempt1/strict-command.json
+attempt1/strict-result.json
+attempt1/strict.log
+attempt1/tests-command.json
+attempt1/tests-result.json
+attempt1/tests.log

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-contract-review",
+  "red_head": "2b30e5055bc793e4c9152425356f535ba3e5d2f6",
+  "files_sha256": {
+    "src/law/narrowing.clj": "e7e503e7197b37774babda62cf59c93f49e168221eb64f9491c434b26a47749b",
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "test/infra/dev/focus_cadence_test.clj": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1",
+    "docs/designs/spark-flight-and-camera.md": "99d877d0533904eaac51750543c505f97b17740c5f4a920ca82ca41ee4049499"
+  },
+  "started_at": "2026-10-06T23:42:13.990888+00:00",
+  "environment": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "resource_scope": "Root-authorized correctness qualification; concurrent Kepler qualification and retained hardware service allowed; no isolated performance claim.",
+  "pid": 14391
+}

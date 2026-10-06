@@ -330,6 +330,14 @@ guard: a failed update is dropped, preserving prior changes and loop operation.
 Attention is prepared on held/error-paused iterations too, without physical
 advancement.
 
+The host offset crosses the named Malli `law.narrowing/focus-offset?` boundary
+inside that guard before `player/focus-follow`: exactly three finite numeric
+coordinates, retaining list/vector support and the absent-key zero default.
+An explicit nil, malformed shape or nonfinite coordinate is rejected visibly;
+the drained world survives unchanged, without clamping the host setting.
+The [boundary RED](../../.ημ/diagnostics/focus-contract-review/red/VERDICT.md)
+records nonfinite attention corruption that the exception guard alone missed.
+
 Grounding: the actual host-loop regression uses the production integrator and
 binding system with co-moving bodies half an AU apart. Render-only follow made
 binding decay after the first tick under both zero and nonzero frame shifts;

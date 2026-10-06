@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-10-06T23:40:53.263043+00:00",
+  "reason": "Root requested AGENTS public docstring paragraph separation after the focused run closed.",
+  "scope": "One blank line in focus-offset-schema docstring only; exact reverse transformation reproduces tested source hash.",
+  "tested_sha256": "32d1ee5119f0d4be053204fb40128d530d21e6eb17e7e19dc4488cc0029f0a30",
+  "final_sha256": "e7e503e7197b37774babda62cf59c93f49e168221eb64f9491c434b26a47749b",
+  "all_other_recorded_files_unchanged": true
+}
