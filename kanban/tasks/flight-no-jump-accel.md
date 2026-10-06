@@ -1,13 +1,14 @@
 ---
-uuid: "flight-no-jump-accel"
-title: "Minimal no-jump flight: replace the position-teleport with acceleration-based movement"
-status: "review"
-priority: "P1"
-labels: ["domain", "infra", "physics", "player", "spark", "spark-flight"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/flight-no-jump-accel.md"
 category: "specs"
-estimate: 3
+labels: ["domain", "infra", "physics", "player", "spark", "spark-flight"]
+write-id: "1791315402092-0.69bjpv8t3kqbwv46rog"
+source: "kanban/tasks/flight-no-jump-accel.md"
+title: "Minimal no-jump flight: replace the position-teleport with acceleration-based movement"
+priority: "P1"
+status: "in_progress"
+estimate: "3"
+uuid: "flight-no-jump-accel"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Minimal no-jump flight
@@ -89,3 +90,7 @@ Fixed: displacement-targeted sizing — terminal v·dt = D (3e14 m/tick,
 Live verify (thrust-direction override through the real wiring): 96% of
 expected v_term, disp/tick ≈ 0.7·D mid-ramp, coast 29,466→1,276 m/s in
 3 s after release, mode-exit clear works.
+
+---
+Reopen existing estimate3 smooth-approach acceptance for the reproduced precision-range defect. Accepted flight design docs/designs/spark-flight-and-camera.md section3.5 now grounds Cruise/Fine sizing in docs/notes/2026-10-06-manual-flight-precision-boundary.md and its production Jacobi probe. Root and independent board_scout reviewed the scoped amendment with no blocking findings. Existing minimum D1e12 gives6.68459AU settled single-input pulse versus1AU binding radius. Scope: preserve defaultCruise3e14 and maximum1e16; expose Fine1e7 through existing Spark setting/intent, lower stepper floor, preserve momentum and all physics ownership. Correct misleading retention/wall60Hz docs. RED must discover actual panel actions and exercise real thrust/integrator with lag, pulse/coast, exposedretention.8/.97/.999, multiple fixed dt and characterized dtchange; justify long .999 settling tail. No local-frame assistance, capture controller or new binding law. Native moving-target commitment/sculpt stays separately unverified. Existing design body link remains authoritative; canonical frontmatter CLI refused adding descriptive design key (exit1 keys not allowed), an upstream authoring gap to record, not permission for a local board writer.
+---
