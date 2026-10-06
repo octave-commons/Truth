@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "render", "spark-flight"]
-write-id: "1791320218651-0.e3v9k5z3l94n01oc5a2"
+write-id: "1791321952119-0.377ud2d9xiqf6jalm17"
 source: "kanban/tasks/body-trails-ringbuffer.md"
 title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
 priority: "P2"
@@ -75,4 +75,6 @@ Closed evidence: .ημ/diagnostics/body-trails/native-gl-line/red-verdict.md, re
 The native line-pass defect is GREEN above RED checkpoint923fd6d: the only production change is explicit GL11/glLineWidth1.0 with a context-restriction comment. Context selection, real shader/alpha/mesh/draw path and cleanup are unchanged. The same private-Xvfb regression passes1 test/9 assertions with zero failures/errors and actual pixels for both legacy and fading lines. Focused passes/shader/trail tests pass17 tests/72 assertions. A requested nonexistent mesh-test namespace was not selected and is not counted; real line packing is covered in trail-test. Changed-source/native fmt, Splint and kondo are clean; independent source review found no blocker. All owned JVMs reaped.
 
 Evidence is .ημ/diagnostics/body-trails/native-gl-line/green-verdict.md plus complete green-native/green-focused logs/start/end metadata and green-static.json. Separate GREEN-CLOSED-FILES.txt and GREEN-SHA256SUMS preserve the earlier RED manifest unchanged. Root owns final source commit/full strict gate. This repairs the confirmed preexisting native GL error, not the entire gameplay acceptance; active ordinary-world source reload and visible fading/readability remain separately observed by its owner. Card stays in_progress.
+
+Planning follow-up: Incoming3-point child UUID3a501e16-f8fe-41a3-bdd1-760e503dd84d proposes an ordinary View magnetic-visibility control (fresh-window Off), covering both dipole loops and short star/protostar vectors. Design docs/designs/magnetic-field-visibility.md links native pixels/source grounding at docs/notes/2026-10-06-magnetic-visibility-evidence.md; frozen media remains at607c4361032816ecb0fafd57f8c77946eea7d898. This child addresses an observed obstruction to star/planet trail readability without changing trail history/alpha, physics, camera or selection. HUD layout and quiet telemetry retain existing flight-hud-and-cues child ownership. Parent stays in_progress and visual fading acceptance remains open; child stays Incoming for planning review, not implementation.
 ---
