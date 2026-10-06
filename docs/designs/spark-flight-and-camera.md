@@ -311,18 +311,47 @@ different group — flagged as a rebindable default, not a hard choice.
 
 ### 7.5 The linchpin — focus must follow the pilot
 
-The single reason "I can't fly to a planet and see voxels" is real: the whole
-resolve pipeline (binding accrual → commitment → voxel band render) keys off the
-**focus point**, and focus only auto-tracks a target in **non-manual** camera
-modes (`sync-observer-focus-to-camera`, `src/infra/dev/window/loop.clj:128-140`).
-The moment you take manual control to fly, focus stops following, and hand-aiming
-it with arrows is ~20,000× too coarse (3e15 m/press vs a ~1-AU focus radius,
-`src/law/narrowing.clj`). So today you can *fly* or *resolve*, never both.
+The resolve pipeline (binding accrual → commitment → voxel band render) reads
+the **focus point**. The accepted manual law is position-only:
+`:focus-position = Spark c/position + persistent :focus-offset`. Arrows adjust
+the offset by 0.1 AU per press; comma/period adjust radius and intensity.
+Tracking modes retain `sync-observer-focus-to-camera` and its camera target.
+Neither attention path writes physical position or velocity.
 
-**Fix:** while manually piloting, drive `:focus-position` from the mote (its
-position, or its aim/velocity heading) so flying up to a planet accrues binding
-and lets abilities land on it — no drop to a debug view. This is `focus-follows-
-pilot`, Wave 0 below, and it is what makes the voxel payoff reachable while flying.
+**Serial cadence (2026-10-06 correction):** the simulation thread drains queued
+input, then applies the manual law using that iteration's host mode and offset,
+before the frozen simulation fold. Render frames no longer enqueue manual
+focus-follow. This makes binding and other snapshot consumers read attention
+and physical bodies from the same state even when several simulation ticks run
+between frames. Manual preparation wins over an already queued tracking-focus
+intent when the current mode is manual. Queued radius/intensity changes survive.
+Both drained input and attention preparation use the same Throwable/map-result
+guard: a failed update is dropped, preserving prior changes and loop operation.
+Attention is prepared on held/error-paused iterations too, without physical
+advancement.
+
+The host offset crosses the named Malli `law.narrowing/focus-offset?` boundary
+inside that guard before `player/focus-follow`: exactly three finite numeric
+coordinates, retaining list/vector support and the absent-key zero default.
+An explicit nil, malformed shape or nonfinite coordinate is rejected visibly;
+the drained world survives unchanged, without clamping the host setting.
+The [boundary RED](../../.ημ/diagnostics/focus-contract-review/red/VERDICT.md)
+records nonfinite attention corruption that the exception guard alone missed.
+
+Grounding: the actual host-loop regression uses the production integrator and
+binding system with co-moving bodies half an AU apart. Render-only follow made
+binding decay after the first tick under both zero and nonzero frame shifts;
+see [observed RED](../../.ημ/diagnostics/focus-cadence/red-verdict.md) and
+`test/infra/dev/focus_cadence_test.clj`. The underlying law and gameplay acceptance
+remain on `focus-follows-pilot`, Wave 0.
+
+**Boundary:** preparation aligns pre-fold consumers. The subsequently published
+focus still represents the pre-fold position, while the integrator has moved
+and recentered physical bodies. This correction does not predict/recenter that
+published attention, recalculate sculpt anchors already created during input
+drain, or change action positions captured by the renderer. Natural manual
+fly-bind-commit-voxel and paid sculpt acceptance remain open until demonstrated
+through ordinary controls.
 
 ## 8. North star & roadmap
 

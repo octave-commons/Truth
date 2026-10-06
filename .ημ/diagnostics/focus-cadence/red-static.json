@@ -1,0 +1,54 @@
+{
+  "JAVA_OPTS": "-Xms128m -Xmx1g",
+  "results": [
+    {
+      "command": [
+        "clj-kondo",
+        "--lint",
+        "test/infra/dev/focus_cadence_test.clj"
+      ],
+      "start_utc": "2026-10-06T21:17:42.840129+00:00",
+      "end_utc": "2026-10-06T21:17:42.973236+00:00",
+      "elapsed_seconds": 0.13311583699760376,
+      "exit_code": 0,
+      "log": "red-static-1.log"
+    },
+    {
+      "command": [
+        "clojure",
+        "-M:cljfmt",
+        "check",
+        "test/infra/dev/focus_cadence_test.clj"
+      ],
+      "start_utc": "2026-10-06T21:17:42.973276+00:00",
+      "end_utc": "2026-10-06T21:17:57.205899+00:00",
+      "elapsed_seconds": 14.23264456799734,
+      "exit_code": 0,
+      "log": "red-static-2.log"
+    },
+    {
+      "command": [
+        "clojure",
+        "-M:splint",
+        "test/infra/dev/focus_cadence_test.clj"
+      ],
+      "start_utc": "2026-10-06T21:17:57.205933+00:00",
+      "end_utc": "2026-10-06T21:18:27.912053+00:00",
+      "elapsed_seconds": 30.7062017749995,
+      "exit_code": 0,
+      "log": "red-static-3.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "start_utc": "2026-10-06T21:18:27.912168+00:00",
+      "end_utc": "2026-10-06T21:18:28.018726+00:00",
+      "elapsed_seconds": 0.10655895299714757,
+      "exit_code": 0,
+      "log": "red-static-4.log"
+    }
+  ]
+}

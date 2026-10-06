@@ -1,0 +1,164 @@
+diff --git a/docs/designs/spark-flight-and-camera.md b/docs/designs/spark-flight-and-camera.md
+index 21ce78b..122722b 100644
+--- a/docs/designs/spark-flight-and-camera.md
++++ b/docs/designs/spark-flight-and-camera.md
+@@ -311,18 +311,39 @@ different group — flagged as a rebindable default, not a hard choice.
+ 
+ ### 7.5 The linchpin — focus must follow the pilot
+ 
+-The single reason "I can't fly to a planet and see voxels" is real: the whole
+-resolve pipeline (binding accrual → commitment → voxel band render) keys off the
+-**focus point**, and focus only auto-tracks a target in **non-manual** camera
+-modes (`sync-observer-focus-to-camera`, `src/infra/dev/window/loop.clj:128-140`).
+-The moment you take manual control to fly, focus stops following, and hand-aiming
+-it with arrows is ~20,000× too coarse (3e15 m/press vs a ~1-AU focus radius,
+-`src/law/narrowing.clj`). So today you can *fly* or *resolve*, never both.
+-
+-**Fix:** while manually piloting, drive `:focus-position` from the mote (its
+-position, or its aim/velocity heading) so flying up to a planet accrues binding
+-and lets abilities land on it — no drop to a debug view. This is `focus-follows-
+-pilot`, Wave 0 below, and it is what makes the voxel payoff reachable while flying.
++The resolve pipeline (binding accrual → commitment → voxel band render) reads
++the **focus point**. The accepted manual law is position-only:
++`:focus-position = Spark c/position + persistent :focus-offset`. Arrows adjust
++the offset by 0.1 AU per press; comma/period adjust radius and intensity.
++Tracking modes retain `sync-observer-focus-to-camera` and its camera target.
++Neither attention path writes physical position or velocity.
++
++**Serial cadence (2026-10-06 correction):** the simulation thread drains queued
++input, then applies the manual law using that iteration's host mode and offset,
++before the frozen simulation fold. Render frames no longer enqueue manual
++focus-follow. This makes binding and other snapshot consumers read attention
++and physical bodies from the same state even when several simulation ticks run
++between frames. Manual preparation wins over an already queued tracking-focus
++intent when the current mode is manual. Queued radius/intensity changes survive.
++Both drained input and attention preparation use the same Throwable/map-result
++guard: a failed update is dropped, preserving prior changes and loop operation.
++Attention is prepared on held/error-paused iterations too, without physical
++advancement.
++
++Grounding: the actual host-loop regression uses the production integrator and
++binding system with co-moving bodies half an AU apart. Render-only follow made
++binding decay after the first tick under both zero and nonzero frame shifts;
++see [observed RED](../../.ημ/diagnostics/focus-cadence/red-verdict.md) and
++`test/infra/dev/focus_cadence_test.clj`. The underlying law and gameplay acceptance
++remain on `focus-follows-pilot`, Wave 0.
++
++**Boundary:** preparation aligns pre-fold consumers. The subsequently published
++focus still represents the pre-fold position, while the integrator has moved
++and recentered physical bodies. This correction does not predict/recenter that
++published attention, recalculate sculpt anchors already created during input
++drain, or change action positions captured by the renderer. Natural manual
++fly-bind-commit-voxel and paid sculpt acceptance remain open until demonstrated
++through ordinary controls.
+ 
+ ## 8. North star & roadmap
+ 
+diff --git a/src/domain/player/focus.clj b/src/domain/player/focus.clj
+index d2a905b..9b34682 100644
+--- a/src/domain/player/focus.clj
++++ b/src/domain/player/focus.clj
+@@ -28,12 +28,15 @@
+    Resolution order vs manual arrow nudges: there is NO competing writer
+    — a nudge edits the offset, not the position, so auto-follow and the
+    nudge commute and the nudge always lands (`:focus-position` keeps a
+-   single writer per mode: this intent in :manual, the camera-target
++   single writer per mode: sim-thread preparation in :manual, the camera-target
+    sync in tracking modes).
+ 
+-   Pure world → world', applied serially pre-tick through the intent
+-   queue. Never touches the spark's physical columns: reads `c/position`,
+-   writes only the `c/observer` attention map."
++   Pure world → world', applied serially after input drain and before each
++   simulation fold, even when no render frame runs. This aligns frozen
++   consumers; published focus still precedes that fold's physical movement.
++   Already captured action anchors are not recalculated here. Never touches
++   the spark's physical columns: reads `c/position`, writes only the
++   `c/observer` attention map."
+   [world offset]
+   (if-let [obs (state/get-observer world)]
+     (if-let [pos (state/observer-position world)]
+diff --git a/src/infra/dev/window/loop.clj b/src/infra/dev/window/loop.clj
+index 13d7f03..5468cc1 100644
+--- a/src/infra/dev/window/loop.clj
++++ b/src/infra/dev/window/loop.clj
+@@ -47,19 +47,24 @@
+ ;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
+ ;; namespace's header.
+ #_{:splint/disable [lint/catch-throwable]}
++(defn- apply-intent
++  "Apply one serial world update; log a failure and retain the previous world.
++   Non-map results are dropped, preserving the intent queue's existing guard."
++  [w f]
++  (try
++    (let [w' (f w)]
++      (if (map? w') w' w))
++    (catch Throwable t
++      (binding [*out* *err*]
++        (println "[INTENT ERROR]" (.getMessage t)))
++      w)))
++
+ (defn- drain-intents
+-  "Apply every queued intent to `w`, in arrival order.  An intent that throws or
+-   returns a non-map is dropped (logged) rather than corrupting the world."
++  "Apply every queued intent in arrival order through the serial update guard."
+   [w ^java.util.concurrent.ConcurrentLinkedQueue queue]
+   (loop [w w]
+     (if-let [f (.poll queue)]
+-      (recur (try
+-               (let [w' (f w)]
+-                 (if (map? w') w' w))
+-               (catch Throwable t
+-                 (binding [*out* *err*]
+-                   (println "[INTENT ERROR]" (.getMessage t)))
+-                 w)))
++      (recur (apply-intent w f))
+       w)))
+ 
+ (defn delete-mesh
+@@ -118,14 +123,18 @@
+ ;; namespace's header.
+ #_{:splint/disable [lint/catch-throwable]}
+ (defn sim-loop
+-  "The dedicated simulation thread: drain intents → tick → publish → pace."
++  "The simulation thread: drain intents → prepare attention → tick → publish.
++   Manual attention uses the current physical snapshot on every iteration,
++   independently of render cadence; the integrator still owns physical motion."
+   [{:keys [world-atom intent-queue config-atom stop-atom service-state]}]
+   (let [period-ns 16666667]
+     (loop [iter (long 0)]
+       (when-not @stop-atom
+         (let [t0  (System/nanoTime)
+               cfg @config-atom
+-              w0  (drain-intents @world-atom intent-queue)
++              w0  (cond-> (drain-intents @world-atom intent-queue)
++                    (= :manual (:mode cfg :manual))
++                    (apply-intent #(player/focus-follow % (:focus-offset cfg [0.0 0.0 0.0]))))
+               w1  (if (:ui/error-state cfg)
+                     w0
+                     (let [tick-fn (:tick-fn cfg default-tick-fn)
+@@ -162,7 +171,7 @@
+    the single source of truth, advanced by the integrator (gravity) and by
+    the `c/accel-thrust` influence channel (manual flight, card
+    flight-no-jump-accel) — camera modes follow the body, they do not puppet
+-   it. In `:manual` mode the focus-follow intent (card focus-follows-pilot)
++   it. In `:manual` mode the sim thread's attention preparation (focus-follows-pilot)
+    pins `:focus-position` to the mote instead; only in tracking modes does
+    `:focus-position` (a pure attention point) ride the camera target."
+   [world camera ctx mode]
+@@ -323,14 +332,7 @@
+                           ;; c/position/c/velocity. The drift position
+                           ;; teleport is gone; there is no second writer.
+                           (swap! world-atom player/set-thrust
+-                                 (cam/thrust-direction @camera-atom drive-input))
+-                          ;; focus-follows-pilot (design §7.5): in manual mode
+-                          ;; the attention focus rides the mote — c/position
+-                          ;; plus the player's persistent arrow-nudge
+-                          ;; :focus-offset — so flying up to a planet accrues
+-                          ;; binding without dropping to a debug view.
+-                          (swap! world-atom player/focus-follow
+-                                 (:focus-offset cfg [0.0 0.0 0.0])))
++                                 (cam/thrust-direction @camera-atom drive-input)))
+               _         (when (and (not drive-input) (:player/thrust w))
+                           ;; Left manual mode with a key held: clear the
+                           ;; channel or the spark would thrust forever.

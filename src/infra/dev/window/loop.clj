@@ -26,7 +26,8 @@
    [infra.render.shader :as sh]
    [infra.render.units :as units]
    [infra.menu :as menu]
-   [infra.camera :as cam])
+   [infra.camera :as cam]
+   [law.narrowing :as narrowing])
   (:import
    (org.lwjgl.glfw GLFW)
    (org.lwjgl.opengl GL11 GL15 GL30)))
@@ -47,19 +48,24 @@
 ;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
 ;; namespace's header.
 #_{:splint/disable [lint/catch-throwable]}
+(defn- apply-intent
+  "Apply one serial world update; log a failure and retain the previous world.
+   Non-map results are dropped, preserving the intent queue's existing guard."
+  [w f]
+  (try
+    (let [w' (f w)]
+      (if (map? w') w' w))
+    (catch Throwable t
+      (binding [*out* *err*]
+        (println "[INTENT ERROR]" (.getMessage t)))
+      w)))
+
 (defn- drain-intents
-  "Apply every queued intent to `w`, in arrival order.  An intent that throws or
-   returns a non-map is dropped (logged) rather than corrupting the world."
+  "Apply every queued intent in arrival order through the serial update guard."
   [w ^java.util.concurrent.ConcurrentLinkedQueue queue]
   (loop [w w]
     (if-let [f (.poll queue)]
-      (recur (try
-               (let [w' (f w)]
-                 (if (map? w') w' w))
-               (catch Throwable t
-                 (binding [*out* *err*]
-                   (println "[INTENT ERROR]" (.getMessage t)))
-                 w)))
+      (recur (apply-intent w f))
       w)))
 
 (defn delete-mesh
@@ -118,14 +124,22 @@
 ;; namespace's header.
 #_{:splint/disable [lint/catch-throwable]}
 (defn sim-loop
-  "The dedicated simulation thread: drain intents → tick → publish → pace."
+  "The simulation thread: drain intents → prepare attention → tick → publish.
+   Manual attention uses the current physical snapshot on every iteration,
+   independently of render cadence; the integrator still owns physical motion."
   [{:keys [world-atom intent-queue config-atom stop-atom service-state]}]
   (let [period-ns 16666667]
     (loop [iter (long 0)]
       (when-not @stop-atom
         (let [t0  (System/nanoTime)
               cfg @config-atom
-              w0  (drain-intents @world-atom intent-queue)
+              w0  (cond-> (drain-intents @world-atom intent-queue)
+                    (= :manual (:mode cfg :manual))
+                    (apply-intent #(let [offset (:focus-offset cfg [0.0 0.0 0.0])]
+                                     (when-not (narrowing/focus-offset? offset)
+                                       (throw (ex-info "Invalid focus-offset: expected three finite coordinates"
+                                                       {:focus-offset offset})))
+                                     (player/focus-follow % offset))))
               w1  (if (:ui/error-state cfg)
                     w0
                     (let [tick-fn (:tick-fn cfg default-tick-fn)
@@ -162,7 +176,7 @@
    the single source of truth, advanced by the integrator (gravity) and by
    the `c/accel-thrust` influence channel (manual flight, card
    flight-no-jump-accel) — camera modes follow the body, they do not puppet
-   it. In `:manual` mode the focus-follow intent (card focus-follows-pilot)
+   it. In `:manual` mode the sim thread's attention preparation (focus-follows-pilot)
    pins `:focus-position` to the mote instead; only in tracking modes does
    `:focus-position` (a pure attention point) ride the camera target."
   [world camera ctx mode]
@@ -323,14 +337,7 @@
                           ;; c/position/c/velocity. The drift position
                           ;; teleport is gone; there is no second writer.
                           (swap! world-atom player/set-thrust
-                                 (cam/thrust-direction @camera-atom drive-input))
-                          ;; focus-follows-pilot (design §7.5): in manual mode
-                          ;; the attention focus rides the mote — c/position
-                          ;; plus the player's persistent arrow-nudge
-                          ;; :focus-offset — so flying up to a planet accrues
-                          ;; binding without dropping to a debug view.
-                          (swap! world-atom player/focus-follow
-                                 (:focus-offset cfg [0.0 0.0 0.0])))
+                                 (cam/thrust-direction @camera-atom drive-input)))
               _         (when (and (not drive-input) (:player/thrust w))
                           ;; Left manual mode with a key held: clear the
                           ;; channel or the spark would thrust forever.

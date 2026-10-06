@@ -359,6 +359,15 @@
   spore: none
   receipt-refs: 2026-10-06T20:12:54.078810169Z,2026-10-06T20:26:50.020640671Z,2026-10-06T20:34:13.031513003Z
   note: Repeat an unexplained performance signal using the original benchmark closure, exact source identities and equal traced workloads before inferring a regression. Keep mature-scene visual cost distinct from ten-tick formation cost. Full unit and strict gates do not establish a clean native renderer: explicit live GL error observation found a fault now being localized. No spore created or promoted.
+- ts: 2026-10-06T21:25:58.145263225Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Repair manual attention cadence at the real serial simulation boundary
+  p-efficiency: 0.93
+  p-friction: 0.2
+  p-skill-candidate: 0.4
+  spore: none
+  receipt-refs: focus-follows-pilot,10f1a81767d7d704a5b36e454b6557089fa4a77e
+  note: Actual host-loop tests with moving physical fixtures expose cadence gaps that pure follow/binding link tests miss. Preserve existing exception containment when moving a callback into the serial boundary; distinguish pre-fold consumer correctness from postpublished position/recenter lag and already captured actions. No new spore warranted.
 - ts: 2026-10-06T21:10:20.862421760Z
   session: /home/err/spaces/foresight/.worktrees/truth-focus-input
   task: Close native integrated controls and trails evidence without hiding interruptions or unmet gameplay acceptance
@@ -368,3 +377,21 @@
   spore: none
   receipt-refs: none
   note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.
+- ts: 2026-10-06T23:32:01.867863432Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-contract-review
+  task: Draft real boundary regressions for the reviewed host focus-offset contract
+  p-efficiency: 0.92
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,review5435441692
+  note: An existing catch guard does not validate data: extra coordinates and NaN can enter pure focus logic without throwing. Exercise the actual serial host boundary and preserve queued state, then test recovery; avoid substituting a missing-symbol-only RED. Keep historical card evidence intact and append an explicit current-contract supersession through Rheos. No new spore warranted.
+- ts: 2026-10-06T23:46:41.986746938Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-contract-review
+  task: Close named focus-offset boundary repair with source-bound RED/GREEN evidence
+  p-efficiency: 0.96
+  p-friction: 0.08
+  p-skill-candidate: 0.1
+  spore: none
+  receipt-refs: focus-follows-pilot,2b30e5055bc793e4c9152425356f535ba3e5d2f6
+  note: Reuse the existing finite-vector predicate behind a named compiled Malli law, and invoke it before the domain call inside established containment. Real boundary tests catch silent NaN and extra-coordinate acceptance that exception tests miss. Record a post-test docstring correction separately, then bind full qualification to final source. Existing skills suffice; no new spore.

@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "uuid": "focus-follows-pilot",
+  "comment": "2026-10-06 observed focus cadence RED at unchanged production 85f307f: actual sim-loop without render frames plus actual integrator/binding fan-out ran 6 tests,70 assertions,24 expected failures,0 errors,exit1. Co-moving bodies remain half an AU apart but binding decays [0.02,0.018,0.016,0.014] under both zero and nonzero COM shifts. Current offset/manual-mode and follow-failure visibility also fail; physical/input/tracking/missing-data/continuation controls pass. Kondo and cljfmt pass; configured Splint check covered292files with0warnings; diff check passes. Independent source review has no blocker. Evidence .ημ/diagnostics/focus-cadence/red-verdict.md; red.log SHA256 7afc60499cd968ea1b31dc60b08a48f7a45ede8f132b1e0cc5a2b17f50ae9114. Root checkpoint required before source fix. Published one-tick/recenter lag and already queued sculpt/action anchors remain explicit limits; original live acceptance still open."
+}

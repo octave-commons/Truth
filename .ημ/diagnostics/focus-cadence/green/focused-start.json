@@ -1,0 +1,29 @@
+{
+  "command": [
+    "clojure",
+    "-M:test",
+    "-n",
+    "infra.dev.focus-cadence-test",
+    "-n",
+    "infra.dev.window-test",
+    "-n",
+    "infra.render.input-test",
+    "-n",
+    "domain.pilot-resolve-seam-test",
+    "-n",
+    "domain.spark-body-test",
+    "-n",
+    "architecture-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "source": "10f1a81767d7d704a5b36e454b6557089fa4a77e",
+  "JAVA_OPTS": "-Xms128m -Xmx2g",
+  "start_utc": "2026-10-06T21:23:31.832759+00:00",
+  "file_sha256": {
+    "src/infra/dev/window/loop.clj": "f9e860f7398141d0c0d0cf4bd0bd11dba7141f7edd4b4916f8d0051efc62ea0b",
+    "src/domain/player/focus.clj": "7ffeafd0a3826d400318458d3128e9181ecfed82c93c8d303cae102b8d5f1b2a",
+    "test/infra/dev/focus_cadence_test.clj": "4d2019a18d4f5c66ea1f49082af1ce28301fbb4e38d952bd5ad90072e8176f68",
+    "docs/designs/spark-flight-and-camera.md": "8fb86afd853aa74045e769809cd218bbc1aba5089b09366b459059b2183ec6ad"
+  },
+  "scope": "Focused regression and nearby loop/input/domain/architecture tests; no native or full gates."
+}

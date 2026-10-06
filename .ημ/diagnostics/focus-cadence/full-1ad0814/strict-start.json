@@ -1,0 +1,13 @@
+{
+  "source": "1ad081475364cc3b75db76142204cbf54b5bf60c",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "command": [
+    "bin/analyze",
+    "--strict"
+  ],
+  "JAVA_OPTS": "-Xms256m -Xmx4g",
+  "started_unix": 1791322263.8282788,
+  "source_clean": true,
+  "load": "Retained native JVM3083624 continues; no isolated performance claim",
+  "native_tests": "No GL production change; existing real framebuffer1test9assertions pass retained, not repeated"
+}
