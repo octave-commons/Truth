@@ -1,13 +1,14 @@
 ---
-uuid: "body-trails-ringbuffer"
-title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
-status: "todo"
-priority: "P2"
-labels: ["domain", "infra", "render", "spark-flight"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/body-trails-ringbuffer.md"
 category: "specs"
-estimate: 5
+labels: ["domain", "infra", "render", "spark-flight"]
+write-id: "1791315464606-0.jwn4wbh4q8rzwpflik"
+source: "kanban/tasks/body-trails-ringbuffer.md"
+title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
+priority: "P2"
+status: "in_progress"
+estimate: "5"
+uuid: "body-trails-ringbuffer"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Motion trails on significant bodies + spark
@@ -51,3 +52,7 @@ Choose N and cadence so trails are long enough to read but cheap.
 
 ## Dependencies
 None. Can land any time. Pairs well with card 9 for visual grounding.
+
+---
+Root reviewed existing TODO estimate5 scope against accepted flight design section6.1 and fresh grounded note docs/notes/research/2026-10-06-body-trails-rendering.md; exact bounded contract in docs/notes/2026-10-06-body-trails-plan.md. Design will link both before code. One registered history writer, no new phase/position writes. Default64 actual samples/body,1e10sim-second cadence,6.3e11s horizon. Huge dt records at mostone observed sample, arithmetic deadline skip with visible metadata, no invented path. Everyfold recenter shifts retained and new observed positions once, even unsampled ticks. Eligibility excludes bare collision planetesimals and nebula; filter before historywork. Existing line path gets actual pervertexopacity through buffer/shader, defaultnontrailalpha0.85 preserved. Deterministic4096segment budget with requested/rendered/dropped diagnostics; currentstate head connection. Root clarification: compare sampling only at common real observation times, no general step-partition invariance claim. Use portable .cljc for new pure history/frame/opacity logic where practical. RED tests cover real frozen-snapshot integrator+trail recenter, eligibility/timebounds/largegap, registryownership, geometry/alpha/cap. Root commits failing tests before source. Full gates, isolated before/after benchmark and normalnative star/planet/player fading evidence remain required; no gameplay completion inferred.
+---

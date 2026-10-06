@@ -184,6 +184,31 @@ total segments. Dust/fragments excluded to keep a dense nebula legible. Trails a
 the perspective anchor that lets the owner judge whether flight and camera feel
 right.
 
+The [trail clock and renderer grounding](../notes/research/2026-10-06-body-trails-rendering.md)
+records the current Jacobi snapshot timing, COM recentering, debris tags, and
+missing line-opacity transport. The implementation contract is
+[body-trails-ringbuffer](../../kanban/tasks/body-trails-ringbuffer.md), with the
+[reviewed implementation plan](../notes/2026-10-06-body-trails-plan.md).
+
+The trail owner retains up to 64 actual position/time observations per eligible
+body, on a 1e10-simulated-second deadline cadence and within a 6.3e11-second
+history horizon. It records at most one observation when a large step skips
+deadlines, reports the skipped count, and never invents the intervening path.
+Different step partitions agree only where they observe the same actual
+position at shared sampling times; they are not required to reconstruct
+unobserved positions. Every retained point, including a new sample, receives
+the current frame translation once per physics fold, even when no sample is
+due. The renderer connects that history to the current published body position.
+
+Filter significant bodies before history work: spark, explicit star/planet/
+gas-giant states, or a non-nebula body explicitly tagged `:body/planet`.
+Unclassified planetesimals and collision fragments are not automatically
+protoplanets. Trails use the existing raw line pass with real per-vertex
+opacity, retain ordinary lines' 0.85 default opacity, and share a 4,096-segment
+budget with deterministic allocation and visible dropped-segment diagnostics.
+New pure timestamp, history, frame, and opacity logic belongs in portable
+`.cljc` namespaces where practical; JVM ECS/GL adapters remain outside it.
+
 ### 6.2 Mote of light
 
 Replace the screen-space particle sprite (`scene/hud.clj:29-46`) with a bespoke
