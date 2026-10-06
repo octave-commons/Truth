@@ -197,8 +197,12 @@ deadlines, reports the skipped count, and never invents the intervening path.
 Different step partitions agree only where they observe the same actual
 position at shared sampling times; they are not required to reconstruct
 unobserved positions. Every retained point, including a new sample, receives
-the current frame translation once per physics fold, even when no sample is
-due. The renderer connects that history to the current published body position.
+the body's applied frame translation once per physics fold, even when no sample
+is due. In the existing optional LOD throttle mode, a non-due body is frozen and
+receives no position/recenter write, so its history likewise receives zero
+translation. The trail adapter reuses the integrator's due-entity predicate;
+sampling deadlines and expiration still advance. The renderer connects that
+history to the current published body position.
 
 Filter significant bodies before history work: spark, explicit star/planet/
 gas-giant states, or a non-nebula body explicitly tagged `:body/planet`.

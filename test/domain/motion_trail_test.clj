@@ -50,7 +50,7 @@
     (is (= [:motion-trail] (mapv :id declared)) "the same registry owner")
     (when-let [owner (first declared)]
       (is (= #{trail-component} (:writes owner)))
-      (is (= #{c/position c/body-kind c/matter-state trail-component}
+      (is (= #{c/position c/body-kind c/matter-state c/lod-tick-phase trail-component}
              (:reads owner))))
     (is (= {} (registry/write-conflicts registry/systems)))))
 
@@ -210,3 +210,39 @@
       (is (= [100.0] (sample-times (ecs/get-component first-fold eid trail-component))))
       (is (= [100.0 10000000100.0] (sample-times next-history)))
       (is (= [[10.0 0.0 0.0] [20.0 0.0 0.0]] (mapv :position (:samples next-history)))))))
+
+(deftest history-rebases-only-when-the-integrator-rebases-the-body
+  (when-let [factory (api 'domain.trail.system/trail-system)]
+    (doseq [throttle? [true false]]
+      (let [[world eid] (spawn-body
+                         (assoc (ecs/empty-world)
+                                :tick 1 :genesis/sim-time 0.0 :sim/dt 1.0
+                                :lod/throttle-ticks? throttle?
+                                :genesis/frame-offset [10.0 0.0 0.0])
+                         {c/body-kind :spark c/position [100.0 0.0 0.0]
+                          c/velocity [2.0 0.0 0.0] c/mass 1.0 c/radius 1.0
+                          c/lod-tick-phase {:level :system :period 2 :phase 0}
+                          trail-component {:samples [{:time -10.0 :position [80.0 0.0 0.0]}]
+                                           :next-at 0.0 :skipped-deadlines 0}})
+            systems [(integrator/integrator-system 1.0) (factory)]
+            first-fold (tick/run-parallel world systems)
+            next-input (assoc first-fold :tick 2 :genesis/sim-time 1.0
+                              :genesis/frame-offset [20.0 0.0 0.0])
+            second-fold (tick/run-parallel next-input systems)
+            first-history (ecs/get-component first-fold eid trail-component)
+            second-history (ecs/get-component second-fold eid trail-component)]
+        (is (= (if throttle? [100.0 0.0 0.0] [92.0 0.0 0.0])
+               (ecs/get-component first-fold eid c/position)))
+        (is (= (if throttle? [[80.0 0.0 0.0] [100.0 0.0 0.0]]
+                   [[70.0 0.0 0.0] [90.0 0.0 0.0]])
+               (mapv :position (:samples first-history)))
+            "an intentionally frozen body receives no recenter translation")
+        (is (= (if throttle? [82.0 0.0 0.0] [74.0 0.0 0.0])
+               (ecs/get-component second-fold eid c/position)))
+        (is (= (if throttle? [[60.0 0.0 0.0] [80.0 0.0 0.0]]
+                   [[50.0 0.0 0.0] [70.0 0.0 0.0]])
+               (mapv :position (:samples second-history)))
+            "the next due fold shifts old history by only the applied offset")
+        (is (= [-10.0 0.0] (sample-times first-history) (sample-times second-history)))
+        (is (= (:next-at first-history) (:next-at second-history)))
+        (is (= #{c/motion-trail} (:writes (factory))))))))

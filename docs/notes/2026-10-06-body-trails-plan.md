@@ -50,6 +50,12 @@ are explicit engineering choices for that requirement, not research findings.
   recorded input position gets that same shift once. Its timestamp stays the
   input time. This aligns histories with the integrator's output frame without
   claiming to know its future trajectory.
+  The opt-in LOD throttle deliberately freezes a non-due body's position,
+  including recentering. Reuse `domain.integrator.base/due-entity?` and read
+  `c/lod-tick-phase` so that body's history receives zero translation on a
+  frozen tick, then the normal offset on its next due tick. Cadence and time
+  pruning still run. This preserves existing LOD behavior; it does not enable
+  throttling or change physics policy.
 - The renderer may connect the latest retained sample to the current published
   body position/time as the visible head. That is projection of actual state,
   not an additional history writer. Avoid duplicate zero-length head segments.
@@ -91,6 +97,8 @@ are explicit engineering choices for that requirement, not research findings.
 3. Real `tick/run-parallel` with the existing integrator plus trail writer:
    nonzero repeated frame shifts keep current body and old/new samples in one
    frame. Include a tick when sampling is not due, and ensure no double shift.
+   Exercise optional LOD non-due then due folds and the disabled-throttle
+   control, proving history receives exactly the translation its body receives.
 4. One writer and complete registry reads/writes; pipeline inclusion and
    architecture conflict check. No position/velocity writes by trails.
 5. Projection uses a non-default view scale correctly, joins only adjacent
