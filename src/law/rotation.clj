@@ -27,6 +27,10 @@
   "Finite world-axis angular velocity vector in radians per simulation second."
   [:vector {:min 3 :max 3} [:fn field/finite-number?]])
 
+(def angular-velocity?
+  "Compiled Malli validator for finite torque-fold angular velocities."
+  (m/validator angular-velocity-schema))
+
 (def rotation-input-schema
   "A complete rotation state and its finite, nonnegative simulation step."
   [:map

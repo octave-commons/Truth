@@ -21,7 +21,8 @@
    No tick logic lives here — only the declaration and its validation."
   (:require
    [clojure.string :as str]
-   [domain.ecs.components :as c]))
+   [domain.ecs.components :as c]
+   [domain.integrator.base :as influence]))
 
 ;; ---------------------------------------------------------------------------
 ;; The registry — current reality of the 12-system Gauss–Seidel pipeline.
@@ -188,6 +189,14 @@
               c/lod-tick-phase}
     :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
               c/angular-momentum c/spin c/consumed-transfer c/consumed-ablation}}
+
+   ;; Attitude is independent of the stellar angular-momentum/spin fold.
+   ;; Derive torque reads from the same registry the integrator consumes.
+   {:id :rotation-integrator
+    :ns 'domain.integrator.rotation
+    :reads (into #{c/orientation c/angular-velocity}
+                 (get-in influence/influence-registry [:angular-velocity :accumulate]))
+    :writes #{c/orientation c/angular-velocity}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
    ;; tick-world). Sole writer of accel.observer; the integrator sums it.

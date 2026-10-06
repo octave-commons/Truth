@@ -19,6 +19,10 @@
                       :compose :sum :scale :dt}
    :angular-momentum {:accumulate [c/torque-em c/torque-disk]
                       :compose :sum :scale :dt}
+   ;; The spark's attitude uses torque in N m, separately from the legacy
+   ;; stellar angular-momentum channels. Flight input adds its owned channels
+   ;; here; until then the rotation integrator preserves free spin.
+   :angular-velocity {:accumulate [] :compose :sum :scale :dt}
    :mass             {:accumulate [c/mass-flux-flare
                                    c/mass-flux-xuv c/mass-flux-disk
                                    c/mass-flux-transfer c/mass-flux-condense]

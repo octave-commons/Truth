@@ -103,6 +103,12 @@
 ;;   nil       — not associated with a disc
 (def angular-momentum :component/angular-momentum) ;; [Lx Ly Lz]
 (def spin             :component/spin)             ;; [ωx ωy ωz]
+(def orientation
+  "Body-to-world unit quaternion [w x y z]; owned by :rotation-integrator."
+  :component/orientation)
+(def angular-velocity
+  "World-axis angular velocity in rad/s; distinct from stellar spin."
+  :component/angular-velocity)
 (def oblateness       :component/oblateness)       ;; double in (0,1]
 (def rotation-axis    :component/rotation-axis)    ;; unit [nx ny nz]
 (def disc-tag         :component/disc-tag)         ;; :disc | :envelope | :outflow | nil

@@ -4,7 +4,8 @@
    [shape.spatial :as sp]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
-   [law.spark :as law-spark]))
+   [law.spark :as law-spark]
+   [law.rotation :as rotation]))
 
 (defn create-observer
   "A fresh observer map — the spark's ATTENTION state only. Physical state
@@ -57,6 +58,8 @@
                                 c/narrative-state {:mood :anticipation :last-utterance-tick nil :topics #{}}
                                 c/position        position
                                 c/velocity        (sp/vec3 0 0 0)
+                                c/orientation     rotation/identity-orientation
+                                c/angular-velocity (sp/vec3 0 0 0)
                                 c/mass            0.0
                                 c/radius          r0
                                 c/body-kind       :spark})
@@ -73,6 +76,9 @@
    `:spark` — and strip the legacy `:position` shadow key from the map so no
    reader can find a second position source.
 
+   Also initializes missing rotational columns to identity orientation and
+   zero angular velocity; existing rotational state is preserved.
+
    Idempotent: on a healthy world every column is present and the map carries
    no `:position`, so this returns the world unchanged. There is currently NO
    load path in-repo (error dumps are write-only); this fn is the designated
@@ -88,6 +94,10 @@
         (ecs/put-component eid c/position (:position obs))
         (missing? c/velocity)
         (ecs/put-component eid c/velocity (sp/vec3 0 0 0))
+        (missing? c/orientation)
+        (ecs/put-component eid c/orientation rotation/identity-orientation)
+        (missing? c/angular-velocity)
+        (ecs/put-component eid c/angular-velocity (sp/vec3 0 0 0))
         (missing? c/mass)
         (ecs/put-component eid c/mass 0.0)
         (missing? c/radius)

@@ -57,12 +57,15 @@
                   main/run-render-demo #(swap! calls conj [:png])
                   shutdown-agents #(swap! shutdowns inc)]
       (main/-main)
+      (main/-main "console")
+      (main/-main "console" "0")
       (main/-main "console" "2")
       (main/-main "demo")
-      (is (= [[:console 1000] [:console 2] [:png]] @calls))
       (testing "invalid modes, extra arguments, and invalid budgets never start a run"
         (doseq [args [["unknown"] ["demo" "unexpected"] ["console" "-1"]
                       ["console" "1.5"] ["console" "2" "unexpected"]]]
           (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Usage:"
                                 (apply main/-main args)))))
-      (is (= 8 @shutdowns)))))
+      (is (= [[:console 1000] [:console 1000] [:console 0] [:console 2] [:png]] @calls)
+          "invalid arguments leave the dispatch list unchanged")
+      (is (= 10 @shutdowns)))))

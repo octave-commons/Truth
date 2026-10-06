@@ -1,6 +1,6 @@
 # Spark rotation integration
 
-Date: 2026-10-06. Status: researched implementation contract; verification pending.
+Date: 2026-10-06. Status: implemented; targeted verification passed, integration review pending.
 Scope: `spark-orientation-angular-momentum`, backing
 `docs/designs/spark-flight-and-camera.md` §3.2. GPL-3.0-or-later.
 
@@ -81,3 +81,15 @@ normalization over many steps, correct integration at fractional and dilated
 physics-table wiring, and identical serial/parallel snapshot semantics. Include
 a scripted torque pulse followed by free coast; input and heading rendering
 remain later cards.
+
+## Targeted implementation verification (2026-10-06)
+
+The red checkpoint (`8fa6c3b`) had 3 tests, 20 assertions and four failures:
+spawn and legacy repair lacked the two rotation columns. After implementation,
+`clojure -M:test -n domain.rotation-test -n domain.spark-body-test -n architecture-test`
+passed 31 tests / 145 assertions with no failures or errors. The 12 rotation
+tests include world-axis composition from a nonidentity quaternion, a torque
+pulse through the actual ECS snapshot fold followed by free coast, and extreme
+finite inputs. Scoped clj-kondo reports zero errors/warnings; whole-tree Splint
+reports zero warnings. Full-suite, strict-gate, benchmark and live-window
+evidence are recorded by the integrating task, not inferred from these checks.
