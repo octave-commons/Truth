@@ -314,3 +314,12 @@
   spore: none
   receipt-refs: none
   note: Two patterns worth spores: (1) a gate config in a conventionally-cached dir (.lsp/) is silently gitignored, so the gate passes locally and fails forever in CI -- check git check-ignore on every new config file before promoting a tool to blocking; (2) scoped symbol renames need a whole-scope re-audit, because a missed site does not error, it silently resolves to clojure.core (comp/count/name/field) and the test passes vacuously.
+- ts: 2026-10-06T18:28:35.220300795Z
+  session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
+  task: Truth playable foundations, frame repair, and canonical Clojure board gates
+  p-efficiency: 0.78
+  p-friction: 0.62
+  p-skill-candidate: 0.68
+  spore: none
+  receipt-refs: none
+  note: Recovered missing research before code; separate immutable validation checkout kept agents moving during full gates. Rheos feature was present in newer canonical artifact despite same package version: verify executable hash and actual pass/fail transition before proposing upstream implementation. No spore promoted; long playable-game goal remains active.

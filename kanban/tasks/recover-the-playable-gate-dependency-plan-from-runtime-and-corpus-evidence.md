@@ -1,10 +1,10 @@
 ---
 labels: "research, design, playable-loop"
 parent: "embodied-character-voxel-mode"
-write-id: "1791310696643-0.njfctw600osk7mpyuav"
+write-id: "1791311573000-0.we6rvyn79xdn38p2ezl"
 title: "Recover the playable Gate dependency plan from runtime and corpus evidence"
 priority: "P1"
-status: "in_progress"
+status: "review"
 estimate: "3"
 uuid: "a2b46a04-d541-4714-aed9-bf07d9a9c923"
 created_at: "2026-10-06T18:01:00.176Z"
@@ -18,4 +18,6 @@ created_at: "2026-10-06T18:01:00.176Z"
 2026-10-06 local planning work complete for root review: docs/notes/truth-playable-gate-dependency-plan.md exists and git diff --check passed. Lawful move to review attempted through Rheos. Engine invoked built-in pnpm build and rejected because this Clojure repository has no package.json: NO_IMPORTER_MANIFEST_FOUND. This is the known upstream Clojure/research build-gate gap, not failure of the note and not permission to add a fake pnpm manifest, replace FSM semantics, or hand-edit status. CLI exit0 did not indicate successful transition; printed REJECTED controls observed outcome. Card remains in_progress with explicit promotion blocker; independent root review and evidence recorded separately.
 
 Dependency-plan note updated after current evidence: the first reproduced boundary is parent-relative spawn materialization. Existing formation-placement-v2 reopened for the 999 AU moving-host birth and 10 AU double-recenter errors; no duplicate physics card. Natural formation/admission and live fly-resolve-sculpt remain unproved after this isolated seam evidence. The canonical Clojure review-gate capability has now been recovered and Truth configuration migrated under hygiene card rheos-clojure-build-gate-config; actual gated transitions await root exact-revision suite/strict execution.
+
+Canonical gated review transition completed on exact source revision a3609f6931951f8e011950ec5eab0a24265e93cd. This card independently executed clojure -M:test: 899 tests, 15635 assertions, 0 failures, 0 errors; then bin/analyze --strict: exit 0, no blocking findings. Move in_progress to review exited 0. Full per-transition log: .ημ/diagnostics/playable-foundation/rheos-review-dependency-plan-a3609f6.log. Plan and evidence-tier matrix are ready for review; the Gate roadmap remains a dependency hypothesis, and native fly-resolve-sculpt plus multi-seed natural formation acceptance remain outstanding on their in_progress cards. No prior gate output was reused. Hosted review and final done policy remain outstanding.
 ---

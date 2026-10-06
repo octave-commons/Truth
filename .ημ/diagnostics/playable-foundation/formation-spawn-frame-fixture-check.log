@@ -1,0 +1,205 @@
+
+Running tests in #{"test"}
+
+Testing domain.disk-evolution-test
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:272)
+GI and binary births retain their planned orbit after parent motion and recenter
+:gas-giant birth preserves the planned parent-relative position
+expected: (< (sp/dist intended-position actual-position) (* 1.0E-10 (sp/len intended-position)))
+  actual: (not (< 1.496277872827808E14 44.87755184008317))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:274)
+GI and binary births retain their planned orbit after parent motion and recenter
+:gas-giant birth inherits the current parent velocity
+expected: (< (sp/dist intended-velocity actual-velocity) 1.0E-8)
+  actual: (not (< 3354.4746235439015 1.0E-8))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:276)
+GI and binary births retain their planned orbit after parent motion and recenter
+the materialized birth, not only its stale request, satisfies the 100-AU gate
+expected: (<= (sp/len actual-position) (* 100.0 law/au))
+  actual: (not (<= 1.4956948711727834E14 1.495978707E13))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:272)
+GI and binary births retain their planned orbit after parent motion and recenter
+:gas-giant birth preserves the planned parent-relative position
+expected: (< (sp/dist intended-position actual-position) (* 1.0E-10 (sp/len intended-position)))
+  actual: (not (< 1.5111051161743097E14 44.87755184008317))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:274)
+GI and binary births retain their planned orbit after parent motion and recenter
+:gas-giant birth inherits the current parent velocity
+expected: (< (sp/dist intended-velocity actual-velocity) 1.0E-8)
+  actual: (not (< 3354.4746235439015 1.0E-8))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:276)
+GI and binary births retain their planned orbit after parent motion and recenter
+the materialized birth, not only its stale request, satisfies the 100-AU gate
+expected: (<= (sp/len actual-position) (* 100.0 law/au))
+  actual: (not (<= 1.510499150489709E14 1.495978707E13))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:272)
+GI and binary births retain their planned orbit after parent motion and recenter
+:protostar birth preserves the planned parent-relative position
+expected: (< (sp/dist intended-position actual-position) (* 1.0E-10 (sp/len intended-position)))
+  actual: (not (< 1.496277872827808E14 74.79441201639))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:274)
+GI and binary births retain their planned orbit after parent motion and recenter
+:protostar birth inherits the current parent velocity
+expected: (< (sp/dist intended-velocity actual-velocity) 1.0E-8)
+  actual: (not (< 3354.4746235439015 1.0E-8))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:276)
+GI and binary births retain their planned orbit after parent motion and recenter
+the materialized birth, not only its stale request, satisfies the 100-AU gate
+expected: (<= (sp/len actual-position) (* 100.0 law/au))
+  actual: (not (<= 1.4948382758684125E14 1.495978707E13))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:272)
+GI and binary births retain their planned orbit after parent motion and recenter
+:protostar birth preserves the planned parent-relative position
+expected: (< (sp/dist intended-position actual-position) (* 1.0E-10 (sp/len intended-position)))
+  actual: (not (< 1.5111051161743097E14 74.79441201639))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:274)
+GI and binary births retain their planned orbit after parent motion and recenter
+:protostar birth inherits the current parent velocity
+expected: (< (sp/dist intended-velocity actual-velocity) 1.0E-8)
+  actual: (not (< 3354.4746235439015 1.0E-8))
+
+FAIL in (disk-fragments-follow-the-current-parent-through-materialization) (disk_evolution_test.clj:276)
+GI and binary births retain their planned orbit after parent motion and recenter
+the materialized birth, not only its stale request, satisfies the 100-AU gate
+expected: (<= (sp/len actual-position) (* 100.0 law/au))
+  actual: (not (<= 1.5096275672745462E14 1.495978707E13))
+[disk-evolution] fragment spawn blocked: hill-clamp-below-floor eid 0 {:branch :gi, :r-hill-max-m 2.5580997604403305E10, :floor-m 4.487936121E10}
+[disk-evolution] fragment spawn blocked: clump-scale-disk eid 0 {:branch :gi, :r-disk-m 1.495978646927621E15, :gate-m 1.495978707E13}
+
+Testing domain.formation-test
+
+FAIL in (absolute-spawn-is-shifted-into-the-current-frame-once) (formation_test.clj:435)
+requests without a parent retain the absolute-spawn frame contract
+expected: (= (sp/v- (:position request) frame-offset) (ecs/get-component result child c/position))
+  actual: (not (= [-1.6034411448986074E12 5.67453089988938E11 -2.991957414E11] [1.2452490902350055E11 0.0 0.0]))
+
+FAIL in (absolute-spawn-is-shifted-into-the-current-frame-once) (formation_test.clj:436)
+requests without a parent retain the absolute-spawn frame contract
+expected: (= (:velocity request) (ecs/get-component result child c/velocity))
+  actual: (not (= [-21599.290937570997 12856.76581475529 0.0] [-0.0 32649.939146357716 0.0]))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.49392339826146E14 21.00988291296447))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 28272.519412144284 1.0E-8))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.4922168657497197E14 33.79484067692555))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 22103.266367545908 1.0E-8))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.494013357029774E14 54.35971543059087))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 35890.560554267126 1.0E-8))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.5035580008186778E14 87.43875107872364))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 46490.95699448211 1.0E-8))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.498120056250084E14 140.64707899306777))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 36993.95928008765 1.0E-8))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.5106017488981944E14 226.23379891911176))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 39579.4824255957 1.0E-8))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:416)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (= 1 (count children))
+  actual: (not (= 1 25))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:417)
+reanchoring onto a recentered parent must not subtract the frame shift again
+the current parent already carries the frame shift
+expected: (< (sp/dist (:rel-position request) relative-position) (* 1.0E-10 (sp/len (:rel-position request))))
+  actual: (not (< 1.4628118965061766E14 363.9018466632768))
+
+FAIL in (planet-relative-spawn-is-already-in-the-current-frame) (formation_test.clj:420)
+reanchoring onto a recentered parent must not subtract the frame shift again
+expected: (< (sp/dist (:rel-velocity request) relative-velocity) 1.0E-8)
+  actual: (not (< 28843.211041804476 1.0E-8))
+
+Ran 53 tests containing 225 assertions.
+35 failures, 0 errors.

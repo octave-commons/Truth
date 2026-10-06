@@ -331,7 +331,8 @@
    ;; Disk evolution: viscous accretion + gravitational instability →
    ;; planets/binaries. Emits mass-flux.disk + torque.disk influences; the
    ;; integrator owns mass/angmom/spin. Fragment spawns emit
-   ;; c/spawn-request-disk (materialized next tick by materialize-lifecycle).
+   ;; c/spawn-request-disk (materialized after this tick's fold; systems read
+   ;; the newborn entities on the next tick).
    ;; Reads c/absorb-accrete from sink-formation (one-tick Jacobi delay).
    ;; Runs in the parallel fan-out (was a post-fold barrier).
    {:id     :disk-evolution

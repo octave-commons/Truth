@@ -204,9 +204,9 @@
       the one-shot c/planets-seeded flag, and debits the consumed mass/angular
       momentum from c/disk-mass / c/disk-angular-mom (conservation).
 
-   Fragment/planet spawns are materialized next tick by materialize-lifecycle
-   (one-tick Jacobi delay). Runs in the parallel fan-out (was a post-fold
-   barrier)."
+   Fragment/planet spawns are materialized after this tick's fold by
+   materialize-lifecycle. Parallel systems first read the newborn entities
+   on the next tick. Runs in the parallel fan-out (was a post-fold barrier)."
   [world]
   (let [dt  (double (or (:sim/dt world) 1.0e12))
         eps (double (or (:sim/softening world) 0.0))

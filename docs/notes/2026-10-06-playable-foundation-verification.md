@@ -51,6 +51,34 @@ The focused launch and architecture suite passed 11 tests / 44 assertions.
 These are slice-level results; whole-tree gates and independent review govern
 promotion. Console budget completion is not a successful formation outcome.
 
+## Integrated gates and formation repair
+
+Source revision `a3609f6931951f8e011950ec5eab0a24265e93cd` passed four
+independent canonical Rheos review transitions. Each ran `clojure -M:test`
+(899 tests, 15,635 assertions, zero failures/errors) and `bin/analyze --strict`
+(exit 0, no blocking findings). The launch, rotation, dependency-plan, and
+canonical board configuration cards entered review; formation and native
+gameplay verification remain in progress. The raw logs are the four
+`rheos-review-*-a3609f6.log` files in the evidence directory.
+
+The formation regression was reproduced before repair in `ee13c84`: 53 tests,
+225 assertions, 19 expected failures. After repair, the focused suites passed
+79 tests / 362 assertions. The identical moving-frame probe measured GI birth
+radius 999.550877 → 2.999879 AU and binary birth radius 998.939730 → 4.999698 AU.
+Core-seed recentering error fell from 10 AU to 4.406e-14 AU. This verifies
+parent-relative materialization and preserves the absolute-spawn path; it
+does not by itself verify subsequent orbital survival.
+
+A longer native run on that revision crossed disk maturity naturally. At tick
+4373 it contained 24 planets, 24 planet-formation events, one phase-0 handoff,
+and two ecology transition events. The production candidate predicate accepted
+entities 1022, 1023, and 1024. The native window at tick 4616 visibly reported
+24 planets and two stars in the planets-formed arc; see `planet-era-native.png`.
+No fixture or state injection produced these births. The capture is still being
+observed for survival; some outer planets were already unbound. A separate
+constructor probe found that requested seeds were ignored, so independent
+two-seed acceptance is explicitly withheld pending its regression repair.
+
 ## Remaining player acceptance
 
 Run actual flight and focus controls; establish a naturally formed stable

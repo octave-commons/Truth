@@ -113,5 +113,11 @@ acceptance needs a reproducible supported successful scenario alongside honest
 failure outcomes; it must not require every simulated world to be forced through
 the same ending.
 
-(己, p=1.00) Next action: pin the two parent-relative materialization defects
-with red regression tests under reopened card `formation-placement-v2`.
+(己, p=1.00) Progress checkpoint: red tests in `ee13c84` and the correction in
+`a3609f6` verify the parent-relative materialization repair. The longer native
+run subsequently produced 24 planets and three production-eligible candidates;
+see the [verification note](2026-10-06-playable-foundation-verification.md).
+That milestone does not close survival or player-control acceptance.
+
+(己, p=1.00) Next action: finish the natural survival trace and repair the
+independently reproduced seed-forwarding defect before comparing two seeds.

@@ -1,0 +1,2 @@
+{:tick 1417, :fixture? false, :agency 37.0, :interventions [{:kind :warp/repulsor, :position [4.7743687232586523E11 3.740861895708942E11 -2.0182936835600717E11], :radius 4.0E15, :strength 1.0, :born-tick 1375, :ttl 600.0}], :warp-count 374, :error nil, :ui-error nil}
+nil

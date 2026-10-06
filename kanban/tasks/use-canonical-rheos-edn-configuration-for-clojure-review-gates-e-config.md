@@ -2,11 +2,11 @@
 category: "tasks"
 labels: "hygiene, workflow"
 type: "task"
-write-id: "1791310696346-0.4szbbl558no3e15695"
+write-id: "1791311069046-0.sdwh7xhttfqw8cufmlu"
 points: "2"
 title: "Use canonical Rheos EDN configuration for Clojure review gates"
 priority: "P1"
-status: "in_progress"
+status: "review"
 uuid: "rheos-clojure-build-gate-config"
 created_at: "2026-10-06T18:16:03.338Z"
 ---
@@ -56,4 +56,6 @@ capability checks, not a claim that Truth's full gates already passed.
 
 ---
 Implemented the scoped config hygiene: sole root openhax.kanban.edn extends canonical Promethean, runs clojure -M:test then bin/analyze --strict, resolves cwd from config directory. Removed JSON to prevent competing/default ambiguity. AGENTS and PROCESS document direct EDN-capable upstream CLI, verified artifact SHA256, and no local substitute. Canonical read-board output before migration, explicit EDN, and automatic EDN discovery compare byte-identical (SHA256 b88e967f455f6039d4fac522f0c80e1e13dc57a61993608a3f468b074b7b8ccb). Preserved actual isolated command pass/fail logs, unchanged-card/ledger manifests and runtime provenance at .ημ/diagnostics/playable-foundation/rheos-build-gate/. No actual Truth review move yet: root owns exact-revision full tests/strict lane; this card remains in_progress until those transitions can run lawfully.
+
+Canonical gated review transition completed on source revision a3609f6931951f8e011950ec5eab0a24265e93cd. Rheos actually executed clojure -M:test: 899 tests, 15635 assertions, 0 failures, 0 errors; then bin/analyze --strict: exit 0, no blocking findings. Move in_progress to review exited 0. Exact log: .ημ/diagnostics/playable-foundation/rheos-review-config-a3609f6.log. CLI SHA256 c16255ab69e158d34536d9c8c72ad1234f3b0abc41e0408a1a270c167dca141d; config SHA256 15aaca2bdd649d2c354e43d87ca944ab01452c616cbee2e85bdf42f7ffb8c262. This is fresh canonical gate evidence, not reuse of prior suite output. Hosted review and final done policy still apply.
 ---
