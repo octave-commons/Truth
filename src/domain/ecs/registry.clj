@@ -202,7 +202,7 @@
    ;; reading its same-tick output or writing physical state.
    {:id :motion-trail
     :ns 'domain.trail.system
-    :reads #{c/position c/body-kind c/matter-state c/motion-trail}
+    :reads #{c/position c/body-kind c/matter-state c/lod-tick-phase c/motion-trail}
     :writes #{c/motion-trail}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
