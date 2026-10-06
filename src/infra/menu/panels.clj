@@ -253,11 +253,28 @@
   "Build stepper row maps for the Spark influence knobs."
   [world obs]
   (mapv (fn [k]
-          {:label (:label k)
+          {:key (:key k)
+           :label (:label k)
            :value (format (:fmt k) (w/knob-value k world obs))
            :dec   (w/knob-action k :down)
            :inc   (w/knob-action k :up)})
         w/spark-knobs))
+
+(defn- flight-ranges-ctx
+  "Draw the Cruise/Fine intent buttons next to the thrust stepper."
+  [{:keys [pad text rects hits rect-fn]} px0 y world]
+  (let [displacement (or (:genesis/spark-flight-displacement world)
+                         player/default-displacement-per-tick)]
+    (swap! text conj {:text "Flight range" :x (+ px0 pad) :y (+ y 5.0)
+                      :scale 1.3 :color w/col-dim})
+    (doseq [[i preset] (map-indexed vector w/spark-flight-ranges)]
+      (let [x (+ px0 pad 118.0 (* i 84.0))
+            color (if (= displacement (:displacement preset)) w/col-active w/col-dim)]
+        (swap! rects conj (rect-fn x y (+ x 78.0) (+ y 22.0) w/col-btn))
+        (swap! text conj {:text (:label preset) :x (+ x 10.0) :y (+ y 5.0)
+                          :scale 1.3 :color color})
+        (swap! hits conj {:x0 x :y0 y :x1 (+ x 78.0) :y1 (+ y 22.0)
+                          :action [:spark/flight-range (:id preset)]})))))
 
 (defn spark-panel-ctx
   "Draw the Spark influence panel."
@@ -267,16 +284,21 @@
         row-h 30.0 header-h 26.0 line-h 22.0
         info (spark-info-lines world obs)
         rows (spark-knob-rows world obs)
+        [before flight] (split-with #(not= :genesis/spark-flight-displacement (:key %)) rows)
         info-h (* line-h (count info))
-        ph (+ (* 2.0 pad) header-h info-h (* (count rows) row-h) 4.0)]
+        rows-y (+ py0 pad header-h info-h)
+        flight-y (+ rows-y (* (count before) row-h))
+        ph (+ (* 2.0 pad) header-h info-h (* (inc (count rows)) row-h) 4.0)]
     (panel-shell-ctx ctx {:px0 px0 :py0 py0 :px1 px1 :ph ph})
     (panel-header-ctx ctx {:px0 px0 :py0 py0 :label "SPARK · INFLUENCE" :color w/col-active})
     (doseq [[i ln] (map-indexed vector info)]
       (swap! text conj {:text (:text ln)
                         :x (+ px0 pad) :y (+ py0 pad header-h (* i line-h))
                         :scale 1.3 :color (or (:color ln) w/col-value)}))
-    (w/stepper-rows-ctx ctx {:px0 px0 :px1 px1 :y0 (+ py0 pad header-h info-h)
-                             :row-h row-h :rows rows})))
+    (w/stepper-rows-ctx ctx {:px0 px0 :px1 px1 :y0 rows-y :row-h row-h :rows before})
+    (flight-ranges-ctx ctx px0 flight-y world)
+    (w/stepper-rows-ctx ctx {:px0 px0 :px1 px1 :y0 (+ flight-y row-h)
+                             :row-h row-h :rows flight})))
 
 (defn read-only-panel-ctx
   "Draw a generic read-only domain panel."

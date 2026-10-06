@@ -1,0 +1,11 @@
+
+Running tests in #{"test"}
+
+Testing domain.spark-body-test
+
+Testing infra.flight-precision-test
+
+Testing infra.menu-test
+
+Ran 30 tests containing 194 assertions.
+0 failures, 0 errors.

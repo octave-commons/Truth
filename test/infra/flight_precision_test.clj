@@ -70,7 +70,7 @@
         world (ecs/put-component world eid c/velocity [123.0 -4.0 5.0])
         hud (panel world)]
     (doseq [[label displacement] [["Cruise" cruise-displacement]
-                                 ["Fine" fine-displacement]]]
+                                  ["Fine" fine-displacement]]]
       (let [control (labeled-control hud label)]
         (is (some? control) (str label " must be a visible, clickable Spark control"))
         (when control
