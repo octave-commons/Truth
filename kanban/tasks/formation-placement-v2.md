@@ -1,11 +1,11 @@
 ---
 category: "specs"
 labels: ["domain", "physics", "genesis", "multi-timescale", "blocker"]
-write-id: "1791316333869-0.3zj1xzqmzko3haxnkp7"
+write-id: "1791316600924-0.pchxzrj42gxh4q0jig"
 source: "kanban/tasks/formation-placement-v2.md"
 title: "Formation placement v2: no spawns at clump-scale radii (disk-scale gate + Hill-stable clamp)"
 priority: "P1"
-status: "in_progress"
+status: "review"
 estimate: "3"
 uuid: "formation-placement-v2"
 created_at: "2026-07-23T00:00:00Z"
