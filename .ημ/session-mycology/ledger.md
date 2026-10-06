@@ -341,3 +341,12 @@
   spore: none
   receipt-refs: a2b46a04-d541-4714-aed9-bf07d9a9c923
   note: An evocative locked menu and event consumers can resemble completed progression. Trace the actual producer, resource debit and destination before calling a Gate playable; preserve user statements separately from assistant elaborations and qualify unmerged board state by revision. No spore warranted.
+- ts: 2026-10-06T22:40:06.575510162Z
+  session: /home/err/spaces/foresight/.worktrees/truth-gate-gap-review-runtime
+  task: Consume reviewed hosted runtime on Truth PR20
+  p-efficiency: 0.95
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth PR20 review runtime consumption; run37535764763; PR10 review5433523578
+  note: A same-head rerun retains an obsolete immutable reusable-workflow pin. Reuse the already reviewed caller patch and keep missing stderr separate from the suspected model cause; new branch heads still require fresh hosted qualification. No spore warranted.
