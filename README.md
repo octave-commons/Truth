@@ -194,6 +194,10 @@ bin/test architecture             # architecture guards only
 # Or use the aliases directly:
 clojure -M:test:test-runner -g domain -g law  # arbitrary combinations
 clojure -M:test                           # full suite via cognitect runner (CI)
+clojure -M:run                            # live console simulation, at most 1000 ticks
+clojure -M:run console 20                 # finite console smoke run, at most 20 ticks
+clojure -M:run demo                       # actual nebula frame to /tmp/truth-view.png
+xvfb-run -a clojure -M:run demo            # same PNG smoke on a private virtual display
 clojure -M:dev                            # live GLFW dev window + nREPL on 127.0.0.1:7888
 clojure -M:demo serve                     # reproducible live demo, nREPL 127.0.0.1:7890
 clojure -M:demo serve life                # explicitly staged life-emergence fixture
@@ -205,9 +209,12 @@ The grouped runners live in `test/test_runner.clj` and only load the
 namespaces they need, so targeted runs are much faster than loading the entire
 tree. `clojure -M:test` still runs the full suite via the cognitect runner.
 
-The old `:run` alias still names the absent `infra.main` namespace and is not a
-working launch route in this revision. Use `:dev` or `:demo` above. For capture
-prerequisites, fixture semantics, and the friend-facing tour, see
+The console and PNG routes use the same seeded ECS world and physics/narrative
+tick as the native window. Console runs stop at their tick budget or the world's
+terminal state; they do not reset to a new nebula. Console runs need no display.
+The PNG route renders one real tick using an offscreen OpenGL context, so it
+requires a display or Xvfb with OpenGL 3.3. For capture prerequisites, fixture
+semantics, and the friend-facing tour, see
 [`docs/demo/README.md`](docs/demo/README.md).
 
 With the dev service running (managed by pm2 as `gates-of-truth-dev`), connect a

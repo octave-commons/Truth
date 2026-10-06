@@ -379,8 +379,10 @@ Original screenshots and three recordings captured October 6, 2026, from base re
 the original demo PR. The additional ignition, accretion, planet, and navigation
 recordings were captured from PR head `51e9d24` plus the capture/port changes
 in this update. Original MP4s are converted at their full duration. The native
-scene is unchanged by GIF encoding. The previous README's `clojure -M:run` route targeted the
-absent `infra.main`; it remains unsupported and is no longer advertised. PM2
+scene is unchanged by GIF encoding. The restored `clojure -M:run` route runs
+the real ECS nebula in the console; `clojure -M:run demo` writes an offscreen
+PNG of one actual nebula tick. Use `xvfb-run -a clojure -M:run demo` without a
+desktop display. Interactive play uses `clojure -M:demo serve` or `clojure -M:dev`. PM2
 now resolves its checkout relative to `dev/ecosystem.config.js` and inherits the
 requested display.
 

@@ -33,7 +33,7 @@
                              arc/tick-genesis (fn [_] (throw (ex-info "Must not tick" {})))]
                  (with-out-str
                    (reset! result (main/run-phase0-simulation 2))))]
-    (is (= 0 (:tick @result)))
+    (is (zero? (:tick @result)))
     (is (re-find #"Recorded ending" output))))
 
 (deftest png-route-uses-the-real-genesis-and-existing-renderer
@@ -62,7 +62,7 @@
       (is (= [[:console 1000] [:console 2] [:png]] @calls))
       (testing "invalid modes, extra arguments, and invalid budgets never start a run"
         (doseq [args [["unknown"] ["demo" "unexpected"] ["console" "-1"]
-                     ["console" "1.5"] ["console" "2" "unexpected"]]]
+                      ["console" "1.5"] ["console" "2" "unexpected"]]]
           (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Usage:"
-                               (apply main/-main args)))))
+                                (apply main/-main args)))))
       (is (= 8 @shutdowns)))))

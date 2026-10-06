@@ -27,6 +27,10 @@ bin/bench-coverage                          # namespace-level benchmark coverage
 bin/bench :ecs :gravity                      # criterium benchmarks (:ecs :gravity :hydro :phase0 :profile)
 bin/mutate                                   # mutation testing (Heretic, local-only, domain/law/shape)
 
+clojure -M:run                               # console simulation, at most 1000 ticks
+clojure -M:run console 20                    # finite console smoke run
+clojure -M:run demo                          # actual nebula PNG: /tmp/truth-view.png
+xvfb-run -a clojure -M:run demo               # offscreen OpenGL on a private display
 clojure -M:dev                               # native dev window, nREPL 7888
 clojure -M:demo serve                        # native tour, nREPL 7890
 clojure -M:demo serve life                   # labeled ECS life fixture
@@ -34,7 +38,10 @@ clojure -M:demo check                        # validate seven scenario/arc contr
 bin/demo-capture docs/demo/my-new-capture    # private display: actual PNGs/MP4s
 ```
 
-The old `:run` alias targets an absent `infra.main` namespace. Demo semantics,
+The console and PNG entry point uses `genesis/create-world` and
+`arc/tick-genesis`, matching the native world. Console runs stop at the requested
+budget or a terminal state without resetting the world; they need no display.
+PNG rendering needs a desktop display or Xvfb with OpenGL 3.3. Demo semantics,
 capture prerequisites, and the visually checked gallery live in
 [`docs/demo/README.md`](docs/demo/README.md). Use `bin/demo-capture` for full
 window/UI captures: `take-screenshot!` uses the offscreen rendering path and
