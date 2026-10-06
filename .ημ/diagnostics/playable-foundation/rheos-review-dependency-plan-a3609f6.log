@@ -1,0 +1,538 @@
+▶ build-gate: clojure -M:test
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing benchmark-coverage-test
+
+Testing domain.arc-test
+
+Testing domain.chemistry-system-test
+
+Testing domain.chemistry-test
+
+Testing domain.classifier-test
+
+Testing domain.collision-malleability-test
+
+Testing domain.commitment-test
+
+Testing domain.condensation-seeder-test
+
+Testing domain.debris-reaper-test
+
+Testing domain.differentiation-test
+
+Testing domain.disk-evolution-test
+[disk-evolution] fragment spawn blocked: hill-clamp-below-floor eid 0 {:branch :gi, :r-hill-max-m 2.5580997604403305E10, :floor-m 4.487936121E10}
+[disk-evolution] fragment spawn blocked: clump-scale-disk eid 0 {:branch :gi, :r-disk-m 1.495978646927621E15, :gate-m 1.495978707E13}
+
+Testing domain.dominant-star-test
+
+Testing domain.ecology-test
+
+Testing domain.ecs.core-test
+
+Testing domain.ecs.dsl-test
+
+Testing domain.ecs.event-test
+
+Testing domain.ecs.ledger-test
+
+Testing domain.ecs.parallel-integration-test
+
+Testing domain.ecs.rewind-test
+
+Testing domain.ecs.tick-test
+
+Testing domain.ecs.timeline-test
+
+Testing domain.em-field-substrate-test
+
+Testing domain.em-lorentz-test
+
+Testing domain.em-test
+
+Testing domain.eos-test
+
+Testing domain.field-cell-test
+
+Testing domain.field-test
+
+Testing domain.focus-conservation-test
+
+Testing domain.focus-zone-test
+
+Testing domain.force-accumulator-test
+
+Testing domain.formation-integration-test
+
+Testing domain.formation-test
+
+Testing domain.genesis.formation-progress-test
+
+Testing domain.genesis.handoff-test
+
+Testing domain.genesis-test
+
+Testing domain.gravity.barnes-hut-test
+
+Testing domain.gravity.dark-matter-test
+
+Testing domain.gravity.pair-softening-test
+
+Testing domain.hydro-test
+
+Testing domain.integrator.universal-substep-test
+[fling-test] K observed at 5 AU, dt=80 yr (parent-orbit criterion): 142
+[fling-test] max per-tick |Δv| over 1000 ticks: 13354.933910102105 m/s; max separation: 5.232640649001779 AU; E_J span: 184216.17256879807 vs |E0| = 2.883781984398975E9 ; z-crossings: 305 vs full-time ≈ 14179
+[no-parent-test] K observed (acceleration criterion, no orbit): 112
+[uniform-test] K observed (acceleration criterion, no gravity sources): 15
+[slingshot-test] raw-Euler one-tick kick at periapsis (a·dt): 593286.4511859198 m/s
+[slingshot-test] max per-tick |Δv|: 15882.065963301036 ; r range (AU): [9.046166136999053 19.27632431459561] ; E range: [-3.8419272363080636E7 -3.2885281004241325E7] vs E0 = -3.553638832641485E7 ; L/L0 range: [1.0074833900273419 1.187982339567031]
+
+Testing domain.interior-test
+
+Testing domain.intervention-test
+
+Testing domain.life-arc-test
+
+Testing domain.lod-test
+
+Testing domain.mass-transfer-test
+
+Testing domain.mhd-force-test
+
+Testing domain.naming-test
+
+Testing domain.narrative-test
+
+Testing domain.narrowing-test
+
+Testing domain.observer-influence-test
+
+Testing domain.orbital.kepler-test
+
+Testing domain.orbital.multi-timescale-regression-test
+Observed K at 5 AU, dt=80 yr, live softening: 142
+
+Testing domain.orbital.split-test
+
+Testing domain.orbital.system-test
+
+Testing domain.orbital-stability-test
+
+Testing domain.physics.cache-test
+
+Testing domain.physics.collision-test
+
+Testing domain.physics.soa-cache-test
+
+Testing domain.pilot-resolve-seam-test
+
+Testing domain.player-test
+
+Testing domain.profile-test
+
+Testing domain.regime-test
+
+Testing domain.rotation-test
+
+Testing domain.spark-body-test
+
+Testing domain.spatial.index-test
+
+Testing domain.stellar-classification-test
+
+Testing domain.stellar-test
+
+Testing domain.stellar-wind-test
+
+Testing domain.structure-test
+
+Testing domain.time-slip-test
+
+Testing domain.voxel-carve-test
+
+Testing domain.voxel-focus-test
+
+Testing domain.voxel-load-test
+
+Testing domain.voxel-sculpt-test
+
+Testing domain.world-bootstrap-test
+
+Testing infra.appearance-test
+
+Testing infra.camera-test
+
+Testing infra.dev.window-test
+clojure.lang.ExceptionInfo: boom {:x 1}
+	at infra.dev.window_test$fn__31067.invokeStatic(window_test.clj:116)
+	at infra.dev.window_test$fn__31067.invoke(window_test.clj:113)
+	at clojure.test$test_var$fn__9856.invoke(test.clj:717)
+	at clojure.test$test_var.invokeStatic(test.clj:717)
+	at clojure.test$test_var.invoke(test.clj:708)
+	at clojure.test$test_vars$fn__9882$fn__9887.invoke(test.clj:735)
+	at infra.dev.window_test$eval30973$fn__30974.invoke(window_test.clj:18)
+	at clojure.test$compose_fixtures$fn__9850$fn__9851.invoke(test.clj:694)
+	at clojure.test$default_fixture.invokeStatic(test.clj:687)
+	at clojure.test$default_fixture.invoke(test.clj:683)
+	at clojure.test$compose_fixtures$fn__9850.invoke(test.clj:694)
+	at clojure.test$test_vars$fn__9882.invoke(test.clj:735)
+	at clojure.test$default_fixture.invokeStatic(test.clj:687)
+	at clojure.test$default_fixture.invoke(test.clj:683)
+	at clojure.test$test_vars.invokeStatic(test.clj:731)
+	at clojure.test$test_all_vars.invokeStatic(test.clj:737)
+	at clojure.test$test_ns.invokeStatic(test.clj:758)
+	at clojure.test$test_ns.invoke(test.clj:743)
+	at clojure.core$map$fn__5935.invoke(core.clj:2772)
+	at clojure.lang.LazySeq.sval(LazySeq.java:42)
+	at clojure.lang.LazySeq.seq(LazySeq.java:51)
+	at clojure.lang.Cons.next(Cons.java:39)
+	at clojure.lang.RT.next(RT.java:713)
+	at clojure.core$next__5451.invokeStatic(core.clj:64)
+	at clojure.core$reduce1.invokeStatic(core.clj:946)
+	at clojure.core$reduce1.invokeStatic(core.clj:936)
+	at clojure.core$merge_with.invokeStatic(core.clj:3076)
+	at clojure.core$merge_with.doInvoke(core.clj:3068)
+	at clojure.lang.RestFn.applyTo(RestFn.java:139)
+	at clojure.core$apply.invokeStatic(core.clj:669)
+	at clojure.test$run_tests.invokeStatic(test.clj:768)
+	at clojure.test$run_tests.doInvoke(test.clj:768)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$apply.invoke(core.clj:662)
+	at cognitect.test_runner$test.invokeStatic(test_runner.clj:74)
+	at cognitect.test_runner$test.invoke(test_runner.clj:62)
+	at cognitect.test_runner$_main.invokeStatic(test_runner.clj:127)
+	at cognitect.test_runner$_main.doInvoke(test_runner.clj:115)
+	at clojure.lang.RestFn.invoke(RestFn.java:397)
+	at clojure.lang.AFn.applyToHelper(AFn.java:152)
+	at clojure.lang.RestFn.applyTo(RestFn.java:132)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.main$main_opt.invokeStatic(main.clj:514)
+	at clojure.main$main_opt.invoke(main.clj:510)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+
+Testing infra.input-test
+
+Testing infra.inspect-test
+
+Testing infra.main-test
+
+Testing infra.menu-test
+
+Testing infra.render.asset-test
+
+Testing infra.render.field-test
+
+Testing infra.render.input-test
+
+Testing infra.render.material-test
+
+Testing infra.render.passes-test
+
+Testing infra.render.scene.voxel-test
+
+Testing infra.render.shader-test
+
+Testing infra.render.units-test
+
+Testing infra.render-test
+
+Testing law.composition-test
+
+Testing law.contract-test
+
+Testing law.ledger-test
+
+Testing law.pair-softening-test
+
+Testing law.plasma-test
+
+Testing law.registry-test
+
+Testing law.render-test
+
+Testing law.seed-contract-test
+
+Testing law.stellar-halo-test
+
+Testing law.voxel-test
+
+Testing shape.core-test
+
+Testing shape.spatial-test
+
+Ran 899 tests containing 15635 assertions.
+0 failures, 0 errors.
+▶ build-gate: bin/analyze --strict
+
+[1;36m━━━ clj-kondo  (bugs / anti-patterns)[0m
+linting took 9039ms, errors: 0, warnings: 0
+
+[1;36m━━━ structural smells  (dung heaps)[0m
+────────────────────────────────────────────────────────
+CODE-SMELL / STRUCTURAL REPORT  (dev/smell_report.clj)
+────────────────────────────────────────────────────────
+
+● GOD NAMESPACES  (loc≥500 vars≥30 | HARD loc≥1200 vars≥60)
+  (loc = code lines; raw = every line incl. docstrings/comments)
+  [warn] domain.voxel.carve                  453 loc ( 779 raw)   32 vars  (src/domain/voxel/carve.clj)
+  [warn] domain.chemistry                    376 loc ( 618 raw)   37 vars  (src/domain/chemistry.clj)
+  [warn] domain.gravity.barnes-hut.tree      359 loc ( 482 raw)   30 vars  (src/domain/gravity/barnes_hut/tree.clj)
+  [warn] infra.dev.actor-dashboard           311 loc ( 454 raw)   34 vars  (src/infra/dev/actor_dashboard.clj)
+  [warn] law.field.schema                    158 loc ( 280 raw)   33 vars  (src/law/field/schema.clj)
+  [warn] law.voxel                           148 loc ( 477 raw)   49 vars  (src/law/voxel.clj)
+  [warn] law.crater                          137 loc ( 407 raw)   59 vars  (src/law/crater.clj)
+  [warn] law.stellar.orbital.constants        76 loc ( 192 raw)   36 vars  (src/law/stellar/orbital/constants.clj)
+  [warn] law.interior                         62 loc ( 213 raw)   30 vars  (src/law/interior.clj)
+  [warn] law.stellar                          47 loc (  74 raw)   42 vars  (src/law/stellar.clj)
+
+● MEGA-FUNCTIONS  (loc≥40 | HARD loc≥80)
+  (loc = code lines; raw = every line incl. the docstring)
+  [warn] voxel-focus-system               58 loc (  86 raw)  src/domain/voxel/focus.clj:238
+  [warn] curl-estimate-from-cache         54 loc (  67 raw)  src/domain/em/lorentz.clj:262
+  [warn] classification-system            51 loc (  79 raw)  src/domain/stellar/classifier/planet.clj:347
+  [warn] layer-template                   50 loc (  69 raw)  src/domain/interior.clj:208
+  [warn] rebuild-neighbor-cache           42 loc (  56 raw)  src/domain/physics/cache/neighbor.clj:379
+  [warn] apply-erosion                    42 loc (  49 raw)  src/domain/voxel/sculpt.clj:172
+  [warn] mass-ws                          41 loc (  50 raw)  src/domain/integrator/core.clj:145
+
+● PARAMETER BLOAT  (arity≥5 | HARD arity≥8)
+  [warn] fold-chunk                      6 params  src/domain/voxel/band.clj:309
+  [warn] view-bar-hud                    5 params  src/infra/render/hud.clj:416
+  [warn] disk-angular-momentum-from-radius  5 params  src/domain/stellar/sink.clj:139
+  [warn] mood-from-events                5 params  src/domain/narrative.clj:42
+  [warn] seed-resource-cells             5 params  src/domain/interior.clj:487
+  [warn] dominance-gate                  5 params  src/domain/integrator/kinematics.clj:200
+
+● HIGH FAN-OUT  (deps≥18 | HARD deps≥30)
+  none
+
+● UNDOCUMENTED PUBLIC FNS  (AGENTS.md: docstrings mandatory)
+  (vocabulary namespaces exempt; see dev/smell_report.clj vocabulary-namespaces)
+  none
+
+────────────────────────────────────────────────────────
+HARD breaches: 0 | undocumented public fns: 0
+────────────────────────────────────────────────────────
+
+[1;36m━━━ Splint  (idiom anti-patterns)[0m
+Linting took 3243ms, checked 281 files, 0 style warnings
+
+[1;36m━━━ clojure-lsp  (dead code: unused public vars)[0m
+  none
+
+[1;36m━━━ jscpd  (copy-paste duplication)[0m
+Clone found (clojure):
+ - test/domain/physics/soa_cache_test.clj [232:5 - 240:39] (8 lines, 112 tokens)
+   test/domain/physics/soa_cache_test.clj [224:5 - 231:61]
+Clone found (clojure):
+ - test/domain/physics/collision_test.clj [153:5 - 161:57] (8 lines, 101 tokens)
+   test/domain/physics/collision_test.clj [63:3 - 140:53]
+Clone found (clojure):
+ - test/domain/physics/cache_test.clj [17:31 - 31:7] (14 lines, 142 tokens)
+   test/domain/physics/soa_cache_test.clj [21:59 - 35:9]
+Clone found (clojure):
+ - test/domain/orbital/system_test.clj [76:22 - 88:22] (12 lines, 159 tokens)
+   test/domain/orbital/system_test.clj [53:23 - 64:83]
+Clone found (clojure):
+ - test/domain/integrator/universal_substep_test.clj [299:79 - 310:78] (11 lines, 141 tokens)
+   test/domain/integrator/universal_substep_test.clj [110:73 - 121:10]
+Clone found (clojure):
+ - test/domain/integrator/universal_substep_test.clj [616:11 - 626:12] (10 lines, 118 tokens)
+   test/domain/integrator/universal_substep_test.clj [539:11 - 549:76]
+Clone found (clojure):
+ - test/domain/gravity/barnes_hut_test.clj [14:3 - 28:2] (14 lines, 236 tokens)
+   test/domain/gravity/pair_softening_test.clj [49:3 - 63:81]
+Clone found (clojure):
+ - test/domain/gravity/barnes_hut_test.clj [261:5 - 270:16] (9 lines, 159 tokens)
+   test/domain/gravity/barnes_hut_test.clj [55:5 - 64:12]
+Clone found (clojure):
+ - test/domain/genesis/handoff_test.clj [196:49 - 206:25] (10 lines, 125 tokens)
+   test/domain/genesis/handoff_test.clj [49:50 - 59:29]
+Clone found (clojure):
+ - test/infra/inspect_test.clj [102:5 - 110:84] (8 lines, 141 tokens)
+   test/infra/menu_test.clj [141:5 - 149:83]
+Clone found (clojure):
+ - test/infra/camera_test.clj [61:5 - 71:13] (10 lines, 116 tokens)
+   test/infra/camera_test.clj [46:5 - 55:62]
+Clone found (clojure):
+ - test/domain/voxel_load_test.clj [43:38 - 54:29] (11 lines, 106 tokens)
+   test/domain/voxel_sculpt_test.clj [50:78 - 61:14]
+Clone found (clojure):
+ - test/domain/voxel_load_test.clj [78:25 - 91:25] (13 lines, 169 tokens)
+   test/domain/voxel_sculpt_test.clj [87:33 - 100:22]
+Clone found (clojure):
+ - test/domain/voxel_focus_test.clj [17:4 - 28:14] (11 lines, 107 tokens)
+   test/domain/voxel_sculpt_test.clj [17:4 - 28:24]
+Clone found (clojure):
+ - test/domain/voxel_focus_test.clj [87:3 - 97:44] (10 lines, 141 tokens)
+   test/domain/voxel_sculpt_test.clj [94:3 - 104:51]
+Clone found (clojure):
+ - test/domain/voxel_focus_test.clj [235:5 - 245:13] (10 lines, 138 tokens)
+   test/domain/voxel_focus_test.clj [192:5 - 202:19]
+Clone found (clojure):
+ - test/domain/voxel_focus_test.clj [260:5 - 271:31] (11 lines, 154 tokens)
+   test/domain/voxel_focus_test.clj [192:5 - 203:41]
+Clone found (clojure):
+ - test/domain/voxel_carve_test.clj [103:3 - 123:51] (20 lines, 265 tokens)
+   test/domain/voxel_load_test.clj [75:3 - 95:44]
+Clone found (clojure):
+ - test/domain/voxel_carve_test.clj [119:27 - 127:35] (8 lines, 106 tokens)
+   test/domain/voxel_sculpt_test.clj [100:35 - 108:34]
+Clone found (clojure):
+ - test/domain/stellar_wind_test.clj [81:3 - 98:15] (17 lines, 189 tokens)
+   test/domain/stellar_wind_test.clj [57:3 - 74:16]
+Clone found (clojure):
+ - test/domain/stellar_wind_test.clj [106:19 - 119:32] (13 lines, 130 tokens)
+   test/domain/stellar_wind_test.clj [57:16 - 70:26]
+Clone found (clojure):
+ - test/domain/stellar_wind_test.clj [130:11 - 140:54] (10 lines, 115 tokens)
+   test/domain/stellar_wind_test.clj [106:11 - 67:52]
+Clone found (clojure):
+ - test/domain/stellar_test.clj [287:85 - 295:39] (8 lines, 98 tokens)
+   test/domain/stellar_wind_test.clj [57:34 - 67:21]
+Clone found (clojure):
+ - test/domain/stellar_test.clj [944:5 - 955:59] (11 lines, 163 tokens)
+   test/domain/stellar_test.clj [920:5 - 931:64]
+Clone found (clojure):
+ - test/domain/orbital_stability_test.clj [69:44 - 77:45] (8 lines, 98 tokens)
+   test/domain/genesis/handoff_test.clj [35:16 - 44:22]
+Clone found (clojure):
+ - test/domain/mass_transfer_test.clj [152:40 - 160:31] (8 lines, 98 tokens)
+   test/domain/mass_transfer_test.clj [125:39 - 133:33]
+Clone found (clojure):
+ - test/domain/mass_transfer_test.clj [203:3 - 213:35] (10 lines, 130 tokens)
+   test/domain/mass_transfer_test.clj [178:3 - 188:35]
+Clone found (clojure):
+ - test/domain/lod_test.clj [100:51 - 114:43] (14 lines, 264 tokens)
+   test/domain/lod_test.clj [82:50 - 96:43]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [126:5 - 142:13] (16 lines, 172 tokens)
+   test/domain/mhd_force_test.clj [18:5 - 34:17]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [165:5 - 181:13] (16 lines, 172 tokens)
+   test/domain/mhd_force_test.clj [117:5 - 133:17]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [304:5 - 318:13] (14 lines, 158 tokens)
+   test/domain/hydro_test.clj [265:5 - 279:19]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [327:5 - 341:17] (14 lines, 158 tokens)
+   test/domain/hydro_test.clj [265:5 - 279:19]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [348:5 - 361:12] (13 lines, 149 tokens)
+   test/domain/hydro_test.clj [265:5 - 278:13]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [382:5 - 396:23] (14 lines, 158 tokens)
+   test/domain/hydro_test.clj [265:5 - 279:19]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [405:5 - 421:12] (16 lines, 172 tokens)
+   test/domain/mhd_force_test.clj [117:5 - 133:17]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [506:18 - 519:17] (13 lines, 143 tokens)
+   test/domain/hydro_test.clj [266:17 - 279:19]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [549:5 - 563:19] (14 lines, 158 tokens)
+   test/domain/hydro_test.clj [505:5 - 279:19]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [572:5 - 591:17] (19 lines, 222 tokens)
+   test/domain/mhd_force_test.clj [18:5 - 145:16]
+Clone found (clojure):
+ - test/domain/hydro_test.clj [600:5 - 619:8] (19 lines, 229 tokens)
+   test/domain/hydro_test.clj [265:5 - 284:91]
+Clone found (clojure):
+ - test/domain/formation_integration_test.clj [208:29 - 216:56] (8 lines, 96 tokens)
+   test/domain/formation_integration_test.clj [188:75 - 196:60]
+Clone found (clojure):
+ - test/domain/focus_conservation_test.clj [27:28 - 41:5] (14 lines, 136 tokens)
+   test/domain/focus_zone_test.clj [16:43 - 30:9]
+Clone found (clojure):
+ - test/domain/focus_conservation_test.clj [124:5 - 137:82] (13 lines, 174 tokens)
+   test/domain/focus_zone_test.clj [101:5 - 114:13]
+Clone found (clojure):
+ - test/domain/focus_conservation_test.clj [160:5 - 173:12] (13 lines, 174 tokens)
+   test/domain/focus_zone_test.clj [101:5 - 114:13]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [57:11 - 76:13] (19 lines, 227 tokens)
+   test/domain/mhd_force_test.clj [56:11 - 75:17]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [87:5 - 97:13] (10 lines, 122 tokens)
+   test/domain/mhd_force_test.clj [95:5 - 105:12]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [139:5 - 149:18] (10 lines, 123 tokens)
+   test/domain/mhd_force_test.clj [55:5 - 65:17]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [149:18 - 159:12] (10 lines, 114 tokens)
+   test/domain/mhd_force_test.clj [65:17 - 75:17]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [179:5 - 204:8] (25 lines, 310 tokens)
+   test/domain/mhd_force_test.clj [55:5 - 81:55]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [211:5 - 231:13] (20 lines, 238 tokens)
+   test/domain/mhd_force_test.clj [55:5 - 75:17]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [234:55 - 242:52] (8 lines, 126 tokens)
+   test/domain/em_lorentz_test.clj [201:53 - 209:52]
+Clone found (clojure):
+ - test/domain/em_lorentz_test.clj [244:5 - 263:17] (19 lines, 232 tokens)
+   test/domain/mhd_force_test.clj [55:5 - 74:36]
+Clone found (clojure):
+ - test/domain/condensation_seeder_test.clj [91:5 - 100:51] (9 lines, 105 tokens)
+   test/domain/condensation_seeder_test.clj [41:5 - 50:51]
+Clone found (clojure):
+ - test/domain/condensation_seeder_test.clj [116:5 - 134:15] (18 lines, 201 tokens)
+   test/domain/condensation_seeder_test.clj [41:5 - 108:61]
+Clone found (clojure):
+ - test/domain/condensation_seeder_test.clj [141:5 - 153:59] (12 lines, 144 tokens)
+   test/domain/condensation_seeder_test.clj [41:5 - 53:48]
+Clone found (clojure):
+ - test/domain/condensation_seeder_test.clj [162:5 - 174:58] (12 lines, 146 tokens)
+   test/domain/condensation_seeder_test.clj [41:5 - 53:54]
+Clone found (clojure):
+ - test/domain/condensation_seeder_test.clj [200:5 - 209:48] (9 lines, 102 tokens)
+   test/domain/condensation_seeder_test.clj [41:5 - 50:48]
+Clone found (clojure):
+ - test/domain/condensation_seeder_test.clj [220:5 - 231:48] (11 lines, 128 tokens)
+   test/domain/condensation_seeder_test.clj [66:5 - 77:48]
+Clone found (clojure):
+ - test/domain/commitment_test.clj [31:55 - 44:75] (13 lines, 114 tokens)
+   test/domain/narrowing_test.clj [30:91 - 43:72]
+Clone found (clojure):
+ - src/domain/gravity/barnes_hut/tree.clj [436:35 - 445:32] (9 lines, 127 tokens)
+   src/domain/gravity/barnes_hut/tree.clj [392:44 - 401:33]
+Clone found (clojure):
+ - src/infra/render/mesh.clj [187:21 - 200:6] (13 lines, 125 tokens)
+   src/infra/render/mesh.clj [143:21 - 156:15]
+Clone found (clojure):
+ - src/infra/render/hud.clj [104:27 - 112:53] (8 lines, 107 tokens)
+   src/infra/render/hud.clj [42:46 - 50:51]
+Clone found (clojure):
+ - src/infra/dev/server.clj [19:6 - 30:17] (11 lines, 145 tokens)
+   src/infra/dev/window.clj [17:6 - 28:31]
+Clone found (clojure):
+ - src/domain/stellar/disc_evolution.clj [240:68 - 248:23] (8 lines, 118 tokens)
+   src/domain/stellar/disc_evolution.clj [220:98 - 228:23]
+Clone found (clojure):
+ - src/domain/integrator/kinematics.clj [603:92 - 615:12] (12 lines, 131 tokens)
+   src/domain/integrator/kinematics.clj [489:71 - 501:12]
+Clone found (clojure):
+ - src/domain/em/lorentz.clj [188:3 - 199:10] (11 lines, 141 tokens)
+   src/domain/mhd/force.clj [27:3 - 38:15]
+Found 65 clones.
+duplicated lines: 800 (1.59%), duplicated tokens: 9818 (1.52%)
+
+[1;36m━━━ cljfmt  (formatting)[0m
+  all files formatted.
+
+[1;36m━━━ verdict[0m
+[1;32m✔ no blocking findings[0m
+moved a2b46a04-d541-4714-aed9-bf07d9a9c923: in_progress -> review

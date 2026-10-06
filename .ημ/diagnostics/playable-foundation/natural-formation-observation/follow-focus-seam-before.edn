@@ -1,0 +1,3 @@
+{:case :selected-body-moves-before-frame, :expected-selected-world-overlap? true, :actual-overlap? false, :focus-distance-au 6.5, :binding-output #:component{:binding {1 {}}, :binding-scar {1 {}}}, :spark-position-preserved? true}
+{:case :exact-render-target-goes-stale-in-intent-queue, :expected-selected-world-overlap? true, :actual-overlap? false, :focus-distance-au 10.0}
+{:case :manual-flight-control, :overlap? true, :binding-output #:component{:binding {1 {0 0.02}}, :binding-scar {1 {}}}, :spark-position-preserved? true}

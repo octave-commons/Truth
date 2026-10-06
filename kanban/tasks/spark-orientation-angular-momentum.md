@@ -1,11 +1,11 @@
 ---
 category: "specs"
 labels: ["domain", "physics", "player", "spark", "spark-flight"]
-write-id: "1791309476940-0.918iqef6rezgjzqzto"
+write-id: "1791311342443-0.guobs98pufdf1zarvq9"
 source: "kanban/tasks/spark-orientation-angular-momentum.md"
 title: "Spark gains orientation + angular momentum (rotation integrator, single writer)"
 priority: "P1"
-status: "in_progress"
+status: "review"
 estimate: "5"
 uuid: "spark-orientation-angular-momentum"
 created_at: "2026-07-23T00:00:00Z"
@@ -58,4 +58,6 @@ None. Unblocks cards 2 (torque channels), 6 (camera roll inheritance),
 2026-10-06 readiness audit: the approved design docs/designs/spark-flight-and-camera.md cites scratchpad/spark-flight-controls-research.md, absent from checkout and all available git history. No historical findings can be fabricated. Triage this existing 5-point feature back to Breakdown while restoring its research-to-design chain with a tracked, narrowly scoped primary-source quaternion-integration note. Research agent verifies convention, integration, normalization, and simulated-time boundaries; design will cite the new note and preserve provenance that it is new evidence, not recovered scratchpad. After the note and design link exist, re-admit the same feature slice: schemas and red tests first, one declared rotation-integrator writer, spawn defaults, zero/constant torque and unit-norm tests, strict analysis and architecture gates. No source implementation before the grounding repair.
 
 2026-10-06 grounding repaired before implementation: docs/research/physics/spark-rotation-integration.md now cites verified Sola 2017 arXiv:1711.02508v1 sections 3, 4.5.1, 4.6.1 and the official AHRS AngularRate documentation; design section 3.2 links it. New note explicitly preserves missing-scratchpad provenance and confines current evidence to the rotational substrate. 5-point slice remains unchanged: scalar-first body-to-world unit quaternion, world-frame angular velocity, same simulation dt, one declared rotation-integrator writer, schema/red tests before implementation. Rheos refused requested todo-to-breakdown with No transition; no status bypass was used and code was held until this tracked research repair existed. Claim now proceeds through the legal todo-to-in_progress edge; strict tests, architecture, write-conflicts, and analysis remain review gates.
+
+Canonical gated review transition completed on exact source revision a3609f6931951f8e011950ec5eab0a24265e93cd. This card independently executed clojure -M:test: 899 tests, 15635 assertions, 0 failures, 0 errors; then bin/analyze --strict: exit 0, no blocking findings. Move in_progress to review exited 0. Full per-transition log: .ημ/diagnostics/playable-foundation/rheos-review-orientation-a3609f6.log. Prior scoped rotation/architecture tests and research provenance remain attached to this source; current gate was executed anew rather than reused. This does not claim chase-camera/input-feel or live Gate completion. Hosted review and final done policy remain outstanding.
 ---

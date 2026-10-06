@@ -51,6 +51,71 @@ The focused launch and architecture suite passed 11 tests / 44 assertions.
 These are slice-level results; whole-tree gates and independent review govern
 promotion. Console budget completion is not a successful formation outcome.
 
+## Integrated gates and formation repair
+
+Source revision `a3609f6931951f8e011950ec5eab0a24265e93cd` passed four
+independent canonical Rheos review transitions. Each ran `clojure -M:test`
+(899 tests, 15,635 assertions, zero failures/errors) and `bin/analyze --strict`
+(exit 0, no blocking findings). The launch, rotation, dependency-plan, and
+canonical board configuration cards entered review; formation and native
+gameplay verification remain in progress. The raw logs are the four
+`rheos-review-*-a3609f6.log` files in the evidence directory.
+
+The formation regression was reproduced before repair in `ee13c84`: 53 tests,
+225 assertions, 19 expected failures. After repair, the focused suites passed
+79 tests / 362 assertions. The identical moving-frame probe measured GI birth
+radius 999.550877 → 2.999879 AU and binary birth radius 998.939730 → 4.999698 AU.
+Core-seed recentering error fell from 10 AU to 4.406e-14 AU. This verifies
+parent-relative materialization and preserves the absolute-spawn path; it
+does not by itself verify subsequent orbital survival.
+
+A longer native run on that revision crossed disk maturity naturally. At tick
+4373 it contained 24 planets, 24 planet-formation events, one phase-0 handoff,
+and two ecology transition events. The production candidate predicate accepted
+entities 1022, 1023, and 1024. The native window at tick 4616 visibly reported
+24 planets and two stars in the planets-formed arc; see `planet-era-native.png`.
+No fixture or state injection produced these births. The completed 900-second
+capture ended at published tick 6981 with 24 planets, 21 bound two-body orbits,
+three currently eligible candidates (1021, 1022, 1023), and four prebiotic
+ecologies. Persisted candidate components and the current predicate are recorded
+separately: an earlier admission does not prove continued eligibility.
+
+## Native selection and attention boundary
+
+The run remained an ordinary untouched formation observation until
+2026-10-06T18:36:57Z. Subsequent real native input is labeled separately in
+`natural-formation-observation/segments.edn`: L had no living target while all
+four ecologies were prebiotic; clicking the Entities row at 18:38:30Z selected
+Niphaelar (1024) and entered follow-selection. The player narrowed focus twice
+with comma at 18:39:29Z and pressed T approximately 18:39:59–18:40:00Z.
+
+At tick 6800, focus was sustained and the candidate component existed, but the
+production overlap predicate was false: the smoothed camera-derived focus was
+about 661 AU from the moving planet, versus the existing 1 AU overlap radius.
+At the final T observation, Resonance stayed 5, binding stayed empty, and no
+commitment, planetary palette, or voxels existed. No sculpting success is
+claimed. The capture also exposes overlapping menu/inspector/HUD text that
+needs separate UI work.
+
+The existing flight design §5 explicitly identifies non-manual camera modes as
+debug/cinematic views. Their camera-target attention policy is an inspected
+limitation, not a reason to enlarge the physical overlap gate or to certify
+manual fly → resolve → sculpt. A pure diagnostic reproduces the lag and
+separately confirms that ordinary manual focus-follow can accrue binding near
+a body without changing spark position. Actual manual flight remains the next
+native acceptance test.
+
+## Independent-seed regression
+
+A constructor probe found that requested seeds were ignored. Red checkpoint
+`08161ab` contains two tests / seven assertions with two expected failures:
+seeds 41 and 43 produced identical positions and velocities. Green `81207e7`
+forwards the requested seed to the existing generator and retains default 42.
+The same probe then distinguishes both seeds. Independent review found no
+blocking defect; its canonical review transition passed 901 tests / 15,642
+assertions and all six strict analysis gates. Independent two-seed natural
+formation acceptance remains open until the second full run completes.
+
 ## Remaining player acceptance
 
 Run actual flight and focus controls; establish a naturally formed stable

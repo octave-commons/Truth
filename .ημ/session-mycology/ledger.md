@@ -332,3 +332,12 @@
   spore: none
   receipt-refs: truth-manual-hud-plan
   note: Native pixels plus the independent HUD concat path explain overlap without speculative graphics work. Split placement from information density; preserve detail access and existing heading/debug/binding ownership. Target current Markdown/design paths in searches because archived transcripts may embed large image payloads. No spore needed.
+- ts: 2026-10-06T18:28:35.220300795Z
+  session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
+  task: Truth playable foundations, frame repair, and canonical Clojure board gates
+  p-efficiency: 0.78
+  p-friction: 0.62
+  p-skill-candidate: 0.68
+  spore: none
+  receipt-refs: none
+  note: Recovered missing research before code; separate immutable validation checkout kept agents moving during full gates. Rheos feature was present in newer canonical artifact despite same package version: verify executable hash and actual pass/fail transition before proposing upstream implementation. No spore promoted; long playable-game goal remains active.

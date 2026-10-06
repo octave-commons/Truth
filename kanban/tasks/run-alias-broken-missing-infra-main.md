@@ -1,11 +1,11 @@
 ---
 category: "specs"
 labels: ["specs", "tooling", "infra", "docs"]
-write-id: "1791309968710-0.lftvwkku24hdzvxbu9"
+write-id: "1791311167402-0.eneqwbggvvgcvqiwqp5"
 source: "kanban/tasks/run-alias-broken-missing-infra-main.md"
 title: "`clojure -M:run` has been broken since 0a9343a — `src/infra/main.clj` does not exist"
 priority: "P2"
-status: "in_progress"
+status: "review"
 estimate: "3"
 uuid: "run-alias-broken-missing-infra-main"
 created_at: "2026-07-25T00:00:00Z"
@@ -72,4 +72,6 @@ held, but a frame render would have been better evidence.
 2026-10-06 implementation scope resolved by runtime history recovery and root approval: restore infra.main with console default capped at 1000 ticks, explicit console [ticks] for finite runs, demo PNG through genesis/create-world and the existing renderer, and visible failure for invalid arguments. Native-window launch remains the existing clojure -M:dev and clojure -M:demo serve routes documented alongside the repaired commands; no duplicate native launch mode or new nREPL dependency. Red checkpoint: new entry-point test cannot load absent infra.main, confirming the intended missing implementation. Source changes proceed after root records the red checkpoint.
 
 2026-10-06 independent local preparation review of green commit b5a7e39 by board-scout: no blocking correctness or architecture finding. Verified no-argument console default1000, finite explicit budget, termination without reseeding, same genesis/create-world plus arc/tick-genesis, existing renderer tick exactly once for demo, and worker-pool cleanup on error/normal CLI exit. README/CLAUDE/AGENTS distinguish console/native and OpenGL/Xvfb prerequisites. One test-strength finding at test/infra/main_test.clj:62: call-history assertion precedes invalid-argument cases, so add unchanged-history assertion after that loop to substantiate the test wording that no run starts. Root informed. This local review is preparation, not hosted approval or permission to mark done; full gates and canonical PR policy remain.
+
+Canonical gated review transition completed on exact source revision a3609f6931951f8e011950ec5eab0a24265e93cd. This card independently executed clojure -M:test: 899 tests, 15635 assertions, 0 failures, 0 errors; then bin/analyze --strict: exit 0, no blocking findings. Move in_progress to review exited 0. Full per-transition log: .ημ/diagnostics/playable-foundation/rheos-review-launch-a3609f6.log. Console default and explicit finite budget, real ECS PNG path, invalid-argument no-start assertion, and native-route documentation are included in the reviewed source. No prior gate result was reused. Hosted review and final done policy remain outstanding.
 ---

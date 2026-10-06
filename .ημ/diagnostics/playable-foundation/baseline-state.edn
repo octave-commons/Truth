@@ -1,0 +1,3 @@
+{:tick 188, :sim-time 5.167767721418255E12, :arc :arc/genesis-nebula-collapse, :fixture? false, :states {:nebula 1000}, :stats {:body-count 1000, :star-count 0, :disk-mass-kg 0.0, :avg-temp 3.000000000000081, :peak-temp 3.0}, :camera {:target [3.606458427965524E-4 6.26235006552095E-4 -6.338208337189057E-5], :distance 75.29476495811053}}
+{:agency 0.0, :resonance 0.0, :coherence 0.8}
+nil

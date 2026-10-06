@@ -1,0 +1,17 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.disk-evolution-test
+[disk-evolution] fragment spawn blocked: hill-clamp-below-floor eid 0 {:branch :gi, :r-hill-max-m 2.5580997604403305E10, :floor-m 4.487936121E10}
+[disk-evolution] fragment spawn blocked: clump-scale-disk eid 0 {:branch :gi, :r-disk-m 1.495978646927621E15, :gate-m 1.495978707E13}
+
+Testing domain.formation-integration-test
+
+Testing domain.formation-test
+
+Testing domain.rotation-test
+
+Ran 79 tests containing 362 assertions.
+0 failures, 0 errors.

@@ -1,0 +1,11 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.genesis-seed-test
+
+Testing law.seed-contract-test
+
+Ran 12 tests containing 38 assertions.
+0 failures, 0 errors.
