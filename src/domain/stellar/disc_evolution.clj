@@ -342,13 +342,17 @@
                                 offset      [(* r-orbit (math/cos angle))
                                              (* r-orbit (math/sin angle))
                                              0.0]
+                                relative-velocity [(* (- v-orbit) (math/sin angle))
+                                                   (* v-orbit (math/cos angle))
+                                                   0.0]
                                 comp-pos    (sp/v+ pos offset)
                                 comp-vel    (sp/v+ (ecs/get-component w' eid c/velocity)
-                                                   [(* (- v-orbit) (math/sin angle))
-                                                    (* v-orbit (math/cos angle))
-                                                    0.0])
-                                 ;; Emit spawn request (materialized next tick by materialize-lifecycle)
+                                                   relative-velocity)
+                                 ;; Lifecycle materializes after the parent advances this tick.
                                 spawn-spec  {:position comp-pos :velocity comp-vel
+                                             :spawn-parent eid
+                                             :rel-position offset
+                                             :rel-velocity relative-velocity
                                              :mass companion-m
                                              :radius (geometry/sphere-radius companion-m 1.0e3)
                                              :matter-state :protostar
@@ -397,13 +401,17 @@
                                 offset    [(* r-orbit (math/cos angle))
                                            (* r-orbit (math/sin angle))
                                            0.0]
+                                relative-velocity [(* (- v-orbit) (math/sin angle))
+                                                   (* v-orbit (math/cos angle))
+                                                   0.0]
                                 epos      (sp/v+ pos offset)
                                 evel      (sp/v+ (ecs/get-component w' eid c/velocity)
-                                                 [(* (- v-orbit) (math/sin angle))
-                                                  (* v-orbit (math/cos angle))
-                                                  0.0])
-                                 ;; Emit spawn request (materialized next tick by materialize-lifecycle)
+                                                 relative-velocity)
+                                 ;; Lifecycle materializes after the parent advances this tick.
                                 spawn-spec {:position epos :velocity evel
+                                            :spawn-parent eid
+                                            :rel-position offset
+                                            :rel-velocity relative-velocity
                                             :mass embryo-m
                                             :radius (geometry/sphere-radius embryo-m geometry/planet-material-density)
                                             :matter-state :gas-giant

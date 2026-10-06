@@ -426,7 +426,7 @@
   (testing "requests without a parent retain the absolute-spawn frame contract"
     (let [[world host] (build-disk-world {})
           request (-> (pf/planet-seeds world host) :spawns first second
-                       (dissoc :spawn-parent :rel-position :rel-velocity))
+                      (dissoc :spawn-parent :rel-position :rel-velocity))
           existing (set (ecs/entities-with world c/matter-state))
           frame-offset [(* 10.0 au) (* -5.0 au) (* 2.0 au)]
           queued (-> world
