@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: none
   note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.
+- ts: 2026-10-06T22:03:26.921250834Z
+  session: /home/err/spaces/foresight/.worktrees/truth-mote-readiness-plan
+  task: Ground the existing mote shader card without granting premature implementation readiness
+  p-efficiency: 0.93
+  p-friction: 0.15
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: mote-of-light-shader,b402939931575e377ae4409d9cd4061dff11df06
+  note: An integrated orientation substrate does not imply an ordinary-input producer. Correct stale renderer facts while preserving reviewed card bodies through canonical comments; keep proposed shared axes pinned and unaccepted instead of choosing a conflicting visual frame. Static poses prove shader response, not player controllability. No spore warranted.

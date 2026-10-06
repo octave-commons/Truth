@@ -1,13 +1,14 @@
 ---
-uuid: "mote-of-light-shader"
-title: "Mote-of-light render: bespoke core + halo + heading flare (replaces particle sprite)"
-status: "todo"
-priority: "P2"
-labels: ["infra", "render", "spark", "spark-flight"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/mote-of-light-shader.md"
 category: "specs"
-estimate: 5
+labels: ["infra", "render", "spark", "spark-flight"]
+write-id: "1791324160871-0.6pox29jw7fylp316ynr"
+source: "kanban/tasks/mote-of-light-shader.md"
+title: "Mote-of-light render: bespoke core + halo + heading flare (replaces particle sprite)"
+priority: "P2"
+status: "todo"
+estimate: "5"
+uuid: "mote-of-light-shader"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Mote-of-light render
@@ -50,3 +51,7 @@ headless PNG path. Don't let the halo wash out at true scale.
 
 ## Dependencies
 Card 1 (orientation for the heading flare). Pairs with card 8 (trails).
+
+---
+2026-10-06 planning-only readiness repair at composed source b402939931575e377ae4409d9cd4061dff11df06: docs/notes/2026-10-06-mote-render-readiness.md grounds the narrow amendment to docs/designs/spark-flight-and-camera.md section 6.2. Original card body and TODO5 scope are preserved. Corrected facts: existing particle is already anchored at ECS position, with depth testing but no depth writes before solids; nominal 28–72 pixel size and fixed cyan color do not supply orientation or coherence brightness. The old bodies.clj:152 opacity coupling cite is stale. Card 1 unambiguously means spark-orientation-angular-momentum, currently REVIEW5 with its integrated single-writer substrate; ordinary input still has no attitude torque producer. The shared +Y forward/+X right/+Z up frame is only the pinned PR9 proposal at 9f2d772, pending review and owned there by common-frame work. Open before implementation: review grounding, reconcile that shared-axis contract and ownership, specify bounded graphical extent/coherence response/depth tests, record scope and claim legally through Rheos. Static-pose/native-offscreen tests can establish shader response but cannot establish ordinary-input turning or player-proof acceptance. Existing facing-cue HUD work remains separate. No new feature task, status transition, implementation, source/config change, external review request or native input occurred; no readiness admission is claimed.
+---
