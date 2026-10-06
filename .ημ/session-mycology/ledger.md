@@ -323,6 +323,24 @@
   spore: none
   receipt-refs: none
   note: Recovered missing research before code; separate immutable validation checkout kept agents moving during full gates. Rheos feature was present in newer canonical artifact despite same package version: verify executable hash and actual pass/fail transition before proposing upstream implementation. No spore promoted; long playable-game goal remains active.
+- ts: 2026-10-06T18:51:56.256840630Z
+  session: /home/err/spaces/foresight/.worktrees/truth-review-runtime
+  task: Consume existing upstream review diagnostics through a minimal Truth caller change
+  p-efficiency: 0.88
+  p-friction: 0.35
+  p-skill-candidate: 0.48
+  spore: none
+  receipt-refs: review-runtime-upstream-diagnostics
+  note: Inspect exact reusable workflow requirements, revision binding and credentials before advancing an old caller pin. Use upstream deterministic tests and preserve native merge/review provenance separately from current convergence counters; do not create a local reviewer engine or relabel missing providers. Two-line executable adoption; hosted qualification remains distinct. No spore created or promoted.
+- ts: 2026-10-06T19:00:47.475165010Z
+  session: /home/err/spaces/foresight/.worktrees/truth-review-runtime
+  task: Verify published Truth head and canonical adoption review gate independently
+  p-efficiency: 0.94
+  p-friction: 0.12
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: review-runtime-upstream-diagnostics
+  note: Ran canonical Rheos review admission at immutable9b1818b and full test/strict at clean detached56f2a19 in separate checkouts. Both899tests15635assertions and strict passed. Append fresh head-bound evidence rather than rewriting historical receipts; detached validation remains clean. No spore needed.
 - ts: 2026-10-06T19:29:00Z
   session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
   task: Native manual flight, precision evidence and hosted review recovery
