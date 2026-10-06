@@ -106,6 +106,16 @@
     :dec [:setting/scale :zoom-sensitivity 0.8  1.0 200.0]
     :inc [:setting/scale :zoom-sensitivity 1.25 1.0 200.0]}])
 
+(def ^:private fine-displacement 1.0e7)
+
+(def spark-flight-ranges
+  "Player-selected displacement presets for the existing thrust setting.
+
+   Fine bounds isolated constant-dt release coast across the exposed damping
+   range; it neither brakes existing momentum instantly nor matches a target."
+  [{:id :cruise :label "Cruise" :displacement player/default-displacement-per-tick}
+   {:id :fine :label "Fine" :displacement fine-displacement}])
+
 (def spark-knobs
   "Adjustable influence knobs for the Spark panel — every magic number of the
    observer halo / warp-well model, as data. Each row names where the value
@@ -136,7 +146,7 @@
     :mode :scale :down 0.5 :up 2.0 :lo 0.001 :hi 0.5}
    {:label "Thrust m/t" :scope :world :key :genesis/spark-flight-displacement
     :dflt player/default-displacement-per-tick :fmt "%.1e"
-    :mode :scale :down 0.5 :up 2.0 :lo 1.0e12 :hi 1.0e16}
+    :mode :scale :down 0.5 :up 2.0 :lo fine-displacement :hi 1.0e16}
    {:label "Damp keep/t" :scope :world :key :genesis/spark-damping-retention
     :dflt player/default-damping-retention :fmt "%.3f"
     :mode :add :down -0.01 :up 0.01 :lo 0.80 :hi 0.999}])
@@ -161,7 +171,12 @@
    enqueues the returned fn as a sim intent and it lands between ticks, like
    every other input."
   [action]
-  (when (= :spark/knob (first action))
+  (case (first action)
+    :spark/flight-range
+    (when-let [preset (some #(when (= (second action) (:id %)) %) spark-flight-ranges)]
+      (fn [world] (assoc world :genesis/spark-flight-displacement (:displacement preset))))
+
+    :spark/knob
     (let [[_ scope k dflt mode step lo hi] action
           bump (fn [v]
                  (let [v  (double (or v dflt))
@@ -169,7 +184,9 @@
                    (max (double lo) (min (double hi) v'))))]
       (if (= scope :observer)
         (fn [w] (player/update-observer w #(update % k bump)))
-        (fn [w] (update w k bump))))))
+        (fn [w] (update w k bump))))
+
+    nil))
 
 (defn apply-action
   "Fold a menu :action into the config map. Pure — the window loop swaps the

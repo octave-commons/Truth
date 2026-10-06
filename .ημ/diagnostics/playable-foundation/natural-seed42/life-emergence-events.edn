@@ -1,0 +1,1 @@
+{:observation-tick 11280, :event {:id #uuid "3a4b3e35-7051-401c-8937-c8387c8b8f7d", :tick 11280, :kind :event/life-emergence, :entities #{1012}, :payload {:from :prebiotic, :to :prokaryotic}, :cause nil}}

@@ -105,6 +105,50 @@ model; `.agents/skills/physics-dt-unit-mismatch/`). Thrust *forces* are physical
 (per-second) and integrate correctly through the existing integrator; the economy
 regen is the part that needs sim-time pacing.
 
+### 3.5 Wave 0 precision range (2026-10-06 amendment)
+
+Scope: repair the existing three-point `flight-no-jump-accel` smooth-approach
+acceptance. The released [precision investigation](../notes/2026-10-06-manual-flight-precision-boundary.md)
+and its [production-system probe](../../.ημ/diagnostics/playable-foundation/manual-flight/response-probe.edn)
+show that the current minimum displacement setting, `D = 1e12 m/tick`, settles
+through 6.68459 AU after a single accepted input tick. The binding radius is 1 AU.
+Native coarse travel succeeded; that evidence does not establish fine approach
+or commitment to a moving, currently eligible planet.
+
+Expose **Cruise** and **Fine** choices in the existing Spark panel beside the
+thrust setting. Cruise selects the unchanged default `D = 3e14 m/tick`; Fine
+selects `D = 1e7 m/tick`. Keep the existing half/double stepper, lower its minimum
+to `1e7`, and retain its `1e16` maximum. Both choices set only
+`:genesis/spark-flight-displacement` through the existing world-intent path.
+The current numeric value remains visible; a choice is marked selected only
+when its value matches. Custom stepper values select neither preset. Retention,
+camera mode, focus, position and velocity remain untouched by choosing a range.
+Selecting Fine while cruising does not instantly stop the spark.
+
+The sizing uses the actual frozen-snapshot channel delay. At constant `h`, let
+`w = v h` and `α = 1−r`; the force-free recurrence is
+`w[n+1] = w[n] − α w[n−1] + α D u[n−1]`. One input tick from rest settles through
+`D`; release from steady thrust coasts `r D / (1−r)`. For a coast allowance of
+`0.1 R`, require `D ≤ 0.1 R (1−r)/r`. Fine's `1e7` gives a maximum coast of
+0.066779 AU over the full exposed `r = .80–.999` range, and a settled pulse of
+0.000066846 AU. These are constant-dt, isolated-body bounds, not validated feel
+or a guarantee under gravity, changing dt, inherited cruise velocity or moving
+targets. Consecutive unequal timesteps consume the prior step's acceleration;
+the tests must characterize that response without claiming adaptive invariance.
+
+Regression verification must discover the actual panel actions and apply their
+world intents, then exercise the real thrust/integrator pair through
+`tick/run-parallel`: initial lag, pulse distance, steady-release coast, several
+constant timesteps and the exposed retention endpoints. No test may reposition
+the spark after fixture initialization. Check Cruise/default preservation and
+that the settings intent changes no physical components. Full tests, strict
+analysis and native visibility of the choices remain required. Correct the
+emitter documentation's exact-retention and guaranteed-wall-60-Hz claims.
+
+This slice adds no local-frame reference, velocity matching, automatic slowdown,
+capture controller, FA toggle or binding-rule change. The separate native
+fly→resolve→sculpt acceptance remains open until genuine controls demonstrate it.
+
 ## 4. Coherence-gated thrust (the "let it rise" economy)
 
 Coherence already exists as a `c/observer` field (0.8 init, drain/regen in

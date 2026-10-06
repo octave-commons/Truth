@@ -1,0 +1,44 @@
+{:source-commit "24cbffd40fcc22e77cb967fa9da2b65e67be509c"
+ :launch-command "DISPLAY=:2 TRUTH_DEMO_PORT=7895 clojure -J-Xms256m -J-Xmx2g -M:demo serve"
+ :scenario :nebula
+ :fixture? false
+ :runtime-world-injection? false
+ :runtime-tuning-via-repl? false
+ :display ":2"
+ :window-id 2097159
+ :service-port 7895
+ :service-pid 2798625
+ :xvfb-pid 2797145
+ :readback "Read-only snapshot.clj through the existing demo-client; one published ECS world per snapshot."
+ :inputs "native-inputs.log: actual X11 R, Spark/Fine/plus/Cruise clicks, W hold/release and Escape."
+ :setting-sequence [3.0e14 1.0e7 2.0e7 3.0e14]
+ :setting-verdict :pass
+ :retention-throughout 0.97
+ :camera-mode-throughout-settings :manual
+ :service-errors-in-readbacks nil
+ :ui-errors-in-readbacks nil
+ :media [{:path "precision-controls.mp4" :width 1280 :height 720 :fps 24
+          :frames 2880 :duration-seconds 120.0
+          :start-utc "2026-10-06T19:53:10Z" :end-utc "2026-10-06T19:55:10Z"
+          :content "Full native window: default, Fine, custom, Cruise, W and Fine-during-coast. Escape occurs after this recording."}
+         {:path "precision-controls-full.gif" :width 1280 :height 720 :fps 8
+          :frames 320 :duration-seconds 40.01 :speed-factor 3
+          :content "Entire 120-second recording, full window with no crop; accelerated 3x."}]
+ :coast-readbacks [{:tick 1963 :displacement 3.0e14 :speed-m-per-s 2710.842673674857}
+                  {:tick 2114 :displacement 1.0e7 :speed-m-per-s 22.9319552838253}]
+ :coast-limit "Different ticks in a live gravitational world; nonzero coast is observed, while exact setting-intent preservation is established by the focused tests."
+ :escape {:input-utc "2026-10-06T19:55:20Z"
+          :render-thread-alive? false :simulation-thread-alive? true
+          :nrepl-service-alive? true :native-window-map-state :IsViewable
+          :tick-first 2272 :tick-later 3799
+          :whole-service-quit-claimed? false}
+ :cleanup {:owned-service-sigterm-exit 143
+           :owned-service-shutdown-message "Dev window stopped."
+           :owned-service-reaped? true :owned-display-reaped? true
+           :port-7895-free? true :encoding-finished? true
+           :retained-service-2372912-before-and-after-state "T"
+           :retained-service-signalled? false}
+ :limits ["Verifies visibility and genuine setting actions, not a moving-target approach, commitment or sculpt."
+          "No fixture selection, world placement, nREPL tuning or phase advance was used."
+          "Escape observation is distinct from intentional long-lived-service policy and requires source/docs classification."
+          "Software Xvfb rendering and concurrent work make this unsuitable as an isolated performance benchmark."]}

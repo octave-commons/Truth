@@ -1,0 +1,98 @@
+{:source "24cbffd40fcc22e77cb967fa9da2b65e67be509c",
+ :native-settings-checks :pass,
+ :states
+ [{:tick 1394,
+   :effective-displacement 3.0E14,
+   :preset-colors
+   {"Cruise" [0.8 0.92 1.0 1.0], "Fine" [0.6 0.7 0.84 0.85]},
+   :speed-m-per-s 1.2029135565422497,
+   :effective-retention 0.97,
+   :window
+   {:mode :manual, :ui/active-domain :spark, :ui/cursor-free? true},
+   :snapshot "before-fine",
+   :wall-ms 1791316406379,
+   :thrust-intent nil,
+   :velocity
+   [-0.16028376897617932 1.1263946475051614 -0.3905703982480476]}
+  {:tick 1567,
+   :effective-displacement 1.0E7,
+   :preset-colors
+   {"Cruise" [0.6 0.7 0.84 0.85], "Fine" [0.8 0.92 1.0 1.0]},
+   :speed-m-per-s 1.9555431492404611,
+   :effective-retention 0.97,
+   :window
+   {:mode :manual, :ui/active-domain :spark, :ui/cursor-free? true},
+   :snapshot "after-fine",
+   :wall-ms 1791316425593,
+   :thrust-intent nil,
+   :velocity
+   [-0.11489503456758789 1.8841433057304613 -0.5108347512103132]}
+  {:tick 1719,
+   :effective-displacement 2.0E7,
+   :preset-colors
+   {"Cruise" [0.6 0.7 0.84 0.85], "Fine" [0.6 0.7 0.84 0.85]},
+   :speed-m-per-s 2.9828515921706864,
+   :effective-retention 0.97,
+   :window
+   {:mode :manual, :ui/active-domain :spark, :ui/cursor-free? true},
+   :snapshot "custom",
+   :wall-ms 1791316448334,
+   :thrust-intent nil,
+   :velocity
+   [0.5529983443277637 2.8971278129007256 -0.4452492423385005]}
+  {:tick 1837,
+   :effective-displacement 3.0E14,
+   :preset-colors
+   {"Cruise" [0.8 0.92 1.0 1.0], "Fine" [0.6 0.7 0.84 0.85]},
+   :speed-m-per-s 3.550109212078247,
+   :effective-retention 0.97,
+   :window
+   {:mode :manual, :ui/active-domain :spark, :ui/cursor-free? true},
+   :snapshot "back-cruise",
+   :wall-ms 1791316468013,
+   :thrust-intent nil,
+   :velocity
+   [1.7059972769808762 3.1131804000973458 -0.03092741609638194]}
+  {:tick 1963,
+   :effective-displacement 3.0E14,
+   :preset-colors
+   {"Cruise" [0.8 0.92 1.0 1.0], "Fine" [0.6 0.7 0.84 0.85]},
+   :speed-m-per-s 2710.842673674857,
+   :effective-retention 0.97,
+   :window
+   {:mode :manual, :ui/active-domain :spark, :ui/cursor-free? true},
+   :snapshot "cruise-coasting",
+   :wall-ms 1791316485763,
+   :thrust-intent nil,
+   :velocity [2.396258846504379 2547.473853657284 926.843689244683]}
+  {:tick 2114,
+   :effective-displacement 1.0E7,
+   :preset-colors
+   {"Cruise" [0.6 0.7 0.84 0.85], "Fine" [0.8 0.92 1.0 1.0]},
+   :speed-m-per-s 22.9319552838253,
+   :effective-retention 0.97,
+   :window
+   {:mode :manual, :ui/active-domain :spark, :ui/cursor-free? true},
+   :snapshot "fine-coasting",
+   :wall-ms 1791316504461,
+   :thrust-intent nil,
+   :velocity
+   [0.6110797970171005 21.575438624856428 7.74607014983043]}],
+ :escape
+ {:tick 2272,
+  :window-thread-alive? false,
+  :service-present? true,
+  :service-error nil,
+  :ui-error nil,
+  :stop false,
+  :wall-ms 1791316524033,
+  :sim-thread-alive? true,
+  :window-present? true},
+ :later-after-escape
+ {:wall-ms 1791316596917,
+  :tick 3799,
+  :window-thread-alive? false,
+  :sim-thread-alive? true,
+  :stop false,
+  :service-error nil,
+  :ui-error nil}}

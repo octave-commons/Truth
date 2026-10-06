@@ -1,0 +1,27 @@
+;; Read only: one published ECS world and the current native shell state.
+(let [service @infra.dev.window/service-state
+      world @(:world service)
+      cfg @(:config service)
+      eid (domain.player/observer-entity world)
+      getc #(domain.ecs.core/get-component world eid %)]
+  {:wall-ms (System/currentTimeMillis)
+   :tick (:tick world)
+   :sim-dt (:sim/dt world)
+   :scenario (:demo/scenario world)
+   :fixture? (:demo/fixture? world)
+   :arc (:arc/current world)
+   :observer-eid eid
+   :displacement-key (:genesis/spark-flight-displacement world)
+   :effective-displacement (or (:genesis/spark-flight-displacement world)
+                               domain.player/default-displacement-per-tick)
+   :effective-retention (or (:genesis/spark-damping-retention world)
+                            domain.player/default-damping-retention)
+   :observer (domain.player/get-observer world)
+   :position (getc domain.ecs.components/position)
+   :velocity (getc domain.ecs.components/velocity)
+   :accel-thrust (getc domain.ecs.components/accel-thrust)
+   :thrust-intent (:player/thrust world)
+   :window (select-keys cfg [:mode :ui/active-domain :ui/cursor-free? :focus-offset])
+   :menu (select-keys (infra.menu/menu-hud cfg world 1280 720) [:text :hits :regions])
+   :service-error (:error service)
+   :ui-error (:ui/error-state cfg)})

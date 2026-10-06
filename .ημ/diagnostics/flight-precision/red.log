@@ -1,0 +1,248 @@
+
+Running tests in #{"test"}
+
+Testing infra.flight-precision-test
+
+FAIL in (preset-indication-follows-the-actual-value) (flight_precision_test.clj:97)
+both preset labels must be visible
+expected: (every? some? default-colors)
+  actual: (not (every? #object[clojure.core$some_QMARK_ 0x53fc870f "clojure.core$some_QMARK_@53fc870f"] [nil nil]))
+
+FAIL in (cruise-and-fine-are-real-panel-intents) (flight_precision_test.clj:75)
+Cruise must be a visible, clickable Spark control
+expected: (some? control)
+  actual: (not (some? nil))
+
+FAIL in (cruise-and-fine-are-real-panel-intents) (flight_precision_test.clj:75)
+Fine must be a visible, clickable Spark control
+expected: (some? control)
+  actual: (not (some? nil))
+
+FAIL in (actual-stepper-reaches-fine-without-changing-cruise) (flight_precision_test.clj:110)
+the actual menu minimum must reach Fine
+expected: (= fine-displacement (get floor displacement-key))
+  actual: (not (= 1.0E7 1.0E12))
+
+FAIL in (actual-stepper-reaches-fine-without-changing-cruise) (flight_precision_test.clj:113)
+the same half/double stepper remains useful at fine range
+expected: (= (* 2.0 fine-displacement) (get (up floor) displacement-key))
+  actual: (not (= 2.0E7 2.0E12))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=1.0E7, retention=0.8
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999968511554E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=1.0E7, retention=0.8
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999968511554E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=1.0E7, retention=0.8
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 4.000000000000001E7 3.9999999842557754E12))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=1.0E7, retention=0.8
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 3.9999999842557754E12 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=1.0E7, retention=0.97
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999301982039E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=1.0E7, retention=0.97
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999301982039E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=1.0E7, retention=0.97
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 3.233333333333331E8 3.2333331006606703E13))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=1.0E7, retention=0.97
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 3.2333331006606703E13 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=1.0E7, retention=0.999
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.99999901105309E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=1.0E7, retention=0.999
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.99999901105309E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=1.0E7, retention=0.999
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 9.98999999999999E9 9.989999011053185E14))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=1.0E7, retention=0.999
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.989999011053185E14 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=4.138029443E9, retention=0.8
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999968511554E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=4.138029443E9, retention=0.8
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999968511554E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=4.138029443E9, retention=0.8
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 4.000000000000001E7 3.9999999842557754E12))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=4.138029443E9, retention=0.8
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 3.9999999842557754E12 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=4.138029443E9, retention=0.97
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999301982041E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=4.138029443E9, retention=0.97
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999301982041E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=4.138029443E9, retention=0.97
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 3.233333333333331E8 3.2333331006606703E13))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=4.138029443E9, retention=0.97
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 3.2333331006606703E13 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=4.138029443E9, retention=0.999
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999011053094E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=4.138029443E9, retention=0.999
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999011053094E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=4.138029443E9, retention=0.999
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 9.98999999999999E9 9.989999011053192E14))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=4.138029443E9, retention=0.999
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.989999011053192E14 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=1.0E12, retention=0.8
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999968511555E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=1.0E12, retention=0.8
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999968511555E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=1.0E12, retention=0.8
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 4.000000000000001E7 3.9999999842557754E12))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=1.0E12, retention=0.8
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 3.9999999842557754E12 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=1.0E12, retention=0.97
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.99999930198204E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=1.0E12, retention=0.97
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.99999930198204E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=1.0E12, retention=0.97
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 3.233333333333331E8 3.2333331006606703E13))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=1.0E12, retention=0.97
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 3.2333331006606703E13 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:142)
+constant dt=1.0E12, retention=0.999
+settled one-tick pulse is Fine D
+expected: (close-to? fine-displacement (x pulse eid c/position))
+  actual: (not (close-to? 1.0E7 9.999999011053115E11))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:143)
+constant dt=1.0E12, retention=0.999
+one fine input pulse fits well inside the planet binding neighborhood
+expected: (< (x pulse eid c/position) (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.999999011053115E11 1.495978707E10))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:145)
+constant dt=1.0E12, retention=0.999
+steady release includes the delayed prior channel
+expected: (close-to? expected-coast coast)
+  actual: (not (close-to? 9.98999999999999E9 9.989999011053192E14))
+
+FAIL in (actual-menu-minimum-bounds-pulse-and-release-through-jacobi-physics) (flight_precision_test.clj:146)
+constant dt=1.0E12, retention=0.999
+fine release coast stays below one tenth radius
+expected: (< coast (* 0.1 narrowing/world-focus-radius))
+  actual: (not (< 9.989999011053192E14 1.495978707E10))
+
+Ran 5 tests containing 84 assertions.
+41 failures, 0 errors.

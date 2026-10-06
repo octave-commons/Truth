@@ -1,0 +1,10 @@
+2026-10-06T19:53:08Z R press/release; select normal manual mode
+2026-10-06T19:53:21Z Spark tab native click at274,13
+2026-10-06T19:53:40Z Fine native click at1201,389
+2026-10-06T19:54:01Z Thrust plus native click at1245,419
+2026-10-06T19:54:20Z Cruise native click at1117,389
+2026-10-06T19:54:40Z W native2-second hold/release at Cruise
+2026-10-06T19:54:58Z Fine selected during post-W coast
+2026-10-06T19:55:20Z Escape native press/release
+2026-10-06T19:57:00Z SIGTERM owned service2798625 after Escape observation
+2026-10-06T19:57:50Z SIGTERM owned Xvfb2797145

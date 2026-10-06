@@ -1,0 +1,742 @@
+Dev window thread started on gates-of-truth-dev-window — sim thread on gates-of-truth-sim
+Truth demo ready: nREPL 127.0.0.1:7895
+Compiling body shaders...
+Compiling particle shaders...
+Compiling sprite shaders...
+Compiling line shaders...
+Compiling hud shaders...
+Compiling volume shaders...
+Camera reset
+[kinematics-ws] K clamp binds: eid 1001 demanded 29373 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14398 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7058 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29378 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7065 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14406 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14406 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29384 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29382 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14407 clamped 4096[kinematics-ws] K clamp binds: eid 
+1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29389 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14410 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29391 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14409 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001[kinematics-ws] K clamp binds: eid 1002 demanded 14402 clamped 4096
+ demanded 29376 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29392 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 demanded 1003 demanded14405  clamped7068 clamped 4096 
+4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7070 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29388 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14405 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14400 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7071 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29388 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7070 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29400 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14407 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7065 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14402 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29408 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29406 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7064 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14408 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29399 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7067 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14411 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29402 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7068 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14408 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7063 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29416 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14415 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29393 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7063 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14422 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1003 demanded 10027067 clamped  4096demanded 14424 
+clamped[kinematics-ws] K clamp binds: eid 1001 demanded 29417 clamped 4096
+ 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29400 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14424 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7061 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14424 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29410 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7063 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 10021001[kinematics-ws] K clamp binds: eid  1003 demanded 7064 clamped 4096
+ demandeddemanded  29427 clamped 14425 clamped 4096
+4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29435 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14425 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7060 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29435 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14427 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7060 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29425 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14429 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid 1002 demanded 14432 clamped 4096
+ 1001 demanded 29417 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7067 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29432 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7061 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14429 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14422 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29421 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7067 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29429 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14425 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7065 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29419 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14427 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7071 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29441 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14419 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid 1003 demanded 7066 clamped 4096
+1001 demanded  294511002 demanded 14428  clamped 4096clamped 4096
+
+[kinematics-ws] K clamp binds: eid 1001 demanded 29453 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7071 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14420 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29455 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 [kinematics-ws] K clamp binds: eid demanded 7075 clamped 4096
+1002 demanded 14429 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29456 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1003 1002 demandeddemanded 14425 clamped 4096 7072 clamped 
+4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14428 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1001 demanded 29449 clamped 40961003 demanded 7073 
+clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14437 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7079 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29439 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14437 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7081 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29449 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7080 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14435 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29439 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid1003  demanded 7079 clamped 1002 4096demanded 14439 clamped 
+4096
+1001 demanded 29453 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29452 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7080 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14443 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29454 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7082 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14446 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29460 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7085 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14447 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29462 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7087 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14446 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29460 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7089 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14444 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14442 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7089 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29463 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 demanded 1001 demanded[kinematics-ws] K clamp binds: eid 1003 demanded 7089 clamped 4096
+14447 clamped 29475  clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1002 demanded 14453 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29461 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7089 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 demanded 14446 clamped 40961003 demanded 
+7088 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29466 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29461 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7087 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14438 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14449 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29481 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7085 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7085 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29479 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14440 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14445 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29476 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7087 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29478 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7090 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14442 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29480 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14450 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7091 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29488 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7086 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14441 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29499 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14455 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7082 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14456 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29480 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7086 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7089 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29484 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14450 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10011002  demanded demanded 29483 14455clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7083 clamped 4096
+ clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14464 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29499 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7082 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29487 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14470 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7087 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29489 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid1003  demanded 1002 demanded 708114472  clamped clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7083 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29497 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14473 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29498 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7085 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14473 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29493 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7080 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14472 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29501 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7086 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14468 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14463 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29522 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7080 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7087 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14465 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29494 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7081 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14470 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29513 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29492 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7088 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14465 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7085 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29525 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14460 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29528 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14468 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7086 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7091 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29520 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14459 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29519 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7086 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14468 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14460 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29524 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7091 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29537 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14471 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7095 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 demanded 14467 clamped 4096
+ 1001 demanded 29541 clamped 4096
+1003 demanded 7090 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29512 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7093 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14468 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7099 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29532 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14479 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29516 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14480 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7100 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7098 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29544 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14478 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29527 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14478 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7097 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7099 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14480 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29525 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29534 clamped 4096[kinematics-ws] K clamp binds: eid 1002 demanded 14482 clamped 4096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7103 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29536 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7107 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14483 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 [kinematics-ws] K clamp binds: eid 1002 demanded 14482 clamped 4096
+demanded 7109 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29531 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29535 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14481 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7109 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7110 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29562 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14485 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14492 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7110 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29543 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29539 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 demanded 14494 1003 demanded 7110 clamped clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1001 demanded 29545 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14481 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7110 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14480 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7110 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29565 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14492 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1001 1003 demanded demanded 7110 clamped 4096
+29542 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7109 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29542 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14476 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29552 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7108 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14489 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14478 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7107 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29552 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29546 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14492 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7107 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29558 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 [kinematics-ws] K clamp binds: eid 1003 demanded 7108 clamped 4096
+demanded 14479 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29589 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14493 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7108 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29550 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14495 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7106 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7104 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29574 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14487 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7106 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14494 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29549 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10021001 demanded  29594demanded 14505 clamped 4096 clamped 4096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7106 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29581 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7103 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14510 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29564 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7104 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14511 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29563 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14511 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7105 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29565 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7102 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14511 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29575 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14513 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7104 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14514 clamped [kinematics-ws] K clamp binds: eid 1003 demanded 7103 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29604 clamped 4096
+4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14513 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29601 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7103 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded [kinematics-ws] K clamp binds: eid 14507 1001clamped  4096demanded
+ 29559 [kinematics-ws] K clamp binds: eid 1003 demanded 7103 clamped 4096
+clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29610 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14502 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7103 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7104 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14506 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29563 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7104 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14509 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29593 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7105 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14500 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29623 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29614 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7107 [kinematics-ws] K clamp binds: eid 1002 demanded 14505 clamped 4096clamped 4096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7105 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14503 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29606 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7109 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14503 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29610 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29625 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14504 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7109 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded [kinematics-ws] K clamp binds: eid 1002 demanded 14508 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29629 clamped 4096
+7109 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29592 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 demanded 1003 14504 clamped demanded 7113 clamped 4096
+4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29602 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7113 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14514 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7113 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14515 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29611 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29608 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14512 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7116 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29590 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14516 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7119 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14523 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7119 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29629 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29644 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7119 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14528 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 demanded 14530 clamped 4096
+[kinematics-ws] K clamp binds: eid1003 demanded 7120 clamped 4096
+ 1001 demanded 29645 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29647 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7122 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14531 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29649 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14531 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7126 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29633 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14530 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14528 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29607 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7127 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29636 clamped [kinematics-ws] K clamp binds: eid4096 
+1002 demanded 14525 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29617 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14525 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29637 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14528 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14527 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29611 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29639 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14521 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29659 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14525 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14524 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29661 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid 1003 demanded 7128  1002 demanded 14522 clamped 4096
+clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29662 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29664 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 1003demanded 14525  clamped 4096
+demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29656 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7129 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14524 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14525 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7129 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29634 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29646 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14531 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29649 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14528 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7126 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29641 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14532 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7126 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14539 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29642 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7126 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29668 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7126 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14541 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14541 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29663 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29656 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14541 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29656 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14542 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7125 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29659 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14543 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7123 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29670 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1003 demanded 7123 clamped 1002 4096demanded 
+14544 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29683 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14543 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 1001 demanded demanded 1454429661  clampedclamped  40964096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7122 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29658 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14548 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7122 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29672 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14553 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29666 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14550 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29658 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7123 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14540 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29686 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14544 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7124 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 demanded 14549 clamped 1003 demanded 40967124 clamped 
+4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29696 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29697 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7126 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14537 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29699 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7125 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14549 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14538 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7127 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29701 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14550 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29693 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7128 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14540 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29676 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29687 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7131 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14552 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29685 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14551 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7131 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7132 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29685 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14547 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14557 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7134 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29681 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14564 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29703 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7136 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29704 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14563 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7136 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29700 clamped 4096
+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 demanded 1003 14560 demanded clamped 7137 clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1001 demanded 29700 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14560 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7139 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10011002  demanded 29703 clamped 4096
+demanded 14560 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7141 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29710 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7143 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14561 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10021001  demanded demanded 14561 29718clamped  clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7143 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10011003  demanded demanded 7144 29704 clamped clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1002 demanded 14562 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7144 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29698 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14566 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29712 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7145 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14573 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29701 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7145 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14575 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14564 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29705 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29725 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14558 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29726 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14571 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14563 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29723 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14560 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29724 clamped [kinematics-ws] K clamp binds: eid4096
+ 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29728 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14569 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7147 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14558 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29735 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29735 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14570 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7149 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29717 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7151 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14565 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29727 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7150 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14564 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7147 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14578 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29722 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29733 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7144 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14570 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29721 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14568 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7145 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29735 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14580 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7149 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29749 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14588 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7147 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29754 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14589 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7142 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29756 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7145 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14587 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10011002  demanded demanded14586 clamped  29755 4096clamped 4096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7147 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14586 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7141 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29748 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29740 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14587 clamped [kinematics-ws] K clamp binds: eid4096 
+1003 demanded 7144 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29748 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7145 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14590 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29744 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14594 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7140 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29744 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14595 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29744 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7141 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14588 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1001 1002 demanded demanded 29757 14580 clampedclamped  40964096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7144 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7142 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14585 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29755 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14591 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7144 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29755 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14578 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7143 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29759 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29760 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14585 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7146 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7143 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14584 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29759 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29763 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7148 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14582 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29775 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14585 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7144 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29767 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7149 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14587 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29756 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14582 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7149 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14596 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29772 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7147 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29762 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7153 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14589 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29765 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7153 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14588 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14600 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29785 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7151 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14606 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29788 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7155 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29786 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14604 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7159 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14601 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29787 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7158 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  10011002 demanded 14600 clamped 4096
+ demanded 29791 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7156 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14600 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29796 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7158 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29792 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14601 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7161 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29778 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14602 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7166 clamped 4096[kinematics-ws] K clamp binds: eid
+[kinematics-ws] K clamp binds: eid 1002 demanded 14604 clamped 4096
+ 1001 demanded 29788 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29781 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14609 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7166 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14615 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29791 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29781 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14613 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29796 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14601 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14600 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29807 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14612 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29809 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14600 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29810 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29812 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7165 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14602 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14607 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29813 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7166 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1001 1002 demandeddemanded  1459829810  clampedclamped  40964096
+
+[kinematics-ws] K clamp binds: eid 1003 demanded 7167 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14609 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7169 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29802 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29805 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7171 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14604 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29804 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7172 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14604 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29805 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14617 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7170 clamped 4096
+[kinematics-ws] K clamp binds: eid 1001 demanded 29805 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 demanded 100314605  demanded clamped 7166 clamped 40964096
+
+[kinematics-ws] K clamp binds: eid 1001 demanded 29816 clamped 4096
+[kinematics-ws] K clamp binds: eid 1002 demanded 14609 clamped 4096
+[kinematics-ws] K clamp binds: eid 1003 demanded 7164 clamped 4096
+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid   1002 1003demanded  14623 1001demanded  clamped 7166 4096clamped 4096
+
+demanded 29819 clamped 4096
+Dev window stopped.
