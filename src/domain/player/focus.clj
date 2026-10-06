@@ -28,12 +28,15 @@
    Resolution order vs manual arrow nudges: there is NO competing writer
    — a nudge edits the offset, not the position, so auto-follow and the
    nudge commute and the nudge always lands (`:focus-position` keeps a
-   single writer per mode: this intent in :manual, the camera-target
+   single writer per mode: sim-thread preparation in :manual, the camera-target
    sync in tracking modes).
 
-   Pure world → world', applied serially pre-tick through the intent
-   queue. Never touches the spark's physical columns: reads `c/position`,
-   writes only the `c/observer` attention map."
+   Pure world → world', applied serially after input drain and before each
+   simulation fold, even when no render frame runs. This aligns frozen
+   consumers; published focus still precedes that fold's physical movement.
+   Already captured action anchors are not recalculated here. Never touches
+   the spark's physical columns: reads `c/position`, writes only the
+   `c/observer` attention map."
   [world offset]
   (if-let [obs (state/get-observer world)]
     (if-let [pos (state/observer-position world)]

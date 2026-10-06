@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "uuid": "focus-follows-pilot",
+  "comment": "2026-10-06 GREEN after committed RED10f1a817: shared existing private guarded intent application between drain and after-drain manual focus preparation; current cfg mode/offset now reaches each pre-fold snapshot; removed only render manual follow enqueue. No pure focus law, physical writer, tracking camera or clock change. Focused6 namespaces45tests282assertions0failures/errors exit0; touched kondo/fmt/Splint3files0warnings/diff check all pass. Independent review no blockers. Closed RED11checksums unchanged; new evidence .ημ/diagnostics/focus-cadence/green/verdict.md; focused log SHA256 1d4a2b31808a54e4914a598833e6c85a6bedc177c5d055c29379dc4a45916f1e. Root owns checkpoint/full gates/native follow-up. Published one-tick/recenter lag and previously captured sculpt/action anchors remain explicit limits; full live card acceptance still open."
+}

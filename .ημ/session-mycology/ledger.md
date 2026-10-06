@@ -359,3 +359,12 @@
   spore: none
   receipt-refs: 2026-10-06T20:12:54.078810169Z,2026-10-06T20:26:50.020640671Z,2026-10-06T20:34:13.031513003Z
   note: Repeat an unexplained performance signal using the original benchmark closure, exact source identities and equal traced workloads before inferring a regression. Keep mature-scene visual cost distinct from ten-tick formation cost. Full unit and strict gates do not establish a clean native renderer: explicit live GL error observation found a fault now being localized. No spore created or promoted.
+- ts: 2026-10-06T21:25:58.145263225Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Repair manual attention cadence at the real serial simulation boundary
+  p-efficiency: 0.93
+  p-friction: 0.2
+  p-skill-candidate: 0.4
+  spore: none
+  receipt-refs: focus-follows-pilot,10f1a81767d7d704a5b36e454b6557089fa4a77e
+  note: Actual host-loop tests with moving physical fixtures expose cadence gaps that pure follow/binding link tests miss. Preserve existing exception containment when moving a callback into the serial boundary; distinguish pre-fold consumer correctness from postpublished position/recenter lag and already captured actions. No new spore warranted.

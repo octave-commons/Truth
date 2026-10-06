@@ -1,0 +1,64 @@
+{
+  "JAVA_OPTS": "-Xms128m -Xmx1g",
+  "results": [
+    {
+      "command": [
+        "clj-kondo",
+        "--lint",
+        "src/infra/dev/window/loop.clj",
+        "src/domain/player/focus.clj",
+        "test/infra/dev/focus_cadence_test.clj"
+      ],
+      "start_utc": "2026-10-06T21:24:13.379314+00:00",
+      "end_utc": "2026-10-06T21:24:13.588590+00:00",
+      "elapsed_seconds": 0.20930798400149797,
+      "exit_code": 0,
+      "log": "static-1.log"
+    },
+    {
+      "command": [
+        "clojure",
+        "-M:cljfmt",
+        "check",
+        "src/infra/dev/window/loop.clj",
+        "src/domain/player/focus.clj",
+        "test/infra/dev/focus_cadence_test.clj"
+      ],
+      "start_utc": "2026-10-06T21:24:13.588655+00:00",
+      "end_utc": "2026-10-06T21:24:29.126751+00:00",
+      "elapsed_seconds": 15.538115583000035,
+      "exit_code": 0,
+      "log": "static-2.log"
+    },
+    {
+      "command": [
+        "clojure",
+        "-Sdeps",
+        "{:deps {io.github.noahtheduke/splint {:mvn/version \"1.24.0\"}}}",
+        "-M",
+        "-m",
+        "noahtheduke.splint",
+        "src/infra/dev/window/loop.clj",
+        "src/domain/player/focus.clj",
+        "test/infra/dev/focus_cadence_test.clj"
+      ],
+      "start_utc": "2026-10-06T21:24:29.126783+00:00",
+      "end_utc": "2026-10-06T21:24:58.543284+00:00",
+      "elapsed_seconds": 29.41658390700104,
+      "exit_code": 0,
+      "log": "static-3.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "start_utc": "2026-10-06T21:24:58.543402+00:00",
+      "end_utc": "2026-10-06T21:24:58.578343+00:00",
+      "elapsed_seconds": 0.035004534998734016,
+      "exit_code": 0,
+      "log": "static-4.log"
+    }
+  ]
+}
