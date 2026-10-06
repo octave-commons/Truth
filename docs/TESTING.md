@@ -26,6 +26,27 @@ Group membership is defined in `test/test_runner.clj`. The `integration` group
 contains the intentionally slow simulation tests (`domain.genesis-test`,
 `domain.formation-integration-test`, `domain.dominant-star-test`, etc.).
 
+## Native OpenGL regression
+
+The ordinary `test/` suite remains headless. The explicit `test-native/` suite
+creates a hidden window through the production GLFW bootstrap, compiles the
+production line shader, and executes the production line pass. It checks the
+forward-compatible core context, native GL errors, and visible framebuffer
+pixels for both legacy lines and fading trail vertices. It requires a working
+OpenGL 3.3 display and fails if that capability is unavailable; it does not skip
+or substitute a mocked renderer.
+
+```bash
+# Own a separate virtual display; this does not touch a running game window.
+JAVA_OPTS='-Xms128m -Xmx1g' xvfb-run -a clojure -M:test:native-render-test
+```
+
+The alias reuses the existing test runner and LWJGL dependencies. Native tests
+are selected separately so `bin/test` and coverage continue to run without a
+display. All six static-analysis tools include `test-native/` without executing
+the tests. Context, program, window, and GLFW callback resources are released
+after the native test, including on failure.
+
 ## Test Coverage & Mutation Testing
 
 Two complementary questions about the test suite:

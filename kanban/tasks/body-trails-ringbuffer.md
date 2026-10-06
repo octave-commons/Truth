@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "render", "spark-flight"]
-write-id: "1791318115930-0.mnbuk4i14rdupqe63wp"
+write-id: "1791319943760-0.1lhzm9r9kqykter6p71d"
 source: "kanban/tasks/body-trails-ringbuffer.md"
 title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
 priority: "P2"
@@ -65,4 +65,10 @@ Timing clarification (means; before → after):
 - 500-particle critical path: 24.1 → 23.5 ms.
 - Ten consecutive ticks: 218.1 → 299.5 ms, +37.3%. Reported quantile ranges: 175.9–285.3 ms before, 204.1–367.5 ms after.
 The ten-tick increase remains unresolved. One before/after pair with overlapping ranges does not establish a general speedup or a narrow regression bound. Both full runs exited 0; actual native fading and stacked-source full validation remain pending.
+
+Native line-pass RED checkpoint prepared on integrated source 400ba3a (current HEAD recorded in red-2-start.json). The fresh ordinary game driver callback names GL_INVALID_VALUE in glLineWidth on its owning render thread. Source provenance proves glLineWidth(1.5) and the forward-compatible core hint already exist at e71b12f and blame to 63666769 (2026-07-08); this is an existing invalid call exposed by native verification, not a newly introduced width in the trail change. Khronos OpenGL 4.5 core Appendix D.2.1 disallows widths above1 in that context.
+
+Independent private-Xvfb production-pass test: 1 test, 9 assertions, 2 expected failures, zero errors; both legacy/default-alpha and fading-alpha lines return GL1281 while actual nonblack pixels, real shader compilation, context flags, and readback checks pass. No production source modification; git diff HEAD -- src is empty. Native suite is explicitly invoked outside the headless test path, with all six static tools receiving its source path. Final native fmt/Splint and kondo checks pass. First heap-start failure and broader tool-style failure are preserved as non-passing probes; unrelated existing dev/smell_report style forms were not rewritten or suppressed.
+
+Closed evidence: .ημ/diagnostics/body-trails/native-gl-line/red-verdict.md, red-2.log, source-provenance.json, copied owner callback attribution/restoration with hashes, and CLOSED-FILES.txt / SHA256SUMS. Root owns RED commit before a minimal explicit1.0 line-width repair; no context/profile/opacity/render-path change proposed. Card remains in_progress; no native gameplay completion or review transition claimed.
 ---

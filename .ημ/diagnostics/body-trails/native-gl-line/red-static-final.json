@@ -1,0 +1,76 @@
+[
+  {
+    "command": [
+      "clojure",
+      "-M:cljfmt",
+      "check",
+      "test-native"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 17.1605806350708,
+    "output": "All source files formatted correctly\n"
+  },
+  {
+    "command": [
+      "clojure",
+      "-Sdeps",
+      "{:aliases {:native-style {:extra-deps {io.github.noahtheduke/splint {:mvn/version \"1.24.0\"}} :main-opts [\"-m\" \"noahtheduke.splint\" \"test-native\"]}}}",
+      "-M:native-style"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 31.776344299316406,
+    "output": "Linting took 534ms, checked 1 files, 0 style warnings\n"
+  },
+  {
+    "command": [
+      "clj-kondo",
+      "--lint",
+      "test-native",
+      "deps.edn",
+      ".lsp/config.edn",
+      "dev/smell_report.clj"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 0.12397909164428711,
+    "output": "linting took 78ms, errors: 0, warnings: 0\n"
+  },
+  {
+    "command": [
+      "bash",
+      "-n",
+      "bin/analyze"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0028913021087646484,
+    "output": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 0.004426002502441406,
+    "output": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "HEAD",
+      "--",
+      "src"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0034062862396240234,
+    "output": ""
+  }
+]

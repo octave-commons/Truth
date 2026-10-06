@@ -1,0 +1,68 @@
+[
+  {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "output": "295031485bc5ced52850cf95bddf21394d9493ff\n"
+  },
+  {
+    "command": [
+      "git",
+      "show",
+      "e71b12f:src/infra/render/scene/setup.clj"
+    ],
+    "exit_code": 0,
+    "output": "125:     (passes/bind-uniforms! line-program {:projection proj :view view})\n126:     (passes/set-blend! :alpha)\n127:     (passes/set-depth-write! false)\n128:     (GL11/glLineWidth 1.5)\n129:     (let [lm (rmesh/upload-particle-mesh (rmesh/make-particle-mesh lines))]\n130:       (GL30/glBindVertexArray (:vao lm))\n131:       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))\n"
+  },
+  {
+    "command": [
+      "git",
+      "show",
+      "e71b12f:src/infra/render/window.clj"
+    ],
+    "exit_code": 0,
+    "output": "54:   (GLFW/glfwWindowHint GLFW/GLFW_CONTEXT_VERSION_MAJOR 3)\n55:   (GLFW/glfwWindowHint GLFW/GLFW_CONTEXT_VERSION_MINOR 3)\n56:   (GLFW/glfwWindowHint GLFW/GLFW_OPENGL_PROFILE GLFW/GLFW_OPENGL_CORE_PROFILE)\n57:   (GLFW/glfwWindowHint GLFW/GLFW_OPENGL_FORWARD_COMPAT GL11/GL_TRUE))\n58: \n59: (defn create-window\n60:   \"Create a visible GLFW window and make its context current.\"\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "e71b12f",
+      "400ba3a",
+      "--",
+      "src/infra/render/scene/setup.clj",
+      "src/infra/render/window.clj"
+    ],
+    "exit_code": 0,
+    "output": "diff --git a/src/infra/render/scene/setup.clj b/src/infra/render/scene/setup.clj\nindex aa8111e..d98ce10 100644\n--- a/src/infra/render/scene/setup.clj\n+++ b/src/infra/render/scene/setup.clj\n@@ -118,7 +118,7 @@\n     (passes/set-blend! :none)))\n \n (defn- render-lines-pass\n-  \"Field line and reticle line pass.\"\n+  \"Field, reticle, and fading body-trail line pass.\"\n   [line-program proj view lines]\n   (when (and line-program (pos? (int line-program)) (seq lines))\n     (GL20/glUseProgram line-program)\n@@ -126,7 +126,7 @@\n     (passes/set-blend! :alpha)\n     (passes/set-depth-write! false)\n     (GL11/glLineWidth 1.5)\n-    (let [lm (rmesh/upload-particle-mesh (rmesh/make-particle-mesh lines))]\n+    (let [lm (rmesh/upload-line-mesh (rmesh/make-line-mesh lines))]\n       (GL30/glBindVertexArray (:vao lm))\n       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))\n       (GL30/glBindVertexArray 0)\n@@ -251,4 +251,3 @@\n     (render-voxel-cubes-pass body-program cube-mesh projection view camera' voxels)\n     (render-sprites-pass sprite-program projection view sprites)\n     (render-hud-pass hud-program hud hud-text width height)))\n-\n"
+  },
+  {
+    "command": [
+      "git",
+      "blame",
+      "-L",
+      "122,133",
+      "e71b12f",
+      "--",
+      "src/infra/render/scene/setup.clj"
+    ],
+    "exit_code": 0,
+    "output": "63666769 (Error 2026-07-08 14:24:43 -0500 122)   [line-program proj view lines]\n63666769 (Error 2026-07-08 14:24:43 -0500 123)   (when (and line-program (pos? (int line-program)) (seq lines))\n63666769 (Error 2026-07-08 14:24:43 -0500 124)     (GL20/glUseProgram line-program)\n520b8470 (err   2026-07-23 07:13:47 -0500 125)     (passes/bind-uniforms! line-program {:projection proj :view view})\n520b8470 (err   2026-07-23 07:13:47 -0500 126)     (passes/set-blend! :alpha)\n520b8470 (err   2026-07-23 07:13:47 -0500 127)     (passes/set-depth-write! false)\n63666769 (Error 2026-07-08 14:24:43 -0500 128)     (GL11/glLineWidth 1.5)\n63666769 (Error 2026-07-08 14:24:43 -0500 129)     (let [lm (rmesh/upload-particle-mesh (rmesh/make-particle-mesh lines))]\n63666769 (Error 2026-07-08 14:24:43 -0500 130)       (GL30/glBindVertexArray (:vao lm))\n63666769 (Error 2026-07-08 14:24:43 -0500 131)       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))\n63666769 (Error 2026-07-08 14:24:43 -0500 132)       (GL30/glBindVertexArray 0)\n63666769 (Error 2026-07-08 14:24:43 -0500 133)       (GL15/glDeleteBuffers (:vbo lm))\n"
+  },
+  {
+    "command": [
+      "git",
+      "blame",
+      "-L",
+      "54,57",
+      "e71b12f",
+      "--",
+      "src/infra/render/window.clj"
+    ],
+    "exit_code": 0,
+    "output": "63666769 (Error 2026-07-08 14:24:43 -0500 54)   (GLFW/glfwWindowHint GLFW/GLFW_CONTEXT_VERSION_MAJOR 3)\n63666769 (Error 2026-07-08 14:24:43 -0500 55)   (GLFW/glfwWindowHint GLFW/GLFW_CONTEXT_VERSION_MINOR 3)\n63666769 (Error 2026-07-08 14:24:43 -0500 56)   (GLFW/glfwWindowHint GLFW/GLFW_OPENGL_PROFILE GLFW/GLFW_OPENGL_CORE_PROFILE)\n63666769 (Error 2026-07-08 14:24:43 -0500 57)   (GLFW/glfwWindowHint GLFW/GLFW_OPENGL_FORWARD_COMPAT GL11/GL_TRUE))\n"
+  }
+]

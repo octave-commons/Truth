@@ -1,0 +1,15 @@
+{
+  "command": [
+    "xvfb-run",
+    "-a",
+    "clojure",
+    "-M:test:native-render-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-motion-trails",
+  "source": "295031485bc5ced52850cf95bddf21394d9493ff",
+  "started_unix": 1791319603.9913185,
+  "JAVA_OPTS": "-Xms128m -Xmx1g",
+  "display_policy": "new xvfb-run private display; active/suspended game displays untouched",
+  "production_change": false,
+  "prior_attempt": "red.log could not initialize JVM: inherited JAVA_OPTS Xms3g exceeded command Xmx1g; not a test result"
+}

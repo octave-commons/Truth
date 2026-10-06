@@ -38,6 +38,9 @@
    :law-test {:main-opts ["-m" "test-runner" "-g" "law"]}
    :shape-test {:main-opts ["-m" "test-runner" "-g" "shape"]}
    :render-test {:main-opts ["-m" "test-runner" "-g" "render"]}
+   ;; Explicit native GL suite; compose with :test for the existing runner.
+   :native-render-test {:extra-paths ["test-native"]
+                        :main-opts ["-m" "cognitect.test-runner" "-d" "test-native"]}
    :architecture-test {:main-opts ["-m" "test-runner" "-g" "architecture"]}
    :full-test {:main-opts ["-m" "test-runner" "-g" "all"]}
    :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
@@ -51,7 +54,7 @@
    ;; --- Static analysis (see bin/analyze + docs/STATIC-ANALYSIS.md) ---------
    ;; Splint: idiomatic-style / anti-pattern linter (maintained kibit successor).
    :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.24.0"}}
-            :main-opts ["-m" "noahtheduke.splint" "src" "test"]}
+            :main-opts ["-m" "noahtheduke.splint" "src" "test" "test-native"]}
    ;; --- Test coverage (cloverage; see bin/coverage + docs/TESTING.md) ---------
    ;; Instruments src, runs the test suite, reports line/form coverage. bin/coverage
    ;; supplies -p/-s/report flags. Whole tree is measured (all tests pass headless).
