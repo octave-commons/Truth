@@ -1,0 +1,27 @@
+{:source-commit "81207e7c65212685456ebe0faff3cac1cec50613"
+ :launch-command "DISPLAY=:1 TRUTH_DEMO_PORT=7894 clojure -M:demo serve"
+ :scenario :nebula
+ :fixture? false
+ :runtime-world-injection? false
+ :display ":1"
+ :window-id 2097159
+ :service-port 7894
+ :service-pid 2372912
+ :xvfb-pid 2368830
+ :retained-running? true
+ :retention-reason "Parent requested availability for subsequent genuine manual approach; Escape remains untested in this particular session."
+ :media [{:path "manual-flight.mp4" :duration-seconds 90 :width 1280 :height 720 :fps 24 :content "Actual W thrust, release and coast in manual mode."}
+         {:path "manual-flight-overview.gif" :speed-factor 6 :content "Compressed overview of the same 90-second native recording."}
+         {:path "manual-controls.mp4" :duration-seconds 30 :width 1280 :height 720 :fps 24 :content "Actual A, S, Space and mouse-look sequence; exact input times in native-inputs.log."}]
+ :readbacks ["before-W.edn" "holding-W.edn" "after-W-release.edn"
+             "holding-D.edn" "after-mouse-look.edn" "after-mouse-look-second.edn"
+             "after-controls.edn"]
+ :screenshots ["start.png" "holding-W.png" "after-strafe-look.png" "after-controls.png"]
+ :observations ["R selected normal manual mode. W and D produced expected camera-relative thrust vectors through the existing influence channel. Release cleared thrust intent and damping reduced velocity."
+                "Tab enabled captured mouse look. The first immediate mouse movement was not reflected; a subsequent movement changed yaw/pitch from -90/-20 to -85/-22."
+                "Orientation remained identity and angular velocity zero: input-to-torque control is not part of the new rotational substrate."
+                "No service or UI error was present in the saved readbacks. All held keys were released; after-controls thrust intent is nil."
+                "This verifies native movement, not a completed manual approach/commitment/sculpt loop. No planet was planted or phase advanced."
+                "Dense telemetry, overlapping event/action text and wire markers are visible in the actual 1280x720 screenshots."
+                "The first service launch mistakenly used display :3 rather than allocated :1. Only that owned process was terminated; failed-display-start.log preserves the harness error. Corrected launch used :1."
+                "Measured runtime rate occurred with software Xvfb rendering/capture and a concurrent seed43 run; it is not an isolated performance benchmark."]}

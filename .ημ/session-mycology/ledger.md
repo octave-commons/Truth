@@ -323,3 +323,12 @@
   spore: none
   receipt-refs: "2026-10-06T18:33:38Z truth-flight-controls-plan"
   note: Reused the existing dt-dilated-player-constants lesson, but distinguished fixed-dt control invariance from delayed-channel adaptive-dt transients. No new spore needed; document the causal limitation in the design and keep missing camera research visible.
+- ts: 2026-10-06T19:11:10.177441383Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Ground quiet manual HUD planning in native screenshots and existing layout ownership
+  p-efficiency: 0.87
+  p-friction: 0.22
+  p-skill-candidate: 0.36
+  spore: none
+  receipt-refs: truth-manual-hud-plan
+  note: Native pixels plus the independent HUD concat path explain overlap without speculative graphics work. Split placement from information density; preserve detail access and existing heading/debug/binding ownership. Target current Markdown/design paths in searches because archived transcripts may embed large image payloads. No spore needed.
