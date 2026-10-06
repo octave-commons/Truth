@@ -259,11 +259,30 @@ New pure timestamp, history, frame, and opacity logic belongs in portable
 
 ### 6.2 Mote of light
 
-Replace the screen-space particle sprite (`scene/hud.clj:29-46`) with a bespoke
-world-space mote: **bright core + soft halo + a heading flare** oriented along the
+Replace the current world-anchored, camera-facing particle footprint
+(`scene/hud.clj:29-46`) with a bespoke world-space mote:
+**bright core + soft halo + a heading flare** oriented along the
 nose (uses `c/orientation` from §3.2). Coherence modulates brightness. Reads as a
 "vessel of light," visually separable from real stars — while still narratively a
 proto-star that later resolves into an actual body.
+
+Current integration grounding and unresolved readiness decisions are recorded in
+[Mote render readiness](../notes/2026-10-06-mote-render-readiness.md), inspected at
+`b402939`. The existing point already projects the Spark's physical position;
+the particle pass uses depth testing with depth writes disabled and precedes
+solid bodies. Its brightness does not currently consume coherence: the old
+`scene/bodies.clj:152` opacity reference is stale. Explicitly carry coherence to
+the new visual input and verify depth composition in the one existing renderer,
+including its offscreen path.
+
+The orientation substrate is integrated, but ordinary input has no attitude
+torque producer yet. Static-pose/native-offscreen evidence may verify shader
+response; it does not establish normal-input turning. Reconcile the shared
+nose axis with the [pinned PR9 proposal](https://github.com/octave-commons/Truth/blob/9f2d7722d2166c2a0f1af3bd16b3558446f5c01f/docs/designs/spark-flight-controls-increments.md#proposed-body-frame-and-torque-law)
+before implementation: **+Y forward, +X right, +Z up remains proposed pending
+review**. No independent axis convention, physics/input change, ownership
+transfer from that proposal's common-frame work, or Ready/In Progress admission
+follows from this amendment. The existing mote card remains TODO5.
 
 ## 7. Control doctrine (corrected 2026-07-23)
 
