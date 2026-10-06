@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/kucherenko/jscpd/master/packages/jscpd/schema.json",
   "format": ["clojure"],
   "pattern": "**/*.clj",
-  "path": ["src", "test"],
+  "path": ["src", "test", "test-native"],
   "minTokens": 60,
   "minLines": 8,
   "reporters": ["console", "json"],

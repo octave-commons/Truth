@@ -63,7 +63,7 @@ ANALYSIS_CFG='{:output {:analysis {:var-definitions {:meta true} :arglists true}
 
 # 1 ── clj-kondo: correctness + anti-patterns (config in .clj-kondo/config.edn).
 sec "clj-kondo  (bugs / anti-patterns)"
-clj-kondo --lint src test
+clj-kondo --lint src test test-native
 kondo=$?   # 0 none · 2 warnings · 3 errors
 case "$kondo" in
   0) ;;
@@ -82,7 +82,7 @@ smell_args=(); [ "$STRICT" -eq 1 ] && smell_args+=(--strict)
 # structural tier would pass precisely when it could not be evaluated. Same class
 # of bug as the PIPESTATUS one noted below, one stage earlier.
 analysis=$(mktemp)
-clj-kondo --lint src test --config "$ANALYSIS_CFG" 2>/dev/null >"$analysis"
+clj-kondo --lint src test test-native --config "$ANALYSIS_CFG" 2>/dev/null >"$analysis"
 if [ ! -s "$analysis" ]; then
   echo "  clj-kondo produced no analysis export — structural check could not run"
   FAIL+=("structural: clj-kondo analysis export empty — the check did not run")
@@ -151,9 +151,9 @@ rm -f "$jscpd_err"
 # 6 ── cljfmt: formatting consistency. BLOCKING (was 0). --fix applies it.
 sec "cljfmt  (formatting)"
 if [ "$FIX" -eq 1 ]; then
-  clojure -M:cljfmt fix src test && echo "  formatting applied."
+  clojure -M:cljfmt fix src test test-native && echo "  formatting applied."
 else
-  if clojure -M:cljfmt check src test >/dev/null 2>&1; then
+  if clojure -M:cljfmt check src test test-native >/dev/null 2>&1; then
     echo "  all files formatted."
   else
     echo "  files need formatting — run: bin/analyze --fix"
