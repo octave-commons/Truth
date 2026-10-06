@@ -395,3 +395,12 @@
   spore: none
   receipt-refs: Truth hardware-context native line regression,c79be1e
   note: Passive PCI and render-node access establish a possible route; glxinfo and actual tested-context identity establish the selected renderer. Use the existing hidden production-context test in a separate JVM, preserve cleanup and retain the live game untouched. Do not infer GPU performance or full-game acceptance from a small shader test. No spore warranted.
+- ts: 2026-10-06T23:29:13.686487934Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Verify actual fresh hardware game without replacing renderer or borrowing stale context evidence
+  p-efficiency: 0.91
+  p-friction: 0.25
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,be832d7,PID4070721
+  note: Separate lost-session status from a fresh launch. Capture the actual invoked render facade after scene/HUD, on its owner thread before swap; the screenshot helper creates another context and advances world work. Preserve actual framebuffer dimensions and distinguish after-scene world readback from rendered input. Verify restoration and active-log prefixes, not screenshot-derived FPS. No spore warranted.

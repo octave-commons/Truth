@@ -1,0 +1,16 @@
+{
+  "started_utc": "2026-10-06T23:32:15.920641+00:00",
+  "finished_utc": "2026-10-06T23:32:18.478397+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 2.55782203200215,
+  "read_only": true,
+  "port": 7896,
+  "pid": 4070721,
+  "proc_start_ticks": 3869117,
+  "pre_audit_state": "S",
+  "client_max_heap_bytes": 268435456,
+  "prior_observation_tick": 4371,
+  "form": "audit-form.clj",
+  "root_reported_pause_utc": "2026-10-06T23:28:13Z",
+  "root_reported_resume_utc": "2026-10-06T23:31:16Z"
+}

@@ -1,0 +1,8 @@
+initial-audit.stderr
+initial-audit.stdout
+observer-install.stderr
+observer-install.stdout
+observer-restore.stderr
+observer-restore.stdout
+runtime.stderr
+runtime.stdout

@@ -1,0 +1,28 @@
+{
+  "observed_utc": "2026-10-06T23:24:54.540320+00:00",
+  "images": [
+    {
+      "path": "captures/pid-4070721-window-129843170276688-frame-01.png",
+      "bytes": 642021,
+      "width": 1264,
+      "height": 1490,
+      "sha256": "65bcccc26de8104d5c2018cc4ea848f30743a27cff07118ecf927ea700bd593f"
+    },
+    {
+      "path": "captures/pid-4070721-window-129843170276688-frame-02.png",
+      "bytes": 641353,
+      "width": 1264,
+      "height": 1490,
+      "sha256": "3acb3b3c665ffef12efd944978b5cfee520b7fb6377a7fe7f20a652b129ab55e"
+    },
+    {
+      "path": "captures/pid-4070721-window-129843170276688-frame-03.png",
+      "bytes": 644642,
+      "width": 1264,
+      "height": 1490,
+      "sha256": "cd1667715ed2331340c7b0f8c906ddc78dd5e604a9090f0045e76600b3349365"
+    }
+  ],
+  "visual_inspection": "All3 opened via view_image: actual scene/menu/HUD with purple gas, cyan field loops and greenring; no error-screen; HUD ticks2835,2959,3066 visible. No desktop/otherwindow pixels or synthetic additions.",
+  "dimension_note": "Initial requested config1280x720 differs from actual native framebuffer1264x1490; no resize command/input was sent. Window-manager cause not established."
+}
