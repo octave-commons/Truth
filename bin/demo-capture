@@ -109,7 +109,7 @@ done
 # Execute all clicks in one nREPL request, avoiding JVM startup latency between
 # panels. xdotool still dispatches real native input.
 remote '(demo/select! :life)'
-record navigation-tour 18 &
+record navigation-tour 24 &
 video_pid=$!
 DISPLAY="$display" remote '(require (quote clojure.java.shell)) (doseq [panel [:world :view :entities :spark :phase :journal :narrator :multiverse]] (let [s @infra.dev.window/service-state h (first (filter #(= [:ui/toggle-domain panel] (:action %)) (:hits (infra.menu/menu-hud @(:config s) @(:world s) 1280 720)))) x (str (int (/ (+ (:x0 h) (:x1 h)) 2))) y (str (int (/ (+ (:y0 h) (:y1 h)) 2))) result (clojure.java.shell/sh "xdotool" "mousemove" x y "click" "1")] (assert (zero? (:exit result))) (Thread/sleep 1800) (assert (= panel (:ui/active-domain @(:config s))))))'
 wait "$video_pid"

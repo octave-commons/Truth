@@ -54,7 +54,7 @@ New recording: 10 seconds orbiting the staged planet before the toy ecology comp
 
 ### 7. Click through every panel
 
-New continuous 18-second recording of real mouse clicks through World, View, Entities, Spark, Phase, Journal, Narrator, and Multiverse. Each active panel is checked during capture; this uses the life fixture.
+New continuous 24-second recording of real mouse clicks through World, View, Entities, Spark, Phase, Journal, Narrator, and Multiverse. Each active panel is checked during capture; this uses the life fixture.
 
 ![7. Click through every panel; native application recording](2026-10-06/navigation-tour.gif)
 
