@@ -1,0 +1,10 @@
+{
+  "command": [
+    "jfr",
+    "summary",
+    "/home/err/spaces/foresight/.worktrees/truth-native-profile/.\u03b7\u03bc/diagnostics/native-profile/native-45s.jfr"
+  ],
+  "start_utc": "2026-10-06T22:11:01.972740+00:00",
+  "end_utc": "2026-10-06T22:11:03.182062+00:00",
+  "exit": 0
+}

@@ -1,0 +1,39 @@
+{
+  "inclusive_namespace_union": {
+    "Kepler": {
+      "samples": 593,
+      "share_of_java_samples": 0.3191603875134553
+    },
+    "Barnes-Hut force": {
+      "samples": 294,
+      "share_of_java_samples": 0.15823466092572658
+    },
+    "Spatial index": {
+      "samples": 187,
+      "share_of_java_samples": 0.10064585575888052
+    },
+    "Integrator kinematics": {
+      "samples": 186,
+      "share_of_java_samples": 0.10010764262648009
+    },
+    "Hydro+EM force": {
+      "samples": 6,
+      "share_of_java_samples": 0.0032292787944025836
+    },
+    "Rendering": {
+      "samples": 17,
+      "share_of_java_samples": 0.00914962325080732
+    },
+    "Physics SoA": {
+      "samples": 23,
+      "share_of_java_samples": 0.012378902045209902
+    }
+  },
+  "render_native_samples": 648,
+  "swap_buffer_samples": 642,
+  "llvmpipe_threads": 22,
+  "llvmpipe_cpu_seconds": 490.82,
+  "llvmpipe_share_of_target_cpu": 0.8124141355623603,
+  "target_average_cores": 12.62116881886976,
+  "gc_pause_fraction_of_recording": 0.06404341204444444
+}

@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-06T22:17:41.932044+00:00",
+  "python_ast_parse": true,
+  "config_known_events": 183,
+  "config_enabled_events": [
+    "jdk.CPULoad",
+    "jdk.ExecutionSample",
+    "jdk.GCPhasePause",
+    "jdk.GarbageCollection",
+    "jdk.NativeMethodSample",
+    "jdk.ThreadCPULoad"
+  ],
+  "lossless_export_sha256_verified": true,
+  "selected_export_only_allowed_event_types": true,
+  "source_unchanged": true,
+  "kondo_command": [
+    "clj-kondo",
+    "--lint",
+    "/home/err/spaces/foresight/.worktrees/truth-native-profile/.\u03b7\u03bc/diagnostics/native-profile/world-observation.clj",
+    "/home/err/spaces/foresight/.worktrees/truth-native-profile/.\u03b7\u03bc/diagnostics/native-profile/registered-event-types.clj"
+  ],
+  "kondo_exit": 0,
+  "full_tests_or_strict_run": false,
+  "reason": "No production or test changes; profile and offline analysis only."
+}

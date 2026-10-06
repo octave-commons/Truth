@@ -1,0 +1,16 @@
+{
+  "command": [
+    "jcmd",
+    "3083624",
+    "JFR.start",
+    "name=truth-native-45s",
+    "settings=/home/err/spaces/foresight/.worktrees/truth-native-profile/.\u03b7\u03bc/diagnostics/native-profile/minimal-safe.jfc",
+    "duration=45s",
+    "filename=/home/err/spaces/foresight/.worktrees/truth-native-profile/.\u03b7\u03bc/diagnostics/native-profile/native-45s.jfr",
+    "dumponexit=false",
+    "path-to-gc-roots=false"
+  ],
+  "start_utc": "2026-10-06T22:10:13.377572+00:00",
+  "end_utc": "2026-10-06T22:10:14.101560+00:00",
+  "exit": 0
+}

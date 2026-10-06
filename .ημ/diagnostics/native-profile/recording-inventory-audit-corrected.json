@@ -1,0 +1,28 @@
+{
+  "recording_sha256": "322e929ce070321d01cde170ef10cb5a386859d10349d4e24c372941b771589e",
+  "positive_counts": {
+    "jdk.ThreadCPULoad": 3075,
+    "jdk.ExecutionSample": 1858,
+    "jdk.NativeMethodSample": 1391,
+    "jdk.Checkpoint": 138,
+    "jdk.GarbageCollection": 71,
+    "jdk.GCPhasePause": 71,
+    "jdk.CPULoad": 44,
+    "jdk.Metadata": 1
+  },
+  "unexpected_positive_counts": {},
+  "payload_export_authorized_by_allowlist": true,
+  "disabled_sensitive_event_counts": {
+    "jdk.ActiveRecording": 0,
+    "jdk.ActiveSetting": 0,
+    "jdk.InitialEnvironmentVariable": 0,
+    "jdk.InitialSystemProperty": 0,
+    "jdk.JVMInformation": 0,
+    "jdk.NativeLibrary": 0,
+    "jdk.ProcessStart": 0,
+    "jdk.StringFlag": 0,
+    "jdk.SystemProcess": 0,
+    "jdk.ThreadDump": 0
+  },
+  "inventory_parser_correction": "Infrastructure event spelling is jdk.Checkpoint, not jdk.CheckPoint; first failed audit preserved."
+}
