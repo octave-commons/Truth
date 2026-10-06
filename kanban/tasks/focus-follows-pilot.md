@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
-write-id: "1791322107463-0.swxlfepxctp4fbmmgax"
+write-id: "1791322601890-0.xutaalmyciebat15wm1"
 source: "kanban/tasks/focus-follows-pilot.md"
 title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
 priority: "P1"
@@ -131,4 +131,6 @@ Evidence: .ημ/diagnostics/focus-input/native-400ba3a/README.md, snapshots02-09
 Remaining acceptance is substantial: no manual fly-overlap-bind-commit-voxel or sculpt success. Actual later manual snapshot23 completed during held D at tick12029 (despite its requested-before filename): vx46535.8m/s and focus-to-Spark lag2935.70AU; released snapshot24 at12102 has vx17307.1m/s and lag601.66AU. These measured lags include software rendering and concurrent verification load; they do not establish a universal cadence claim. Read-only cadence investigation must distinguish missed render-frame refresh from ordinary frozen-snapshot motion. Do not substitute follow-camera attention or fixture placement. Card remains in_progress.
 
 2026-10-06 root locally composed committed cadence GREEN021ef9d with frozen native evidence PR17 head74fe6df. Source changes remain exactly guarded pre-fold manual attention preparation, its regression tests and explanatory docs. Git conflict resolution preserves both parents of every ledger as ordered line subsequences and every card comment; newest preexisting write-id retained until this canonical append. No card transition or native runtime replacement; integrated full suite and strict gate start next.
+
+2026-10-06 integrated source1ad081475364cc3b75db76142204cbf54b5bf60c passes clojure -M:test:934tests15983assertions0failures/errors,exit0; bin/analyze --strict all6blocking stages pass,exit0. Closed9file/8hash proof .ημ/diagnostics/focus-cadence/full-1ad0814. Production source matches GREEN021ef9d and unchanged committed RED10f1a81 test. Native service ran concurrently, so duration is not isolated performance evidence. Native pre-fold cadence and bounded actual-host cost remain next; published lag and queued-action anchor limits remain. No transition or full manual fly-bind-commit-voxel/sculpt/Gate completion.
 ---
