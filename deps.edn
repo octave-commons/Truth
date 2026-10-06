@@ -10,7 +10,16 @@
         org.lwjgl/lwjgl-opengl$natives-linux {:mvn/version "3.3.3"}
         org.lwjgl/lwjgl-stb$natives-linux {:mvn/version "3.3.3"}}
   :aliases
-  {:bench {:extra-paths ["bench"]
+  {:demo {:extra-paths ["dev"]
+          :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
+          :main-opts ["-m" "demo"]}
+   :demo-client {:extra-paths ["dev"]
+                 :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
+                 :main-opts ["-m" "demo-client"]}
+   :demo-test {:extra-paths ["dev"]
+               :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
+               :main-opts ["-m" "demo-test"]}
+   :bench {:extra-paths ["bench"]
           :extra-deps {criterium/criterium {:mvn/version "0.4.6"}}
           :main-opts ["-m" "gates-of-truth.bench"]}
    :bench-coverage {:extra-paths ["bench"]

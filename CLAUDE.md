@@ -27,9 +27,18 @@ bin/bench-coverage                          # namespace-level benchmark coverage
 bin/bench :ecs :gravity                      # criterium benchmarks (:ecs :gravity :hydro :phase0 :profile)
 bin/mutate                                   # mutation testing (Heretic, local-only, domain/law/shape)
 
-clojure -M:run                               # Phase 0 console simulation
-clojure -M:run demo                          # render one frame to /tmp/truth-view.png
+clojure -M:dev                               # native dev window, nREPL 7888
+clojure -M:demo serve                        # native tour, nREPL 7890
+clojure -M:demo serve life                   # labeled ECS life fixture
+clojure -M:demo check                        # validate seven scenario/arc contracts
+bin/demo-capture docs/demo/my-new-capture    # private display: actual PNGs/MP4s
 ```
+
+The old `:run` alias targets an absent `infra.main` namespace. Demo semantics,
+capture prerequisites, and the visually checked gallery live in
+[`docs/demo/README.md`](docs/demo/README.md). Use `bin/demo-capture` for full
+window/UI captures: `take-screenshot!` uses the offscreen rendering path and
+does not capture the live menu/inspector surface.
 
 ### Dev service (pm2)
 
@@ -292,3 +301,8 @@ And update `MEMORY.md`:
 - Kanban process state lives in `kanban/`; design docs in `docs/designs/`,
   implementation specs in `kanban/tasks/`, dated engineering notes in
   `docs/notes/`.
+
+The visual tour in `docs/demo/README.md` embeds every recording as a GIF and all
+17 screenshots on one page. `bin/demo-capture` also records ignition, accretion,
+planet camera orbits and real mouse navigation. `TRUTH_DEMO_PORT` defaults to
+7890 and can isolate a capture from an already-running demo.

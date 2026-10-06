@@ -7,15 +7,17 @@
 // It shares the same nREPL port (7888) as the simulation so notebooks can
 // evaluate forms directly in the running world state.
 // Access at http://localhost:8888
+const path = require('node:path');
+const cwd = path.resolve(__dirname, '..');
 module.exports = {
   apps: [
     {
       name: 'gates-of-truth-dev',
       script: 'clj',
       args: '-M:dev',
-      cwd: '/home/err/spaces/Truth',
+      cwd,
       env: {
-        DISPLAY: ':0'
+        DISPLAY: process.env.DISPLAY || ':0'
       },
       interpreter: 'none',
       autorestart: true,
@@ -30,9 +32,9 @@ module.exports = {
       name: 'truth-notebook',
       script: 'jupyter',
       args: 'lab --port 8888 --no-browser --ip 0.0.0.0',
-      cwd: '/home/err/spaces/Truth',
+      cwd,
       env: {
-        DISPLAY: ':0'
+        DISPLAY: process.env.DISPLAY || ':0'
       },
       interpreter: 'none',
       autorestart: true,
@@ -47,7 +49,7 @@ module.exports = {
       name: 'truth-actor-dashboard',
       script: 'clj',
       args: '-M:dashboard',
-      cwd: '/home/err/spaces/Truth',
+      cwd,
       interpreter: 'none',
       autorestart: true,
       max_restarts: 5,

@@ -1,0 +1,5 @@
+Execution error (IllegalArgumentException) at demo-client/-main (demo_client.clj:9).
+Usage: clojure -M:demo-client <form>
+
+Full report at:
+/tmp/clojure-2330398438348483417.edn

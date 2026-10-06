@@ -1,0 +1,253 @@
+{
+  "previous_head": "d0265e642d161e9fbf3b1187248f1ace5981d944",
+  "working_change": "Suppress camera status when any menu is active; refresh8panelPNGs and24secondnavigationGIF",
+  "inline_gifs": 7,
+  "inline_pngs": 17,
+  "inline_total_bytes": 6927864,
+  "assets": [
+    {
+      "path": "docs/demo/2026-10-06/live-formation.gif",
+      "sha256": "a00e683a27de5c10c557f526134e9ee79c7a1100f7f8357108e7d3607662951b",
+      "bytes": 955542,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 120,
+      "duration_ms": 12000,
+      "loop": 0,
+      "distinct_frames": 119
+    },
+    {
+      "path": "docs/demo/2026-10-06/living-world-orbit.gif",
+      "sha256": "18867b596c8a6fa74ed55a9225bbb762905a738582a0918af66660843ab241a9",
+      "bytes": 771170,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 100,
+      "duration_ms": 10000,
+      "loop": 0,
+      "distinct_frames": 94
+    },
+    {
+      "path": "docs/demo/2026-10-06/protostar-orbit.gif",
+      "sha256": "e8dfbfd484fcceb85888540928503559821e6c3ac7bebc5b57529de7a25474b5",
+      "bytes": 1655929,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 100,
+      "duration_ms": 10000,
+      "loop": 0,
+      "distinct_frames": 97
+    },
+    {
+      "path": "docs/demo/2026-10-06/ignition-orbit.gif",
+      "sha256": "7da27332d1bde599934821e0242bf653b79a01661dbf6ac971d56f5fa635dbcd",
+      "bytes": 994616,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 100,
+      "duration_ms": 10000,
+      "loop": 0,
+      "distinct_frames": 81
+    },
+    {
+      "path": "docs/demo/2026-10-06/accretion-orbit.gif",
+      "sha256": "4533861d0719e943031bfc11753fd312318efeb26b3c7f4ce17cf2e31204988c",
+      "bytes": 837222,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 100,
+      "duration_ms": 10000,
+      "loop": 0,
+      "distinct_frames": 82
+    },
+    {
+      "path": "docs/demo/2026-10-06/planets-orbit.gif",
+      "sha256": "ec427e9c9bca0e063e4c04c1b5bd2850f5405ade409168a9654a87c0e16eb8e3",
+      "bytes": 574362,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 100,
+      "duration_ms": 10000,
+      "loop": 0,
+      "distinct_frames": 85
+    },
+    {
+      "path": "docs/demo/2026-10-06/navigation-tour.gif",
+      "sha256": "f3b8d28504090dfd623271b09d031aa2a771ed8470fa267b663b3f2ced5e41e2",
+      "bytes": 447789,
+      "size": [
+        960,
+        540
+      ],
+      "frames": 240,
+      "duration_ms": 24000,
+      "loop": 0,
+      "distinct_frames": 92
+    },
+    {
+      "path": "docs/demo/2026-10-06/01-live-nebula.png",
+      "sha256": "c01a5736d15d2025a43c556e979b831b40be263d29b513a02681cd97805ab693",
+      "bytes": 115395,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/02-live-formation.png",
+      "sha256": "463357fff0f6abaeccf33fb1f76e188710b24f73187ee2e1e2bc60466d685d7d",
+      "bytes": 108826,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-protostar.png",
+      "sha256": "5aeabcf774c35e55b631e0ee031c4bf8263f9946e79ad88fb34ce7bdaea4a5d7",
+      "bytes": 51285,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-ignition.png",
+      "sha256": "7f69dc25f76b6ae17c69e5e2cbe20911756893a8b2c4d3a2119729dd10e5a81d",
+      "bytes": 22420,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-accretion.png",
+      "sha256": "da5e784b3ac3f8fcf2d46aeca922bd0d8ccfdd89d56b8267664c7c6661aec282",
+      "bytes": 23105,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-planets.png",
+      "sha256": "1f749c87218f8f832d00c323f56c4784d39322c250eba80a3ee7e7b079ec0ced",
+      "bytes": 27358,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-life.png",
+      "sha256": "a0c7ae812cd2c4c64102d2efd3f12e2f5af5c8455b5503a20c3750fa8b1304a3",
+      "bytes": 28779,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/hero-living-world.png",
+      "sha256": "1a0980a09baf7f03821d4a02e333245e05dd78abbf7e553436dbcd3a871070f6",
+      "bytes": 54339,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-dispersed.png",
+      "sha256": "82f116476c5fdb45774bc34228745cf9b8445e94c8f3b5c5d877e09b18086f1e",
+      "bytes": 16653,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-world.png",
+      "sha256": "4f2c9fe1f12b413d8e69317c8049c0c93cd20c26433a80265f3eece83bab4961",
+      "bytes": 29982,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-view.png",
+      "sha256": "20e334266289c2c0dbddad1cbb29721a94d8c0d2d7fb16210a5500f64116ab9d",
+      "bytes": 29471,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-entities.png",
+      "sha256": "017d57e49e8a149edae7d5f382a03bc24316a288751998cf8978132d8a58fa69",
+      "bytes": 30883,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-spark.png",
+      "sha256": "b9034e18c4208b4c68c814c3b07308f3dfbd2aed0a24c4686ca6358f001a770d",
+      "bytes": 32565,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-phase.png",
+      "sha256": "97129600b5006c957c5ac6e8ce1e6117ff99dcf464d810d42a5d461bc54bac42",
+      "bytes": 29713,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-journal.png",
+      "sha256": "c1d7e22774d1983318facba07435d316fc53e3434c333df1d91c6d0ee641206c",
+      "bytes": 30128,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-narrator.png",
+      "sha256": "bc0fa2685f3b58df002c5d696cf4b7a3564ace922ef72be767dacfe8dd0fbfed",
+      "bytes": 29442,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-multiverse.png",
+      "sha256": "c40723df5bc2375a941510dd18beac89af5cf88ada97166d392b914418811f85",
+      "bytes": 30890,
+      "size": [
+        1280,
+        720
+      ]
+    }
+  ]
+}

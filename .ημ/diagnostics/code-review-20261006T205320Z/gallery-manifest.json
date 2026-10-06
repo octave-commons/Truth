@@ -1,0 +1,180 @@
+{
+  "gallery_files": [
+    {
+      "path": "docs/demo/2026-10-06/01-live-nebula.png",
+      "sha256": "c01a5736d15d2025a43c556e979b831b40be263d29b513a02681cd97805ab693"
+    },
+    {
+      "path": "docs/demo/2026-10-06/02-live-formation.png",
+      "sha256": "463357fff0f6abaeccf33fb1f76e188710b24f73187ee2e1e2bc60466d685d7d"
+    },
+    {
+      "path": "docs/demo/2026-10-06/accretion-orbit.gif",
+      "sha256": "4533861d0719e943031bfc11753fd312318efeb26b3c7f4ce17cf2e31204988c"
+    },
+    {
+      "path": "docs/demo/2026-10-06/accretion-orbit.mp4",
+      "sha256": "ed35bf204a89660fe061b3fb756a4bf7e4056064da27d7ea39f6a12464f39719"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/cloud-start.png",
+      "sha256": "cebd89b855f938692864fbe665b14c887e63f790aeb5f7f5c3938d4810d825bd"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/continuous-formation.gif",
+      "sha256": "0f0aab6789bb2f4e2012129fca368cb4b4ecd2a02c815e2f16d8bf34b8611e2d"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/continuous-formation.mp4",
+      "sha256": "c74f2adb07e0814843ff5cfbe9b45a5422cf0203851375af3572b92f1b1b1213"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/contraction.png",
+      "sha256": "2708bfd0369450fd8627a619ac5f5bf4a315d95c2b0e13b49fc282e891285c84"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/core-transition.gif",
+      "sha256": "ddb81d7b7f671315a3f52e927a1cb869ca0123c4664d416a0f4395ecd8a7fe67"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/first-core.png",
+      "sha256": "251b309c356d8c110809d3999f87c9b3ed834737a6a35d4502a14cd7bd4b85ba"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/formation-end.png",
+      "sha256": "8f9f187b5c63f9067a11d5e32f2c442ea8f2d0af612c7178bfb3ea8c301da594"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/gas-and-accretion.gif",
+      "sha256": "5b49e77817a40298a08d54fc410d30d6108be32ead5a65c763581008b87c5a16"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/gas-system.png",
+      "sha256": "f9485a72f9f9674690c8b61b5ebb1589c67ddc8d2243095b03c96e1420e35742"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/ignition.png",
+      "sha256": "91d8816dfecb4ec236c6c8f3193f8e290e292fb30467bbf8e3a52fc591146c08"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/protostar.png",
+      "sha256": "52fa95e4be4a76e2e9c89f855b40f5aae90cf3830e49da308691b23ed7b718fc"
+    },
+    {
+      "path": "docs/demo/2026-10-06/formation-wide/stellar-ignition.gif",
+      "sha256": "ec9e9ae28a0ca216bc0eab9e7c82429f9447c3d07c06f8e747b1e811556234c2"
+    },
+    {
+      "path": "docs/demo/2026-10-06/hero-living-world.png",
+      "sha256": "1a0980a09baf7f03821d4a02e333245e05dd78abbf7e553436dbcd3a871070f6"
+    },
+    {
+      "path": "docs/demo/2026-10-06/ignition-orbit.gif",
+      "sha256": "7da27332d1bde599934821e0242bf653b79a01661dbf6ac971d56f5fa635dbcd"
+    },
+    {
+      "path": "docs/demo/2026-10-06/ignition-orbit.mp4",
+      "sha256": "f5014d9cdff446140ffab7bf6ac17bf83758f90298cd634bf71a46cf568030ea"
+    },
+    {
+      "path": "docs/demo/2026-10-06/live-formation.gif",
+      "sha256": "a00e683a27de5c10c557f526134e9ee79c7a1100f7f8357108e7d3607662951b"
+    },
+    {
+      "path": "docs/demo/2026-10-06/live-formation.mp4",
+      "sha256": "48936f1dfb200235856830817f33dad37c142648a0a29e7e787f99ddce6409d1"
+    },
+    {
+      "path": "docs/demo/2026-10-06/living-world-orbit.gif",
+      "sha256": "18867b596c8a6fa74ed55a9225bbb762905a738582a0918af66660843ab241a9"
+    },
+    {
+      "path": "docs/demo/2026-10-06/living-world-orbit.mp4",
+      "sha256": "b095ea0fc54bc0596fce2dc723b4f676612733167407e2c4fec46ade7cbcb31c"
+    },
+    {
+      "path": "docs/demo/2026-10-06/living-world-preview.gif",
+      "sha256": "3b7b9cdb8b451d075dc636ded7a088da71b1aa6030826dcd64a37a4d6cb0bd34"
+    },
+    {
+      "path": "docs/demo/2026-10-06/navigation-tour.gif",
+      "sha256": "f3b8d28504090dfd623271b09d031aa2a771ed8470fa267b663b3f2ced5e41e2"
+    },
+    {
+      "path": "docs/demo/2026-10-06/navigation-tour.mp4",
+      "sha256": "c45c479dc9190c98f06944a25789524cbfaa722ef675d8867dd326a1ff783f0e"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-entities.png",
+      "sha256": "017d57e49e8a149edae7d5f382a03bc24316a288751998cf8978132d8a58fa69"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-journal.png",
+      "sha256": "c1d7e22774d1983318facba07435d316fc53e3434c333df1d91c6d0ee641206c"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-multiverse.png",
+      "sha256": "c40723df5bc2375a941510dd18beac89af5cf88ada97166d392b914418811f85"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-narrator.png",
+      "sha256": "bc0fa2685f3b58df002c5d696cf4b7a3564ace922ef72be767dacfe8dd0fbfed"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-phase.png",
+      "sha256": "97129600b5006c957c5ac6e8ce1e6117ff99dcf464d810d42a5d461bc54bac42"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-spark.png",
+      "sha256": "b9034e18c4208b4c68c814c3b07308f3dfbd2aed0a24c4686ca6358f001a770d"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-view.png",
+      "sha256": "20e334266289c2c0dbddad1cbb29721a94d8c0d2d7fb16210a5500f64116ab9d"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-world.png",
+      "sha256": "4f2c9fe1f12b413d8e69317c8049c0c93cd20c26433a80265f3eece83bab4961"
+    },
+    {
+      "path": "docs/demo/2026-10-06/planets-orbit.gif",
+      "sha256": "ec427e9c9bca0e063e4c04c1b5bd2850f5405ade409168a9654a87c0e16eb8e3"
+    },
+    {
+      "path": "docs/demo/2026-10-06/planets-orbit.mp4",
+      "sha256": "1a9d8f0d84fc55eb0ca94867746269bafe58f525bdad8f8628a0785a0e48a5ed"
+    },
+    {
+      "path": "docs/demo/2026-10-06/protostar-orbit.gif",
+      "sha256": "e8dfbfd484fcceb85888540928503559821e6c3ac7bebc5b57529de7a25474b5"
+    },
+    {
+      "path": "docs/demo/2026-10-06/protostar-orbit.mp4",
+      "sha256": "39b59be68da4e6c7bf58064821c0f8b790b4b31b8410f23da3e08e5998ac23cd"
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-accretion.png",
+      "sha256": "da5e784b3ac3f8fcf2d46aeca922bd0d8ccfdd89d56b8267664c7c6661aec282"
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-dispersed.png",
+      "sha256": "82f116476c5fdb45774bc34228745cf9b8445e94c8f3b5c5d877e09b18086f1e"
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-ignition.png",
+      "sha256": "7f69dc25f76b6ae17c69e5e2cbe20911756893a8b2c4d3a2119729dd10e5a81d"
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-life.png",
+      "sha256": "a0c7ae812cd2c4c64102d2efd3f12e2f5af5c8455b5503a20c3750fa8b1304a3"
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-planets.png",
+      "sha256": "1f749c87218f8f832d00c323f56c4784d39322c250eba80a3ee7e7b079ec0ced"
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-protostar.png",
+      "sha256": "5aeabcf774c35e55b631e0ee031c4bf8263f9946e79ad88fb34ce7bdaea4a5d7"
+    }
+  ]
+}

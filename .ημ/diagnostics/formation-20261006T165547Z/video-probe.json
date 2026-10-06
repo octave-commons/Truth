@@ -1,0 +1,16 @@
+{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/tmp/truth-formation-smoke-20261006/continuous-formation.mp4",
+        "duration": "4.000000"
+    }
+}

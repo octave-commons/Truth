@@ -1,0 +1,7 @@
+Execution error (ExceptionInfo) at demo/scenario-world (demo.clj:74).
+Unknown demo scenario
+Execution error (ExceptionInfo) at demo-client/-main (demo_client.clj:17).
+Demo evaluation failed
+
+Full report at:
+/tmp/clojure-526906015388668722.edn

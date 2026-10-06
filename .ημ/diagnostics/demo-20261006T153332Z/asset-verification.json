@@ -1,0 +1,225 @@
+{
+  "screenshots": 17,
+  "videos": 3,
+  "preview_gif": true,
+  "assets": [
+    {
+      "path": "docs/demo/2026-10-06/01-live-nebula.png",
+      "bytes": 115395,
+      "sha256": "c01a5736d15d2025a43c556e979b831b40be263d29b513a02681cd97805ab693",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/02-live-formation.png",
+      "bytes": 108826,
+      "sha256": "463357fff0f6abaeccf33fb1f76e188710b24f73187ee2e1e2bc60466d685d7d",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/hero-living-world.png",
+      "bytes": 54339,
+      "sha256": "1a0980a09baf7f03821d4a02e333245e05dd78abbf7e553436dbcd3a871070f6",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/live-formation.mp4",
+      "bytes": 175171,
+      "sha256": "48936f1dfb200235856830817f33dad37c142648a0a29e7e787f99ddce6409d1",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720,
+            "avg_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "12.000000"
+        }
+      },
+      "black_segments_over_0.2_seconds": 0
+    },
+    {
+      "path": "docs/demo/2026-10-06/living-world-orbit.mp4",
+      "bytes": 108768,
+      "sha256": "b095ea0fc54bc0596fce2dc723b4f676612733167407e2c4fec46ade7cbcb31c",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720,
+            "avg_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "10.000000"
+        }
+      },
+      "black_segments_over_0.2_seconds": 0
+    },
+    {
+      "path": "docs/demo/2026-10-06/living-world-preview.gif",
+      "bytes": 294936,
+      "sha256": "3b7b9cdb8b451d075dc636ded7a088da71b1aa6030826dcd64a37a4d6cb0bd34"
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-entities.png",
+      "bytes": 31532,
+      "sha256": "3ba8ad9c648bf083b51162428535f8c2965ae591cb6514c80dcb4bbd6541e4ab",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-journal.png",
+      "bytes": 30664,
+      "sha256": "161b816995c076bcd4bbb61518ee924500806989fd9f0be750b2b0f39a20d011",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-multiverse.png",
+      "bytes": 31396,
+      "sha256": "f813caf286a9b11c895972d11064dea5988a2c197e314cec9eb017d2dfc6efc1",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-narrator.png",
+      "bytes": 29955,
+      "sha256": "a152aec22fa50711111bf97060fcf4f6599b3bb4d88dc45f256d356db345d42d",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-phase.png",
+      "bytes": 30259,
+      "sha256": "168d64812fb0cfe72ab57013b78f2e0eb6c3882d26f171dce4bb04d50722b474",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-spark.png",
+      "bytes": 33124,
+      "sha256": "18a626f73fe482f5e34720790c6779ac6865bdba8ef84a8e1763347996693276",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-view.png",
+      "bytes": 30055,
+      "sha256": "9656d0a648f3bd91bc1b23dca9010127ab407498f3d6dcd53b68cc487723b576",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/panel-world.png",
+      "bytes": 30438,
+      "sha256": "be4915f16e55f801dd163ed35f27ed6ad9ab66da79a71f05baf2f00a0551b3d3",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/protostar-orbit.mp4",
+      "bytes": 257101,
+      "sha256": "39b59be68da4e6c7bf58064821c0f8b790b4b31b8410f23da3e08e5998ac23cd",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720,
+            "avg_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "10.000000"
+        }
+      },
+      "black_segments_over_0.2_seconds": 0
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-accretion.png",
+      "bytes": 23105,
+      "sha256": "da5e784b3ac3f8fcf2d46aeca922bd0d8ccfdd89d56b8267664c7c6661aec282",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-dispersed.png",
+      "bytes": 16653,
+      "sha256": "82f116476c5fdb45774bc34228745cf9b8445e94c8f3b5c5d877e09b18086f1e",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-ignition.png",
+      "bytes": 22420,
+      "sha256": "7f69dc25f76b6ae17c69e5e2cbe20911756893a8b2c4d3a2119729dd10e5a81d",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-life.png",
+      "bytes": 28779,
+      "sha256": "a0c7ae812cd2c4c64102d2efd3f12e2f5af5c8455b5503a20c3750fa8b1304a3",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-planets.png",
+      "bytes": 27358,
+      "sha256": "1f749c87218f8f832d00c323f56c4784d39322c250eba80a3ee7e7b079ec0ced",
+      "dimensions": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "docs/demo/2026-10-06/story-protostar.png",
+      "bytes": 51285,
+      "sha256": "5aeabcf774c35e55b631e0ee031c4bf8263f9946e79ad88fb34ce7bdaea4a5d7",
+      "dimensions": [
+        1280,
+        720
+      ]
+    }
+  ]
+}

@@ -69,10 +69,10 @@
           frac (max 0.0 (min 1.0 (/ coh (max 1e-9 mx))))
           fi   (double (or (:focus-intensity obs) 0.5))
           col  (conj (rcolor/coherence-color (player/decoherence-state obs)) 0.92)
-          x0 -0.96 x1 -0.46 y0 -0.93 y1 -0.89]
+          x0 -0.96 x1 -0.46 y0 -0.99 y1 -0.975]
       [{:x0 -1.0 :y0 -1.0 :x1 1.0 :y1 1.0 :color (mood-color mood)}
        {:x0 x0 :y0 y0 :x1 x1 :y1 y1 :color [0.10 0.10 0.16 0.65]}
        {:x0 x0 :y0 y0 :x1 (+ x0 (* (- x1 x0) frac)) :y1 y1 :color col}
-       {:x0 x0 :y0 -0.875 :x1 (+ x0 (* (- x1 x0) fi)) :y1 -0.86
+       {:x0 x0 :y0 -0.968 :x1 (+ x0 (* (- x1 x0) fi)) :y1 -0.958
         :color [0.70 0.86 1.0 0.85]}])
     []))

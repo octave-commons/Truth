@@ -280,15 +280,6 @@
          :scale 2.8
          :color [1.0 0.92 0.60 ^double alpha]}))))
 
-(defn- controls-help-line
-  "Bottom-right passive control legend."
-  [width height]
-  {:text "focus rides camera   arrows: move focus (manual)   ,/.: narrow/widen   G: warp   L: life   WASD: fly"
-   :x (- (double width) 460.0)
-   :y (- (double height) 18.0)
-   :scale 1.2
-   :color [0.50 0.55 0.65 0.55]})
-
 (def ^:const ambient-line-fade-ticks
   "How long an ambient narrator line floats in the viewport before it is gone.
    Long and quiet: the line is an ambience, not a notification (the transient
@@ -321,7 +312,7 @@
   "Player HUD: quanta/state (bottom-left), observation note + quest (bottom-center),
    event notifications (center), ambient narrator line (low viewport float),
    gravitational-binding readout (bottom-left, above quanta — see
-   `binding-readout-entry`), controls hint (bottom-right). `height` anchors
+   `binding-readout-entry`). The action palette owns the controls hint. `height` anchors
    everything to the framebuffer size. Empty without an observer."
   [world width height]
   (if-let [obs (player/get-observer world)]
@@ -333,19 +324,17 @@
           n-line  (notif-entry world notif width height)
           a-line  (ambient-line-entry world width height)
           b-line  (binding-readout-entry world height)
-          w       (double width)
           h       (double height)]
       (cond-> base
         note   (conj {:text note
-                      :x (- w 220.0) :y (- h 40.0)
-                      :scale 1.6 :color [0.90 0.95 1.0 0.85]})
+                      :x 16.0 :y (- h 164.0)
+                      :scale 1.3 :color [0.90 0.95 1.0 0.85]})
         quest  (conj {:text quest
-                      :x (- w 200.0) :y (- h 18.0)
+                      :x 16.0 :y (- h 140.0)
                       :scale 1.4 :color [0.70 0.85 0.95 0.70]})
         n-line (conj n-line)
         a-line (conj a-line)
-        b-line (conj b-line)
-        true   (conj (controls-help-line width height))))
+        b-line (conj b-line)))
     []))
 
 (defn- afford-colors
@@ -425,7 +414,7 @@
     0.0))
 
 (defn view-bar-hud
-  "Top-left status bar separating the active view/camera from the simulation.
+  "Top-right status bar separating the active view/camera from the simulation.
 
    Shows current camera mode, orbit distance, the spark's live speed, and
    whether the view is user-driven or tracking the world."
@@ -437,12 +426,13 @@
         tracking? (not= :manual mode)
         label (case mode
                 :manual "3RD PERSON"
+                :follow-selection "FOLLOW"
                 :track-largest-cluster "TRACK"
                 :fit-all "FIT ALL"
                 (name mode))
         ndcx (fn [px] (- (/ (* 2.0 px) w) 1.0))
         ndcy (fn [py] (- 1.0 (/ (* 2.0 py) h)))
-        x0 10.0 y0 34.0
+        x0 (- w 240.0) y0 34.0
         line-h 20.0 pad 10.0
         panel-w 230.0
         panel-h (+ (* 2.0 pad) (* 3.0 line-h))

@@ -1,0 +1,24 @@
+{
+  "supersedes_head": "c35cd65e40cd5e0da1930cf7ac5b183606dbf5ab",
+  "reason": "18-second recording ended before final panel appeared; retake24seconds includes all8tabs and finalMultiverse frame visually checked at23seconds",
+  "duration_ms": 24000,
+  "frames": 240,
+  "size": [
+    960,
+    540
+  ],
+  "loop": 0,
+  "native_final_panel": "multiverse",
+  "assets": [
+    {
+      "path": "docs/demo/2026-10-06/navigation-tour.gif",
+      "sha256": "710bc2cf255d5f4387c9d6b210d27a22d987f06a92631097960b20fd3ad962e4",
+      "bytes": 443295
+    },
+    {
+      "path": "docs/demo/2026-10-06/navigation-tour.mp4",
+      "sha256": "e15bcc9b57a12a7cbf363e6c364397ff3dafe02522f7e7e2429495cbc944376c",
+      "bytes": 272107
+    }
+  ]
+}
