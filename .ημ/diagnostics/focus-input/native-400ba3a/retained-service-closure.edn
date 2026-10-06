@@ -1,0 +1,1 @@
+{:tick 12675, :render-alive? true, :arc :arc/life-emergence, :config {:mode :manual, :ui/active-domain nil, :ui/cursor-free? true}, :service-error nil, :ui-error nil, :window 132404983551008, :fixture? false, :observer-original-restored? true, :sim-alive? true, :wall-ms 1791320580020, :thrust nil, :world-identity 1675959387}

@@ -1,0 +1,13 @@
+{
+  "source": "85f307ffd8b017f7d4c3d498490227eeaf087d93",
+  "command": [
+    "clojure",
+    "-M:test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-input",
+  "JAVA_OPTS": "-Xms256m -Xmx4g",
+  "started_unix": 1791320344.5264938,
+  "source_clean": true,
+  "load": "Approved overlapping ordinary native functional capture on owner private display/port; not isolated performance evidence",
+  "native_tests": "Already passed 1 test/9 assertions; deliberately not repeated by this ordinary headless gate"
+}

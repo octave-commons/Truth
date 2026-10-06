@@ -368,3 +368,12 @@
   spore: none
   receipt-refs: focus-follows-pilot,10f1a81767d7d704a5b36e454b6557089fa4a77e
   note: Actual host-loop tests with moving physical fixtures expose cadence gaps that pure follow/binding link tests miss. Preserve existing exception containment when moving a callback into the serial boundary; distinguish pre-fold consumer correctness from postpublished position/recenter lag and already captured actions. No new spore warranted.
+- ts: 2026-10-06T21:10:20.862421760Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-input
+  task: Close native integrated controls and trails evidence without hiding interruptions or unmet gameplay acceptance
+  p-efficiency: 0.55
+  p-friction: 0.8
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: none
+  note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.

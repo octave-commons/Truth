@@ -1,0 +1,8 @@
+Execution error (AssertionError) at user/eval16159 (REPL:49).
+Assert failed: Observer already installed
+(nil? (ns-resolve (quote user) (quote truth-native-observer)))
+Execution error (ExceptionInfo) at demo-client/-main (demo_client.clj:18).
+Demo evaluation failed
+
+Full report at:
+/tmp/clojure-10794683869342711712.edn

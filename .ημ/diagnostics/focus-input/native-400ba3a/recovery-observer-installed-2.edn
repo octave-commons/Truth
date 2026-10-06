@@ -1,0 +1,2 @@
+nil
+{:installed true, :sample-every-frames 30, :raw-gl-sample-cap 128, :call-duration "Original render-frame-once elapsed wall time, includes wait/sleep; not GPU timing", :overhead "Diagnostic atom update each call; bounded GL query first and every30 calls"}

@@ -1,0 +1,140 @@
+{
+  "closed_at_utc": "2026-10-06T21:04:45.780027+00:00",
+  "launch_revision": "22f762f61b14db8da477e8a49bd000585bee11a1",
+  "launch_production_equivalent": "400ba3a",
+  "post_fix_revision": "85f307ffd8b017f7d4c3d498490227eeaf087d93",
+  "setup_sha256": "a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7",
+  "scenario": "ordinary default nebula",
+  "seed": 42,
+  "fixture": false,
+  "display": ":2",
+  "port": 7895,
+  "pid": 3083624,
+  "xvfb_pid": 3082301,
+  "window_initial": 2097159,
+  "window_recovered": 2097165,
+  "world_atom_identity": 1675959387,
+  "instrumentation_restored": true,
+  "service_retained": true,
+  "media": {
+    "controls-full-window-8x.gif": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 540,
+          "nb_frames": "240"
+        }
+      ],
+      "format": {
+        "duration": "30.010000"
+      }
+    },
+    "controls.mp4": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 720,
+          "nb_frames": "5760"
+        }
+      ],
+      "format": {
+        "duration": "240.000000"
+      }
+    },
+    "formation-full-window-10x.gif": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 540,
+          "nb_frames": "415"
+        }
+      ],
+      "format": {
+        "duration": "51.880000"
+      }
+    },
+    "formation-trails.mp4": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 720,
+          "nb_frames": "12458"
+        }
+      ],
+      "format": {
+        "duration": "519.083333"
+      }
+    },
+    "post-fix-full-window-4x.gif": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 540,
+          "nb_frames": "240"
+        }
+      ],
+      "format": {
+        "duration": "30.010000"
+      }
+    },
+    "post-fix-trails.mp4": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 720,
+          "nb_frames": "2880"
+        }
+      ],
+      "format": {
+        "duration": "120.000000"
+      }
+    },
+    "recovered-full-window-6x.gif": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 540,
+          "nb_frames": "320"
+        }
+      ],
+      "format": {
+        "duration": "40.010000"
+      }
+    },
+    "recovered-trails.mp4": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 720,
+          "nb_frames": "5760"
+        }
+      ],
+      "format": {
+        "duration": "240.000000"
+      }
+    }
+  },
+  "excluded_active_files": [
+    "runtime.log",
+    "xvfb.log"
+  ],
+  "manual_route_complete": false,
+  "global_graphics_clean_at_launch": false,
+  "post_fix_gl_zero_samples": 14,
+  "post_fix_first_residual_error_preserved": true,
+  "limitations": [
+    "software Mesa llvmpipe and concurrent load; not GPU/isolated perf",
+    "operator Escape interrupted initial render loop; same world recovered",
+    "camera-follow inspection separate from manual movement",
+    "magnetic field loops/overlays obscure star and planet fading trails",
+    "no manual overlap/commitment/sculpt/Gate proof"
+  ]
+}

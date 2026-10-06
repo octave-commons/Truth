@@ -1,0 +1,37 @@
+diff --git a/deps.edn b/deps.edn
+index 577e3e9..63b5dea 100644
+--- a/deps.edn
++++ b/deps.edn
+@@ -38,6 +38,9 @@
+    :law-test {:main-opts ["-m" "test-runner" "-g" "law"]}
+    :shape-test {:main-opts ["-m" "test-runner" "-g" "shape"]}
+    :render-test {:main-opts ["-m" "test-runner" "-g" "render"]}
++   ;; Explicit native GL suite; compose with :test for the existing runner.
++   :native-render-test {:extra-paths ["test-native"]
++                        :main-opts ["-m" "cognitect.test-runner" "-d" "test-native"]}
+    :architecture-test {:main-opts ["-m" "test-runner" "-g" "architecture"]}
+    :full-test {:main-opts ["-m" "test-runner" "-g" "all"]}
+    :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
+@@ -51,7 +54,7 @@
+    ;; --- Static analysis (see bin/analyze + docs/STATIC-ANALYSIS.md) ---------
+    ;; Splint: idiomatic-style / anti-pattern linter (maintained kibit successor).
+    :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.24.0"}}
+-            :main-opts ["-m" "noahtheduke.splint" "src" "test"]}
++            :main-opts ["-m" "noahtheduke.splint" "src" "test" "test-native"]}
+    ;; --- Test coverage (cloverage; see bin/coverage + docs/TESTING.md) ---------
+    ;; Instruments src, runs the test suite, reports line/form coverage. bin/coverage
+    ;; supplies -p/-s/report flags. Whole tree is measured (all tests pass headless).
+diff --git a/src/infra/render/scene/setup.clj b/src/infra/render/scene/setup.clj
+index d98ce10..9b6c963 100644
+--- a/src/infra/render/scene/setup.clj
++++ b/src/infra/render/scene/setup.clj
+@@ -125,7 +125,8 @@
+     (passes/bind-uniforms! line-program {:projection proj :view view})
+     (passes/set-blend! :alpha)
+     (passes/set-depth-write! false)
+-    (GL11/glLineWidth 1.5)
++    ;; Forward-compatible core contexts reject line widths greater than one.
++    (GL11/glLineWidth 1.0)
+     (let [lm (rmesh/upload-line-mesh (rmesh/make-line-mesh lines))]
+       (GL30/glBindVertexArray (:vao lm))
+       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))
