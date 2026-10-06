@@ -1,13 +1,14 @@
 ---
-uuid: "body-trails-ringbuffer"
-title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
-status: "todo"
-priority: "P2"
-labels: ["domain", "infra", "render", "spark-flight"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/body-trails-ringbuffer.md"
 category: "specs"
-estimate: 5
+labels: ["domain", "infra", "render", "spark-flight"]
+write-id: "1791318115930-0.mnbuk4i14rdupqe63wp"
+source: "kanban/tasks/body-trails-ringbuffer.md"
+title: "Motion trails on star, planets, and spark (ring-buffer component + line render)"
+priority: "P2"
+status: "in_progress"
+estimate: "5"
+uuid: "body-trails-ringbuffer"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Motion trails on significant bodies + spark
@@ -51,3 +52,17 @@ Choose N and cadence so trails are long enough to read but cheap.
 
 ## Dependencies
 None. Can land any time. Pairs well with card 9 for visual grounding.
+
+---
+Root reviewed existing TODO estimate5 scope against accepted flight design section6.1 and fresh grounded note docs/notes/research/2026-10-06-body-trails-rendering.md; exact bounded contract in docs/notes/2026-10-06-body-trails-plan.md. Design will link both before code. One registered history writer, no new phase/position writes. Default64 actual samples/body,1e10sim-second cadence,6.3e11s horizon. Huge dt records at mostone observed sample, arithmetic deadline skip with visible metadata, no invented path. Everyfold recenter shifts retained and new observed positions once, even unsampled ticks. Eligibility excludes bare collision planetesimals and nebula; filter before historywork. Existing line path gets actual pervertexopacity through buffer/shader, defaultnontrailalpha0.85 preserved. Deterministic4096segment budget with requested/rendered/dropped diagnostics; currentstate head connection. Root clarification: compare sampling only at common real observation times, no general step-partition invariance claim. Use portable .cljc for new pure history/frame/opacity logic where practical. RED tests cover real frozen-snapshot integrator+trail recenter, eligibility/timebounds/largegap, registryownership, geometry/alpha/cap. Root commits failing tests before source. Full gates, isolated before/after benchmark and normalnative star/planet/player fading evidence remain required; no gameplay completion inferred.
+
+Closed isolated body-trails Phase0 comparison: BEFORE clean e71b12f1f5fe070695fd1cd82cded2296a9f862d in truth-validation; AFTER reviewed LOD-corrected3614d34854bd0953ea12aef4aae1e3642b5b9c4b in truth-motion-trails. Both unchanged bin/bench :phase0 runs exit0 and reaped; durations414.360s and375.428s. Identical runner/dependency/benchmark hashes, selected JVM environment, affinity; OpenJDK21.0.12.1,22processors,6GiBmaxheap. Other owned heavy simulation/native/gate work held; retained2372912 SIGSTOP; unrelated host services documented/untouched. Complete37case comparison and raw stdout/stderr/resources/source/environment evidence: .ημ/diagnostics/body-trails/benchmark-comparison.md and benchmark-comparison.json, before/after logs+start/end metadata+timing. Explicit15file benchmark-CLOSED-FILES.txt,14/14 checksums verified. Mixed result: tick1004.5→4.6ms; tick50026.3→21.2ms; tick100052.2→47.8ms; critical50024.1→23.5ms;10-tick sequence218.1→299.5ms(+37.3%, reported ranges175.9–285.3 vs204.1–367.5ms). No blanket performance-pass/speedup claim: one pair, broad quantile ranges, ten-tick increase remains a signal to assess. Suite exercises fresh/early nebula worlds, not mature populated histories/GPU render cost. Focused correctness61tests292assertions0failures, independent source reviews no findings. Full stacked-source suite/strict and actual native visible fading remain pending; no review transition requested.
+
+Timing clarification (means; before → after):
+- 100 gas particles, one tick: 4.5 → 4.6 ms.
+- 500 gas particles, one tick: 26.3 → 21.2 ms.
+- 1,000 gas particles, one tick: 52.2 → 47.8 ms.
+- 500-particle critical path: 24.1 → 23.5 ms.
+- Ten consecutive ticks: 218.1 → 299.5 ms, +37.3%. Reported quantile ranges: 175.9–285.3 ms before, 204.1–367.5 ms after.
+The ten-tick increase remains unresolved. One before/after pair with overlapping ranges does not establish a general speedup or a narrow regression bound. Both full runs exited 0; actual native fading and stacked-source full validation remain pending.
+---

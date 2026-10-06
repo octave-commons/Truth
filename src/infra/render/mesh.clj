@@ -3,7 +3,9 @@
    All OpenGL buffer operations happen here; the rest of the renderer works
    with pure mesh descriptors."
   (:require
-   [clojure.math :as math] [infra.camera :as cam])
+   [clojure.math :as math] [infra.camera :as cam]
+   [law.render :as render-law]
+   [law.trail :as trail-law])
   (:import
    (org.lwjgl.opengl GL11 GL15 GL20 GL30)
    (org.lwjgl BufferUtils)))
@@ -179,8 +181,8 @@
     {:buffer fb
      :count  (count sprites)}))
 
-(defn upload-sprite-mesh
-  "Upload an interleaved sprite buffer (position 3, color 3, size 1)."
+(defn- upload-colored-scalar-mesh
+  "Upload position 3, color 3, and one scalar at attribute location 2."
   [{:keys [buffer] :as m}]
   (let [vao (GL30/glGenVertexArrays)
         vbo (GL15/glGenBuffers)
@@ -194,12 +196,36 @@
     ;; color
     (GL20/glVertexAttribPointer 1 3 GL11/GL_FLOAT false stride (* 3 4))
     (GL20/glEnableVertexAttribArray 1)
-    ;; size
+    ;; Scalar: sprite size or line opacity, according to the bound shader.
     (GL20/glVertexAttribPointer 2 1 GL11/GL_FLOAT false stride (* 6 4))
     (GL20/glEnableVertexAttribArray 2)
     (GL15/glBindBuffer GL15/GL_ARRAY_BUFFER 0)
     (GL30/glBindVertexArray 0)
     {:vao vao :vbo vbo :count (:count m)}))
+
+(defn upload-sprite-mesh
+  "Upload an interleaved sprite buffer (position 3, color 3, size 1)."
+  [mesh]
+  (upload-colored-scalar-mesh mesh))
+
+(defn make-line-mesh
+  "Pack raw line position/RGB/opacity with the legacy opacity default.
+
+   Enforces law.render/valid-line-vertex? before crossing the GL buffer edge."
+  [vertices]
+  (let [fb (BufferUtils/createFloatBuffer (* 7 (count vertices)))]
+    (doseq [{:keys [position color alpha] :as vertex} vertices]
+      (when-not (render-law/valid-line-vertex? (assoc vertex :render-mode :line))
+        (throw (ex-info "Invalid line vertex" {:vertex vertex})))
+      (doseq [value (concat position color [(or alpha trail-law/head-opacity)])]
+        (.put fb (float value))))
+    (.flip fb)
+    {:buffer fb :count (count vertices)}))
+
+(defn upload-line-mesh
+  "Upload a raw line buffer (position 3, color 3, opacity 1)."
+  [mesh]
+  (upload-colored-scalar-mesh mesh))
 
 (defn subdivisions-for-screen-size
   "Adaptive icosahedron subdivisions for a body of `screen-diameter` pixels.

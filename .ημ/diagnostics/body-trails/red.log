@@ -1,0 +1,102 @@
+
+Running tests in #{"test"}
+
+Testing domain.motion-trail-test
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:40)
+The accepted trail contract requires domain.trail/eligible?
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:40)
+The accepted trail contract requires domain.trail/advance-history
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:40)
+The accepted trail contract requires law.trail/valid-trail?
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:40)
+The accepted trail contract requires domain.trail.system/trail-system
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:41)
+expected: (= trail-component (some-> (ns-resolve (quote domain.ecs.components) (quote motion-trail)) deref))
+  actual: (not (= :component/motion-trail nil))
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:49)
+one owner in the actual fan-out
+expected: (= [:motion-trail] (mapv :id owners))
+  actual: (not (= [:motion-trail] []))
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:50)
+the same registry owner
+expected: (= [:motion-trail] (mapv :id declared))
+  actual: (not (= [:motion-trail] []))
+
+Testing infra.render.trail-test
+
+FAIL in (opacity-is-a-real-render-contract) (trail_test.clj:53)
+line shader accepts an opacity value instead of discarding it
+expected: (= :float (get-in shader/line-program [:vertex :inputs :aAlpha]))
+  actual: (not (= :float nil))
+
+FAIL in (opacity-is-a-real-render-contract) (trail_test.clj:54)
+line shader accepts an opacity value instead of discarding it
+expected: (= :float (get-in shader/line-program [:vertex :outputs :vAlpha]))
+  actual: (not (= :float nil))
+
+FAIL in (opacity-is-a-real-render-contract) (trail_test.clj:55)
+line shader accepts an opacity value instead of discarding it
+expected: (= :float (get-in shader/line-program [:fragment :inputs :vAlpha]))
+  actual: (not (= :float nil))
+
+FAIL in (opacity-is-a-real-render-contract) (trail_test.clj:59)
+render shape opacity must be a finite fraction
+expected: (not (law/valid-render-shape? (assoc shape :alpha 1.1)))
+  actual: (not (not true))
+
+FAIL in (opacity-is-a-real-render-contract) (trail_test.clj:60)
+render shape opacity must be a finite fraction
+expected: (not (law/valid-render-shape? (assoc shape :alpha -0.1)))
+  actual: (not (not true))
+
+FAIL in (opacity-is-a-real-render-contract) (trail_test.clj:61)
+render shape opacity must be a finite fraction
+expected: (not (law/valid-render-shape? (assoc shape :alpha Double/NaN)))
+  actual: (not (not true))
+
+FAIL in (existing-scene-exposes-real-trail-geometry) (trail_test.clj:45)
+two adjacent segments including the current head
+expected: (= 4 (count shapes))
+  actual: (not (= 4 0))
+
+FAIL in (existing-scene-exposes-real-trail-geometry) (trail_test.clj:46)
+expected: (= #{[[0.0 0.0 0.0] [4.0 0.0 0.0]] [[4.0 0.0 0.0] [10.0 0.0 0.0]]} (set (partition 2 (map :position shapes))))
+  actual: (not (= #{[[0.0 0.0 0.0] [4.0 0.0 0.0]] [[4.0 0.0 0.0] [10.0 0.0 0.0]]} #{}))
+
+FAIL in (pure-geometry-and-line-adapters-exist) (trail_test.clj:39)
+The trail render contract requires shape.trail/segments
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (pure-geometry-and-line-adapters-exist) (trail_test.clj:39)
+The trail render contract requires shape.trail/budget-segments
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (pure-geometry-and-line-adapters-exist) (trail_test.clj:39)
+The trail render contract requires infra.render.scene.trails/project-trails
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+FAIL in (pure-geometry-and-line-adapters-exist) (trail_test.clj:39)
+The trail render contract requires infra.render.mesh/make-line-mesh
+expected: (some? (api sym))
+  actual: (not (some? nil))
+
+Ran 17 tests containing 22 assertions.
+19 failures, 0 errors.

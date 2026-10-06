@@ -321,29 +321,33 @@
                           }"}})
 
 (def line-program
-  "Pass-through line shader for magnetic field lines."
+  "Raw line shader with interpolated per-vertex opacity."
   {:name :line
    :version "330 core"
-   :vertex {:inputs    {:aPos :vec3 :aColor :vec3}
+   :vertex {:inputs    {:aPos :vec3 :aColor :vec3 :aAlpha :float}
             :uniforms  {:view :mat4 :projection :mat4}
-            :outputs   {:vColor :vec3}
+            :outputs   {:vColor :vec3 :vAlpha :float}
             :source    "#version 330 core
                         layout(location = 0) in vec3 aPos;
                         layout(location = 1) in vec3 aColor;
+                        layout(location = 2) in float aAlpha;
                         out vec3 vColor;
+                        out float vAlpha;
                         uniform mat4 view;
                         uniform mat4 projection;
                         void main() {
                           vColor = aColor;
+                          vAlpha = aAlpha;
                           gl_Position = projection * view * vec4(aPos, 1.0);
                         }"}
-   :fragment {:inputs    {:vColor :vec3}
+   :fragment {:inputs    {:vColor :vec3 :vAlpha :float}
               :uniforms  {}
               :outputs   {:FragColor :vec4}
               :source    "#version 330 core
                           in vec3 vColor;
+                          in float vAlpha;
                           out vec4 FragColor;
-                          void main() { FragColor = vec4(vColor, 0.85); }"}})
+                          void main() { FragColor = vec4(vColor, vAlpha); }"}})
 
 (def hud-program
   "Solid-colour 2D HUD rectangle / text shader."

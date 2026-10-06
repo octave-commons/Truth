@@ -1,0 +1,6 @@
+test/domain/motion_trail_test.clj:89:11 [style/eq-zero] - Use `zero?` instead of recreating it.
+(= 0 (:skipped-deadlines fine))
+Consider using:
+(zero? (:skipped-deadlines fine))
+
+Linting took 436ms, checked 15 files, 1 style warnings
