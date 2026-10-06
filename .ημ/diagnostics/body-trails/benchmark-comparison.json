@@ -1,0 +1,637 @@
+{
+  "before_source": "e71b12f1f5fe070695fd1cd82cded2296a9f862d",
+  "after_source": "3614d34854bd0953ea12aef4aae1e3642b5b9c4b",
+  "before_seconds": 414.3602787059972,
+  "after_seconds": 375.4284014570003,
+  "measurements": [
+    {
+      "index": 1,
+      "label": "create-world (100 particles)",
+      "before": {
+        "label": "create-world (100 particles)",
+        "mean": "1.5 ms",
+        "range": "1.4 ms \u2014 1.5 ms"
+      },
+      "after": {
+        "label": "create-world (100 particles)",
+        "mean": "1.6 ms",
+        "range": "1.5 ms \u2014 1.7 ms"
+      },
+      "before_mean_ms": 1.5,
+      "after_mean_ms": 1.6,
+      "delta_percent_from_rounded_means": 6.666666666666665
+    },
+    {
+      "index": 2,
+      "label": "create-world (500 particles)",
+      "before": {
+        "label": "create-world (500 particles)",
+        "mean": "8.4 ms",
+        "range": "8.2 ms \u2014 8.9 ms"
+      },
+      "after": {
+        "label": "create-world (500 particles)",
+        "mean": "8.5 ms",
+        "range": "8.1 ms \u2014 8.8 ms"
+      },
+      "before_mean_ms": 8.4,
+      "after_mean_ms": 8.5,
+      "delta_percent_from_rounded_means": 1.1904761904761862
+    },
+    {
+      "index": 3,
+      "label": "create-world (1000 particles)",
+      "before": {
+        "label": "create-world (1000 particles)",
+        "mean": "18.3 ms",
+        "range": "17.0 ms \u2014 20.5 ms"
+      },
+      "after": {
+        "label": "create-world (1000 particles)",
+        "mean": "17.5 ms",
+        "range": "17.0 ms \u2014 18.1 ms"
+      },
+      "before_mean_ms": 18.3,
+      "after_mean_ms": 17.5,
+      "delta_percent_from_rounded_means": -4.371584699453557
+    },
+    {
+      "index": 4,
+      "label": "tick-world (100 particles)",
+      "before": {
+        "label": "tick-world (100 particles)",
+        "mean": "4.5 ms",
+        "range": "3.6 ms \u2014 6.7 ms"
+      },
+      "after": {
+        "label": "tick-world (100 particles)",
+        "mean": "4.6 ms",
+        "range": "3.4 ms \u2014 6.8 ms"
+      },
+      "before_mean_ms": 4.5,
+      "after_mean_ms": 4.6,
+      "delta_percent_from_rounded_means": 2.2222222222222143
+    },
+    {
+      "index": 5,
+      "label": "tick-world (500 particles)",
+      "before": {
+        "label": "tick-world (500 particles)",
+        "mean": "26.3 ms",
+        "range": "18.9 ms \u2014 39.9 ms"
+      },
+      "after": {
+        "label": "tick-world (500 particles)",
+        "mean": "21.2 ms",
+        "range": "18.0 ms \u2014 24.6 ms"
+      },
+      "before_mean_ms": 26.3,
+      "after_mean_ms": 21.2,
+      "delta_percent_from_rounded_means": -19.391634980988602
+    },
+    {
+      "index": 6,
+      "label": "tick-world (1000 particles)",
+      "before": {
+        "label": "tick-world (1000 particles)",
+        "mean": "52.2 ms",
+        "range": "36.3 ms \u2014 77.3 ms"
+      },
+      "after": {
+        "label": "tick-world (1000 particles)",
+        "mean": "47.8 ms",
+        "range": "36.4 ms \u2014 67.4 ms"
+      },
+      "before_mean_ms": 52.2,
+      "after_mean_ms": 47.8,
+      "delta_percent_from_rounded_means": -8.429118773946376
+    },
+    {
+      "index": 7,
+      "label": "tick-world (500 particles) \u2014 critical path",
+      "before": {
+        "label": "tick-world (500 particles) \u2014 critical path",
+        "mean": "24.1 ms",
+        "range": "18.2 ms \u2014 39.3 ms"
+      },
+      "after": {
+        "label": "tick-world (500 particles) \u2014 critical path",
+        "mean": "23.5 ms",
+        "range": "17.5 ms \u2014 33.5 ms"
+      },
+      "before_mean_ms": 24.1,
+      "after_mean_ms": 23.5,
+      "delta_percent_from_rounded_means": -2.4896265560165998
+    },
+    {
+      "index": 8,
+      "label": "  advance-tick + spatial-index",
+      "before": {
+        "label": "  advance-tick + spatial-index",
+        "mean": "3.4 ms",
+        "range": "2.9 ms \u2014 4.0 ms"
+      },
+      "after": {
+        "label": "  advance-tick + spatial-index",
+        "mean": "3.4 ms",
+        "range": "3.0 ms \u2014 4.2 ms"
+      },
+      "before_mean_ms": 3.4,
+      "after_mean_ms": 3.4,
+      "delta_percent_from_rounded_means": 0.0
+    },
+    {
+      "index": 9,
+      "label": "  system-summary (post-physics)",
+      "before": {
+        "label": "  system-summary (post-physics)",
+        "mean": "279.7 \u03bcs",
+        "range": "199.9 \u03bcs \u2014 415.3 \u03bcs"
+      },
+      "after": {
+        "label": "  system-summary (post-physics)",
+        "mean": "252.4 \u03bcs",
+        "range": "176.6 \u03bcs \u2014 308.8 \u03bcs"
+      },
+      "before_mean_ms": 0.2797,
+      "after_mean_ms": 0.2524,
+      "delta_percent_from_rounded_means": -9.7604576331784
+    },
+    {
+      "index": 10,
+      "label": "  stats-of (post-physics)",
+      "before": {
+        "label": "  stats-of (post-physics)",
+        "mean": "182.3 \u03bcs",
+        "range": "146.8 \u03bcs \u2014 277.4 \u03bcs"
+      },
+      "after": {
+        "label": "  stats-of (post-physics)",
+        "mean": "232.4 \u03bcs",
+        "range": "157.3 \u03bcs \u2014 447.4 \u03bcs"
+      },
+      "before_mean_ms": 0.18230000000000002,
+      "after_mean_ms": 0.23240000000000002,
+      "delta_percent_from_rounded_means": 27.48217224355458
+    },
+    {
+      "index": 11,
+      "label": "  detect-phase + complexity-score (post-physics)",
+      "before": {
+        "label": "  detect-phase + complexity-score (post-physics)",
+        "mean": "345.9 \u03bcs",
+        "range": "234.5 \u03bcs \u2014 432.2 \u03bcs"
+      },
+      "after": {
+        "label": "  detect-phase + complexity-score (post-physics)",
+        "mean": "299.6 \u03bcs",
+        "range": "209.3 \u03bcs \u2014 379.2 \u03bcs"
+      },
+      "before_mean_ms": 0.3459,
+      "after_mean_ms": 0.29960000000000003,
+      "delta_percent_from_rounded_means": -13.385371494651622
+    },
+    {
+      "index": 12,
+      "label": "  pacing (post-physics)",
+      "before": {
+        "label": "  pacing (post-physics)",
+        "mean": "455.6 \u03bcs",
+        "range": "445.1 \u03bcs \u2014 468.2 \u03bcs"
+      },
+      "after": {
+        "label": "  pacing (post-physics)",
+        "mean": "505.8 \u03bcs",
+        "range": "438.4 \u03bcs \u2014 627.4 \u03bcs"
+      },
+      "before_mean_ms": 0.4556,
+      "after_mean_ms": 0.5058,
+      "delta_percent_from_rounded_means": 11.018437225636536
+    },
+    {
+      "index": 13,
+      "label": "  observer-system (post-physics)",
+      "before": {
+        "label": "  observer-system (post-physics)",
+        "mean": "2.8 \u03bcs",
+        "range": "2.5 \u03bcs \u2014 3.3 \u03bcs"
+      },
+      "after": {
+        "label": "  observer-system (post-physics)",
+        "mean": "2.5 \u03bcs",
+        "range": "2.4 \u03bcs \u2014 2.6 \u03bcs"
+      },
+      "before_mean_ms": 0.0028,
+      "after_mean_ms": 0.0025,
+      "delta_percent_from_rounded_means": -10.71428571428571
+    },
+    {
+      "index": 14,
+      "label": "  non-physics tick overhead",
+      "before": {
+        "label": "  non-physics tick overhead",
+        "mean": "1.5 ms",
+        "range": "1.1 ms \u2014 2.0 ms"
+      },
+      "after": {
+        "label": "  non-physics tick overhead",
+        "mean": "1.4 ms",
+        "range": "1.0 ms \u2014 1.8 ms"
+      },
+      "before_mean_ms": 1.5,
+      "after_mean_ms": 1.4,
+      "delta_percent_from_rounded_means": -6.666666666666677
+    },
+    {
+      "index": 15,
+      "label": "  advance-tick + spatial-index",
+      "before": {
+        "label": "  advance-tick + spatial-index",
+        "mean": "2.9 ms",
+        "range": "2.5 ms \u2014 3.4 ms"
+      },
+      "after": {
+        "label": "  advance-tick + spatial-index",
+        "mean": "3.0 ms",
+        "range": "2.4 ms \u2014 4.4 ms"
+      },
+      "before_mean_ms": 2.9,
+      "after_mean_ms": 3.0,
+      "delta_percent_from_rounded_means": 3.4482758620689724
+    },
+    {
+      "index": 16,
+      "label": "  expire-interventions + materialize-lifecycle",
+      "before": {
+        "label": "  expire-interventions + materialize-lifecycle",
+        "mean": "1.0 \u03bcs",
+        "range": "916.6 ns \u2014 1.2 \u03bcs"
+      },
+      "after": {
+        "label": "  expire-interventions + materialize-lifecycle",
+        "mean": "945.2 ns",
+        "range": "901.9 ns \u2014 1.0 \u03bcs"
+      },
+      "before_mean_ms": 0.001,
+      "after_mean_ms": 0.0009452,
+      "delta_percent_from_rounded_means": -5.4800000000000075
+    },
+    {
+      "index": 17,
+      "label": "  system-summary",
+      "before": {
+        "label": "  system-summary",
+        "mean": "270.2 \u03bcs",
+        "range": "202.6 \u03bcs \u2014 332.9 \u03bcs"
+      },
+      "after": {
+        "label": "  system-summary",
+        "mean": "250.7 \u03bcs",
+        "range": "176.3 \u03bcs \u2014 332.2 \u03bcs"
+      },
+      "before_mean_ms": 0.2702,
+      "after_mean_ms": 0.2507,
+      "delta_percent_from_rounded_means": -7.216876387860848
+    },
+    {
+      "index": 18,
+      "label": "  stats-of",
+      "before": {
+        "label": "  stats-of",
+        "mean": "468.3 \u03bcs",
+        "range": "339.8 \u03bcs \u2014 607.3 \u03bcs"
+      },
+      "after": {
+        "label": "  stats-of",
+        "mean": "626.5 \u03bcs",
+        "range": "471.6 \u03bcs \u2014 774.0 \u03bcs"
+      },
+      "before_mean_ms": 0.4683,
+      "after_mean_ms": 0.6265000000000001,
+      "delta_percent_from_rounded_means": 33.78176382660689
+    },
+    {
+      "index": 19,
+      "label": "  detect-phase + complexity-score",
+      "before": {
+        "label": "  detect-phase + complexity-score",
+        "mean": "279.5 \u03bcs",
+        "range": "214.4 \u03bcs \u2014 348.3 \u03bcs"
+      },
+      "after": {
+        "label": "  detect-phase + complexity-score",
+        "mean": "288.6 \u03bcs",
+        "range": "223.0 \u03bcs \u2014 367.8 \u03bcs"
+      },
+      "before_mean_ms": 0.2795,
+      "after_mean_ms": 0.2886,
+      "delta_percent_from_rounded_means": 3.2558139534883734
+    },
+    {
+      "index": 20,
+      "label": "  pacing",
+      "before": {
+        "label": "  pacing",
+        "mean": "444.6 \u03bcs",
+        "range": "427.8 \u03bcs \u2014 480.1 \u03bcs"
+      },
+      "after": {
+        "label": "  pacing",
+        "mean": "465.7 \u03bcs",
+        "range": "443.3 \u03bcs \u2014 516.5 \u03bcs"
+      },
+      "before_mean_ms": 0.44460000000000005,
+      "after_mean_ms": 0.4657,
+      "delta_percent_from_rounded_means": 4.745838956365267
+    },
+    {
+      "index": 21,
+      "label": "  observer-system",
+      "before": {
+        "label": "  observer-system",
+        "mean": "2.7 \u03bcs",
+        "range": "2.6 \u03bcs \u2014 2.8 \u03bcs"
+      },
+      "after": {
+        "label": "  observer-system",
+        "mean": "3.0 \u03bcs",
+        "range": "2.5 \u03bcs \u2014 3.5 \u03bcs"
+      },
+      "before_mean_ms": 0.0027,
+      "after_mean_ms": 0.003,
+      "delta_percent_from_rounded_means": 11.111111111111116
+    },
+    {
+      "index": 22,
+      "label": "  gravity-acceleration system",
+      "before": {
+        "label": "  gravity-acceleration system",
+        "mean": "615.4 \u03bcs",
+        "range": "512.0 \u03bcs \u2014 879.0 \u03bcs"
+      },
+      "after": {
+        "label": "  gravity-acceleration system",
+        "mean": "603.6 \u03bcs",
+        "range": "518.4 \u03bcs \u2014 679.5 \u03bcs"
+      },
+      "before_mean_ms": 0.6154,
+      "after_mean_ms": 0.6036,
+      "delta_percent_from_rounded_means": -1.9174520636983994
+    },
+    {
+      "index": 23,
+      "label": "  motion-integration system",
+      "before": {
+        "label": "  motion-integration system",
+        "mean": "569.4 \u03bcs",
+        "range": "554.4 \u03bcs \u2014 590.9 \u03bcs"
+      },
+      "after": {
+        "label": "  motion-integration system",
+        "mean": "866.7 \u03bcs",
+        "range": "628.4 \u03bcs \u2014 1.5 ms"
+      },
+      "before_mean_ms": 0.5694,
+      "after_mean_ms": 0.8667,
+      "delta_percent_from_rounded_means": 52.212855637513165
+    },
+    {
+      "index": 24,
+      "label": "  density-system",
+      "before": {
+        "label": "  density-system",
+        "mean": "732.6 \u03bcs",
+        "range": "715.6 \u03bcs \u2014 785.5 \u03bcs"
+      },
+      "after": {
+        "label": "  density-system",
+        "mean": "866.9 \u03bcs",
+        "range": "678.5 \u03bcs \u2014 1.5 ms"
+      },
+      "before_mean_ms": 0.7326,
+      "after_mean_ms": 0.8669,
+      "delta_percent_from_rounded_means": 18.33196833196833
+    },
+    {
+      "index": 25,
+      "label": "  merged-hydro-em system",
+      "before": {
+        "label": "  merged-hydro-em system",
+        "mean": "2.9 ms",
+        "range": "2.4 ms \u2014 5.0 ms"
+      },
+      "after": {
+        "label": "  merged-hydro-em system",
+        "mean": "2.1 ms",
+        "range": "2.0 ms \u2014 2.2 ms"
+      },
+      "before_mean_ms": 2.9,
+      "after_mean_ms": 2.1,
+      "delta_percent_from_rounded_means": -27.586206896551722
+    },
+    {
+      "index": 26,
+      "label": "  field-system",
+      "before": {
+        "label": "  field-system",
+        "mean": "127.8 ns",
+        "range": "122.3 ns \u2014 136.7 ns"
+      },
+      "after": {
+        "label": "  field-system",
+        "mean": "121.1 ns",
+        "range": "119.2 ns \u2014 123.8 ns"
+      },
+      "before_mean_ms": 0.0001278,
+      "after_mean_ms": 0.00012109999999999999,
+      "delta_percent_from_rounded_means": -5.242566510172142
+    },
+    {
+      "index": 27,
+      "label": "  collision-detection-system",
+      "before": {
+        "label": "  collision-detection-system",
+        "mean": "358.6 \u03bcs",
+        "range": "329.2 \u03bcs \u2014 391.4 \u03bcs"
+      },
+      "after": {
+        "label": "  collision-detection-system",
+        "mean": "379.6 \u03bcs",
+        "range": "361.6 \u03bcs \u2014 398.5 \u03bcs"
+      },
+      "before_mean_ms": 0.35860000000000003,
+      "after_mean_ms": 0.37960000000000005,
+      "delta_percent_from_rounded_means": 5.856107083100959
+    },
+    {
+      "index": 28,
+      "label": "  stellar structure-system",
+      "before": {
+        "label": "  stellar structure-system",
+        "mean": "754.9 \u03bcs",
+        "range": "724.3 \u03bcs \u2014 814.6 \u03bcs"
+      },
+      "after": {
+        "label": "  stellar structure-system",
+        "mean": "965.8 \u03bcs",
+        "range": "802.0 \u03bcs \u2014 1.4 ms"
+      },
+      "before_mean_ms": 0.7549,
+      "after_mean_ms": 0.9658,
+      "delta_percent_from_rounded_means": 27.937475162273138
+    },
+    {
+      "index": 29,
+      "label": "  stellar classifier-system",
+      "before": {
+        "label": "  stellar classifier-system",
+        "mean": "598.9 \u03bcs",
+        "range": "592.0 \u03bcs \u2014 606.7 \u03bcs"
+      },
+      "after": {
+        "label": "  stellar classifier-system",
+        "mean": "634.9 \u03bcs",
+        "range": "619.0 \u03bcs \u2014 653.3 \u03bcs"
+      },
+      "before_mean_ms": 0.5989,
+      "after_mean_ms": 0.6349,
+      "delta_percent_from_rounded_means": 6.011020203706807
+    },
+    {
+      "index": 30,
+      "label": "  stellar temperature-system",
+      "before": {
+        "label": "  stellar temperature-system",
+        "mean": "605.7 \u03bcs",
+        "range": "486.5 \u03bcs \u2014 843.8 \u03bcs"
+      },
+      "after": {
+        "label": "  stellar temperature-system",
+        "mean": "660.3 \u03bcs",
+        "range": "495.4 \u03bcs \u2014 948.1 \u03bcs"
+      },
+      "before_mean_ms": 0.6057,
+      "after_mean_ms": 0.6603,
+      "delta_percent_from_rounded_means": 9.014363546310044
+    },
+    {
+      "index": 31,
+      "label": "  regime-system",
+      "before": {
+        "label": "  regime-system",
+        "mean": "624.3 \u03bcs",
+        "range": "515.3 \u03bcs \u2014 914.3 \u03bcs"
+      },
+      "after": {
+        "label": "  regime-system",
+        "mean": "631.0 \u03bcs",
+        "range": "503.4 \u03bcs \u2014 1.1 ms"
+      },
+      "before_mean_ms": 0.6243,
+      "after_mean_ms": 0.631,
+      "delta_percent_from_rounded_means": 1.0732019862245812
+    },
+    {
+      "index": 32,
+      "label": "  step-physics parallel (on initial w500)",
+      "before": {
+        "label": "  step-physics parallel (on initial w500)",
+        "mean": "15.0 ms",
+        "range": "10.4 ms \u2014 21.7 ms"
+      },
+      "after": {
+        "label": "  step-physics parallel (on initial w500)",
+        "mean": "17.3 ms",
+        "range": "13.1 ms \u2014 25.5 ms"
+      },
+      "before_mean_ms": 15.0,
+      "after_mean_ms": 17.3,
+      "delta_percent_from_rounded_means": 15.333333333333332
+    },
+    {
+      "index": 33,
+      "label": "  step-physics parallel (on world1 with spatial tree)",
+      "before": {
+        "label": "  step-physics parallel (on world1 with spatial tree)",
+        "mean": "24.7 ms",
+        "range": "16.8 ms \u2014 34.4 ms"
+      },
+      "after": {
+        "label": "  step-physics parallel (on world1 with spatial tree)",
+        "mean": "23.9 ms",
+        "range": "15.9 ms \u2014 32.3 ms"
+      },
+      "before_mean_ms": 24.7,
+      "after_mean_ms": 23.9,
+      "delta_percent_from_rounded_means": -3.238866396761142
+    },
+    {
+      "index": 34,
+      "label": "  step-physics sequential",
+      "before": {
+        "label": "  step-physics sequential",
+        "mean": "19.1 ms",
+        "range": "15.8 ms \u2014 30.1 ms"
+      },
+      "after": {
+        "label": "  step-physics sequential",
+        "mean": "17.9 ms",
+        "range": "16.8 ms \u2014 19.3 ms"
+      },
+      "before_mean_ms": 19.1,
+      "after_mean_ms": 17.9,
+      "delta_percent_from_rounded_means": -6.282722513089023
+    },
+    {
+      "index": 35,
+      "label": "  full parallel step-physics",
+      "before": {
+        "label": "  full parallel step-physics",
+        "mean": "15.3 ms",
+        "range": "11.3 ms \u2014 21.4 ms"
+      },
+      "after": {
+        "label": "  full parallel step-physics",
+        "mean": "16.9 ms",
+        "range": "11.3 ms \u2014 24.5 ms"
+      },
+      "before_mean_ms": 15.3,
+      "after_mean_ms": 16.9,
+      "delta_percent_from_rounded_means": 10.457516339869265
+    },
+    {
+      "index": 36,
+      "label": "  full sequential step-physics",
+      "before": {
+        "label": "  full sequential step-physics",
+        "mean": "21.1 ms",
+        "range": "17.7 ms \u2014 32.1 ms"
+      },
+      "after": {
+        "label": "  full sequential step-physics",
+        "mean": "19.3 ms",
+        "range": "17.1 ms \u2014 21.3 ms"
+      },
+      "before_mean_ms": 21.1,
+      "after_mean_ms": 19.3,
+      "delta_percent_from_rounded_means": -8.530805687203792
+    },
+    {
+      "index": 37,
+      "label": "  10 ticks",
+      "before": {
+        "label": "  10 ticks",
+        "mean": "218.1 ms",
+        "range": "175.9 ms \u2014 285.3 ms"
+      },
+      "after": {
+        "label": "  10 ticks",
+        "mean": "299.5 ms",
+        "range": "204.1 ms \u2014 367.5 ms"
+      },
+      "before_mean_ms": 218.1,
+      "after_mean_ms": 299.5,
+      "delta_percent_from_rounded_means": 37.32232920678589
+    }
+  ]
+}

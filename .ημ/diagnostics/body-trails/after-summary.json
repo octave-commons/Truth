@@ -1,0 +1,187 @@
+[
+  {
+    "label": "create-world (100 particles)",
+    "mean": "1.6 ms",
+    "range": "1.5 ms \u2014 1.7 ms"
+  },
+  {
+    "label": "create-world (500 particles)",
+    "mean": "8.5 ms",
+    "range": "8.1 ms \u2014 8.8 ms"
+  },
+  {
+    "label": "create-world (1000 particles)",
+    "mean": "17.5 ms",
+    "range": "17.0 ms \u2014 18.1 ms"
+  },
+  {
+    "label": "tick-world (100 particles)",
+    "mean": "4.6 ms",
+    "range": "3.4 ms \u2014 6.8 ms"
+  },
+  {
+    "label": "tick-world (500 particles)",
+    "mean": "21.2 ms",
+    "range": "18.0 ms \u2014 24.6 ms"
+  },
+  {
+    "label": "tick-world (1000 particles)",
+    "mean": "47.8 ms",
+    "range": "36.4 ms \u2014 67.4 ms"
+  },
+  {
+    "label": "tick-world (500 particles) \u2014 critical path",
+    "mean": "23.5 ms",
+    "range": "17.5 ms \u2014 33.5 ms"
+  },
+  {
+    "label": "  advance-tick + spatial-index",
+    "mean": "3.4 ms",
+    "range": "3.0 ms \u2014 4.2 ms"
+  },
+  {
+    "label": "  system-summary (post-physics)",
+    "mean": "252.4 \u03bcs",
+    "range": "176.6 \u03bcs \u2014 308.8 \u03bcs"
+  },
+  {
+    "label": "  stats-of (post-physics)",
+    "mean": "232.4 \u03bcs",
+    "range": "157.3 \u03bcs \u2014 447.4 \u03bcs"
+  },
+  {
+    "label": "  detect-phase + complexity-score (post-physics)",
+    "mean": "299.6 \u03bcs",
+    "range": "209.3 \u03bcs \u2014 379.2 \u03bcs"
+  },
+  {
+    "label": "  pacing (post-physics)",
+    "mean": "505.8 \u03bcs",
+    "range": "438.4 \u03bcs \u2014 627.4 \u03bcs"
+  },
+  {
+    "label": "  observer-system (post-physics)",
+    "mean": "2.5 \u03bcs",
+    "range": "2.4 \u03bcs \u2014 2.6 \u03bcs"
+  },
+  {
+    "label": "  non-physics tick overhead",
+    "mean": "1.4 ms",
+    "range": "1.0 ms \u2014 1.8 ms"
+  },
+  {
+    "label": "  advance-tick + spatial-index",
+    "mean": "3.0 ms",
+    "range": "2.4 ms \u2014 4.4 ms"
+  },
+  {
+    "label": "  expire-interventions + materialize-lifecycle",
+    "mean": "945.2 ns",
+    "range": "901.9 ns \u2014 1.0 \u03bcs"
+  },
+  {
+    "label": "  system-summary",
+    "mean": "250.7 \u03bcs",
+    "range": "176.3 \u03bcs \u2014 332.2 \u03bcs"
+  },
+  {
+    "label": "  stats-of",
+    "mean": "626.5 \u03bcs",
+    "range": "471.6 \u03bcs \u2014 774.0 \u03bcs"
+  },
+  {
+    "label": "  detect-phase + complexity-score",
+    "mean": "288.6 \u03bcs",
+    "range": "223.0 \u03bcs \u2014 367.8 \u03bcs"
+  },
+  {
+    "label": "  pacing",
+    "mean": "465.7 \u03bcs",
+    "range": "443.3 \u03bcs \u2014 516.5 \u03bcs"
+  },
+  {
+    "label": "  observer-system",
+    "mean": "3.0 \u03bcs",
+    "range": "2.5 \u03bcs \u2014 3.5 \u03bcs"
+  },
+  {
+    "label": "  gravity-acceleration system",
+    "mean": "603.6 \u03bcs",
+    "range": "518.4 \u03bcs \u2014 679.5 \u03bcs"
+  },
+  {
+    "label": "  motion-integration system",
+    "mean": "866.7 \u03bcs",
+    "range": "628.4 \u03bcs \u2014 1.5 ms"
+  },
+  {
+    "label": "  density-system",
+    "mean": "866.9 \u03bcs",
+    "range": "678.5 \u03bcs \u2014 1.5 ms"
+  },
+  {
+    "label": "  merged-hydro-em system",
+    "mean": "2.1 ms",
+    "range": "2.0 ms \u2014 2.2 ms"
+  },
+  {
+    "label": "  field-system",
+    "mean": "121.1 ns",
+    "range": "119.2 ns \u2014 123.8 ns"
+  },
+  {
+    "label": "  collision-detection-system",
+    "mean": "379.6 \u03bcs",
+    "range": "361.6 \u03bcs \u2014 398.5 \u03bcs"
+  },
+  {
+    "label": "  stellar structure-system",
+    "mean": "965.8 \u03bcs",
+    "range": "802.0 \u03bcs \u2014 1.4 ms"
+  },
+  {
+    "label": "  stellar classifier-system",
+    "mean": "634.9 \u03bcs",
+    "range": "619.0 \u03bcs \u2014 653.3 \u03bcs"
+  },
+  {
+    "label": "  stellar temperature-system",
+    "mean": "660.3 \u03bcs",
+    "range": "495.4 \u03bcs \u2014 948.1 \u03bcs"
+  },
+  {
+    "label": "  regime-system",
+    "mean": "631.0 \u03bcs",
+    "range": "503.4 \u03bcs \u2014 1.1 ms"
+  },
+  {
+    "label": "  step-physics parallel (on initial w500)",
+    "mean": "17.3 ms",
+    "range": "13.1 ms \u2014 25.5 ms"
+  },
+  {
+    "label": "  step-physics parallel (on world1 with spatial tree)",
+    "mean": "23.9 ms",
+    "range": "15.9 ms \u2014 32.3 ms"
+  },
+  {
+    "label": "  step-physics sequential",
+    "mean": "17.9 ms",
+    "range": "16.8 ms \u2014 19.3 ms"
+  },
+  {
+    "label": "  full parallel step-physics",
+    "mean": "16.9 ms",
+    "range": "11.3 ms \u2014 24.5 ms"
+  },
+  {
+    "label": "  full sequential step-physics",
+    "mean": "19.3 ms",
+    "range": "17.1 ms \u2014 21.3 ms"
+  },
+  {
+    "label": "  10 ticks",
+    "mean": "299.5 ms",
+    "range": "204.1 ms \u2014 367.5 ms"
+  }
+]
