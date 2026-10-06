@@ -350,3 +350,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
   note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-06T20:57:26.787471110Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Bound explicit local-reference flight-assist planning under the existing owner
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.22
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec
+  note: Distinguish absolute braking, body-frame thrust, translating navigation reference and camera tracking before claiming approach readiness. A pinned cross-PR proposal is evidence of intended scope, not a local file or admitted dependency. Reuse the existing FA owner with one Incoming specification child and retain candidate-law uncertainty. No spore created or promoted.
