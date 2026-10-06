@@ -386,3 +386,12 @@
   spore: none
   receipt-refs: focus-follows-pilot,1ad081475364cc3b75db76142204cbf54b5bf60c
   note: Boundary identity and preserved intermediate snapshots establish real sim consumption despite slow render frames. Keep host config and world knobs distinct in readbacks; retain failed queries. Diagnostic restart must independently prove worker death and owner-context cleanup before loading loop code. Full media and restored-hook audit close evidence, not gameplay. Existing lessons suffice; no spore.
+- ts: 2026-10-06T22:52:26.910519444Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Separate Xvfb software-renderer evidence from accessible host hardware
+  p-efficiency: 0.96
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth hardware-context native line regression,c79be1e
+  note: Passive PCI and render-node access establish a possible route; glxinfo and actual tested-context identity establish the selected renderer. Use the existing hidden production-context test in a separate JVM, preserve cleanup and retain the live game untouched. Do not infer GPU performance or full-game acceptance from a small shader test. No spore warranted.

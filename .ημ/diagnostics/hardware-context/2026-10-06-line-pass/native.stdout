@@ -1,0 +1,8 @@
+
+Testing infra.render.line-pass-test
+{:hardware-native-test-context {:display ":0", :vendor "Intel", :renderer "Mesa Intel(R) Arc(tm) Graphics (MTL)", :version "4.6 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4", :visible? false}}
+Compiling line shaders...
+
+Ran 1 tests containing 9 assertions.
+0 failures, 0 errors.
+{:native-test-summary {:test 1, :pass 9, :fail 0, :error 0, :type :summary}, :contexts-observed 1, :original-test-context-function-restored? true, :hardware-verdict :requires-inspection-of-recorded-context-identity}
