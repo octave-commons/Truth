@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "switch",
+    "--detach",
+    "3614d34854bd0953ea12aef4aae1e3642b5b9c4b"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "Previous HEAD position was e71b12f Preserve native manual flight and precision boundary evidence\nHEAD is now at 3614d34 Keep trails aligned with deliberately frozen LOD positions\n"
+}
