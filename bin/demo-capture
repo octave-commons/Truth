@@ -10,8 +10,13 @@ if [[ -e "$out" ]]; then
   echo "Capture destination must be new: $out" >&2
   exit 2
 fi
-if ss -ltn 'sport = :7890' | tail -n +2 | rg -q .; then
-  echo "Demo port 7890 is occupied; stop that demo before capturing." >&2
+export TRUTH_DEMO_PORT=${TRUTH_DEMO_PORT:-7890}
+if [[ ! "$TRUTH_DEMO_PORT" =~ ^[1-9][0-9]{0,4}$ ]] || (( TRUTH_DEMO_PORT > 65535 )); then
+  echo "TRUTH_DEMO_PORT must be between 1 and 65535." >&2
+  exit 2
+fi
+if ss -ltn "sport = :$TRUTH_DEMO_PORT" | tail -n +2 | rg -q .; then
+  echo "Demo port $TRUTH_DEMO_PORT is occupied; choose a free TRUTH_DEMO_PORT." >&2
   exit 2
 fi
 mkdir -p "$out"
@@ -91,7 +96,28 @@ record protostar-orbit 10 &
 video_pid=$!
 remote '(demo/orbit!)'
 wait "$video_pid"
-ffmpeg -hide_banner -loglevel error -i "$out/living-world-orbit.mp4" -t 8 -filter_complex '[0:v]fps=10,scale=640:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4' "$out/living-world-preview.gif"
+for scenario in ignition accretion planets; do
+  remote "(demo/select! :$scenario)"
+  remote '(demo/closeup!)'
+  sleep 1
+  record "$scenario-orbit" 10 &
+  video_pid=$!
+  remote '(demo/orbit!)'
+  wait "$video_pid"
+done
+# One continuous recording of actual panel transitions, with each state checked.
+# Execute all clicks in one nREPL request, avoiding JVM startup latency between
+# panels. xdotool still dispatches real native input.
+remote '(demo/select! :life)'
+record navigation-tour 18 &
+video_pid=$!
+DISPLAY="$display" remote '(require (quote clojure.java.shell)) (doseq [panel [:world :view :entities :spark :phase :journal :narrator :multiverse]] (let [s @infra.dev.window/service-state h (first (filter #(= [:ui/toggle-domain panel] (:action %)) (:hits (infra.menu/menu-hud @(:config s) @(:world s) 1280 720)))) x (str (int (/ (+ (:x0 h) (:x1 h)) 2))) y (str (int (/ (+ (:y0 h) (:y1 h)) 2))) result (clojure.java.shell/sh "xdotool" "mousemove" x y "click" "1")] (assert (zero? (:exit result))) (Thread/sleep 1800) (assert (= panel (:ui/active-domain @(:config s))))))'
+wait "$video_pid"
+for video in "$out"/*.mp4; do
+  ffmpeg -hide_banner -loglevel error -i "$video" -filter_complex '[0:v]fps=10,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4' -loop 0 "${video%.mp4}.gif"
+done
+# Preserve the compact preview used by earlier links.
+ffmpeg -hide_banner -loglevel error -i "$out/living-world-orbit.mp4" -t 8 -filter_complex '[0:v]fps=10,scale=640:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4' -loop 0 "$out/living-world-preview.gif"
 remote '(let [s @infra.dev.window/service-state] (assert (nil? (:error s))) (assert (nil? (:ui/error-state @(:config s)))) (select-keys @(:world s) [:arc/current :demo/fixture?]))' >"$diagnostics/final-state.edn"
 for video in "$out"/*.mp4; do ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=duration -of json "$video"; done >"$diagnostics/video-probes.json"
 printf 'Captured native Truth window at 1280x720. Logs and runtime assertions: %s\n' "$diagnostics"

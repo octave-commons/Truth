@@ -160,7 +160,7 @@
   id)
 
 (defn -main
-  "List/check scenarios or serve the native demo with nREPL on loopback port 7890."
+  "List/check scenarios or serve with loopback nREPL; TRUTH_DEMO_PORT defaults to 7890."
   [& [command scenario]]
   (try
     (case command
@@ -169,7 +169,8 @@
                 (println id (select-keys (:world (scenario-world id))
                                          [:arc/current :demo/fixture?])))
       "serve" (let [{:keys [world]} (scenario-world :nebula)
-                    server (nrepl/start-server :bind "127.0.0.1" :port 7890)]
+                    port (Integer/parseInt (or (System/getenv "TRUTH_DEMO_PORT") "7890"))
+                    server (nrepl/start-server :bind "127.0.0.1" :port port)]
                 (window/start! (atom world) {:tick-fn arc/tick-genesis
                                              :bodies-fn render/phase0-bodies+fields
                                              :camera (camera/make-camera 60.0)
@@ -177,7 +178,7 @@
                 (select! (keyword (or scenario "nebula")))
                 (.addShutdownHook (Runtime/getRuntime)
                                   (Thread. #(do (window/stop!) (nrepl/stop-server server))))
-                (println "Truth demo ready: nREPL 127.0.0.1:7890")
+                (println (str "Truth demo ready: nREPL 127.0.0.1:" port))
                 @(promise))
       (throw (ex-info "Usage: clojure -M:demo list|check|serve [scenario]" {})))
     (finally (shutdown-agents))))

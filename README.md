@@ -5,11 +5,12 @@ Aker. You begin Phase 0 as a quantum spark witnessing a stellar nebula collapse
 into a star system, and the same world continues, cooling and becoming more
 articulate, into geology, ecology, and civilization.
 
-![Living-world fixture in the native Truth renderer](docs/demo/2026-10-06/hero-living-world.png)
+![Living-world orbit — staged fixture in the native Truth renderer](docs/demo/2026-10-06/living-world-orbit.gif)
 
 **Try the demo:** `clojure -M:demo serve` opens the live nebula. The
-[native-window tour](docs/demo/README.md) includes real screenshots, short
-videos, all seven narrative arcs, and the eight navigation panels. Later arcs
+[complete visual tour](docs/demo/README.md) embeds seven looping GIFs, all
+17 screenshots, all seven narrative arcs, and the eight navigation panels on
+one scrollable page. Later arcs
 are explicitly staged ECS fixtures; the formation clip runs the real physics.
 
 ## The one rule that matters most

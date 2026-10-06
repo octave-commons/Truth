@@ -301,3 +301,8 @@ And update `MEMORY.md`:
 - Kanban process state lives in `kanban/`; design docs in `docs/designs/`,
   implementation specs in `kanban/tasks/`, dated engineering notes in
   `docs/notes/`.
+
+The visual tour in `docs/demo/README.md` embeds every recording as a GIF and all
+17 screenshots on one page. `bin/demo-capture` also records ignition, accretion,
+planet camera orbits and real mouse navigation. `TRUTH_DEMO_PORT` defaults to
+7890 and can isolate a capture from an already-running demo.
