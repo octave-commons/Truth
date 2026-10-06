@@ -4,6 +4,7 @@
    Design: docs/designs/spark-flight-and-camera.md §3.5. The isolated-body
    bounds do not establish native capture of a moving planetary target."
   (:require
+   [clojure.math :as math]
    [clojure.test :refer [deftest is testing]]
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
@@ -62,8 +63,8 @@
   ;; Dominant root of the released Jacobi response: z²-z+(1-r)=0.
   ;; At r=.999 this requires >16,000 ticks; the old 1,000-tick probe would
   ;; leave a substantial tail. Keep <1e-7 of that mode, plus ten guard ticks.
-  (let [root (/ (+ 1.0 (Math/sqrt (- 1.0 (* 4.0 (- 1.0 retention))))) 2.0)]
-    (+ 10 (long (Math/ceil (/ (Math/log 1.0e-7) (Math/log root)))))))
+  (let [root (/ (+ 1.0 (math/sqrt (- 1.0 (* 4.0 (- 1.0 retention))))) 2.0)]
+    (+ 10 (long (math/ceil (/ (math/log 1.0e-7) (math/log root)))))))
 
 (deftest cruise-and-fine-are-real-panel-intents
   (let [[world eid] (spark-fixture)
