@@ -1,13 +1,14 @@
 ---
-uuid: "focus-follows-pilot"
-title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
-status: "review"
-priority: "P1"
-labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/focus-follows-pilot.md"
 category: "specs"
-estimate: 3
+labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
+write-id: "1791318421259-0.8plhce7wq35qn3s4lu"
+source: "kanban/tasks/focus-follows-pilot.md"
+title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
+priority: "P1"
+status: "in_progress"
+estimate: "3"
+uuid: "focus-follows-pilot"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Focus follows the pilot
@@ -110,3 +111,11 @@ breaches in unrelated namespaces (`domain.stellar.classifier`,
 `law.stellar`, `derive-edits`, `voxel-focus-system`) owned by
 `epic-static-analysis-cleanup` (which documents this exact baseline). Not
 caused by this card and not fixable within it.
+
+---
+2026-10-06 scoped 3-point acceptance repair, authorized by root: native period press changed focus intensity 1.0 to 0.25 because infra.render.input/key-callback calls player-key for GLFW_PRESS, GLFW_REPEAT, and GLFW_RELEASE. Existing design docs/designs/spark-flight-and-camera.md section 7.5 and this card require usable manual arrow/comma/period overrides; no focus law, camera, physics, or pacing change is authorized. RED scope: invoke the actual GLFWKeyCallback with press/repeat/release, verify one focus adjustment per physical press and ordinary held-key tracking, use the production IntentAtom and drain-intents to verify publication is queued and position/velocity remain unchanged. Native observation/provenance is in .ημ/diagnostics/playable-foundation/manual-flight/; research note docs/notes/2026-10-06-playable-gate-route-audit.md records the defect on the integrating branch. Hold JVM execution until the benchmark owner releases; root must commit observed RED before production code. Acceptance for the original full manual fly-bind-commit-voxel chain remains outstanding after this narrow repair.
+
+2026-10-06 observed RED at source base 6944df4 after explicit benchmark release: clojure -J-Xms256m -J-Xmx2g -M:test -n infra.render.input-test exited1; 9 tests,86 assertions,23 expected failures,0 errors. Real GLFW callback repeats/release add extra arrow and queued comma/period actions. Existing tests and held-flight-key control pass. Final scoped clj-kondo0 warnings/errors; formatting applied and diff check clean. Evidence .ημ/diagnostics/focus-input/red-final.log and red-verdict.md; final log SHA256 49ca1bd873d605a912a48147f11f4777653fb1ee66a360a2de2d97746e87c83f. Production source unchanged. Waiting for root RED commit before minimal guard repair; original full manual fly-bind-commit-voxel acceptance remains open.
+
+2026-10-06 GREEN against committed RED558476c: added only GLFW_PRESS guard to existing player-key dispatch. Held movement-key tracking and all focus/camera/physics/palette semantics unchanged. Focused callback + window + architecture command passed20 tests131 assertions0 failures0 errors, exit0; cljfmt0, kondo0 warnings/errors, Splint1.24.0 checked2 files0 warnings, diff check clean. Evidence .ημ/diagnostics/focus-input/green-focused.log and green-verdict.md; log SHA256 a51be989b4b651a3fc09d0851e3dfb45367d2090a339bdc060da67158c98b6f7. All focused JVMs reaped; root owns checkpoint and integrated full gates. No native input performed; full manual fly-bind-commit-voxel acceptance remains open.
+---

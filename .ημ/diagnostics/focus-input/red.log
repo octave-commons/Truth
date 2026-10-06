@@ -1,0 +1,161 @@
+
+Running tests in #{"test"}
+
+Testing infra.render.input-test
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:149)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+one physical press nudges 0.1 AU regardless of repeat count
+expected: (= expected-offset (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [-1.495978697E10 200.0 -300.0] [-5.983914818E10 200.0 -300.0]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:156)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+expected: (= expected-focus (:focus-position (player/get-observer drained)))
+  actual: (not (= [-1.495978696E10 220.0 -270.0] [-5.983914817E10 220.0 -270.0]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:157)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+only attention changed; position, velocity, and other state survive
+expected: (= (player/update-observer world assoc :focus-position expected-focus) drained)
+  actual: (not (= {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "f262312a-ed99-4221-9b70-312c01d11d9e", :resonance-thresholds #{}, :focus-position [-1.495978696E10 220.0 -270.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0} {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "f262312a-ed99-4221-9b70-312c01d11d9e", :resonance-thresholds #{}, :focus-position [-5.983914817E10 220.0 -270.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0}))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:162)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+a second physical press produces exactly one additional nudge
+expected: (= (sp/v+ expected-offset delta) (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [-2.991957404E10 200.0 -300.0] [-8.975872232E10 200.0 -300.0]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:149)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+one physical press nudges 0.1 AU regardless of repeat count
+expected: (= expected-offset (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [1.495978717E10 200.0 -300.0] [5.983914838E10 200.0 -300.0]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:156)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+expected: (= expected-focus (:focus-position (player/get-observer drained)))
+  actual: (not (= [1.495978718E10 220.0 -270.0] [5.983914839E10 220.0 -270.0]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:157)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+only attention changed; position, velocity, and other state survive
+expected: (= (player/update-observer world assoc :focus-position expected-focus) drained)
+  actual: (not (= {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "2d89052f-d926-4b8b-8a1a-78f946f71ae9", :resonance-thresholds #{}, :focus-position [1.495978718E10 220.0 -270.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0} {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "2d89052f-d926-4b8b-8a1a-78f946f71ae9", :resonance-thresholds #{}, :focus-position [5.983914839E10 220.0 -270.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0}))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:162)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+a second physical press produces exactly one additional nudge
+expected: (= (sp/v+ expected-offset delta) (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [2.991957424E10 200.0 -300.0] [8.975872252E10 200.0 -300.0]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:149)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+one physical press nudges 0.1 AU regardless of repeat count
+expected: (= expected-offset (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [100.0 200.0 -1.495978737E10] [100.0 200.0 -5.983914858E10]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:156)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+expected: (= expected-focus (:focus-position (player/get-observer drained)))
+  actual: (not (= [110.0 220.0 -1.495978734E10] [110.0 220.0 -5.983914855E10]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:157)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+only attention changed; position, velocity, and other state survive
+expected: (= (player/update-observer world assoc :focus-position expected-focus) drained)
+  actual: (not (= {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "175d0223-6963-463c-be48-2a7b41ec220f", :resonance-thresholds #{}, :focus-position [110.0 220.0 -1.495978734E10], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0} {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "175d0223-6963-463c-be48-2a7b41ec220f", :resonance-thresholds #{}, :focus-position [110.0 220.0 -5.983914855E10], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0}))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:162)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+a second physical press produces exactly one additional nudge
+expected: (= (sp/v+ expected-offset delta) (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [100.0 200.0 -2.991957444E10] [100.0 200.0 -8.975872272E10]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:149)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+one physical press nudges 0.1 AU regardless of repeat count
+expected: (= expected-offset (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [100.0 200.0 1.495978677E10] [100.0 200.0 5.983914798E10]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:156)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+expected: (= expected-focus (:focus-position (player/get-observer drained)))
+  actual: (not (= [110.0 220.0 1.49597868E10] [110.0 220.0 5.983914801E10]))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:157)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+only attention changed; position, velocity, and other state survive
+expected: (= (player/update-observer world assoc :focus-position expected-focus) drained)
+  actual: (not (= {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "8cd93e66-baf0-4dd0-a82b-416b48c474cd", :resonance-thresholds #{}, :focus-position [110.0 220.0 1.49597868E10], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0} {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "8cd93e66-baf0-4dd0-a82b-416b48c474cd", :resonance-thresholds #{}, :focus-position [110.0 220.0 5.983914801E10], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0}))
+
+FAIL in (callback-nudges-focus-once-per-physical-arrow-press) (input_test.clj:162)
+GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark
+a second physical press produces exactly one additional nudge
+expected: (= (sp/v+ expected-offset delta) (:focus-offset (clojure.core/deref config)))
+  actual: (not (= [100.0 200.0 2.991957384E10] [100.0 200.0 8.975872212E10]))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:191)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+one press contributes exactly one focus intent
+expected: (= 1 (.size queue))
+  actual: (not (= 1 4))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:196)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+expected: (= expected-radius (:focus-radius obs))
+  actual: (not (= 4000.0 500.0))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:198)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+queued input preserves fresh published state and Spark momentum
+expected: (= (player/update-observer (clojure.core/deref published) assoc :focus-radius expected-radius :focus-intensity expected-intensity) drained)
+  actual: (not (= {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 4000.0, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "5ff567c8-596c-4d7f-ba0b-2a9c1e3a2795", :resonance-thresholds #{}, :focus-position [10.0 20.0 30.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0, :test/concurrent-state :preserved} {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 500.0, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "5ff567c8-596c-4d7f-ba0b-2a9c1e3a2795", :resonance-thresholds #{}, :focus-position [10.0 20.0 30.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0, :test/concurrent-state :preserved}))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:191)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+one press contributes exactly one focus intent
+expected: (= 1 (.size queue))
+  actual: (not (= 1 4))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:196)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+expected: (= expected-radius (:focus-radius obs))
+  actual: (not (= 16000.0 128000.0))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:197)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+expected: (= expected-intensity (:focus-intensity obs))
+  actual: (not (= 0.5 0.1))
+
+FAIL in (callback-adjusts-focus-size-once-through-the-intent-queue) (input_test.clj:198)
+comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain
+queued input preserves fresh published state and Spark momentum
+expected: (= (player/update-observer (clojure.core/deref published) assoc :focus-radius expected-radius :focus-intensity expected-intensity) drained)
+  actual: (not (= {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 16000.0, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "51b8cca0-f686-4e16-92ae-1fec574b4de0", :resonance-thresholds #{}, :focus-position [10.0 20.0 30.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0, :test/concurrent-state :preserved} {:components #:component{:body-kind {0 :spark}, :mass {0 0.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [10.0 20.0 30.0]}, :radius {0 1.0E12}, :velocity {0 [1.0 2.0 3.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 128000.0, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.1, :coherence 0.8, :resolution 0.0, :id #uuid "51b8cca0-f686-4e16-92ae-1fec574b4de0", :resonance-thresholds #{}, :focus-position [10.0 20.0 30.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}}, :alive #{0}, :next-id 1, :tick 0, :test/concurrent-state :preserved}))
+
+Ran 9 tests containing 86 assertions.
+23 failures, 0 errors.
