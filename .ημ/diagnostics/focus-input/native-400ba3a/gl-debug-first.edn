@@ -1,0 +1,7 @@
+Execution error (NullPointerException) at user/eval16076 (REPL:1).
+Cannot invoke "java.util.concurrent.Future.get()" because "fut" is null
+Execution error (ExceptionInfo) at demo-client/-main (demo_client.clj:18).
+Demo evaluation failed
+
+Full report at:
+/tmp/clojure-12868486514466311403.edn

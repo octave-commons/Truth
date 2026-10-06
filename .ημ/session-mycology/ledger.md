@@ -359,3 +359,12 @@
   spore: none
   receipt-refs: 2026-10-06T20:12:54.078810169Z,2026-10-06T20:26:50.020640671Z,2026-10-06T20:34:13.031513003Z
   note: Repeat an unexplained performance signal using the original benchmark closure, exact source identities and equal traced workloads before inferring a regression. Keep mature-scene visual cost distinct from ten-tick formation cost. Full unit and strict gates do not establish a clean native renderer: explicit live GL error observation found a fault now being localized. No spore created or promoted.
+- ts: 2026-10-06T21:10:20.862421760Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-input
+  task: Close native integrated controls and trails evidence without hiding interruptions or unmet gameplay acceptance
+  p-efficiency: 0.55
+  p-friction: 0.8
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: none
+  note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.

@@ -1,0 +1,2 @@
+nil
+{:tick 6776, :line-packing-ms [5.094045 4.89663 3.186359], :measurement-kind :bounded-live-cpu-observation, :projection-ms [4.034656 4.359202 23.381014], :dt 3.065696697424829E9, :writer-ms [4.450737 3.683671 4.124204], :geometry {:requested 1701, :rendered 1701, :dropped 0}, :fixture? false, :history-count 27, :sim-time 6.247427886882928E13, :wall-ms 1791319682741, :sample-counts {63 27}, :gpu-cost-measured? false}

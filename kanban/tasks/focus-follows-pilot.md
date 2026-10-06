@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
-write-id: "1791318421259-0.8plhce7wq35qn3s4lu"
+write-id: "1791320986053-0.5m7nndbjqgay9zkms2"
 source: "kanban/tasks/focus-follows-pilot.md"
 title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
 priority: "P1"
@@ -118,4 +118,10 @@ caused by this card and not fixable within it.
 2026-10-06 observed RED at source base 6944df4 after explicit benchmark release: clojure -J-Xms256m -J-Xmx2g -M:test -n infra.render.input-test exited1; 9 tests,86 assertions,23 expected failures,0 errors. Real GLFW callback repeats/release add extra arrow and queued comma/period actions. Existing tests and held-flight-key control pass. Final scoped clj-kondo0 warnings/errors; formatting applied and diff check clean. Evidence .ημ/diagnostics/focus-input/red-final.log and red-verdict.md; final log SHA256 49ca1bd873d605a912a48147f11f4777653fb1ee66a360a2de2d97746e87c83f. Production source unchanged. Waiting for root RED commit before minimal guard repair; original full manual fly-bind-commit-voxel acceptance remains open.
 
 2026-10-06 GREEN against committed RED558476c: added only GLFW_PRESS guard to existing player-key dispatch. Held movement-key tracking and all focus/camera/physics/palette semantics unchanged. Focused callback + window + architecture command passed20 tests131 assertions0 failures0 errors, exit0; cljfmt0, kondo0 warnings/errors, Splint1.24.0 checked2 files0 warnings, diff check clean. Evidence .ημ/diagnostics/focus-input/green-focused.log and green-verdict.md; log SHA256 a51be989b4b651a3fc09d0851e3dfb45367d2090a339bdc060da67158c98b6f7. All focused JVMs reaped; root owns checkpoint and integrated full gates. No native input performed; full manual fly-bind-commit-voxel acceptance remains open.
+
+2026-10-06 closed native control evidence, with original manual gameplay acceptance still open. Ordinary seed-42 nebula launched from 22f762f (production source equivalent to 400ba3a), using real GLFW input and published readbacks. Right held and released leaves exactly one 0.1-AU offset; comma changes focus intensity 0.5 to 1.0 once; period held/released changes 1.0 to 0.5 once. Snapshot03 already contains the subsequent comma action, so it proves unchanged arrow offset, not pre-comma intensity. Actual menu clicks preserve Cruise 3e14 -> Fine 1e7 -> Cruise 3e14, retention 0.97 and focus. This verifies the narrow PRESS-guard repair above RED558476c; no new focus law was introduced.
+
+Evidence: .ημ/diagnostics/focus-input/native-400ba3a/README.md, snapshots02-09, controls.mp4, controls-full-window-8x.gif, manifest.json, and SHA256SUMS. The closed inventory has92 paths including its hash file, with91 hashed files verified. Active runtime.log/xvfb.log are excluded. Integrated full source400ba3a previously passed928 tests15913 assertions and all six strict gates; no fresh transition gate is claimed by this comment.
+
+Remaining acceptance is substantial: no manual fly-overlap-bind-commit-voxel or sculpt success. Actual later manual snapshot23 completed during held D at tick12029 (despite its requested-before filename): vx46535.8m/s and focus-to-Spark lag2935.70AU; released snapshot24 at12102 has vx17307.1m/s and lag601.66AU. These measured lags include software rendering and concurrent verification load; they do not establish a universal cadence claim. Read-only cadence investigation must distinguish missed render-frame refresh from ordinary frozen-snapshot motion. Do not substitute follow-camera attention or fixture placement. Card remains in_progress.
 ---

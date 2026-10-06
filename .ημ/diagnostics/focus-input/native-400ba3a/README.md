@@ -1,0 +1,42 @@
+# Native integrated controls and trails — 2026-10-06
+
+Owned service PID3083624, Xvfb PID3082301 on :2, nREPL7895. Retained original PID2372912/:1/7894 was not touched. Ordinary `clojure -J-Xms256m -J-Xmx2g -M:demo serve`, default nebula, no formation fixture or world injection. Launch HEAD22f762f61b14db8da477e8a49bd000585bee11a1 had production source/deps identical to400ba3a. Root had928tests15913assertions and six strict checks passing before launch.
+
+## Read the evidence
+
+- `controls.mp4` covers the full240s window at1280x72024fps; `controls-full-window-8x.gif` is the entire interval, uncropped, scaled960x540 and8x playback.
+- `formation-trails.mp4` is519.083333s and contains the operator's Escape error, a stale visible window interval, and same-world recovery. It is not uninterrupted rendering. Its full-window10xGIF preserves that interval.
+- `recovered-trails.mp4` is the separate240s recovery capture, with manual D, normal Entities selection491 then1012, and scroll zoom. Its full-window6xGIF is uncropped. These camera-follow views are diagnostic inspection, not manual approach evidence.
+- `post-fix-trails.mp4` is the separate120s capture after only scene/setup was reloaded from85f307f; normal manual D and its release are included. Root fullsuite/strict ran concurrently.
+- Raw snapshots00–09 and `derived-summary.edn` establish actual controls. Right held/released leaves exactly1.495978707e10m offset; comma changes intensity0.5→1; period held/released changes1→0.5 once. Snapshot03 already contains the subsequent comma effect because the read client started before the comma and completed later; it still proves unchanged arrow offset. The input log contains actual commands/timestamps, not a claim every intended click was accepted.
+- Actual menu reads07/08/09 show Cruise3e14 → Fine1e7 → Cruise3e14; retention0.97 and focus unchanged. `fine.png` shows the real Fine highlight and1e7 text. Current-run custom value was not separately tested (prior precision native run owns that evidence).
+- Natural snapshot11 at tick4641 has24planets/2stars plus Spark:27 histories,63samples each,1701segments,0drop. Snapshot18 at8342 has36planets/3stars plus Spark:40 histories,2519segments,0drop, alpha0..0.85. Compiled line id12/source hash−1142320420 matches actual source. Published simulation time and per-body first/last sample positions remain in those files.
+- Full-window screenshots show real cyan Spark motion trail, natural star/planet inspection and magnetic field loops. The large cyan loops are magnetic fields, not trails. Star491's snapshot18 history projects approximately center(641,361) toward(585,252), derived from production camera geometry. Fine star/planet fade is visually obscured by field loops and text; this is not claimed as clean visual acceptance of all trail classes.
+
+## OpenGL defect and repair
+
+The bounded observer wraps only render-frame-once, preserves its argument/return/exception behavior, measures original call wall duration, and queries GL on the render thread first/every30th frame. It stores at most128 raw samples and8 diagnostic errors. Each frame incurs an atom update; these are not GPU timings or isolated performance measurements.
+
+Initial actual samples returned[1281,0]. The approved KHR_debug callback recorded `GL_INVALID_VALUE in glLineWidth` on gates-of-truth-dev-window. The first callback-install attempt had a reader error, the next readback failed because no callback was installed, and both files are preserved. Corrected attempt2 installed and then restored/freed our callback; original DEBUG_OUTPUT=false, no prior callback, no synchronous flag changed. `gl-debug-restored.edn` records38 driver messages and restored status.
+
+Root regression923fd6d reproduced1281 in actual forward-compatible GL for both line types; GREENab02026 changed width1.5→1.0 and a comment. Root merged85f307ffd8b017f7d4c3d498490227eeaf087d93. `line-width-transition.edn` records namespace-only reload at ticks11485→11486 with the same world atom1675959387. Source hash a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7. No reload-all, world/config/camera/cache replacement occurred at this repair. deps changes only introduce native-test tooling and are not a live runtime change.
+
+First post-reload sample2400 still returned[1281,0], consistent with an undrained earlier GL error (inference, not a clean sample). Sample2430 and subsequent samples through2730 returned[0]; final observer readback has14consecutive sampled GL_NO_ERROR results fromframe2430through2820, no later nonzero sample and no diagnostic error. UI/service error fields remained nil. The debug callback had already been removed before reload.
+
+## Operator interruption and honest recovery
+
+At20:46UTC the operator mistakenly used Escape while trying to dismiss Spark panel; the actual callback closes the window despite the menu helper's back-action comment. `escape-state.edn` shows render-dead/sim-running/stop=false. The bad input is retained. Renderer observer was restored before recovery. Old stale native window2097159 stayed mapped.
+
+Recovery used existing stop!/start! with the same world atom, not a loaded/copied world. Both old threads were verified dead before newstart. Worldidentity1675959387; beforetick7469,stopped7470,new7470. Stale shader host cache and volume host cache were discarded with no GL calls before a fresh unshared context; no old GL IDs were deleted in the new context. Newwindow2097165 has fresh compiled programs. Camera was preserved, host configuration reset to manual, removing0.1AU focus offset/openpanel/cursorfree state. No motion state was replaced. `recovery.edn` records all of this. The observer reinstall initially refused its existing diagnostic Var, then verified the original callable had been restored, archived that Var, and installed a new bounded observer.
+
+## Measurement and gameplay limits
+
+`derived-summary.edn` is reproducible with `bb summarize-readbacks.clj`. Snapshots00→12:582.667s,6.865simulationticks/s,1.284achievedframes/s,777.3ms mean original render-call elapsed time (includes swap/sleep). Close-follow17→20:109.888s,8.509ticks/s,5.351frames/s,186.9ms mean call time. Camera/content/CPU load differ; this does not isolate a performance cause. Renderer was Mesa llvmpipeLLVM20.1.2 software,1280x720, alongside recording,sim,clients,andobserver overhead.
+
+Pure CPU probe13 ran with the render thread stopped but ordinary simulation still live: tick6776,27histories×63, writer3.68–4.45ms,projection4.03/4.36/23.38ms,packing3.19–5.09ms. It only computed outputs and never applied write sets. Not GPU or isolated benchmark evidence.
+
+Snapshot21 at9976 has no fresh eligible candidate/handoff, binding{},palette nil; six historical candidates remain ready-to-commit by current code. Stored admission and fresh eligibility are separate. Instantaneous target velocity*dt values in derived-summary are linearized scale estimates, not actual subcycled orbit displacement. At that fixed dt, staying within one radius over43ticks from center would need constant relative drift <=1.367m/s; acceleration, adaptive dt, current eligibility and focus latency are excluded from that estimate. Manual snapshot23 actually completed during the D hold (despite its requested-before filename): tick12029,vx46535.8m/s,focus-to-Spark lag2935.70AU. Snapshot24 afterrelease: tick12102,vx17307.1m/s,lag601.66AU. These observed lags depend on this rendering/concurrency environment. Actual screenshotpost-fix-manual-motion at12063 contains a horizontal cyan motion trail; screenshotpost-fix-manual-faded at12423 shows its disappearance after release/history aging, with the view still manual. This combines decay/age-out/deceleration, not an isolated per-pixel fade measurement. No manual overlap/commitment/sculpt/Gate completion is claimed.
+
+## Ownership and closure
+
+Final closure at tick12675 records arc/life-emergence, fixture=false, both workers alive, thrust=nil, manual mode, no selection/panel, original render callable restored, nil UI/service errors. Every capture and GIF encoder is reaped. The service/world remain retained for root-coordinated later work. Do not kill or reuse7895/:2 without coordination. Active runtime.log/xvfb.log are not closed evidence and must not be staged. Capture processes and bounded instrumentation are closed/restored individually; final closure readback and hashes are authoritative. Old stale context/window is a known lifecycle leak, distinct from the line-width repair.
