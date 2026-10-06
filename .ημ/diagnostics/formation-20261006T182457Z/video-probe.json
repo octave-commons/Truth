@@ -1,0 +1,16 @@
+{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": ".ημ/diagnostics/playable-foundation/live-long-run/continuous-formation.mp4",
+        "duration": "900.000000"
+    }
+}

@@ -74,10 +74,47 @@ A longer native run on that revision crossed disk maturity naturally. At tick
 and two ecology transition events. The production candidate predicate accepted
 entities 1022, 1023, and 1024. The native window at tick 4616 visibly reported
 24 planets and two stars in the planets-formed arc; see `planet-era-native.png`.
-No fixture or state injection produced these births. The capture is still being
-observed for survival; some outer planets were already unbound. A separate
-constructor probe found that requested seeds were ignored, so independent
-two-seed acceptance is explicitly withheld pending its regression repair.
+No fixture or state injection produced these births. The completed 900-second
+capture ended at published tick 6981 with 24 planets, 21 bound two-body orbits,
+three currently eligible candidates (1021, 1022, 1023), and four prebiotic
+ecologies. Persisted candidate components and the current predicate are recorded
+separately: an earlier admission does not prove continued eligibility.
+
+## Native selection and attention boundary
+
+The run remained an ordinary untouched formation observation until
+2026-10-06T18:36:57Z. Subsequent real native input is labeled separately in
+`natural-formation-observation/segments.edn`: L had no living target while all
+four ecologies were prebiotic; clicking the Entities row at 18:38:30Z selected
+Niphaelar (1024) and entered follow-selection. The player narrowed focus twice
+with comma at 18:39:29Z and pressed T approximately 18:39:59–18:40:00Z.
+
+At tick 6800, focus was sustained and the candidate component existed, but the
+production overlap predicate was false: the smoothed camera-derived focus was
+about 661 AU from the moving planet, versus the existing 1 AU overlap radius.
+At the final T observation, Resonance stayed 5, binding stayed empty, and no
+commitment, planetary palette, or voxels existed. No sculpting success is
+claimed. The capture also exposes overlapping menu/inspector/HUD text that
+needs separate UI work.
+
+The existing flight design §5 explicitly identifies non-manual camera modes as
+debug/cinematic views. Their camera-target attention policy is an inspected
+limitation, not a reason to enlarge the physical overlap gate or to certify
+manual fly → resolve → sculpt. A pure diagnostic reproduces the lag and
+separately confirms that ordinary manual focus-follow can accrue binding near
+a body without changing spark position. Actual manual flight remains the next
+native acceptance test.
+
+## Independent-seed regression
+
+A constructor probe found that requested seeds were ignored. Red checkpoint
+`08161ab` contains two tests / seven assertions with two expected failures:
+seeds 41 and 43 produced identical positions and velocities. Green `81207e7`
+forwards the requested seed to the existing generator and retains default 42.
+The same probe then distinguishes both seeds. Independent review found no
+blocking defect; its canonical review transition passed 901 tests / 15,642
+assertions and all six strict analysis gates. Independent two-seed natural
+formation acceptance remains open until the second full run completes.
 
 ## Remaining player acceptance
 

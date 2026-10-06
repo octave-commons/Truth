@@ -179,6 +179,7 @@
    :collapse-fraction 0.5
    :contraction-time 9.5e14
    :gas-count 1000
+   :seed 42
    :n-seeds 1
    :seed-r 0.25
    :spin 0.6
@@ -237,15 +238,16 @@
 (defn- seeded-world
   "Seed the nebula of gas particles on `base` and attach the gas smoothing
    radius used by the classifier before bodies contract."
-  [base {:keys [nebula-mass nebula-radius gas-count n-seeds seed-r spin turb metallicity]
+  [base {:keys [nebula-mass nebula-radius gas-count seed n-seeds seed-r spin turb metallicity]
          :as _opts}]
   (-> (seed-nebula base nebula-mass nebula-radius
-                   {:gas-count gas-count :n-seeds n-seeds :seed-r seed-r
+                   {:gas-count gas-count :seed seed :n-seeds n-seeds :seed-r seed-r
                     :spin spin :turb turb :metallicity metallicity})
       (assoc :genesis/gas-smoothing-radius (* nebula-radius 0.003))))
 
 (defn create-world
-  "Bootstrap a Phase 0 world ready to tick."
+  "Bootstrap a Phase 0 world ready to tick. :seed selects reproducible nebula
+   initial conditions and defaults to 42 when omitted."
   ([] (create-world {}))
   ([opts]
    (let [opts (merge-options opts)]
