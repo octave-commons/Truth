@@ -11,6 +11,7 @@
             [domain.player :as player]
             [domain.stellar.seeder :as seeder]
             [infra.camera :as camera]
+            [infra.camera.navigation.tracking :as tracking]
             [infra.dev.window :as window]
             [infra.menu :as menu]
             [infra.render :as render]
@@ -159,6 +160,71 @@
   (swap! (:config @window/service-state) menu/apply-action [:ui/toggle-domain id])
   id)
 
+(defn prepare-formation!
+  "Install a fresh, paused default nebula and a fixed wide camera.
+
+   Zero camera smoothing freezes the fit-all frame at its initial bounds;
+   contraction remains visible instead of being cancelled by automatic zoom."
+  []
+  (let [{:keys [config camera world-intents] :as service} @window/service-state
+        token (str (java.util.UUID/randomUUID))
+        world (assoc (:world (scenario-world :nebula)) :demo/capture token)
+        bounds (tracking/fit-all-bounds
+                (tracking/bodies->render world camera/phase0-view-scale) 0.95)
+        distance (tracking/distance-for-radius (:radius bounds) 60.0 1.25)]
+    (swap! config assoc :tick-fn identity :on-step identity)
+    (reset! world-intents world)
+    (loop [attempt 0]
+      (when-not (= token (:demo/capture @(:world service)))
+        (when (>= attempt 300)
+          (throw (ex-info "Simulation did not accept formation world" {})))
+        (Thread/sleep 100)
+        (recur (inc attempt))))
+    (swap! config #(-> %
+                       (dissoc :selection :follow-eid :ui/active-domain :zoom-min)
+                       (assoc :mode :fit-all :smoothing 0.0 :volumetric? true
+                              :ui/cursor-free? true)))
+    (reset! camera (-> (camera/make-camera distance)
+                       (assoc :target (:center bounds))
+                       camera/update-camera-position))
+    {:capture token :paused? true :camera-distance distance}))
+
+(defn formation-status
+  "Read the live snapshot without changing its physics or narrative."
+  []
+  (let [{:keys [world config camera error]} @window/service-state
+        w @world]
+    (assert (nil? error))
+    (assert (nil? (:ui/error-state @config)))
+    {:tick (:tick w) :sim-time (:genesis/sim-time w) :arc (:arc/current w)
+     :fixture? (:demo/fixture? w)
+     :states (frequencies (vals (get-in w [:components c/matter-state])))
+     :stats (select-keys (:genesis/stats w)
+                         [:body-count :star-count :disk-mass-kg :avg-temp :peak-temp])
+     :camera (select-keys @camera [:target :distance])}))
+
+(defn formation-system-view!
+  "Ease into a wider-than-body view of the live system over eight seconds.
+
+   Distance is in render units. Only the camera changes; keep the volume pass
+   and live physics running, then hold the new frame."
+  [distance]
+  (let [{:keys [world camera]} @window/service-state
+        _ (assert (and (pos? distance) (false? (:demo/fixture? @world))))
+        bounds (tracking/fit-all-bounds
+                (tracking/bodies->render @world camera/phase0-view-scale) 0.95)
+        start @camera]
+    (doseq [i (range 1 161)]
+      (let [t (/ i 160.0)]
+        (reset! camera
+                (-> start
+                    (assoc :distance (+ (:distance start) (* t (- distance (:distance start))))
+                           :target (mapv #(+ %1 (* t (- %2 %1)))
+                                         (:target start) (:center bounds)))
+                    camera/update-camera-position)))
+      (Thread/sleep 50))
+    :live-system-view))
+
 (defn -main
   "List/check scenarios or serve with loopback nREPL; TRUTH_DEMO_PORT defaults to 7890."
   [& [command scenario]]
@@ -175,7 +241,9 @@
                                              :bodies-fn render/phase0-bodies+fields
                                              :camera (camera/make-camera 60.0)
                                              :width 1280 :height 720})
-                (select! (keyword (or scenario "nebula")))
+                (if (= scenario "formation")
+                  (prepare-formation!)
+                  (select! (keyword (or scenario "nebula"))))
                 (.addShutdownHook (Runtime/getRuntime)
                                   (Thread. #(do (window/stop!) (nrepl/stop-server server))))
                 (println (str "Truth demo ready: nREPL 127.0.0.1:" port))

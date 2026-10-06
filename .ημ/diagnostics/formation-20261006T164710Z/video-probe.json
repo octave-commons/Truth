@@ -1,0 +1,16 @@
+{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "docs/demo/2026-10-06/formation-wide/continuous-formation.mp4",
+        "duration": "360.000000"
+    }
+}

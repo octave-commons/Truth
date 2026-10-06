@@ -1,0 +1,3 @@
+#'demo/-main
+:live-system-view
+{:tick 2882, :sim-time 4.510279832089045E13, :arc :arc/genesis-accretion, :fixture? false, :states {:nebula 911, :star 2}, :stats {:body-count 913, :star-count 2, :disk-mass-kg 7.370143207624472E28, :avg-temp 3499376.627345762, :peak-temp 1.3669972441799833E7}, :camera {:target [3.32765373871835E-4 8.71632236209674E-4 -2.1887273505855065E-4], :distance 18.0}}

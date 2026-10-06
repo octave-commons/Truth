@@ -1,24 +1,128 @@
-# Gates of Truth — the complete visual tour
+# Gates of Truth — watch the nebula become stars
 
-**Everything is embedded on this page. Scroll to see seven looping GIFs, all
-seven story states, and every navigation panel. No video player or download is
-needed.** Tap a still image if you want to inspect the text more closely.
+**Start here: one continuous live run, from the starting cloud through
+contraction, core formation, ignition, and the surrounding gas afterward.**
+Everything is embedded on this page: **11 looping GIFs and 24 screenshots**.
+Tap a still to inspect the native readouts on your phone.
 
-[Animated scenes](#animated-scenes) · [Story screenshots](#story-screenshots) ·
-[All eight panels](#all-eight-panels) · [Run it yourself](#run-it-yourself)
+[Continuous formation](#continuous-formation) · [Slower transitions](#slower-transitions) ·
+[Frames from the same run](#frames-from-the-same-run) · [Earlier fixture tour](#animated-scenes) ·
+[All eight panels](#all-eight-panels)
 
-These are real captures of the native JVM/OpenGL application. The nebula runs
-live physics. Later scenes are **staged ECS fixtures**: they show the renderer
-and interface, with the simulation frozen and the camera moving. The blue/green
-world contains a terrestrial planet and prokaryotic toy ecology; it does not
-claim natural life emergence during capture. Macro views move the observer to
-the subject at true scale; no body radius is enlarged.
+## Continuous formation
+
+**Six minutes of the actual default seeded simulation, shown in 45 seconds
+at 8× playback.** The large cloud contracts in the original wide frame; a
+resolved core appears, a protostar heats up, and stellar ignition happens.
+The volume renderer stays on throughout. This is a single native recording,
+with no fixture switches or inserted formation states.
+
+![Continuous live cloud contraction, core formation, stellar ignition, and gas afterward; 8 times playback](2026-10-06/formation-wide/continuous-formation.gif)
+
+The camera holds its initial position and distance through the formation
+transitions. About four minutes into the source recording (around 30 seconds
+into this GIF), it eases inward over eight seconds to frame the gas around
+the formed system, then holds again. This remains a view of the surrounding
+material; the camera never approaches a stellar surface. Cyan loops are the
+existing field overlays, while the cloudy purple/bright regions are the gas
+volume. Stars are small at this physical scale and partly obscured by gas.
+
+## Slower transitions
+
+### The first core and heating protostar — half speed
+
+Source seconds **24–44**, shown over **40 seconds at 0.5× playback**. The
+first core is brief: the actual event ledger records condensation at tick
+354, then the body climbs the mass ladder. Watch the new resolved-body
+count, the core notification, and the brightening around the protostar.
+The temporary “Accretion” arc label before ignition comes from a substellar
+body; it does not mean a star has already formed.
+
+![First resolved core followed by a brightening protostar in the same cloud; half-speed excerpt](2026-10-06/formation-wide/core-transition.gif)
+
+### Stellar ignition — original speed
+
+Source seconds **70–92**, shown at **1× playback**. This includes the actual
+`:protostar → :star` event at tick 952. The native “A star ignites” message,
+star count, peak temperature, and surrounding cloud remain visible together.
+
+![Actual stellar ignition with the surrounding cloud retained; original-speed excerpt](2026-10-06/formation-wide/stellar-ignition.gif)
+
+### Gas around the formed system — 4× playback
+
+Source seconds **260–340**, shown over **20 seconds**. The camera is now
+fixed in the wider system view after the earlier reframe. Two formed stars,
+remaining gas, field structure, and the live disk count stay in the same
+frame. This shows continuing gas motion and accretion accounting; the
+renderer does not yet provide a clearly resolved spiral disk at this scale.
+
+![Live gas and field structure around two formed stars; fixed system view at 4 times playback](2026-10-06/formation-wide/gas-and-accretion.gif)
+
+### What the live run actually formed
+
+| Evidence | Observed transition or state |
+| --- | --- |
+| Tick 0 | 1,000 nebula particles; no cores or stars; initial peak 12 K. |
+| Tick 354, threshold event | Entity 491 changes from nebula to condensed core. |
+| Tick 424, sampled snapshot | A protostar and 999 nebula particles; peak temperature about 3.85 million K. |
+| Tick 952, threshold event | The same entity 491 changes from protostar to star. |
+| Tick 955, sampled snapshot | One star, another protostar, a brown dwarf, and 958 nebula particles; peak about 10.18 million K. |
+| Tick 3,868, final snapshot | Two stars and 904 nebula particles; about 1.74 million simulated years elapsed; disk mass about 1.11 × 10²⁹ kg. |
+
+A separate live stellar readout after ignition measured the first star at
+about **0.269 solar masses**, **0.473 solar radii**, and **13.17 million K**
+in its simulation temperature component. That temperature describes the
+simulation's hot stellar interior component, not a measured photosphere.
+The HUD's peak temperature is the highest body temperature in the current
+world. Neither should be confused with the 5,778 K staged surface shown later.
+
+## Frames from the same run
+
+### Starting cloud — tick 0
+
+![Untouched cloud at tick zero, before physics resumes](2026-10-06/formation-wide/cloud-start.png)
+
+### Contracting cloud — source second 10
+
+![Cloud contracting within the original fixed wide frame](2026-10-06/formation-wide/contraction.png)
+
+### First resolved core — source second 28, tick 355
+
+The notification follows the condensation event at tick 354; subsequent
+classification is rapid.
+
+![First core notification and first resolved body while the cloud remains visible](2026-10-06/formation-wide/first-core.png)
+
+### Heating protostar — source second 35
+
+![Brightening protostar and surrounding gas, retaining the original wide camera](2026-10-06/formation-wide/protostar.png)
+
+### Ignition — source second 80, tick 967
+
+![Actual star ignition notification, star count, and cloud in the same frame](2026-10-06/formation-wide/ignition.png)
+
+### Surrounding gas — source second 300
+
+![Gas and field structure around the formed system in the later fixed frame](2026-10-06/formation-wide/gas-system.png)
+
+### End of the six-minute run
+
+![Two stars and remaining cloud at the end of the live native run](2026-10-06/formation-wide/formation-end.png)
+
+The formation recording uses normal `domain.arc/tick-genesis` and its existing
+physics parameters. New capture observations and threshold-event evidence are
+under [`.ημ/diagnostics/formation-20261006T164710Z`](../../.ημ/diagnostics/formation-20261006T164710Z/).
+
+The older tour below remains available in full. Its later scenes are
+**staged ECS fixtures** with frozen physics and moving cameras. They show
+surfaces and interface states; the continuous run above supplies the actual
+formation evidence. The blue/green fixture has prokaryotic toy ecology.
 
 ## Animated scenes
 
-### 1. Live nebula formation
+### 1. Earlier short live nebula clip
 
-12 seconds of the normal seeded physics world. The simulation clock advances.
+The original 12-second nebula clip, retained for comparison. It shows early motion; use the continuous run above to see formation.
 
 ![1. Live nebula formation; native application recording](2026-10-06/live-formation.gif)
 
@@ -58,8 +162,9 @@ New continuous 24-second recording of real mouse clicks through World, View, Ent
 
 ![7. Click through every panel; native application recording](2026-10-06/navigation-tour.gif)
 
-The GIFs keep the complete recording duration at 960×540, 10 fps, and loop
-continuously. The 1280×720 MP4 sources remain in the repository for reproduction;
+The seven earlier GIFs keep their complete recording duration at 960×540,
+10 fps, and loop continuously. The continuous formation overview is 6 fps;
+its slower excerpts are 10 fps. All playback compression is labeled above. The 1280×720 MP4 sources remain in the repository for reproduction;
 every recording has its own GIF above. The earlier compact living-world preview
 is retained for existing links.
 
@@ -234,6 +339,7 @@ No browser, model service, notebook server, or generated imagery is required.
 clojure -M:demo list
 clojure -M:demo check
 bin/demo-capture docs/demo/my-new-capture
+bin/formation-capture docs/demo/my-new-formation 360
 ```
 
 The destination must not exist. The script allocates a private Xvfb display,
@@ -243,6 +349,21 @@ processes it started. It refuses to compete with an existing server on the chose
 (default 7890). For a separate capture alongside your demo, use
 `TRUTH_DEMO_PORT=7891 bin/demo-capture docs/demo/my-new-capture`; both launcher
 and client honor that optional environment variable. Diagnostic output is under `.ημ/diagnostics/demo-<UTC timestamp>/`.
+
+The formation capture starts a fresh paused tick-zero cloud, verifies a visible
+frame, records 360 seconds, and samples live matter states and temperature.
+It eases the camera to the system view after 240 seconds and keeps the volume
+renderer enabled. Its default port is **7891**. It produces the full source
+MP4, the 8× GIF, and the slower excerpts above. A shorter duration omits
+excerpts outside its source range. Runtime throughput can change when
+transitions occur; consult the recorded ticks and observations.
+
+To explore this fixed-frame start interactively, run
+`clojure -M:demo serve formation`, then resume with:
+
+```bash
+clojure -M:demo-client '(swap! (:config @infra.dev.window/service-state) assoc :tick-fn domain.arc/tick-genesis)'
+```
 
 The RNG seed and fixture inputs are stable. Live screenshots and video timing
 depend on machine speed; OpenGL pixels can differ between drivers. This is a

@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Capture the real native OpenGL window on a private X display.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+for tool in clojure Xvfb ffmpeg ffprobe xdotool ss rg; do
+  command -v "$tool" >/dev/null || { echo "Missing required tool: $tool" >&2; exit 2; }
+done
+out=${1:-"docs/demo/formation-$(date -u +%Y%m%dT%H%M%SZ)"}
+seconds=${2:-360}
+[[ "$seconds" =~ ^[1-9][0-9]*$ ]] || { echo "Duration must be a positive whole number of seconds." >&2; exit 2; }
+if [[ -e "$out" ]]; then
+  echo "Capture destination must be new: $out" >&2
+  exit 2
+fi
+export TRUTH_DEMO_PORT=${TRUTH_DEMO_PORT:-7891}
+if [[ ! "$TRUTH_DEMO_PORT" =~ ^[1-9][0-9]{0,4}$ ]] || (( TRUTH_DEMO_PORT > 65535 )); then
+  echo "TRUTH_DEMO_PORT must be between 1 and 65535." >&2
+  exit 2
+fi
+if ss -ltn "sport = :$TRUTH_DEMO_PORT" | tail -n +2 | rg -q .; then
+  echo "Demo port $TRUTH_DEMO_PORT is occupied; choose a free TRUTH_DEMO_PORT." >&2
+  exit 2
+fi
+mkdir -p "$out"
+scratch=$(mktemp -d /tmp/truth-demo.XXXXXX)
+diagnostics=".ημ/diagnostics/formation-$(date -u +%Y%m%dT%H%M%SZ)"
+mkdir -p "$diagnostics"
+app_pid=''
+x_pid=''
+video_pid=''
+cleanup() {
+  if [[ -n "$video_pid" ]]; then kill -TERM "$video_pid" 2>/dev/null || true; wait "$video_pid" 2>/dev/null || true; fi
+  if [[ -n "$app_pid" ]]; then kill -TERM "$app_pid" 2>/dev/null || true; wait "$app_pid" 2>/dev/null || true; fi
+  if [[ -n "$x_pid" ]]; then kill -TERM "$x_pid" 2>/dev/null || true; wait "$x_pid" 2>/dev/null || true; fi
+}
+trap cleanup EXIT
+Xvfb -displayfd 3 -screen 0 1280x720x24 -nolisten tcp -ac 3>"$scratch/display" >"$diagnostics/xvfb.log" 2>&1 &
+x_pid=$!
+for _ in {1..100}; do
+  [[ -s "$scratch/display" ]] && break
+  kill -0 "$x_pid" || { cat "$diagnostics/xvfb.log" >&2; exit 1; }
+  sleep .1
+done
+display=":$(cat "$scratch/display")"
+DISPLAY="$display" clojure -M:demo serve formation >"$diagnostics/runtime.log" 2>&1 &
+app_pid=$!
+ready=0
+for _ in {1..180}; do
+  if rg -q 'Truth demo ready' "$diagnostics/runtime.log"; then ready=1; break; fi
+  kill -0 "$app_pid" || { cat "$diagnostics/runtime.log" >&2; exit 1; }
+  sleep 1
+done
+[[ "$ready" == 1 ]] || { echo "Demo startup timed out; see $diagnostics/runtime.log" >&2; exit 1; }
+remote() { clojure -M:demo-client "$1"; }
+shot() { ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -video_size 1280x720 -i "$display.0" -frames:v 1 "$out/$1.png"; }
+record() {
+  ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -framerate 24 -video_size 1280x720 -i "$display.0" -t "$2" -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p -movflags +faststart "$out/$1.mp4" &
+  video_pid=$!
+}
+
+# A paused tick-zero cloud must be visible before the recording starts.
+remote '(loop [attempt 0] (let [s @infra.dev.window/service-state cfg @(:config s)] (assert (nil? (:error s))) (if (and (:body-program cfg) (:volume-program cfg)) (do (Thread/sleep 1500) true) (do (when (>= attempt 300) (throw (ex-info "Native renderer readiness timed out" {}))) (Thread/sleep 100) (recur (inc attempt))))))'
+shot cloud-start
+blank=$(ffmpeg -hide_banner -i "$out/cloud-start.png" -vf 'blackframe=amount=99:threshold=16' -f null - 2>&1 || true)
+[[ "$blank" != *'pblack:'* ]] || { echo "Native cloud frame is blank" >&2; exit 1; }
+remote '(assert (zero? (:tick (demo/formation-status)))) (demo/formation-status)' >"$diagnostics/initial-state.edn"
+record continuous-formation "$seconds"
+# Read-only observations are sampled inside the existing demo JVM. This does
+# not replace tick-genesis, alter parameters, or generate transition states.
+remote "(swap! (:config @infra.dev.window/service-state) assoc :demo/monitor (future (dotimes [i $seconds] (when (= i 240) (swap! (:config @infra.dev.window/service-state) assoc :demo/reframe (future (demo/formation-system-view! 18.0)))) (spit \"$diagnostics/progress.edn\" (str (pr-str (assoc (demo/formation-status) :wall-ms (System/currentTimeMillis))) \"\\n\") :append true) (Thread/sleep 1000)))) (swap! (:config @infra.dev.window/service-state) assoc :tick-fn domain.arc/tick-genesis) :recording" >"$diagnostics/start.edn"
+wait "$video_pid"
+video_pid=''
+remote '(let [s @infra.dev.window/service-state] @(:demo/monitor @(:config s)) (when-let [reframe (:demo/reframe @(:config s))] @reframe) (swap! (:config s) assoc :tick-fn identity) (demo/formation-status))' >"$diagnostics/final-state.edn"
+shot formation-end
+remote '(let [w @(:world @infra.dev.window/service-state)] (vec (filter #(contains? #{:event/condensed-core-formation :event/protostar-formation :event/stellar-ignition} (:kind %)) (get-in w [:ledger :events]))))' >"$diagnostics/formation-events.edn"
+# The whole recording is retained, with an explicitly compressed overview.
+ffmpeg -hide_banner -loglevel error -i "$out/continuous-formation.mp4" -filter_complex '[0:v]setpts=PTS/8,fps=6,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=5' -loop 0 "$out/continuous-formation.gif"
+# Excerpts use source-time ranges; short captures simply omit absent ranges.
+excerpt() {
+  local name=$1 start=$2 duration=$3 speed=$4
+  if (( seconds < start + duration )); then return; fi
+  ffmpeg -hide_banner -loglevel error -ss "$start" -t "$duration" -i "$out/continuous-formation.mp4" -filter_complex "[0:v]setpts=PTS/$speed,fps=10,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4" -loop 0 "$out/$name.gif"
+}
+excerpt core-transition 24 20 0.5
+excerpt stellar-ignition 70 22 1
+excerpt gas-and-accretion 260 80 4
+for item in contraction:10 first-core:28 protostar:35 ignition:80 gas-system:300; do
+  name=${item%:*}; time=${item#*:}
+  if (( seconds >= time )); then
+    ffmpeg -hide_banner -loglevel error -ss "$time" -i "$out/continuous-formation.mp4" -frames:v 1 "$out/$name.png"
+  fi
+done
+ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=filename,duration -of json "$out/continuous-formation.mp4" >"$diagnostics/video-probe.json"
+printf 'Captured %s seconds of live formation. Observations: %s\n' "$seconds" "$diagnostics"

@@ -1,0 +1,83 @@
+{
+  "videos": [
+    {
+      "file": "continuous-formation.gif",
+      "seconds": 45.0,
+      "frames": 270,
+      "unique_frames": 270,
+      "loop": 0,
+      "bytes": 7477452
+    },
+    {
+      "file": "core-transition.gif",
+      "seconds": 40.0,
+      "frames": 400,
+      "unique_frames": 400,
+      "loop": 0,
+      "bytes": 1719101
+    },
+    {
+      "file": "stellar-ignition.gif",
+      "seconds": 22.0,
+      "frames": 220,
+      "unique_frames": 216,
+      "loop": 0,
+      "bytes": 1422476
+    },
+    {
+      "file": "gas-and-accretion.gif",
+      "seconds": 20.0,
+      "frames": 200,
+      "unique_frames": 200,
+      "loop": 0,
+      "bytes": 4697914
+    }
+  ],
+  "images": [
+    {
+      "file": "cloud-start.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "contraction.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "first-core.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "formation-end.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "gas-system.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "ignition.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "protostar.png",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "camera": {
+    "fixed_initial_samples": 240,
+    "initial": "{:target [1.2811022168505777 2.180350528214099 -0.2522941507151355], :distance 62.559752114287484}",
+    "final": "{:target [3.32765373871835E-4 8.71632236209674E-4 -2.1887273505855065E-4], :distance 18.0}"
+  },
+  "gallery": {
+    "inline_gifs": 11,
+    "inline_pngs": 24,
+    "bytes": 24452733
+  }
+}
