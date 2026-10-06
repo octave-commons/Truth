@@ -1,0 +1,14 @@
+{
+  "command": [
+    "clj-kondo",
+    "--lint",
+    ".\u03b7\u03bc/diagnostics/focus-cadence/native-1ad0814/host-loop-cost.clj"
+  ],
+  "start_utc": "2026-10-06T21:45:49.763661+00:00",
+  "end_utc": "2026-10-06T21:45:49.789433+00:00",
+  "elapsed_seconds": 0.02578461499797413,
+  "exit_code": 0,
+  "script_sha256": "67fdf21d3eedbb44d4ac4a4102f5a05a17ccfa3d13b50b8be185fb7a1fdb1be5",
+  "production_source_diff": "",
+  "author_execution": "No benchmark or live nREPL eval; root is sole operator."
+}

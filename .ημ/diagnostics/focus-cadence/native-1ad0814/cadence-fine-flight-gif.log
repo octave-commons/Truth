@@ -1,0 +1,38 @@
+ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+  built with gcc 13 (Ubuntu 13.2.0-23ubuntu3)
+  configuration: --prefix=/usr --extra-version=3ubuntu5 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --disable-omx --enable-gnutls --enable-libaom --enable-libass --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libglslang --enable-libgme --enable-libgsm --enable-libharfbuzz --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-openal --enable-opencl --enable-opengl --disable-sndio --enable-libvpl --disable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-ladspa --enable-libbluray --enable-libjack --enable-libpulse --enable-librabbitmq --enable-librist --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libx264 --enable-libzmq --enable-libzvbi --enable-lv2 --enable-sdl2 --enable-libplacebo --enable-librav1e --enable-pocketsphinx --enable-librsvg --enable-libjxl --enable-shared
+  libavutil      58. 29.100 / 58. 29.100
+  libavcodec     60. 31.102 / 60. 31.102
+  libavformat    60. 16.100 / 60. 16.100
+  libavdevice    60.  3.100 / 60.  3.100
+  libavfilter     9. 12.100 /  9. 12.100
+  libswscale      7.  5.100 /  7.  5.100
+  libswresample   4. 12.100 /  4. 12.100
+  libpostproc    57.  3.100 / 57.  3.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'cadence-fine-flight.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf60.16.100
+  Duration: 00:01:30.00, start: 0.000000, bitrate: 131 kb/s
+  Stream #0:0[0x1](und): Video: h264 (Constrained Baseline) (avc1 / 0x31637661), yuv420p(progressive), 1280x720, 130 kb/s, 12 fps, 12 tbr, 12288 tbn (default)
+    Metadata:
+      handler_name    : VideoHandler
+      vendor_id       : [0][0][0][0]
+      encoder         : Lavc60.31.102 libx264
+Stream mapping:
+  Stream #0:0 (h264) -> setpts:default
+  paletteuse:default -> Stream #0:0 (gif)
+[Parsed_palettegen_4 @ 0x5bfaede4dec0] 255(+1) colors generated out of 129431 colors; ratio=0.001970
+Output #0, gif, to 'cadence-fine-flight-full-6x.gif':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf60.16.100
+  Stream #0:0: Video: gif, pal8(pc, gbr/unknown/unknown, progressive), 960x540, q=2-31, 200 kb/s, 8 fps, 100 tbn
+    Metadata:
+      encoder         : Lavc60.31.102 gif
+frame=    0 fps=0.0 q=-0.0 size=       0kB time=00:00:00.00 bitrate=N/A speed=   0x    frame=   28 fps=5.7 q=-0.0 size=     512kB time=00:00:03.50 bitrate=1198.4kbits/s speed=0.709x    frame=   41 fps=7.5 q=-0.0 size=     768kB time=00:00:05.12 bitrate=1227.6kbits/s speed=0.941x    frame=   66 fps= 11 q=-0.0 size=    1024kB time=00:00:08.12 bitrate=1032.4kbits/s speed=1.37x    frame=   78 fps= 12 q=-0.0 size=    1024kB time=00:00:09.75 bitrate= 860.4kbits/s speed=1.51x    frame=  111 fps= 16 q=-0.0 size=    1280kB time=00:00:13.75 bitrate= 762.6kbits/s speed=1.97x    [out#0/gif @ 0x5bfaedeff800] video:1640kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.001191%
+frame=  120 fps= 17 q=-0.0 Lsize=    1640kB time=00:00:14.87 bitrate= 903.4kbits/s speed=2.06x    

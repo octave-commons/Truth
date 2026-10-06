@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
-write-id: "1791322601890-0.xutaalmyciebat15wm1"
+write-id: "1791324595193-0.hu5w9fworojzgqcdtr"
 source: "kanban/tasks/focus-follows-pilot.md"
 title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
 priority: "P1"
@@ -133,4 +133,6 @@ Remaining acceptance is substantial: no manual fly-overlap-bind-commit-voxel or 
 2026-10-06 root locally composed committed cadence GREEN021ef9d with frozen native evidence PR17 head74fe6df. Source changes remain exactly guarded pre-fold manual attention preparation, its regression tests and explanatory docs. Git conflict resolution preserves both parents of every ledger as ordered line subsequences and every card comment; newest preexisting write-id retained until this canonical append. No card transition or native runtime replacement; integrated full suite and strict gate start next.
 
 2026-10-06 integrated source1ad081475364cc3b75db76142204cbf54b5bf60c passes clojure -M:test:934tests15983assertions0failures/errors,exit0; bin/analyze --strict all6blocking stages pass,exit0. Closed9file/8hash proof .ημ/diagnostics/focus-cadence/full-1ad0814. Production source matches GREEN021ef9d and unchanged committed RED10f1a81 test. Native service ran concurrently, so duration is not isolated performance evidence. Native pre-fold cadence and bounded actual-host cost remain next; published lag and queued-action anchor limits remain. No transition or full manual fly-bind-commit-voxel/sculpt/Gate completion.
+
+2026-10-06 native proof for source1ad0814, evidence baseb402939: same actual seed42 world retained through verified worker/context restart, world atom1675959387. Normal control readbacks and bounded observers establish1772 prepared-world identity/alignment passes,0misses/failures/probe errors,1460 advancing aligned same-completed-frame pairs;1771completed observations plus1inflight atclose. Actual Fine1e7 and11 held-D inputs retained with neutral input before/after. Eleven sampled GL drains[0]. Hooks fully restored; final read-only audit tick28343 confirms live workers, old workers stopped, noerrors, manual Fine/zerooffset/nilthrust/closed drawer/emptyqueue. Detached host-boundary cost median paired+37.900microseconds CPU,+8432bytes manual; tracking allocation unchanged. Full120s/90s MP4 and full6x GIFs in .ημ/diagnostics/focus-cadence/native-1ad0814 with source/lifecycle/failed-probe limits explicit. This is composed-runtime evidence, not fresh fullhead launch or FPS. Existing full934tests15983assertions/all6strict evidence remains. Manual approach/bind/commit/sculpt/Gate still open; keep InProgress3.
 ---

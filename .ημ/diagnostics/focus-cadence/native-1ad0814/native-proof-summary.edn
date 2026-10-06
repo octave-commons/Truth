@@ -1,0 +1,327 @@
+{:fine-flight
+ {:readback
+  {:tick 25878,
+   :position
+   [1.7039839832047834E16 3.477930590889228E13 4.693037746087591E15],
+   :velocity
+   [-0.14427338086816344 -0.00653310643002382 -0.03240935843054132],
+   :thrust nil,
+   :displacement 1.0E7},
+  :held-output-coordinate-separation-metres
+  [3.7360361878809656E11 3.7375696982960077E11],
+  :held-frame-counts {257 5, 258 6},
+  :before-held
+  {:tick 25848,
+   :aligned? true,
+   :call 1458,
+   :offset [0.0 0.0 0.0],
+   :render-frames 257,
+   :prepared-identity-match? true,
+   :output-focus
+   [1.7029731060806268E16 3.821862821806542E13 4.689625766191046E15],
+   :wall-ms 1791323875405,
+   :focus
+   [1.7029731060806268E16 3.821862821806542E13 4.689625766191046E15],
+   :position
+   [1.7029731060806268E16 3.821862821806542E13 4.689625766191046E15],
+   :thrust nil,
+   :output-position
+   [1.7030068415842954E16 3.810447927677481E13 4.689739240200391E15]},
+  :after-held
+  {:tick 25860,
+   :aligned? true,
+   :call 1470,
+   :offset [0.0 0.0 0.0],
+   :render-frames 259,
+   :prepared-identity-match? true,
+   :output-focus
+   [1.7033777842103356E16 3.684850489351587E13 4.69098697836411E15],
+   :wall-ms 1791323878215,
+   :focus
+   [1.7033777842103356E16 3.684850489351587E13 4.69098697836411E15],
+   :position
+   [1.7033777842103356E16 3.684850489351587E13 4.69098697836411E15],
+   :thrust nil,
+   :output-position
+   [1.7034115012340016E16 3.673439468099963E13 4.69110032093277E15]},
+  :preset-confirmed
+  {:tick 25842,
+   :displacement 1.0E7,
+   :retention 0.97,
+   :position
+   [1.7027706977425134E16 3.890364014637017E13 4.688944888864628E15]},
+  :thrust-values [[1.0 6.123233995736766E-17 0.0]],
+  :ring-input-ticks [25750 25877],
+  :input-receipts
+  [{:wall_unix 1.7913236017229006E9,
+    :argv ["xdotool" "keydown" "--window" "2097171" "Right"],
+    :exit 0,
+    :stderr ""}
+   {:wall_unix 1.791323602579563E9,
+    :argv ["xdotool" "keyup" "--window" "2097171" "Right"],
+    :exit 0,
+    :stderr ""}
+   {:wall_unix 1.791323874241431E9,
+    :argv ["xdotool" "keydown" "--window" "2097171" "d"],
+    :exit 0,
+    :stderr ""}
+   {:wall_unix 1.7913238772712693E9,
+    :argv ["xdotool" "keyup" "--window" "2097171" "d"],
+    :exit 0,
+    :stderr ""}],
+  :held-thrust-input-count 11,
+  :all-held-inputs-aligned? true,
+  :held-input-ticks
+  [25849 25850 25851 25852 25853 25854 25855 25856 25857 25858 25859],
+  :earlier-rows-evicted 1359,
+  :held-first
+  {:tick 25849,
+   :aligned? true,
+   :call 1459,
+   :offset [0.0 0.0 0.0],
+   :render-frames 257,
+   :prepared-identity-match? true,
+   :output-focus
+   [1.7030068415842954E16 3.810447927677481E13 4.689739240200391E15],
+   :wall-ms 1791323875483,
+   :focus
+   [1.7030068415842954E16 3.810447927677481E13 4.689739240200391E15],
+   :position
+   [1.7030068415842954E16 3.810447927677481E13 4.689739240200391E15],
+   :thrust [1.0 6.123233995736766E-17 0.0],
+   :output-position
+   [1.7030405752831452E16 3.799034414125509E13 4.68985269150945E15]},
+  :held-last
+  {:tick 25859,
+   :aligned? true,
+   :call 1469,
+   :offset [0.0 0.0 0.0],
+   :render-frames 258,
+   :prepared-identity-match? true,
+   :output-focus
+   [1.7033440650763248E16 3.6962640269757875E13 4.690873599441828E15],
+   :wall-ms 1791323878115,
+   :focus
+   [1.7033440650763248E16 3.6962640269757875E13 4.690873599441828E15],
+   :position
+   [1.7033440650763248E16 3.6962640269757875E13 4.690873599441828E15],
+   :thrust [1.0 6.123233995736766E-17 0.0],
+   :output-position
+   [1.7033777842103356E16 3.684850489351587E13 4.69098697836411E15]},
+  :retained-rows 128},
+ :cumulative
+ {:prepared-identity-misses 0,
+  :alignment-failures 0,
+  :sim-calls-started 1772,
+  :alignment-not-applicable 0,
+  :probe-errors-dropped 0,
+  :last-sim-entry {:tick 26162, :render-frames 311, :aligned? true},
+  :world-atom-identity 1675959387,
+  :started-wall-ms 1791323515862,
+  :render-frames 311,
+  :gl-error-code-count 0,
+  :prepared-identity-matches 1772,
+  :sim-calls-failed 0,
+  :source "1ad081475364cc3b75db76142204cbf54b5bf60c",
+  :closed? true,
+  :gl-nonzero-samples 0,
+  :gl-truncated-samples 0,
+  :focus-returns-on-sim 1772,
+  :installation :restored,
+  :gl-rows-dropped 0,
+  :gl-samples 11,
+  :sim-completion-rows-unobserved-at-close 1,
+  :same-frame-advanced-pairs 1460,
+  :alignment-passes 1772,
+  :probe-error-count 0,
+  :prepared-return-discarded-at-close? false,
+  :same-frame-pairs 1460,
+  :sim-rows-dropped 1643,
+  :sim-calls-completed 1771,
+  :focus-returns 1772,
+  :closed-wall-ms 1791323946656,
+  :same-frame-aligned-advanced-pairs 1460},
+ :evidence-tier :derived,
+ :installation-readback-tick 24390,
+ :media-probe
+ {:method
+  "ffprobe stream width,height,r_frame_rate,avg_frame_rate,duration,nb_frames",
+  :cadence-controls.mp4
+  {:width 1280,
+   :height 720,
+   :duration-seconds 120.0,
+   :capture-rate "12/1",
+   :frames 1440},
+  :cadence-fine-flight.mp4
+  {:width 1280,
+   :height 720,
+   :duration-seconds 90.0,
+   :capture-rate "12/1",
+   :frames 1080},
+  :native-fps-claim? false},
+ :observed-interval-seconds 430.794,
+ :controls
+ {:right
+  {:tick 24781,
+   :offset [1.495978707E10 0.0 0.0],
+   :observer
+   {:focus-radius 5.0E15, :focus-intensity 0.5, :coherence 1.0},
+   :counters
+   {:sim-calls-started 391,
+    :alignment-passes 391,
+    :alignment-failures 0,
+    :prepared-identity-misses 0,
+    :same-frame-aligned-advanced-pairs 324,
+    :gl-samples 3,
+    :gl-nonzero-samples 0,
+    :probe-error-count 0}},
+  :left-then-narrow
+  {:tick 24866,
+   :offset [0.0 0.0 0.0],
+   :observer
+   {:focus-radius 2.5E15,
+    :focus-intensity 1.0,
+    :coherence 0.9872499999999995}},
+  :widen-and-menu
+  {:tick 25170,
+   :settings
+   {:mode :manual,
+    :ui/active-domain :spark,
+    :ui/cursor-free? true,
+    :focus-offset [0.0 0.0 0.0]},
+   :observer
+   {:focus-intensity 0.5,
+    :focus-radius 5.0E15,
+    :coherence 0.8882499999999958},
+   :counters
+   {:alignment-passes 780,
+    :alignment-failures 0,
+    :prepared-identity-misses 0,
+    :same-frame-aligned-advanced-pairs 641,
+    :render-frames 139,
+    :gl-nonzero-samples 0,
+    :probe-error-count 0}}},
+ :source
+ {:source "1ad081475364cc3b75db76142204cbf54b5bf60c",
+  :published_head "b402939931575e377ae4409d9cd4061dff11df06",
+  :loop_sha256
+  "f9e860f7398141d0c0d0cf4bd0bd11dba7141f7edd4b4916f8d0051efc62ea0b"},
+ :restoration
+ {:restored true,
+  :world-atom-identity 1675959387,
+  :tick 26162,
+  :tick-key-presence-restored? true,
+  :focus-root-restored? true,
+  :frame-root-restored? true},
+ :final-ring
+ {:rows 128,
+  :input-ticks [26034 26161],
+  :calls [1644 1771],
+  :all-inputs-aligned? true,
+  :all-output-focus-equals-input-focus? true,
+  :output-focus-differs-from-output-position-count 128,
+  :output-coordinate-separation-metres
+  [3.708961080683148E11 3.721987926577688E11]},
+ :gl
+ {:samples 11,
+  :rows
+  [{:frame 1,
+    :wall-ms 1791323518583,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 30,
+    :wall-ms 1791323556727,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 60,
+    :wall-ms 1791323598667,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 90,
+    :wall-ms 1791323642766,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 120,
+    :wall-ms 1791323685817,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 150,
+    :wall-ms 1791323727964,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 180,
+    :wall-ms 1791323770836,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 210,
+    :wall-ms 1791323811858,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 240,
+    :wall-ms 1791323852383,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 270,
+    :wall-ms 1791323892590,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}
+   {:frame 300,
+    :wall-ms 1791323931626,
+    :thread "gates-of-truth-dev-window",
+    :window 132406392702304,
+    :raw-gl-errors [0],
+    :drain-truncated? false}],
+  :nonzero-samples 0,
+  :nonzero-codes 0,
+  :truncated-samples 0,
+  :rows-evicted 0},
+ :limits
+ ["Cumulative counters retain all admitted observations; rings do not retain every input."
+  "One original tick was still in flight at closure; no completion or output is claimed for it."
+  "Output coordinate separation includes physical integration and COM recentering, not travelled distance."
+  "GL reads sample and consume flags on the owner thread; eleven zero samples do not cover every draw."
+  "Manual alignment and nonzero input are observed; target overlap, commitment, sculpt and Gate remain unverified."
+  "Diagnostic host wrappers and external capture add overhead; this is not a performance benchmark."],
+ :inputs-sha256
+ {"after-menu-request.log"
+  "07519c0b180a1ab5948ec4e5c230007311d8523261b814353263c8932aa4764e",
+  "arrow-right-readback.log"
+  "90f38fa25dd4d1014b925fde1ef51cbf71d2d25bc400e9a1416cb328e7b3e73d",
+  "center-narrow-readback.log"
+  "8ca3980acee1d64c0d821d961d820b8d1a389007173d7ae4d7b80e473bdcc4ec",
+  "fine-confirmed.log"
+  "391567dc0ec31b0d54dddec0c0abfc857d7f0f14553beef83297be43cfbf1f5a",
+  "fine-flight-readback.log"
+  "70745680327b25f5be05b49f04fedde16bb3a22b9de64a1565734ed8bb5c6b1b",
+  "native-inputs.jsonl"
+  "2d2cf985dc91c79473b2625249b2e781925451c85603502365833dbbc190a02e",
+  "native-proof-install.clj"
+  "530fee69e9c416345cfe1244b4e536962fb5ce858c4d20ad110166e746f306fc",
+  "native-proof-install.log"
+  "2a6935b9ffbf6cf306c8b6b06099c0398ebd98800eddbd965663248d4cdedbd3",
+  "native-proof-restore.clj"
+  "9ccd9d3c189b81d403d8f40370cd8022e4b64ee6aceab0a9b5ebd95699f0d6db",
+  "native-proof-restored.log"
+  "db45dc9b3ac92a9dce3e7a30b705786fa717cc96098feb623a5e89a7c3e08f10",
+  "source-before-reload.json"
+  "c1b4de6da0ece2125bbde5ee54134abab0ab765503c45bf1d97288906bc481c5"}}

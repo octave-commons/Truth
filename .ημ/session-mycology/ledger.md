@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: none
   note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.
+- ts: 2026-10-06T22:11:00.736219621Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Close same-world native focus proof without hiding lifecycle and diagnostic limits
+  p-efficiency: 0.82
+  p-friction: 0.45
+  p-skill-candidate: 0.5
+  spore: none
+  receipt-refs: focus-follows-pilot,1ad081475364cc3b75db76142204cbf54b5bf60c
+  note: Boundary identity and preserved intermediate snapshots establish real sim consumption despite slow render frames. Keep host config and world knobs distinct in readbacks; retain failed queries. Diagnostic restart must independently prove worker death and owner-context cleanup before loading loop code. Full media and restored-hook audit close evidence, not gameplay. Existing lessons suffice; no spore.
