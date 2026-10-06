@@ -155,6 +155,13 @@ and embedding model calls live exclusively in `infra/myth_engine.clj`.
 
 ### Running the dev service
 
+The reproducible native-window tour is `clojure -M:demo serve` (loopback nREPL
+7890), with `clojure -M:demo check` for all seven arc fixtures and
+`bin/demo-capture <new-output-directory>` for actual Xvfb window captures.
+Later arcs are explicitly labeled, frozen ECS fixtures. See
+[`docs/demo/README.md`](docs/demo/README.md) for coverage and limitations.
+The legacy `:run` alias targets an absent namespace; it is not a launch route.
+
 The Phase 0 dev window + nREPL (`infra.dev.server`, `clj -M:dev`) runs
 continuously under **pm2** as `gates-of-truth-dev` — this is intentional. pm2
 watching is OFF, so it does NOT auto-reload on edits:

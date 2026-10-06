@@ -5,6 +5,13 @@ Aker. You begin Phase 0 as a quantum spark witnessing a stellar nebula collapse
 into a star system, and the same world continues, cooling and becoming more
 articulate, into geology, ecology, and civilization.
 
+![Living-world fixture in the native Truth renderer](docs/demo/2026-10-06/hero-living-world.png)
+
+**Try the demo:** `clojure -M:demo serve` opens the live nebula. The
+[native-window tour](docs/demo/README.md) includes real screenshots, short
+videos, all seven narrative arcs, and the eight navigation panels. Later arcs
+are explicitly staged ECS fixtures; the formation clip runs the real physics.
+
 ## The one rule that matters most
 
 **There is a single simulation substrate: the ECS world (`domain.ecs.core`).**
@@ -96,7 +103,7 @@ New ECS component keywords added: `sed-bands`, `atmosphere-shells`,
 ### Actors
 
 Research is produced by seven periodic ημ actors (see
-[`.eta-mu/actors/`](.eta-mu/actors/)):
+[`.ημ/actors/`](.ημ/actors/)):
 
 - `truth-research-cosmology` (daily 02:00 local) — stellar physics, nucleosynthesis, CMB
 - `truth-research-physics` (daily 04:00 local) — SPH, N-body, MHD, orbital mechanics
@@ -135,12 +142,12 @@ Implementation specs (driven by the Kanban process):
 | Module | Contents |
 |--------|----------|
 | [`domain.ecs`](src/domain/ecs/) | ECS core — world, entities, components, systems, DSL |
-| [`domain.phase0`](src/domain/phase0.clj) | Phase 0 physics pipeline — gravity, hydro, MHD-lite |
+| [`domain.genesis`](src/domain/genesis.clj) | Phase 0 physics pipeline — gravity, hydro, MHD-lite |
 | [`domain.gravity`](src/domain/gravity/) | Gravitational solver (Barnes-Hut tree) |
 | [`domain.em`](src/domain/em.clj) | Magnetic field — flux-freezing, magnetic pressure, resistive decay |
 | [`domain.regime`](src/domain/regime.clj) | Dimensionless-number regime classifier (β, Mach, Jeans) |
 | [`domain.hydro`](src/domain/hydro.clj) | Hydrodynamics — SPH density, pressure forces |
-| [`domain.stellar`](src/domain/stellar.clj) | Stellar structure — polytropes, fusion ignition, mass-radius |
+| [`domain.stellar.*`](src/domain/stellar/) | Stellar structure — polytropes, fusion ignition, mass-radius |
 | [`domain.chemistry`](src/domain/chemistry.clj) | Chemical network — ionisation, molecules, dust |
 | [`domain.orbital`](src/domain/orbital/) | Orbital mechanics — N-body integration, Kepler |
 | [`domain.spatial`](src/domain/spatial/) | Spatial partitioning — kd-tree, neighbor search |
@@ -169,7 +176,8 @@ individual tool commands.
 
 ## Running
 
-Requires a JDK and the Clojure CLI.
+Requires a JDK, the Clojure CLI, and an X11/Wayland display with OpenGL 3.3.
+The October 2026 demo was verified with JDK 21 and Mesa on Linux.
 
 ```bash
 bin/test                          # full suite (same as clojure -M:test)
@@ -185,14 +193,21 @@ bin/test architecture             # architecture guards only
 # Or use the aliases directly:
 clojure -M:test:test-runner -g domain -g law  # arbitrary combinations
 clojure -M:test                           # full suite via cognitect runner (CI)
-clojure -M:run                            # Phase 0 console simulation
-clojure -M:run demo                       # render one Sun/Earth/Moon frame to /tmp/truth-view.png
 clojure -M:dev                            # live GLFW dev window + nREPL on 127.0.0.1:7888
+clojure -M:demo serve                     # reproducible live demo, nREPL 127.0.0.1:7890
+clojure -M:demo serve life                # explicitly staged life-emergence fixture
+clojure -M:demo check                     # validate all seven fixture/arc contracts
+bin/demo-capture docs/demo/my-capture     # private Xvfb display; real PNGs + MP4s
 ```
 
 The grouped runners live in `test/test_runner.clj` and only load the
 namespaces they need, so targeted runs are much faster than loading the entire
 tree. `clojure -M:test` still runs the full suite via the cognitect runner.
+
+The old `:run` alias still names the absent `infra.main` namespace and is not a
+working launch route in this revision. Use `:dev` or `:demo` above. For capture
+prerequisites, fixture semantics, and the friend-facing tour, see
+[`docs/demo/README.md`](docs/demo/README.md).
 
 With the dev service running (managed by pm2 as `gates-of-truth-dev`), connect a
 REPL and drive the live window:

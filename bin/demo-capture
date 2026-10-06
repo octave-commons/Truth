@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# Capture the real native OpenGL window on a private X display.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+for tool in clojure Xvfb ffmpeg ffprobe xdotool ss rg; do
+  command -v "$tool" >/dev/null || { echo "Missing required tool: $tool" >&2; exit 2; }
+done
+out=${1:-"docs/demo/capture-$(date -u +%Y%m%dT%H%M%SZ)"}
+if [[ -e "$out" ]]; then
+  echo "Capture destination must be new: $out" >&2
+  exit 2
+fi
+if ss -ltn 'sport = :7890' | tail -n +2 | rg -q .; then
+  echo "Demo port 7890 is occupied; stop that demo before capturing." >&2
+  exit 2
+fi
+mkdir -p "$out"
+scratch=$(mktemp -d /tmp/truth-demo.XXXXXX)
+diagnostics=".ημ/diagnostics/demo-$(date -u +%Y%m%dT%H%M%SZ)"
+mkdir -p "$diagnostics"
+app_pid=''
+x_pid=''
+cleanup() {
+  if [[ -n "$app_pid" ]]; then kill -TERM "$app_pid" 2>/dev/null || true; wait "$app_pid" 2>/dev/null || true; fi
+  if [[ -n "$x_pid" ]]; then kill -TERM "$x_pid" 2>/dev/null || true; wait "$x_pid" 2>/dev/null || true; fi
+}
+trap cleanup EXIT
+Xvfb -displayfd 3 -screen 0 1280x720x24 -nolisten tcp -ac 3>"$scratch/display" >"$diagnostics/xvfb.log" 2>&1 &
+x_pid=$!
+for _ in {1..100}; do
+  [[ -s "$scratch/display" ]] && break
+  kill -0 "$x_pid" || { cat "$diagnostics/xvfb.log" >&2; exit 1; }
+  sleep .1
+done
+display=":$(cat "$scratch/display")"
+DISPLAY="$display" clojure -M:demo serve >"$diagnostics/runtime.log" 2>&1 &
+app_pid=$!
+ready=0
+for _ in {1..180}; do
+  if rg -q 'Truth demo ready' "$diagnostics/runtime.log"; then ready=1; break; fi
+  kill -0 "$app_pid" || { cat "$diagnostics/runtime.log" >&2; exit 1; }
+  sleep 1
+done
+[[ "$ready" == 1 ]] || { echo "Demo startup timed out; see $diagnostics/runtime.log" >&2; exit 1; }
+remote() { clojure -M:demo-client "$1"; }
+shot() { ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -video_size 1280x720 -i "$display.0" -frames:v 1 "$out/$1.png"; }
+record() { ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -framerate 24 -video_size 1280x720 -i "$display.0" -t "$2" -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p -movflags +faststart "$out/$1.mp4"; }
+
+remote '(loop [attempt 0] (let [s @infra.dev.window/service-state cfg @(:config s)] (assert (nil? (:error s))) (if (and (:body-program cfg) (:volume-program cfg)) (do (Thread/sleep 1500) true) (do (when (>= attempt 300) (throw (ex-info "Native renderer readiness timed out" {}))) (Thread/sleep 100) (recur (inc attempt))))))'
+shot 01-live-nebula
+# Ready shaders alone do not prove a visible frame. Reject a blank first frame
+# before recording, using FFmpeg's pixel check rather than guessed sleeps.
+for attempt in {1..20}; do
+  blank=$(ffmpeg -hide_banner -i "$out/01-live-nebula.png" -vf 'blackframe=amount=99:threshold=16' -f null - 2>&1 || true)
+  if [[ "$blank" != *'pblack:'* ]]; then break; fi
+  [[ "$attempt" != 20 ]] || { echo "Native window remained blank" >&2; exit 1; }
+  sleep 1
+  ffmpeg -y -hide_banner -loglevel error -f x11grab -draw_mouse 0 -video_size 1280x720 -i "$display.0" -frames:v 1 "$out/01-live-nebula.png"
+done
+record live-formation 12
+remote '(select-keys @(:world @infra.dev.window/service-state) [:tick :arc/current :demo/fixture?])' >"$diagnostics/live-state.edn"
+shot 02-live-formation
+for scenario in protostar ignition accretion planets life dispersed; do
+  remote "(demo/select! :$scenario)"
+  sleep 1
+  shot "story-$scenario"
+done
+remote '(demo/select! :life)'
+# Exercise real mouse-hit dispatch for all eight tabs; locations come from the
+# current menu draw-list, rather than assuming tab widths or bypassing clicks.
+for panel in world view entities spark phase journal narrator multiverse; do
+  coords=$(remote "(let [s @infra.dev.window/service-state h (first (filter #(= [:ui/toggle-domain :$panel] (:action %)) (:hits (infra.menu/menu-hud @(:config s) @(:world s) 1280 720))))] (str (int (/ (+ (:x0 h) (:x1 h)) 2)) \" \" (int (/ (+ (:y0 h) (:y1 h)) 2))))" | tr -d '"')
+  read -r px py <<<"$coords"
+  DISPLAY="$display" xdotool mousemove "$px" "$py" click 1
+  sleep 1
+  remote "(assert (= :$panel (:ui/active-domain @(:config @infra.dev.window/service-state))))"
+  shot "panel-$panel"
+done
+remote '(swap! (:config @infra.dev.window/service-state) dissoc :ui/active-domain)'
+remote '(demo/closeup!)'
+DISPLAY="$display" xdotool mousemove 1260 710
+sleep 1
+shot hero-living-world
+record living-world-orbit 10 &
+video_pid=$!
+remote '(demo/orbit!)'
+wait "$video_pid"
+remote '(demo/select! :protostar)'
+remote '(demo/closeup!)'
+record protostar-orbit 10 &
+video_pid=$!
+remote '(demo/orbit!)'
+wait "$video_pid"
+ffmpeg -hide_banner -loglevel error -i "$out/living-world-orbit.mp4" -t 8 -filter_complex '[0:v]fps=10,scale=640:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4' "$out/living-world-preview.gif"
+remote '(let [s @infra.dev.window/service-state] (assert (nil? (:error s))) (assert (nil? (:ui/error-state @(:config s)))) (select-keys @(:world s) [:arc/current :demo/fixture?]))' >"$diagnostics/final-state.edn"
+for video in "$out"/*.mp4; do ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=duration -of json "$video"; done >"$diagnostics/video-probes.json"
+printf 'Captured native Truth window at 1280x720. Logs and runtime assertions: %s\n' "$diagnostics"
