@@ -1,0 +1,11 @@
+{:raw-path ".ημ/diagnostics/playable-foundation/natural-seed42/runner.log"
+ :committed-path ".ημ/diagnostics/playable-foundation/natural-seed42/runner.log.gz"
+ :encoding :gzip
+ :compression-command "gzip -n -c"
+ :raw-sha256 "60b2f14581ac011def0dec2db3c5abd1088bc368db54017c0034ed1c590df014"
+ :gzip-sha256 "9212e67af4458364d9c344a67e37ea0b25612bdba33f1934e9848bc048faf408"
+ :decoded-sha256 "60b2f14581ac011def0dec2db3c5abd1088bc368db54017c0034ed1c590df014"
+ :raw-bytes 3114541
+ :gzip-bytes 175284
+ :decoded-matches-raw? true
+ :raw-original-committed? false}

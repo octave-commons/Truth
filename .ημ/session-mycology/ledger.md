@@ -350,3 +350,21 @@
   spore: none
   receipt-refs: Truth PR9 review runtime consumption; run37517844652; PR10 review5433523578
   note: A same-head rerun retains an obsolete immutable reusable-workflow pin. Reuse the already reviewed caller patch and keep missing stderr separate from the suspected model cause; new branch heads still require fresh hosted qualification. No spore warranted.
+- ts: 2026-10-06T19:29:00Z
+  session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
+  task: Native manual flight, precision evidence and hosted review recovery
+  p-efficiency: 0.76
+  p-friction: 0.65
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
+  note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-06T23:01:37.830258724Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Restore hosted review after flight-planning parent drift
+  p-efficiency: 0.86
+  p-friction: 0.31
+  p-skill-candidate: 0.18
+  spore: none
+  receipt-refs: Truth PR9 parent synchronization
+  note: When newhead has no Actions, check mergeability before retrying workflow. Local merge of existing parent and union of append-only tails restores reach; verify every parent line relativeorder, not only commonprefix. No new spore.

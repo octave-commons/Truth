@@ -102,8 +102,8 @@ debug/cinematic views. Their camera-target attention policy is an inspected
 limitation, not a reason to enlarge the physical overlap gate or to certify
 manual fly → resolve → sculpt. A pure diagnostic reproduces the lag and
 separately confirms that ordinary manual focus-follow can accrue binding near
-a body without changing spark position. Actual manual flight remains the next
-native acceptance test.
+a body without changing spark position. Actual manual flight was the next
+acceptance test; the subsequent segment below records its results.
 
 ## Independent-seed regression
 
@@ -113,8 +113,61 @@ seeds 41 and 43 produced identical positions and velocities. Green `81207e7`
 forwards the requested seed to the existing generator and retains default 42.
 The same probe then distinguishes both seeds. Independent review found no
 blocking defect; its canonical review transition passed 901 tests / 15,642
-assertions and all six strict analysis gates. Independent two-seed natural
-formation acceptance remains open until the second full run completes.
+assertions and all six strict analysis gates. Both independent seeded runs have
+now completed 12,000 ticks normally. Their 48 exact birth observations were all
+within 25 AU of a bound host; 19 and 20 planets respectively remain bound at
+every recorded post-birth sample. The
+[two-seed report](2026-10-06-two-seed-natural-formation.md) preserves exact
+source identity, sampling limits, life-transition events and raw diagnostics.
+This qualifies the tested formation/sampled-survival horizon, pending fresh
+canonical review gates; it does not establish continuous binding between samples
+or native manual capture.
+
+## Native manual flight and the precision boundary
+
+The subsequent ordinary nebula session loaded `81207e7` and exercised actual
+R/W/D/A/S/Space/Tab/mouse controls, without planted bodies or state injection.
+Its [closed evidence inventory](../../.ημ/diagnostics/playable-foundation/manual-flight/CLOSED-FILES.txt)
+contains three native videos with full-window GIF companions, input timestamps,
+screenshots and published-state readbacks. The
+[capture report](../../.ημ/diagnostics/playable-foundation/manual-flight/README.md)
+records exact timing, settings, service identity and limitations.
+
+A 30-second W burst reduced distance to naturally formed planet 1012 from
+264,914.58 AU to 30,464.18 AU. A later correction reached 28,648.92 AU.
+Release cleared thrust and slowed the spark. Read-only coordinates assisted
+aiming; this does not establish discoverable navigation through the HUD alone.
+At the existing minimum displacement setting, the spark reached about 242 m/s
+while the target moved at about 1.21 km/s, and separation increased. No sample
+reached the 1 AU overlap boundary; intermediate settings were not tested for
+capture. No commitment or sculpt success follows from this segment.
+
+The [precision note](2026-10-06-manual-flight-precision-boundary.md) separates
+that native observation from an isolated production thrust/integrator probe.
+Under fixed dt and default retention, the existing minimum setting still gives
+6.68459 AU total travel for one accepted input tick and 216.13498 AU coast after
+steady thrust. It derives a possible finer range without inventing automatic
+target capture or changing the one-writer physics boundary.
+
+At tick 8976 the retained native world had no currently eligible candidate.
+Some stored candidate records persisted, and the existing commitment predicate
+uses those historical records; that is not fresh physical admission evidence.
+The session remains available with all controls released. Graceful Escape,
+regional voxel resolution and paid sculpting remain unverified.
+
+## Hosted review runtime qualification
+
+The separately stacked [review-runtime PR #10](https://github.com/octave-commons/Truth/pull/10)
+passed the complete hosted workflow on head
+`2722e131c498a3d8777a3a2441eca5e3fc0fe5af` in
+[run 37517152897](https://github.com/octave-commons/Truth/actions/runs/37517152897).
+The upstream runtime bound the exact head, delivered the complete 64,861-byte
+diff in ten pages, and published
+[MiMo approval 5433523578](https://github.com/octave-commons/Truth/pull/10#pullrequestreview-5433523578)
+with zero confirmed findings. Its terminal review gate, unit/integration tests,
+coverage and strict analysis passed. This supplies hosted Node 22 evidence for
+that adoption; it does not satisfy the remaining configured reviewer cohort.
+No merge or paid review was performed.
 
 ## Remaining player acceptance
 

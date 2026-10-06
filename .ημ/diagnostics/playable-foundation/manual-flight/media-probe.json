@@ -1,0 +1,98 @@
+{
+  "manual-flight.mp4": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "24/1",
+        "nb_frames": "2160"
+      }
+    ],
+    "format": {
+      "duration": "90.000000",
+      "size": "2745954"
+    }
+  },
+  "manual-flight-overview.gif": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "gif",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "8/1",
+        "nb_frames": "120"
+      }
+    ],
+    "format": {
+      "duration": "15.010000",
+      "size": "7557674"
+    }
+  },
+  "manual-controls.mp4": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "24/1",
+        "nb_frames": "720"
+      }
+    ],
+    "format": {
+      "duration": "30.000000",
+      "size": "953142"
+    }
+  },
+  "manual-controls-overview.gif": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "gif",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "8/1",
+        "nb_frames": "80"
+      }
+    ],
+    "format": {
+      "duration": "10.010000",
+      "size": "7068144"
+    }
+  },
+  "manual-approach.mp4": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "12/1",
+        "nb_frames": "1080"
+      }
+    ],
+    "format": {
+      "duration": "90.000000",
+      "size": "2315123"
+    }
+  },
+  "manual-approach-overview.gif": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "gif",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "8/1",
+        "nb_frames": "120"
+      }
+    ],
+    "format": {
+      "duration": "15.010000",
+      "size": "4503821"
+    }
+  }
+}
