@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-10-06T22:23:28.590666+00:00",
+  "source_revision": "e0a4e175d3f6c41e8ee1899220bd7ba1046bc30b",
+  "files": {
+    "card-before.md": {
+      "source": "kanban/tasks/body-trails-ringbuffer.md",
+      "bytes": 9923,
+      "sha256": "0e9776a0a3732e9619e26adf5e6f94a3922540e8dd72143d1794aaa1fffb6d26"
+    },
+    "ledger-before.edn": {
+      "source": "kanban/tasks/.events/ledger.edn",
+      "bytes": 595690,
+      "sha256": "593851ab15cbe43c569a5199ec3a9e6fb295db1e80517d6c501ca786f3f6d15c"
+    },
+    ".\u03b7\u03bc/receipts.edn": {
+      "bytes": 37558,
+      "sha256": "db9f16de1336560470c1be91db8ede47ee7789bd1f5e9f2edacc74b394ff7887"
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "bytes": 22310,
+      "sha256": "6a3adda355e5ce8cb749c2ef1c6385761db7eccf2aaa74cf0eab8d5b4693f545"
+    }
+  },
+  "runtime": {
+    "node": "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "cli": "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+    "upstream_merge": "ef3c4abf1ea75199486f693e9470df3fec88dd49",
+    "upstream_head": "ab6b227becd8585742b5130df9ae624d8744928e"
+  }
+}

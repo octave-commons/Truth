@@ -1,0 +1,17 @@
+[
+  {
+    "type": "kanban.comment",
+    "id": "tasks",
+    "time": "2026-10-06T22:23:41.326Z",
+    "mode": "tell",
+    "payload": {
+      "task-id": "body-trails-ringbuffer",
+      "text": "Applied the merged upstream Rheos comment formatter from open-hax/rheos PR2 (ef3c4abf1ea75199486f693e9470df3fec88dd49; CLI SHA256 83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7) for Truth PR18 review comment 4200839294. Existing body/comment content and section types are preserved; separators now remain horizontal rules rather than turning final prose into a heading. Historical ledger bytes are retained, and this repair is one new canonical comment event. Status, scope and acceptance remain unchanged.",
+      "source": "cli",
+      "agent": "eta-mu",
+      "write-id": "1791325421315-0.i4cgynxic5pzxnnm86u",
+      "type": "comment"
+    },
+    "root": "3b1aee65-edd4-4bf7-bfd9-061f0fa9f926"
+  }
+]

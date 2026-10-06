@@ -1,0 +1,43 @@
+{
+  "verified_at": "2026-10-06T22:24:22.315Z",
+  "canonicalSectionsPreservedWithOneAppendedComment": true,
+  "canonicalFrontmatterPreservedExceptWriteId": true,
+  "uuidAndSourcePreserved": true,
+  "status": "in_progress",
+  "oldWriteId": "1791321952119-0.377ud2d9xiqf6jalm17",
+  "newWriteId": "1791325421315-0.i4cgynxic5pzxnnm86u",
+  "ledger": {
+    "oldBytes": 595690,
+    "oldSha256": "593851ab15cbe43c569a5199ec3a9e6fb295db1e80517d6c501ca786f3f6d15c",
+    "newBytes": 596592,
+    "newSha256": "99171377ff8551bec797b4d34e32771814eb1435c4530299d9f0a49bc3b83c41",
+    "historicalPrefixUnchanged": true,
+    "appendedLines": 1,
+    "appendedSha256": "0d3d7a1b62b5c39d8dc258514c6fb6373a22e09bfdf9055f19a441e2f0744fdd"
+  },
+  "markdown": {
+    "library": "marked",
+    "oldFinalParagraphType": "heading",
+    "oldFinalParagraphDepth": 2,
+    "newPriorParagraphType": "paragraph",
+    "newCommentType": "paragraph",
+    "oldFinalParagraph": "Planning follow-up: Incoming3-point child UUID3a501e16-f8fe-41a3-bdd1-760e503dd84d proposes an ordinary View magnetic-visibility control (fresh-window Off), covering both dipole loops and short star/protostar vectors. Design docs/designs/magnetic-field-visibility.md links native pixels/source grounding at docs/notes/2026-10-06-magnetic-visibility-evidence.md; frozen media remains at607c4361032816ecb0fafd57f8c77946eea7d898. This child addresses an observed obstruction to star/planet trail readability without changing trail history/alpha, physics, camera or selection. HUD layout and quiet telemetry retain existing flight-hud-and-cues child ownership. Parent stays in_progress and visual fading acceptance remains open; child stays Incoming for planning review, not implementation."
+  },
+  "eventOutput": [
+    {
+      "type": "kanban.comment",
+      "id": "tasks",
+      "time": "2026-10-06T22:23:41.326Z",
+      "mode": "tell",
+      "payload": {
+        "task-id": "body-trails-ringbuffer",
+        "text": "Applied the merged upstream Rheos comment formatter from open-hax/rheos PR2 (ef3c4abf1ea75199486f693e9470df3fec88dd49; CLI SHA256 83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7) for Truth PR18 review comment 4200839294. Existing body/comment content and section types are preserved; separators now remain horizontal rules rather than turning final prose into a heading. Historical ledger bytes are retained, and this repair is one new canonical comment event. Status, scope and acceptance remain unchanged.",
+        "source": "cli",
+        "agent": "eta-mu",
+        "write-id": "1791325421315-0.i4cgynxic5pzxnnm86u",
+        "type": "comment"
+      },
+      "root": "3b1aee65-edd4-4bf7-bfd9-061f0fa9f926"
+    }
+  ]
+}

@@ -359,3 +359,21 @@
   spore: none
   receipt-refs: 2026-10-06T20:12:54.078810169Z,2026-10-06T20:26:50.020640671Z,2026-10-06T20:34:13.031513003Z
   note: Repeat an unexplained performance signal using the original benchmark closure, exact source identities and equal traced workloads before inferring a regression. Keep mature-scene visual cost distinct from ten-tick formation cost. Full unit and strict gates do not establish a clean native renderer: explicit live GL error observation found a fault now being localized. No spore created or promoted.
+- ts: 2026-10-06T21:27:18.684374533Z
+  session: /home/err/spaces/foresight/.worktrees/truth-magnetic-visibility-plan
+  task: Plan magnetic visibility from actual native pixels and canonical board ownership
+  p-efficiency: 0.9
+  p-friction: 0.2
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: 3a501e16-f8fe-41a3-bdd1-760e503dd84d
+  note: Separate screen-space schematic glyphs from true-scale bodies and actual trail paths before tuning or claiming visibility. Reuse existing HUD owners, pin evidence across branches, and keep the known Rheos design-key limitation explicit. Small planning slice only; no new spore warranted.
+- ts: 2026-10-06T22:24:54.456530809Z
+  session: /home/err/spaces/foresight/.worktrees/truth-magnetic-visibility-plan
+  task: Consume already merged Rheos Markdown comment repair with immutable before evidence
+  p-efficiency: 0.95
+  p-friction: 0.15
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: Truth PR18 comment4200839294,open-hax/rheos#2,ef3c4abf1ea75199486f693e9470df3fec88dd49
+  note: Inspect the extracted owner and existing qualified artifact before proposing a duplicate upstream fix. Package version alone did not identify capability. Compare canonical read outputs and raw history prefixes, then verify real Markdown tokens; never hand-edit generated comments or historical events. No spore created or promoted.
