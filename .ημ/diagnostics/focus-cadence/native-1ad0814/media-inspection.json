@@ -1,0 +1,82 @@
+{
+  "recording_fps_is_not_native_fps": true,
+  "gif_conversion": "full interval, uncropped,6x playback,960x540,8fps palette;2 threads each",
+  "files": [
+    {
+      "path": "cadence-controls.mp4",
+      "sha256": "823f836c796a5f916e9f30b2f04b7c1b25b0fb2e0d09ad04463b0b7c05bada10",
+      "ffprobe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "12/1",
+            "nb_frames": "1440"
+          }
+        ],
+        "format": {
+          "duration": "120.000000",
+          "size": "1738212"
+        }
+      }
+    },
+    {
+      "path": "cadence-fine-flight.mp4",
+      "sha256": "fd464c10132601deca5c97e68a26c1488fb4cf51113657d3af97b6c95bbfb994",
+      "ffprobe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "12/1",
+            "nb_frames": "1080"
+          }
+        ],
+        "format": {
+          "duration": "90.000000",
+          "size": "1476226"
+        }
+      }
+    },
+    {
+      "path": "cadence-controls-full-6x.gif",
+      "sha256": "767a0b1ab737df1f3905efc18434dc595d2122d4830363cae5a6ea3cc9fafa19",
+      "ffprobe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 540,
+            "r_frame_rate": "8/1",
+            "nb_frames": "160"
+          }
+        ],
+        "format": {
+          "duration": "20.010000",
+          "size": "1860778"
+        }
+      }
+    },
+    {
+      "path": "cadence-fine-flight-full-6x.gif",
+      "sha256": "3f4abbc5419c5583721af60642d8bafa655d0ac0ba851fd8e5a9a2085f129b70",
+      "ffprobe": {
+        "programs": [],
+        "streams": [
+          {
+            "width": 960,
+            "height": 540,
+            "r_frame_rate": "8/1",
+            "nb_frames": "120"
+          }
+        ],
+        "format": {
+          "duration": "15.010000",
+          "size": "1679837"
+        }
+      }
+    }
+  ]
+}

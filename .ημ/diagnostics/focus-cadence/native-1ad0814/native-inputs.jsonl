@@ -1,0 +1,14 @@
+{"wall_unix": 1791323601.7058768, "argv": ["xdotool", "windowfocus", "2097171"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323601.7229006, "argv": ["xdotool", "keydown", "--window", "2097171", "Right"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323602.579563, "argv": ["xdotool", "keyup", "--window", "2097171", "Right"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323623.9469547, "argv": ["xdotool", "key", "--window", "2097171", "Left"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323624.7678745, "argv": ["xdotool", "key", "--window", "2097171", "comma"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323667.484267, "argv": ["xdotool", "key", "--window", "2097171", "period"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323667.4870791, "argv": ["xdotool", "mousemove", "--window", "2097171", "270", "13"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323667.5913198, "argv": ["xdotool", "click", "1"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323809.0629823, "argv": ["xdotool", "mousemove", "--window", "2097171", "1200", "389"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323809.1754873, "argv": ["xdotool", "click", "1"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323874.1169078, "argv": ["xdotool", "mousemove", "--window", "2097171", "270", "13"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323874.2231774, "argv": ["xdotool", "click", "1"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323874.241431, "argv": ["xdotool", "keydown", "--window", "2097171", "d"], "exit": 0, "stderr": ""}
+{"wall_unix": 1791323877.2712693, "argv": ["xdotool", "keyup", "--window", "2097171", "d"], "exit": 0, "stderr": ""}

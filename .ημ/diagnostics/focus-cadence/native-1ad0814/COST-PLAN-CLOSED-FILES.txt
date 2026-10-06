@@ -1,0 +1,6 @@
+host-loop-cost.clj
+host-loop-cost-plan.md
+host-loop-cost-kondo.log
+host-loop-cost-static.json
+COST-PLAN-CLOSED-FILES.txt
+COST-PLAN-SHA256SUMS

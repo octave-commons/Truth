@@ -1,0 +1,8 @@
+Execution error (AssertionError) at user/eval17201 (final-service-audit.clj:28).
+Assert failed: {:proof-restored? true, :old-workers-stopped? true, :service-error-free? true, :frame-root-restored? true, :retained-world? true, :fine? false, :neutral-thrust? true, :new-loop-root? true, :proof-closed? true, :tick-key-presence-restored? true, :same-world? true, :new-workers-live? true, :ui-error-free? true, :tick-value-restored? true, :focus-root-restored? true, :zero-offset? true, :manual? true}
+(every? true? (vals checks))
+Execution error (ExceptionInfo) at demo-client/-main (demo_client.clj:18).
+Demo evaluation failed
+
+Full report at:
+/tmp/clojure-2349706773478789056.edn

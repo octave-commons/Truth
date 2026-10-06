@@ -1,0 +1,108 @@
+{:derived-from "host-loop-cost.log",
+ :raw-sha256
+ "5e02c0a0e8ae3445b199b71aa525333ce2612dba5f3cab067f69945dccaf8d37",
+ :source-after "1ad081475364cc3b75db76142204cbf54b5bf60c",
+ :gc-counters-unchanged? true,
+ :controls {},
+ :modes
+ [{:mode :manual,
+   :before
+   {:cpu-us {:min 64.193734375, :median 75.90575, :max 83.4485},
+    :bytes {:min 385.0, :median 385.0, :max 385.0},
+    :wall-seconds
+    {:min 2.063098754, :median 2.06418426, :max 2.065349295}},
+   :after
+   {:cpu-us
+    {:min 107.85903125, :median 113.8059296875, :max 114.2551484375},
+    :bytes {:min 8817.0, :median 8817.0, :max 8817.0},
+    :wall-seconds
+    {:min 2.068920547, :median 2.068928053, :max 2.068954223}},
+   :paired-cpu-us-delta
+   {:min 30.8066484375, :median 37.9001796875, :max 43.665296875},
+   :paired-bytes-delta {:min 8432.0, :median 8432.0, :max 8432.0},
+   :pairs
+   [{:pair 1,
+     :order [:before :after],
+     :cpu-us-delta 37.9001796875,
+     :bytes-delta 8432.0}
+    {:pair 2,
+     :order [:after :before],
+     :cpu-us-delta 30.8066484375,
+     :bytes-delta 8432.0}
+    {:pair 3,
+     :order [:before :after],
+     :cpu-us-delta 43.665296875,
+     :bytes-delta 8432.0}],
+   :warmup
+   [{:variant :before,
+     :publications 64,
+     :cpu-us-per-publication 84.19825,
+     :bytes-per-publication 417.25}
+    {:variant :after,
+     :publications 64,
+     :cpu-us-per-publication 146.89853125,
+     :bytes-per-publication 8853.5}]}
+  {:mode :follow-selection,
+   :before
+   {:cpu-us
+    {:min 57.6646640625, :median 71.3577265625, :max 87.3464921875},
+    :bytes {:min 385.5625, :median 385.5625, :max 385.5625},
+    :wall-seconds
+    {:min 2.061993454, :median 2.063905976, :max 2.067698976}},
+   :after
+   {:cpu-us
+    {:min 52.3815234375, :median 71.6398359375, :max 73.677703125},
+    :bytes {:min 385.5625, :median 385.5625, :max 385.5625},
+    :wall-seconds
+    {:min 2.061516284, :median 2.064253586, :max 2.064409308}},
+   :paired-cpu-us-delta
+   {:min -13.6687890625, :median -5.283140625, :max 0.282109375},
+   :paired-bytes-delta {:min 0.0, :median 0.0, :max 0.0},
+   :pairs
+   [{:pair 1,
+     :order [:before :after],
+     :cpu-us-delta -13.6687890625,
+     :bytes-delta 0.0}
+    {:pair 2,
+     :order [:after :before],
+     :cpu-us-delta 0.282109375,
+     :bytes-delta 0.0}
+    {:pair 3,
+     :order [:before :after],
+     :cpu-us-delta -5.283140625,
+     :bytes-delta 0.0}],
+   :warmup
+   [{:variant :before,
+     :publications 64,
+     :cpu-us-per-publication 81.37946875,
+     :bytes-per-publication 398.75}
+    {:variant :after,
+     :publications 64,
+     :cpu-us-per-publication 81.50703125,
+     :bytes-per-publication 398.75}]}],
+ :elapsed-seconds 28.935,
+ :preservation
+ {:preserved-production-state? true,
+  :preserved-user-settings? true,
+  :new-loop-roots-restored? true},
+ :source-before "10f1a81767d7d704a5b36e454b6557089fa4a77e",
+ :units
+ {:cpu :microseconds-per-publication,
+  :allocation :bytes-per-publication,
+  :wall :seconds-per-128-publication-sample},
+ :fixture
+ {:tick 23086,
+  :demo/scenario :nebula,
+  :observer-count 1,
+  :queue-identity 1024895126,
+  :world-atom-identity 1675959387,
+  :genesis/frame-offset
+  [-2.7775972143409247E11 1.463008021571238E11 -1.4633573341163788E11],
+  :alive-count 867,
+  :demo/fixture? false,
+  :sim/dt 2.544932992796438E9,
+  :config-atom-identity 899660740,
+  :genesis/sim-time 1.0440968298284344E14,
+  :world-identity 1567123584},
+ :frozen-script-sha256
+ "67fdf21d3eedbb44d4ac4a4102f5a05a17ccfa3d13b50b8be185fb7a1fdb1be5"}
