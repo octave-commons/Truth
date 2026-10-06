@@ -1,0 +1,35 @@
+{
+  "observed_at": "2026-10-06T23:19:28.384147+00:00",
+  "lost_java_pid": 3083624,
+  "lost_xvfb_pid": 3082301,
+  "both_proc_entries_absent": true,
+  "managed_session_37040": "write_stdin reports Unknown process id",
+  "managed_session_71086": "write_stdin reports Unknown process id",
+  "final_runtime_error": "X connection to :2 broken (explicit kill or server shutdown).",
+  "server_exit_cause": "unproven",
+  "exact_exit_status": "unavailable; proc zombie observed immediately after SIGCONT, then reaped before exit status read",
+  "last_closed_audit_tick": 35100,
+  "later_window_image_tick": 35739,
+  "world_recovery": "No complete reloadable world snapshot was written; evolved world is not currently available. Existing receipts, fixture and screenshots are not that world.",
+  "older_java_2372912": "still intentionally paused; untouched",
+  "files": [
+    {
+      "source": "/home/err/spaces/foresight/.worktrees/truth-focus-input/.\u03b7\u03bc/diagnostics/focus-input/native-400ba3a/runtime.log",
+      "source_bytes": 17459656,
+      "source_sha256": "4c89430998439240617ca4ff2ef2eaa84205c7b5b952536ef57c6edb7571cf46",
+      "stored": "runtime.log.gz",
+      "stored_sha256": "57e28d3a0d63885d04367afddab6de0cdb7d71ec5aeab84d2c44f42176697b03",
+      "mtime_ns": 1791328335150153742,
+      "decompression_equal": true
+    },
+    {
+      "source": "/home/err/spaces/foresight/.worktrees/truth-focus-input/.\u03b7\u03bc/diagnostics/focus-input/native-400ba3a/xvfb.log",
+      "source_bytes": 1174,
+      "source_sha256": "f172a1b0f5cf2a0d462c51dfc335af1a1dfc8e873cb66f61d018c8b1b35fe416",
+      "stored": "xvfb.log.gz",
+      "stored_sha256": "150a96e31f3332aebb670a8e99a13571742e8062b37d34b39103b98256678bc8",
+      "mtime_ns": 1791318857923392008,
+      "decompression_equal": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "scope": "complete closed read-only client outputs",
+  "gzip_mtime": 0,
+  "files": [
+    {
+      "original_untracked": "audit.stdout",
+      "committed_gzip": "audit.stdout.gz",
+      "decoded_bytes": 525,
+      "decoded_sha256": "16d1fc451fb88b30ba58fd0d631305d1600eb187591b738796b961701dcd321b",
+      "gzip_sha256": "f667fe4b5b4046a5bf3aa5c340dd99b80be7fcd80a248a55be3d5fe16c8d2116"
+    },
+    {
+      "original_untracked": "audit.stderr",
+      "committed_gzip": "audit.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    }
+  ]
+}

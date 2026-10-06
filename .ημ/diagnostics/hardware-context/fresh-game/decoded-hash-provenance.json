@@ -1,0 +1,70 @@
+{
+  "snapshot_utc": "2026-10-06T23:27:25.810750+00:00",
+  "gzip_mtime": 0,
+  "files": [
+    {
+      "original_untracked": "initial-audit.stdout",
+      "committed_gzip": "initial-audit.stdout.gz",
+      "decoded_bytes": 811,
+      "decoded_sha256": "8c484f23eb18f90151bff1269bf450f07a205e830a6d85c1828187e4a371bde6",
+      "gzip_sha256": "d23e5cbce5ac8777f9c6ec02f1afc309b34cae87dae41ebb6c472091b04df07f",
+      "scope": "closed client output, byte-identical archive"
+    },
+    {
+      "original_untracked": "initial-audit.stderr",
+      "committed_gzip": "initial-audit.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "scope": "closed client output, byte-identical archive"
+    },
+    {
+      "original_untracked": "observer-install.stdout",
+      "committed_gzip": "observer-install.stdout.gz",
+      "decoded_bytes": 224,
+      "decoded_sha256": "154f2c964f2b58e23d9ce93db4ec2c82ceeac5a238cb744b4f404bdb407ccc7a",
+      "gzip_sha256": "89ca5430e18f8907e5104ca06a6ef423bca731623f9f412907637898336d51a7",
+      "scope": "closed client output, byte-identical archive"
+    },
+    {
+      "original_untracked": "observer-install.stderr",
+      "committed_gzip": "observer-install.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "scope": "closed client output, byte-identical archive"
+    },
+    {
+      "original_untracked": "observer-restore.stdout",
+      "committed_gzip": "observer-restore.stdout.gz",
+      "decoded_bytes": 4973,
+      "decoded_sha256": "cbb0b83717d96bc6cfb1111930e7fa44e285132dd2bfa97d7954642310b1d2e8",
+      "gzip_sha256": "1f219b8854b122d72053bfcf9fbf36515f0e6252cca6be2cd6d20b1a5a3e7808",
+      "scope": "closed client output, byte-identical archive"
+    },
+    {
+      "original_untracked": "observer-restore.stderr",
+      "committed_gzip": "observer-restore.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "scope": "closed client output, byte-identical archive"
+    },
+    {
+      "original_active_untracked": "runtime.stdout",
+      "committed_gzip": "runtime.stdout.prefix.gz",
+      "decoded_prefix_bytes": 1682091,
+      "decoded_prefix_sha256": "a727e77d2314ff3a871c6c3d4f3da8c924bf3e54faa7864b56c02732d517bdca",
+      "gzip_sha256": "e5d22ad65091a57d344f8a2801958a62e250f840472fb423cc5b1b70831d5291",
+      "scope": "immutable prefix snapshot of still-open process log; not the future complete log"
+    },
+    {
+      "original_active_untracked": "runtime.stderr",
+      "committed_gzip": "runtime.stderr.prefix.gz",
+      "decoded_prefix_bytes": 0,
+      "decoded_prefix_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "scope": "immutable prefix snapshot of still-open process log; not the future complete log"
+    }
+  ]
+}

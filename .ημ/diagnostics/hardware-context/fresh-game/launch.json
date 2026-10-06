@@ -1,0 +1,44 @@
+{
+  "started_utc": "2026-10-06T23:19:00.153001+00:00",
+  "pid": 4070721,
+  "proc_start_ticks": 3869117,
+  "session_id": 4070721,
+  "process_group": 4070721,
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "head": "be832d798a984b0c6c79512d2d3497dd7f7df62a",
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:demo",
+    "serve",
+    "nebula"
+  ],
+  "env_overlay": {
+    "DISPLAY": ":0",
+    "TRUTH_DEMO_PORT": "7896"
+  },
+  "inherited_auth_no_contents_recorded": true,
+  "stdin": "DEVNULL",
+  "stdout": "runtime.stdout",
+  "stderr": "runtime.stderr",
+  "start_new_session": true,
+  "source_hashes": {
+    "test-native/infra/render/line_pass_test.clj": "dd9e771af5eee80fbcfda1d59d60588159c3106b67f127f3a3420ffb04b44fe7",
+    "src/infra/render/window.clj": "817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14",
+    "src/infra/render/scene/setup.clj": "a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7",
+    "deps.edn": "ca96620b1410a3184b135d2439dfea1b5ae7c4468646382294fdee1b403b4e8e",
+    "dev/demo.clj": "83a6be14f20aef051bc5483d3e17650db9996309e87521a5c8fa00264a43c45e",
+    "src/infra/dev/window/lifecycle.clj": "ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c",
+    "src/infra/dev/window/loop.clj": "f9e860f7398141d0c0d0cf4bd0bd11dba7141f7edd4b4916f8d0051efc62ea0b",
+    "src/domain/genesis/bootstrap.clj": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9"
+  },
+  "initial_contract": {
+    "seed": 42,
+    "gas_count": 1000,
+    "scenario": "nebula",
+    "fixture": false,
+    "world": "fresh independent natural genesis; not migrated"
+  },
+  "prior_session_status": "Root reported Java3083624/Xvfb:2 unavailable after resume and X connection failure; causal X-server exit unproven. Older2372912/:1 remains outside task."
+}

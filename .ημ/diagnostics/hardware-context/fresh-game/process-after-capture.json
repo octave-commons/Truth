@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-10-06T23:27:25.811688+00:00",
+  "pid": 4070721,
+  "proc_start_ticks": 3869117,
+  "state": "S",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "session_id": 4070721,
+  "process_group": 4070721,
+  "head_at_launch": "be832d798a984b0c6c79512d2d3497dd7f7df62a",
+  "current_head": "be832d798a984b0c6c79512d2d3497dd7f7df62a",
+  "no_signal_sent_by_this_task": true,
+  "observer_restoration_proof": "observer-restore.stdout.gz"
+}

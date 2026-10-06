@@ -1,0 +1,56 @@
+{
+  "observed_utc": "2026-10-06T22:51:38.538828+00:00",
+  "uid": 1000,
+  "display_devices": [
+    {
+      "pci": "0000:00:02.0",
+      "class": "0x030000",
+      "vendor": "0x8086",
+      "device": "0x7d55",
+      "driver": "i915",
+      "drm_nodes": [
+        "renderD128",
+        "card1",
+        "controlD65"
+      ]
+    },
+    {
+      "pci": "0000:01:00.0",
+      "class": "0x030000",
+      "vendor": "0x10de",
+      "device": "0x2820",
+      "driver": "nvidia",
+      "drm_nodes": [
+        "controlD64",
+        "renderD129",
+        "card0"
+      ]
+    }
+  ],
+  "render_nodes": [
+    {
+      "path": "/dev/dri/renderD128",
+      "mode": "0o660",
+      "uid": 0,
+      "gid": 992,
+      "readable": true,
+      "writable": true
+    },
+    {
+      "path": "/dev/dri/renderD129",
+      "mode": "0o660",
+      "uid": 0,
+      "gid": 992,
+      "readable": true,
+      "writable": true
+    }
+  ],
+  "tools": {
+    "glxinfo": "/usr/bin/glxinfo",
+    "xdpyinfo": "/usr/bin/xdpyinfo",
+    "vglrun": null,
+    "Xorg": "/usr/bin/Xorg",
+    "Xvfb": "/usr/bin/Xvfb"
+  },
+  "hardware_read_only_inventory": true
+}

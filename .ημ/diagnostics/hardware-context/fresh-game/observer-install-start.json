@@ -1,0 +1,7 @@
+{
+  "started_utc": "2026-10-06T23:21:06.320590+00:00",
+  "form": "(load-file \"/home/err/spaces/foresight/.worktrees/truth-focus-cadence/.\u03b7\u03bc/diagnostics/hardware-context/fresh-game/frame-observer-install.clj\")",
+  "script_sha256": "47346f69e34e2dc90562905cf87b8e9b754bb4525852a002fdc3d4d39780bc4f",
+  "independent_review": "intent_research source-only no blocking findings; confirmed original draw/cleanup/bounds/error isolation",
+  "port": 7896
+}

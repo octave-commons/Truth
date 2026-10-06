@@ -1,0 +1,16 @@
+{
+  "finished_utc": "2026-10-06T22:51:38.493064+00:00",
+  "head": "c79be1e957695505b48ea7f1905821927e7fb270",
+  "source_hashes": {
+    "test-native/infra/render/line_pass_test.clj": "dd9e771af5eee80fbcfda1d59d60588159c3106b67f127f3a3420ffb04b44fe7",
+    "src/infra/render/window.clj": "817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14",
+    "src/infra/render/scene/setup.clj": "a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7",
+    "deps.edn": "ca96620b1410a3184b135d2439dfea1b5ae7c4468646382294fdee1b403b4e8e"
+  },
+  "source_hashes_unchanged": true,
+  "tracked_diff": [
+    ""
+  ],
+  "owned_timeout_pid": 3910433,
+  "owned_timeout_pid_exists": false
+}
