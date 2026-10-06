@@ -158,7 +158,7 @@
   "Advance the real compact workload; retain each frozen/published world."
   [path scenario]
   (vec (take (inc compact-steps) (iterate (partial compact-step path)
-                                         (compact-world scenario)))))
+                                          (compact-world scenario)))))
 
 (defn compact-observation
   "Capture all component columns and IDs; transient runtime caches are not EDN."
