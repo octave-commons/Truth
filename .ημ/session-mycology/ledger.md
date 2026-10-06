@@ -341,3 +341,12 @@
   spore: none
   receipt-refs: none
   note: Recovered missing research before code; separate immutable validation checkout kept agents moving during full gates. Rheos feature was present in newer canonical artifact despite same package version: verify executable hash and actual pass/fail transition before proposing upstream implementation. No spore promoted; long playable-game goal remains active.
+- ts: 2026-10-06T22:40:06.549190626Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Consume reviewed hosted runtime on Truth PR9
+  p-efficiency: 0.95
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth PR9 review runtime consumption; run37517844652; PR10 review5433523578
+  note: A same-head rerun retains an obsolete immutable reusable-workflow pin. Reuse the already reviewed caller patch and keep missing stderr separate from the suspected model cause; new branch heads still require fresh hosted qualification. No spore warranted.
