@@ -368,3 +368,12 @@
   spore: none
   receipt-refs: 3a501e16-f8fe-41a3-bdd1-760e503dd84d
   note: Separate screen-space schematic glyphs from true-scale bodies and actual trail paths before tuning or claiming visibility. Reuse existing HUD owners, pin evidence across branches, and keep the known Rheos design-key limitation explicit. Small planning slice only; no new spore warranted.
+- ts: 2026-10-06T22:24:54.456530809Z
+  session: /home/err/spaces/foresight/.worktrees/truth-magnetic-visibility-plan
+  task: Consume already merged Rheos Markdown comment repair with immutable before evidence
+  p-efficiency: 0.95
+  p-friction: 0.15
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: Truth PR18 comment4200839294,open-hax/rheos#2,ef3c4abf1ea75199486f693e9470df3fec88dd49
+  note: Inspect the extracted owner and existing qualified artifact before proposing a duplicate upstream fix. Package version alone did not identify capability. Compare canonical read outputs and raw history prefixes, then verify real Markdown tokens; never hand-edit generated comments or historical events. No spore created or promoted.
