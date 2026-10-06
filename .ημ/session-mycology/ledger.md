@@ -341,3 +341,12 @@
   spore: none
   receipt-refs: review-runtime-upstream-diagnostics
   note: Ran canonical Rheos review admission at immutable9b1818b and full test/strict at clean detached56f2a19 in separate checkouts. Both899tests15635assertions and strict passed. Append fresh head-bound evidence rather than rewriting historical receipts; detached validation remains clean. No spore needed.
+- ts: 2026-10-06T19:29:00Z
+  session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
+  task: Native manual flight, precision evidence and hosted review recovery
+  p-efficiency: 0.76
+  p-friction: 0.65
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
+  note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
