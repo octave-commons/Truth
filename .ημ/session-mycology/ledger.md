@@ -350,3 +350,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
   note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-06T20:43:33.964775326Z
+  session: /home/err/spaces/foresight/.worktrees/truth-motion-trails
+  task: Compose native flight and bounded trails while preserving benchmark and planning evidence
+  p-efficiency: 0.82
+  p-friction: 0.48
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: 2026-10-06T20:12:54.078810169Z,2026-10-06T20:26:50.020640671Z,2026-10-06T20:34:13.031513003Z
+  note: Repeat an unexplained performance signal using the original benchmark closure, exact source identities and equal traced workloads before inferring a regression. Keep mature-scene visual cost distinct from ten-tick formation cost. Full unit and strict gates do not establish a clean native renderer: explicit live GL error observation found a fault now being localized. No spore created or promoted.
