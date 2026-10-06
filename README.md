@@ -223,10 +223,11 @@ REPL and drive the live window:
 ## Actor Dashboard
 
 There is a lightweight web dashboard for the ημ actor system at
-[`src/infra/dev/actor_dashboard.clj`](src/infra/dev/actor_dashboard.clj). It
-auto-discovers every actor under `.eta-mu/actors/`, including `fork-tax-tender`,
-and shows session counts, inbox/outbox activity, live process status, and recent
-research notebooks.
+[`src/infra/dev/actor_dashboard.clj`](src/infra/dev/actor_dashboard.clj).
+The actor corpus lives under [`.ημ/actors/`](.ημ/actors/). The current dashboard
+still searches the historical ASCII-spelled directory and needs a separate
+path migration before it can discover that corpus. Its intended view shows
+session counts, inbox/outbox activity, live process status, and research notebooks.
 
 Run it with:
 

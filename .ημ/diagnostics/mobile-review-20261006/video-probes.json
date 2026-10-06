@@ -1,0 +1,114 @@
+[
+{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/accretion-orbit.mp4",
+        "duration": "10.000000"
+    }
+}
+,{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/ignition-orbit.mp4",
+        "duration": "10.000000"
+    }
+}
+,{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/live-formation.mp4",
+        "duration": "12.000000"
+    }
+}
+,{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/living-world-orbit.mp4",
+        "duration": "10.000000"
+    }
+}
+,{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/navigation-tour.mp4",
+        "duration": "24.000000"
+    }
+}
+,{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/planets-orbit.mp4",
+        "duration": "10.000000"
+    }
+}
+,{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 720
+        }
+    ],
+    "format": {
+        "filename": "/home/err/spaces/foresight/Truth/docs/demo/2026-10-06/protostar-orbit.mp4",
+        "duration": "10.000000"
+    }
+}
+]

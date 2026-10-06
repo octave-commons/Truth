@@ -1,0 +1,10 @@
+{
+  "intentional_remote_failure_exit": 1,
+  "all_owned_children_reaped": true,
+  "pids": {
+    "app": 1318572,
+    "display": 1318566,
+    "recorder": 1321335
+  },
+  "desktop_demo_unchanged": 1129382
+}

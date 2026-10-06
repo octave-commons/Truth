@@ -25,7 +25,9 @@ diagnostics=".ημ/diagnostics/demo-$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir -p "$diagnostics"
 app_pid=''
 x_pid=''
+video_pid=''
 cleanup() {
+  if [[ -n "$video_pid" ]]; then kill -TERM "$video_pid" 2>/dev/null || true; wait "$video_pid" 2>/dev/null || true; fi
   if [[ -n "$app_pid" ]]; then kill -TERM "$app_pid" 2>/dev/null || true; wait "$app_pid" 2>/dev/null || true; fi
   if [[ -n "$x_pid" ]]; then kill -TERM "$x_pid" 2>/dev/null || true; wait "$x_pid" 2>/dev/null || true; fi
 }
@@ -49,7 +51,10 @@ done
 [[ "$ready" == 1 ]] || { echo "Demo startup timed out; see $diagnostics/runtime.log" >&2; exit 1; }
 remote() { clojure -M:demo-client "$1"; }
 shot() { ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -video_size 1280x720 -i "$display.0" -frames:v 1 "$out/$1.png"; }
-record() { ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -framerate 24 -video_size 1280x720 -i "$display.0" -t "$2" -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p -movflags +faststart "$out/$1.mp4"; }
+record() {
+  ffmpeg -hide_banner -loglevel error -f x11grab -draw_mouse 0 -framerate 24 -video_size 1280x720 -i "$display.0" -t "$2" -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p -movflags +faststart "$out/$1.mp4" &
+  video_pid=$!
+}
 
 remote '(loop [attempt 0] (let [s @infra.dev.window/service-state cfg @(:config s)] (assert (nil? (:error s))) (if (and (:body-program cfg) (:volume-program cfg)) (do (Thread/sleep 1500) true) (do (when (>= attempt 300) (throw (ex-info "Native renderer readiness timed out" {}))) (Thread/sleep 100) (recur (inc attempt))))))'
 shot 01-live-nebula
@@ -63,6 +68,8 @@ for attempt in {1..20}; do
   ffmpeg -y -hide_banner -loglevel error -f x11grab -draw_mouse 0 -video_size 1280x720 -i "$display.0" -frames:v 1 "$out/01-live-nebula.png"
 done
 record live-formation 12
+wait "$video_pid"
+video_pid=''
 remote '(select-keys @(:world @infra.dev.window/service-state) [:tick :arc/current :demo/fixture?])' >"$diagnostics/live-state.edn"
 shot 02-live-formation
 for scenario in protostar ignition accretion planets life dispersed; do
@@ -86,38 +93,47 @@ remote '(demo/closeup!)'
 DISPLAY="$display" xdotool mousemove 1260 710
 sleep 1
 shot hero-living-world
-record living-world-orbit 10 &
-video_pid=$!
+record living-world-orbit 10
 remote '(demo/orbit!)'
 wait "$video_pid"
+video_pid=''
 remote '(demo/select! :protostar)'
 remote '(demo/closeup!)'
-record protostar-orbit 10 &
-video_pid=$!
+record protostar-orbit 10
 remote '(demo/orbit!)'
 wait "$video_pid"
+video_pid=''
 for scenario in ignition accretion planets; do
   remote "(demo/select! :$scenario)"
   remote '(demo/closeup!)'
   sleep 1
-  record "$scenario-orbit" 10 &
-  video_pid=$!
+  record "$scenario-orbit" 10
   remote '(demo/orbit!)'
   wait "$video_pid"
+  video_pid=''
 done
 # One continuous recording of actual panel transitions, with each state checked.
 # Execute all clicks in one nREPL request, avoiding JVM startup latency between
 # panels. xdotool still dispatches real native input.
 remote '(demo/select! :life)'
-record navigation-tour 24 &
-video_pid=$!
+record navigation-tour 24
 DISPLAY="$display" remote '(require (quote clojure.java.shell)) (doseq [panel [:world :view :entities :spark :phase :journal :narrator :multiverse]] (let [s @infra.dev.window/service-state h (first (filter #(= [:ui/toggle-domain panel] (:action %)) (:hits (infra.menu/menu-hud @(:config s) @(:world s) 1280 720)))) x (str (int (/ (+ (:x0 h) (:x1 h)) 2))) y (str (int (/ (+ (:y0 h) (:y1 h)) 2))) result (clojure.java.shell/sh "xdotool" "mousemove" x y "click" "1")] (assert (zero? (:exit result))) (Thread/sleep 1800) (assert (= panel (:ui/active-domain @(:config s))))))'
 wait "$video_pid"
+video_pid=''
 for video in "$out"/*.mp4; do
   ffmpeg -hide_banner -loglevel error -i "$video" -filter_complex '[0:v]fps=10,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4' -loop 0 "${video%.mp4}.gif"
 done
 # Preserve the compact preview used by earlier links.
 ffmpeg -hide_banner -loglevel error -i "$out/living-world-orbit.mp4" -t 8 -filter_complex '[0:v]fps=10,scale=640:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4' -loop 0 "$out/living-world-preview.gif"
 remote '(let [s @infra.dev.window/service-state] (assert (nil? (:error s))) (assert (nil? (:ui/error-state @(:config s)))) (select-keys @(:world s) [:arc/current :demo/fixture?]))' >"$diagnostics/final-state.edn"
-for video in "$out"/*.mp4; do ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=duration -of json "$video"; done >"$diagnostics/video-probes.json"
+{
+  printf '[\n'
+  separator=''
+  for video in "$out"/*.mp4; do
+    printf '%s' "$separator"
+    ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=filename,duration -of json "$video"
+    separator=','
+  done
+  printf ']\n'
+} >"$diagnostics/video-probes.json"
 printf 'Captured native Truth window at 1280x720. Logs and runtime assertions: %s\n' "$diagnostics"

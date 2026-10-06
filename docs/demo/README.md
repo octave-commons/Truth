@@ -263,8 +263,14 @@ absent `infra.main`; it remains unsupported and is no longer advertised. PM2
 now resolves its checkout relative to `dev/ecosystem.config.js` and inherits the
 requested display.
 
-The existing full suite passes: **879 tests / 15,486 assertions**, zero
-failures/errors. Architecture guards and the render group pass; the six-tool
+The original demo implementation passed the full suite: **879 tests / 15,486
+assertions**, zero failures/errors. The mobile-gallery update passes the render
+group again: **51 tests / 8,185 assertions**, zero failures/errors. The eight
+panel stills and navigation GIF are refreshed with the camera status hidden
+while a menu is open, so it cannot cover the panel text. The navigation clip
+ends visibly on Multiverse. An intentional remote failure verifies that cleanup
+terminates and reaps its recorder, app, and display; probe output is a valid JSON
+array with one entry per recording. Original raw probe output is retained. Architecture guards and the render group pass; the six-tool
 `bin/analyze --strict` gate passes. The new demo clients are separately linted,
 all seven scenarios are constructed/validated, and the actual capture pass
 checks native UI state. Gallery images and representative video frames are
