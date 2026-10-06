@@ -1,13 +1,14 @@
 ---
-uuid: "embodied-character-voxel-mode"
-title: "Epic: Embodied single-character voxel mode (the Gates horizon)"
-status: "icebox"
-priority: "P2"
-labels: ["specs", "phase5", "phase6", "voxel", "character", "gates", "epic"]
-created_at: "2026-07-22T00:00:00Z"
-source: "kanban/tasks/embodied-character-voxel-mode.md"
 category: "specs"
-estimate: 55
+labels: ["specs", "phase5", "phase6", "voxel", "character", "gates", "epic"]
+write-id: "1791317948290-0.xs7qim4ke3dn7lj6fh"
+source: "kanban/tasks/embodied-character-voxel-mode.md"
+title: "Epic: Embodied single-character voxel mode (the Gates horizon)"
+priority: "P2"
+status: "incoming"
+estimate: "55"
+uuid: "embodied-character-voxel-mode"
+created_at: "2026-07-22T00:00:00Z"
 ---
 
 # Epic: Embodied single-character voxel mode (the Gates horizon)
@@ -44,4 +45,6 @@ specs.
 Created 2026-07-22 (Claude): the top of the ladder, iceboxed. See
 `docs/designs/the-first-narrowing-star-to-planet.md` — this rung inherits that
 rung's "felt, gradual, decision" template.
+
+User explicitly activated the playable Gate goal on 2026-10-06. Triage now prioritizes its prerequisite phase specifications. Preserve the existing prohibition on breaking down implementation before those specs exist; natural planets/life are verified, but actors, civilization, embodiment and Gate producers remain absent. Incoming bounded design/research children will make those causal boundaries explicit.
 ---
