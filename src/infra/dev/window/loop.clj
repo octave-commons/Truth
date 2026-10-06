@@ -26,7 +26,8 @@
    [infra.render.shader :as sh]
    [infra.render.units :as units]
    [infra.menu :as menu]
-   [infra.camera :as cam])
+   [infra.camera :as cam]
+   [law.narrowing :as narrowing])
   (:import
    (org.lwjgl.glfw GLFW)
    (org.lwjgl.opengl GL11 GL15 GL30)))
@@ -134,7 +135,11 @@
               cfg @config-atom
               w0  (cond-> (drain-intents @world-atom intent-queue)
                     (= :manual (:mode cfg :manual))
-                    (apply-intent #(player/focus-follow % (:focus-offset cfg [0.0 0.0 0.0]))))
+                    (apply-intent #(let [offset (:focus-offset cfg [0.0 0.0 0.0])]
+                                     (when-not (narrowing/focus-offset? offset)
+                                       (throw (ex-info "Invalid focus-offset: expected three finite coordinates"
+                                                       {:focus-offset offset})))
+                                     (player/focus-follow % offset))))
               w1  (if (:ui/error-state cfg)
                     w0
                     (let [tick-fn (:tick-fn cfg default-tick-fn)

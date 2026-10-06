@@ -1,0 +1,39 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:test",
+    "-n",
+    "infra.dev.focus-cadence-test",
+    "-n",
+    "domain.pilot-resolve-seam-test",
+    "-n",
+    "infra.render.input-test",
+    "-n",
+    "infra.dev.window-test",
+    "-n",
+    "architecture-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-contract-review",
+  "red_head": "2b30e5055bc793e4c9152425356f535ba3e5d2f6",
+  "files_sha256": {
+    "src/law/narrowing.clj": "32d1ee5119f0d4be053204fb40128d530d21e6eb17e7e19dc4488cc0029f0a30",
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "test/infra/dev/focus_cadence_test.clj": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1",
+    "docs/designs/spark-flight-and-camera.md": "99d877d0533904eaac51750543c505f97b17740c5f4a920ca82ca41ee4049499"
+  },
+  "started_at": "2026-10-06T23:39:26.470965+00:00",
+  "resource_scope": "Focused JVM only; root-owned hardware native service resumed; no isolated performance claim.",
+  "pid": 4189571,
+  "exit_code": 0,
+  "elapsed_seconds": 17.73147936500027,
+  "completed_at": "2026-10-06T23:39:44.213493+00:00",
+  "final_files_sha256": {
+    "src/law/narrowing.clj": "32d1ee5119f0d4be053204fb40128d530d21e6eb17e7e19dc4488cc0029f0a30",
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "test/infra/dev/focus_cadence_test.clj": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1",
+    "docs/designs/spark-flight-and-camera.md": "99d877d0533904eaac51750543c505f97b17740c5f4a920ca82ca41ee4049499"
+  },
+  "log_sha256": "210d771ffc6c05ec94fadb002a6d5d54442cee5f11b451bba217fd0adfd586b8"
+}
