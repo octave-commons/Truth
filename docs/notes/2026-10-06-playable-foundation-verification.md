@@ -113,8 +113,15 @@ seeds 41 and 43 produced identical positions and velocities. Green `81207e7`
 forwards the requested seed to the existing generator and retains default 42.
 The same probe then distinguishes both seeds. Independent review found no
 blocking defect; its canonical review transition passed 901 tests / 15,642
-assertions and all six strict analysis gates. Independent two-seed natural
-formation acceptance remains open until the second full run completes.
+assertions and all six strict analysis gates. Both independent seeded runs have
+now completed 12,000 ticks normally. Their 48 exact birth observations were all
+within 25 AU of a bound host; 19 and 20 planets respectively remain bound at
+every recorded post-birth sample. The
+[two-seed report](2026-10-06-two-seed-natural-formation.md) preserves exact
+source identity, sampling limits, life-transition events and raw diagnostics.
+This qualifies the tested formation/sampled-survival horizon, pending fresh
+canonical review gates; it does not establish continuous binding between samples
+or native manual capture.
 
 ## Native manual flight and the precision boundary
 
