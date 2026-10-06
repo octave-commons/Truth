@@ -1,14 +1,14 @@
 ---
-uuid: "committed-biosphere-native-action-spec"
-title: "Specify one causal native biosphere action on the committed world"
-status: "incoming"
-type: "task"
-priority: "P1"
-points: "3"
+category: "tasks"
 labels: "design, ecology, input, playable-gate"
 parent: "embodied-character-voxel-mode"
-category: "tasks"
-write-id: "1791317948903-0.dapl57xojb85u8cxskx"
+type: "task"
+write-id: "1791318932367-0.v6y1lbhs8dqibq8migu"
+points: "3"
+title: "Specify one causal native biosphere action on the committed world"
+priority: "P1"
+status: "incoming"
+uuid: "committed-biosphere-native-action-spec"
 created_at: "2026-10-06T20:19:08.903Z"
 ---
 
@@ -40,3 +40,7 @@ Trace existing helper and writer code, inspect relevant laws/tests, and independ
 
 ## Risks
 The inherited helper may assume a different phase/target or charge resources inconsistently. Native controls and planetary unlock semantics must agree before a key is bound.
+
+---
+Planning refinement from independent review, included while this card is Incoming: coordinate time-unit and cadence decisions with committed-clock-executable-policy. Independent interface research may proceed while that policy is reviewed; any consumer that depends on unresolved clock semantics must identify the dependency explicitly. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+---

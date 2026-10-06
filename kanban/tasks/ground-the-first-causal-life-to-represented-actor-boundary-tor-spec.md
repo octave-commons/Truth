@@ -1,14 +1,14 @@
 ---
-uuid: "life-to-represented-actor-spec"
-title: "Ground the first causal life-to-represented-actor boundary"
-status: "incoming"
-type: "task"
-priority: "P1"
-points: "3"
+category: "tasks"
 labels: "research, design, ecology, actors, playable-gate"
 parent: "embodied-character-voxel-mode"
-category: "tasks"
-write-id: "1791317949245-0.hapi1wqm2ubnd1xuf37"
+type: "task"
+write-id: "1791318933567-0.jmkcf6yovpmj7tx5yi"
+points: "3"
+title: "Ground the first causal life-to-represented-actor boundary"
+priority: "P1"
+status: "incoming"
+uuid: "life-to-represented-actor-spec"
 created_at: "2026-10-06T20:19:09.245Z"
 ---
 
@@ -40,3 +40,7 @@ Independent source/model review plus a small labeled derivation or disposable mo
 
 ## Risks
 Anthropomorphic labels can conceal absent mechanism, and overly detailed biology can consume the whole project. Keep one causal, visible actor boundary as the deliverable; broader civilization and Gate rules remain later specifications.
+
+---
+Planning refinement from independent review, included while this card is Incoming: coordinate modeled time units and update cadence with committed-clock-executable-policy; this is a semantic reference, not a fabricated blocking dependency on independent research. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+---

@@ -1,14 +1,14 @@
 ---
-uuid: "committed-clock-executable-policy"
-title: "Specify the executable committed-world clock and later history contract"
-status: "incoming"
-type: "task"
-priority: "P1"
-points: "3"
+category: "tasks"
 labels: "design, pacing, narrowing, playable-gate"
 parent: "narrowing-commitment-horizon"
-category: "tasks"
-write-id: "1791317948597-0.pv92uuya2d8inqfv2tm"
+type: "task"
+write-id: "1791318931233-0.lwwlem3454o4pvh5a9t"
+points: "3"
+title: "Specify the executable committed-world clock and later history contract"
+priority: "P1"
+status: "incoming"
+uuid: "committed-clock-executable-policy"
 created_at: "2026-10-06T20:19:08.597Z"
 ---
 
@@ -40,3 +40,7 @@ Review against current production source and existing tests; provide executable 
 
 ## Risks
 The existing 1e7-second pacing floor, assumed 60 Hz, dt>=1 flight clamp and LOD skipped-time behavior cannot be repaired by a flag reader alone. A local lock can accidentally make later civilization progression impossible unless the temporal relationship is explicit.
+
+---
+Planning refinement from independent review, included while this card is Incoming: bound this three-point deliverable to the first safe consumer policy. If later asynchronous neighborhood causality needs a new solver or exceeds this size, state that boundary explicitly and propose separate research; do not absorb it into this card or claim the complete local lock is solved. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+---
