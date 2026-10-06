@@ -3,7 +3,7 @@ category: "tasks"
 labels: "hygiene, regression, genesis"
 parent: "formation-placement-v2"
 type: "task"
-write-id: "1791311841213-0.8pj19xmdhn4e5yf1hoz"
+write-id: "1791311980556-0.erqvm2mihawu8anq12"
 points: "2"
 title: "Forward requested genesis seed to nebula bootstrap"
 priority: "P1"
@@ -62,4 +62,6 @@ final committed source; previous exact-head review outcomes are not reused.
 
 ---
 Red checkpoint ready on source 56f2a19d02085b3f2e86c9926b837bc990859ef8: new public-entry-point test/domain/genesis_seed_test.clj runs 2 tests / 7 assertions, 2 expected failures, 0 errors. Both failures are precisely seed41 versus seed43 positions and velocities being identical. Repeatability, omitted seed equals explicit42, four gas parcels, total mass4e30, unchanged mass/state/composition controls pass. Test-file clj-kondo is 0 errors/0 warnings and diffcheck passes. Log: .ημ/diagnostics/playable-foundation/natural-formation-observation/seed-forwarding-red.log. A first unmatched-parenthesis test-read attempt was corrected and retained separately as seed-forwarding-test-read-check.log; it is not regression evidence. No implementation changes yet; awaiting root red commit before forwarding seed through existing options/RNG, with default42 explicitly preserved to avoid passing nil to seed-nebula.
+
+Minimal green repair complete on red checkpoint 08161ab: default-world-options now carries :seed42, seeded-world forwards the requested value into the existing seed-nebula RNG, and bootstrap create-world docstring records omitted-seed behavior. Focused genesis seed, seed-contract and architecture suite passes 12 tests / 38 assertions, 0 failures, 0 errors. Touched-file clj-kondo has 0 errors/0 warnings; cljfmt check and git diff --check pass. Same isolated probe now reports same-components? false and same-positions? false for seeds41/43; stderr empty. Evidence: natural-formation-observation/seed-forwarding-green.log, seed-forwarding-format.log and seed-forwarding-after.edn under .ημ/diagnostics/playable-foundation/. No RNG replacement or physics change. Awaiting root green source checkpoint before full canonical review gate; no prior gate result applies to this new source.
 ---
