@@ -1,0 +1,22 @@
+Dev window thread started on gates-of-truth-dev-window — sim thread on gates-of-truth-sim
+[LWJGL] GLFW_PLATFORM_UNAVAILABLE error
+	Description : Failed to detect any supported platform
+	Stacktrace  :
+		org.lwjgl.glfw.GLFW.glfwInit(GLFW.java:1079)
+		infra.render.window$init_glfw.invokeStatic(window.clj:52)
+		infra.render.window$init_glfw.invoke(window.clj:48)
+		infra.dev.window.loop$window_loop.invokeStatic(loop.clj:454)
+		infra.dev.window.loop$window_loop.invoke(loop.clj:448)
+		infra.dev.window.lifecycle$make_service_threads$fn__13680.invoke(lifecycle.clj:45)
+		clojure.lang.AFn.run(AFn.java:22)
+		java.base/java.lang.Thread.run(Thread.java:1583)
+Exception in thread "gates-of-truth-dev-window" java.lang.RuntimeException: Failed to initialize GLFW
+	at infra.render.window$init_glfw.invokeStatic(window.clj:52)
+	at infra.render.window$init_glfw.invoke(window.clj:48)
+	at infra.dev.window.loop$window_loop.invokeStatic(loop.clj:454)
+	at infra.dev.window.loop$window_loop.invoke(loop.clj:448)
+	at infra.dev.window.lifecycle$make_service_threads$fn__13680.invoke(lifecycle.clj:45)
+	at clojure.lang.AFn.run(AFn.java:22)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Truth demo ready: nREPL 127.0.0.1:7894
+Dev window stopped.

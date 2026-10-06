@@ -323,3 +323,12 @@
   spore: none
   receipt-refs: none
   note: Recovered missing research before code; separate immutable validation checkout kept agents moving during full gates. Rheos feature was present in newer canonical artifact despite same package version: verify executable hash and actual pass/fail transition before proposing upstream implementation. No spore promoted; long playable-game goal remains active.
+- ts: 2026-10-06T19:29:00Z
+  session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
+  task: Native manual flight, precision evidence and hosted review recovery
+  p-efficiency: 0.76
+  p-friction: 0.65
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
+  note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
