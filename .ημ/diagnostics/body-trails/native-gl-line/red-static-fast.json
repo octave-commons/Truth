@@ -1,0 +1,35 @@
+[
+  {
+    "command": [
+      "clj-kondo",
+      "--lint",
+      "test-native",
+      "deps.edn",
+      ".lsp/config.edn",
+      "dev/smell_report.clj"
+    ],
+    "exit_code": 0,
+    "output": "linting took 189ms, errors: 0, warnings: 0\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "HEAD",
+      "--",
+      "src"
+    ],
+    "exit_code": 0,
+    "output": ""
+  }
+]

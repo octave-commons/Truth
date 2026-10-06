@@ -1,0 +1,13 @@
+.ημ/diagnostics/body-trails/native-gl-line/GREEN-CLOSED-FILES.txt
+.ημ/diagnostics/body-trails/native-gl-line/GREEN-SHA256SUMS
+.ημ/diagnostics/body-trails/native-gl-line/green-board-comment.log
+.ημ/diagnostics/body-trails/native-gl-line/green-focused-end.json
+.ημ/diagnostics/body-trails/native-gl-line/green-focused-start.json
+.ημ/diagnostics/body-trails/native-gl-line/green-focused.log
+.ημ/diagnostics/body-trails/native-gl-line/green-native-end.json
+.ημ/diagnostics/body-trails/native-gl-line/green-native-start.json
+.ημ/diagnostics/body-trails/native-gl-line/green-native.log
+.ημ/diagnostics/body-trails/native-gl-line/green-receipt-append.log
+.ημ/diagnostics/body-trails/native-gl-line/green-static.json
+.ημ/diagnostics/body-trails/native-gl-line/green-verdict.md
+src/infra/render/scene/setup.clj

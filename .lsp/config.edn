@@ -15,7 +15,9 @@
 ;;   - `test/`. All 33 test findings were macro output, and ZERO hand-written
 ;;     test vars were flagged — so the macro-scoped exclusion below is strictly
 ;;     better than a path exclusion, and keeps future dead test code visible.
-{:linters
+{;; Keep the default :dev/:test paths and statically analyze native tests too.
+ :source-aliases #{:dev :test :native-render-test}
+ :linters
  {:clojure-lsp/unused-public-var
   {;; VERIFIED 2026-07-25, and it does NOT work: `:exclude-when-defined-by
    ;; #{domain.ecs.dsl/defcomponent domain.ecs.dsl/defevent}` has no effect here.

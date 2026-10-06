@@ -1,0 +1,19 @@
+{
+  "source": "923fd6d6078ce68ac85c02ae725e032a7366f55b",
+  "command": [
+    "clojure",
+    "-M:test",
+    "-n",
+    "infra.render.trail-test",
+    "-n",
+    "infra.render.mesh-test",
+    "-n",
+    "infra.render.shader-test",
+    "-n",
+    "infra.render.passes-test"
+  ],
+  "JAVA_OPTS": "-Xms128m -Xmx1g",
+  "started_unix": 1791320070.5589905,
+  "production_diff": "diff --git a/src/infra/render/scene/setup.clj b/src/infra/render/scene/setup.clj\nindex d98ce10..9b6c963 100644\n--- a/src/infra/render/scene/setup.clj\n+++ b/src/infra/render/scene/setup.clj\n@@ -125,7 +125,8 @@\n     (passes/bind-uniforms! line-program {:projection proj :view view})\n     (passes/set-blend! :alpha)\n     (passes/set-depth-write! false)\n-    (GL11/glLineWidth 1.5)\n+    ;; Forward-compatible core contexts reject line widths greater than one.\n+    (GL11/glLineWidth 1.0)\n     (let [lm (rmesh/upload-line-mesh (rmesh/make-line-mesh lines))]\n       (GL30/glBindVertexArray (:vao lm))\n       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))\n",
+  "display_policy": "native test uses new xvfb-run -a display; no active game access"
+}

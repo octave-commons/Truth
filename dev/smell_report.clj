@@ -74,7 +74,9 @@
   (test-namespace? ns-sym))
 
 (defn- project-file? [f]
-  (and f (or (str/starts-with? f "src/") (str/starts-with? f "test/"))))
+  (and f (or (str/starts-with? f "src/")
+             (str/starts-with? f "test/")
+             (str/starts-with? f "test-native/"))))
 
 (defn- public-defn? [d]
   (and (#{'clojure.core/defn 'clojure.core/defmacro} (:defined-by d))

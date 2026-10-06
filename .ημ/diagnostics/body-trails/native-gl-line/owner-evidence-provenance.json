@@ -1,0 +1,12 @@
+[
+  {
+    "source": "/home/err/spaces/foresight/.worktrees/truth-focus-input/.\u03b7\u03bc/diagnostics/focus-input/native-400ba3a/gl-debug-messages-2.edn",
+    "copy": ".\u03b7\u03bc/diagnostics/body-trails/native-gl-line/owner-gl-debug-messages-2.edn",
+    "sha256": "9747603156c2b73bf5f8128ed6a9177ae76129867366ea61ce799c498580bb1a"
+  },
+  {
+    "source": "/home/err/spaces/foresight/.worktrees/truth-focus-input/.\u03b7\u03bc/diagnostics/focus-input/native-400ba3a/gl-debug-restored.edn",
+    "copy": ".\u03b7\u03bc/diagnostics/body-trails/native-gl-line/owner-gl-debug-restored.edn",
+    "sha256": "bd847f80a140ed99d3fcdc89ea31cf236ccc694423ddb351c1715f664e2e2c05"
+  }
+]

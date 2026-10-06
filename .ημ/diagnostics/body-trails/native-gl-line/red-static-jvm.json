@@ -1,0 +1,27 @@
+[
+  {
+    "command": [
+      "clojure",
+      "-M:cljfmt",
+      "check",
+      "test-native/infra/render/line_pass_test.clj",
+      "dev/smell_report.clj"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 1,
+    "elapsed_seconds": 8.08571743965149,
+    "output": "test-native/infra/render/line_pass_test.clj has incorrect formatting\n--- a/test-native/infra/render/line_pass_test.clj\n+++ b/test-native/infra/render/line_pass_test.clj\n@@ -52,17 +52,17 @@\n     (fn []\n       (testing \"the test uses the same forward-compatible core context as the game\"\n         (is (pos? (bit-and GL30/GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT\n-                          (GL11/glGetInteger GL30/GL_CONTEXT_FLAGS))))\n+                           (GL11/glGetInteger GL30/GL_CONTEXT_FLAGS))))\n         (is (pos? (bit-and GL32/GL_CONTEXT_CORE_PROFILE_BIT\n-                          (GL11/glGetInteger GL32/GL_CONTEXT_PROFILE_MASK)))))\n+                           (GL11/glGetInteger GL32/GL_CONTEXT_PROFILE_MASK)))))\n       (let [program (shader/compile-program shader/line-program)\n             vertices [{:position [-0.75 0.0 0.0] :color [1.0 0.5 0.25]}\n                       {:position [0.75 0.0 0.0] :color [1.0 0.5 0.25]}]]\n         (try\n           (is (= GL11/GL_NO_ERROR (GL11/glGetError)) \"context and shader setup\")\n           (doseq [[label line] [[\"legacy default opacity\" vertices]\n-                               [\"fading trail opacity\" (mapv #(assoc %1 :alpha %2)\n-                                                            vertices [0.2 0.8])]]]\n+                                [\"fading trail opacity\" (mapv #(assoc %1 :alpha %2)\n+                                                              vertices [0.2 0.8])]]]\n             (testing label\n               (draw-line! program line)\n               (is (= GL11/GL_NO_ERROR (GL11/glGetError))\ndev/smell_report.clj has incorrect formatting\n--- a/dev/smell_report.clj\n+++ b/dev/smell_report.clj\n@@ -197,18 +197,18 @@\n           (filter #(>= (:loc %) (get-in thresholds [:function-loc :warn])))\n           (sort-by :loc >))\n \n-      :param-bloat\n-      (->> defs\n-           (filter #(#{'clojure.core/defn 'clojure.core/defmacro} (:defined-by %)))\n-           (remove dsl-macro?)\n-           (map (fn [d] (assoc d :arity (arity d))))\n-           (filter #(>= (:arity %) (get-in thresholds [:params :warn])))\n-           (sort-by :arity >))\n+     :param-bloat\n+     (->> defs\n+          (filter #(#{'clojure.core/defn 'clojure.core/defmacro} (:defined-by %)))\n+          (remove dsl-macro?)\n+          (map (fn [d] (assoc d :arity (arity d))))\n+          (filter #(>= (:arity %) (get-in thresholds [:params :warn])))\n+          (sort-by :arity >))\n \n-      :missing-docstrings\n-      (->> defs (filter public-defn?) (filter #(str/blank? (str (:doc %))))\n-           (filter #(not (vocabulary-namespace? (:ns %))))\n-           (sort-by (juxt :filename :row)))\n+     :missing-docstrings\n+     (->> defs (filter public-defn?) (filter #(str/blank? (str (:doc %))))\n+          (filter #(not (vocabulary-namespace? (:ns %))))\n+          (sort-by (juxt :filename :row)))\n \n      :high-fan-out\n      (->> namespace-usages\n2 file(s) formatted incorrectly\n"
+  },
+  {
+    "command": [
+      "clojure",
+      "-Sdeps",
+      "{:aliases {:native-style {:extra-deps {io.github.noahtheduke/splint {:mvn/version \"1.24.0\"}} :main-opts [\"-m\" \"noahtheduke.splint\" \"test-native\" \"dev/smell_report.clj\"]}}}",
+      "-M:native-style"
+    ],
+    "JAVA_OPTS": "-Xms128m -Xmx1g",
+    "exit_code": 1,
+    "elapsed_seconds": 12.817890405654907,
+    "output": "dev/smell_report.clj:16:1 [naming/single-segment-namespace] - smell-report is a single segment. Consider adding an additional segment.\n(ns smell-report (:require [clojure.edn :as edn] [clojure.string :as str]))\n\nLinting took 402ms, checked 2 files, 1 style warnings\n"
+  }
+]

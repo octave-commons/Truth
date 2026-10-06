@@ -1,0 +1,20 @@
+
+Running tests in #{"test-native"}
+
+Testing infra.render.line-pass-test
+Compiling line shaders...
+
+FAIL in (production-line-pass-draws-without-native-errors) (line_pass_test.clj:68)
+legacy default opacity
+the real line pass must not generate a native GL error
+expected: (= GL11/GL_NO_ERROR (GL11/glGetError))
+  actual: (not (= 0 1281))
+
+FAIL in (production-line-pass-draws-without-native-errors) (line_pass_test.clj:68)
+fading trail opacity
+the real line pass must not generate a native GL error
+expected: (= GL11/GL_NO_ERROR (GL11/glGetError))
+  actual: (not (= 0 1281))
+
+Ran 1 tests containing 9 assertions.
+2 failures, 0 errors.

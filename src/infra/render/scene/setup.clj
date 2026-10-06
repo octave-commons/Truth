@@ -125,7 +125,8 @@
     (passes/bind-uniforms! line-program {:projection proj :view view})
     (passes/set-blend! :alpha)
     (passes/set-depth-write! false)
-    (GL11/glLineWidth 1.5)
+    ;; Forward-compatible core contexts reject line widths greater than one.
+    (GL11/glLineWidth 1.0)
     (let [lm (rmesh/upload-line-mesh (rmesh/make-line-mesh lines))]
       (GL30/glBindVertexArray (:vao lm))
       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))

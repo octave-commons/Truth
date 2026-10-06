@@ -1,0 +1,14 @@
+{
+  "command": [
+    "xvfb-run",
+    "-a",
+    "clojure",
+    "-J-Xmx1g",
+    "-M:test:native-render-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-motion-trails",
+  "source": "295031485bc5ced52850cf95bddf21394d9493ff",
+  "started_unix": 1791319548.452492,
+  "display_policy": "xvfb-run -a owns a new private display; does not use :2/7895 or suspended :1/7894",
+  "production_change": false
+}
