@@ -393,3 +393,47 @@
               (str "planet at " (/ r au) " AU should be BOUND to the star's "
                    "current state (E=" energy "); a stale anchor births it "
                    "already unbound")))))))
+
+(deftest planet-relative-spawn-is-already-in-the-current-frame
+  (testing "reanchoring onto a recentered parent must not subtract the frame shift again"
+    (let [[world host] (build-disk-world {})
+          requests (mapv second (:spawns (pf/planet-seeds world host)))
+          existing (set (ecs/entities-with world c/matter-state))
+          frame-offset [(* 10.0 au) (* -5.0 au) (* 2.0 au)]
+          current-position [(* 1000.0 au) (* 20.0 au) 0.0]
+          current-velocity [3000.0 -1500.0 50.0]]
+      (is (seq requests) "the real planet seeder produces the requests")
+      (doseq [request requests]
+        (let [moved (-> world
+                        (ecs/put-component host c/position current-position)
+                        (ecs/put-component host c/velocity current-velocity)
+                        (ecs/put-component host c/spawn-request-planet [request])
+                        (assoc :genesis/frame-offset frame-offset))
+              result (genesis/materialize-lifecycle moved)
+              children (remove existing (ecs/entities-with result c/matter-state))
+              child (first children)
+              relative-position (sp/v- (ecs/get-component result child c/position) current-position)
+              relative-velocity (sp/v- (ecs/get-component result child c/velocity) current-velocity)]
+          (is (= 1 (count children)))
+          (is (< (sp/dist (:rel-position request) relative-position)
+                 (* 1.0e-10 (sp/len (:rel-position request))))
+              "the current parent already carries the frame shift")
+          (is (< (sp/dist (:rel-velocity request) relative-velocity) 1.0e-8))
+          (is (nil? (ecs/get-component result host c/spawn-request-planet)))
+          (is (= result (genesis/materialize-lifecycle result))))))))
+
+(deftest absolute-spawn-is-shifted-into-the-current-frame-once
+  (testing "requests without a parent retain the absolute-spawn frame contract"
+    (let [[world host] (build-disk-world {})
+          request (-> (pf/planet-seeds world host) :spawns first second
+                       (dissoc :spawn-parent :rel-position :rel-velocity))
+          existing (set (ecs/entities-with world c/matter-state))
+          frame-offset [(* 10.0 au) (* -5.0 au) (* 2.0 au)]
+          queued (-> world
+                     (ecs/put-component host c/spawn-request-planet [request])
+                     (assoc :genesis/frame-offset frame-offset))
+          result (genesis/materialize-lifecycle queued)
+          child (first (remove existing (ecs/entities-with result c/matter-state)))]
+      (is (= (sp/v- (:position request) frame-offset) (ecs/get-component result child c/position)))
+      (is (= (:velocity request) (ecs/get-component result child c/velocity)))
+      (is (= result (genesis/materialize-lifecycle result))))))

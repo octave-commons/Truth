@@ -5,6 +5,7 @@
    [domain.stellar.disc-evolution :as disc-evolution]
    [domain.stellar.seeder :as seeder]
    [domain.stellar.structure :as structure]
+   [domain.genesis :as genesis]
    [domain.planet-formation :as pf]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
@@ -244,6 +245,39 @@
       (is (< (abs (- r (* 0.5 1.5e12))) (* 0.05 1.5e12))
           "spawn radius ≈ 0.5× disk radius (10 AU disk → ~5 AU)")
       (is (< r (* 10.0 law/au))))))
+
+(deftest disk-fragments-follow-the-current-parent-through-materialization
+  (testing "GI and binary births retain their planned orbit after parent motion and recenter"
+    (doseq [[disk-mass expected-state] [[(* 0.8 law/solar-mass) :gas-giant]
+                                        [(* 1.2 law/solar-mass) :protostar]]
+            frame-offset [[0.0 0.0 0.0] [(* 10.0 law/au) (* -5.0 law/au) 0.0]]]
+      (let [[world host] (fragmenting-ws disk-mass (* 10.0 law/au) {})
+            request (first (ecs/get-component world host c/spawn-request-disk))
+            intended-position (sp/v- (:position request) (ecs/get-component world host c/position))
+            intended-velocity (sp/v- (:velocity request) (ecs/get-component world host c/velocity))
+            ;; The integrator has already advanced and recentered this parent.
+            current-position [(* 1000.0 law/au) (* 20.0 law/au) 0.0]
+            current-velocity [3000.0 -1500.0 50.0]
+            moved (-> world
+                      (ecs/put-component host c/position current-position)
+                      (ecs/put-component host c/velocity current-velocity)
+                      (assoc :genesis/frame-offset frame-offset))
+            result (genesis/materialize-lifecycle moved)
+            children (remove #{host} (ecs/entities-with result c/matter-state))
+            child (first children)
+            actual-position (sp/v- (ecs/get-component result child c/position) current-position)
+            actual-velocity (sp/v- (ecs/get-component result child c/velocity) current-velocity)]
+        (is (= expected-state (:matter-state request)))
+        (is (= 1 (count children)))
+        (is (< (sp/dist intended-position actual-position) (* 1.0e-10 (sp/len intended-position)))
+            (str expected-state " birth preserves the planned parent-relative position"))
+        (is (< (sp/dist intended-velocity actual-velocity) 1.0e-8)
+            (str expected-state " birth inherits the current parent velocity"))
+        (is (<= (sp/len actual-position) (* 100.0 law/au))
+            "the materialized birth, not only its stale request, satisfies the 100-AU gate")
+        (is (nil? (ecs/get-component result host c/spawn-request-disk)))
+        (is (= result (genesis/materialize-lifecycle result))
+            "a consumed request neither spawns nor recenters again")))))
 
 ;; --- formation-placement-v2: disk-scale gate + Hill-stable clamp -------------
 
