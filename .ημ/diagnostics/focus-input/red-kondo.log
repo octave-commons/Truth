@@ -1,0 +1,6 @@
+test/infra/render/input_test.clj:124:16: warning: Shadowed var: clojure.core/key
+test/infra/render/input_test.clj:136:15: warning: Shadowed var: clojure.core/keys
+test/infra/render/input_test.clj:170:14: warning: Shadowed var: clojure.core/key
+test/infra/render/input_test.clj:182:13: warning: Shadowed var: clojure.core/keys
+test/infra/render/input_test.clj:213:11: warning: Shadowed var: clojure.core/keys
+linting took 34ms, errors: 0, warnings: 5

@@ -6,12 +6,14 @@
    [domain.ecs.components :as c]
    [domain.ecs.core :as ecs]
    [domain.player :as player]
+   [infra.dev.window.loop :as loop]
    [infra.render.hud :as hud]
    [infra.render.input :as rinput]
    [law.narrowing :as law-narrowing]
    [shape.spatial :as sp])
   (:import
-   (org.lwjgl.glfw GLFW)))
+   (java.util.concurrent ConcurrentLinkedQueue)
+   (org.lwjgl.glfw GLFW GLFWKeyCallback)))
 
 ;; --- Fixtures ------------------------------------------------------------------
 
@@ -114,6 +116,113 @@
       (is (== (* 0.1 law-narrowing/world-focus-radius) rinput/focus-nudge-step)
           "the step is scaled to the binding-overlap radius (~0.1 AU), not 3e15 m")
       (is (= world @world-atom) "the world is untouched by a nudge"))))
+
+(deftest callback-nudges-focus-once-per-physical-arrow-press
+  (testing "GLFW repeats and release retain the one-press offset; the normal
+            queued focus-follow path applies it without moving the Spark"
+    (let [step (* 0.1 law-narrowing/world-focus-radius)]
+      (doseq [[glfw-key delta] [[GLFW/GLFW_KEY_LEFT [(- step) 0.0 0.0]]
+                                [GLFW/GLFW_KEY_RIGHT [step 0.0 0.0]]
+                                [GLFW/GLFW_KEY_UP [0.0 0.0 (- step)]]
+                                [GLFW/GLFW_KEY_DOWN [0.0 0.0 step]]]]
+        (let [offset [100.0 200.0 -300.0]
+              expected-offset (sp/v+ offset delta)
+              [world obs-eid] (player/spawn-observer (ecs/empty-world) [10.0 20.0 30.0])
+              world (ecs/put-component world obs-eid c/velocity [1.0 2.0 3.0])
+              published (atom world)
+              queue (ConcurrentLinkedQueue.)
+              intents (loop/->IntentAtom queue published)
+              config (atom {:mode :manual :focus-offset offset})
+              held-keys (atom {GLFW/GLFW_KEY_W true})
+              ^GLFWKeyCallback callback
+              (@#'infra.render.input/key-callback 0 (atom {}) held-keys config intents)]
+          (try
+            (.invoke callback 0 glfw-key 0 GLFW/GLFW_PRESS 0)
+            (is (= expected-offset (:focus-offset @config)))
+            (doseq [action [GLFW/GLFW_REPEAT GLFW/GLFW_REPEAT GLFW/GLFW_RELEASE]]
+              (.invoke callback 0 glfw-key 0 action 0)
+              (is (= (if (= action GLFW/GLFW_RELEASE)
+                       {GLFW/GLFW_KEY_W true}
+                       {GLFW/GLFW_KEY_W true glfw-key true})
+                     @held-keys)
+                  "repeat preserves held keys; release removes only its own key"))
+            (is (= expected-offset (:focus-offset @config))
+                "one physical press nudges 0.1 AU regardless of repeat count")
+            (is (= world @published) "the callback did not publish a world mutation")
+            (swap! intents player/focus-follow (:focus-offset @config))
+            (is (= world @published) "focus-follow also waits for the sim drain")
+            (let [drained (@#'infra.dev.window.loop/drain-intents @published queue)
+                  expected-focus (sp/v+ [10.0 20.0 30.0] expected-offset)]
+              (is (= expected-focus (:focus-position (player/get-observer drained))))
+              (is (= (player/update-observer world assoc :focus-position expected-focus)
+                     drained)
+                  "only attention changed; position, velocity, and other state survive"))
+            (.invoke callback 0 glfw-key 0 GLFW/GLFW_PRESS 0)
+            (.invoke callback 0 glfw-key 0 GLFW/GLFW_RELEASE 0)
+            (is (= (sp/v+ expected-offset delta) (:focus-offset @config))
+                "a second physical press produces exactly one additional nudge")
+            (finally
+              (.free callback))))))))
+
+(deftest callback-adjusts-focus-size-once-through-the-intent-queue
+  (testing "comma/period press-repeat-release queues one radius/intensity
+            adjustment, applied to the latest published world on drain"
+    (doseq [[glfw-key intensity expected-radius expected-intensity]
+            [[GLFW/GLFW_KEY_COMMA 0.5 4000.0 1.0]
+             [GLFW/GLFW_KEY_PERIOD 1.0 16000.0 0.5]]]
+      (let [[world obs-eid] (player/spawn-observer (ecs/empty-world) [10.0 20.0 30.0])
+            world (-> world
+                      (ecs/put-component obs-eid c/velocity [1.0 2.0 3.0])
+                      (player/update-observer assoc :focus-radius 8000.0
+                                              :focus-intensity intensity))
+            published (atom world)
+            queue (ConcurrentLinkedQueue.)
+            intents (loop/->IntentAtom queue published)
+            config (atom {:mode :manual})
+            held-keys (atom {})
+            ^GLFWKeyCallback callback
+            (@#'infra.render.input/key-callback 0 (atom {}) held-keys config intents)]
+        (try
+          (.invoke callback 0 glfw-key 0 GLFW/GLFW_PRESS 0)
+          (is (= {glfw-key true} @held-keys))
+          (doseq [action [GLFW/GLFW_REPEAT GLFW/GLFW_REPEAT GLFW/GLFW_RELEASE]]
+            (.invoke callback 0 glfw-key 0 action 0))
+          (is (= {} @held-keys) "the released focus key is no longer held")
+          (is (= 1 (.size queue)) "one press contributes exactly one focus intent")
+          (is (= world @published) "render-side callback never writes the live world")
+          (swap! published assoc :test/concurrent-state :preserved)
+          (let [drained (@#'infra.dev.window.loop/drain-intents @published queue)
+                obs (player/get-observer drained)]
+            (is (= expected-radius (:focus-radius obs)))
+            (is (= expected-intensity (:focus-intensity obs)))
+            (is (= (player/update-observer @published assoc
+                                           :focus-radius expected-radius
+                                           :focus-intensity expected-intensity)
+                   drained)
+                "queued input preserves fresh published state and Spark momentum")
+            (is (.isEmpty queue)))
+          (finally
+            (.free callback)))))))
+
+(deftest callback-keeps-held-flight-keys-independent-of-discrete-focus-actions
+  (testing "held movement remains active through repeats and clears on release"
+    (let [published (atom (first (player/spawn-observer (ecs/empty-world) [0.0 0.0 0.0])))
+          queue (ConcurrentLinkedQueue.)
+          intents (loop/->IntentAtom queue published)
+          config (atom {:mode :manual})
+          held-keys (atom {GLFW/GLFW_KEY_LEFT_SHIFT true})
+          ^GLFWKeyCallback callback
+          (@#'infra.render.input/key-callback 0 (atom {}) held-keys config intents)]
+      (try
+        (doseq [action [GLFW/GLFW_PRESS GLFW/GLFW_REPEAT GLFW/GLFW_REPEAT]]
+          (.invoke callback 0 GLFW/GLFW_KEY_W 0 action 0)
+          (is (= {GLFW/GLFW_KEY_LEFT_SHIFT true GLFW/GLFW_KEY_W true} @held-keys)))
+        (.invoke callback 0 GLFW/GLFW_KEY_W 0 GLFW/GLFW_RELEASE 0)
+        (is (= {GLFW/GLFW_KEY_LEFT_SHIFT true} @held-keys))
+        (is (= {:mode :manual} @config) "movement events never nudge attention")
+        (is (.isEmpty queue) "held movement stays with the existing frame dispatcher")
+        (finally
+          (.free callback))))))
 
 ;; --- HUD legend --------------------------------------------------------------------
 
