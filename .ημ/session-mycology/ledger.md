@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: none
   note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.
+- ts: 2026-10-06T22:51:53.914533Z
+  session: /home/err/spaces/foresight/.worktrees/truth-kepler-cost
+  task: Freeze a numerical oracle and performance baseline before same-iteration Kepler reuse
+  p-efficiency: 0.82
+  p-friction: 0.35
+  p-skill-candidate: 0.45
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,2026-10-06T22:51:53.914533Z
+  note: Preserve an existing numerical defect as an explicit outcome when the admitted slice promises identity. Verify real compact dominance so fallback cannot masquerade as solver coverage. Strict EDN readback correctly rejected a metrics record; encode only its named type plus every field, keep the failed attempt, and do not relax the physics oracle. Named isolated system costs and mature-orbit work do not establish initial-nebula critical path or native FPS. No spore created or promoted.

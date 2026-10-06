@@ -1,0 +1,1 @@
+{:actual-class "criterium.core.OutlierCount", :record? true, :printed "{:low-severe 0, :low-mild 1, :high-mild 2, :high-severe 3}\n", :roundtrip-is-record? false, :original-equal-roundtrip? false, :explicit {:record-type "criterium.core.OutlierCount", :fields {:low-severe 0, :low-mild 1, :high-mild 2, :high-severe 3}}, :all-fields-preserved? true, :explicit-roundtrip-equal? true}

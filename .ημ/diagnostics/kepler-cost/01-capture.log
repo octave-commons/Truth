@@ -1,0 +1,204 @@
+{:oracle "test/fixtures/kepler-reuse-b402939.edn",
+ :source
+ {:commit "b402939931575e377ae4409d9cd4061dff11df06",
+  :kepler-sha256
+  "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1"},
+ :public-cases 28,
+ :declared-failures
+ [{:case :ellipse,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4626998257160447590],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 0],
+     :alpha [:float64 4603219251127931372],
+     :chi [:float64 -5207097917962786438],
+     :F [:float64 4596373779694328218],
+     :iterations 128}}}
+  {:case :eccentric,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4631501856787818086],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 0],
+     :alpha [:float64 4587366580439587232],
+     :chi [:float64 -5227418159481482112],
+     :F [:float64 4591870180066957722],
+     :iterations 128}}}
+  {:case :parabolic,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4602678819172646912],
+     :dt [:float64 -4641950207923317637],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 0],
+     :alpha [:float64 0],
+     :chi [:float64 -4616189618054758400],
+     :F [:float64 -4615502708633588575],
+     :iterations 128}}}
+  {:case :near-parabolic-bound,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4602678819172646912],
+     :dt [:float64 -4641950207923317637],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 0],
+     :alpha [:float64 4496133457583276032],
+     :chi [:float64 -5331294584708910979],
+     :F [:float64 4579306007921886430],
+     :iterations 128}}}
+  {:case :near-parabolic-unbound,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4602678819172646912],
+     :dt [:float64 -4641950207923317637],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 0],
+     :alpha [:float64 -4727238579305054208],
+     :chi [:float64 0],
+     :F [:float64 4579306007921886430],
+     :iterations 128}}}
+  {:case :hyperbolic,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4626998257160447590],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 0],
+     :alpha [:float64 -4615108754144189480],
+     :chi [:float64 0],
+     :F [:float64 4596373779694328218],
+     :iterations 128}}}
+  {:case :hyperbolic-infall,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4631501856787818086],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 -4625196817309499392],
+     :alpha [:float64 -4614827279167478824],
+     :chi [:float64 0],
+     :F [:float64 4591870180066957722],
+     :iterations 128}}}
+  {:case :rotated-ellipse,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4631501856787818086],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 4363988038922010624],
+     :alpha [:float64 4603219251127931372],
+     :chi [:float64 -5211601517590156934],
+     :F [:float64 4591870180066957722],
+     :iterations 128}}}
+  {:case :radial-outward,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4631501856787818086],
+     :r0 [:float64 4607182418800017408],
+     :rv [:float64 4596373779694328218],
+     :alpha [:float64 4602858963157741732],
+     :chi [:float64 -5212177978342460358],
+     :F [:float64 4591870180066957722],
+     :iterations 128}}}
+  {:case :solar-scale,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4908016516649412148],
+     :dt [:float64 -4542698260854210560],
+     :r0 [:float64 4774214028412452864],
+     :rv [:float64 0],
+     :alpha [:float64 4439817148882042568],
+     :chi [:float64 -5135795278450131954],
+     :F [:float64 4831317884913575162],
+     :iterations 128}}}
+  {:case :small-scale,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4517329193108106637],
+     :dt [:float64 -4631501856787818086],
+     :r0 [:float64 4576918229304087675],
+     :rv [:float64 0],
+     :alpha [:float64 4633078116657397760],
+     :chi [:float64 -5226726406578718009],
+     :F [:float64 4547007122018943789],
+     :iterations 128}}}
+  {:case :negative-bracket-reproduction,
+   :direction -1.0,
+   :step 1,
+   :error
+   {:message
+    "propagate: universal-anomaly Newton iteration did not converge",
+    :data
+    {:mu [:float64 4607182418800017408],
+     :dt [:float64 -4616189618054758400],
+     :r0 [:float64 4604480259023595110],
+     :rv [:float64 0],
+     :alpha [:float64 4607182418800017404],
+     :chi [:float64 -5192650370358181892],
+     :F [:float64 4607182418800017408],
+     :iterations 128}}}],
+ :compact-paths
+ [{:path :map,
+   :scenario :stationary,
+   :all-gates-pass? true,
+   :first-offset [0.0 0.0 0.0]}
+  {:path :map,
+   :scenario :moving-recentered,
+   :all-gates-pass? true,
+   :first-offset [2.0000000000000002E12 -3.0E12 9.999999999999999E11]}
+  {:path :soa,
+   :scenario :stationary,
+   :all-gates-pass? true,
+   :first-offset [0.0 0.0 0.0]}
+  {:path :soa,
+   :scenario :moving-recentered,
+   :all-gates-pass? true,
+   :first-offset [2.0000000000000002E12 -3.0E12 9.999999999999999E11]}]}

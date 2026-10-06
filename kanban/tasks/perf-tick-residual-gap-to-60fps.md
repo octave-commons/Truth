@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["perf", "phase0", "spec"]
-write-id: "1784782942790-0.k5ywquou0mij92y72g"
+write-id: "1791327076923-0.2mdl8o0h9x80kc9lj15"
 source: "kanban/tasks/perf-tick-residual-gap-to-60fps.md"
 title: "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000"
 priority: "P1"
@@ -39,6 +39,7 @@ contexts/dates, so this card must **not** assume one.
   (see `persistent-neighbor-cache.md` §4 pattern).
 
 ---
+
 Triage 2026-07-10: sized 3 but first slice is profiling, not a blind fix. Moved to breakdown to capture current benchmark baseline and scope the single largest hot segment.
 
 Triage 2026-07-10: already scoped 3pt with clear first slice (profile, identify hot segment, scope fix). Moved to ready.
@@ -56,4 +57,9 @@ First slice complete + reviewed 2026-07-22. ATTRIBUTION @500 (probe-grounded): t
 Next slice materialized as child card perf-big5-shared-neighbor-pass (5pt): owner approved the staleness-budgeted shared pass + windowed-equivalence contract 2026-07-22. This parent stays in_progress until the child lands and the @1000 delta is recorded.
 
 Child slice done 2026-07-22 (perf-big5-shared-neighbor-pass): big-3 neighbor systems 16.3 -> 8.8ms @500; tick-world @1000 35.8 -> 33.4ms with bounded-drift windowed-equivalence (owner-approved). Remaining gap to 16.6ms budget: ~2x @1000, now dominated by the remaining big-5 CPU work (hydro-em 5.5ms, gravity 4.9ms, integrator 3.2ms isolated) under saturation — next candidates: SoA-ify the hydro-em pair loop, gravity walk sharing. Keeping this card in_progress as the perf umbrella; the profiling breakdown + both completed slices are recorded above.
+
+2026-10-06 root and independent math/scope review admit baseline preparation for a3point no-behavior-change reuse of z/c2/c3 within each unconverged Kepler Newton iteration. PROCESS hygiene exemption applies; existing InProgress owner/design/solver semantics retained. Before productionedit, commit source-pinned500/1000 current segment/tick benchmark and16.6ms budget result, real public propagate branch batches plus compact map/SoA fold baseline, raw-bit trajectories and declared exception outcomes. Numerical characterization is expected GREEN before; RED here is explicitly observed performance/budget evidence, never invented wrongphysics or implementation-mirroring callcounts. Retain arithmetic order, conditional derivative, bracket/initialguess/convergence/caps/errors/finalfg state. A separate pre-existing negative-dt bracket defect is being reproduced and must remainunchanged in this performance slice. Fullbefore/after improvement with dispersion/allocation and exact component/trajectory equality required; existing native software-rendering cost/FPS and umbrella completion remainopen. Root owns baselinecheckpoint beforeminimalGREEN and allfullgates; this comment neither approves unmeasuredbenefit nor enlarges physics scope.
+
+2026-10-06 baseline-only checkpoint on unchanged production b402939 (solver SHA3707256a). Guarded raw-bit oracle captured once: 14 public cases x two time directions, exact declared exceptions and +/-zero edges, four real map/SoA compact scenarios x12 folds with actual dominance-gate pass and COM recenter. Focused new plus existing numerical regressions pass21tests596assertions0failures/errors. Twelve negative-time matrix outcomes preserve the separately reproduced pre-existing bracket defect; no physics fix in this slice. Selected existing phase0 closures:500 mean26.550ms (interval20.469-34.708),1000 mean53.465ms (42.374-69.726), still3.22x16.6ms budget. All45 named systems sampled5times per size; largest1000 isolated means hydro-em9.131ms,structure7.816,neighbor-cache7.641,gravity7.579,integrator6.833; isolated sum is not parallel critical path. Public16-step batch means:elliptic116.421us,near-parabolic41.966us,hyperbolic45.088us; compactSoA stationary435.816us,moving427.851us. Initial gas controls do not exercise mature Kepler; no FPS or optimization win claimed. First cost attempt failed strict EDN serialization of Criterium OutlierCount; original script/error preserved, metrics unavailable, explicit known-type/all-fields encoding independently reviewed, only failed cost and unrunphase0 retried successfully. Both owned native JVMs had zero CPU during successful measurements; other load and broad intervals remain visible. Final touched kondo0/0; no full strict/style/full-suite claim. Exact commands, raw samples, load, hashes and limitations: .ημ/diagnostics/kepler-cost/RESULT.md and CLOSED-FILES.txt. Root owns baseline commit before any same-iteration Stumpff reuse source change. Card remains in_progress; native software-rendering and umbrella budget remain open.
+
 ---

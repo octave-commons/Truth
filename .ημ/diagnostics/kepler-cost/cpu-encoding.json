@@ -1,0 +1,98 @@
+{
+  "encoding": "gzip",
+  "compression_level": 9,
+  "mtime": 0,
+  "originals": "Retained locally untracked; excluded from STAGING.txt/CLOSED-FILES.txt. Stored gzip decompression reproduces every original byte.",
+  "files": [
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/01-capture-cpu-after.json",
+      "raw_sha256": "64981e88111c1763371050a30ae94985d34a559b06a1bd093174ee283c0e0cf0",
+      "raw_bytes": 124465,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/01-capture-cpu-after.json.gz",
+      "stored_sha256": "52612d74199466f2c4f88d4b9f6c6748737b7fc9972ca0dcc7b74ef7129e47bb",
+      "stored_bytes": 12268,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/01-capture-cpu-before.json",
+      "raw_sha256": "ed132968c36a45532da6c8f3f7bc6c43912ab8aa4dfa4041c84f0e46e4ef42d3",
+      "raw_bytes": 123297,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/01-capture-cpu-before.json.gz",
+      "stored_sha256": "ae8e423b25d21928f11f089ddd3d8aa474fcae4fe3e7d6312090867d7d50480d",
+      "stored_bytes": 12159,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/02-numerical-tests-cpu-after.json",
+      "raw_sha256": "2fe77e8e81ea439b347b684a196d344d125f2ae9ee89b8b21abfb9ea459d3f63",
+      "raw_bytes": 123926,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/02-numerical-tests-cpu-after.json.gz",
+      "stored_sha256": "bf43fb9bc73819ade34471dcf1f1995a8736f2e75e0fcc2da3b43d59d44c03c7",
+      "stored_bytes": 12203,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/02-numerical-tests-cpu-before.json",
+      "raw_sha256": "c34fcc6fb14fb0cba926cf7af05774e3e5f37bdfda454a9877cdac37466b43bd",
+      "raw_bytes": 124465,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/02-numerical-tests-cpu-before.json.gz",
+      "stored_sha256": "c2f09672f59b1d6261abcc51293db0ffbfaf8d2b0ea54bf3acbab82e54af5cb8",
+      "stored_bytes": 12265,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03-propagation-cost-cpu-after.json",
+      "raw_sha256": "c133a3fa4a82cbf7b1457580f14502b5bcfda827faafce80ea658ba67365c8a9",
+      "raw_bytes": 124737,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03-propagation-cost-cpu-after.json.gz",
+      "stored_sha256": "17fc218c25f1a8a783ab7a268b95c00abeb4741f6d95260892e108c369acaec3",
+      "stored_bytes": 12331,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03-propagation-cost-cpu-before.json",
+      "raw_sha256": "91b3226750aac5832d9ec75e7606de184e6780db8f8b8d8d73c3b2637d70ad14",
+      "raw_bytes": 124057,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03-propagation-cost-cpu-before.json.gz",
+      "stored_sha256": "2decfbc0a46e39902e0ed50c344db382a5c6e8bd5778b043fd153e7cc03005e9",
+      "stored_bytes": 12216,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03b-propagation-cost-cpu-after.json",
+      "raw_sha256": "7f1d1220daa5d26211ae615bd61d6b0417f0bdc8fe9bde50b5366c4d9ee730cf",
+      "raw_bytes": 123335,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03b-propagation-cost-cpu-after.json.gz",
+      "stored_sha256": "b39d23c764d756c4af4705f858d7e40fbf58e829258041c495b7aef495f0b310",
+      "stored_bytes": 12183,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03b-propagation-cost-cpu-before.json",
+      "raw_sha256": "5d6044127a2b6334de3fa6472970744eb07b68c6f0a9b7c306a3686618f27505",
+      "raw_bytes": 124447,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/03b-propagation-cost-cpu-before.json.gz",
+      "stored_sha256": "fcc543458b6710cfdc4a5be4c06da4bcf12be1b24c0418b87e915f0831db30c0",
+      "stored_bytes": 12366,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/04-phase0-cost-cpu-after.json",
+      "raw_sha256": "67307c2dbd018559c8018d1576ceff6e2462cc72b18b7d75e48813e3fcf59842",
+      "raw_bytes": 123782,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/04-phase0-cost-cpu-after.json.gz",
+      "stored_sha256": "efccdebb638eb0525ae26ced04f773dbb48fd42384cec4956dc07cd0099dffe6",
+      "stored_bytes": 12247,
+      "decompression_byte_equal": true
+    },
+    {
+      "raw_path": ".\u03b7\u03bc/diagnostics/kepler-cost/04-phase0-cost-cpu-before.json",
+      "raw_sha256": "861671dcca91eeb33eb3f24e6c4ebbc712f533ea63ba2e7e8c46bd88b71d800c",
+      "raw_bytes": 123336,
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-cost/04-phase0-cost-cpu-before.json.gz",
+      "stored_sha256": "446b888a2c085daa729f1d13f22ef26b3ff7e7258b25482ded3d511d10919642",
+      "stored_bytes": 12185,
+      "decompression_byte_equal": true
+    }
+  ]
+}

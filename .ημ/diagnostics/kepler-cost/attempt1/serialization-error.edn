@@ -1,0 +1,40 @@
+{:clojure.main/message
+ "Execution error (ExceptionInfo) at evidence.kepler/write-new! (kepler.clj:34).\nEvidence does not round-trip as ordinary EDN\n",
+ :clojure.main/triage
+ {:clojure.error/class clojure.lang.ExceptionInfo,
+  :clojure.error/line 34,
+  :clojure.error/cause "Evidence does not round-trip as ordinary EDN",
+  :clojure.error/symbol evidence.kepler/write-new!,
+  :clojure.error/source "kepler.clj",
+  :clojure.error/phase :execution},
+ :clojure.main/trace
+ {:via
+  [{:type clojure.lang.ExceptionInfo,
+    :message "Evidence does not round-trip as ordinary EDN",
+    :data {:path ".ημ/diagnostics/kepler-cost/before-propagation.edn"},
+    :at
+    [evidence.kepler$write_new_BANG_ invokeStatic "kepler.clj" 34]}],
+  :trace
+  [[evidence.kepler$write_new_BANG_ invokeStatic "kepler.clj" 34]
+   [evidence.kepler$write_new_BANG_ invoke "kepler.clj" 29]
+   [evidence.kepler$propagation_cost_BANG_
+    invokeStatic
+    "kepler.clj"
+    122]
+   [evidence.kepler$propagation_cost_BANG_ invoke "kepler.clj" 103]
+   [evidence.kepler$_main invokeStatic "kepler.clj" 154]
+   [evidence.kepler$_main invoke "kepler.clj" 148]
+   [clojure.lang.AFn applyToHelper "AFn.java" 156]
+   [clojure.lang.AFn applyTo "AFn.java" 144]
+   [clojure.lang.Var applyTo "Var.java" 705]
+   [clojure.core$apply invokeStatic "core.clj" 667]
+   [clojure.main$main_opt invokeStatic "main.clj" 514]
+   [clojure.main$main_opt invoke "main.clj" 510]
+   [clojure.main$main invokeStatic "main.clj" 664]
+   [clojure.main$main doInvoke "main.clj" 616]
+   [clojure.lang.RestFn applyTo "RestFn.java" 137]
+   [clojure.lang.Var applyTo "Var.java" 705]
+   [clojure.main main "main.java" 40]],
+  :cause "Evidence does not round-trip as ordinary EDN",
+  :data {:path ".ημ/diagnostics/kepler-cost/before-propagation.edn"}}}
+
