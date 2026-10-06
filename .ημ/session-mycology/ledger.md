@@ -350,3 +350,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
   note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-06T22:15:41.638900988Z
+  session: /home/err/spaces/foresight/.worktrees/truth-gate-endpoints-plan
+  task: Separate earned Gate endpoint provenance from absent reachability and progression laws
+  p-efficiency: 0.9
+  p-friction: 0.2
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: 8e79b9ff-1cd4-4eb9-8a31-80b892fd0c98,5740c2783a5689752c7bed0d45f923081e8c2ce3
+  note: Trace an apparent requirement to original user words versus assistant elaboration before assigning authority. Cross-world identity cannot be a bare local ECS integer; an event reference retains a claim but does not prove its producer. A bounded design can specify evidence roles while leaving clock, cost, operability and nonexistent progression producers visibly unresolved. No spore warranted.
