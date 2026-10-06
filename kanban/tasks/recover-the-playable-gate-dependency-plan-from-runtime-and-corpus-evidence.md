@@ -1,7 +1,7 @@
 ---
 labels: "research, design, playable-loop"
 parent: "embodied-character-voxel-mode"
-write-id: "1791311573000-0.we6rvyn79xdn38p2ezl"
+write-id: "1791322697075-0.fqe0egcaopibb2uwrs"
 title: "Recover the playable Gate dependency plan from runtime and corpus evidence"
 priority: "P1"
 status: "review"
@@ -20,4 +20,8 @@ created_at: "2026-10-06T18:01:00.176Z"
 Dependency-plan note updated after current evidence: the first reproduced boundary is parent-relative spawn materialization. Existing formation-placement-v2 reopened for the 999 AU moving-host birth and 10 AU double-recenter errors; no duplicate physics card. Natural formation/admission and live fly-resolve-sculpt remain unproved after this isolated seam evidence. The canonical Clojure review-gate capability has now been recovered and Truth configuration migrated under hygiene card rheos-clojure-build-gate-config; actual gated transitions await root exact-revision suite/strict execution.
 
 Canonical gated review transition completed on exact source revision a3609f6931951f8e011950ec5eab0a24265e93cd. This card independently executed clojure -M:test: 899 tests, 15635 assertions, 0 failures, 0 errors; then bin/analyze --strict: exit 0, no blocking findings. Move in_progress to review exited 0. Full per-transition log: .ημ/diagnostics/playable-foundation/rheos-review-dependency-plan-a3609f6.log. Plan and evidence-tier matrix are ready for review; the Gate roadmap remains a dependency hypothesis, and native fly-resolve-sculpt plus multi-seed natural formation acceptance remain outstanding on their in_progress cards. No prior gate output was reused. Hosted review and final done policy remain outstanding.
+
+2026-10-06 route audit saved at docs/notes/2026-10-06-playable-gate-route-audit.md. Natural planets and prokaryotic life are observed. Next existing implemented payoff is manual flight, sustained overlap, commitment, voxel rendering and paid sculpt; no native complete sequence yet. Confirmed focus callback dispatches on release/repeat, and completed time-lock acceptance has only a data record with no pacing consumer. Native ecology helpers lack callers; Phase3–6 society/avatar/Gate producers are absent. Existing epic remains unsplit until phase specs; prepare bounded executable policy and causal progression specifications, never fake Gate events or fixture avatars.
+
+2026-10-06 Gate producer evidence is now preserved in docs/notes/2026-10-06-gate-producer-contract-gaps.md, supplementing the existing dependency plan and route audit. Source rechecked at a5453e43a33c8ad674e78790341090899a2adb47. The note distinguishes original user statements, adopted phase/UX direction, assistant-authored graph and energy-budget sketches, and executable consumers. Current source has no actor/civilization/Gate producer, receiver graph, construction or activation law; discovery rewards/text/mood are consumers only. Multiverse panel hardcodes 0 of 6 thresholds and ghost names despite the design requiring real graph entries. Creation versus discovery versus activation lock timing, earned embodiment, capability thresholds and activation cost remain unresolved. Existing Incoming prerequisite owners are explicitly qualified to progression-plan revision 96b19f0; no new task, source edit or board transition. This research card remains Review. Root owns review, commit and publication; no native input or external review request.
 ---
