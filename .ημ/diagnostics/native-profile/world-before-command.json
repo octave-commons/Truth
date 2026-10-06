@@ -1,0 +1,10 @@
+{
+  "command": [
+    "clojure",
+    "-M:demo-client",
+    "(load-file \"/home/err/spaces/foresight/.worktrees/truth-native-profile/.\u03b7\u03bc/diagnostics/native-profile/world-observation.clj\")"
+  ],
+  "start_utc": "2026-10-06T22:10:04.028533+00:00",
+  "end_utc": "2026-10-06T22:10:12.413801+00:00",
+  "exit": 0
+}

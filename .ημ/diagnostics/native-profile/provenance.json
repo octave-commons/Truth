@@ -1,0 +1,20 @@
+{
+  "closed_utc": "2026-10-06T22:17:40.255024+00:00",
+  "worktree": "/home/err/spaces/foresight/.worktrees/truth-native-profile",
+  "branch": "codex/truth-native-profile",
+  "head": "b402939931575e377ae4409d9cd4061dff11df06",
+  "production_composition": "1ad081475364cc3b75db76142204cbf54b5bf60c",
+  "source_diff_empty": true,
+  "source_sha256": {
+    "src/domain/orbital/kepler.clj": "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+    "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+    "src/domain/gravity/barnes_hut/force.clj": "fd197d7e7e5da5c977991bd259b883911a10d2cf433f924c55ca7d352e35e455",
+    "src/infra/dev/window/loop.clj": "f9e860f7398141d0c0d0cf4bd0bd11dba7141f7edd4b4916f8d0051efc62ea0b",
+    "src/infra/render/scene/setup.clj": "a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7",
+    "docs/designs/multi-timescale-integration.md": "c768e6c40bf970a4239bd4f03eefe89d0505b368f4b032db4acad2a7c06ce1b2"
+  },
+  "recording_sha256": "322e929ce070321d01cde170ef10cb5a386859d10349d4e24c372941b771589e",
+  "recording_command_record": "recording-start-command.json",
+  "operator_scope": "root-released single45s observation; no UI, world/config writes, service stop, globalJFR changes or production edits",
+  "other_load": "Two unidentified Java processes overlap; terminated before cwd-only follow-up. No isolation claim."
+}

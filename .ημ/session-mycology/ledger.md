@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: none
   note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.
+- ts: 2026-10-06T22:18:52.839551+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-native-profile
+  task: Observe native hotspots with an explicit secret-safe JFR event allowlist
+  p-efficiency: 0.88
+  p-friction: 0.2
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: 2026-10-06T22:18:52.839551+00:00
+  note: Disable sensitive JFR metadata before recording and audit inventory before payload export; a default recording cannot be made safe by later selective printing. Separate sampled native waiting boundaries from CPU use using safe OS thread counters. Record unexpected background contention instead of inferring isolated timings. A pure performance change needs exact numerical contracts plus measured work reduction, not fabricated behavioral failure. No spore created or promoted.

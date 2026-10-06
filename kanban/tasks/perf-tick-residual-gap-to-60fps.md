@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["perf", "phase0", "spec"]
-write-id: "1784782942790-0.k5ywquou0mij92y72g"
+write-id: "1791325461319-0.mwozke5xwskxksr48fz"
 source: "kanban/tasks/perf-tick-residual-gap-to-60fps.md"
 title: "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000"
 priority: "P1"
@@ -39,6 +39,7 @@ contexts/dates, so this card must **not** assume one.
   (see `persistent-neighbor-cache.md` §4 pattern).
 
 ---
+
 Triage 2026-07-10: sized 3 but first slice is profiling, not a blind fix. Moved to breakdown to capture current benchmark baseline and scope the single largest hot segment.
 
 Triage 2026-07-10: already scoped 3pt with clear first slice (profile, identify hot segment, scope fix). Moved to ready.
@@ -56,4 +57,11 @@ First slice complete + reviewed 2026-07-22. ATTRIBUTION @500 (probe-grounded): t
 Next slice materialized as child card perf-big5-shared-neighbor-pass (5pt): owner approved the staleness-budgeted shared pass + windowed-equivalence contract 2026-07-22. This parent stays in_progress until the child lands and the @1000 delta is recorded.
 
 Child slice done 2026-07-22 (perf-big5-shared-neighbor-pass): big-3 neighbor systems 16.3 -> 8.8ms @500; tick-world @1000 35.8 -> 33.4ms with bounded-drift windowed-equivalence (owner-approved). Remaining gap to 16.6ms budget: ~2x @1000, now dominated by the remaining big-5 CPU work (hydro-em 5.5ms, gravity 4.9ms, integrator 3.2ms isolated) under saturation — next candidates: SoA-ify the hydro-em pair loop, gravity walk sharing. Keeping this card in_progress as the perf umbrella; the profiling breakdown + both completed slices are recorded above.
+
+2026-10-06 root-authorized profiling-first continuation in isolated codex/truth-native-profile at b402939 (production1ad0814). Scope: one45second observational JFR of retained natural native JVM3083624, nREPL7895/display2, after hooks restored and root resource release. Verify process identity/JDK settings; enable only explicit CPU execution/native-method samples, CPU/thread load and bounded GC events; explicitly disable every other known JDK event including environment, properties, arguments/flags and process metadata. Audit recording event inventory before export/publication. Record compact active world and host/thread CPU context without secrets. No source edits, UI input, service stops, force or pacing changes, global JFR settings, installs, or FPS improvement claim. Native sampling complements but does not replace original500/1000 segment-ms acceptance. Deliver current hotspots plus one evidence-grounded <=5point follow-up; implementation requires separate approved scope.
+
+2026-10-06 observational native profile completed once, production composition1ad0814/evidence baseb402939, retained natural JVM3083624. JFR22:10:14-22:10:59UTC:1858 Java execution samples,1391 native-method samples; all183 registered event types explicit,6 payload types enabled, no custom types, all secret-bearing metadata events zero. Event inventory was audited before selected-only export; rawJFR SHA322e929ce070321d01cde170ef10cb5a386859d10349d4e24c372941b771589e. Surrounding47.868s OS counters: target604.15CPU-s,22llvmpipe workers490.82CPU-s(81.24%). Render native samples642of648 sit at glfwSwapBuffers; waiting samples are not CPU attribution. Java inclusive namespace unions: Kepler593/1858(31.92%), Barnes-Hut294(15.82%), spatial index187(10.06%), overlapping not segment ms. GC71pauses totals2.882s. Scene858alive/36planets/3stars/40histories, manual nilthrust, active natural life-emergence, no service/UI errors. Load confound: two unidentified Java processes97.35+74.72CPU-s overlap; whole-machine mean98.55%. Root encoders had reaped; no isolated/FPS claim. Full evidence .ημ/diagnostics/native-profile/RESULT.md and forthcoming CLOSED-FILES/SHA256SUMS. Proposed <=3pt follow-up in KEPLER-CANDIDATE.md: share same-iteration z/c2/c3 between universal-anomaly F and dF without arithmetic-order, brackets/tolerance/errors/physics changes. Require baseline output-bit trajectories, independent analytic/invariant and real compact ECS equivalence, representative Criterium before/after timing/allocation; call counts alone insufficient. Proposal only; no production/test changes. Original500/1000 named-segment ms, before/after delta and numerical-equivalence acceptance remain open; keep IN_PROGRESS.
+
+Root review2026-10-06: closed45s native JFR evidence has40files/38verified hashes under .ημ/diagnostics/native-profile. llvmpipe accounted81.24percent targetCPU in surrounding47.868s; Kepler31.92percent inclusive Java execution samples with explicit overlap/truncation/load limits. This is not isolated500/1000 segment timing or nativeFPS. Proposed3point within-Newton Stumpff reuse is scoped for independent math review and baseline-only preparation; no production edit admitted yet. Current equations, arithmetic order and all solver decisions must remain bitwise equivalent. Performance RED must be honest baseline/budget evidence, not invented wrong-trajectory tests. Existing acceptance/card status unchanged. This canonical comment consumes merged open-hax/rheos ef3c4abf formatter artifact SHA83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7; historical ledger untouched.
+
 ---

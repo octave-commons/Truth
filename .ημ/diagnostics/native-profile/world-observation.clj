@@ -1,0 +1,30 @@
+;; Read one already-published world. No input, config, physical or renderer writes.
+(require 'infra.dev.window.lifecycle 'infra.dev.window.loop)
+(let [service @infra.dev.window.lifecycle/service-state
+      world @(:world service)
+      config @(:config service)
+      reload-state (some-> (ns-resolve 'user 'truth-cadence-reload) deref deref)]
+  {:wall-ms (System/currentTimeMillis)
+   :pid (.pid (java.lang.ProcessHandle/current))
+   :tick (:tick world)
+   :sim-time (:genesis/sim-time world)
+   :dt (:sim/dt world)
+   :active? (:genesis/active world)
+   :arc (:arc/current world)
+   :scenario (:demo/scenario world)
+   :fixture? (:demo/fixture? world)
+   :alive (count (:alive world))
+   :matter-counts (frequencies (vals (get-in world [:components :component/matter-state])))
+   :motion-trail-count (count (get-in world [:components :component/motion-trail]))
+   :mode (:mode config)
+   :thrust (:player/thrust world)
+   :service-error? (boolean (:error service))
+   :ui-error? (boolean (:ui/error-state config))
+   :sim-root-matches-approved-reload? (identical? (:new-sim-loop reload-state)
+                                                @#'infra.dev.window.loop/sim-loop)
+   :loop-source-file (:file (meta #'infra.dev.window.loop/sim-loop))
+   :workers (mapv (fn [role]
+                    (let [^Thread thread (get service role)]
+                      {:role role :name (.getName thread) :alive? (.isAlive thread)
+                       :thread-id (.getId thread)}))
+                  [:thread :sim-thread])})
