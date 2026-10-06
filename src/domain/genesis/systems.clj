@@ -6,6 +6,7 @@
    [domain.intervention :as intervention]
    [domain.player :as player]
    [domain.integrator :as integ]
+   [domain.integrator.rotation :as rotation]
    [domain.stellar.geometry :as geometry]
    [domain.stellar.classifier.candidate :as cls-cand]
    [domain.stellar.classifier.planet :as cls-planet]
@@ -49,7 +50,8 @@
    (player/thrust-acceleration-system)
    (dark-matter/dark-matter-acceleration-system)
    (intervention/thermal-intervention-system)
-   (integ/integrator-system dt)])
+   (integ/integrator-system dt)
+   (rotation/rotation-integrator-system dt)])
 
 (defn- ^:private physics-transform-systems
   "Geometry / structure / EOS."

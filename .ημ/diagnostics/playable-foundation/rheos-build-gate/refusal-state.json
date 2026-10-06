@@ -1,0 +1,21 @@
+{
+  "uuid": "truth-rheos-probe",
+  "frontmatter": {
+    "category": "tasks",
+    "type": "task",
+    "write-id": "1791310658356-0.bewewisfrwgyefmqwf",
+    "points": "3",
+    "title": "Isolated Truth Clojure build gate probe",
+    "priority": "P3",
+    "status": "in_progress",
+    "uuid": "truth-rheos-probe",
+    "created_at": "2026-10-06T18:13:17.197Z"
+  },
+  "sections": [
+    {
+      "type": "body",
+      "content": "# Isolated Truth Clojure build gate probe\n\n## Outcome\n\n_What is true when this is done._\n\n## Scope\n\n- _TODO_\n\n## Acceptance criteria\n\n- _TODO_"
+    }
+  ],
+  "source-path": "/tmp/truth-rheos-runtime-PfcYM2/tasks/isolated-truth-clojure-build-gate-probe-os-probe.md"
+}

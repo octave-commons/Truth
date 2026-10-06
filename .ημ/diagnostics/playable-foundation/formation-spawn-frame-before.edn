@@ -1,0 +1,3 @@
+{:case :moving-host-gi-fragment, :request-parent nil, :request-radius-au 2.9998790510915456, :actual-radius-au 999.5508766292429, :elements nil}
+{:case :moving-host-binary-companion, :request-parent nil, :request-radius-au 4.999697633824008, :actual-radius-au 998.9397298661089, :elements nil}
+{:case :parent-relative-seed-with-frame-shift, :expected-relative [1.4485284403252466E11 3.7378824134301056E10 0.0], :actual-relative [-1.3511258629674688E12 3.7378824134301056E10 0.0], :error-au 9.999999999999956}

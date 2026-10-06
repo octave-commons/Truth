@@ -1,0 +1,17 @@
+2026-10-06T18:50:23Z D down
+2026-10-06T18:50:30Z D up
+2026-10-06T18:50:56Z TAB then mouse-look
+2026-10-06T18:51:23Z mouse-look second move
+2026-10-06T18:54:00Z A down
+2026-10-06T18:54:04Z A up; S down
+2026-10-06T18:54:08Z S up; Space down
+2026-10-06T18:54:13Z Space up; mouse-look
+2026-10-06T19:02:58Z Spark: decrement Damp keep/t 17 times; increment Focus intensity 5 times
+2026-10-06T19:04:31Z Tuned click spacing: observed only partial rapid steps; slower damping clicks
+2026-10-06T19:07:53Z View look sensitivity: 14 native plus clicks with 0.8s hold and 1s release
+2026-10-06T19:11:55Z Approach coarse W30s, damping0.8, displacement3e14, aimed near1012 by native mouse
+2026-10-06T19:12:25Z Approach coarse W released
+2026-10-06T19:13:17Z Approach heading correction dx39 dy36; W2.5s coarse
+2026-10-06T19:14:25Z Spark thrust floor attempt: nine decrement clicks with hold1s/release1.5s
+2026-10-06T19:15:54Z Fine approach W20s at confirmed displacement1e12 damping0.8
+2026-10-06T19:16:18Z Fine W released (duration includes read-only snapshot latency)

@@ -1,0 +1,17 @@
+{:loaded-runtime-commit "a3609f6"
+ :capture-diagnostics ".ημ/diagnostics/formation-20261006T182457Z"
+ :capture-duration-seconds 900
+ :service-port 7893
+ :segments [{:kind :natural-formation
+             :until-exclusive-wall-ms 1791311817000
+             :observation "Capture-owned camera reframe only; no player intervention before this cutoff."}
+            {:kind :player-observation
+             :from-inclusive-wall-ms 1791311817000
+             :human-inputs [{:time-utc "2026-10-06T18:36:57Z" :action "Native L key"}
+                            {:time-utc "2026-10-06T18:37:06Z" :action "Native Entities tab click"}]
+             :observation "Root conducts normal native input; follow/focus may affect observer field. Later orbital survival is not an untouched natural-run control."}]
+ :snapshot-notes ["Each snapshot dereferences the published world once and uses production pure functions. It does not step or replace the world."
+                  "snapshot-001 used key :planets for all candidate inputs, including material-classified stars; later snapshots correctly name it :candidate-bodies and add :planet-count."
+                  "Snapshots are roughly minute-spaced; the event ledger records intervening formation events, but not each body's exact birth radius."
+                  "Candidate components persist by design; current eligible-candidate? and fresh orbit elements are recorded separately."
+                  "seed-forwarding-before is an isolated bootstrap probe, never a mutation of the capture world."]}

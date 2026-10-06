@@ -45,6 +45,36 @@ inventory lingering files, capture blockers, link references).&#x20;
 
 Move to _In Review_; when the reviewer approves **and** the global [Definition of Done](#definition-of-done-global-gates) is satisfied, advance to _Done_, recording evidence and summaries on the card. Testing and documentation are DoD gates, not their own columns.
 
+## Canonical board runtime
+
+The sole config is [`openhax.kanban.edn`](openhax.kanban.edn). It uses the
+upstream `:extends :promethean` overlay, retaining the canonical transition and
+WIP rules while replacing the build commands with `clojure -M:test` and
+`bin/analyze --strict`. Upstream resolves `:cwd "."` relative to the config
+directory. A failed command refuses the move and prevents later commands from
+running. Run gated moves against the exact source revision being reviewed and
+record the result on the card; a previous successful test run does not bypass
+the transition gate.
+
+Use an EDN-capable canonical Rheos CLI. The older published `eta-mu` shim on this
+host cannot consume the overlay; package version `0.1.0` alone does not identify
+the runtime capability. On 2026-10-06, the existing upstream artifact
+`/home/err/spaces/eta-mu/packages/rheos/dist/cli.cjs` was verified with SHA256
+`c16255ab69e158d34536d9c8c72ad1234f3b0abc41e0408a1a270c167dca141d`.
+From the Truth repository root, invoke that canonical artifact directly:
+
+```sh
+node /home/err/spaces/eta-mu/packages/rheos/dist/cli.cjs read-board --config openhax.kanban.edn
+node /home/err/spaces/eta-mu/packages/rheos/dist/cli.cjs comment TASK_UUID --text "Evidence and scoped plan" --config openhax.kanban.edn
+node /home/err/spaces/eta-mu/packages/rheos/dist/cli.cjs move TASK_UUID --to in_progress --config openhax.kanban.edn
+```
+
+The runtime also discovers the root EDN config when `--config` is omitted.
+The old JSON config is removed so there is no competing definition. On other
+hosts, use a verified EDN-capable upstream Rheos artifact and record its identity;
+if unavailable, report the tool gap. Do not substitute a repository-local board
+implementation or bypass the gate through another transition path.
+
 # Grounding: Research → Design → Task
 
 Feature work flows down a three-layer chain, and each layer **cites the one above it**.

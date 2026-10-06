@@ -1,0 +1,71 @@
+{:kind :isolated-production-jacobi-response,
+ :natural-world-mutated? false,
+ :other-forces? false,
+ :constant-dt? true,
+ :results
+ [{:dt 1.0E7,
+   :displacement-m-per-tick 3.0E14,
+   :retention 0.97,
+   :first-pulse-samples
+   [{:position-au 0.0, :velocity-times-dt-au 0.0}
+    {:position-au 0.0, :velocity-times-dt-au 0.0}
+    {:position-au 60.16128410041606,
+     :velocity-times-dt-au 60.16128410041606}
+    {:position-au 120.32256820083212,
+     :velocity-times-dt-au 60.16128410041606}
+    {:position-au 178.6790137782357,
+     :velocity-times-dt-au 58.35644557740358}
+    {:position-au 235.2306208326268,
+     :velocity-times-dt-au 56.5516070543911}],
+   :pulse-total-translation-au 2005.3761366804852,
+   :held-terminal
+   {:position-au 1940535.6415945336,
+    :velocity-times-dt-au 2005.3761366804886},
+   :release-total-translation-au 64840.49508599365,
+   :released-final
+   {:position-au 2005376.1366805271,
+    :velocity-times-dt-au 4.5572981044187115E-11}}
+  {:dt 4.1E9,
+   :displacement-m-per-tick 3.0E14,
+   :retention 0.97,
+   :first-pulse-samples
+   [{:position-au 0.0, :velocity-times-dt-au 0.0}
+    {:position-au 0.0, :velocity-times-dt-au 0.0}
+    {:position-au 60.16128410041606,
+     :velocity-times-dt-au 60.16128410041606}
+    {:position-au 120.32256820083212,
+     :velocity-times-dt-au 60.16128410041606}
+    {:position-au 178.6790137782357,
+     :velocity-times-dt-au 58.356445577403576}
+    {:position-au 235.2306208326268,
+     :velocity-times-dt-au 56.55160705439109}],
+   :pulse-total-translation-au 2005.3761366804843,
+   :held-terminal
+   {:position-au 1940535.6415945326,
+    :velocity-times-dt-au 2005.3761366804881},
+   :release-total-translation-au 64840.49508599365,
+   :released-final
+   {:position-au 2005376.1366805264,
+    :velocity-times-dt-au 4.5572981044187154E-11}}
+  {:dt 1.0E12,
+   :displacement-m-per-tick 1.0E12,
+   :retention 0.97,
+   :first-pulse-samples
+   [{:position-au 0.0, :velocity-times-dt-au 0.0}
+    {:position-au 0.0, :velocity-times-dt-au 0.0}
+    {:position-au 0.20053761366805356,
+     :velocity-times-dt-au 0.20053761366805356}
+    {:position-au 0.4010752273361071,
+     :velocity-times-dt-au 0.20053761366805356}
+    {:position-au 0.5955967125941191,
+     :velocity-times-dt-au 0.19452148525801197}
+    {:position-au 0.7841020694420895,
+     :velocity-times-dt-au 0.18850535684797035}],
+   :pulse-total-translation-au 6.684587122268302,
+   :held-terminal
+   {:position-au 6468.452138648444,
+    :velocity-times-dt-au 6.6845871222682955},
+   :release-total-translation-au 216.13498361998995,
+   :released-final
+   {:position-au 6684.587122268434,
+    :velocity-times-dt-au 1.5190993681395707E-13}}]}

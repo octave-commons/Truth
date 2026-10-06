@@ -151,6 +151,7 @@
                           'domain.debris 'domain.ecology 'domain.lod 'domain.profile
                           'domain.integrator 'domain.integrator.core 'domain.integrator.base
                           'domain.integrator.kinematics 'domain.integrator.temperature
+                          'domain.integrator.rotation 'shape.quaternion
                           'domain.physics.cache 'domain.physics.cache.soa 'domain.physics.cache.neighbor
                           'domain.intervention 'domain.player 'domain.pacing
                           'domain.spatial.index 'domain.chemistry 'domain.atmosphere

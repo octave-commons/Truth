@@ -179,6 +179,7 @@
    :collapse-fraction 0.5
    :contraction-time 9.5e14
    :gas-count 1000
+   :seed 42
    :n-seeds 1
    :seed-r 0.25
    :spin 0.6
@@ -237,15 +238,16 @@
 (defn- seeded-world
   "Seed the nebula of gas particles on `base` and attach the gas smoothing
    radius used by the classifier before bodies contract."
-  [base {:keys [nebula-mass nebula-radius gas-count n-seeds seed-r spin turb metallicity]
+  [base {:keys [nebula-mass nebula-radius gas-count seed n-seeds seed-r spin turb metallicity]
          :as _opts}]
   (-> (seed-nebula base nebula-mass nebula-radius
-                   {:gas-count gas-count :n-seeds n-seeds :seed-r seed-r
+                   {:gas-count gas-count :seed seed :n-seeds n-seeds :seed-r seed-r
                     :spin spin :turb turb :metallicity metallicity})
       (assoc :genesis/gas-smoothing-radius (* nebula-radius 0.003))))
 
 (defn create-world
-  "Bootstrap a Phase 0 world ready to tick."
+  "Bootstrap a Phase 0 world ready to tick. :seed selects reproducible nebula
+   initial conditions and defaults to 42 when omitted."
   ([] (create-world {}))
   ([opts]
    (let [opts (merge-options opts)]
@@ -269,8 +271,8 @@
    c/spawn-request-disk c/spawn-request-planet c/spawn-request-condense
    c/spawn-request-promotion])
 
-(defn- resolve-spawn-parent
-  "Re-anchor a spec's absolute `:position`/`:velocity` on its `:spawn-parent`
+(defn- resolve-spawn-frame
+  "Place a spec into the current frame, re-anchoring on its `:spawn-parent`
    entity's CURRENT state, when the spec carries one (see
    `domain.planet-formation.orbit/build-planet-spec`). `materialize-lifecycle`
    runs AFTER `step-physics` (`domain.genesis.tick/tick-physics`), so `w` here
@@ -281,25 +283,23 @@
    `docs/designs/multi-timescale-integration.md` §3.0), the same order as the
    whole seeded orbit; using the stale absolute values would spawn the body
    already many AU from its actual parent with a velocity that pairs with
-   nothing — an instant, silent ejection with no raw-Euler tick involved. A
-   no-op when the spec carries no `:spawn-parent`, or that entity no longer
-   resolves (defensive; the parent star should always still exist)."
+   nothing — an instant, silent ejection with no raw-Euler tick involved.
+   The current parent is already recentered, so do not subtract frame-offset
+   again. Absolute requests (including an unresolved parent, as before) still
+   need that shift once; design §3.4 requires the same frame for every body."
   [w spec]
-  (if-let [parent (:spawn-parent spec)]
-    (if-let [p-pos (ecs/get-component w parent c/position)]
-      (let [p-vel (or (ecs/get-component w parent c/velocity) [0.0 0.0 0.0])]
-        (assoc spec
-               :position (sp/v+ p-pos (get spec :rel-position [0.0 0.0 0.0]))
-               :velocity (sp/v+ p-vel (get spec :rel-velocity [0.0 0.0 0.0]))))
-      spec)
-    spec))
+  (if-let [p-pos (when-let [parent (:spawn-parent spec)]
+                   (ecs/get-component w parent c/position))]
+    (let [p-vel (or (ecs/get-component w (:spawn-parent spec) c/velocity) [0.0 0.0 0.0])]
+      (assoc spec
+             :position (sp/v+ p-pos (get spec :rel-position [0.0 0.0 0.0]))
+             :velocity (sp/v+ p-vel (get spec :rel-velocity [0.0 0.0 0.0]))))
+    (update spec :position sp/v- (or (:genesis/frame-offset w) [0.0 0.0 0.0]))))
 
 (defn- spawn-entity
-  "Materialize one spawn spec into a new entity, shifting its position by the
-   current frame-offset so it lands in the same Galilean frame as its parents."
+  "Materialize one spawn spec in the same current Galilean frame as its parent."
   [w spec]
-  (let [spec  (-> (resolve-spawn-parent w spec)
-                  (update :position sp/v- (or (:genesis/frame-offset w) [0.0 0.0 0.0])))
+  (let [spec  (resolve-spawn-frame w spec)
         extra (:extra-components spec)
         [w2 neweid] (seeder/spawn-clump
                      w (dissoc spec :extra-components

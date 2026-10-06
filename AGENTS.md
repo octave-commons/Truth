@@ -162,7 +162,12 @@ The capture creates a full-duration GIF for every MP4 and includes a native
 navigation tour. Set `TRUTH_DEMO_PORT` to a free port for parallel capture.
 Later arcs are explicitly labeled, frozen ECS fixtures. See
 [`docs/demo/README.md`](docs/demo/README.md) for coverage and limitations.
-The legacy `:run` alias targets an absent namespace; it is not a launch route.
+`clojure -M:run` runs the real ECS nebula in the console for at most 1000 ticks;
+`clojure -M:run console 20` sets a smaller tick budget. Terminal states stop the
+run without replacing the world. `clojure -M:run demo` writes one actual nebula
+frame to `/tmp/truth-view.png` through the existing offscreen renderer. For a
+machine without a desktop, use `xvfb-run -a clojure -M:run demo`; OpenGL 3.3
+is required for PNG rendering. The console route needs no display.
 
 The Phase 0 dev window + nREPL (`infra.dev.server`, `clj -M:dev`) runs
 continuously under **pm2** as `gates-of-truth-dev` — this is intentional. pm2
@@ -219,6 +224,18 @@ live process status, and recent research notebooks. It auto-refreshes every
 
 When you create or modify an actor, make sure it appears in this dashboard and
 mention the dashboard in any related docs so other agents can find it.
+
+## Board operations
+
+`openhax.kanban.edn` is the sole board configuration. Use an EDN-capable
+canonical Rheos runtime supporting `:extends :promethean` and
+`:build-gate-commands`; the older published `eta-mu` shim does not support this
+contract. The upstream overlay preserves the Promethean FSM and runs
+`clojure -M:test` followed by `bin/analyze --strict` from this repository before
+admitting `in_progress` → `review`. See [PROCESS.md](PROCESS.md#canonical-board-runtime)
+for the verified runtime hash and direct CLI commands. Do not add a local board
+parser, wrapper, validator, or gate bypass. Record a missing capable runtime as
+a tooling blocker.
 
 ## Agent Skills
 

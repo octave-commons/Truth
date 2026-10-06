@@ -189,6 +189,20 @@ The K-loop replaces only the *integration* of compact bodies; the other things
   through to the existing symplectic-Euler path unchanged. No special third
   path.
 
+**Lifecycle births use the same frame contract (2026-10-06 correction).**
+`materialize-lifecycle` runs after the integrator. A parent-relative request
+(`:spawn-parent`, `:rel-position`, `:rel-velocity`) composes with the parent's
+current position and velocity. That parent position already includes `−foff`,
+so the newborn receives no second subtraction. GI fragments and binary
+companions carry this same packet as core-accretion seeds. An absolute request
+without a resolved parent retains the existing one-time `−foff` transformation;
+materialization consumes the request so a later call cannot shift it again.
+This preserves relative geometry and velocity under parent translation and
+recentering without changing the disk/Hill gates or the velocity pairing rule.
+The deterministic lifecycle regressions in `disk_evolution_test.clj` and
+`formation_test.clj` pin these boundaries; they do not establish natural
+formation rates or long-term orbital survival.
+
 ### 3.5 The placement arm (needed for candidates to actually appear)
 
 The blocker has a second arm: `disc/resolvable-orbit-radius` (`disc.clj:156-167`)

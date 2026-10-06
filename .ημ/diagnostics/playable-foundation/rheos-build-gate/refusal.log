@@ -1,0 +1,8 @@
+▶ build-gate: test -f gate-marker
+▶ build-gate: clojure -M -e '(throw (ex-info "expected-gate-failure" {}))'
+Execution error (ExceptionInfo) at user/eval1 (REPL:1).
+expected-gate-failure
+
+Full report at:
+/tmp/clojure-3019872987608778296.edn
+rheos: transition refused: Build gate failed: `clojure -M -e '(throw (ex-info "expected-gate-failure" {}))'` exited with code 1

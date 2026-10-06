@@ -1,0 +1,5 @@
+{:tasks-dir "./kanban/tasks"
+ :board-file ".kanban/board.json"
+ :fsm {:extends :promethean
+       :build-gate-commands ["clojure -M:test" "bin/analyze --strict"]
+       :cwd "."}}
