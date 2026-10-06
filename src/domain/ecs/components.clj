@@ -367,6 +367,9 @@
 ;; --- Render -----------------------------------------------------------------
 (def renderable   :component/renderable)
 (def cell-id      :component/cell-id)
+(def motion-trail
+  "Bounded simulation-time position history, owned by :motion-trail."
+  :component/motion-trail)
 
 ;; --- Myth engine ------------------------------------------------------------
 (def facet-vector :component/facet-vector)

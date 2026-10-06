@@ -198,6 +198,13 @@
                  (get-in influence/influence-registry [:angular-velocity :accumulate]))
     :writes #{c/orientation c/angular-velocity}}
 
+   ;; Motion observations share the integrator's output frame, without
+   ;; reading its same-tick output or writing physical state.
+   {:id :motion-trail
+    :ns 'domain.trail.system
+    :reads #{c/position c/body-kind c/matter-state c/motion-trail}
+    :writes #{c/motion-trail}}
+
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
    ;; tick-world). Sole writer of accel.observer; the integrator sums it.
    {:id     :observer-accel

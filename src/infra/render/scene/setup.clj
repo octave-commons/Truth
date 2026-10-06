@@ -118,7 +118,7 @@
     (passes/set-blend! :none)))
 
 (defn- render-lines-pass
-  "Field line and reticle line pass."
+  "Field, reticle, and fading body-trail line pass."
   [line-program proj view lines]
   (when (and line-program (pos? (int line-program)) (seq lines))
     (GL20/glUseProgram line-program)
@@ -126,7 +126,7 @@
     (passes/set-blend! :alpha)
     (passes/set-depth-write! false)
     (GL11/glLineWidth 1.5)
-    (let [lm (rmesh/upload-particle-mesh (rmesh/make-particle-mesh lines))]
+    (let [lm (rmesh/upload-line-mesh (rmesh/make-line-mesh lines))]
       (GL30/glBindVertexArray (:vao lm))
       (GL11/glDrawArrays GL11/GL_LINES 0 (:count lm))
       (GL30/glBindVertexArray 0)
@@ -251,4 +251,3 @@
     (render-voxel-cubes-pass body-program cube-mesh projection view camera' voxels)
     (render-sprites-pass sprite-program projection view sprites)
     (render-hud-pass hud-program hud hud-text width height)))
-

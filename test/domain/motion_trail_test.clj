@@ -86,7 +86,7 @@
       (is (= 10.0 (:next-at before)))
       (is (= fine (observe advance fine 20.0))
           "rendering/observing the same simulation time cannot append samples")
-      (is (= 0 (:skipped-deadlines fine))))))
+      (is (zero? (:skipped-deadlines fine))))))
 
 (deftest skipped-deadlines-never-invent-an-orbit
   (when-let [advance (api 'domain.trail/advance-history)]
@@ -186,8 +186,27 @@
                             :genesis/frame-offset [20.0 0.0 0.0])
           second-fold (tick/run-parallel next-input [(integrator/integrator-system 1.0) (factory)])]
       (is (= [92.0 0.0 0.0] (ecs/get-component first-fold eid c/position)))
+      (is (= [-10.0 0.0] (sample-times (ecs/get-component first-fold eid trail-component)))
+          "input positions retain input timestamps rather than output time")
       (is (= [[70.0 0.0 0.0] [90.0 0.0 0.0]]
              (mapv :position (:samples (ecs/get-component first-fold eid trail-component)))))
       (is (= [74.0 0.0 0.0] (ecs/get-component second-fold eid c/position)))
+      (is (= [-10.0 0.0] (sample-times (ecs/get-component second-fold eid trail-component)))
+          "an unsampled recenter changes coordinates, never observation time")
       (is (= [[50.0 0.0 0.0] [70.0 0.0 0.0]]
              (mapv :position (:samples (ecs/get-component second-fold eid trail-component))))))))
+
+(deftest writer-samples-the-simulation-clock-not-tick-or-published-time
+  (when-let [factory (api 'domain.trail.system/trail-system)]
+    (let [[world eid] (spawn-body
+                       (assoc (ecs/empty-world) :genesis/sim-time 100.0 :sim/dt 7.0 :tick 999999)
+                       {c/matter-state :star c/position [10.0 0.0 0.0]})
+          write (:run (factory))
+          first-fold (tick/apply-write-set world (write world))
+          later (-> first-fold
+                    (assoc :genesis/sim-time 10000000100.0 :sim/dt 3.0 :tick 2)
+                    (ecs/put-component eid c/position [20.0 0.0 0.0]))
+          next-history (get-in (write later) [trail-component eid])]
+      (is (= [100.0] (sample-times (ecs/get-component first-fold eid trail-component))))
+      (is (= [100.0 10000000100.0] (sample-times next-history)))
+      (is (= [[10.0 0.0 0.0] [20.0 0.0 0.0]] (mapv :position (:samples next-history)))))))
