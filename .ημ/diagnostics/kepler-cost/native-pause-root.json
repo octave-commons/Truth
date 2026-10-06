@@ -1,0 +1,11 @@
+{
+  "pid": 3083624,
+  "executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-input",
+  "starttime": 2882197,
+  "state_before": "S",
+  "operation": "SIGSTOP owned retained native JVM for source-pinned baseline benchmark; retain world/context",
+  "utc": "2026-10-06T22:34:46.202362+00:00",
+  "older_retained_java_2372912": "already intentionally paused, untouched",
+  "state_after": "T"
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "clojure",
+    "-M:test",
+    "-n",
+    "domain.orbital.kepler-reuse-test",
+    "-n",
+    "domain.orbital.kepler-test",
+    "-n",
+    "domain.orbital.multi-timescale-regression-test"
+  ],
+  "exit": 0,
+  "pid": 3828206,
+  "start_utc": "2026-10-06T22:37:42.239890+00:00",
+  "end_utc": "2026-10-06T22:37:54.201061+00:00",
+  "wall_seconds": 11.96117533499637,
+  "JAVA_OPTS": "-Xms256m -Xmx2g"
+}

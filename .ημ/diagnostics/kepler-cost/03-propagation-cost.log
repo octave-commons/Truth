@@ -1,0 +1,10 @@
+Measuring :elliptic
+Measuring :near-parabolic
+Measuring :hyperbolic
+Measuring [:compact-soa :stationary]
+Measuring [:compact-soa :moving-recentered]
+Execution error (ExceptionInfo) at evidence.kepler/write-new! (kepler.clj:34).
+Evidence does not round-trip as ordinary EDN
+
+Full report at:
+/tmp/clojure-6286963410428526393.edn

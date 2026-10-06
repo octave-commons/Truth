@@ -1,0 +1,13 @@
+{
+  "command": [
+    "clojure",
+    "-Sdeps",
+    "{:aliases {:probe {:main-opts [\"-e\" \"(load-file \\\".\u03b7\u03bc/diagnostics/kepler-cost/serializer-probe.clj\\\")\"]}}}",
+    "-M:bench:probe"
+  ],
+  "start_utc": "2026-10-06T22:42:19.424448+00:00",
+  "end_utc": "2026-10-06T22:42:21.292250+00:00",
+  "exit": 0,
+  "wall_seconds": 1.8678102519988897,
+  "JAVA_OPTS": "-Xms128m -Xmx512m"
+}

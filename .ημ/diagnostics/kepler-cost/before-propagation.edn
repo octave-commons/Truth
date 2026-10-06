@@ -1,0 +1,283 @@
+{:kepler-sha256
+ "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+ :propagation
+ [{:label :elliptic,
+   :criterium
+   {:samples
+    (138551801 161207624 255996767 122129071 118345840 125229377),
+    :mean
+    [1.164213715826436E-4
+     (9.662492212189616E-5 1.5982515951843491E-4)],
+    :execution-count 1329,
+    :variance
+    [1.584310097839185E-9
+     (6.204191113893948E-11 3.160704418675971E-9)],
+    :outlier-variance 0.8178618655879697,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 1, :high-severe 0}},
+    :warmup-time 5000485772,
+    :lower-q
+    [8.90487885628292E-5 (8.90487885628292E-5 9.18954635063958E-5)],
+    :warmup-executions 49114,
+    :sample-count 6,
+    :upper-q
+    [1.815772357035365E-4
+     (1.0425267193378481E-4 1.9262360195635816E-4)],
+    :total-time 0.92146048,
+    :sample-variance [1.5634996925847571E-9 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.705474315681933E-9},
+    :sample-mean
+    [1.1555812390268372E-4
+     (-3.0652179540639044E-6 2.3418146575943135E-4)]},
+   :post-warmup-thread-cost
+   {:repetitions 100,
+    :thread-only? true,
+    :cpu-ns-per-batch 87592.05,
+    :bytes-per-batch 375121.84,
+    :criterium-execute-wall-ns 8669401,
+    :last-result-hash 53790878,
+    :includes-criterium-consumption-overhead? true},
+   :inputs
+   [{:id :circular,
+     :mu 1.0,
+     :r [1.0 0.0 0.0],
+     :v [0.0 1.0 0.0],
+     :dt 0.2}
+    {:id :ellipse,
+     :mu 1.0,
+     :r [1.0 0.0 0.0],
+     :v [0.0 1.2 0.0],
+     :dt 0.2}
+    {:id :eccentric,
+     :mu 1.0,
+     :r [1.0 0.0 0.0],
+     :v [0.0 1.396424004376894 0.0],
+     :dt 0.1}
+    {:id :rotated-ellipse,
+     :mu 1.0,
+     :r [0.6 0.8 0.0],
+     :v [-0.72 0.54 0.7937253933193772],
+     :dt 0.1}
+    {:id :radial-outward,
+     :mu 1.0,
+     :r [1.0 0.0 0.0],
+     :v [0.2 1.2 0.0],
+     :dt 0.1}
+    {:id :solar-scale,
+     :mu 1.327124E20,
+     :r [1.495978707E11 0.0 0.0],
+     :v [0.0 29784.691831696804 0.0],
+     :dt 86400.0}
+    {:id :small-scale,
+     :mu 1.0E-6,
+     :r [0.01 0.0 0.0],
+     :v [0.0 0.012 0.0],
+     :dt 0.1}],
+   :steps 16}
+  {:label :near-parabolic,
+   :criterium
+   {:samples
+    (124327990 247411012 116017030 112880066 119019349 114318468),
+    :mean
+    [4.196631738868833E-5 (3.498517885078219E-5 6.182267283393502E-5)],
+    :execution-count 3324,
+    :variance
+    [2.591108833237195E-10
+     (8.257001755696447E-13 4.839189598313698E-10)],
+    :outlier-variance 0.8210413390280304,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 0, :high-severe 1}},
+    :warmup-time 5081455353,
+    :lower-q
+    [3.395910529482551E-5
+     (3.395910529482551E-5 3.4391837545126355E-5)],
+    :warmup-executions 136273,
+    :sample-count 6,
+    :upper-q
+    [6.960350605445247E-5 (3.580606167268352E-5 7.443171239470518E-5)],
+    :total-time 0.833973915,
+    :sample-variance [2.5680366371210845E-10 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.705474315681933E-9},
+    :sample-mean
+    [4.181577993381468E-5 (-6.259504500174646E-6 8.9891064367804E-5)]},
+   :post-warmup-thread-cost
+   {:repetitions 100,
+    :thread-only? true,
+    :cpu-ns-per-batch 33830.39,
+    :bytes-per-batch 171257.12,
+    :criterium-execute-wall-ns 3357735,
+    :last-result-hash 1323375415,
+    :includes-criterium-consumption-overhead? true},
+   :inputs
+   [{:id :parabolic,
+     :mu 0.5,
+     :r [1.0 0.0 0.0],
+     :v [0.0 1.0 0.0],
+     :dt 0.02}
+    {:id :near-parabolic-bound,
+     :mu 0.5,
+     :r [1.0 0.0 0.0],
+     :v [0.0 0.99999999 0.0],
+     :dt 0.02}
+    {:id :near-parabolic-unbound,
+     :mu 0.5,
+     :r [1.0 0.0 0.0],
+     :v [0.0 1.00000001 0.0],
+     :dt 0.02}],
+   :steps 16}
+  {:label :hyperbolic,
+   :criterium
+   {:samples
+    (103947173 161969887 200681104 102842554 98728299 101042352),
+    :mean
+    [4.508812097338936E-5 (3.575859809757237E-5 6.236236437908497E-5)],
+    :execution-count 2856,
+    :variance
+    [2.9386105324455974E-10
+     (7.549358505839779E-11 3.723599181131837E-10)],
+    :outlier-variance 0.8208224341042116,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 0, :high-severe 0}},
+    :warmup-time 5096525290,
+    :lower-q
+    [3.456873214285715E-5 (3.456873214285715E-5 3.537897478991597E-5)],
+    :warmup-executions 141859,
+    :sample-count 6,
+    :upper-q
+    [6.603268999474791E-5 (3.639606897759104E-5 7.026649299719889E-5)],
+    :total-time 0.769211369,
+    :sample-variance [2.263462829585113E-10 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.705474315681933E-9},
+    :sample-mean
+    [4.488861863912232E-5
+     (-2.458088705581548E-7 9.00230461488028E-5)]},
+   :post-warmup-thread-cost
+   {:repetitions 100,
+    :thread-only? true,
+    :cpu-ns-per-batch 32536.88,
+    :bytes-per-batch 135761.12,
+    :criterium-execute-wall-ns 3234722,
+    :last-result-hash -1207076229,
+    :includes-criterium-consumption-overhead? true},
+   :inputs
+   [{:id :hyperbolic,
+     :mu 1.0,
+     :r [1.0 0.0 0.0],
+     :v [0.0 1.8 0.0],
+     :dt 0.2}
+    {:id :hyperbolic-infall,
+     :mu 1.0,
+     :r [1.0 0.0 0.0],
+     :v [-0.25 1.8 0.0],
+     :dt 0.1}],
+   :steps 16}],
+ :compact
+ [{:label [:compact-soa :stationary],
+   :criterium
+   {:samples
+    (132426492 233700234 121023471 112563201 113415006 119839803),
+    :mean
+    [4.3581602664576806E-4
+     (3.683774890282132E-4 6.168455768025079E-4)],
+    :execution-count 319,
+    :variance
+    [2.181352665600641E-8
+     (1.6852086378999809E-10 4.3059110383745766E-8)],
+    :outlier-variance 0.8175867334463223,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 0, :high-severe 1}},
+    :warmup-time 5065959933,
+    :lower-q
+    [3.5286269905956117E-4
+     (3.5286269905956117E-4 3.561778518808778E-4)],
+    :warmup-executions 11626,
+    :sample-count 6,
+    :upper-q
+    [6.884502778213167E-4 (3.789201018808778E-4 7.326026144200627E-4)],
+    :total-time 0.832968207,
+    :sample-variance [2.1727248941332668E-8 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.705474315681933E-9},
+    :sample-mean
+    [4.3519760031347966E-4
+     (-7.007375316593995E-6 8.774025759435534E-4)]},
+   :gate
+   {:star 0, :planet 1, :pass? true, :frame-offset [0.0 0.0 0.0]}}
+  {:label [:compact-soa :moving-recentered],
+   :criterium
+   {:samples
+    (131950647 118743236 119109075 170600246 207288517 116001369),
+    :mean
+    [4.278505515873016E-4 (3.624249191468254E-4 5.290875694444445E-4)],
+    :execution-count 336,
+    :variance
+    [1.3852041024448587E-8
+     (3.926205406974367E-9 2.1711987543474145E-8)],
+    :outlier-variance 0.6513714131106045,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 0, :high-severe 0}},
+    :warmup-time 5007694670,
+    :lower-q
+    [3.4524216964285716E-4
+     (3.4524216964285716E-4 3.534024880952381E-4)],
+    :warmup-executions 11776,
+    :sample-count 6,
+    :upper-q
+    [5.889026287202382E-4
+     (3.9271025892857145E-4 6.169301101190477E-4)],
+    :total-time 0.86369309,
+    :sample-variance [1.2222871125747378E-8 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.705474315681933E-9},
+    :sample-mean
+    [4.2841919146825404E-4
+     (9.674790821972436E-5 7.600904747167837E-4)]},
+   :gate
+   {:star 0,
+    :planet 1,
+    :pass? true,
+    :frame-offset
+    [2.0000000000000002E12 -3.0E12 9.999999999999999E11]}}]}

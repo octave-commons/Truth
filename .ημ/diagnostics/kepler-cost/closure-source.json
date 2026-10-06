@@ -1,0 +1,53 @@
+{
+  "closed_at_utc": "2026-10-06T22:51:15.713501+00:00",
+  "head": "b402939931575e377ae4409d9cd4061dff11df06",
+  "source_checks": {
+    "src/domain/orbital/kepler.clj": {
+      "expected": "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+      "actual": "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+      "match": true
+    },
+    "test/domain/orbital/kepler_workload.clj": {
+      "expected": "9029fa5439faff5ad58a26d61f3df3c4ddb105faf40e435f2ebdf66c207675ee",
+      "actual": "9029fa5439faff5ad58a26d61f3df3c4ddb105faf40e435f2ebdf66c207675ee",
+      "match": true
+    },
+    "test/domain/orbital/kepler_reuse_test.clj": {
+      "expected": "fc2d1edc5a9b7c3d3914cd425ff8c970a1114ccd7f8abbfbbe6052e7cd98c148",
+      "actual": "fc2d1edc5a9b7c3d3914cd425ff8c970a1114ccd7f8abbfbbe6052e7cd98c148",
+      "match": true
+    },
+    ".\u03b7\u03bc/diagnostics/kepler-cost/evidence/kepler.clj": {
+      "expected": "e63574e742ce75147601e19f81237b57c18f0ebd5bcb1e3641b6f6df39ab69bc",
+      "actual": "78b3bbd395b631b933a3896594ad2ab72b8161b3d1459da22cf24ec30a3d2fa8",
+      "match": false
+    },
+    ".\u03b7\u03bc/diagnostics/kepler-cost/BASELINE-PLAN.md": {
+      "expected": "b80be55a5db727ab1ddf01a125c11e828bce471cdb3ead2ba89c57ab00d18b31",
+      "actual": "b80be55a5db727ab1ddf01a125c11e828bce471cdb3ead2ba89c57ab00d18b31",
+      "match": true
+    }
+  },
+  "adapter_change": "Explicit OutlierCount representation; original adapter preserved and hash verified. Current adapter and frozen oracle match rerun-source.json.",
+  "production_deps_bench_diff_exit": 0,
+  "final_kondo": {
+    "argv": [
+      "clj-kondo",
+      "--lint",
+      "test/domain/orbital/kepler_workload.clj",
+      "test/domain/orbital/kepler_reuse_test.clj",
+      ".\u03b7\u03bc/diagnostics/kepler-cost/evidence/kepler.clj",
+      ".\u03b7\u03bc/diagnostics/kepler-cost/serializer-probe.clj"
+    ],
+    "exit": 0,
+    "log": "final-kondo.log"
+  },
+  "resource_window_released": true,
+  "no_source_optimization": true,
+  "root_released_lifecycle_files": [
+    "native-pause-root.json",
+    "native-resume-root.json",
+    "native-resumed-service-audit.log"
+  ],
+  "root_resume_report": "Root resumed verified PID3083624 at22:49:25UTC; resumed service audit exit0,tick35100,all checks true. This occurred after every measurement process exited."
+}

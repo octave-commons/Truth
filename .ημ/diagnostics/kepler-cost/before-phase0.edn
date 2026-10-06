@@ -1,0 +1,109 @@
+{:kepler-sha256
+ "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+ :selected
+ [{:label "tick-world (500 particles)",
+   :criterium
+   {:samples
+    (223181666 139171430 120984780 122038131 230487730 111654816),
+    :mean
+    [0.026549865722222225 (0.02046866855555556 0.03470781494444445)],
+    :execution-count 6,
+    :variance
+    [8.659723024068173E-5
+     (3.4814798204711855E-6 1.1310096356805564E-4)],
+    :outlier-variance 0.8186126849313698,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 0, :high-severe 0}},
+    :warmup-time 16438737196,
+    :lower-q
+    [0.018609136000000002 (0.018609136000000002 0.020164130000000002)],
+    :warmup-executions 565,
+    :sample-count 6,
+    :upper-q
+    [0.037196944333333336 (0.02283829460416667 0.03841462166666667)],
+    :total-time 0.947518553,
+    :sample-variance [8.149364229488782E-5 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.732471008151453E-9},
+    :sample-mean
+    [0.02631995980555556 (-7.621889395863266E-4 0.05340210855069745)]}}
+  {:label "tick-world (1000 particles)",
+   :criterium
+   {:samples
+    (227871498 117773926 139805815 128049924 226109394 121002347),
+    :mean
+    [0.053465278222222225 (0.042373992222222226 0.06972630694444445)],
+    :execution-count 3,
+    :variance
+    [3.156127042665097E-4
+     (1.402766013043763E-4 3.9979549282637714E-4)],
+    :outlier-variance 0.8169540283560611,
+    :outliers
+    {:record-type "criterium.core.OutlierCount",
+     :fields
+     {:low-severe 0, :low-mild 0, :high-mild 0, :high-severe 0}},
+    :warmup-time 13226599981,
+    :lower-q
+    [0.03925797533333334 (0.03925797533333334 0.04033411566666667)],
+    :warmup-executions 211,
+    :sample-count 6,
+    :upper-q [0.075369798 (0.046112109541666675 0.075957166)],
+    :total-time 0.960612904,
+    :sample-variance [3.0465334080979835E-4 (0.0 0.0)],
+    :options
+    {:max-gc-attempts 100,
+     :samples 6,
+     :target-execution-time 100000000,
+     :warmup-jit-period 5000000000,
+     :tail-quantile 0.025,
+     :bootstrap-size 500,
+     :overhead 5.732471008151453E-9},
+    :sample-mean
+    [0.05336738355555556
+     (0.0010044189022036098 0.10573034820890749)]}}],
+ :skipped
+ ["create-world (100 particles)"
+  "create-world (500 particles)"
+  "create-world (1000 particles)"
+  "tick-world (100 particles)"
+  "tick-world (500 particles) — critical path"
+  "  advance-tick + spatial-index"
+  "  system-summary (post-physics)"
+  "  stats-of (post-physics)"
+  "  detect-phase + complexity-score (post-physics)"
+  "  pacing (post-physics)"
+  "  observer-system (post-physics)"
+  "  non-physics tick overhead"
+  "  advance-tick + spatial-index"
+  "  expire-interventions + materialize-lifecycle"
+  "  system-summary"
+  "  stats-of"
+  "  detect-phase + complexity-score"
+  "  pacing"
+  "  observer-system"
+  "  gravity-acceleration system"
+  "  motion-integration system"
+  "  density-system"
+  "  merged-hydro-em system"
+  "  field-system"
+  "  collision-detection-system"
+  "  stellar structure-system"
+  "  stellar classifier-system"
+  "  stellar temperature-system"
+  "  regime-system"
+  "  step-physics parallel (on initial w500)"
+  "  step-physics parallel (on world1 with spatial tree)"
+  "  step-physics sequential"
+  "  full parallel step-physics"
+  "  full sequential step-physics"
+  "  10 ticks"],
+ :coverage
+ "Only original500/1000 tick closures measured by Criterium; named system samples printed separately. Not the entire phase0 group."}

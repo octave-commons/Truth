@@ -1,0 +1,14 @@
+{
+  "head": "b402939931575e377ae4409d9cd4061dff11df06",
+  "adapter_sha256": "78b3bbd395b631b933a3896594ad2ab72b8161b3d1459da22cf24ec30a3d2fa8",
+  "oracle_sha256": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+  "native_paused_identity": {
+    "comm": "java",
+    "state": "T",
+    "utime": 10394010,
+    "stime": 38956,
+    "starttime": 2882197
+  },
+  "change": "Explicit known Criterium OutlierCount encoding only; strict oracle unchanged; first cost metrics unavailable after old writer rejected representation.",
+  "start_utc": "2026-10-06T22:43:05.035310+00:00"
+}
