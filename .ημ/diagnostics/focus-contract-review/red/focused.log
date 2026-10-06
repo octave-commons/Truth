@@ -1,0 +1,143 @@
+
+Running tests in #{"test"}
+
+Testing infra.dev.focus-cadence-test
+
+FAIL in (corrected-host-offset-recovers-on-the-next-iteration) (focus_cadence_test.clj:279)
+the invalid offset cannot corrupt the first consumer snapshot
+expected: (= (dissoc world :tick) (dissoc (first inputs) :tick))
+  actual: (not (= {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "467f5eca-0e46-492e-a408-2fb0c178b1b5", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 5.0E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 0.5, :coherence 0.8, :resolution 0.0, :id #uuid "467f5eca-0e46-492e-a408-2fb0c178b1b5", :resonance-thresholds #{}, :focus-position [##NaN 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2}))
+
+FAIL in (corrected-host-offset-recovers-on-the-next-iteration) (focus_cadence_test.clj:285)
+only the invalid iteration emits a boundary error
+expected: (= 1 (count (re-seq #"focus-offset" errors)))
+  actual: (not (= 1 0))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset nil
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [nil nil]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset nil
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" "[INTENT ERROR] Cannot invoke \"java.lang.Number.doubleValue()\" because \"x\" is null\n[INTENT ERROR] Cannot invoke \"java.lang.Number.doubleValue()\" because \"x\" is null\n"))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset []
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [[] []]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset []
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" "[INTENT ERROR] Cannot invoke \"java.lang.Number.doubleValue()\" because \"x\" is null\n[INTENT ERROR] Cannot invoke \"java.lang.Number.doubleValue()\" because \"x\" is null\n"))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset [0.0 0.0]
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [[0.0 0.0] [0.0 0.0]]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset [0.0 0.0]
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" "[INTENT ERROR] Cannot invoke \"java.lang.Number.doubleValue()\" because \"x\" is null\n[INTENT ERROR] Cannot invoke \"java.lang.Number.doubleValue()\" because \"x\" is null\n"))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset [0.0 0.0 0.0 1.0]
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [[0.0 0.0 0.0 1.0] [0.0 0.0 0.0 1.0]]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset [0.0 0.0 0.0 1.0]
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" ""))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset [##NaN 0.0 0.0]
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [[##NaN 0.0 0.0] [##NaN 0.0 0.0]]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:227)
+invalid host focus-offset [##NaN 0.0 0.0]
+rejection preserves the complete drained world, including attention and physics
+expected: (= [expected expected] (mapv (fn* [p1__16076#] (dissoc p1__16076# :tick)) inputs))
+  actual: (not (= [{:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true}] [{:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [##NaN 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [##NaN 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true}]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset [##NaN 0.0 0.0]
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" ""))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset [0.0 ##Inf 0.0]
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [[0.0 ##Inf 0.0] [0.0 ##Inf 0.0]]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:227)
+invalid host focus-offset [0.0 ##Inf 0.0]
+rejection preserves the complete drained world, including attention and physics
+expected: (= [expected expected] (mapv (fn* [p1__16076#] (dissoc p1__16076# :tick)) inputs))
+  actual: (not (= [{:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true}] [{:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 ##Inf 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 ##Inf 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true}]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset [0.0 ##Inf 0.0]
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" ""))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset [0.0 0.0 ##-Inf]
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [[0.0 0.0 ##-Inf] [0.0 0.0 ##-Inf]]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:227)
+invalid host focus-offset [0.0 0.0 ##-Inf]
+rejection preserves the complete drained world, including attention and physics
+expected: (= [expected expected] (mapv (fn* [p1__16076#] (dissoc p1__16076# :tick)) inputs))
+  actual: (not (= [{:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 0.0], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true}] [{:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 ##-Inf], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true} {:components #:component{:body-kind {0 :spark, 1 :body/planet}, :planet-candidate {1 {:planet-id 1}}, :mass {0 0.0, 1 1.0}, :orientation {0 [1.0 0.0 0.0 0.0]}, :narrative-state {0 {:mood :anticipation, :last-utterance-tick nil, :topics #{}}}, :position {0 [7.479893535E10 0.0 0.0], 1 [0.0 0.0 0.0]}, :radius {0 1.0E12, 1 1.0}, :velocity {0 [2.991957414E11 0.0 0.0], 1 [2.991957414E11 0.0 0.0]}, :angular-velocity {0 [0.0 0.0 0.0]}, :observer {0 {:agency 0.0, :focus-radius 2.5E15, :attention-shell {:immediate-r 4.0E15, :regional-r 1.5E16}, :time-witnessed 0.0, :last-tick 0, :focus-intensity 1.0, :coherence 0.8, :resolution 0.0, :id #uuid "a70ade96-061a-4f67-aa5d-e9b90e0bb8d2", :resonance-thresholds #{}, :focus-position [7.479893535E10 0.0 ##-Inf], :narrative-seeds {}, :resonance 0.0, :max-coherence 1.0, :resonance-events []}}}, :archetypes {0 #{:component/body-kind :component/mass :component/orientation :component/narrative-state :component/position :component/radius :component/velocity :component/angular-velocity :component/observer}, 1 #{:component/body-kind :component/planet-candidate :component/mass :component/position :component/radius :component/velocity}}, :alive #{0 1}, :next-id 2, :test/queued true}]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset [0.0 0.0 ##-Inf]
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" ""))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset ["bad" 0.0 0.0]
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [["bad" 0.0 0.0] ["bad" 0.0 0.0]]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset ["bad" 0.0 0.0]
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" "[INTENT ERROR] class java.lang.String cannot be cast to class java.lang.Number (java.lang.String and java.lang.Number are in module java.base of loader 'bootstrap')\n[INTENT ERROR] class java.lang.String cannot be cast to class java.lang.Number (java.lang.String and java.lang.Number are in module java.base of loader 'bootstrap')\n"))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:226)
+invalid host focus-offset {:x 0.0, :y 0.0, :z 0.0}
+invalid host data never enters focus-follow
+expected: (empty? (clojure.core/deref domain-offsets))
+  actual: (not (empty? [{:x 0.0, :y 0.0, :z 0.0} {:x 0.0, :y 0.0, :z 0.0}]))
+
+FAIL in (invalid-host-offset-is-rejected-before-the-domain-boundary) (focus_cadence_test.clj:230)
+invalid host focus-offset {:x 0.0, :y 0.0, :z 0.0}
+the rejected boundary is named in the error
+expected: (re-find #"focus-offset" errors)
+  actual: (not (re-find #"focus-offset" "[INTENT ERROR] nth not supported on this type: PersistentArrayMap\n[INTENT ERROR] nth not supported on this type: PersistentArrayMap\n"))
+
+Ran 11 tests containing 164 assertions.
+23 failures, 0 errors.

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "kondo",
+    "command": [
+      "clj-kondo",
+      "--lint",
+      "test/infra/dev/focus_cadence_test.clj"
+    ],
+    "exit_code": 0,
+    "completed_at": "2026-10-06T23:34:18.332931+00:00"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "completed_at": "2026-10-06T23:34:18.354750+00:00"
+  }
+]

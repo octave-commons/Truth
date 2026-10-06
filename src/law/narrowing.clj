@@ -5,9 +5,20 @@
    docs/designs/the-first-narrowing-star-to-planet.md §2)."
   (:require
    [malli.core :as m]
+   [law.field.schema :as field]
    [law.stellar :as law-stellar]))
 
 ;; --- Schemas ----------------------------------------------------------------
+
+(def focus-offset-schema
+  "Three finite world-metre coordinates supplied by the host for manual focus.
+
+   Retains the existing finite-vector contract's list and vector support."
+  [:fn field/finite-vec3?])
+
+(def focus-offset?
+  "Compiled Malli validator for the host-to-domain manual focus boundary."
+  (m/validator focus-offset-schema))
 
 (def binding-schema
   "The `c/binding` component on the observer entity: a map from candidate-world
