@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "uuid": "focus-follows-pilot",
+  "comment": "2026-10-06 actual PR19 focus-offset RED at unchanged production b402939931575e377ae4409d9cd4061dff11df06: clojure -J-Xms256m -J-Xmx2g -M:test -n infra.dev.focus-cadence-test exited1; 11 tests,164 assertions,23 expected failures,0 errors. Malformed offsets enter the pure domain before validation, nonfinite offsets corrupt attention, and the existing errors do not name the focus-offset boundary. Valid sequential coordinates, absent-key zero default, continuation, later valid-setting recovery and tracking controls pass. No missing-symbol or runner error supplies RED. JVM4149723 reaped. Touched kondo0 errors/warnings and diff check pass; formatting/full/strict/native gates not claimed. Evidence .ημ/diagnostics/focus-contract-review/red/VERDICT.md; raw log SHA256 2e6421ab6c4872cb553ebd184a5e96e52aefaa7db2229893bfe0c0d9c924a4eb. Root must commit this RED before production changes. Original manual gameplay acceptance remains open; no transition or hosted settlement."
+}

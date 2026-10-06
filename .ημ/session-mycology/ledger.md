@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: none
   note: Verify the actual GLFW callback before using a menu shortcut; current Escape closes the render loop despite an unrelated back-action comment. Separate input dispatch from accepted published state, especially when read clients overlap later input. A same-world restart requires dead prior writers and discarding old-context host caches; never reuse GL IDs across unshared contexts. Driver errors need owning-thread attribution and explicit restoration. Preserve failed probes, mixed source boundaries and visual limits. Existing lifecycle/cadence work owns follow-up; no spore created.
+- ts: 2026-10-06T23:32:01.867863432Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-contract-review
+  task: Draft real boundary regressions for the reviewed host focus-offset contract
+  p-efficiency: 0.92
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,review5435441692
+  note: An existing catch guard does not validate data: extra coordinates and NaN can enter pure focus logic without throwing. Exercise the actual serial host boundary and preserve queued state, then test recovery; avoid substituting a missing-symbol-only RED. Keep historical card evidence intact and append an explicit current-contract supersession through Rheos. No new spore warranted.

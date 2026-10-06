@@ -1,0 +1,22 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:test",
+    "-n",
+    "infra.dev.focus-cadence-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-contract-review",
+  "source_head": "b402939931575e377ae4409d9cd4061dff11df06",
+  "source_diff": "",
+  "test_sha256": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1",
+  "started_at": "2026-10-06T23:32:42.111907+00:00",
+  "resource_scope": "Only focused test JVM authorized; retained native service may run; no isolated performance claim.",
+  "pid": 4149723,
+  "exit_code": 1,
+  "elapsed_seconds": 23.730631603997608,
+  "completed_at": "2026-10-06T23:33:05.875555+00:00",
+  "final_test_sha256": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1",
+  "log_sha256": "2e6421ab6c4872cb553ebd184a5e96e52aefaa7db2229893bfe0c0d9c924a4eb"
+}

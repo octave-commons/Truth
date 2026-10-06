@@ -201,3 +201,95 @@
     (is (re-find #"focus failure probe" errors) "the failed update remains visible")
     (is (empty? service))
     (is (nil? (:ui/error-state config)) "attention failure retains intent-drop semantics")))
+
+(deftest invalid-host-offset-is-rejected-before-the-domain-boundary
+  (let [[world _ _] (moving-pair)
+        original-follow player/focus-follow
+        queued-update #(-> %
+                           (assoc :test/queued true)
+                           (player/update-observer player/narrow-focus 2.0))
+        expected (dissoc (queued-update world) :tick)]
+    (doseq [offset [nil [] [0.0 0.0] [0.0 0.0 0.0 1.0]
+                    [##NaN 0.0 0.0] [0.0 ##Inf 0.0] [0.0 0.0 ##-Inf]
+                    ["bad" 0.0 0.0] {:x 0.0 :y 0.0 :z 0.0}]]
+      (testing (str "invalid host focus-offset " (pr-str offset))
+        (let [domain-offsets (atom [])
+              {:keys [inputs published errors service config]}
+              (with-redefs [player/focus-follow
+                            (fn [w supplied-offset]
+                              (swap! domain-offsets conj supplied-offset)
+                              (original-follow w supplied-offset))]
+                (run-iterations world 2
+                                {:config {:focus-offset offset}
+                                 :intents [queued-update]
+                                 :tick-fn ecs/advance-tick}))]
+          (is (empty? @domain-offsets) "invalid host data never enters focus-follow")
+          (is (= [expected expected] (mapv #(dissoc % :tick) inputs))
+              "rejection preserves the complete drained world, including attention and physics")
+          (is (= [1 2] (mapv :tick published)) "the existing guard keeps ticking")
+          (is (re-find #"focus-offset" errors) "the rejected boundary is named in the error")
+          (is (identical? offset (:focus-offset config)) "no silent host correction or clamp")
+          (is (empty? service))
+          (is (nil? (:ui/error-state config))))))))
+
+(deftest valid-host-offsets-preserve-focus-and-physical-state
+  (let [[world _ _] (moving-pair)
+        observer (player/get-observer world)]
+    (doseq [offset [[0.0 0.0 0.0] [3 -2 1] '(2.0 3.0 -4.0)]]
+      (testing (str "finite host coordinates " offset)
+        (let [{:keys [inputs published errors]}
+              (run-iterations world 2 {:config {:focus-offset offset}
+                                       :tick-fn identity})
+              expected-focus (sp/v+ (player/observer-position world) offset)]
+          (is (= [expected-focus expected-focus] (mapv focus-position inputs)))
+          (is (= inputs published))
+          (doseq [input inputs]
+            (is (= (physical-columns world) (physical-columns input)))
+            (is (= (dissoc observer :focus-position)
+                   (dissoc (player/get-observer input) :focus-position))))
+          (is (= "" errors)))))))
+
+(deftest absent-host-offset-still-defaults-to-zero
+  (let [[world _ _] (moving-pair)
+        offset [3.0 -2.0 1.0]
+        {:keys [inputs config errors]}
+        (run-iterations world 3
+                        {:config {:focus-offset offset}
+                         :tick-fn identity
+                         :after-publish (fn [n _ cfg]
+                                          (when (= n 1) (swap! cfg dissoc :focus-offset)))})]
+    (is (not (contains? config :focus-offset)) "exercise a genuinely absent host key")
+    (is (= [(sp/v+ (player/observer-position world) offset)
+            (player/observer-position world)
+            (player/observer-position world)]
+           (mapv focus-position inputs)))
+    (is (= "" errors))))
+
+(deftest corrected-host-offset-recovers-on-the-next-iteration
+  (let [[world _ _] (moving-pair)
+        offset [3.0 -2.0 1.0]
+        {:keys [inputs published errors]}
+        (run-iterations world 3
+                        {:config {:focus-offset [##NaN 0.0 0.0]}
+                         :tick-fn ecs/advance-tick
+                         :after-publish (fn [n queued cfg]
+                                          (when (= n 1)
+                                            (swap! cfg assoc :focus-offset offset)
+                                            (swap! queued assoc :test/queued true)))})]
+    (is (= (dissoc world :tick) (dissoc (first inputs) :tick))
+        "the invalid offset cannot corrupt the first consumer snapshot")
+    (is (= [1 2 3] (mapv :tick published)))
+    (is (= [nil true true] (mapv :test/queued inputs)))
+    (is (= (repeat 2 (sp/v+ (player/observer-position world) offset))
+           (map focus-position (rest inputs))))
+    (is (= 1 (count (re-seq #"focus-offset" errors)))
+        "only the invalid iteration emits a boundary error")))
+
+(deftest tracking-mode-does-not-consume-the-manual-offset
+  (let [[world _ _] (moving-pair)
+        {:keys [inputs published errors]}
+        (run-iterations world 2 {:config {:mode :follow-selection
+                                          :focus-offset [##NaN 0.0 0.0]}
+                                 :tick-fn identity})]
+    (is (= [world world] inputs published))
+    (is (= "" errors))))
