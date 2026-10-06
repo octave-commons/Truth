@@ -15,6 +15,7 @@
    [infra.render.units :as units]
    [infra.render.scene.particles :as particles]
    [infra.render.scene.hud :as hud]
+   [infra.render.scene.trails :as trails]
    [infra.render.scene.voxel :as voxel]))
 
 ;; --- Level-of-detail: distant bodies fall back to screen-space sprites ------
@@ -263,7 +264,9 @@
      (if-let [cached (get @phase0-bodies-cache ckey)]
        cached
        (let [ctx (units/make-context scale (cam/make-camera) {:width 1 :height 1})
-             bodies (phase0-bodies-from-world* ctx world)]
+             trail-projection (trails/project-trails ctx world)
+             bodies (into (phase0-bodies-from-world* ctx world) (:shapes trail-projection))]
+         (trails/report-budget! (:summary trail-projection))
          (reset! phase0-bodies-cache {ckey bodies})
          bodies)))))
 

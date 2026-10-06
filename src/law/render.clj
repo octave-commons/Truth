@@ -52,9 +52,14 @@
    [:position vec3]
    [:radius {:optional true} :double]
    [:color {:optional true} vec3]
+   [:alpha {:optional true} [:and :double [:>= 0.0] [:<= 1.0]]]
    [:glow {:optional true} :double]
    [:brightness {:optional true} :double]
    [:label {:optional true} :string]])
+
+(def valid-line-vertex?
+  "Compiled line-buffer boundary: a render shape with required RGB color."
+  (m/validator [:and render-shape [:map [:color vec3]]]))
 
 (def volume-light
   "One point light scattered by the ray-marched gas volume: render-space

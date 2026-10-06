@@ -1,0 +1,23 @@
+
+Running tests in #{"test"}
+
+Testing domain.lod-test
+
+Testing domain.motion-trail-test
+
+FAIL in (trail-api-and-owner-exist) (motion_trail_test.clj:53)
+expected: (= #{trail-component c/lod-tick-phase c/position c/body-kind c/matter-state} (:reads owner))
+  actual: (not (= #{:component/body-kind :component/motion-trail :component/lod-tick-phase :component/position :component/matter-state} #{:component/body-kind :component/motion-trail :component/position :component/matter-state}))
+
+FAIL in (history-rebases-only-when-the-integrator-rebases-the-body) (motion_trail_test.clj:236)
+an intentionally frozen body receives no recenter translation
+expected: (= (if throttle? [[80.0 0.0 0.0] [100.0 0.0 0.0]] [[70.0 0.0 0.0] [90.0 0.0 0.0]]) (mapv :position (:samples first-history)))
+  actual: (not (= [[80.0 0.0 0.0] [100.0 0.0 0.0]] [[70.0 0.0 0.0] [90.0 0.0 0.0]]))
+
+FAIL in (history-rebases-only-when-the-integrator-rebases-the-body) (motion_trail_test.clj:242)
+the next due fold shifts old history by only the applied offset
+expected: (= (if throttle? [[60.0 0.0 0.0] [80.0 0.0 0.0]] [[50.0 0.0 0.0] [70.0 0.0 0.0]]) (mapv :position (:samples second-history)))
+  actual: (not (= [[60.0 0.0 0.0] [80.0 0.0 0.0]] [[50.0 0.0 0.0] [70.0 0.0 0.0]]))
+
+Ran 14 tests containing 89 assertions.
+3 failures, 0 errors.

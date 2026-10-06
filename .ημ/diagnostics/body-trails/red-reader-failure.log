@@ -1,0 +1,7 @@
+
+Running tests in #{"test"}
+Syntax error reading source at (domain/motion_trail_test.clj:161:80).
+Unmatched delimiter: )
+
+Full report at:
+/tmp/clojure-3945620833955217250.edn

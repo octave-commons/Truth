@@ -7,6 +7,7 @@
    [domain.player :as player]
    [domain.integrator :as integ]
    [domain.integrator.rotation :as rotation]
+   [domain.trail.system :as trail]
    [domain.stellar.geometry :as geometry]
    [domain.stellar.classifier.candidate :as cls-cand]
    [domain.stellar.classifier.planet :as cls-planet]
@@ -57,7 +58,8 @@
   "Geometry / structure / EOS."
   []
   [(geometry/structure-system)
-   (geometry/eos-system)])
+   (geometry/eos-system)
+   (trail/trail-system)])
 
 (defn- ^:private physics-formation-systems
   "Classifier, planet classification + M5 handoff, seeding, fusion,

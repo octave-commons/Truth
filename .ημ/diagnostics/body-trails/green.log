@@ -1,0 +1,13 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.motion-trail-test
+
+Testing infra.render.shader-test
+
+Testing infra.render.trail-test
+
+Ran 28 tests containing 134 assertions.
+0 failures, 0 errors.

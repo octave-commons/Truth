@@ -1,0 +1,226 @@
+=== System Info ===
+  JVM:      OpenJDK 64-Bit Server VM 21.0.12.1
+  Cores:    22
+  Heap:     6144 MB allocated
+  PID:      3035576@err-Stealth-16-AI-Studio-A1VGG
+
+
+  Realistic tick-world phase profile (500 particles, 10 samples avg):
+{:observer-system 0.1324391,
+ :samples 10,
+ :system-summary 0.704606,
+ :events+clock 0.5683168,
+ :detect+complexity 0.11194119999999999,
+ :pacing 1.1447732,
+ :advance-com-spatial 5.0892957,
+ :total 37.8053623,
+ :stats-of 0.7738425999999999,
+ :expire+materialize 0.0416526,
+ :step-physics 29.238495100000005}
+
+  Per-system step-physics profile (initial w500, one sample each):
+
+  Per-system step-physics profile (initial w500):
+  :gravity                                 3.120 ms
+  :hydro-em                                6.615 ms
+  :warp                                    0.016 ms
+  :observer-accel                          1.858 ms
+  :player-thrust                           0.051 ms
+  :dark-matter                             0.342 ms
+  :thermal-intervention                    0.009 ms
+  :integrator                              7.113 ms
+    :integrator/leapfrog                   1.668 ms
+    :integrator/comp-condensed             1.661 ms
+    :integrator/temperature                1.234 ms
+    :integrator/force-accum                0.590 ms
+    :integrator/mass                       0.552 ms
+    :integrator/rotation                   0.547 ms
+    :integrator/composition                0.010 ms
+  :rotation-integrator                     0.106 ms
+  :structure                               2.580 ms
+    :structure/gas-query                   2.122 ms
+    :structure/gas-reduce                  0.074 ms
+    :structure/resolved                    0.065 ms
+  :eos                                     0.275 ms
+  :classifier                              1.203 ms
+    :classifier/transitions                0.841 ms
+    :classifier/scan                       0.094 ms
+    :classifier/select                     0.014 ms
+    :classifier/write-set                  0.003 ms
+  :classification                          0.230 ms
+  :handoff                                 0.092 ms
+  :condensation-seeder                     0.011 ms
+  :field                                   2.083 ms
+    :field/scan                            1.312 ms
+    :field/compute                         0.726 ms
+  :fusion                                  0.954 ms
+    :fusion/burn                           0.760 ms
+    :fusion/scan                           0.171 ms
+  :stellar-sed                             0.187 ms
+  :atmosphere-shells                       0.164 ms
+  :nucleosynthesis                         0.294 ms
+  :differentiation                         0.738 ms
+  :deuterium-depletion                     0.158 ms
+  :stellar-wind                            0.233 ms
+    :stellar-wind/scan                     0.107 ms
+    :stellar-wind/compute                  0.100 ms
+    :stellar-wind/write-set                0.004 ms
+  :wind-ablation                           0.047 ms
+    :wind-ablation/scan                    0.015 ms
+    :wind-ablation/write-set               0.009 ms
+    :wind-ablation/compute                 0.007 ms
+  :stellar-flare                           0.006 ms
+  :xuv-atmospheric-escape                  0.155 ms
+  :disc-identification                     0.170 ms
+  :regime                                  1.124 ms
+    :regime/classify                       1.046 ms
+    :regime/write-set                      0.056 ms
+  :collision-detection                     0.498 ms
+  :fusion-promotion                        0.928 ms
+    :fusion-promotion/evaluate             0.766 ms
+    :fusion-promotion/scan                 0.126 ms
+    :fusion-promotion/write-set            0.007 ms
+  :sink-formation                          0.266 ms
+  :disk-evolution                          0.201 ms
+  :mass-transfer                           0.290 ms
+  :neighbor-cache                          0.934 ms
+    :neighbor-cache/rebuild                1.643 ms
+    :neighbor-cache/build-entries          0.529 ms
+    :neighbor-cache/scan-prior             0.154 ms
+    :neighbor-cache/evict                  0.077 ms
+    :neighbor-cache/full-check             0.012 ms
+    :neighbor-cache/item-map               0.008 ms
+    :neighbor-cache/build-map              0.006 ms
+  :lod-scheduler                           0.233 ms
+  :magnetosphere-coupling                  0.367 ms
+    :magnetosphere/filter-winds            0.211 ms
+    :magnetosphere/compute                 0.123 ms
+    :magnetosphere/build-wind-data         0.004 ms
+  :ecology                                 0.426 ms
+  :debris-reaper                           0.754 ms
+  :focus-zone                              0.092 ms
+  :binding                                 0.050 ms
+  :commitment                              0.029 ms
+  :voxel-sculpt                            0.006 ms
+  :voxel-carve                             0.012 ms
+  :voxel-focus                             0.007 ms
+
+  Per-system step-physics profile (world1 with spatial tree):
+  :gravity                                 106.282 ms
+  :hydro-em                                7.459 ms
+  :warp                                    0.007 ms
+  :observer-accel                          0.622 ms
+  :player-thrust                           0.023 ms
+  :dark-matter                             0.234 ms
+  :thermal-intervention                    0.006 ms
+  :integrator                              7.786 ms
+    :integrator/comp-condensed             2.469 ms
+    :integrator/leapfrog                   1.691 ms
+    :integrator/temperature                1.454 ms
+    :integrator/rotation                   0.676 ms
+    :integrator/mass                       0.671 ms
+    :integrator/force-accum                0.397 ms
+    :integrator/composition                0.053 ms
+  :rotation-integrator                     0.160 ms
+  :structure                               5.870 ms
+    :structure/gas-query                   5.178 ms
+    :structure/gas-reduce                  0.333 ms
+    :structure/resolved                    0.057 ms
+  :eos                                     0.406 ms
+  :classifier                              1.370 ms
+    :classifier/transitions                1.176 ms
+    :classifier/scan                       0.122 ms
+    :classifier/select                     0.030 ms
+    :classifier/write-set                  0.003 ms
+  :classification                          0.267 ms
+  :handoff                                 0.086 ms
+  :condensation-seeder                     0.009 ms
+  :field                                   0.907 ms
+    :field/compute                         0.535 ms
+    :field/scan                            0.346 ms
+  :fusion                                  0.806 ms
+    :fusion/burn                           0.667 ms
+    :fusion/scan                           0.121 ms
+  :stellar-sed                             0.181 ms
+  :atmosphere-shells                       0.124 ms
+  :nucleosynthesis                         0.261 ms
+  :differentiation                         0.715 ms
+  :deuterium-depletion                     0.165 ms
+  :stellar-wind                            0.280 ms
+    :stellar-wind/scan                     0.138 ms
+    :stellar-wind/compute                  0.108 ms
+    :stellar-wind/write-set                0.003 ms
+  :wind-ablation                           0.048 ms
+    :wind-ablation/scan                    0.014 ms
+    :wind-ablation/write-set               0.012 ms
+    :wind-ablation/compute                 0.006 ms
+  :stellar-flare                           0.005 ms
+  :xuv-atmospheric-escape                  0.227 ms
+  :disc-identification                     0.246 ms
+  :regime                                  1.223 ms
+    :regime/classify                       1.115 ms
+    :regime/write-set                      0.079 ms
+  :collision-detection                     0.703 ms
+  :fusion-promotion                        1.336 ms
+    :fusion-promotion/evaluate             1.061 ms
+    :fusion-promotion/scan                 0.231 ms
+    :fusion-promotion/write-set            0.007 ms
+  :sink-formation                          0.345 ms
+  :disk-evolution                          0.211 ms
+  :mass-transfer                           0.298 ms
+  :neighbor-cache                          8.678 ms
+    :neighbor-cache/rebuild                17.163 ms
+    :neighbor-cache/build-entries          8.133 ms
+    :neighbor-cache/build-map              0.204 ms
+    :neighbor-cache/item-map               0.124 ms
+    :neighbor-cache/scan-prior             0.077 ms
+    :neighbor-cache/evict                  0.025 ms
+    :neighbor-cache/full-check             0.010 ms
+  :lod-scheduler                           0.319 ms
+  :magnetosphere-coupling                  0.865 ms
+    :magnetosphere/filter-winds            0.493 ms
+    :magnetosphere/compute                 0.307 ms
+    :magnetosphere/build-wind-data         0.007 ms
+  :ecology                                 0.013 ms
+  :debris-reaper                           1.717 ms
+  :focus-zone                              0.138 ms
+  :binding                                 0.065 ms
+  :commitment                              0.032 ms
+  :voxel-sculpt                            0.008 ms
+  :voxel-carve                             0.006 ms
+  :voxel-focus                             0.007 ms
+
+  Overhead functions measured on post-physics world (500 particles):
+
+  Tick overhead breakdown (500 particles):
+
+  System Breakdown (500 particles, one tick):
+  Measuring individual system costs to identify the bottleneck.
+
+  Step-physics parallel vs sequential (500 particles):
+
+  Parallel vs Sequential (500 particles):
+
+  Multi-tick Scaling (500 particles):
+
+  Phase 0 Tick Analysis:
+    Target: 16.6ms per tick for 60 Hz rendering.
+    If tick > 16.6ms, identify the dominant system above.
+    Gravity is usually the bottleneck at high N.
+    SPH/EM neighbor queries scale with particle count.
+    Collision cost depends on body density (overlaps).
+    If parallel ≈ sequential: check write-set sizes.
+UNTIMED POPULATION: [{:tick 0, :total-samples 0, :matter-states {:nebula 500}, :dt 1.590115934278727E10, :max-samples 0, :skipped-deadlines 0, :sim-time 0.0, :trailed-bodies 0, :sample-counts {}} {:tick 1, :total-samples 0, :matter-states {:nebula 500}, :dt 1.3732604200037315E10, :max-samples 0, :skipped-deadlines 0, :sim-time 1.590115934278727E10, :trailed-bodies 0, :sample-counts {}} {:tick 2, :total-samples 0, :matter-states {:nebula 499, :condensed-core 1}, :dt 1.3732863553914175E10, :max-samples 0, :skipped-deadlines 0, :sim-time 2.9633763542824585E10, :trailed-bodies 0, :sample-counts {}} {:tick 3, :total-samples 0, :matter-states {:nebula 499, :condensed-core 1}, :dt 1.373312218317444E10, :max-samples 0, :skipped-deadlines 0, :sim-time 4.336662709673876E10, :trailed-bodies 0, :sample-counts {}} {:tick 4, :total-samples 0, :matter-states {:nebula 499, :condensed-core 1}, :dt 1.3733380087760618E10, :max-samples 0, :skipped-deadlines 0, :sim-time 5.70997492799132E10, :trailed-bodies 0, :sample-counts {}} {:tick 5, :total-samples 0, :matter-states {:nebula 499, :condensed-core 1}, :dt 1.3731972705011814E10, :max-samples 0, :skipped-deadlines 0, :sim-time 7.083312936767381E10, :trailed-bodies 0, :sample-counts {}} {:tick 6, :total-samples 0, :matter-states {:nebula 499, :gas-giant 1}, :dt 1.3730568440323267E10, :max-samples 0, :skipped-deadlines 0, :sim-time 8.456510207268562E10, :trailed-bodies 0, :sample-counts {}} {:tick 7, :total-samples 0, :matter-states {:nebula 499, :gas-giant 1}, :dt 1.3729581897974808E10, :max-samples 0, :skipped-deadlines 0, :sim-time 9.82956705130089E10, :trailed-bodies 0, :sample-counts {}} {:tick 8, :total-samples 0, :matter-states {:nebula 499, :gas-giant 1}, :dt 1.3729012660266018E10, :max-samples 0, :skipped-deadlines 0, :sim-time 1.120252524109837E11, :trailed-bodies 0, :sample-counts {}} {:tick 9, :total-samples 0, :matter-states {:nebula 499, :gas-giant 1}, :dt 1.3728755520441956E10, :max-samples 0, :skipped-deadlines 0, :sim-time 1.2575426507124973E11, :trailed-bodies 0, :sample-counts {}} {:tick 10, :total-samples 0, :matter-states {:nebula 499, :gas-giant 1}, :dt 1.3728705855730967E10, :max-samples 0, :skipped-deadlines 0, :sim-time 1.3948302059169168E11, :trailed-bodies 0, :sample-counts {}}]
+
+--- ten ticks targeted repetition 1 ---
+  Mean:   250.4 ms
+  Range:  170.6 ms — 324.9 ms
+
+--- ten ticks targeted repetition 2 ---
+  Mean:   220.0 ms
+  Range:  171.1 ms — 319.4 ms
+
+--- ten ticks targeted repetition 3 ---
+  Mean:   240.3 ms
+  Range:  170.5 ms — 298.5 ms
+TARGETED REPEAT COMPLETE
