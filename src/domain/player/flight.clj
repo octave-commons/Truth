@@ -15,19 +15,20 @@
      Wave 1 orientation lands), or absent when no flight key is held.
    - `thrust-acceleration-system` is a write-set fan-out system, the SOLE
      writer of `c/accel-thrust`, emitting on the observer entity only:
-       a = dir · (thrust-dv / dt)  −  v · (1 − retention) / dt
+       a = dir · D · (1 − retention) / dt² − v · (1 − retention) / dt
      The integrator sums it with every other accel.* channel and stays
      the sole writer of c/position/c/velocity.
 
    UNITS (the physics-dt-unit-mismatch lesson): `:sim/dt` dilates with
    the bulk-collapse dynamical time and the integrator advances x by
    v·dt, so the thrust term is sized by DISPLACEMENT per tick, not Δv:
-   a held key drives terminal v·dt → `default-displacement-per-tick` at
-   ANY dilation, and coast-down is a fixed retained FRACTION per tick.
+   at constant dt a held key drives terminal v·dt → the selected D.
+   The Jacobi fold consumes the prior acceleration channel, so coasting
+   is a delayed second-order response, not exact per-tick retention.
    (A fixed Δv per tick would make displacement proportional to dt —
    dilation-dependent, the exact bug class this comment exists to
-   prevent.) The sim thread paces at ~60 ticks/s
-   (infra.dev.window.loop/sim-loop), so per-tick feel is per-frame feel.
+   prevent.) Changing dt also changes the prior-channel kick. The sim
+   thread targets 60 ticks/s but does not guarantee that wall-clock pace.
    Live-tune via the `:genesis/` knobs below in the pm2 window; Wave 1
    (spark-flight-force-channels) re-expresses this as body-frame thrust
    with real units once orientation exists."
@@ -41,26 +42,27 @@
 (def ^:private zero3 [0.0 0.0 0.0])
 
 (def default-displacement-per-tick
-  "Target spark displacement (m) PER TICK at full thrust, terminal speed —
-   the quantity that must stay constant under `:sim/dt` dilation
+  "Cruise displacement (m/tick) at full thrust and constant-dt equilibrium.
+
+   The quantity is normalized for `:sim/dt` dilation
    (physics-dt-unit-mismatch: the integrator advances x by v·dt, so a fixed
    Δv per tick makes displacement PROPORTIONAL to dt — the 2026-07-23 live
    fling: 6e13 m/s Δv at dt=4.1e9 s moved the spark 8e24 m in one tick).
-   3.0e14 m/tick crosses the late-sim world (~1e17 m) in ~300 ticks ≈ 5 s
-   wall at the ~60 Hz sim pace — the old drift's feel (3.0e15 m/s × 16 ms
-   frames ≈ 5e13 m/frame) scaled up for a world that has since inflated.
-   The thrust term derives Δv = D·(1−retention)/dt so terminal v·dt = D at
-   ANY dilated dt. Live knob: `:genesis/spark-flight-displacement`."
+   3.0e14 m/tick crosses a ~1e17 m world in ~333 settled-thrust ticks;
+   wall time depends on actual simulation throughput. At fixed dt, the
+   delayed thrust/damping channels have equilibrium v·dt = D. Unequal
+   timesteps do not preserve that trajectory because the integrator consumes
+   the prior channel. Live knob: `:genesis/spark-flight-displacement`."
   3.0e14)
 
 (def default-damping-retention
-  "Fraction of the spark's velocity RETAINED per tick by the proto
-   flight-assist (always on in Wave 0 — the FA toggle is Wave 1 card 3).
-   0.97: a released mote coasts to ~5% in ln(0.05)/ln(0.97) ≈ 98 ticks
-   ≈ 1.6 s at the sim's ~60 Hz pace. Expressed through the accel channel
-   as a_damp = −v · (1 − retention) / dt so the integrator's a·dt applies
-   exactly the fractional decay at any dilated dt. Live knob:
-   `:genesis/spark-damping-retention`."
+  "Retention parameter for the always-on Wave 0 flight-assist damping.
+
+   The emitted brake is −v·(1−r)/dt. With the one-tick channel delay,
+   force-free constant-dt motion follows w[n+1]=w[n]−(1−r)w[n−1], where
+   w=v·dt. At r=.97 its slow decay root is ~.96904, not exactly r.
+   Release from settled thrust coasts rD/(1−r). Live knob:
+   `:genesis/spark-damping-retention`; the FA toggle remains Wave 1."
   0.97)
 
 (defn set-thrust
@@ -75,15 +77,12 @@
     (dissoc world :player/thrust)))
 
 (defn thrust-acceleration-system
-  "Write-set system (sole writer of `c/accel-thrust`): the spark's
-   manual-flight thrust plus the always-on proto flight-assist damping,
-   one acceleration channel on the observer entity only. Reads the
-   `:player/thrust` world key (input direction, set by intent) and the
-   spark's `c/velocity` snapshot (damping); both terms are divided by
-   `:sim/dt` so one integrator step lands exactly `thrust-dv` of Δv and
-   exactly `(1 − retention)` of fractional decay per tick at any time
-   dilation. Auto-clears when there is no observer (the
-   contribution-write-set precedent)."
+  "Emit manual thrust and proto-assist through the sole `c/accel-thrust` channel.
+
+   Read the intent's world-axis direction, selected displacement D and current
+   velocity. Emit dir·D·(1−r)/dt² − v·(1−r)/dt on the observer. The integrator
+   consumes this on the following tick, whose dt may differ; only the fixed-dt
+   equilibrium guarantees v·dt=D. Auto-clear when there is no observer."
   []
   {:id     :player-thrust
    :writes #{c/accel-thrust}
@@ -96,7 +95,7 @@
              retention (double (or (:genesis/spark-damping-retention world)
                                    default-damping-retention))
              v         (or (ecs/get-component world eid c/velocity) zero3)
-             ;; Δv per tick = D·(1−retention)/dt ⇒ terminal v·dt = D at any dt
+             ;; With constant dt the delayed channel has equilibrium v·dt = D.
              a-thrust  (if-let [dir (:player/thrust world)]
                          (sp/v* dir (/ (* disp (- 1.0 retention)) (* dt dt)))
                          zero3)
