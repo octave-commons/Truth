@@ -30,6 +30,9 @@ jobs:
             ~/.clojure
           key: deps-${{ hashFiles('deps.edn') }}
 
+      - name: Native demo failure-path contracts
+        run: clojure -M:demo-test
+
       - name: Run unit tests
         run: ./bin/test unit
 

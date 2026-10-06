@@ -1,0 +1,7 @@
+:nebula {:arc/current :arc/genesis-nebula-collapse, :demo/fixture? false}
+:protostar {:arc/current :arc/genesis-protostar, :demo/fixture? true}
+:ignition {:arc/current :arc/genesis-ignition, :demo/fixture? true}
+:accretion {:arc/current :arc/genesis-accretion, :demo/fixture? true}
+:planets {:arc/current :arc/genesis-planets-formed, :demo/fixture? true}
+:life {:arc/current :arc/life-emergence, :demo/fixture? true}
+:dispersed {:arc/current :arc/genesis-dispersed, :demo/fixture? true}

@@ -6,6 +6,8 @@
   "Evaluate one supplied form on the demo server and fail on remote errors."
   [& [code]]
   (try
+    (when (nil? code)
+      (throw (IllegalArgumentException. "Usage: clojure -M:demo-client <form>")))
     (with-open [connection (nrepl/connect :host "127.0.0.1"
                                           :port (Integer/parseInt (or (System/getenv "TRUTH_DEMO_PORT") "7890")))]
       (let [responses (vec (nrepl/message (nrepl/client connection 40000)

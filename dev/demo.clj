@@ -164,22 +164,38 @@
   "Install a fresh, paused default nebula and a fixed wide camera.
 
    Zero camera smoothing freezes the fit-all frame at its initial bounds;
-   contraction remains visible instead of being cancelled by automatic zoom."
+   contraction remains visible instead of being cancelled by automatic zoom.
+   A failed world replacement restores the prior tick and step settings."
   []
   (let [{:keys [config camera world-intents] :as service} @window/service-state
+        _ (when-not service (throw (ex-info "Demo window is not running" {})))
+        previous-config @config
         token (str (java.util.UUID/randomUUID))
         world (assoc (:world (scenario-world :nebula)) :demo/capture token)
         bounds (tracking/fit-all-bounds
                 (tracking/bodies->render world camera/phase0-view-scale) 0.95)
         distance (tracking/distance-for-radius (:radius bounds) 60.0 1.25)]
     (swap! config assoc :tick-fn identity :on-step identity)
-    (reset! world-intents world)
-    (loop [attempt 0]
-      (when-not (= token (:demo/capture @(:world service)))
-        (when (>= attempt 300)
-          (throw (ex-info "Simulation did not accept formation world" {})))
-        (Thread/sleep 100)
-        (recur (inc attempt))))
+    (try
+      (reset! world-intents world)
+      (loop [attempt 0]
+        (when-not (= token (:demo/capture @(:world service)))
+          (when (>= attempt 300)
+            (throw (ex-info "Simulation did not accept formation world" {})))
+          (Thread/sleep 100)
+          (recur (inc attempt))))
+      ;; Intentional: restore the paused pipeline on any failed handoff,
+      ;; including interrupted waits, then propagate the original failure.
+      (catch Throwable t
+        (swap! config
+               (fn [current]
+                 (reduce (fn [cfg setting]
+                           (if (contains? previous-config setting)
+                             (assoc cfg setting (get previous-config setting))
+                             (dissoc cfg setting)))
+                         current
+                         [:tick-fn :on-step])))
+        (throw t)))
     (swap! config #(-> %
                        (dissoc :selection :follow-eid :ui/active-domain :zoom-min)
                        (assoc :mode :fit-all :smoothing 0.0 :volumetric? true

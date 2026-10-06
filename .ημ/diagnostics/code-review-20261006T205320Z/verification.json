@@ -1,0 +1,52 @@
+{
+  "base_head": "0112e228e93abf346da31f15456290c1b4c9b7ae",
+  "review_id": 5432156719,
+  "regression_before": {
+    "tests": 6,
+    "assertions": 23,
+    "failures": 7,
+    "errors": 2
+  },
+  "regression_after": {
+    "tests": 6,
+    "assertions": 23,
+    "failures": 0,
+    "errors": 0
+  },
+  "passed": [
+    "bin/analyze --strict",
+    "clojure -M:demo check",
+    "clj-kondo: modified dev sources, zero warnings/errors",
+    "cljfmt: modified dev sources",
+    "shellcheck and bash syntax: both capture scripts",
+    "actionlint: test workflow",
+    "git diff --check"
+  ],
+  "capture_isolation": "Four distinct ports/output paths and a fixed UTC timestamp; all four atomically allocated unique diagnostic directories. Injected startup failures are expected and are not successful captures.",
+  "native_smoke": {
+    "command": "TRUTH_DEMO_PORT=7892 bin/formation-capture /tmp/truth-pr7-native-smoke-20261006 4",
+    "exit_code": 0,
+    "diagnostics": ".\u03b7\u03bc/diagnostics/formation-20261006T205442Z-3205663-wEqWIm",
+    "port_released": true
+  },
+  "gallery": "No accepted GIF or PNG changed; gallery-manifest.json preserves SHA-256 hashes.",
+  "source_sha256": {
+    "bin/demo-capture": "cc9e9bab1d8fb1d624fb4d16c1823f6cf914d6295b88b60a437483cbda554fc1",
+    "bin/formation-capture": "559dbe71a4208fba31ea7ed5bf1b53331c24b50f495d6b2cf9b818d8f7770de9",
+    "dev/demo.clj": "bc94c5881b8e4decb5e6ec7bb2a797b08b9b6e76160c388efbd75111d62118a2",
+    "dev/demo_client.clj": "411d440f0d472e10e6f43b3d3402a66e113c4355d6137421e7321156390c7e91",
+    "dev/demo_test.clj": "771fa1257f32ce16f28e7279f1a557c330783e2b9fe328a0a3ce444fb1498161",
+    "deps.edn": "b078e92f665008ba9239da1075e7f968876d961fbce7cc2b914d8dc47e152999",
+    ".github/workflows/test.yml": "f17a89ae3b025e6a87166b54161243db1d72d0c5a573ccadaa91de56e78edb55"
+  },
+  "evidence_sha256": {
+    "analysis.log": "90c5163420447808cd6cb3502dcc5e65e3cd636fe8a6fe48fb5a7ec19ae968d9",
+    "capture-isolation.json": "53dc854c83b79de2c5b7a87521e4eed71a401f4fb602ff42bd1d65f6e99aa1a2",
+    "gallery-manifest.json": "02538af7865fa034cff03cb7dddc1b7938ac175014b0f14deb35e2bd37347aea",
+    "missing-input.log": "3efdf762d473226e92a27f40c2d052f7f428b1cb3062cc81e0c32011d69a5b62",
+    "native-smoke.log": "142f0df4bef4091dfb67dab4deaa76549da69f5e89a0345b5e6cfd449f7a7e34",
+    "regression-green.log": "2171a9f5c3504c3fdc2a5a279f19434847959ad306b652e99f34daad2c203fc4",
+    "regression-red.log": "a767cc5f2cdf33dbc01d853bc804820e20dbf165c2256c8269d5b4e28ff930a8",
+    "scenario-check.log": "0f95904a6c08db844603ceacccdb7eb7cfe868ddd4cba916afff2a7bbeaa3d03"
+  }
+}
