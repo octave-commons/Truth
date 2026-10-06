@@ -92,3 +92,14 @@ Kimi remains a separate infrastructure gap: Truth has no verified hosted Kimi
 review surface and canonical PR-flow has no verified Kimi app identity. The
 MiMo workflow and its publisher cannot be relabeled as Kimi. This change does
 not claim a Kimi invitation, completed review, or approval.
+
+## Fresh canonical admission — 2026-10-06T18:59:37Z
+
+At committed source `9b1818ba4cc84001c19f043a72f79c25bbaec43a`, canonical Rheos
+ran `clojure -M:test` (899 tests, 15,635 assertions, zero failures/errors) and
+`bin/analyze --strict` (exit 0, no blocking findings), then lawfully moved
+`review-runtime-upstream-diagnostics` from `in_progress` to `review`.
+The checkout began clean; simulation, tests and workflow stayed unchanged.
+The complete gate output is
+`.ημ/diagnostics/review-runtime-upstream/rheos-review-9b1818b.log`.
+This establishes local review admission; hosted qualification remains separate.

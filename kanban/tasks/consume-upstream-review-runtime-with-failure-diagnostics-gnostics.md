@@ -2,11 +2,11 @@
 category: "tasks"
 labels: "hygiene, ci, review"
 type: "task"
-write-id: "1791312669330-0.0wlme6b0iqaf1rdyihef"
+write-id: "1791313214933-0.097a478zpzt3irndtbt6"
 points: "3"
 title: "Consume upstream review runtime with failure diagnostics"
 priority: "P1"
-status: "in_progress"
+status: "review"
 uuid: "review-runtime-upstream-diagnostics"
 created_at: "2026-10-06T18:44:30.671Z"
 ---
@@ -54,4 +54,6 @@ and canonical review admission. Mark upstream review/provenance blockers explici
 
 ---
 Caller-only adoption prepared: upstream pin 09a4454480baa67f6fdc40f6f73f5e48ef0457d1 plus required native pr_head_sha. Exact upstream tests 74/74 pass; actionlint and interface check pass. Provenance, exact stack/head binding, named-secret/read-permission preservation, free default, failed-attempt artifacts, fail-closed terminal gate and unverified hosted/Kimi qualification recorded in docs/notes/2026-10-06-review-runtime-adoption.md. Root owns commits, publication and gated review admission; no local reviewer implementation or credential changes.
+
+2026-10-06T18:59:37Z: canonical in_progress→review succeeded at exact committed source 9b1818ba4cc84001c19f043a72f79c25bbaec43a. Rheos freshly ran clojure -M:test: 899 tests, 15635 assertions, zero failures/errors, then bin/analyze --strict: exit0, no blocking findings. Source/workflow files unchanged throughout; only canonical card/event mutations followed. Full gate log: .ημ/diagnostics/review-runtime-upstream/rheos-review-9b1818b.log. This is local gated review admission, not hosted reviewer approval or a Done transition.
 ---
