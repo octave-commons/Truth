@@ -1,13 +1,14 @@
 ---
-uuid: "formation-placement-v2"
-title: "Formation placement v2: no spawns at clump-scale radii (disk-scale gate + Hill-stable clamp)"
-status: "review"
-priority: "P1"
-labels: ["domain", "physics", "genesis", "multi-timescale", "blocker"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/formation-placement-v2.md"
 category: "specs"
-estimate: 3
+labels: ["domain", "physics", "genesis", "multi-timescale", "blocker"]
+write-id: "1791310330900-0.sqyc6n1coiszw5sepv"
+source: "kanban/tasks/formation-placement-v2.md"
+title: "Formation placement v2: no spawns at clump-scale radii (disk-scale gate + Hill-stable clamp)"
+priority: "P1"
+status: "in_progress"
+estimate: "3"
+uuid: "formation-placement-v2"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Formation placement v2
@@ -58,3 +59,7 @@ gate band may differ per branch; document the choice).
 ## Dependencies
 `fragment-placement-decouple-dt` (landed). Sibling of
 `universal-compact-substepping` — either unblocks candidates only together.
+
+---
+Review reopened 2026-10-06 for two executable materialization defects found by runtime_scout and accepted for repair by root. Existing acceptance requires every FORMED event at <=100 AU from its host; a GI request planned at 2.999879 AU materialized at 999.550877 AU (unbound) when its host advanced 1000 AU before materialization, because GI and binary packets omit :spawn-parent/:rel-position/:rel-velocity. Separately, a core parent-relative seed under 10 AU :genesis/frame-offset has exactly 10 AU relative-position error: current post-integrator parent resolution is followed by a second recenter. Scope remains estimate 3: uniform parent-relative packets for GI/binary and exactly-once recenter for resolved parent-relative materialization; preserve absolute-spawn behavior, existing physical disk/Hill gates and velocity pairing. Grounding: docs/designs/multi-timescale-integration.md sections 3.0 (current parent-relative composition) and 3.4 (uniform frame shift once), with existing cluster-dispersal research section 3.2. Historical scratchpad probe artifacts remain missing, so these are fresh executable seam reproductions, not a claim to have rerun old research. Runtime scout will preserve script/output under .ημ/diagnostics/playable-foundation and write red moving-parent/nonzero-recenter regression tests; root commits red before source changes. This slice does not certify the two-seed live planet survival acceptance or complete the parent blocker.
+---

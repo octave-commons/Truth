@@ -225,6 +225,18 @@ live process status, and recent research notebooks. It auto-refreshes every
 When you create or modify an actor, make sure it appears in this dashboard and
 mention the dashboard in any related docs so other agents can find it.
 
+## Board operations
+
+`openhax.kanban.edn` is the sole board configuration. Use an EDN-capable
+canonical Rheos runtime supporting `:extends :promethean` and
+`:build-gate-commands`; the older published `eta-mu` shim does not support this
+contract. The upstream overlay preserves the Promethean FSM and runs
+`clojure -M:test` followed by `bin/analyze --strict` from this repository before
+admitting `in_progress` → `review`. See [PROCESS.md](PROCESS.md#canonical-board-runtime)
+for the verified runtime hash and direct CLI commands. Do not add a local board
+parser, wrapper, validator, or gate bypass. Record a missing capable runtime as
+a tooling blocker.
+
 ## Agent Skills
 
 Project-local skills live under `.agents/skills/` and are discoverable by OpenCode (when working in this project), by eta-mu (through the per-skill `CONTRACT.edn` and project `CONTRACT.edn`), and by Claude (via this file). Prefer these over inventing ad-hoc instructions for recurring tasks.

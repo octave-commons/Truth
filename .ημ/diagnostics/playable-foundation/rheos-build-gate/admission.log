@@ -1,0 +1,3 @@
+▶ build-gate: test -f gate-marker
+▶ build-gate: clojure -M -e '(assert (= 4 (+ 2 2)))'
+moved truth-rheos-probe: in_progress -> review

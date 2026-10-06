@@ -1,0 +1,5 @@
+{:tasks-dir "./tasks"
+ :board-file "./board.json"
+ :fsm {:extends :promethean
+       :build-gate-commands ["test -f gate-marker" "clojure -M -e '(throw (ex-info \"expected-gate-failure\" {}))'" "touch must-not-run"]
+       :cwd "./gate"}}
