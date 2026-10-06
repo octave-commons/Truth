@@ -199,7 +199,9 @@
         (when (= key GLFW/GLFW_KEY_L)
           (jump-to-living-world config-atom world-atom @camera-atom))
         (dispatch-palette-action! config-atom world-atom key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT))))
-      (when world-atom
+      ;; Focus nudges are discrete presses; repeats and release only maintain
+      ;; held-key state for the existing continuous movement dispatcher.
+      (when (and world-atom (= action GLFW/GLFW_PRESS))
         (player-key config-atom world-atom key)))))
 
 (defn- cursor-callback
