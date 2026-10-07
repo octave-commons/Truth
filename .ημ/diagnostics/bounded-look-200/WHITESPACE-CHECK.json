@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-07T10:21:11.227341+00:00",
+  "full_staged": {
+    "exit": 2,
+    "stdout": ".\u03b7\u03bc/diagnostics/bounded-look-200/pure-tests-red.stderr:1: trailing whitespace.\n+test_aim_geometry_clamps_both_axes_and_reduces_heading_error (__main__.ProtocolChecks.test_aim_geometry_clamps_both_axes_and_reduces_heading_error) ... \n.\u03b7\u03bc/diagnostics/bounded-look-200/pure-tests-red.stderr:5: trailing whitespace.\n+test_aim_geometry_wraps_yaw_at_seam_without_long_way_gesture (__main__.ProtocolChecks.test_aim_geometry_wraps_yaw_at_seam_without_long_way_gesture) ... \n.\u03b7\u03bc/diagnostics/bounded-look-200/pure-tests-red.stderr:34: trailing whitespace.\n+test_two_hundred_pixel_axis_bound_accepts_one_acknowledged_gesture (__main__.ProtocolChecks.test_two_hundred_pixel_axis_bound_accepts_one_acknowledged_gesture) ... \n",
+    "stderr": ""
+  },
+  "excluding_preserved_raw_red_stderr": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

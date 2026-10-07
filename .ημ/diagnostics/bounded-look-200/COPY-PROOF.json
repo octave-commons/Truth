@@ -1,0 +1,99 @@
+{
+  "at": "2026-10-07T10:04:16.240052+00:00",
+  "root_scope_sha256": "37dca1cc0528c38db7aa93e1e9d8c1fc83f547f2b1e303b8903b845f1c9d9072",
+  "parent_preparation": "51a35312290fb722740a21fd225c3227d9c8b12c",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "predecessor_directory": "../input-observation-window",
+  "predecessor_hashes_verified": {
+    "runner.py": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+    "aim-client.py": "047bf69afe71a166787a940c05ef5a69b731e965e0fda05b8f77b87d6507a848",
+    "snapshot.clj": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+    "snapshot_client.clj": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+    "test_protocol.py": "ba82c52cba2c8432361ff7bc670adaded85989b7ca67a37ef2a2328d9d796cf9",
+    "PLAN.md": "83c3aa90a66df9e526a2ac71271a3528172bcd921afbc11c24ac0872aea3d488",
+    "SHA256SUMS": "17b8437302c780e0e97f72ad68552fa0700c55bd173b3e33b18a3b6bc95fc1bd"
+  },
+  "byte_identical_files": [
+    "snapshot.clj",
+    "snapshot_client.clj"
+  ],
+  "inherited_test_methods_byte_identical": [
+    "test_child_wait_uses_remaining_no_target_budget",
+    "test_deadlines_use_shared_origin_and_only_success_lifts_phase_limit",
+    "test_delayed_terminal_frame_stops_observation_without_gesture_replay",
+    "test_fresh_handoff_cannot_replace_either_admission_flag",
+    "test_global_commitment_frame_rejects_incomplete_or_unpaired_evidence",
+    "test_global_prior_commitment_precedes_invalid_target",
+    "test_held_key_released_once_when_commitment_appears",
+    "test_historical_ready_admits_without_fresh_handoff",
+    "test_idle_supervisor_begins_cleanup_at_cutoff",
+    "test_input_observation_clips_startup_phase_work_and_aim_deadlines",
+    "test_input_read_error_is_preserved_without_observation_retry",
+    "test_late_admission_result_can_be_observed_after_phase_cutoff",
+    "test_late_valid_admission_has_original_work_reserve",
+    "test_matching_read_at_phase_or_aim_cutoff_is_rejected",
+    "test_matching_read_returned_after_observation_deadline_is_rejected",
+    "test_missing_duplicate_nonfinite_and_other_target_fail",
+    "test_pending_snapshot_wait_is_clipped_at_cutoff",
+    "test_postrelease_commitment_precedes_invalid_target_geometry",
+    "test_snapshot_completion_at_or_after_cutoff_never_admits",
+    "test_successful_target_cannot_be_replaced",
+    "test_tab_observation_accepts_delayed_state_after_four_nonmatches_once",
+    "test_tab_unconfirmed_state_uses_observation_budget_without_replay",
+    "test_terminal_prevents_later_input_before_guard_or_command",
+    "test_terminal_result_closes_run_and_retains_observation"
+  ],
+  "all_inherited_class_methods_byte_identical": [
+    "admit",
+    "setUp",
+    "setUpClass",
+    "tearDownClass",
+    "test_child_wait_uses_remaining_no_target_budget",
+    "test_deadlines_use_shared_origin_and_only_success_lifts_phase_limit",
+    "test_delayed_terminal_frame_stops_observation_without_gesture_replay",
+    "test_fresh_handoff_cannot_replace_either_admission_flag",
+    "test_global_commitment_frame_rejects_incomplete_or_unpaired_evidence",
+    "test_global_prior_commitment_precedes_invalid_target",
+    "test_held_key_released_once_when_commitment_appears",
+    "test_historical_ready_admits_without_fresh_handoff",
+    "test_idle_supervisor_begins_cleanup_at_cutoff",
+    "test_input_observation_clips_startup_phase_work_and_aim_deadlines",
+    "test_input_read_error_is_preserved_without_observation_retry",
+    "test_late_admission_result_can_be_observed_after_phase_cutoff",
+    "test_late_valid_admission_has_original_work_reserve",
+    "test_matching_read_at_phase_or_aim_cutoff_is_rejected",
+    "test_matching_read_returned_after_observation_deadline_is_rejected",
+    "test_missing_duplicate_nonfinite_and_other_target_fail",
+    "test_pending_snapshot_wait_is_clipped_at_cutoff",
+    "test_postrelease_commitment_precedes_invalid_target_geometry",
+    "test_snapshot_completion_at_or_after_cutoff_never_admits",
+    "test_successful_target_cannot_be_replaced",
+    "test_tab_observation_accepts_delayed_state_after_four_nonmatches_once",
+    "test_tab_unconfirmed_state_uses_observation_budget_without_replay",
+    "test_terminal_prevents_later_input_before_guard_or_command",
+    "test_terminal_result_closes_run_and_retains_observation"
+  ],
+  "added_test_methods": [
+    "test_aim_geometry_clamps_both_axes_and_reduces_heading_error",
+    "test_aim_geometry_rounds_small_errors_without_forcing_a_step",
+    "test_aim_geometry_wraps_yaw_at_seam_without_long_way_gesture",
+    "test_larger_look_preserves_existing_pitch_limit_and_unsupported_target_rejection",
+    "test_two_hundred_one_pixels_rejected_before_read_or_native_command",
+    "test_two_hundred_pixel_axis_bound_accepts_one_acknowledged_gesture"
+  ],
+  "added_pure_helpers": [
+    "camera_frame",
+    "load_aim_module"
+  ],
+  "exact_executable_diffs": {
+    "runner.py": "--- ../input-observation-window/runner.py\n+++ runner.py\n@@ -29,6 +29,7 @@\n TAP_KEYS = (\"r\", \"Tab\")\n RELEASE_KEYS = TAP_KEYS\n HOLD_KEYS = (\"w\",)\n+LOOK_PIXEL_CAP = 200\n NO_TARGET_SECONDS = 960\n STARTUP_SECONDS = 180\n WORK_SECONDS = 1470\n@@ -676,7 +677,7 @@\n         elif operation == \"look\":\n             assert len(args) == 2\n             dx, dy = map(int, args)\n-            assert max(abs(dx), abs(dy)) <= 100 and (dx or dy), \"Small look steps only\"\n+            assert max(abs(dx), abs(dy)) <= LOOK_PIXEL_CAP and (dx or dy), \"Small look steps only\"\n             before = self.input_state(self.inspect())\n             assert before[\"looking\"] and not before[\"pick_pending\"], \"Actual locked manual look required\"\n             want_yaw = before[\"yaw\"] + dx * before[\"sensitivity\"]\n",
+    "aim-client.py": "--- ../input-observation-window/aim-client.py\n+++ aim-client.py\n@@ -22,7 +22,7 @@\n HERE = Path(__file__).resolve().parent\n ROOT = HERE.parents[2]\n RUNNER = HERE / \"runner.py\"\n-RUNNER_SHA256 = \"99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22\"\n+RUNNER_SHA256 = \"f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a\"\n BASE = \"b395c4049718f7ce015ddf25fc0a192d97821373\"\n MAX_STEPS = 180\n MAX_SECONDS = 120\n@@ -72,8 +72,8 @@\n     forward = [-math.cos(pr) * math.cos(yr), -math.cos(pr) * math.sin(yr), -math.sin(pr)]\n     dot = max(-1, min(1, sum(a * b for a, b in zip(forward, direction))))\n     angle = math.degrees(math.acos(dot))\n-    dx = max(-100, min(100, round(yaw_error / sensitivity)))\n-    dy = max(-100, min(100, round(-pitch_error / sensitivity)))\n+    dx = max(-protocol.LOOK_PIXEL_CAP, min(protocol.LOOK_PIXEL_CAP, round(yaw_error / sensitivity)))\n+    dy = max(-protocol.LOOK_PIXEL_CAP, min(protocol.LOOK_PIXEL_CAP, round(-pitch_error / sensitivity)))\n     return {\"target\": target, \"tick\": int(flight[0]), \"spark_position\": position,\n             \"target_position\": destination, \"distance_m\": distance, \"angle_degrees\": angle,\n             \"yaw\": yaw, \"pitch\": pitch, \"sensitivity\": sensitivity,\n"
+  },
+  "here_root_resolution": {
+    "directory": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window/.ημ/diagnostics/bounded-look-200",
+    "root": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window",
+    "matches_worktree": true
+  },
+  "unchanged_scope": "Only LOOK_PIXEL_CAP and its two consumers changed; all startup/work/phase/aim/caller/cleanup constants and remaining runner/aim bytes are equal after reversing those exact substitutions.",
+  "old_raw_evidence": "Unchanged; not copied into or edited by this derivative."
+}

@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-07T10:17:22.401804+00:00",
+  "parent": "aa1fd95be217f21056160327fe695104e945331b",
+  "copied_paths": [
+    "runner.py",
+    "aim-client.py",
+    "snapshot.clj",
+    "snapshot_client.clj",
+    "test_protocol.py",
+    "PLAN.md",
+    "pure-tests-red.stdout",
+    "pure-tests-red.stderr",
+    "pure-tests-green.stdout",
+    "pure-tests-green.stderr",
+    "COPY-PROOF.json",
+    "SOURCE-EQUALITY.json",
+    "STATIC-CHECKS.json",
+    "manifest-shape-repair.json",
+    "preparation-hashes.json",
+    "PREPARATION-FILES.txt",
+    "SHA256SUMS"
+  ],
+  "all_copied_bytes_equal": true,
+  "manifest_sha256": "fae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e",
+  "checksums_verified": 16,
+  "production_files_verified": 186,
+  "actual_AST_extracted_preparation_reader": "passed in destinationworktree",
+  "independent_review": "board_scout repairedfreezePASS; sixruntimepins unchanged; no nativequalification"
+}

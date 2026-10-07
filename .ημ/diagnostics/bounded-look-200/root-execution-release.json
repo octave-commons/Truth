@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-07T10:18:13.649170+00:00",
+  "parent": "aa1fd95be217f21056160327fe695104e945331b",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "manifest_sha256": "fae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e",
+  "canonical_comment": "Root execution release2026-10-07: one fresh bounded-look-200 attempt on parentPR54aa1fd95, repaired frozenmanifestfae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e. Root andindependentboard_scout reviewed minimalshared200pixelcap,30puretests andunchanged186production; rootactualAST-extractedpreparationreaderpasses correctedflat6pins innewworktree. Preserve malformedinitialmanifestandrepairprovenance; neverlaunchsuperseded474e6e1a freeze. Rootfirst usesordinary R/Spark/Fine/Cruise andtwo acknowledgedhalvings forprovisionalD7.5e13, closeSpark/Tablock, freshbaseline, then separatelyacknowledged +200/-200X and+200/-200Y; eachpair returnsbaselinewithin.02degrees, samereleasedmanualstate/sensitivity/world andnilthrust, finalfreshread. Stopon anymismatch/uncertainty, no gesture replay. This camera calibration mustpassbeforeformation; fourlooksconsume360runbudget. Captureatmost3originalPNGs overall. Then bounded30sreadonlyformationpoll owns lane, max32polls, no concurrentcommands, stoponstoredreadywithoutselection/error/terminal/original960. Rootchoosesoneactualnaturalstored/currentreadyfinite target withglobalcommit0; ifcurrentrange/recenttickscreenrejects provisionalD, reduce throughactualmenu beforeaim. No W merelybecausecalibration/aimpasses: freshheading<=.5degrees,currentreadiness/rangescreen andnilthrustrequired. Threefinite120saims,<=20requested<=2sWholds, twofreshcoastobservationsperpulse, stopinvalid/loss/overshoot/unsafe residual/twononcontractions. Sharedstartup180/no-target960/work1470/total1500/cleanup30/caller45 remainoriginal, withno extension or retarget. Rootonlyinput, no fixture/physicalwriter/seed-basedpointing/primarytouch. Existingmeasurementowner staysInProgress3, no productfeature/commitment/embodiment/Gateclaim.",
+  "root_and_independent_review": "passed repairedfreeze; no native200pixelqualificationyet",
+  "prior_ledger_bytes": 665984,
+  "prior_ledger_sha256": "93febe43cc114d9d88897e3b7c58f645b8ae13473dcadcc6ad18cf833d091f50",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "after_write_id": "1791368293050-0.7lxbrlxrjjaibpqjpfc",
+  "execution_release": "one freshattempt01 afterexplicitpreparationcommit; port7898 freeatpreflight",
+  "runtime_started": false,
+  "additional_root_operator_programs": {
+    "root-setup.py": "e9b0ec5cbaffba8b9ceb2317137a33c449fc5f94a085134d967848e2f14e489a",
+    "root-formation-poller.py": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa"
+  },
+  "operator_program_note": "Savedbeforeexecution; preparationcommitpins these additionalrootprograms outside the17-file frozen authorbundle. Rootchecks finalcalibration tickadvance beforestartingpoller."
+}
