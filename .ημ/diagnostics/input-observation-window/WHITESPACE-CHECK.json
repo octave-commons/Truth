@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-07T09:37:17.697829+00:00",
+  "full_staged_diff_check": {
+    "exit": 2,
+    "finding": "two trailing spaces in preserved raw unittest RED stderr at lines10and18"
+  },
+  "authored_and_other_files_check": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "decision": "Preserve frozen raw log bytes and manifest; no source whitespace finding."
+}
