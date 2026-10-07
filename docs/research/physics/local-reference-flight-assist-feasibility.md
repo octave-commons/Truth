@@ -371,3 +371,18 @@ selecting an answer. Canonical reads used the verified merged Rheos CLI
 SHA256 `83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7`;
 the existing specification remains Incoming, points 3. No source, tests,
 runner, runtime, new card or status transition accompanies this supplement.
+
+
+## 11. Closed ordinary-flight clock refinement
+
+(己, p=0.99) The [dated clock-envelope analysis](2026-10-07-pre-capture-clock-envelope.md)
+adds immutable closed attempt 02/03 endpoint evidence and exact pending-channel
+algebra. It proposes a 1-second–1-day maximum-step band after Auto/time slip,
+with cloud softening preserved, under the existing Incoming 3 specification.
+This supersedes only the absence of a concrete candidate range/precedence in
+§10; all prior derivations and provenance remain intact. The finite upward
+transition admission law and controller/reference budget are still unaccepted
+and unresolved. Neither a long-interval chord nor endpoint velocity supplies a
+finite capture bound. No source, test, runtime, clock or implementation admission
+is claimed; the [existing proposal](../../notes/2026-10-06-local-reference-flight-assist.md#proposed-pre-capture-clock-envelope--2026-10-07-utc)
+states the candidate and exact later acceptance matrix.

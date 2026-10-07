@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: flight-local-reference-assist-spec, 2026-10-07T01:00:36.658061Z
   note: Missing executable policy does not imply missing user intent. Recover product requirements and explicit supersession separately, read status through Rheos, and distinguish a Done label from unverified live acceptance. Verify preserved canonical comment content without assuming section boundaries. No spore created or promoted.
+- ts: 2026-10-07T12:34:11.212442900Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Refine existing flight specification with closed endpoint and delayed-clock evidence
+  p-efficiency: 0.89
+  p-friction: 0.20
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec,0fce01b,ae5444b,93dc5b
+  note: Sparse endpoint chords cannot stand in for maximum composed displacement. Record the effective consumed step separately from next published dt, and include pending command state when reviewing clock transitions. Existing three-point planning scope remains unfinished; no spore, implementation or native result.

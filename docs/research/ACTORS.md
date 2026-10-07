@@ -68,3 +68,14 @@ See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
 ### Interactive follow-up, 2026-10-07 UTC
 
 - Interactive Codex runtime scout appended [recovered pre-capture intent](physics/local-reference-flight-assist-feasibility.md#10-recovered-pre-capture-intent): living UX timing requirements, approved physical-body constraints with unverified capture acceptance, proposed local narrowing and superseded pacing/spring history remain distinct. Existing Incoming specification only; no controller, clock or implementation admission.
+
+
+### Interactive clock-envelope refinement, 2026-10-07 UTC
+
+- Interactive Codex intent/research scout (not a scheduled actor):
+  [Pre-capture clock envelope from closed ordinary-flight evidence](physics/2026-10-07-pre-capture-clock-envelope.md).
+  Draft source/math analysis pins closed attempts 02/03, separates compact
+  displacement from velocity proxies, and proposes a maximum-step range and
+  precedence. Pending-force transition admission remains explicitly unfinished;
+  Incoming 3 is unchanged. Offline arithmetic/source/reference checks only;
+  no new native observation, production test, clock or controller implementation.

@@ -246,3 +246,76 @@ a post-capture clock alone cannot supply it. This is independent analysis allowe
 by the existing Incoming three-point specification, with no controller, gain,
 clock, experiment or implementation admission. Historical claims above remain
 at their recorded provenance.
+
+
+## Proposed pre-capture clock envelope — 2026-10-07 UTC
+
+(己, p=0.99) This refinement replaces the vague timing question above with a
+concrete **unaccepted candidate** and a finite remaining transition decision.
+The existing `flight-local-reference-assist-spec` remains Incoming, 3 points;
+no clock, controller, UI, RED tests, consumer card or implementation is admitted.
+[Closed ordinary-flight analysis](../research/physics/2026-10-07-pre-capture-clock-envelope.md)
+pins source `b395c404` and independent worlds from closed attempts 02/03. The
+observed long-interval position chords are not maximum speeds, local habitat
+bounds, or a guarantee that an approaching body can remain inside one AU.
+
+1. **Value and extent.** Propose a user-selected global *maximum simulation
+   seconds per tick*, with a first capture adjustment band of **1–86400 seconds**
+   and a distinct Auto state. It is not a promised rate per real second.
+   One second matches the current emitter normalization floor; it is not a
+   physical lower limit or a sourced optimum. One day can fit the observed
+   kilometre-per-second scale inside part of a one-AU margin, but does not
+   guarantee a 0.1-AU reserve or bound unseen compact motion. Automatic
+   shortest-orbit global pacing and the post-capture local clock stay outside
+   this candidate.
+2. **Precedence.** Propose `h_requested=min(h_auto_after_slip,h_manual_cap)`
+   while manual override is admitted. Auto with no cap keeps its current result.
+   Apply the manual cap after the automatic floor and time-slip multiplier;
+   neither can enlarge it afterward. Keep softening on the existing physical
+   cloud policy. The live UX limits this override to Phases 0–5 and removes it
+   at Gate discovery; post-commitment local timing remains separately owned.
+3. **Boundary and state.** Each change needs an identified effective fold and
+   one h shared by the frozen fan-out and elapsed-time accounting. Preserve
+   position, velocity, spin, mass, selected D/r, and the already published
+   influence channels at command application. Do not recompute or erase an old
+   command to make the transition appear safe. Next-tick pacing must preserve
+   the requested cap; no special Spark integration route is allowed.
+4. **Unresolved finite upward transition.** The next fold consumes
+   `h_new*a_previous`. For a brake emitted at h_old, its velocity coefficient is
+   `alpha*h_new/h_old`. Keys-up alone does not neutralize it. Before any code,
+   specify named finite kick/displacement budgets and whether a request outside
+   them is rejected or limited, with a visible reason and an effective-step
+   record. A limiter may choose a smaller step, never exceed the manual cap.
+   Choosing a ratio such as two is not by itself a stability proof. This
+   decision remains **unaccepted and unresolved**; it is not delegated to an
+   implementation author as tuning.
+5. **Control meaning and reference.** Fixed D preserves equilibrium distance
+   per tick, not physical speed or acceleration. A small clock with Cruise
+   still selected can remain unsuitable for capture. Fine does not erase prior
+   momentum; evaluate the actual pending flight channel, inherited velocity,
+   external forces and focus margin. Use the reference's actual composed
+   production displacement, with common recentering canceled; never substitute
+   final velocity times h for compact motion. No automatic D change, target
+   acquisition, velocity teleport, interception or capture is proposed.
+6. **Acceptance boundary.** Later pure-law tests cover finite input schemas,
+   Auto/cap/slip/softening precedence, exact effective fold and sim-time sum,
+   fixed-D scaling, held/released residual-channel transitions, and explicit
+   unsafe-request outcomes. Actual fold tests preserve the same SoA path and
+   all component writers. Binding tests distinguish 43 uninterrupted qualifying
+   reads from 42 inter-read intervals and from the later commitment fold; a
+   continuous-overlap-through-publication criterion spans 44 folds from the
+   first zero-binding snapshot. The full matrix and conditional path bound are
+   in the linked analysis. No test was executed or fabricated here.
+
+(己, p=0.99) The future ordinary demonstration must record the actual binding
+consumer inputs, current stored-candidate/readiness gate, fresh handoff as a
+separate fact, and the global irreversible commitment state. Sparse readbacks,
+follow-camera success or a past candidate do not establish current habitability,
+physical residence, sculpt, embodiment or Gate progress. This refines the
+existing card's native evidence language without rewriting its historical body.
+
+(己, p=0.99) Planning remains incomplete until the finite transition decision,
+reference-displacement envelope and manual/assist budget are settled. Clock/UI
+implementation may require its own reviewed ≤5-point consumer breakdown; the
+present three-point scope is the specification refinement only. No additional
+consumer or Ready transition is created by this section.

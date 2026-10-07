@@ -153,3 +153,12 @@ New ECS component keywords added to `domain.ecs.components`:
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-culture
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-coordinator
 ```
+
+
+## Interactive source/evidence analyses — 2026-10-07 supplement
+
+- [Pre-capture clock envelope from closed ordinary-flight evidence](physics/2026-10-07-pre-capture-clock-envelope.md)
+  — **draft analysis/proposal**, not a validated deep-research notebook. Existing
+  Incoming 3 reference/assist specification; paired native endpoints, conditional
+  residence and delayed-force transition bounds, and a proposed 1-second–1-day
+  cap. No kinetic calibration, new experiment, accepted clock or source promotion.

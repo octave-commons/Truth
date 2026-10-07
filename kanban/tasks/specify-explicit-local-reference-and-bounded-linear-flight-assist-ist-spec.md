@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, research, player, spark-flight"
 parent: "flight-assist-damping-and-toggle"
 type: "task"
-write-id: "1791334790469-0.w0spydxbv1oyr436239"
+write-id: "1791376099815-0.4crmsnrzkq2i7y200wb"
 points: "3"
 title: "Specify explicit local reference and bounded linear flight assist"
 priority: "P1"
@@ -139,5 +139,7 @@ Independent source/math review found no blocker; source tests/native experiments
 Four evidence tiers remain explicit: living UX requirement; approved real-body/force/single-writer law with satellite-capture acceptance still unverified in the original Done-card implementation commit; proposed narrowing and the Todo parent's undefined local frame; and superseded separate-rate pacing plus deleted wall-time spring code. Canonical reads report spark-as-gravity-bound-body Done8, flight-assist-damping-and-toggle Todo5, and phase-0-player-focus-dual-representation-spec Breakdown despite its body saying canonical. None of those labels proves natural approach/capture.
 
 The question is reconciliation of pre-capture timing, delayed forces, actual reference displacement, finite player budget and useful surrounding evolution. Post-commitment time-lock begins too late to establish approach. No clock/controller/rate choice, source/tests/runner/native action, new card or transition. Existing Incoming3 remains unchanged. Verified 18 appended reference targets against local files/headings and exact Git objects; note/actor historical prefixes and whitespace checks pass. Interactive ACTORS follow-up records the recovery. Root owns review, commit and publication.
+
+(己, p=0.99) Root-authorized docs/research/planning refinement under this existing Incoming 3 specification, prior to any documentation edits. Integrate closed ordinary native attempt 02 and 03 evidence into a dated pre-capture clock-envelope research note and the existing local-reference proposal. Proposed range is a 1 second–1day maximum simulation step after automatic pacing/time slip, preserving auto-derived softening and the existing single-writer/frozen-channel path. The finite up-transition admission decision remains explicitly unaccepted and unresolved; fixed-D speed/acceleration, actual pending force, 43 binding reads versus later commitment, and compact actual displacement versus endpoint-velocity proxy receive worked bounds and a later acceptance matrix. No chord average becomes a maximum-speed or finite-capture guarantee. Source is pinned b395c404; evidence references ae5444b63e30207838f5c31f28138cb98d0027f0 and93dc5b2bc0c734e5d8c311ac004035581db885b4, with immutable map resolution for packed inputs. Retain current status/points/body/history and preserve pre-existing pr7-recovery dirt. No source/tests/JVM/native/control/clock implementation, new card, status transition, review request or Ready claim. Root independently reviews before commit/push.
 
 ---
