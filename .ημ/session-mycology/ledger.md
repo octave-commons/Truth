@@ -476,3 +476,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,8487159
   note: Merged developer aliases can require a separate suite even when src/test bytes are unchanged. Guard the exact composition before and after each sequential command, retain actual timeout behavior and raw nonblocking diagnostics, and keep old loaded-native evidence bound to its original source. No new spore; existing qualification discipline suffices.
+- ts: 2026-10-07T02:08:52.364714925Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Specify action aim timing without hiding host queue compatibility or payment ordering
+  p-efficiency: 0.88
+  p-friction: 0.25
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,760ea79d,2026-10-07-manual-sculpt-aim-timing
+  note: A current focus law does not alone fix action timing: anonymous world updates need explicit iteration context, and persistent versus action-local preparation changes later-reader observations. State the chosen ordering, malformed-context precedence and plain-Atom/IFn compatibility before RED; preserve earlier proposals through canonical superseding comments. Existing planning and receipt skills suffice; no new spore.

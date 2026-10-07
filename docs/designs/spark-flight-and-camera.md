@@ -353,6 +353,40 @@ drain, or change action positions captured by the renderer. Natural manual
 fly-bind-commit-voxel and paid sculpt acceptance remain open until demonstrated
 through ordinary controls.
 
+#### Proposed manual sculpt consumption boundary (2026-10-07)
+
+**Planning only, pending review; the current boundary above remains the source
+fact.** Existing InProgress 3-point `focus-follows-pilot` owns this bounded
+continuation. The [grounded timing note](../notes/2026-10-07-manual-sculpt-aim-timing.md)
+traces the ordinary callback, queue, host ordering, and existing seam tests.
+
+For a newly consumed manual T/Shift+T/Y request, propose resolving aim from
+the current serial world plus an immutable mode/offset projection of the
+**single host snapshot read for that simulation iteration**, before gated spend and paid-record
+creation. Earlier queued world changes remain ordered; all actions sharing a
+drain use that same host snapshot. Preserve the existing committed-target
+selection, controls, costs, magnitude, focus radius/intensity, tracking path,
+already-created records, final after-drain focus preparation, and Jacobi/barrier
+timing. Root's proposed choice prepares attention persistently with existing
+`focus-follow` inside the same guarded operation as unchanged `request-op`;
+later queued readers observe that refreshed attention. In manual mode, missing
+observer is an early no-op; otherwise invalid offset/unavailable Spark position rejects before the
+domain gates, preserving the pre-operation world without stale-focus fallback.
+Valid-aim denied requests retain prepared attention but create no charge/record.
+Tracking delegates directly to unchanged `request-op`, retaining its validation
+order with no new observer shortcut.
+
+Config and queue have no joint atomic snapshot. The note explicitly proposes
+consumption-time behavior for intervening host changes and mid-drain arrivals;
+this is not keypress-exact aim. The note compares pre/post-drain refresh with a
+named contextual envelope on the existing queue, preserving legacy callable
+entries and the single guarded drain. Dev-window input explicitly opts in;
+plain Atom/no-capability callers retain existing dispatch. This bounded adapter
+and composition of existing domain functions require review, size
+confirmation and meaningful production-path RED before code.
+G/H/J renderer-captured placement is a separate known seam, outside this first
+slice. No source, test, runtime, approach/commitment, or Gate readiness is claimed.
+
 ## 8. North star & roadmap
 
 **North star (owner, 2026-07-23):** the point of this work is a *playable loop* —
