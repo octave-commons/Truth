@@ -512,3 +512,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T06:41:46.046394Z
+  session: /home/err/spaces/foresight/.worktrees/truth-condensed-water-research
+  task: Ground water-bearing solids without converting a capability into material
+  p-efficiency: 0.86
+  p-friction: 0.24
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: a4744132-2328-4cb2-a550-e1328d346673,5ac7505b
+  note: Preserve common-basis elemental amounts before normalization, then bound extraction by each phase as well as total elements. Exact stoichiometry validates accounting only; primary-source temperature regimes and missing donor or hydration laws must remain explicit. Existing research and review skills suffice; no spore.

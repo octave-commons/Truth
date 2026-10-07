@@ -152,3 +152,15 @@ New ECS component keywords added to `domain.ecs.components`:
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-culture
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-coordinator
 ```
+
+
+## Research additions — 2026-10-07
+
+This dated addendum preserves the earlier index and its historical update header.
+
+| Notebook | Status | Phase | Finding and limits | Sources |
+| --- | --- | --- | --- | --- |
+| [Condensed water material budget](physics/2026-10-07-condensed-water-material-budget.md) | draft; exact arithmetic checked; engineering choices unaccepted | 0 → represented-life prerequisites | Conserved elemental H/O allocations distinguish water-bearing solids from free nebular H; oxygen reservations and phase weights must precede normalization. Retention capability does not establish inventory, atmosphere or biological accessibility. Seven constructed cases conserve exactly; no equilibrium/native calibration or implementation admission. | Lodders 2003; Bitsch & Battistini 2020; D’Angelo et al. 2018 |
+
+**Interactive author:** Codex intent-research scout (not a scheduled actor).
+**Canonical owner:** `a4744132-2328-4cb2-a550-e1328d346673` (Incoming, 3 points).
