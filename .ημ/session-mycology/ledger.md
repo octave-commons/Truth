@@ -584,3 +584,12 @@
   spore: none
   receipt-refs: .ημ/diagnostics/natural-flight-profile/attempt-01-audit.json; root-successor-scope.json
   note: A stricter diagnostic freshness predicate prevented testing intentionally retained production readiness. Match the actual consumer predicate and report stronger checks separately. Automate phase cutoff in the supervisor; root manual polling missed cadence and late STOP must remain a protocol deviation. No spore promoted.
+- ts: 2026-10-07T09:23:45.687547543Z
+  session: /home/err/spaces/foresight/.worktrees/truth-compact-clamp-research
+  task: Compact clamp source boundary
+  p-efficiency: 0.85
+  p-friction: 0.2
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: .ημ/diagnostics/compact-clamp-research/closure.json
+  note: Warnings name a resolution ceiling but omit branch/tick/dt. Separate actual call inputs from published projections and derived demands before choosing a numerical repair. No spore.
