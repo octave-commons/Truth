@@ -377,3 +377,13 @@
   spore: none
   receipt-refs: life-to-represented-actor-spec,98b847ce75491bdccacf2ec3a7476d451270bf49
   note: A normalized life score cannot fund a conserved organism. Distinguish representation admission from abiogenesis, cohort identity from individual history, and a primary-supported rate shape from calibrated ecology. Trace generic lifecycle ownership before promising atomic resource settlement. Publish the bounded decision boundary with explicit missing producers instead of assigning readiness by prose. Independent reviews closed; no spore created or promoted.
+
+- ts: 2026-10-07T04:21:49.479080+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Refine finite carbon transactions and terminal habitat accounting without inventing a biological producer
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth#38,77a962a5,review5437526683,life-to-represented-actor-spec
+  note: Small biological accounting kernels need finite representable debits and durable terminal dispositions as well as balanced equations. Keep source budgets and runtime producers separate from those engineering invariants. Existing provenance and pure-boundary skills suffice; no spore.

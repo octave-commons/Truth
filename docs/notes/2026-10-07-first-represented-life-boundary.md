@@ -195,3 +195,120 @@ history through the existing renderer/menu. No forced phase, direct world write,
 debug actor or research toy substitutes for that path. An individually represented
 organism, cognition, society, embodiment and earned Gate production remain later
 unspecified steps.
+
+
+## 7. Bounded accounting refinement (2026-10-07)
+
+**Proposed refinement, not Ready or an accepted biological producer.** Source-only
+audit: `77a962a5f21f097b74278e9e7cf3c2136170091a`. The smallest useful pure
+boundary is a **local inventory transaction**, given already-accounted stocks and
+admitted transfers. It need not choose a Monod integrator, create living stock or
+advance biological time. The preceding historical text and open decisions stand.
+
+### 7.1 Specify transfers independently of the law requesting them
+
+The proposed account holds `U/S/W` and living stock `B_i` per persistent cohort,
+all in kg C, with closed total `T = U+S+W+sum(B_i)`. Opening budget and provenance,
+habitat/account identity, revision, operation identity, cause and prior outcomes
+are supplied data. These remain ECS content, not a parallel mutable ledger.
+
+| Operation | Transfers of the same kg C quantity between compartments | Bounds |
+| --- | --- | --- |
+| Expose living stock as cohort `i` | `U -> B_i: b` | `0 < b <= U`; no second incarnation of a prior birth |
+| Resource use and justified loss | `S -> B_i: g`; `S -> W: q-g`; `B_i -> W: L` | `0 <= g <= q <= S`; `0 <= L <= B_i+g` |
+
+Growth precedes loss within one atomic settlement, as in §3. The action's signed
+change `(0,-q,g-L,q-g+L)` sums to zero. A future producer may derive `g=Y_c*q`;
+the kernel takes admitted `q/g/L`, without deriving them from elapsed time or
+choosing a yield. Explicit zero action makes no stock change; excessive requests
+are rejected, not silently clipped. The `q=0` example in §5 is an upstream
+resource-aware proposal when `S=0`, not permission to replace an invalid request.
+The producer must supply its modeled interval and rule version. The kernel
+preserves them; neither a 24-tick clock nor volume-to-rate conversion belongs here.
+
+### 7.2 Proposed finite transaction contract
+
+These are choices for design review, not recovered current runtime behavior:
+
+1. Validate finite nonnegative stocks/transfers, finite total, identity and account
+   revision. Validate intermediate and final results too. Invalid input, overflow
+   or unsupported numeric settlement returns a reason without partial stock or
+   entity writes.
+2. A persisted operation key identifies one immutable attempt, including its
+   account, payload and interval. Identical retry returns the prior outcome with
+   no additional debit, allocation or event. Conflicting reuse rejects without
+   replacing that outcome. Apply this to resource actions and rejected admissions,
+   not only births. Exact key encoding remains to be selected.
+3. For a new operation, reject stale revision and invalid/terminal habitat.
+   Commit accepted stock/entity effects and outcome together. New attempt needs
+   new persisted operation identity; loss, phase reset and zoom do not renew it.
+   Lineage identity remains distinct from operation key and transient ECS ID.
+4. Competing operations consume one running balance in an explicitly ordered
+   batch, never independently spending frozen `S`. Select/version that order;
+   hash-map traversal is not policy. Engineering order is not ecological fairness.
+5. Final habitat survival/removal must be known before committing a new birth.
+   Same-fold removal rejects it without partition/allocation. Retrying an older
+   accepted operation after removal returns history, never recreates the cohort.
+
+**Numeric acceptance remains a required decision.** Explicit transfers fix the
+conservation equation, not machine representation. Finite doubles and rounded
+sum equality can hide a positive debit that did not change its much larger source
+while the destination gained stock. The [decided precision boundary](../designs/resolution-regimes-and-scale-coupling.md#5-the-hard-limit-float-precision-not-lagrangian)
+already forbids tiny-from-huge bookkeeping, including within a local account.
+Choose an exact representation or a documented representability/error policy,
+verify actual source/destination changes, and reject unsupported settlement
+atomically. No mass quantum, epsilon, clamp or minimum biological cohort size is
+chosen here. Zero-sum algebra alone does not verify floating-point conservation.
+
+### 7.3 Terminal parent disposition is separate from birth cancellation
+
+If an existing cohort's habitat is reaped, its inventory and retry/lineage state
+need durable disposition. [ECS despawn](../../src/domain/ecs/core.clj), lines 39–48,
+removes all components; placing the only account or deduplication evidence there
+would erase them. A historical event alone does not say where the carbon went.
+
+Proposed requirement: close the removed habitat's account to new actions, retain
+its final inventory/identity/outcomes in durable causal state, and atomically
+account for transfer to a surviving aggregate/account or an explicitly modeled
+boundary export before integration discards active inventory. Distinguish the
+historical terminal inventory from destination stock to prevent double counting.
+This grants no ghost habitat, automatic food recycling or spontaneous loss law.
+The destination/export semantics and owner are **unselected**. Full parent-loss
+integration remains blocked until they are specified; rejecting pending birth
+alone is insufficient.
+
+### 7.4 Resolve engineering choices without inventing a biology producer
+
+The [decided resolution contract §§3–6](../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers)
+already settles one ECS, local budgets, conservation through detail changes and
+sufficient retained state for replay. [Promotion/demotion](../../src/domain/genesis/promotion.clj),
+lines 147–156 and 244–265, illustrates one owner combining debits/credits against
+its updated balance; it does not implement biological or generic admission.
+
+Existing [chemistry](../../src/domain/chemistry.clj), lines 357–389, counts
+`:organics` as carbon **plus bound oxygen** and volatiles include other elements.
+Neither is already available substrate kg C or living `U`. The [ecology schema](../../src/law/ecology/schema.clj),
+lines 57–67, supplies normalized scalars, not a conversion. A pure test account
+cannot establish budget origin, accessibility, habitat or biological applicability.
+
+Identity encoding, retry semantics, deterministic ordering, numeric acceptance
+and the transaction/result interface are bounded engineering choices this spec
+can settle without new biological coefficients. The rules above are proposals for
+that review. Budget production, rates/loss, applicability and elapsed time remain
+producer/clock decisions. Cohort versus individual remains a project scope choice.
+
+Integration still needs one declared owner and atomic settlement with the final
+removal set. Today's [lifecycle](../../src/domain/genesis/bootstrap.clj), lines
+299–317 and 341–352, sends every birth through `spawn-clump`, then reaps; its
+contract reserves continuous mass/momentum writes for the integrator. Do not debit
+in fan-out and add a refund writer after reaping. Generic validated component
+creation must settle account, entity and outcome together, without stellar
+components. This needs an explicit ownership/order amendment; the pure kernel
+proposal does not authorize an alternate writer or tick path.
+
+Finite proof cases are §5's transfers; repeated success/rejection; conflicting
+key; stale revision; competing consumers; nonfinite, overflowing and unrepresentable
+settlement; same-fold birth cancellation; and terminal parent disposition without
+double counting or re-admission. These are specification cases, not executed
+tests. Resolving them can close the accounting boundary, while a real natural-world
+budget producer remains necessary for represented-life gameplay.

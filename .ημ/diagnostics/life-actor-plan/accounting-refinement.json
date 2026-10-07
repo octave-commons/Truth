@@ -1,0 +1,150 @@
+{
+  "at": "2026-10-07T04:21:49.479080+00:00",
+  "base": "77a962a5f21f097b74278e9e7cf3c2136170091a",
+  "uuid": "life-to-represented-actor-spec",
+  "scope": "Research/design only; no production implementation or admitted Ready scope",
+  "canonical_cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "canonical_frontmatter": {
+    "category": "tasks",
+    "labels": "research, design, ecology, actors, playable-gate",
+    "parent": "embodied-character-voxel-mode",
+    "type": "task",
+    "write-id": "1791346908881-0.incl2b41jmb1z9t6uo2",
+    "points": "3",
+    "title": "Ground the first causal life-to-represented-actor boundary",
+    "priority": "P1",
+    "status": "incoming",
+    "uuid": "life-to-represented-actor-spec",
+    "created_at": "2026-10-06T20:19:09.245Z"
+  },
+  "body_unchanged": true,
+  "prior_comment_prefix_preserved": true,
+  "note": {
+    "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "sha256": "5b12236638545182a019a3a6e853eed6086b1192caceee639f05852acd017c01",
+    "prior_note_prefix_preserved": true,
+    "prior_bytes": 17052
+  },
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 597322,
+      "before_sha256": "699df990bd0f66904c3becaeb9d557facd74024518ad4c34ac0ac127d911da2d",
+      "after_bytes": 599036,
+      "after_sha256": "9485d8937fa0c37de41bd45a88a5c72dce0d15187fc52be3f62a4bba67aa5265",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 33510,
+      "before_sha256": "d0a2a6c71958384e8dfbf8fa4b9aee104b9283cde805af17aaf84d73ebac4b75",
+      "after_bytes": 34640,
+      "after_sha256": "d20aa00316c31a99a7b96de0f27f70c3dd375783b26b737d8817bd1bb8bd27f0",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 23099,
+      "before_sha256": "a959c489cbee83d7e879113c833670c23a0a696f56e070b994678498b2517552",
+      "after_bytes": 23777,
+      "after_sha256": "0ae149ea28a4e6a769a17d06818c999dbfe6bd265e61d569a267ecc908c0c61c",
+      "original_prefix_preserved": true,
+      "appended_lines": 10
+    }
+  ],
+  "independent_review": [
+    {
+      "reviewer": "codex-root",
+      "note_sha256": "5b12236638545182a019a3a6e853eed6086b1192caceee639f05852acd017c01",
+      "result": "No source/algebra/authority blocker; not hosted approval"
+    },
+    {
+      "reviewer": "intent_research",
+      "note_sha256": "5b12236638545182a019a3a6e853eed6086b1192caceee639f05852acd017c01",
+      "result": "No blocker in second accounting/terminal-state read; not implementation admission"
+    }
+  ],
+  "local_path_and_line_checks": {
+    "count": 24,
+    "targets": [
+      "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers",
+      "../designs/gates-of-truth-world-gen-phases.md#phase-2-emergence-of-life",
+      "../designs/simulation-methods-research.md#open-research-questions",
+      "../research/physics/nebula-to-life-fsm.md",
+      "../../src/domain/ecology/state.clj",
+      "../../src/law/ecology/schema.clj",
+      "../../src/domain/ecology/system.clj",
+      "../../src/domain/genesis/bootstrap.clj",
+      "../../src/domain/stellar/seeder.clj",
+      "../../src/domain/ecs/core.clj",
+      "../../src/domain/ecs/event.clj",
+      "2026-10-06-two-seed-natural-formation.md",
+      "../designs/commitment-and-resonance.md#441-committed-world-grow--bounded-proposal-2026-10-07",
+      "../../src/domain/ecs/components.clj",
+      "../../src/domain/genesis/tick.clj",
+      "../../kanban/tasks/specify-the-executable-committed-world-clock-and-later-history-contract-e-policy.md",
+      "../designs/resolution-regimes-and-scale-coupling.md#5-the-hard-limit-float-precision-not-lagrangian",
+      "../../src/domain/ecs/core.clj",
+      "../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers",
+      "../../src/domain/genesis/promotion.clj",
+      "../../src/domain/chemistry.clj",
+      "../../src/law/ecology/schema.clj",
+      "../../src/domain/genesis/bootstrap.clj"
+    ],
+    "limits": "File existence and numerical line bounds checked; named fragments manually inspected, not a board validation."
+  },
+  "source_files_unchanged": [
+    {
+      "path": "src/domain/ecs/core.clj",
+      "sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970"
+    },
+    {
+      "path": "src/domain/chemistry.clj",
+      "sha256": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f"
+    },
+    {
+      "path": "src/law/ecology/schema.clj",
+      "sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75"
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9"
+    },
+    {
+      "path": "src/domain/genesis/promotion.clj",
+      "sha256": "2526b21abd4c8e2f49a4d199b1513ff0a5ed82ac9cc0a09c238b8fc1a0b53af4"
+    }
+  ],
+  "closed_artifacts_excluding_inventory": [
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 24821,
+      "sha256": "5b12236638545182a019a3a6e853eed6086b1192caceee639f05852acd017c01"
+    },
+    {
+      "path": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "bytes": 6821,
+      "sha256": "6af416b4f1534ac3bcba77fea5d79c7b5ed8a72b3cd5275e4cf2fa347fbcb16c"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 599036,
+      "sha256": "9485d8937fa0c37de41bd45a88a5c72dce0d15187fc52be3f62a4bba67aa5265"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 34640,
+      "sha256": "d20aa00316c31a99a7b96de0f27f70c3dd375783b26b737d8817bd1bb8bd27f0"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 23777,
+      "sha256": "0ae149ea28a4e6a769a17d06818c999dbfe6bd265e61d569a267ecc908c0c61c"
+    }
+  ],
+  "verification": "Source/algebra reviews by root and intent; original17052-byte note prefix preserved; canonical card body/frontmatter except write-id unchanged; old comment and all ledger prefixes preserved; local target/line checks and git diff --check pass. No numerical/native/production tests run.",
+  "limits": "No numeric backend, biological budget/rate/clock or materialization law selected. No runtime, tests or native calls. Earlier authoring inventory describes earlier checkpoint, not new complete-file hashes."
+}
