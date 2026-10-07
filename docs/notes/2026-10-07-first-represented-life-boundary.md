@@ -456,3 +456,209 @@ allocation or terminal material change must be shown as rejection/closure rather
 than adjusted until a cohort appears. No result in this note is an executed test,
 local review is not hosted approval, and Incoming remains Incoming until the
 canonical planning/admission process completes.
+
+## 9. Proposed first cohort resource-action producer (2026-10-07)
+
+This is a **new, unaccepted design continuation**, isolated at PR38 head
+`4a4b4f63309b4b99ed211c9c186840fe0e8d3f33`, under the same Incoming 3 owner.
+Sections 3 and 8 left the action producer open; this section selects one bounded
+candidate without changing the origin guards, carbon allocation or parent-loss
+rule. It supplies no code, biological calibration, natural admission, individual,
+civilization or Gate. The parent proposal remains unaccepted. Scope/provenance:
+[delegated scope](../../.ημ/diagnostics/life-action-plan/root-scope.json) and
+[design audit](../../.ημ/diagnostics/life-action-plan/design-audit.json).
+
+### 9.1 Model choice and primary evidence
+
+Select one well-mixed, carbon-limited cohort with constant model coefficients
+within a supported interval. [Monod's original paper](https://garcialab.berkeley.edu/courses/papers/Monod1949.pdf),
+pp. 379–384, supports an empirical nutrient-saturation relation and distinguishes
+resource yield from growth rate under specified limiting conditions; pp. 372–373
+uses doublings rather than natural-exponential rate units. Neither a universal
+extraterrestrial rate nor sufficient oxygen/energy follows from that relation.
+[Jayathilake et al., Methods](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0181965)
+separates substrate kinetics, biomass growth, decay and division; its Methods
+explicitly discretizes growth with forward Euler and a biological timestep.
+That is a numerical precedent, not validation of this proposal's parameters or
+step envelope. This proposal
+selects **no endogenous loss, maintenance, division or recycling: L=0**. It models
+only the stated growth transaction, not indefinite biological survival. Existing
+habitat/account closure still applies and must not be relabeled starvation.
+
+Choose guarded forward Euler for this first numerical reference. It uses one
+bounded evaluation rather than hidden biological substeps. Positivity-preserving
+Patankar methods are a real alternative ([primary research abstract](https://doi.org/10.1016/S0168-9274(03)00101-6));
+positivity alone would not establish fidelity over an arbitrary cosmological
+interval. The guards below are a proposed engineering envelope, **not a proven
+1% global error bound**. A higher-order solver or automatic interval subdivision
+is outside this continuation.
+
+### 9.2 Required inputs and modeled interval
+
+At origin settlement, the proposed sole biology owner initializes producer
+`:cohort-uptake/v1` for the one cohort with its next expected physics tick and
+local elapsed time zero. Birth in the fold for tick n cannot consume that tick's
+already elapsed interval; its first action is for tick n+1. Supply an immutable,
+versioned profile with exact rational `mu_max > 0`, the **natural-exponential
+relative growth rate** (s^-1), `K > 0` (carbon-account units) and `0 < Y <= 1`
+(carbon fraction). A sourced rate R in doublings per time unit must be converted
+as mu_max = ln(2)*R and converted to seconds. Because ln(2) is irrational, importing
+it into this exact-rational model requires an explicit provenance-bearing rational
+approximation, including source units, conversion/error policy and profile version.
+Do not silently copy R as mu_max or claim that a rational approximation is the
+exact sourced conversion. Worked values below are constructed rational profiles,
+not imported or calibrated biological rates. `K = K_s*V / quantum` relates the mass
+parameter to §3's concentration form when supported volume and concentration
+parameters exist. Do not fabricate volume from planet radius. A directly supplied
+K is an explicit compartment model parameter, not measured habitat geometry.
+Missing profile or applicability evidence is unsupported, never a default rate.
+No numerical parameter value in the worked cases is a production prescription.
+
+Inputs are the proposed account's integer U/S/B/W, cohort/account identities,
+revision, profile identity, step identity, positive elapsed h in **modeled
+seconds**, and two rational numerical residues `r_q,r_g` in [0,1), initially zero.
+All values must satisfy named pure validators; finite floating point is not an
+exact-rational contract. Import an actual finite positive binary64 `:sim/dt` by
+its exact IEEE-754 rational value, retaining its source bits. Do not round it to
+an integer second or subtract large absolute `:genesis/sim-time` values.
+
+Bound this reference arithmetic explicitly: every normalized rational numerator
+and denominator, stock and elapsed cursor is at most 4096 bits. Validate operands
+before each operation; pairwise integer products/sums may use at most 8193-bit
+temporaries, then reduce and recheck the 4096-bit result. Exceeding this budget
+is an unsupported numeric interval, never conversion to double. Rational residue
+denominators can grow across actions, so continued support is not guaranteed;
+include that boundary in later horizon testing. There is a fixed count of bounded
+operations per proposal, not an unqualified constant-time arbitrary-precision claim.
+
+The input h belongs to the completed physical fold: current
+[advance-simulation-clock](../../src/domain/genesis/tick.clj) lines 178–207 adds
+the input dt and only then installs pacing's next dt. The fan-out producer reads
+that input snapshot, not the new pacing value. A future accepted exact clock can
+supply the same duration contract; this proposal neither consumes wall time nor
+advances physical time. It runs once per active cohort per completed physical
+step, independently of the scalar ecology's 24-tick cadence. Skipped LOD updates
+are not allowed to skip this bookkeeping producer.
+
+Require the next contiguous step identity and account-local interval [t,t+h]
+where t equals the retained successful cursor. A repeated accepted request uses
+§7's prior outcome; an overlapping, missing or reordered interval is rejected.
+A request must first identify an existing account/cohort and its authorized
+producer; an unidentifiable payload cannot suspend an arbitrary account.
+On malformed input for that identified producer, oversized interval or a missing physical step, retain the
+rejection and mark this producer **suspended with an unmodeled interval**, keeping
+stocks, residues and successful cursor unchanged. Subsequent ticks do not accrue
+catch-up work or restart it. Recovery/reinitialization needs a later explicit
+contract; it cannot silently resume using new coefficients. This is a numerical
+coverage failure, not death or physical pause. Account closure still runs while
+suspended. Normal paused simulation emits no completed steps; it earns no growth.
+
+### 9.3 Extent, integer conversion and conservation
+
+For S>0 and B>0, use exact rational intermediates in carbon-account units:
+
+```text
+mu = mu_max * S / (K + S)             [s^-1]
+a  = mu * h                          [dimensionless]
+x  = B * a / Y                       [ideal consumed carbon units]
+admit only if a <= 1/100 and x <= S/100
+z_q = x + r_q;  q = floor(z_q);  r_q' = z_q - q
+z_g = Y*q + r_g; g = floor(z_g); r_g' = z_g - g
+L = 0
+(U',S',B',W') = (U, S-q, B+g, W+q-g)
+```
+
+The two 1/100 bounds limit the unquantized step's relative living-stock increase
+and substrate depletion. They do not bound external habitat changes between
+samples; the existing final-parent validation still decides coverage. Validate
+`0<=g<=q<=S` after quantization as well. With integer S>=1, x<=S/100 and r_q<1
+imply q<=S; Y<=1 and r_g<1 imply g<=q. Every accepted integer transfer therefore
+conserves U+S+B+W exactly. Quantization can move one whole unit when a stock is
+very small, so the relative-change bound is not a post-quantization guarantee.
+
+Residues are numerical error accumulators, **not carbon stocks, reservations or
+claims against W**. With zero initial residues and a fixed profile, Σx−Σq=r_q<1 and
+Σ(Y*q)−Σg=r_g<1 account unit. Relative to the unquantized ideal growth,
+Y*Σx−Σg=Y*r_q+r_g<1+Y; claiming a combined sub-unit growth error would be
+incorrect. Only the q units
+actually removed from S can fund g; the balance q-g goes to W immediately. Residues
+persist across accepted intervals, save/reload and LOD, so tiny positive rates do
+not vanish merely because of repeated floor operations. They are archived on
+closure; no residue creates refundable/exportable carbon. A profile change is
+unsupported, not permission to reset residues and replay an interval.
+
+If S=0 or B=0, return q=g=L=0, unchanged residues and stocks, and an accepted
+zero-action interval, after ordinary identity/profile/habitat validation. This
+neither invents growth nor infers death. h=0 is a no-step diagnostic, not an
+accepted clock advance; negative, nonfinite or unrepresentable inputs reject.
+There is no min(S,x) clipping, hidden retry or partial interval consumption.
+
+### 9.4 Ownership and final-state validation
+
+The new **proposed** fan-out owner reads the existing book/cohort/profile and
+emits only its own immutable uptake-proposal component. It owns neither stock,
+identity allocation, cursor nor events. Its payload contains step/input-dt bits,
+interval, profile, expected revision, input-stock/residue fingerprint and q/g/L
+with next residues. It has one proposal per active cohort; inactive/suspended
+owners emit the established clearing write-set. Registry reads/writes and named
+Malli validators remain mandatory before implementation.
+
+The **same** §7.2 serial biology settlement checks final parent survival and the
+origin material/habitat signature first, then validates the proposal against the
+current account/revision/profile/cursor. A same-fold removal or closure cancels
+action; it cannot spend and later refund. Any earlier ordered operation changing
+the account makes a frozen proposal stale. For this producer's next unaccounted
+completed step, reject it and suspend the producer with that unmodeled interval;
+keep its successful cursor/residues unchanged, preserving the other operation's
+already accepted changes. Do not recompute the rate on a different snapshot or
+let the following step silently skip this gap. An exact prior retry still returns
+its stored outcome first; a conflicting replay of an already accounted interval
+is rejected without suspending an otherwise current producer. Closed accounts
+remain closed, not newly suspended. After pure validation, stock, residues,
+successful cursor, operation outcome and causal event commit together. A repeated
+outcome neither charges nor emits again. Origin initialization and later uptake
+are separate occurrences; neither constitutes a second living-stock origin.
+
+The uniform lifecycle still lacks these capabilities: current
+[bootstrap/materialize-lifecycle](../../src/domain/genesis/bootstrap.clj) lines
+299–352 constructs stellar clumps. No existing generic birth/settlement writer
+is being claimed. A future inspector/Narrator consumer reads the settled result:
+cohort identity, consumed/gained units, modeled interval and status. Its first
+meaningful action requires q>0; an attempted, rejected or rounded-to-zero action
+must not be displayed as consumption. No new input binding or creature mesh.
+
+### 9.5 Exact review cases and later acceptance
+
+These constructed arithmetic inputs use account units (one unit = 10^-15 kg C),
+not observed organisms. Start independent cases with U=W=r_q=r_g=0,
+S=100000, B=2000, K=100000, mu_max=1/100 s^-1, Y=1/2 unless stated.
+
+| Case | Exact result / required outcome |
+| --- | --- |
+| Funded h=1 s | mu=1/200, x=20; q=20,g=10,L=0; S'=99980,B'=2010,W'=10, total=102000; residues zero. One accepted causal action. |
+| Quantization h=1/100 s, repeated five contiguous intervals | While stocks stay unchanged x=1/5 each time. After four: q=g=0,r_q=4/5. Fifth: q=1,g=0,r_q=0,r_g=1/2,S'=99999,B'=2000,W'=1. Finite uptake is not mislabeled biomass gain. |
+| Depleted S=0, h=1 s | Zero action and interval accepted, no stock creation/death; residues unchanged. |
+| Excessive h=3 s | a=3/200 >1/100: reject the whole interval, suspend producer, no stock/residue/cursor mutation; no three hidden one-second steps. |
+| Substrate-bound rejection: S=10,B=100000,K=10,h=1 s | a=1/200 passes, x=1000 exceeds S/100=1/10: reject before rounding, no clipping or borrowing. |
+| Duplicate, stale revision or same-fold parent reap | Exact duplicate returns prior outcome; stale proposal rejects; parent reap closes/exports under §7.3 and cancels uptake. No second debit or event. |
+
+For error assessment, compare h with two h/2 steps on identical admitted inputs;
+require conservation in both, record different numerical results/residues, and
+measure convergence as the step shrinks. This explicit Euler proposal does **not**
+promise exact timestep-partition invariance. Tests must also cover invalid
+profile/rational residue, changed profile, large input dt, clock gaps, ordinary
+save/reload and the shared lifecycle's same-fold cancellation. These are future
+RED boundaries, not executed project tests or an implementation story admitted
+by this note.
+
+The extension remains bounded to one ecological resource action. Chemistry/stock
+producers, physically admissible habitat, profile/applicability selection,
+accepted lifecycle integration and supported temporal resolution remain real
+prerequisites. Current cosmological steps will generally violate this envelope
+for ordinary microbial rates; no naturally supported interval or active cohort
+is claimed. The existing clock owner must resolve that consumer dependency, not
+an arbitrary slower biological clock in this producer. Root/independent review
+must assess the selected envelope and failure policy before any implementation
+admission. Ordinary native acceptance eventually requires natural origin, one
+positive settled uptake and visible history in the same world; this section does
+not complete the whole actor card, embodiment or an earned Gate.

@@ -405,3 +405,12 @@
   spore: none
   receipt-refs: Truth#38,review5438493967,comment4203793322
   note: When a reviewed proposal selects engineering rules, update its live design/index summaries without promoting those rules to accepted or implemented. Preserve historical notes and ledger prefixes; native settlement is distinct from successor approval. Existing provenance practice suffices; no spore.
+- ts: 2026-10-07T07:53:55.848056110Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-action-plan
+  task: Specify one conserved cohort resource action without concealing unsupported elapsed time
+  p-efficiency: 0.88
+  p-friction: 0.22
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: life-to-represented-actor-spec,life-action-plan/closure.json
+  note: Separate empirical rate shape from its rate convention, calibration and admitted integration envelope. Two individually subunit rounding residues need not give a combined subunit error. A stale next-step transaction must disclose the missing interval rather than silently resuming from a later clock. Independent review corrected these boundaries; preserve the exact source and proposal tier. Existing contract/provenance skills suffice; no spore created or promoted.

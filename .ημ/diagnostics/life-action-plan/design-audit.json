@@ -1,0 +1,288 @@
+{
+  "at": "2026-10-07T07:44:59.684375+00:00",
+  "scope": "Design continuation only; isolated arithmetic, no project/JVM/native execution",
+  "base": "4a4b4f63309b4b99ed211c9c186840fe0e8d3f33",
+  "branch": "codex/truth-life-action-plan",
+  "parent_branch_unchanged": true,
+  "owner": "life-to-represented-actor-spec",
+  "note": {
+    "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "sha256": "7527579890edf041925e15451712ca069d239cb8adfc1de5157de1c459f9745e",
+    "original_bytes": 34930,
+    "original_sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417",
+    "original_byte_prefix_preserved": true,
+    "appended_bytes": 13899
+  },
+  "canonical_scope": {
+    "path": ".ημ/diagnostics/life-action-plan/root-scope.json",
+    "sha256": "90b5b8f8297570fd7700a7a8e8114d2e77f7a5700fd0dd31dd08cea0eab4c14d"
+  },
+  "sources": [
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecology/system.clj",
+      "sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/tick.clj",
+      "sha256": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/registry.clj",
+      "sha256": "de335cb32c29d14b2f2de90ceac4149331260d67379840089f2b5991652b9b5f",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/pacing.clj",
+      "sha256": "bdda144e92b23d6b82c114e3dfd908b946cebfbe713a05699d839f5b7e020279",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/arc.clj",
+      "sha256": "34af0838056b4206e81281f75a1aee81e404782abd5b998dc73c950cac7c1759",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/ecology/schema.clj",
+      "sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75",
+      "equal_base": true
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "sha256": "756cf7bad9a5905ab48b3400f7b24ff3e484fd1cadcd8af692bf4470aa8c0f6e",
+      "equal_base": true
+    },
+    {
+      "path": "docs/designs/gates-of-truth-world-gen-phases.md",
+      "sha256": "9a10f18333e220f5179d1f11200d2eaa340b210d32d9628e9fd97decf5adbbb7",
+      "equal_base": true
+    }
+  ],
+  "links": [
+    {
+      "target": "../../.ημ/diagnostics/life-action-plan/root-scope.json",
+      "exists_or_this_audit": true
+    },
+    {
+      "target": "../../.ημ/diagnostics/life-action-plan/design-audit.json",
+      "exists_or_this_audit": true
+    },
+    {
+      "target": "../../src/domain/genesis/tick.clj",
+      "exists_or_this_audit": true
+    },
+    {
+      "target": "../../src/domain/genesis/bootstrap.clj",
+      "exists_or_this_audit": true
+    }
+  ],
+  "primary_sources": [
+    {
+      "url": "https://garcialab.berkeley.edu/courses/papers/Monod1949.pdf",
+      "accessed": "2026-10-07",
+      "scope": "Full PDF opened; pp372-373 rate convention, pp379-381 limiting nutrient/yield scope, pp383-384 empirical equation2. No model calibration adopted."
+    },
+    {
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0181965",
+      "accessed": "2026-10-07",
+      "scope": "Full Methods opened: growth/decay eq1 explicit Euler, nutrient balance/uptake, division. Does not validate our envelope/carbon profile."
+    },
+    {
+      "url": "https://research.dial.uclouvain.be/entities/publication/77e3865c-56d0-455e-a39c-8c1be11ef96e",
+      "doi": "10.1016/S0168-9274(03)00101-6",
+      "accessed": "2026-10-07",
+      "scope": "Primary author repository abstract only; full text restricted. Used only to identify positive conservative alternative, not to import a scheme."
+    }
+  ],
+  "retrieval_limits": [
+    "Initial guessed PMC URL returned browser challenge; replaced with the existing linked PLOS full text.",
+    "arXiv HTML alternative retrieval returned internal error; no claim relies on it."
+  ],
+  "arithmetic": {
+    "command": "python3 - (inline fractions.Fraction arithmetic shown here)",
+    "source": "from fractions import Fraction as F\n# Isolated exact arithmetic illustration, not a project implementation/test.\ndef advance(s,b,w,h,k=100000,m=F(1,100),y=F(1,2),rq=F(0),rg=F(0)):\n    if s==0 or b==0: return dict(s=s,b=b,w=w,rq=rq,rg=rg,q=0,g=0,accepted=True)\n    mu=m*s/(k+s); a=mu*h; x=F(b)*a/y\n    if a>F(1,100) or x>F(s,100): return dict(accepted=False,a=a,x=x)\n    zq=x+rq; q=zq.numerator//zq.denominator; rq=zq-q\n    zg=y*q+rg; g=zg.numerator//zg.denominator; rg=zg-g\n    assert 0<=g<=q<=s\n    out=dict(s=s-q,b=b+g,w=w+q-g,rq=rq,rg=rg,q=q,g=g,accepted=True,a=a,x=x)\n    assert out['s']+out['b']+out['w']==s+b+w\n    return out\n",
+    "source_sha256": "292ba9f1db06f8da0d38ce3f9872ee8345ddfc0ec166539b1539a6fd0fc630ba",
+    "results": {
+      "funded": {
+        "s": 99980,
+        "b": 2010,
+        "w": 10,
+        "rq": "0",
+        "rg": "0",
+        "q": 20,
+        "g": 10,
+        "accepted": true,
+        "a": "1/200",
+        "x": "20"
+      },
+      "five_tiny_steps": [
+        {
+          "s": 100000,
+          "b": 2000,
+          "w": 0,
+          "rq": "1/5",
+          "rg": "0",
+          "q": 0,
+          "g": 0,
+          "accepted": true,
+          "a": "1/20000",
+          "x": "1/5"
+        },
+        {
+          "s": 100000,
+          "b": 2000,
+          "w": 0,
+          "rq": "2/5",
+          "rg": "0",
+          "q": 0,
+          "g": 0,
+          "accepted": true,
+          "a": "1/20000",
+          "x": "1/5"
+        },
+        {
+          "s": 100000,
+          "b": 2000,
+          "w": 0,
+          "rq": "3/5",
+          "rg": "0",
+          "q": 0,
+          "g": 0,
+          "accepted": true,
+          "a": "1/20000",
+          "x": "1/5"
+        },
+        {
+          "s": 100000,
+          "b": 2000,
+          "w": 0,
+          "rq": "4/5",
+          "rg": "0",
+          "q": 0,
+          "g": 0,
+          "accepted": true,
+          "a": "1/20000",
+          "x": "1/5"
+        },
+        {
+          "s": 99999,
+          "b": 2000,
+          "w": 1,
+          "rq": "0",
+          "rg": "1/2",
+          "q": 1,
+          "g": 0,
+          "accepted": true,
+          "a": "1/20000",
+          "x": "1/5"
+        }
+      ],
+      "empty": {
+        "s": 0,
+        "b": 2000,
+        "w": 0,
+        "rq": "0",
+        "rg": "0",
+        "q": 0,
+        "g": 0,
+        "accepted": true
+      },
+      "too_large": {
+        "accepted": false,
+        "a": "3/200",
+        "x": "60"
+      },
+      "substrate_bound": {
+        "accepted": false,
+        "a": "1/200",
+        "x": "1000"
+      },
+      "one_step": {
+        "s": 99980,
+        "b": 2010,
+        "w": 10,
+        "rq": "0",
+        "rg": "0",
+        "q": 20,
+        "g": 10,
+        "accepted": true,
+        "a": "1/200",
+        "x": "20"
+      },
+      "two_half_steps": {
+        "s": 99980,
+        "b": 2010,
+        "w": 10,
+        "rq": "9799/399980",
+        "rg": "0",
+        "q": 10,
+        "g": 5,
+        "accepted": true,
+        "a": "9999/3999800",
+        "x": "4009599/399980"
+      }
+    },
+    "assertions": "All case assertions passed; conserved integer stock totals; no project tests or biological calibration. This is not an independently derived numerical oracle.",
+    "combined_rounding_counterexample": {
+      "input_x": "19/10",
+      "Y": "9/10",
+      "q": 1,
+      "g": 0,
+      "r_q": "9/10",
+      "r_g": "9/10",
+      "combined_error": "171/100",
+      "bound": "19/10",
+      "equation_asserted": true,
+      "note": "An independently supplied review counterexample; isolated rational arithmetic only, no project tests."
+    }
+  },
+  "verification": {
+    "git_diff_check": 0,
+    "production_config_diff_empty": true,
+    "canonical_body_non_write_id_frontmatter_and_prefix_proofs": "root-scope.json",
+    "independent_review": "Closed by board_scout and root for proposed publication scope; hosted review pending."
+  },
+  "open_limits": [
+    "No accepted parameter/applicability producer, biological calibration or uniform materializer.",
+    "Current cosmological dt generally outside guarded microbial envelope.",
+    "4096-bit rational limit may suspend long histories; no long-horizon cost/accuracy qualification.",
+    "No implementation admission, natural cohort/action, organism/avatar/civilization or Gate acceptance."
+  ],
+  "review": {
+    "reviewer": "board_scout",
+    "scope": "Independent source/model/math and opened primary-text review; no edits/tests/native calls",
+    "at": "2026-10-07",
+    "note_sha256": "7527579890edf041925e15451712ca069d239cb8adfc1de5157de1c459f9745e",
+    "verdict": "No remaining publication blocker; no implementation or numerical/native qualification",
+    "finding": "Clarify combined rounding error: two stage-specific subunit errors compose to less than1+Y against ideal unquantized growth",
+    "resolution": "Equations unchanged; states stage-specific sums and combined Y*r_q+r_g bound",
+    "final_delta": "board_scout source-only final reread passed 2026-10-07: natural-exponential mu_max and explicit ln2 rational-import approximation; unaccounted stale next-step suspension versus exact retries, conflicting old replays and terminal closure. No formula change, implementation or numerical/native qualification."
+  },
+  "closed_at": "2026-10-07T07:52:35.501213+00:00",
+  "intended_paths": [
+    "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    ".ημ/diagnostics/life-action-plan/design-audit.json",
+    ".ημ/diagnostics/life-action-plan/root-scope.json",
+    "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+    "kanban/tasks/.events/ledger.edn"
+  ],
+  "root_review": {
+    "status": "Publication scope approved; final requested precision fixes applied",
+    "note_sha256": "7527579890edf041925e15451712ca069d239cb8adfc1de5157de1c459f9745e",
+    "clarifications": [
+      "mu_max means natural-exponential relative growth rate; imported doublings/time requires explicit ln2 and unit conversion with provenance-bearing rational approximation, not exact irrational conversion. Worked profiles are constructed.",
+      "Next unaccounted stale interval rejects and suspends while preserving prior accepted changes/cursor/residues; exact historical retries, conflicting old replays and closure retain distinct precedence."
+    ]
+  }
+}
