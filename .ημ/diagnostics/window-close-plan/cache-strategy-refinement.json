@@ -1,0 +1,186 @@
+{
+  "at": "2026-10-07T04:23:25.987964+00:00",
+  "base": "ef2728c546e8248f8b31ea2e99169e0de2ec26ab",
+  "uuid": "native-window-close-disposal",
+  "scope": "Research/design only; no production implementation or admitted Ready scope",
+  "canonical_cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "canonical_frontmatter": {
+    "category": "tasks",
+    "labels": "hygiene, render, lifecycle",
+    "parent": "f369c598-279c-498d-a64f-45d2ce16ad34",
+    "type": "task",
+    "write-id": "1791347005327-0.c9j3nk4av1p9e10u8tu",
+    "points": "5",
+    "title": "Dispose native window on render exit while retaining simulation",
+    "priority": "P1",
+    "status": "incoming",
+    "uuid": "native-window-close-disposal",
+    "created_at": "2026-10-07T03:26:09.798Z"
+  },
+  "body_unchanged": true,
+  "prior_comment_prefix_preserved": true,
+  "note": {
+    "path": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+    "sha256": "e64cfaee1f45a01947a2f69e05761821892dc61c397f9eac3a652aefb97adc51",
+    "prior_note_prefix_preserved": true,
+    "prior_bytes": 12258
+  },
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 643897,
+      "before_sha256": "705b93972bc36451491ea60cd9acd024bec47a3f20e95aa5663cefa4794ca386",
+      "after_bytes": 645546,
+      "after_sha256": "dc9f2db3641526090c252900cd5913ed7bd1d45438051ac3d9aa40361329540e",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 67089,
+      "before_sha256": "6b650374edae30c60e35b9d860cc8945c484a628db1324baee43870851858095",
+      "after_bytes": 68253,
+      "after_sha256": "8e5362a74692eddbca1f3a07494aaad212e3a11500f19b29749549b17a35bb55",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 35618,
+      "before_sha256": "9c520882762c28508d912289ed22dfe20164d163fef6f22d67c7cbbd47c2b063",
+      "after_bytes": 36299,
+      "after_sha256": "45f07f2fa96ead6b0dafd3bc8196add8bb3c2446b106d3c7c812c771a3ef0b97",
+      "original_prefix_preserved": true,
+      "appended_lines": 10
+    }
+  ],
+  "independent_review": [
+    {
+      "reviewer": "runtime_scout",
+      "note_sha256": "4ffe019d690a220a76818b2c6f52a13316f01fc2b8aca84d6618823b8a8142ad",
+      "result": "No substantive blocker; correct PDF fragment75to76"
+    },
+    {
+      "reviewer": "codex-root",
+      "note_sha256": "e64cfaee1f45a01947a2f69e05761821892dc61c397f9eac3a652aefb97adc51",
+      "result": "Verified citation-only correction and source-specific proposal; not hosted approval"
+    }
+  ],
+  "local_path_and_line_checks": {
+    "count": 40,
+    "targets": [
+      "../../.ημ/diagnostics/flight-precision/native-24cbffd/README.md",
+      "../../.ημ/diagnostics/flight-precision/native-24cbffd/after-escape.edn",
+      "../../.ημ/diagnostics/flight-precision/native-24cbffd/after-escape-later.edn",
+      "../../.ημ/diagnostics/flight-precision/native-24cbffd/after-escape-xwindow.txt",
+      "../../AGENTS.md#running-the-dev-service",
+      "../demo/README.md#L322",
+      "../designs/spark-flight-and-camera.md#L262",
+      "../../dev/demo.clj#L237",
+      "../../src/infra/dev/server.clj#L59",
+      "../../src/infra/render/input.clj#L191",
+      "../../src/infra/dev/window/loop.clj#L435",
+      "../../src/infra/dev/window/loop.clj#L448",
+      "../../src/infra/dev/window/lifecycle.clj#L95",
+      "../../test/infra/dev/window_test.clj",
+      "../../AGENTS.md#running-the-dev-service",
+      "../../src/infra/dev/window/loop.clj#L455",
+      "../../src/infra/render/window.clj#L59",
+      "../../src/infra/dev/window/loop.clj#L288",
+      "../../src/infra/dev/window/lifecycle.clj#L95",
+      "../../src/infra/dev/window/loop.clj#L71",
+      "../../src/infra/render/asset.clj#L146",
+      "../../src/infra/render/volume.clj#L70",
+      "../../src/infra/render/window.clj#L175",
+      "../../src/infra/render/window.clj#L59",
+      "../../src/infra/render/shader.clj#L29",
+      "../../src/infra/render/shader.clj#L73",
+      "../../src/infra/render/shader.clj#L458",
+      "../../src/infra/dev/window/loop.clj#L79",
+      "../../src/infra/render/asset.clj#L23",
+      "../../src/infra/render/asset.clj#L47",
+      "../../src/infra/render/volume.clj#L70",
+      "../../src/infra/render/mesh.clj#L104",
+      "../../src/infra/render/scene/setup.clj#L89",
+      "../../src/infra/render/hud.clj#L28",
+      "../../src/infra/render/window.clj#L71",
+      "../../src/infra/render/window.clj#L80",
+      "../../src/infra/render/window.clj#L173",
+      "../../src/infra/render/input.clj#L253",
+      "../../src/infra/render/window.clj#L48",
+      "../../src/infra/dev/window/loop.clj#L101"
+    ],
+    "limits": "File existence and numerical line bounds checked; named fragments manually inspected, not a board validation."
+  },
+  "source_files_unchanged": [
+    {
+      "path": "src/infra/render/window.clj",
+      "sha256": "817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14"
+    },
+    {
+      "path": "src/infra/dev/window/loop.clj",
+      "sha256": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067"
+    },
+    {
+      "path": "src/infra/dev/window/lifecycle.clj",
+      "sha256": "ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c"
+    },
+    {
+      "path": "src/infra/render/shader.clj",
+      "sha256": "6cb178a94a8a05566b963d64ab76b102023332d5446fdd2d3772b62019653172"
+    },
+    {
+      "path": "src/infra/render/asset.clj",
+      "sha256": "585b32dadb8913da1963fb054833d664fae2d9a39337b6f416414fe389eae1c7"
+    },
+    {
+      "path": "src/infra/render/volume.clj",
+      "sha256": "0811b4977f41e2b25db17a696f265c423d51edf7f441ccbaf71a3af33abc30ee"
+    },
+    {
+      "path": "src/infra/render/mesh.clj",
+      "sha256": "6fce67c9bf2a0c4061cb74d8493bc6fef5ee56fb6921b8252181045235551384"
+    },
+    {
+      "path": "src/infra/render/scene/setup.clj",
+      "sha256": "a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7"
+    },
+    {
+      "path": "src/infra/render/hud.clj",
+      "sha256": "8b63d1a1797ae0be97ccdacdb76fb25097303604a77f8fe50a1020e6fa176cb0"
+    },
+    {
+      "path": "src/infra/render/input.clj",
+      "sha256": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c"
+    }
+  ],
+  "closed_artifacts_excluding_inventory": [
+    {
+      "path": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "bytes": 25697,
+      "sha256": "e64cfaee1f45a01947a2f69e05761821892dc61c397f9eac3a652aefb97adc51"
+    },
+    {
+      "path": "kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md",
+      "bytes": 9778,
+      "sha256": "a44cda0ebdbbeeaad88478c3ce93f009d9833bc5e26cbd9e965148eeddda2689"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 645546,
+      "sha256": "dc9f2db3641526090c252900cd5913ed7bd1d45438051ac3d9aa40361329540e"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 68253,
+      "sha256": "8e5362a74692eddbca1f3a07494aaad212e3a11500f19b29749549b17a35bb55"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 36299,
+      "sha256": "45f07f2fa96ead6b0dafd3bc8196add8bb3c2446b106d3c7c812c771a3ef0b97"
+    }
+  ],
+  "verification": "Independent runtime/source/API review; ten source hashes match both prior revisions; historical12258-byte note prefix preserved; canonical card body/frontmatter except write-id unchanged; prior comments and ledger prefixes preserved;40local links/line bounds and git diff --check pass. No project tests/native execution.",
+  "limits": "Planning only. Entry exclusion, atomic generation claims and native failure seams require review/size confirmation. Earlier inventories remain original checkpoints; source/tests/config unchanged."
+}

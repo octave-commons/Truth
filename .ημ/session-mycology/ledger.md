@@ -512,3 +512,42 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T03:28:57.842139442Z
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Plan window disposal without converting retained simulation into a quit bug
+  p-efficiency: 0.92
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: native-window-close-disposal,b395c404
+  note: A verified leaked window does not make intentional simulation retention a defect or extend a measurement card into implementation authority. Size the whole resource lifetime including partial creation, error-mode event polling and stale-owner stop races; require native disappearance separately from fake-handle tests. Preserve primary errors, ordinary restart options and context-ID ownership. No new spore; existing planning and provenance skills suffice.
+
+- ts: 2026-10-07T04:06:22.620691+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Record window-plan acceptance amendment without rewriting event history
+  p-efficiency: 0.94
+  p-friction: 0.12
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: native-window-close-disposal,review5437458020,comment4202906657
+  note: Supported Markdown authoring can be made easier to audit by recording exact later acceptance refinements through a canonical comment; preserve the original creation event and make no replay or implementation claim. Existing provenance skills suffice.
+
+- ts: 2026-10-07T04:23:25.987964+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Specify unshared-context retirement and expose cache-entry concurrency requirements before implementation
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth#37,ef2728c,review5437458020,native-window-close-disposal
+  note: A teardown inventory cannot infer context ownership from numeric GL IDs. Scope whole-context retirement separately from host cache exclusion and service-generation ownership; exposing the remaining concurrency restriction is more truthful than claiming ID comparison solves it. No spore.
+
+- ts: 2026-10-07T05:03:43.240650+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Correct GLFW thread-ownership planning before implementation admission
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: PR37,review5437795376,comment4203201069,76e7f97d06aa0c72802b7c11336b6602f20b0933
+  note: An observed Linux run does not waive GLFW main-thread ownership. Separate context ownership from API thread legality; trace the actual launch owner before designing cleanup and expose missing dispatcher/scope rather than promising a worker-only finalizer. No new spore.
