@@ -234,3 +234,15 @@ through the configured planning process. The candidate reference law, budget and
 consumer boundaries remain unaccepted until that review settles them; existing
 native verification continues independently. No implementation or Ready
 transition is claimed here.
+
+## Independent feasibility supplement — 2026-10-07 UTC
+
+(己, p=0.99) The [worked feasibility note](../research/physics/local-reference-flight-assist-feasibility.md)
+adds primary-source verification and derived constant, accelerating and circular
+reference cases. It distinguishes delayed variable-dt velocity response, actual
+reference displacement, finite saturation and the 43 qualifying binding reads.
+The unresolved dependency is a reviewed pre-capture timing/integration envelope;
+a post-capture clock alone cannot supply it. This is independent analysis allowed
+by the existing Incoming three-point specification, with no controller, gain,
+clock, experiment or implementation admission. Historical claims above remain
+at their recorded provenance.

@@ -359,3 +359,12 @@
   spore: none
   receipt-refs: flight-local-reference-assist-spec
   note: Distinguish absolute braking, body-frame thrust, translating navigation reference and camera tracking before claiming approach readiness. A pinned cross-PR proposal is evidence of intended scope, not a local file or admitted dependency. Reuse the existing FA owner with one Incoming specification child and retain candidate-law uncertainty. No spore created or promoted.
+- ts: 2026-10-07T00:44:57.780344Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Derive bounded local-reference feasibility without admitting a controller
+  p-efficiency: 0.87
+  p-friction: 0.21
+  p-skill-candidate: 0.43
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec, 2026-10-07T00:44:57.780344Z
+  note: Distinguish emission dt from consumption dt, final velocity from integrated displacement, and qualifying attention reads from elapsed folds. A constant-step stability result or successful velocity match cannot establish moving-target residence. Keep saturation and pre-capture clock assumptions explicit; resolve source retrieval failures honestly. No spore created or promoted.

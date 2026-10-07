@@ -1,14 +1,14 @@
 ---
-uuid: "flight-local-reference-assist-spec"
-title: "Specify explicit local reference and bounded linear flight assist"
-status: "incoming"
-type: "task"
-priority: "P1"
-points: "3"
+category: "tasks"
 labels: "design, research, player, spark-flight"
 parent: "flight-assist-damping-and-toggle"
-category: "tasks"
-write-id: "1791320205348-0.3umbf3fsp0fk8bm0km8"
+type: "task"
+write-id: "1791333867163-0.neb1ceg4kue6s4p7qs"
+points: "3"
+title: "Specify explicit local reference and bounded linear flight assist"
+priority: "P1"
+status: "incoming"
+uuid: "flight-local-reference-assist-spec"
 created_at: "2026-10-06T20:56:45.348Z"
 ---
 
@@ -125,3 +125,13 @@ for the current focus-residence requirement. Fine's small displacement budget ma
 match orbital speed too slowly. Hidden camera/attention coupling can masquerade
 as manual success. These are questions for the specification and later real
 trajectory evidence, not permission to alter clocks or inject capture here.
+
+---
+
+(己, p=0.99) Independent docs-only analysis is now recorded in docs/research/physics/local-reference-flight-assist-feasibility.md and linked from the existing proposal/ACTORS/index. Source pinned to ad0e685; relevant flight/kinematics/pacing/genesis/narrowing bytes also match 6b160b2. Two IFAC primary full texts plus NASA report sections ground timing/delay and relative-motion limits; initial NASA fetch failures and later text recovery are disclosed.
+
+Derived results preserve the one-tick channel: e[n+1]=e[n]+h[n]b[n-1]+d[n]. Actual reference displacement enters rho[n+1]=rho[n]+h[n]e[n+1]+c[n], where c is final reference velocity times h minus actual displacement. Worked constant, changing-dt, accelerating and circular cases keep finite saturation, velocity matching and position residence distinct. Under the proposed Fine displacement budget at h=4.1e9 seconds, 43 maximum assist kicks change velocity by at most .003146341 m/s; this is a hypothesis-specific bound, not a measured target or universal impossibility claim. Forty-three qualifying binding reads span 42 inter-read intervals; later commitment readiness remains separate.
+
+Independent source/math review found no blocker; source tests/native experiments were not run. Local links and whitespace checks pass. Remaining blocker: settle a reviewed pre-capture timestep/ratio and integration envelope, actual reference displacement interpretation and finite manual/assist budget. A post-commitment clock cannot alone establish pre-capture reachability. No source, runner, tests, clock/gain/controller choice, new consumer, Ready claim or status transition. Existing Incoming3 scope and historical evidence remain intact.
+
+---
