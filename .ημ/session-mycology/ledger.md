@@ -378,3 +378,13 @@
   spore: none
   receipt-refs: committed-clock-executable-policy,98b847ce,narrowing-commitment-horizon
   note: An elapsed-time proposal must inspect floating precision and failure publication as well as dt units. A successful physics function is not a successful published tick; raw wall duration is not automatically active time. Keep all-success arithmetic and native clock acceptance distinct. No spore.
+
+- ts: 2026-10-07T05:08:03.398301+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-clock-policy
+  task: Correct verified clock-card typography without rewriting historical events
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: PR39,review5437719247,87643ae8b0742b55decc072b5cb4470cc5bb23c9
+  note: Preserve append-only historical evidence while correcting readability through a plainly identified successor comment. Use normal word and unit spacing in future canonical comments. Existing skills suffice.
