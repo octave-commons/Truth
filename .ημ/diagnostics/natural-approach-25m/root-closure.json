@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-07T06:09:20.480333+00:00",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "canonical_runtime_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "frontmatter": {
+    "labels": "research, verification, playable-loop",
+    "parent": "planet-orbit-circularization-blocker",
+    "write-id": "1791353359833-0.rgz1un5c2ud84g8uiw0",
+    "title": "Verify native fly-resolve-sculpt loop and graceful exit",
+    "priority": "P1",
+    "status": "in_progress",
+    "estimate": "3",
+    "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+    "created_at": "2026-10-06T17:56:08.534Z"
+  },
+  "body_unchanged": true,
+  "comments_prefix_preserved": true,
+  "append_only_prefixes": {
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 638101,
+      "sha256": "5edb48744881d3f6e995577c77d806b3a32b68d4b126e06517aba0cef0916851",
+      "preserved": true
+    },
+    ".\u03b7\u03bc/receipts.edn": {
+      "bytes": 65642,
+      "sha256": "b06a54487b5ce78552675c2b687753aa814ea98e0396e4209ab7b56b01a4fe1f",
+      "preserved": true
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "bytes": 34779,
+      "sha256": "8a12de845fbb726b6c28c974253bf633982f2ff8729dbff37f25e9a2db0ef76a",
+      "preserved": true
+    }
+  },
+  "ledger_events_appended": 1,
+  "comment": "Closed separate 25-minute-budget native attempt on unchanged production b395c404, preparation f2e8b24: .\u03b7\u03bc/diagnostics/natural-approach-25m/RESULT.md and closure.json. Ordinary seed42/1000gas produced 12 natural planets by saved tick4366, 751.706s after supervisor startup; exact birth time not sampled. Actual production handoff selected current eligible1010 at144070.553AU. Real R/Fine/Tab and small look calibration succeeded, but bulk native look did not fully reach its requested camera angle. Later Spark click did not expose Cruise; next request refused before Cruise click, supervisor failed/cleaned at05:54:59.593089Z after1041.722s within1500s. No thrust or pursuit attempted; no binding/commit/resolve/sculpt/Gate. 29accepted requests:28success/1failure;46children reaped (45exit0, intentional game143); all3ownedPIDs absent, no cleanup errors/unreaped/overrun. All186production+3prep hashes stable; retained primary untouched. One earlier Fine PNG predates planets; no video. Two refused prequeue operator submissions are explicitly recorded. Duplicate release after complete click is a source-supported driver hypothesis, not proven historical cause. Next scope is a separately frozen short input-only reproduction on same production source: actual callback probe plus private native Spark/Fine/Cruise/Tab and incremental look readbacks, no long formation wait, no physical pursuit or production change. Owner stays InProgress3; no transition or fresh build/gameplay acceptance.",
+  "whitespace_check": {
+    "all_staged_exit": 2,
+    "raw_runtime_stdout_original_trailing_whitespace_lines": 15,
+    "raw_output_preserved": true,
+    "all_other_changed_paths_exit": 0
+  }
+}

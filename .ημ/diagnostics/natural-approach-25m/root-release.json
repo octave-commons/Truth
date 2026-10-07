@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-07T05:37:37.572923+00:00",
+  "reviewers": [
+    "root",
+    "runtime_scout"
+  ],
+  "result": "PASS for one separately bounded ordinary attempt",
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "preparation_hashes": {
+    "runner.py": "a855e03ed44a37f83373325a48901526d98c13e7155e99e8c45dbc144b9cb744",
+    "snapshot.clj": "c92131a56cae32269f272f6e3ba0abc796a4ed0c8148a8ab167ef14be2734bbe",
+    "PLAN.md": "ae671f822fb5483b462432b3952c302712b9af3093f27a03f360810713c07b9c"
+  },
+  "review": "Exact three-line budget delta only, snapshot byte identical, same root/identities/input/heap/file/cleanup guards;1470 seconds work1500 total;6 local links verified; no production delta. Earlier run closed and owned PIDs absent.",
+  "canonical_scope": ".\u03b7\u03bc/diagnostics/natural-approach/root-closure.json",
+  "execution": "Not yet started; root owns launch and all native inputs."
+}

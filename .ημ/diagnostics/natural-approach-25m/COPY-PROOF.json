@@ -1,0 +1,16 @@
+{
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "old_preparation_sha256": {
+    "runner.py": "a097c402b074a59231c3163b0f68d57a3ac315dbb7ab6e8962c9fa29d7b48021",
+    "snapshot.clj": "c92131a56cae32269f272f6e3ba0abc796a4ed0c8148a8ab167ef14be2734bbe",
+    "PLAN.md": "b219d1fc17f1ac1cafa2e82740a26817feaa3af52680f6aff88a082828afbcae"
+  },
+  "new_preparation_sha256": {
+    "runner.py": "a855e03ed44a37f83373325a48901526d98c13e7155e99e8c45dbc144b9cb744",
+    "snapshot.clj": "c92131a56cae32269f272f6e3ba0abc796a4ed0c8148a8ab167ef14be2734bbe",
+    "PLAN.md": "ae671f822fb5483b462432b3952c302712b9af3093f27a03f360810713c07b9c"
+  },
+  "snapshot_byte_identical": true,
+  "runner_exact_diff": "--- reviewed-10m/runner.py\n+++ prepared-25m/runner.py\n@@ -82,12 +82,12 @@\n     def __init__(self, directory, port):\n         self.directory, self.port = directory, port\n         self.started = time.monotonic()\n-        self.deadline = self.started + 570  # reserve 30 seconds for owned cleanup\n-        self.cleanup_deadline = self.started + 600\n+        self.deadline = self.started + 1470  # reserve 30 seconds for owned cleanup\n+        self.cleanup_deadline = self.started + 1500\n         self.children = []\n         self.seq = 0\n         self.state = {\"started_at\": utc(), \"base\": BASE, \"cwd\": str(ROOT), \"port\": port,\n-                      \"budget_seconds\": 600, \"work_budget_seconds\": 570,\n+                      \"budget_seconds\": 1500, \"work_budget_seconds\": 1470,\n                       \"supervisor\": identity(os.getpid()), \"stage\": \"starting\"}\n         self.env = os.environ.copy()\n         option_keys = (\"JAVA_TOOL_OPTIONS\", \"_JAVA_OPTIONS\", \"JDK_JAVA_OPTIONS\", \"JAVA_OPTS\", \"CLJ_JVM_OPTS\")\n",
+  "runtime_execution": "none"
+}

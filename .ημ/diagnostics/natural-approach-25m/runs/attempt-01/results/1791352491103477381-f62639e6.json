@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "AssertionError('Requested menu control not currently visible')",
+  "finished_at": "2026-10-07T05:54:57.817405+00:00"
+}

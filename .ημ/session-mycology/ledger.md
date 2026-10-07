@@ -512,3 +512,21 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T05:34:12.788994811Z
+  session: /home/err/spaces/foresight/.worktrees/truth-natural-approach
+  task: Bounded natural native approach verification
+  p-efficiency: 0.63
+  p-friction: 0.37
+  p-skill-candidate: 0.22
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,attempt01
+  note: Read prior formation timing before sizing an approach run. No target before a declared deadline is target availability evidence, not failed pursuit. Freeze a separate longer attempt; never extend the active limit or manufacture a planet. No new spore.
+- ts: 2026-10-07T06:09:20.477238290Z
+  session: /home/err/spaces/foresight/.worktrees/truth-natural-approach
+  task: Natural planets and input failure boundary
+  p-efficiency: 0.5
+  p-friction: 0.5
+  p-skill-candidate: 0.0
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,f2e8b24
+  note: A successful X input command does not prove delivered application state. A balanced click followed by unconditional release may toggle twice; isolate callback and native delivery before another costly formation wait. Sequence dependent operator calls only after inspecting success. No new spore.

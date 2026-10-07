@@ -1,0 +1,12 @@
+{
+  "pid": 1751650,
+  "at": "2026-10-07T05:21:52.631223+00:00",
+  "identity": {
+    "pid": 1751650,
+    "start": "1801268",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-approach",
+    "exe": "/usr/bin/python3.12"
+  }
+}
