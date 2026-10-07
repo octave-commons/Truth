@@ -1,0 +1,139 @@
+{
+  "at": "2026-10-07T14:18:19.630533+00:00",
+  "base_head": "1990070d952895122684a6a9d3d64baac0701f97",
+  "scope": "Three minimal documentation-only review corrections; prepared for root review, no commit/push/settlement yet.",
+  "native_review": {
+    "id": 5443345300,
+    "commit_id": "392c7c293eed1e82a4b9270112c9f10364e24a9d",
+    "state": "COMMENTED",
+    "submitted_at": "2026-10-07T13:52:38Z",
+    "html_url": "https://github.com/octave-commons/Truth/pull/13#pullrequestreview-5443345300",
+    "body": "Documentation-only PR (#13, codex/truth-flight-reference-plan → codex/truth-flight-precision): 16 files, +3164/−1 — a bounded flight-assist / pre-capture clock proposal set (new design doc, three research notebooks, four kanban cards with ledger events, append-only receipts and session ledgers, research index rows) plus two provenance audit JSONs. No source, test, dependency, or workflow changes.\n\nDeterministic evidence: success — the only gate attempted was `diff_stat` (exit 0), consistent with the docs-only scope; no test run is disclosed in the PR body and is appropriate here.\n\nAll 37 pages of the full immutable diff were read and assessed. Source claims were re-verified against the working tree (narrowing accrual/threshold and the commitment system's stale-binding read with no overlap recheck, pacing's dt floor and enlarge-only time slip, advance-simulation-clock's consume-then-install order, kinematics euler-advance/frame-offset/absorb order, SoA and influence-registry channel lists, flight presets and retention ranges), and the design/research arithmetic (binding folds, residence and ceiling tables, recurrence roots, worked examples, counterexamples) was recomputed by hand — all match. Ledger appends preserve their prefixes; card frontmatter matches the Rheos readbacks.\n\nConfirmed findings (non-blocking): 1 — low-severity contract: `docs/research/physics/2026-10-07-pre-capture-clock-envelope.md:19` cites `advance-simulation-clock` at \"lines 175–204\", but the function spans 178–207 at head and line 206 (the `:sim/dt` install the sentence describes) falls outside the cited window; the sibling doc in this same PR anchors the same function correctly at #L178-L216, so the anchors disagree. Fix: update the prose range.\n\nRejected after adversarial validation: two wording nits in the same envelope doc (\"too restrictive\" for a step that exceeds the 0.1-AU ceiling, and a single-fold reading of \"meaningful fraction\" of one AU) — both rejected because the substance is arithmetically correct and the doc's own adjacent tables make the intended meaning unambiguous.\n\nNon-blocking notes: no tests run (disclosed, docs-only); the INDEX \"Last updated\" line mentions only one of the three notebooks this PR adds; the spec card file lacks a trailing newline. Proposals are consistently labeled proposed/incoming/unverified — no overclaimed guarantees found.",
+    "author": "eta-mu-ai[bot]"
+  },
+  "native_thread": {
+    "id": 4207742417,
+    "pull_request_review_id": 5443345300,
+    "commit_id": "392c7c293eed1e82a4b9270112c9f10364e24a9d",
+    "created_at": "2026-10-07T13:52:38Z",
+    "html_url": "https://github.com/octave-commons/Truth/pull/13#discussion_r4207742417",
+    "path": "docs/research/physics/2026-10-07-pre-capture-clock-envelope.md",
+    "line": 19,
+    "body": "Impact: this PR's stated method is precise source traceability (revision-pinned blob links, hash audits); a prose line anchor that lands 3 lines early and stops before the `:sim/dt` install (line 206, inside `advance-simulation-clock`'s trailing `cond->`) fails verification for a reader following the citation. Evidence: at head, tick.clj has `(defn- advance-simulation-clock` at 178, the `:sim/dt (:dt pacing)` install at 206, function end 207, file end 216; the sibling doc added in this same PR correctly pins #L178-L216 for the same function at the same revision, so the two anchors disagree and only this one is wrong. Smallest fix: change \"175–204\" to \"178–207\" (or the sibling's 178–216).",
+    "thread_id": "PRRT_kwDOTDahac6p74vp"
+  },
+  "review_body_item_ids": [],
+  "future_body_settlement_key": "review-body:5443345300",
+  "finding_disposition": [
+    {
+      "item": "source range",
+      "kind": "confirmed native thread finding",
+      "prepared_fix": "175–204 →178–207 only, all pinned URLs unchanged"
+    },
+    {
+      "item": "INDEX header coverage",
+      "kind": "native non-blocking cosmetic note",
+      "prepared_fix": "names all three added research notebooks; date unchanged"
+    },
+    {
+      "item": "specification final newline",
+      "kind": "native non-blocking cosmetic note",
+      "prepared_fix": "one final LF appended, entire prior card preserved as byte prefix"
+    },
+    {
+      "item": "no executed tests",
+      "kind": "disclosed scope limitation, not requested change",
+      "disposition": "preserved, docs-only verification remains source/static"
+    },
+    {
+      "item": "too restrictive and meaningful fraction wording",
+      "kind": "hypotheses explicitly rejected by native reviewer",
+      "disposition": "not changed; no author rejection substituted"
+    }
+  ],
+  "before": {
+    "docs/research/physics/2026-10-07-pre-capture-clock-envelope.md": {
+      "bytes": 23161,
+      "sha256": "249470ed6333940c9fbf534d75de6ad42167384b734f59f65dffa868c2ad5770"
+    },
+    "docs/research/INDEX.md": {
+      "bytes": 15119,
+      "sha256": "c713d7b32bd167fd3751094c4beaef5e0e994e799761a9e6207532b3bbbaccc6"
+    },
+    "kanban/tasks/specify-explicit-local-reference-and-bounded-linear-flight-assist-ist-spec.md": {
+      "bytes": 13334,
+      "sha256": "5ac9ebeb5319a67d58e04d1ff1f2158cd9a9544a9e1e0c067e546acadcad65f0"
+    }
+  },
+  "after": {
+    "docs/research/physics/2026-10-07-pre-capture-clock-envelope.md": {
+      "bytes": 23161,
+      "sha256": "33dca5ae40d5f18e6505bfe834d34f4d43c60a989f714039beb6750f354e9d2d"
+    },
+    "docs/research/INDEX.md": {
+      "bytes": 15177,
+      "sha256": "6562e42fff55ea03a3f8d0dfd7b909941970dfaeea04251a2322ea81d8e469b6"
+    },
+    "kanban/tasks/specify-explicit-local-reference-and-bounded-linear-flight-assist-ist-spec.md": {
+      "bytes": 13335,
+      "sha256": "d0826c70a21a25fa3d8aa35d73e20b511aa6c48c58e525743609d1d12e7e6efc"
+    }
+  },
+  "exact_reverse_byte_checks": true,
+  "all_envelope_urls_unchanged": true,
+  "source_citation": {
+    "path": "src/domain/genesis/tick.clj",
+    "pinned_revision": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+    "equal_pinned_blob": true,
+    "function_start": 178,
+    "dt_install": 206,
+    "function_end": 207
+  },
+  "source_pins": {
+    "reference": ".ημ/diagnostics/flight-clock-design/design-audit.json",
+    "count": 289,
+    "all_unchanged": true
+  },
+  "canonical_rheos_before_after_equal": true,
+  "canonical_owner": {
+    "uuid": "flight-local-reference-assist-spec",
+    "frontmatter": {
+      "category": "tasks",
+      "labels": "design, research, player, spark-flight",
+      "parent": "flight-assist-damping-and-toggle",
+      "type": "task",
+      "write-id": "1791377988028-0.xjbthxo7vgz0a3j170",
+      "points": "3",
+      "title": "Specify explicit local reference and bounded linear flight assist",
+      "priority": "P1",
+      "status": "incoming",
+      "uuid": "flight-local-reference-assist-spec",
+      "created_at": "2026-10-06T20:56:45.348Z"
+    }
+  },
+  "canonical_event_ledger": {
+    "sha256": "bfffd35e618b359660f0977c2f9b202ea40d85e7abf5ad983324fce31a7ed9f7",
+    "unchanged": true
+  },
+  "receipt_prefix": {
+    "bytes": 42149,
+    "sha256": "44d666ba738478004f62cd741ab424cbddcfd550107ae2c4f79f6851bc46f8d0",
+    "preserved": true
+  },
+  "historical_diagnostics": "All previously committed diagnostics are unchanged; this is a new standalone audit.",
+  "unrelated_file": {
+    "path": ".ημ/diagnostics/pr7-recovery/2026-10-07-read-only-audit.md",
+    "sha256": "c18070b88b02e2a0bbf04c33844bfe801f13971466d91ac1d372641088d20c53",
+    "unchanged": true
+  },
+  "owned_paths": [
+    "docs/research/physics/2026-10-07-pre-capture-clock-envelope.md",
+    "docs/research/INDEX.md",
+    "kanban/tasks/specify-explicit-local-reference-and-bounded-linear-flight-assist-ist-spec.md",
+    ".ημ/diagnostics/flight-clock-design/review-fix-5443345300.json",
+    ".ημ/receipts.edn"
+  ],
+  "publication": "HELD for root review; no Git, hosted review or board operational mutation",
+  "no_tests_jvm_native": true
+}

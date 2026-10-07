@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-10-07 (local-reference flight-assist feasibility notebook added)
+**Last updated:** 2026-10-07 (local-reference flight-assist feasibility, pre-capture clock envelope, and clock upward-transition notebooks added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
