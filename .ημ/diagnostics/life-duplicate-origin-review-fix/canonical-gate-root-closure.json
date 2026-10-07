@@ -1,0 +1,88 @@
+{
+  "at": "2026-10-07T20:13:28.384787+00:00",
+  "outcome": "PASS",
+  "started": "2026-10-07T20:10:23.069694+00:00",
+  "ended": "2026-10-07T20:11:45.378057+00:00",
+  "elapsed_s": 82.30836908299534,
+  "tests": {
+    "tests": 944,
+    "assertions": 16247,
+    "failures": 0,
+    "errors": 0
+  },
+  "strict_gate_headings": [
+    "\u2501\u2501\u2501 clj-kondo  (bugs / anti-patterns)",
+    "\u2501\u2501\u2501 structural smells  (dung heaps)",
+    "\u2501\u2501\u2501 Splint  (idiom anti-patterns)",
+    "\u2501\u2501\u2501 clojure-lsp  (dead code: unused public vars)",
+    "\u2501\u2501\u2501 jscpd  (copy-paste duplication)",
+    "\u2501\u2501\u2501 cljfmt  (formatting)",
+    "\u2501\u2501\u2501 verdict"
+  ],
+  "canonical_frontmatter": {
+    "category": "specs",
+    "labels": "feature, ecology, accounting, represented-life",
+    "parent": "life-to-represented-actor-spec",
+    "type": "task",
+    "write-id": "1791403905176-0.t104v3htrnycuhkm80",
+    "points": "3",
+    "title": "Implement the pure integer life-account and origin kernel",
+    "priority": "P1",
+    "status": "review",
+    "design": "docs/designs/resolution-regimes-and-scale-coupling.md",
+    "uuid": "life-account-origin-kernel",
+    "created_at": "2026-10-07T10:48:23.887Z"
+  },
+  "readback_sha256": "ff282d1a959dfad9f3bdbc09523e285bacdb684da9cdf03e5f396a42ebc19b74",
+  "inputs_verified": 319,
+  "processes_absent": [
+    2676023,
+    2676139,
+    2676140,
+    2679363,
+    2679364,
+    2679366,
+    2679671,
+    2680248,
+    2680626,
+    2681754,
+    2682388,
+    2682389,
+    2682391,
+    2682583,
+    2682584,
+    2683167
+  ],
+  "primary_reaped": true,
+  "cleanup_errors": [],
+  "raw_files": {
+    "stdout.log": {
+      "bytes": 18889,
+      "sha256": "b4acf04cd37dee1d524e5b0960a59bd33a6567a59697fc49c6bd85874567714f"
+    },
+    "stderr.log": {
+      "bytes": 3033,
+      "sha256": "124bc65b58cba6367be3471d133bb9f4575639f580f4b2386657d1db034cf6f7"
+    },
+    "command.json": {
+      "bytes": 756,
+      "sha256": "44f18b4ffb1c19d28f7d5841093e31136e083073b7e00db6cabf70d6ac295824"
+    },
+    "ownership.jsonl": {
+      "bytes": 10571,
+      "sha256": "045ec7fd32d0bcf2f875dd3a0af37ea347184b6347540a5d7cc1948960db3592"
+    },
+    "execution.json": {
+      "bytes": 13226,
+      "sha256": "ddd8fb9a0e28815d02d178a6b44340b58b6a2cfd95ec5d70e9fd3c36b78af3b7"
+    },
+    "primary-identity.json": {
+      "bytes": 246,
+      "sha256": "196a85b5ff7567c294c4e68d64fd977403e274da0f1c0ca29f8783b58c719c75"
+    }
+  },
+  "stderr_disposition": "Complete stderr read: expected existing infra.dev.window-test boom fixture and JAVA_TOOL_OPTIONS notices; test suite zero errors and all strict gate passed. No stderr suppression.",
+  "root_verification_correction": "Initial closure checker assumed estimate; actual canonical readback uses points. Failed check232ab2 preserved in readback; no runtime repeat or board mutation from checker.",
+  "primary": "Retained DISPLAY0/7896 untouched; no health claim.",
+  "limits": "Pure account history kernel; no entity/ECS/biology/Gate progression. GREEN publication and native finding settlement remain pending."
+}

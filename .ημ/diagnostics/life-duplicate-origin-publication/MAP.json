@@ -1,0 +1,1494 @@
+{
+  "format": "Exact UTF-8 text per compact JSONL record; no omission, normalization, truncation or compression.",
+  "base": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "remote_observed": "42566341ceb6ede9b5f7c1c7f8013ab59d4e1192",
+  "local_RED": "c57a4799f032bf962b91dc3d76bc8cd86dc2ab54",
+  "generation": {
+    "initial_argv": [
+      "python3",
+      ".ημ/diagnostics/life-duplicate-origin-publication/package.py",
+      "--build"
+    ],
+    "verification_argv": [
+      "python3",
+      ".ημ/diagnostics/life-duplicate-origin-publication/package.py"
+    ],
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan",
+    "producer_sha256": "13e482d69fd0f2e2fa5b74b2feec03a637fe4e7247c7d33c07774bbdb1d511f8",
+    "phase": "Initial generation from immutable originals; not post-repair reconstruction.",
+    "prior_package_outputs": "Absent; create-exclusive writes only."
+  },
+  "archive": {
+    "path": ".ημ/diagnostics/life-duplicate-origin-publication/evidence.jsonl",
+    "bytes": 848172,
+    "sha256": "f94dd0b65eb42d04bea9fcb5a565451c59cbc28c126ae4d4c69feaf0da67f409"
+  },
+  "packed": [
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/inputs/capacity-source.json",
+      "bytes": 1374,
+      "sha256": "6b893a8eb8cd5e4b825ae9c92dadd1f1fe830916562c04c04fa2aa57203264e4",
+      "line": 1,
+      "archive_byte_offset": 0,
+      "archive_line_bytes": 1676
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/inputs/native-pr.json",
+      "bytes": 20199,
+      "sha256": "9f2a34d639f4c32e3ff8f78072814f53697765f139fdb6b300693b5a85b90244",
+      "line": 2,
+      "archive_byte_offset": 1676,
+      "archive_line_bytes": 21528
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/inputs/native-review.json",
+      "bytes": 11714,
+      "sha256": "da6567229c06e7cb5cab98cc22cbf719a4d1c3cd0f0b672820dc48545d6135e4",
+      "line": 3,
+      "archive_byte_offset": 23204,
+      "archive_line_bytes": 12203
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-closure-comment.json",
+      "bytes": 2081,
+      "sha256": "9dfa240f96cdfbaeb34b5327e2fe6fec44714457c9ac2b359b88a786bd9729c6",
+      "line": 4,
+      "archive_byte_offset": 35407,
+      "archive_line_bytes": 2327
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-readback.json",
+      "bytes": 19836,
+      "sha256": "ff282d1a959dfad9f3bdbc09523e285bacdb684da9cdf03e5f396a42ebc19b74",
+      "line": 5,
+      "archive_byte_offset": 37734,
+      "archive_line_bytes": 20494
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-comment.json",
+      "bytes": 1849,
+      "sha256": "1cce62f00c2775d3a0b5a3ef0d32ffc1a407a9205855c65667e572a8d0a66175",
+      "line": 6,
+      "archive_byte_offset": 58228,
+      "archive_line_bytes": 2093
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-release.json",
+      "bytes": 1056,
+      "sha256": "003cfc999f18a78e786145467bd76b05221f25612d1fc5450360e2a3159f72ca",
+      "line": 7,
+      "archive_byte_offset": 60321,
+      "archive_line_bytes": 1318
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/PLAN.md",
+      "bytes": 3527,
+      "sha256": "3f4f7e4a239d6ca5cd35011dbcec508ab449c1da4163944f0bd043325039e86f",
+      "line": 8,
+      "archive_byte_offset": 61639,
+      "archive_line_bytes": 3741
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/PREPARATION-FILES.txt",
+      "bytes": 495,
+      "sha256": "c2b908ea843a22643aa9253281c97a09d129d81611d1b79f2fe6689037fd61b6",
+      "line": 9,
+      "archive_byte_offset": 65380,
+      "archive_line_bytes": 716
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/PROVENANCE.json",
+      "bytes": 3146,
+      "sha256": "61cec01bc4c732c02ef635552b161b0ac524d6a9fd113e5346c86f5dc9f58ad9",
+      "line": 10,
+      "archive_byte_offset": 66096,
+      "archive_line_bytes": 3528
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/SHA256SUMS",
+      "bytes": 1540,
+      "sha256": "3dac311296c0933a8238a871750ea927d73b3157a912a3094bc36e6abb662082",
+      "line": 11,
+      "archive_byte_offset": 69624,
+      "archive_line_bytes": 1750
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/budget-refinement.json",
+      "bytes": 3774,
+      "sha256": "1ffb174c55856aa81cc4810f45fb1533bb970fc63842286464fe6b984c187e0b",
+      "line": 12,
+      "archive_byte_offset": 71374,
+      "archive_line_bytes": 4233
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/PLAN.md",
+      "bytes": 3009,
+      "sha256": "8973f1cd78bde662c653fef2915528b5ea43493a32024eb299f989faf467a454",
+      "line": 13,
+      "archive_byte_offset": 75607,
+      "archive_line_bytes": 3248
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/PREPARATION-FILES.txt",
+      "bytes": 128,
+      "sha256": "059ee9fd2236f56bade83ff45bba4ea7f27801a0db00699ac382e336dea66bae",
+      "line": 14,
+      "archive_byte_offset": 78855,
+      "archive_line_bytes": 367
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/PROVENANCE.json",
+      "bytes": 3011,
+      "sha256": "0a5156971619866e01aca10a5ffe25671a58707fac0c9f3e026547a95ff06e82",
+      "line": 15,
+      "archive_byte_offset": 79222,
+      "archive_line_bytes": 3417
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/SHA256SUMS",
+      "bytes": 579,
+      "sha256": "f941439902f91b8bf8591c388e4fcafd812a4bc264d23edfe5f1ebbc95eebe9d",
+      "line": 16,
+      "archive_byte_offset": 82639,
+      "archive_line_bytes": 806
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/preparation-hashes.json",
+      "bytes": 439,
+      "sha256": "0930e683dd747e5427a7258336c78f5734ca106d03515598e2799392937848df",
+      "line": 17,
+      "archive_byte_offset": 83445,
+      "archive_line_bytes": 699
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/source-pins.json",
+      "bytes": 35473,
+      "sha256": "710ef5c8a8c1b8bbf57363fdf0e2a473df34dba1176d600ffaa8e334d966f748",
+      "line": 18,
+      "archive_byte_offset": 84144,
+      "archive_line_bytes": 37407
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/supervisor.diff",
+      "bytes": 3006,
+      "sha256": "f7c6f4832426f31f924909f9a8e1f44061d18d0aee1965dfe0ea8e5dffafb4c7",
+      "line": 19,
+      "archive_byte_offset": 121551,
+      "archive_line_bytes": 3374
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/initial-unexecuted-900-910/supervisor.py",
+      "bytes": 15060,
+      "sha256": "0b756dc8950ddac0c71b8197136b355115388edf3b2240f6bd4f5a6f49d258c9",
+      "line": 20,
+      "archive_byte_offset": 124925,
+      "archive_line_bytes": 16012
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/preparation-hashes.json",
+      "bytes": 1463,
+      "sha256": "976eb6ee4054244644f556e7dcef5281494906872cba2582ab1ec3f4a5002326",
+      "line": 21,
+      "archive_byte_offset": 140937,
+      "archive_line_bytes": 1742
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/runs/gate-01/command.json",
+      "bytes": 756,
+      "sha256": "44f18b4ffb1c19d28f7d5841093e31136e083073b7e00db6cabf70d6ac295824",
+      "line": 22,
+      "archive_byte_offset": 142679,
+      "archive_line_bytes": 1037
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/runs/gate-01/execution.json",
+      "bytes": 13226,
+      "sha256": "ddd8fb9a0e28815d02d178a6b44340b58b6a2cfd95ec5d70e9fd3c36b78af3b7",
+      "line": 23,
+      "archive_byte_offset": 143716,
+      "archive_line_bytes": 14702
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/runs/gate-01/ownership.jsonl",
+      "bytes": 10571,
+      "sha256": "045ec7fd32d0bcf2f875dd3a0af37ea347184b6347540a5d7cc1948960db3592",
+      "line": 24,
+      "archive_byte_offset": 158418,
+      "archive_line_bytes": 11860
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/runs/gate-01/primary-identity.json",
+      "bytes": 246,
+      "sha256": "196a85b5ff7567c294c4e68d64fd977403e274da0f1c0ca29f8783b58c719c75",
+      "line": 25,
+      "archive_byte_offset": 170278,
+      "archive_line_bytes": 492
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/runs/gate-01/stderr.log",
+      "bytes": 3033,
+      "sha256": "124bc65b58cba6367be3471d133bb9f4575639f580f4b2386657d1db034cf6f7",
+      "line": 26,
+      "archive_byte_offset": 170770,
+      "archive_line_bytes": 3348
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/runs/gate-01/stdout.log",
+      "bytes": 18889,
+      "sha256": "b4acf04cd37dee1d524e5b0960a59bd33a6567a59697fc49c6bd85874567714f",
+      "line": 27,
+      "archive_byte_offset": 174118,
+      "archive_line_bytes": 19672
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/source-pins.json",
+      "bytes": 35473,
+      "sha256": "710ef5c8a8c1b8bbf57363fdf0e2a473df34dba1176d600ffaa8e334d966f748",
+      "line": 28,
+      "archive_byte_offset": 193790,
+      "archive_line_bytes": 37380
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/supervisor.diff",
+      "bytes": 4396,
+      "sha256": "511b1607639198f61ad19b5723378f5ba0ad8b09774732d97eeb4910865c9e7a",
+      "line": 29,
+      "archive_byte_offset": 231170,
+      "archive_line_bytes": 4782
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-runner/supervisor.py",
+      "bytes": 15061,
+      "sha256": "2956b6ee527a6126245ad10e2410d313520667a3ba7e27bc74592974d97ee931",
+      "line": 30,
+      "archive_byte_offset": 235952,
+      "archive_line_bytes": 15986
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-before.json",
+      "bytes": 1168,
+      "sha256": "ef082abd66f1b4a1f3f67538c1274c76711eb52580e610fea8c03f1a32154f7b",
+      "line": 31,
+      "archive_byte_offset": 251938,
+      "archive_line_bytes": 1454
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-comment.json",
+      "bytes": 2257,
+      "sha256": "1ba6a51e987dc448cefc236b3bc5a20be3c07942ccdcab8d278d22d705889871",
+      "line": 32,
+      "archive_byte_offset": 253392,
+      "archive_line_bytes": 2515
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-comment.txt",
+      "bytes": 905,
+      "sha256": "e898d155173c509aff3c9a6461590a4dee06dfdf12b80d7bf226e0d2b3fd317d",
+      "line": 33,
+      "archive_byte_offset": 255907,
+      "archive_line_bytes": 1089
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-read-after.json",
+      "bytes": 18339,
+      "sha256": "5343d2a0b28a3fb63674e6fe45df7cdff4b9b01e19e7feaad04a92bba23967d2",
+      "line": 34,
+      "archive_byte_offset": 256996,
+      "archive_line_bytes": 19009
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-read-before.json",
+      "bytes": 17429,
+      "sha256": "50c8123eafdd6b139c5d4c43e0ffd01981f5c2cfe947a9aa845ac432ffae7873",
+      "line": 35,
+      "archive_byte_offset": 276005,
+      "archive_line_bytes": 18096
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-readback-proof.json",
+      "bytes": 424,
+      "sha256": "3a0dfa7dd26e3fe02aae7409914de2b51ca174d21edfc201354da670105292ab",
+      "line": 36,
+      "archive_byte_offset": 294101,
+      "archive_line_bytes": 635
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-receipt.json",
+      "bytes": 1231,
+      "sha256": "9ff1ab16a6a36bf79000b3a851d99abb01e8e04aa653cc083e5360cb5a9d3d5b",
+      "line": 37,
+      "archive_byte_offset": 294736,
+      "archive_line_bytes": 1502
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/checkpoint-reflection.json",
+      "bytes": 1025,
+      "sha256": "5d76ffb2fc76e70e014f7b82f4b3d4eb3e1538b26508350571a658664a3d43a1",
+      "line": 38,
+      "archive_byte_offset": 296238,
+      "archive_line_bytes": 1279
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-authoring/candidate.diff",
+      "bytes": 1491,
+      "sha256": "5f5baa69061fe2a4ff09999eda9e106eadd04e787c8da9c35f0733dd4d184424",
+      "line": 39,
+      "archive_byte_offset": 297517,
+      "archive_line_bytes": 1713
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-authoring/candidate.json",
+      "bytes": 3410,
+      "sha256": "49798abfa26e6f9fbf6fb9dc1fd3a5641c77c7b8ae4b7d43a99a9d5ba6194d0b",
+      "line": 40,
+      "archive_byte_offset": 299230,
+      "archive_line_bytes": 3823
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/PLAN.md",
+      "bytes": 1811,
+      "sha256": "1e29fa82cad5bde2d64517ea3c4a5f3590022a7c92057f51cde1914f63a6428a",
+      "line": 41,
+      "archive_byte_offset": 303053,
+      "archive_line_bytes": 2008
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/PREPARATION-FILES.txt",
+      "bytes": 128,
+      "sha256": "0368792cac16829a6ae47bd17d1f0380c7d3c8dd1f42209ba47c0517dd2a5b33",
+      "line": 42,
+      "archive_byte_offset": 305061,
+      "archive_line_bytes": 331
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/PROVENANCE.json",
+      "bytes": 1832,
+      "sha256": "d397d3e19e74c25d0b229246701d431a077f7900176cd3c00af60969ebda41ac",
+      "line": 43,
+      "archive_byte_offset": 305392,
+      "archive_line_bytes": 2123
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/SHA256SUMS",
+      "bytes": 579,
+      "sha256": "b6aebddc097b815191cba400ba9cd11ff0a8f9cf27bba5d404aa8c73e3f053dd",
+      "line": 44,
+      "archive_byte_offset": 307515,
+      "archive_line_bytes": 770
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/preparation-hashes.json",
+      "bytes": 439,
+      "sha256": "8e5b9616de031a3bf258555fe6668823207f20a07f8906237d51bbb83144bc82",
+      "line": 45,
+      "archive_byte_offset": 308285,
+      "archive_line_bytes": 663
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/root-closure.json",
+      "bytes": 1320,
+      "sha256": "e4516d84430f2a1c1d19b4764cb426e2defda6f376806e9116f3e8a201807a77",
+      "line": 46,
+      "archive_byte_offset": 308948,
+      "archive_line_bytes": 1641
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/root-release.json",
+      "bytes": 2191,
+      "sha256": "788d6ec3f24dbdb9dee56cc83d06313591b88e16a21a0a014ff812340d4b16da",
+      "line": 47,
+      "archive_byte_offset": 310589,
+      "archive_line_bytes": 2481
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/runs/green-01/command.json",
+      "bytes": 750,
+      "sha256": "6a7df04849e24317c7848c881aa8d5a534d3d3514af7d1e9697f07b98f99ff30",
+      "line": 48,
+      "archive_byte_offset": 313070,
+      "archive_line_bytes": 1037
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/runs/green-01/execution.json",
+      "bytes": 3347,
+      "sha256": "41499bbe5b7649222886b99834c2afe6f35de9020f56add7334fd1bdf3aca55b",
+      "line": 49,
+      "archive_byte_offset": 314107,
+      "archive_line_bytes": 3855
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/runs/green-01/ownership.jsonl",
+      "bytes": 1459,
+      "sha256": "dfc929b1aa65307a702cefb2f19b4900f7db580322155baa9855d3321aaa6af0",
+      "line": 50,
+      "archive_byte_offset": 317962,
+      "archive_line_bytes": 1816
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/runs/green-01/primary-identity.json",
+      "bytes": 209,
+      "sha256": "8da273e1bd13b5ab0684abeaab003d40203aaf0f89828d20c69ec845529f10a6",
+      "line": 51,
+      "archive_byte_offset": 319778,
+      "archive_line_bytes": 447
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/runs/green-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 52,
+      "archive_byte_offset": 320225,
+      "archive_line_bytes": 196
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/runs/green-01/stdout.log",
+      "bytes": 156,
+      "sha256": "fd3aa93abc3623d9cec80cfca23b32a0ba9cc7ed596a7cc4323fd11f59eb5cf3",
+      "line": 53,
+      "archive_byte_offset": 320421,
+      "archive_line_bytes": 365
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/source-pins.json",
+      "bytes": 34916,
+      "sha256": "6960a71ff67f94dd5f9f54a97f9ff1d1b7993e1fc2feba7e7834181816bbf0bd",
+      "line": 54,
+      "archive_byte_offset": 320786,
+      "archive_line_bytes": 36778
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/supervisor.diff",
+      "bytes": 3567,
+      "sha256": "a4ef960ba843a8cf2eae9a20bc59c0c37b355ea4231f3f2210eb222f4c780ded",
+      "line": 55,
+      "archive_byte_offset": 357564,
+      "archive_line_bytes": 3924
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/supervisor.py",
+      "bytes": 14899,
+      "sha256": "8437a0afbabfbed8f8ad27984c9dd0c082b3dd6d3dbfb8cbc5e55f3f26c4789c",
+      "line": 56,
+      "archive_byte_offset": 361488,
+      "archive_line_bytes": 15801
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/RED-PROPOSAL.md",
+      "bytes": 1755,
+      "sha256": "179159148fb1966e09b826ade6bd6c33032c7578f6e2c743a1febc0c4ac68663",
+      "line": 57,
+      "archive_byte_offset": 377289,
+      "archive_line_bytes": 1979
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/SHA256SUMS",
+      "bytes": 988,
+      "sha256": "d5f8549daf58826b05dfc686152703b9ea92d1e702b5c55cc2d143050633741b",
+      "line": 58,
+      "archive_byte_offset": 379268,
+      "archive_line_bytes": 1186
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/after/test/domain/life_account_test.clj",
+      "bytes": 24626,
+      "sha256": "0402ab797b1e99da98f992c61e3c54f9f2779f798ab999f52cce0ad2201c665f",
+      "line": 59,
+      "archive_byte_offset": 380454,
+      "archive_line_bytes": 25372
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/after/test/law/life_account_test.clj",
+      "bytes": 13344,
+      "sha256": "57b6a5720d8784787b09c7d9dc5fe7aa20b0b01f7186efe486d90771787d513c",
+      "line": 60,
+      "archive_byte_offset": 405826,
+      "archive_line_bytes": 13837
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/before.json",
+      "bytes": 289003,
+      "sha256": "8aadd204394c74890b8e9f3a3bc28935782b1e023bb5c349970b7583662f25ad",
+      "line": 61,
+      "archive_byte_offset": 419663,
+      "archive_line_bytes": 301922
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/before/test/domain/life_account_test.clj",
+      "bytes": 21868,
+      "sha256": "2b5aef651c9ee14ea92a9144246f6ec959e1e1641d00a7009310856014a382e9",
+      "line": 62,
+      "archive_byte_offset": 721585,
+      "archive_line_bytes": 22551
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/before/test/law/life_account_test.clj",
+      "bytes": 11538,
+      "sha256": "aec64f817b0cec79135795979c559feb5ae7372f8976add4c588051bdb66f82a",
+      "line": 63,
+      "archive_byte_offset": 744136,
+      "archive_line_bytes": 11987
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/kondo-command.json",
+      "bytes": 406,
+      "sha256": "f50c83566244423eb8a75201f2b7e28d5e760f3efa1b8b53dbb2ff8eee9a4a16",
+      "line": 64,
+      "archive_byte_offset": 756123,
+      "archive_line_bytes": 649
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/kondo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 65,
+      "archive_byte_offset": 756772,
+      "archive_line_bytes": 187
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/kondo.stdout.json",
+      "bytes": 100,
+      "sha256": "3599bf672908c8c99e0cf1b269516348dce468a12145786342066fcf946daf73",
+      "line": 66,
+      "archive_byte_offset": 756959,
+      "archive_line_bytes": 313
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/preparation.json",
+      "bytes": 4891,
+      "sha256": "88d1322fae70cfdd9f2e93565d0f0c138f4f0d2823def00e35d78f0c55106318",
+      "line": 67,
+      "archive_byte_offset": 757272,
+      "archive_line_bytes": 5381
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-preparation/tests.diff",
+      "bytes": 5188,
+      "sha256": "4175cd409278b49e924408b412ac8bec2f8e0c9a5a0681dbf6f772cd17cc454d",
+      "line": 68,
+      "archive_byte_offset": 762653,
+      "archive_line_bytes": 5497
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/PLAN.md",
+      "bytes": 2638,
+      "sha256": "97e2b10945c6a69a22d056ded80606d49f22699dc5a1900d5de9e69772c30acc",
+      "line": 69,
+      "archive_byte_offset": 768150,
+      "archive_line_bytes": 2866
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/PREPARATION-FILES.txt",
+      "bytes": 128,
+      "sha256": "059ee9fd2236f56bade83ff45bba4ea7f27801a0db00699ac382e336dea66bae",
+      "line": 70,
+      "archive_byte_offset": 771016,
+      "archive_line_bytes": 329
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/PROVENANCE.json",
+      "bytes": 1749,
+      "sha256": "b5a0704ffe0fe99805b1825cbf90913d339da261bf4601ef985bffef751f680c",
+      "line": 71,
+      "archive_byte_offset": 771345,
+      "archive_line_bytes": 2030
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/SHA256SUMS",
+      "bytes": 579,
+      "sha256": "fec84172ed67a186282be6c9d7eeb9eaa4a24cd53298dc0d908f573d2cc57e40",
+      "line": 72,
+      "archive_byte_offset": 773375,
+      "archive_line_bytes": 768
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/preparation-hashes.json",
+      "bytes": 439,
+      "sha256": "2c8560427889d88862634eb6783f13f2cd3905730fbd0fa46f291e343bd247f1",
+      "line": 73,
+      "archive_byte_offset": 774143,
+      "archive_line_bytes": 661
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/root-closure.json",
+      "bytes": 1298,
+      "sha256": "f4d228330cc3a58ca31be20c26f93f33d50f99af96406e81100a8c1cdeaa844e",
+      "line": 74,
+      "archive_byte_offset": 774804,
+      "archive_line_bytes": 1613
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/root-comment.json",
+      "bytes": 2327,
+      "sha256": "75d882f97efbdf2ff774099d580c235260c6565cc14bbddaccff42d902c0446e",
+      "line": 75,
+      "archive_byte_offset": 776417,
+      "archive_line_bytes": 2590
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/root-in-progress.json",
+      "bytes": 417,
+      "sha256": "ea7e170e2a39d66b3ea7a6e6e852e7e597cc6fefc96f0ccea3ae6911d1c4408c",
+      "line": 76,
+      "archive_byte_offset": 779007,
+      "archive_line_bytes": 659
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/root-release.json",
+      "bytes": 3764,
+      "sha256": "06e40fef2d4e09e8641cd7469f42a1537a1aac50eb189c5603676306eed9adca",
+      "line": 77,
+      "archive_byte_offset": 779666,
+      "archive_line_bytes": 4236
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/command.json",
+      "bytes": 750,
+      "sha256": "667c4af7f6dd421d2b337d7d4a0c0f4e77f33be1c2847b04e4efff399cba88ca",
+      "line": 78,
+      "archive_byte_offset": 783902,
+      "archive_line_bytes": 1033
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/execution.json",
+      "bytes": 3115,
+      "sha256": "dec7e5d22696bdd9cf0039e442afd1db21eec3fa910e15647396ec2bee34336f",
+      "line": 79,
+      "archive_byte_offset": 784935,
+      "archive_line_bytes": 3594
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/ownership.jsonl",
+      "bytes": 1315,
+      "sha256": "2d691db544cb3790c99dc7b2049f34551cb35b69d5e2af216589667a58c01cfe",
+      "line": 80,
+      "archive_byte_offset": 788529,
+      "archive_line_bytes": 1652
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/primary-identity.json",
+      "bytes": 209,
+      "sha256": "6409cd8fc88e4e30c1081d8a43ab93db5f690bd639b4d3e4fbf71be83ad6f094",
+      "line": 81,
+      "archive_byte_offset": 790181,
+      "archive_line_bytes": 443
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 82,
+      "archive_byte_offset": 790624,
+      "archive_line_bytes": 192
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/stdout.log",
+      "bytes": 1278,
+      "sha256": "76183083f87cb9d5927ca98c700708ef6bd22dee2111958b82bf14a319a6adaa",
+      "line": 83,
+      "archive_byte_offset": 790816,
+      "archive_line_bytes": 1506
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/source-pins.json",
+      "bytes": 34434,
+      "sha256": "6fa120d6628cae09928bb7ee32faf9558434db72082c8a87548b9bffaa3cc786",
+      "line": 84,
+      "archive_byte_offset": 792322,
+      "archive_line_bytes": 36273
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/supervisor.diff",
+      "bytes": 3594,
+      "sha256": "9784135c9bf16ffea70efc5cd6eb68697173256788a6f4c32f7f02815afbbf1a",
+      "line": 85,
+      "archive_byte_offset": 828595,
+      "archive_line_bytes": 3959
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/supervisor.py",
+      "bytes": 14727,
+      "sha256": "efe29bbc20f2dea55bf0adbdc94fd21b0eca1970e05424e3beeb8bb1d32136fd",
+      "line": 86,
+      "archive_byte_offset": 832554,
+      "archive_line_bytes": 15618
+    }
+  ],
+  "direct_originals": [
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-closure.json",
+      "bytes": 3115,
+      "sha256": "9de0fb944473fe96d50987e18db0ef6d3926c453cda67f17a81c103b3e490cc4"
+    }
+  ],
+  "already_committed_originals": [
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/RED-OBSERVED.json",
+      "bytes": 20824,
+      "sha256": "2b1c9a5f514330bb04ca9f224653847e0ac1842b736b69af1d5fbc44992a17fa"
+    }
+  ],
+  "all_original_count": 88,
+  "all_original_bytes": 820099,
+  "packed_original_bytes": 796160,
+  "empty_originals": 3,
+  "roundtrip": {
+    "all_exact_bytes": true,
+    "all_paths_unique": true,
+    "all_originals_classified": true
+  },
+  "observed_verification": {
+    "observed_runs": [
+      {
+        "name": "red",
+        "closure": {
+          "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/red-runner/root-closure.json",
+          "bytes": 1298,
+          "sha256": "f4d228330cc3a58ca31be20c26f93f33d50f99af96406e81100a8c1cdeaa844e"
+        },
+        "outcome": {
+          "tests": 38,
+          "assertions": 508,
+          "failures": 4,
+          "errors": 0
+        },
+        "raw_files_verified": 6,
+        "elapsed_s": 4.095703669998329
+      },
+      {
+        "name": "focused-green",
+        "closure": {
+          "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/green-runner/root-closure.json",
+          "bytes": 1320,
+          "sha256": "e4516d84430f2a1c1d19b4764cb426e2defda6f376806e9116f3e8a201807a77"
+        },
+        "outcome": {
+          "tests": 38,
+          "assertions": 508,
+          "failures": 0,
+          "errors": 0
+        },
+        "raw_files_verified": 6,
+        "elapsed_s": 4.234642466006335
+      },
+      {
+        "name": "canonical-gate",
+        "closure": {
+          "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-closure.json",
+          "bytes": 3115,
+          "sha256": "9de0fb944473fe96d50987e18db0ef6d3926c453cda67f17a81c103b3e490cc4"
+        },
+        "outcome": {
+          "tests": 944,
+          "assertions": 16247,
+          "failures": 0,
+          "errors": 0
+        },
+        "raw_files_verified": 6,
+        "elapsed_s": 82.30836908299534
+      }
+    ],
+    "canonical_status": "review",
+    "canonical_points": "3",
+    "candidate_pins_verified": 319,
+    "preparation_pins_verified": 14,
+    "recorded_absent_identities": 16,
+    "process_limit": "Absence/reap audited from immutable root closure; no fresh process probe.",
+    "law_sha256": "3215179a592c5b2c5010589a3c31be969a80155556a7b8392e5191985053d26b"
+  },
+  "capacity": {
+    "native_review": 5446881815,
+    "head": "42566341ceb6ede9b5f7c1c7f8013ab59d4e1192",
+    "remote_changed": 100,
+    "native_selected": 92,
+    "native_exclusions": [
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/stderr.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/stdout.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/stderr.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/stdout.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stderr.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stdout.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-red/attempt-01/stderr.log",
+        "filter": "!**/*.log"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-red/attempt-01/stdout.log",
+        "filter": "!**/*.log"
+      }
+    ],
+    "proposed_no_rename_paths": 107,
+    "conditional_included_same_exclusions": 99,
+    "repository_exact_included_limit": "UNKNOWN; official OSS range100–300, no universal100 claim.",
+    "local_config": "No .coderabbit.yml/.yaml; organization config not fetched."
+  },
+  "RED_baseline_inventory": [
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/RESULT.md",
+      "bytes": 2085,
+      "sha256": "e651289d4e2ce36144e5d95542158c5a5ad55807a1fcb489eae8dd459049cf68"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/SHA256SUMS",
+      "bytes": 5565,
+      "sha256": "5a6e3f88506c8347e43560e24ef5905b230f4b69115df4163b96975200eaf6f2"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/RESULT.md",
+      "bytes": 1926,
+      "sha256": "7874865a5e2eb4407c7164bcd9d5b983dce54f223d27bf1f4f1ef506172b3dde"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/SHA256SUMS",
+      "bytes": 4432,
+      "sha256": "ca2a5482adce07050d2613b9a8a73b243d1d8ba1d19407967b1cbc027ff1e98d"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/stderr.log",
+      "bytes": 3130,
+      "sha256": "1b211b1a287ce35a778e9c755d3e5ba5e68820fa8aebd83d9612ae3155f2b3b8"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/stdout.log",
+      "bytes": 20520,
+      "sha256": "ad0d5661ceec4ec5a62c816e4c27e128f6a7c2259610775b4883d5baf99825c8"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/RESULT.md",
+      "bytes": 2245,
+      "sha256": "991c9172d06c60721e4e6cb86a4634e09ade3738b96b2960073ac1dc3de4d6df"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/SHA256SUMS",
+      "bytes": 4754,
+      "sha256": "049d24e8f96af07eb0ab07b4041c092879c0876f5232d5e9504ba48dc8949870"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/canonical-readback-proof.json",
+      "bytes": 749,
+      "sha256": "938f7f63047791612809382f9ec7e7bf27bcdfe494c2e2d6628f8cd8bb451ae8"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/result.json",
+      "bytes": 1720,
+      "sha256": "38a49e4e21147eee26f76f768b6f576b923d30b017870dee57b6c4732d83aa6a"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/stderr.log",
+      "bytes": 2952,
+      "sha256": "13bdd1f5eebf30572f452b81804aff7d765539f383f15afc0e22280e8aa87a0e"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/stdout.log",
+      "bytes": 18889,
+      "sha256": "51663d90a6575ca0e8a624e0d659074927dae0d627ed89d5616dd86d7c17fb89"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/snapshot.json",
+      "bytes": 901,
+      "sha256": "7d86042427226ecfb80b9b7049b7a3c5ffcd8d045ec6e5f07cf64a927aa4028d"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/domain/life_account.clj",
+      "bytes": 8835,
+      "sha256": "cf8d55352f0c5dc2719858516a29d1206f9c568f5ff86ce13c726c8897b1b87c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/law/life_account.clj",
+      "bytes": 10856,
+      "sha256": "f235fb152a004d87aff872ce0a74fe843309a1a1433e0f4f59271a7cbca964ce"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/domain/life_account_test.clj",
+      "bytes": 17581,
+      "sha256": "2129269c67e406d241cb59fcd5f013b2c5ef97a2a58b272382142d61ad4485ce"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/law/life_account_test.clj",
+      "bytes": 7935,
+      "sha256": "4d7074c4ad069b7adaf9d384fd87897d8b60da33ab2abf7abf5d9b77489d6ba9"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/RESULT.md",
+      "bytes": 1438,
+      "sha256": "e023eda3b8e46d8c5501e588b007b8d59489af61e10ac0c97f792cbe067988c4"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/SHA256SUMS",
+      "bytes": 2284,
+      "sha256": "be30825306d1f73b5e05973bfcb4cc8e70ece3702aad3fc396ceef6d1f6abd40"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/command.json",
+      "bytes": 3070,
+      "sha256": "199c738791a1c65ddfc17d9f78e92dada69365403929576e3945ee0d7303b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/driver.clj",
+      "bytes": 1853,
+      "sha256": "98e65ecebc93bc7733f5c56d6a79a1bc1dc6c7f66a190f2c6a0b2b3576625620"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/result.json",
+      "bytes": 3739,
+      "sha256": "90c118cf1a58f2e6bbebdc153bfe8b54f39772e7a931908bdc0d14369dc508be"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stderr.log",
+      "bytes": 90,
+      "sha256": "29eb9106ee6d8eab5aec264a34e20995b9f3b5903571bd6a4fd24f528a6bf019"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stdout.log",
+      "bytes": 3209,
+      "sha256": "19cfd2fcb6f968e553155e474aed607f11402211d0f437008ff6b604431f71a0"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/domain/life_account_test.clj",
+      "bytes": 20288,
+      "sha256": "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/law/life_account_test.clj",
+      "bytes": 8333,
+      "sha256": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/run-focused.py",
+      "bytes": 3897,
+      "sha256": "b2890886edc89423612dfdd2f99bd7f6cacf011530aead627f3542fd94351d7e"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/AUXILIARY-MAP.json",
+      "bytes": 56052,
+      "sha256": "767d0fd9c4d93262e59e86b7df861f379aec885d02ced62da82de0087b3cf153"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/PACKAGING.md",
+      "bytes": 2485,
+      "sha256": "e7dc981ce15ee9d97cf86dc3cc3201d92e5eff8a8b1d6e2858390554cf5d5f9e"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/PR-BODY.md",
+      "bytes": 3566,
+      "sha256": "2074fdc7888e405b58aea1cb8a3a31e44b0e1d2a9d4b7b210549a0c53ec30e9e"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/RESULT.md",
+      "bytes": 4643,
+      "sha256": "d75fed7100e7aeebc8f8b665b4b9bf0ff2be8b7a19ff3b54663ba8e57492b3d4"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/SHA256SUMS",
+      "bytes": 4743,
+      "sha256": "7b8ca0bdc3410dabb261aa006e86bb03add48e76ce05f6e02df54194bf0e3a9d"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/STAGING.txt",
+      "bytes": 2436,
+      "sha256": "827c602af9300ee54364a87942600b34261bc229df32d6728b2658840922baae"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/append-only-proof.json",
+      "bytes": 1586,
+      "sha256": "dfced2625503324cb35ae76a41a9e38e7d6a152ffd15593eb0922107e840d69a"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/auxiliary.jsonl",
+      "bytes": 994329,
+      "sha256": "38e43b56842970c1a8d5dbe664149373d5654a3fed947b1ceba9d535354707a7"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/gate-and-style-closure.json",
+      "bytes": 1611,
+      "sha256": "a34d8ab0b72a775de7f1f70b9ba9c6179b9075775bb6d5b260907e6b5cbf7720"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/package-evidence.py",
+      "bytes": 9999,
+      "sha256": "11b02d8ee5662200bfdf275e1811e976dc27f1e77a9c817d49b33dd3450aa1a8"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/final-closure/packaging-proof.json",
+      "bytes": 1312,
+      "sha256": "589aadb4ecdd05989840aa9029e54cf357406767b25749dd63a7b36aebf6321c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/focused-closure.json",
+      "bytes": 2724,
+      "sha256": "375d5568a2d735386613b913a11f7ee1c524bb6c7ca5468bf018e6898ece8ace"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/local-independent-source-review.json",
+      "bytes": 11642,
+      "sha256": "419d36cd5d3e4738243cc72c7edc45c3a7d95bc91a2558f2fe531e74344d37cb"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/style-repair/RESULT.md",
+      "bytes": 925,
+      "sha256": "a84a59060ac7d1a6fb3ce420c10fb6c07d35538315ab8f209e70ca41d550fd1c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/style-repair/SHA256SUMS",
+      "bytes": 4824,
+      "sha256": "85bdafb37f9cd5f75829f20b7b34e485b01e1cd51014c3fc0b66cc45367ac33c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-green/style-repair/exact-delta-proof.json",
+      "bytes": 1557,
+      "sha256": "d7272867fe711f11da05bc729a666d9b269ed0481c928a40478909d8af606f1f"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/accepted-result.json",
+      "bytes": 331,
+      "sha256": "85d72d602ae885ddaae935a14f45f96dbbb27aee96f46edc51636d74ee9798d7"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/accepted.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/accepted.stdout",
+      "bytes": 55,
+      "sha256": "ad29a4ac0bd6c2acb6ce5834dbb0772e93f7bc7c288779580c58f02cd93dc678"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/breakdown-result.json",
+      "bytes": 332,
+      "sha256": "897139304282d91efcaa4ce367bb5f49d697fe6527c071c888488d6448d7be6b"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/breakdown.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/breakdown.stdout",
+      "bytes": 56,
+      "sha256": "8239e5cc10dcac7df24a866556ed015f621f6798f3665e925faf3180ea70b3b7"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment-result.json",
+      "bytes": 2095,
+      "sha256": "675c142c95a126d4f5371fcdfeff4367961cfce67e72f28d3db6c32986e02ae0"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment.stdout",
+      "bytes": 1293,
+      "sha256": "ed36c1c8384547cdd52ac72187bedc3e10bf87ff674bd0b3f82dce3172cdf7cb"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment.txt",
+      "bytes": 1220,
+      "sha256": "714fdaf006cb5e78d5fa848976cc4c4d4348da239b62e7e3c0dcbe9ac90ebd1f"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/in_progress-result.json",
+      "bytes": 334,
+      "sha256": "33b44fb0f73c21367e5e55404db5b04934b430a8582369aab76c371705ecf4a7"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/in_progress.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/in_progress.stdout",
+      "bytes": 54,
+      "sha256": "ea39422e66535cdf21cca82a1bb3d6aeffbd580981c84af947d4085f229f0c31"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/ready-result.json",
+      "bytes": 328,
+      "sha256": "2f7cdf9d51043cfa950dd24dee2d5cbde8d7a2722a7a575d8bc1388a0aa53f00"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/ready.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/ready.stdout",
+      "bytes": 53,
+      "sha256": "24e6e7f135a382d02c1f610f29942521deb9337862ff4c5d6cd146576e7cfae3"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/todo-result.json",
+      "bytes": 327,
+      "sha256": "cb76f4c99587b65b033bc80f16346333f7958edc53efd055cbd3a8b5fc4d4f40"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/todo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/todo.stdout",
+      "bytes": 48,
+      "sha256": "18c43742f4250249557700b9ee52e362eee4d0297e767386f2c0352416d9ff50"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/canonical-intake.json",
+      "bytes": 2506,
+      "sha256": "b9d1ee15629cd8c2edf38fc435a89ba4445979cf66efa618d38951c1fd5333c2"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/local-independent-review-7e659bb4.json",
+      "bytes": 23128,
+      "sha256": "fc37d1b410fe6add70dd8869abb93ffadf5290481ba388a0b078417da5276f21"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "bytes": 11637,
+      "sha256": "13743b0bb8c4e74e7835d49f921eb7f37735767989c8c6e3b20b594ef4e46a05"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/RED-PLAN.md",
+      "bytes": 4931,
+      "sha256": "ea7559e8eda795f3c2b1f226b22c213cb704fb7c210195dd236a6e470542a237"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/RESULT.md",
+      "bytes": 1621,
+      "sha256": "0860a254f3baa0c32985036573c3a0804cdbd31ac6da562535ee54d5599fd64a"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/SHA256SUMS",
+      "bytes": 5112,
+      "sha256": "23960997e29b355db8e982df288969863c6238be8914ef791276d9b97afdbfd8"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/STAGING.txt",
+      "bytes": 2591,
+      "sha256": "ecd8de540e586d8e355626ad101f84cc23edf0e6458df265af60ea3acf40acfc"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/attempt-01/command.json",
+      "bytes": 892,
+      "sha256": "8d1373f15d5ac4a250085c4132335c627caaaac7684b034f1524fabc1479fd89"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/attempt-01/result.json",
+      "bytes": 1501,
+      "sha256": "b1d25ab3fca8e0dc32a11ee610725c4327ce8ee9f555d108740a0d3d11fe764e"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/attempt-01/stderr.log",
+      "bytes": 90,
+      "sha256": "29eb9106ee6d8eab5aec264a34e20995b9f3b5903571bd6a4fd24f528a6bf019"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/attempt-01/stdout.log",
+      "bytes": 34996,
+      "sha256": "8885eceae9e8a0ab4eedd225b6bc91a18121bb32650352a810e41ea7e9eaa56d"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/closure.json",
+      "bytes": 1507,
+      "sha256": "1509e2842381131acf23118c5d68b37a95eebcd1e7a2e6c645d884815cf26a84"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/shared-prefixes-before-own-provenance.json",
+      "bytes": 913,
+      "sha256": "4a09463d957eee60826bc7c0462aacf168485900b50f4af38582060390da055d"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/static-attempts.json",
+      "bytes": 1089,
+      "sha256": "6849b2957fc49a766c5a738fcc93aa771943855036aa5b7f871f69f7f23e6d2c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-account-kernel-red/summary.json",
+      "bytes": 2141,
+      "sha256": "0c2602b850865c53c6287e922b50dd4587686fa22a11d01c8ee59b74d8883d2a"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-plan/accounting-refinement.json",
+      "bytes": 6665,
+      "sha256": "ae2e5c215a0456d02c355d3da4dfe15e98710ce9986b1bfc70c837aa2b5c27ca"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-plan/authoring.json",
+      "bytes": 27831,
+      "sha256": "1990c79f3b279a17167d9b72d68b94404594709930f7578a4430523cad4e7dfe"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/chemistry-prerequisite-audit.json",
+      "bytes": 16731,
+      "sha256": "8917606e52605c15e4e906cf6f5b31f53e1f93062f12db6d37efeebef33bf18c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/origin-account-contract-audit.json",
+      "bytes": 8060,
+      "sha256": "1df6504fd088c538c579384eb30a101faa091f2cfe4863e8d0a29eea1dab00d7"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/origin-contract-closure.json",
+      "bytes": 8358,
+      "sha256": "d79462c89894a1c9b040fb08d27a935108f2991a04d50439957240f24be344ae"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/origin-contract-scope.json",
+      "bytes": 2242,
+      "sha256": "7ef08d44cadf74c26579a3ac460d225c884dd0926be1cbe335ddfa9a2bf53739"
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-publication/MAP.json",
+      "bytes": 23127,
+      "sha256": "39b4bbacb25d06d6e135f32598878b217ea1d2b11ef300c5e09cb6972ff689e5"
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-publication/RESULT.md",
+      "bytes": 1552,
+      "sha256": "e45b990b0833e2b837f08ed9da989ffea5677dc080cb10d03cd4c1aea3d58e92"
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-publication/evidence.jsonl",
+      "bytes": 566192,
+      "sha256": "36a7624d92374fe7ef85ecfeba9b98fda2a69d118d1a79181f65dbed4af192ee"
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-publication/independent-review.json",
+      "bytes": 7628,
+      "sha256": "4c35d2fd323ce279e8b401dc87ee6f3111917d5caa42df1d6ff382ab8e0ab157"
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-review-fix/RED-OBSERVED.json",
+      "bytes": 2678,
+      "sha256": "500a1c45ea45d16a177083dc6da5c75a8e6ca0ecf34240328b87582dbadb6246"
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-review-fix/RED-OBSERVED.json",
+      "bytes": 20824,
+      "sha256": "2b1c9a5f514330bb04ca9f224653847e0ac1842b736b69af1d5fbc44992a17fa"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 45059,
+      "sha256": "2b4cebe2fe4b27a652be80667a6b5c5508db039b865f2e70ea7983cc82569fad"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 28697,
+      "sha256": "3407a1dcfa8c55d9674efaef6a973e5cbdc039ba009157cd753dc73017610450"
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "bytes": 7459,
+      "sha256": "2424f33cf0528e38fcce8c0f1b98e5136bc87414d0b348cee33cdf86bd524b31"
+    },
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 38698,
+      "sha256": "8ee8fa3de5a797895d57a474240632cf1f9dd1f3b3f7fbf7aa5b857c46b931c2"
+    },
+    {
+      "path": "docs/research/ACTORS.md",
+      "bytes": 4620,
+      "sha256": "133faa620caa646697973c02719300d792b9a8bedf63e8635843de6be65c9dc4"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 620959,
+      "sha256": "f00a3801407816806e2420917f20332bb26870b4338ce32b26808892f98d0be9"
+    },
+    {
+      "path": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "bytes": 10697,
+      "sha256": "7ddf455578ace95c7d2bc513e99994444dbce9537516731e0840c836b6c20c89"
+    },
+    {
+      "path": "kanban/tasks/life-account-origin-kernel.md",
+      "bytes": 17236,
+      "sha256": "35b47aa41a45545f43ed4af77b1af9e405602ee8b8f8daed0cd314b7f9e3166f"
+    },
+    {
+      "path": "src/domain/life_account.clj",
+      "bytes": 8299,
+      "sha256": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a"
+    },
+    {
+      "path": "src/law/life_account.clj",
+      "bytes": 12448,
+      "sha256": "76812c44715ef050748d3c20a93e39e28b616d592911ba316b94609497fdbd81"
+    },
+    {
+      "path": "test/domain/life_account_test.clj",
+      "bytes": 24626,
+      "sha256": "0402ab797b1e99da98f992c61e3c54f9f2779f798ab999f52cce0ad2201c665f"
+    },
+    {
+      "path": "test/law/life_account_test.clj",
+      "bytes": 13344,
+      "sha256": "57b6a5720d8784787b09c7d9dc5fe7aa20b0b01f7186efe486d90771787d513c"
+    }
+  ],
+  "prospective_staging_paths": [
+    ".ημ/diagnostics/life-duplicate-origin-publication/MAP.json",
+    ".ημ/diagnostics/life-duplicate-origin-publication/RESULT.md",
+    ".ημ/diagnostics/life-duplicate-origin-publication/STAGING.txt",
+    ".ημ/diagnostics/life-duplicate-origin-publication/evidence.jsonl",
+    ".ημ/diagnostics/life-duplicate-origin-publication/package.py",
+    ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-closure.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    "kanban/tasks/.events/ledger.edn",
+    "kanban/tasks/life-account-origin-kernel.md",
+    "src/law/life_account.clj"
+  ],
+  "cumulative_no_rename_paths": [
+    ".ημ/diagnostics/life-account-kernel-green/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-green/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/stderr.log",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-01/stdout.log",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/canonical-readback-proof.json",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/result.json",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/stderr.log",
+    ".ημ/diagnostics/life-account-kernel-green/canonical-gate-attempt-02/stdout.log",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/snapshot.json",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/domain/life_account.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/law/life_account.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/domain/life_account_test.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/law/life_account_test.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/command.json",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/driver.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/result.json",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stderr.log",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stdout.log",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/domain/life_account_test.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/law/life_account_test.clj",
+    ".ημ/diagnostics/life-account-kernel-green/coherence-and-retry/run-focused.py",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/AUXILIARY-MAP.json",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/PACKAGING.md",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/PR-BODY.md",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/STAGING.txt",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/append-only-proof.json",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/auxiliary.jsonl",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/gate-and-style-closure.json",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/package-evidence.py",
+    ".ημ/diagnostics/life-account-kernel-green/final-closure/packaging-proof.json",
+    ".ημ/diagnostics/life-account-kernel-green/focused-closure.json",
+    ".ημ/diagnostics/life-account-kernel-green/local-independent-source-review.json",
+    ".ημ/diagnostics/life-account-kernel-green/style-repair/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-green/style-repair/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-green/style-repair/exact-delta-proof.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/accepted-result.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/accepted.stderr",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/accepted.stdout",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/breakdown-result.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/breakdown.stderr",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/breakdown.stdout",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment-result.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment.stderr",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment.stdout",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/comment.txt",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/in_progress-result.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/in_progress.stderr",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/in_progress.stdout",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/ready-result.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/ready.stderr",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/ready.stdout",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/todo-result.json",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/todo.stderr",
+    ".ημ/diagnostics/life-account-kernel-plan/admission-2026-10-07/todo.stdout",
+    ".ημ/diagnostics/life-account-kernel-plan/canonical-intake.json",
+    ".ημ/diagnostics/life-account-kernel-plan/local-independent-review-7e659bb4.json",
+    ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+    ".ημ/diagnostics/life-account-kernel-red/RED-PLAN.md",
+    ".ημ/diagnostics/life-account-kernel-red/RESULT.md",
+    ".ημ/diagnostics/life-account-kernel-red/SHA256SUMS",
+    ".ημ/diagnostics/life-account-kernel-red/STAGING.txt",
+    ".ημ/diagnostics/life-account-kernel-red/attempt-01/command.json",
+    ".ημ/diagnostics/life-account-kernel-red/attempt-01/result.json",
+    ".ημ/diagnostics/life-account-kernel-red/attempt-01/stderr.log",
+    ".ημ/diagnostics/life-account-kernel-red/attempt-01/stdout.log",
+    ".ημ/diagnostics/life-account-kernel-red/closure.json",
+    ".ημ/diagnostics/life-account-kernel-red/shared-prefixes-before-own-provenance.json",
+    ".ημ/diagnostics/life-account-kernel-red/static-attempts.json",
+    ".ημ/diagnostics/life-account-kernel-red/summary.json",
+    ".ημ/diagnostics/life-actor-plan/accounting-refinement.json",
+    ".ημ/diagnostics/life-actor-plan/authoring.json",
+    ".ημ/diagnostics/life-actor-planning/chemistry-prerequisite-audit.json",
+    ".ημ/diagnostics/life-actor-planning/origin-account-contract-audit.json",
+    ".ημ/diagnostics/life-actor-planning/origin-contract-closure.json",
+    ".ημ/diagnostics/life-actor-planning/origin-contract-scope.json",
+    ".ημ/diagnostics/life-close-revision-publication/MAP.json",
+    ".ημ/diagnostics/life-close-revision-publication/RESULT.md",
+    ".ημ/diagnostics/life-close-revision-publication/evidence.jsonl",
+    ".ημ/diagnostics/life-close-revision-publication/independent-review.json",
+    ".ημ/diagnostics/life-close-revision-review-fix/RED-OBSERVED.json",
+    ".ημ/diagnostics/life-duplicate-origin-publication/MAP.json",
+    ".ημ/diagnostics/life-duplicate-origin-publication/RESULT.md",
+    ".ημ/diagnostics/life-duplicate-origin-publication/STAGING.txt",
+    ".ημ/diagnostics/life-duplicate-origin-publication/evidence.jsonl",
+    ".ημ/diagnostics/life-duplicate-origin-publication/package.py",
+    ".ημ/diagnostics/life-duplicate-origin-review-fix/RED-OBSERVED.json",
+    ".ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-closure.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    "docs/designs/resolution-regimes-and-scale-coupling.md",
+    "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "docs/research/ACTORS.md",
+    "kanban/tasks/.events/ledger.edn",
+    "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+    "kanban/tasks/life-account-origin-kernel.md",
+    "src/domain/life_account.clj",
+    "src/law/life_account.clj",
+    "test/domain/life_account_test.clj",
+    "test/law/life_account_test.clj"
+  ],
+  "companion_boundary": "Source/card/ledger/receipts remain direct, not packed. Root may append provenance; immutable raw selection does not include those live companions.",
+  "package_files": [
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/package.py",
+      "bytes": 16718,
+      "sha256": "13e482d69fd0f2e2fa5b74b2feec03a637fe4e7247c7d33c07774bbdb1d511f8"
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/evidence.jsonl",
+      "bytes": 848172,
+      "sha256": "f94dd0b65eb42d04bea9fcb5a565451c59cbc28c126ae4d4c69feaf0da67f409"
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/RESULT.md",
+      "bytes": 4272,
+      "sha256": "d8e1d522ecad2b8d55e3a96447cb416b5415d4d01eebeeb53d31b5b5d8d66469"
+    },
+    {
+      "path": ".ημ/diagnostics/life-duplicate-origin-publication/STAGING.txt",
+      "bytes": 553,
+      "sha256": "386aaa1236b6f2d662f55f0737fa5bf2ea195a5c6d4184da6195b4c6b79a68d7"
+    }
+  ]
+}

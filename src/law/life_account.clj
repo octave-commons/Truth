@@ -266,10 +266,17 @@
   "Reject locally provable contradictions between supplied account and history.
 
    Same-account acceptance requires current state at least as recent, terminal
-   state at the accepted close revision, and unchanged opening material.
-   Account/history retain their separate validators; absence of entries never
-   proves completeness."
+   state at the accepted close revision, unchanged opening material and at most
+   one supplied accepted origin. Account/history retain their separate
+   validators; absence of entries never proves completeness."
   [{:keys [account history requested-account] :as context}]
   (and (context-shape? context)
-       (every? #(entry-consistent? account (if account (:id account) requested-account) %)
-               (vals history))))
+       (let [account-id (if account (:id account) requested-account)
+             entries (vals history)]
+         (and (every? #(entry-consistent? account account-id %) entries)
+              (<= (count (filter (fn [{:keys [request outcome]}]
+                                   (and (= account-id (:account request))
+                                        (= :origin (:kind request))
+                                        (true? (:accepted? outcome))))
+                                 entries))
+                  1)))))

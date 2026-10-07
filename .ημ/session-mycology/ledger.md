@@ -450,3 +450,12 @@
   spore: none
   receipt-refs: life-duplicate-origin-review-fix/RED-OBSERVED.json,review5446881815,root-closuref4d22833
   note: Per-entry history coherence does not prove cross-entry uniqueness. Exercise real replay using two individually valid retained origins and preserve partial/unrelated-account controls. Canonical readback combines comment paragraphs, so verify an exact suffix once without replaying a successful mutation. Distinguish contradictory supplied history from duplicate stock transfer. Existing skills suffice; no spore.
+- ts: 2026-10-07T20:24:00.828713813Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Life duplicate-origin qualification and exact publication provenance
+  p-efficiency: 0.80
+  p-friction: 0.30
+  p-skill-candidate: 0.24
+  spore: none
+  receipt-refs: .ημ/diagnostics/life-duplicate-origin-publication/MAP.json
+  note: Validate supplied history coherence before idempotent replay. Read actual canonical metadata field names before asserting; retain primary as an explicit exemption from temporary validation ownership. Save the producer before generation and provide separate read-only verification, preserving failed attempts and unexecuted drafts. Source and offline confidence do not establish gameplay. No new spore or promotion.

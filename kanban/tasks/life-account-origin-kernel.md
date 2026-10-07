@@ -3,11 +3,11 @@ category: "specs"
 labels: "feature, ecology, accounting, represented-life"
 parent: "life-to-represented-actor-spec"
 type: "task"
-write-id: "1791401683501-0.i1ouvu0n38d3abzrykh"
+write-id: "1791404008987-0.842jv6tyc22phvzv9eh"
 points: "3"
 title: "Implement the pure integer life-account and origin kernel"
 priority: "P1"
-status: "in_progress"
+status: "review"
 design: "docs/designs/resolution-regimes-and-scale-coupling.md"
 uuid: "life-account-origin-kernel"
 created_at: "2026-10-07T10:48:23.887Z"
@@ -145,5 +145,11 @@ Review5446390998 close-revision correction verified. RED commit5822d2a:35tests45
 Confirmed review5446881815/comment4210730351 duplicate-origin history finding: two accepted origins for the relevant same account are contradictory even with distinct operation counters and identical material. Root read actual law/domain plus all three new tests and whole frozen supervisor; independent author agrees. Preserve partial/empty/rejected/other-account history controls. Release exactly one focused RED red-01 at supervisor efe29bbc20f2dea55bf0adbdc94fd21b0eca1970e05424e3beeb8bb1d32136fd, manifest fec84172ed67a186282be6c9d7eeb9eaa4a24cd53298dc0d908f573d2cc57e40,316pins verified. Predict38tests508assertions4failures0errors; prediction is not observation.110swork120stotal sanitized1GiB2CPU mainJVM, owned group/start identity/raw logs/reap. Prior238native+5clock/Rheos PIDs absent. No concurrent JVM/native, retry or extension; production unchanged, retained primary untouched. Return card to InProgress for this review repair.
 
 Observed RED for review5446881815/comment4210730351, 2026-10-07: actual focused law.life-account-test + domain.life-account-test at unchanged production4256634 ran38 tests/508 assertions/4 intended failures/0 errors in4.095704s, raw exit1. Two failures show operation-context? accepting two supplied same-account accepted origins with distinct operation ids; two show actual apply-operation replaying either contradictory retained opening instead of refusing the pair. Single/empty/partial/rejected/other-account history controls and prior terminal-revision controls pass. All316 source/preparation pins remained exact; owned2443186/2443193 absent and primary reaped, root closuref4d22833. Preserve every raw artifact. Record and commit this RED before the narrowly authorized law-only same-account accepted-origin uniqueness repair; no production change, GREEN test, full gate, native claim or push yet.
+
+Root reviewed exact minimal GREEN law3215179a592c5b2c5010589a3c31be969a80155556a7b8392e5191985053d26b after committedREDc57a4799. Existing per-entry consistency and partial-history behavior remain; countonlyaccepted same-relevant-account origins <=1. Release exactly one focused green-01 at supervisor8437a0afbabfbed8f8ad27984c9dd0c082b3dd6d3dbfb8cbc5e55f3f26c4789c,manifestb6aebddc097b815191cba400ba9cd11ff0a8f9cf27bba5d404aa8c73e3f053dd.319pinsfreshverified,testsunchanged. Expect38/5080F0E;110work120total1GiB2processors,ownedidentity/rawlogs/reap,noretry. All18latestRheosfullgatePIDsabsent andallpreviousreleasedlanesclosed. No concurrentJVM/native,fullgate/push/settlement/merge fromfocusedrelease;retainedprimaryuntouched.
+
+Root releases one canonical Life duplicate-origin GREEN full gate after focused38/508 PASS and closure e4516d84. Exact REDhead c57a4799, law3215179a, supervisor2956b6ee527a6126245ad10e2410d313520667a3ba7e27bc74592974d97ee931, manifest3dac311296c0933a8238a871750ea927d73b3157a912a3094bc36e6abb662082;319inputpins and16manifestrows verified; fresh gate-01 absent. Single canonical move to review,280seconds work/300total including20cleanup,2GiB2CPU, no retry/extension. All prior ephemeral lanes closed; retained primary excluded and untouched. Initial root preflight mistakenly included retained PID131581 and refused before launch; raw error retained in canonical-gate-root-release.json, no health inference. Root owns finite lane and verifies raw full/strict outcomes and all cleanup before publication. No gameplay/Gate claim.
+
+Duplicate-origin GREEN canonical gate completed20:11:45UTC in82.308369s:944tests16247assertions0failures0errors and all6strict tools PASS. Canonical Rheos moved life-account-origin-kernel in_progress to review; fresh read-task confirms Review3 (points key). Exact319pins unchanged; primaryPGID2676023 reaped and all16 observed identities absent. Complete raw stderr preserves expected existing window-test boom fixture and JVM-option notices. Root closure 9de0fb944473fe96d50987e18db0ef6d3926c453cda67f17a81c103b3e490cc4 at .ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-closure.json. All released ephemeral JVM/native lanes closed; retained DISPLAY0/7896 untouched. Minimal law3215179a plus preserved localREDc57a4799 ready for publication preparation; no GREENpush or native finding settlement yet, no biological/ECS/Gate claim. Root checker initially assumed estimate rather than actual points; error preserved, no repeat runtime.
 
 ---

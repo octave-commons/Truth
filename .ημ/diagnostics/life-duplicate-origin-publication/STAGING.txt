@@ -1,0 +1,11 @@
+.ημ/diagnostics/life-duplicate-origin-publication/MAP.json
+.ημ/diagnostics/life-duplicate-origin-publication/RESULT.md
+.ημ/diagnostics/life-duplicate-origin-publication/STAGING.txt
+.ημ/diagnostics/life-duplicate-origin-publication/evidence.jsonl
+.ημ/diagnostics/life-duplicate-origin-publication/package.py
+.ημ/diagnostics/life-duplicate-origin-review-fix/canonical-gate-root-closure.json
+.ημ/receipts.edn
+.ημ/session-mycology/ledger.md
+kanban/tasks/.events/ledger.edn
+kanban/tasks/life-account-origin-kernel.md
+src/law/life_account.clj
