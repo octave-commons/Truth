@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-07T10:06:50.972057+00:00",
+  "independent_reviewer": "board_scout",
+  "verdict": "pass-storage-equivalence",
+  "scope": "Twoarchives plus mapping and complete707-file originalrun/client partition",
+  "original_files": 707,
+  "original_bytes": 5253176,
+  "direct_files": 20,
+  "packed_files": 687,
+  "empty_files": 272,
+  "archive_hashes": {
+    "run-auxiliary.jsonl": "715f5a0f4e6e4bb2bef268d37ce4209152cbcff64039bcdde1dede04f0bd9b40",
+    "outer-client-auxiliary.jsonl": "db896008268d4a88f1ed627bc7bd5ebecb29704035bbe1263578e339b90e9489",
+    "AUXILIARY-MAP.json": "a5b90cf5a4aaa616a7316d939f1314c063e0745b320bec9c4d676555bf9c108c"
+  },
+  "checks": [
+    "all687payloads byteidentical tooriginals; alldirecthashes match",
+    "completeunique safe path partition; no symlinks; duplicateJSONkeys rejected",
+    "fixedschema lexicalordering deterministicUTF8 encoding",
+    "everyarchive_line and >8192bytedirectpolicy verified",
+    "all originals andpackagefiles unchanged during independent audit"
+  ],
+  "limits": [
+    "storage equivalence against presentoriginals, not independent proof of prepack historical immutability",
+    "not nativecorrectness or hostedreviewcompletion; fullinputstillrequired"
+  ],
+  "writes_by_reviewer": false
+}

@@ -1,0 +1,16 @@
+{
+  "pid": 3177307,
+  "at": "2026-10-07T09:37:28.161435+00:00",
+  "identity": {
+    "pid": 3177307,
+    "start": "3334821",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window",
+    "exe": "/usr/bin/python3.12"
+  },
+  "lease_started_at": "2026-10-07T09:37:28.141441+00:00",
+  "lease_started_monotonic": 33348.20020547,
+  "startup_deadline": 33528.20020547,
+  "total_deadline": 34848.20020547
+}

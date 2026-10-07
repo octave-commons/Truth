@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-07T09:36:37.344105+00:00",
+  "parent": "a48a9ec76a6118b1557d11a4bc78e4caae45cdc6",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "preparation_manifest_sha256": "17b8437302c780e0e97f72ad68552fa0700c55bd173b3e33b18a3b6bc95fc1bd",
+  "root_review": "passed full prior source/diff/tests inspection plus new-worktree15hash/186production verification",
+  "independent_review": "intent_research prior full preparation review passed; same frozen bytes",
+  "canonical_comment": "Root execution release 2026-10-07: one fresh isolated input-observation-window attempt on parent PR53 a48a9ec, frozen manifest17b8437302c780e0e97f72ad68552fa0700c55bd173b3e33b18a3b6bc95fc1bd. Root and independent intent_research preparation review passed;24 pure protocol tests pass;186 production files remain b395c404. Only await_input now uses its existing clipped20s window instead of three nonmatches; no gesture retry or production change. Preserve startup180/no-target960/work1470/total1500, cleanup30/caller45, fixed explicit natural target, zero global commitment before admission, terminal commitment handling, three120s aims/360smalllooks/twenty requested<=2s W pulses/threePNGs and all identity/source/read guards. Root may initialize ordinary R/Spark/Fine then Cruise and three thrust-down clicks early, each individually acknowledged, observing exactD3.75e13 and nilthrust, then close drawer and lock look. This is provisional configuration only: no W until current target/range/recent tick-rate distance screen passes; changing D does not erase velocity. Run bounded30s read-only formation polling with no other commands during poll ownership; stop polling at first stored+ready observation, error, terminal, original960 or finite32poll cap. Root explicitly selects one observed target and uses ordinary aim only; no retarget, fixture, world setter, primary input, T/Y or lease extension. Inspect two coast observations per pulse and stop for invalid readiness/geometry, unsafe residual motion, overshoot or two noncontracting intervals. Preserve all errors, exact times and owned teardown. This remains measurement-only InProgress3, with no approach, commitment, embodiment, Gate or performance outcome claimed.",
+  "prior_ledger_bytes": 660167,
+  "prior_ledger_sha256": "1befc16946020513c433b22487422ad5dcb79f3851a19264f734fefb71017829",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "before_write_id": "1791365267516-0.n5hbo4xipsbcacdvbdm",
+  "after_write_id": "1791365796562-0.xelskeh3zaoxyp61uca",
+  "execution_release": "one fresh attempt-01 after explicit preparation commit on preflighted private port7898",
+  "runtime_started": false
+}

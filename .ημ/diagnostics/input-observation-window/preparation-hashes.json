@@ -1,0 +1,8 @@
+{
+  "runner.py": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+  "aim-client.py": "047bf69afe71a166787a940c05ef5a69b731e965e0fda05b8f77b87d6507a848",
+  "snapshot_client.clj": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+  "snapshot.clj": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+  "PLAN.md": "83c3aa90a66df9e526a2ac71271a3528172bcd921afbc11c24ac0872aea3d488",
+  "test_protocol.py": "ba82c52cba2c8432361ff7bc670adaded85989b7ca67a37ef2a2328d9d796cf9"
+}

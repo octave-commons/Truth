@@ -1,0 +1,171 @@
+{
+  "at": "2026-10-07T09:28:31.606492+00:00",
+  "scope": "Diagnostic preparation only. Python AST/static/hash reads and pure protocol tests; no JVM, native service/input, project namespaces, sockets, board/Git action.",
+  "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "python_ast": {
+    "runner.py": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+    "aim-client.py": "047bf69afe71a166787a940c05ef5a69b731e965e0fda05b8f77b87d6507a848",
+    "test_protocol.py": "ba82c52cba2c8432361ff7bc670adaded85989b7ca67a37ef2a2328d9d796cf9"
+  },
+  "pure_tests": {
+    "command": [
+      "python3",
+      "-B",
+      ".ημ/diagnostics/input-observation-window/test_protocol.py"
+    ],
+    "blockers": "Inherited ExitStack forbids subprocess Popen/run/check_output/check_call/call, socket.socket, os signal/process-launch calls and native identity; actual native commands in action tests use explicit recorders. No live process inspected.",
+    "test_sha256": "ba82c52cba2c8432361ff7bc670adaded85989b7ca67a37ef2a2328d9d796cf9",
+    "inherited_methods": 17,
+    "added_methods": 7,
+    "red": {
+      "runner_sha256": "1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab",
+      "stdout": "pure-tests-red.stdout",
+      "stderr": "pure-tests-red.stderr",
+      "tests": 24,
+      "failures_including_subcases": 10,
+      "errors": 0,
+      "all17_inherited_tests_passed": true,
+      "exit_code": null,
+      "exit_note": "The initial shell tool result was reduced to stdout by the authoring call; exit code was not retained. This RED verdict uses the complete unittest failure log, not an invented exit code."
+    },
+    "green": {
+      "runner_sha256": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+      "stdout": "pure-tests-green.stdout",
+      "stderr": "pure-tests-green.stderr",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0,
+      "tool_chunk_id": "b9b66a",
+      "wall_time_seconds": 0.160885242
+    }
+  },
+  "clojure_lint": {
+    "new_run": false,
+    "reason": "Both Clojure files are byte-identical; no new project or JVM load. Reuse predecessor exact-file static records.",
+    "previous_static_path": "../commit-ready-approach/STATIC-CHECKS.json",
+    "previous_static_sha256": "b34e609d64e1ecefd708763f7d89b00b9a62a8f9863459adaddba4c7d4bbe655",
+    "records": [
+      {
+        "command": [
+          "clj-kondo",
+          "--lint",
+          ".ημ/diagnostics/commit-ready-approach/snapshot.clj",
+          "--cache",
+          "false"
+        ],
+        "exit": 0,
+        "errors": 0,
+        "warnings": 0,
+        "sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+        "stdout": "kondo-snapshot.stdout",
+        "stderr": "kondo-snapshot.stderr"
+      },
+      {
+        "command": [
+          "clj-kondo",
+          "--lint",
+          ".ημ/diagnostics/commit-ready-approach/snapshot_client.clj",
+          "--cache",
+          "false"
+        ],
+        "exit": 0,
+        "errors": 0,
+        "warnings": 0,
+        "sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+        "stdout": "kondo-worker.stdout",
+        "stderr": "kondo-worker.stderr"
+      }
+    ]
+  },
+  "source_hashes_verified": 186,
+  "local_markdown_links": [
+    {
+      "label": "root-recorded scope",
+      "target": "root-scope.json",
+      "repository_path": ".ημ/diagnostics/input-observation-window/root-scope.json"
+    },
+    {
+      "label": "commit-ready approach plan",
+      "target": "../commit-ready-approach/PLAN.md",
+      "repository_path": ".ημ/diagnostics/commit-ready-approach/PLAN.md"
+    },
+    {
+      "label": "Root's closed-run observation",
+      "target": "../commit-ready-approach/root-closure-observation.json",
+      "repository_path": ".ημ/diagnostics/commit-ready-approach/root-closure-observation.json"
+    },
+    {
+      "label": "runner",
+      "target": "runner.py",
+      "repository_path": ".ημ/diagnostics/input-observation-window/runner.py"
+    },
+    {
+      "label": "snapshot.clj",
+      "target": "snapshot.clj",
+      "repository_path": ".ημ/diagnostics/input-observation-window/snapshot.clj"
+    },
+    {
+      "label": "snapshot_client.clj",
+      "target": "snapshot_client.clj",
+      "repository_path": ".ημ/diagnostics/input-observation-window/snapshot_client.clj"
+    },
+    {
+      "label": "aim-client.py",
+      "target": "aim-client.py",
+      "repository_path": ".ημ/diagnostics/input-observation-window/aim-client.py"
+    },
+    {
+      "label": "test_protocol.py",
+      "target": "test_protocol.py",
+      "repository_path": ".ημ/diagnostics/input-observation-window/test_protocol.py"
+    },
+    {
+      "label": "RED log",
+      "target": "pure-tests-red.stderr",
+      "repository_path": ".ημ/diagnostics/input-observation-window/pure-tests-red.stderr"
+    },
+    {
+      "label": "GREEN log",
+      "target": "pure-tests-green.stderr",
+      "repository_path": ".ημ/diagnostics/input-observation-window/pure-tests-green.stderr"
+    },
+    {
+      "label": "STATIC-CHECKS.json",
+      "target": "STATIC-CHECKS.json",
+      "repository_path": ".ημ/diagnostics/input-observation-window/STATIC-CHECKS.json"
+    },
+    {
+      "label": "COPY-PROOF.json",
+      "target": "COPY-PROOF.json",
+      "repository_path": ".ημ/diagnostics/input-observation-window/COPY-PROOF.json"
+    },
+    {
+      "label": "SOURCE-EQUALITY.json",
+      "target": "SOURCE-EQUALITY.json",
+      "repository_path": ".ημ/diagnostics/input-observation-window/SOURCE-EQUALITY.json"
+    }
+  ],
+  "trailing_whitespace": {
+    "runner.py": [],
+    "aim-client.py": [],
+    "test_protocol.py": [],
+    "PLAN.md": []
+  },
+  "immutable_predecessor_checks": {
+    "runner.py": "1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab",
+    "aim-client.py": "ff435b59f495b09e9341eb3d140a2a8949ea9d1438281364b7b4515af7879331",
+    "snapshot_client.clj": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+    "snapshot.clj": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+    "PLAN.md": "7393de21f4e554091b978ed592171a0051094e88eda923373ce83669f840dc06",
+    "test_protocol.py": "069f01b8336be89bcd9270e74a96be9d7b485382fd821081371a82f3ee92aa47"
+  },
+  "root_scope_sha256": "ede13d18fcf3c1f1544fe4b373da41ee23148a2eb81f08a8d588ea6f369a7494",
+  "not_qualified": [
+    "Actual native callback timing or delayed delivery",
+    "Real deadline preemption or cancellation",
+    "Network/cap-exhaustion failure injection",
+    "Real fresh-process cleanup",
+    "Physical approach, binding, commitment, embodiment or Gate"
+  ]
+}

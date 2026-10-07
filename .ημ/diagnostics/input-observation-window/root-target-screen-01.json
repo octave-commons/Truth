@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-07T09:50:12.081894+00:00",
+  "root_selected_target": 1010,
+  "selection": "only stored+ready body in first formation observation; no retarget",
+  "tick": 4435,
+  "range_m": 2.5471873832795624e+16,
+  "range_AU": 170268.95980275222,
+  "D": 37500000000000.0,
+  "recent_sampled_tick_rates": [
+    5.677108622262319,
+    5.597323391484865,
+    5.680522856321847,
+    5.679516472536,
+    4.6621635321117525
+  ],
+  "N_star": 25,
+  "coast_fraction": 0.04760152346698884,
+  "combined_fraction": 0.08440682511672248,
+  "thrust": [
+    "nil",
+    "nil",
+    "nil"
+  ],
+  "readiness_fields": [
+    "planet",
+    "true",
+    "true",
+    "true"
+  ],
+  "heuristic_only": true,
+  "poller_finished": true
+}

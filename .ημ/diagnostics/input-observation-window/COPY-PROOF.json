@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-07T09:28:31.580655+00:00",
+  "parent_preparation": "59ce1c05a963bb81fc52c7b4b6943a5725d23e64",
+  "root_scope_sha256": "ede13d18fcf3c1f1544fe4b373da41ee23148a2eb81f08a8d588ea6f369a7494",
+  "predecessor_preparation_manifest_sha256": "3689e67a41c3e5ac370fa376f9189b80079230a458631007887f518e8e31f7b8",
+  "all_six_predecessor_prep_pins_unchanged": true,
+  "runner_outside_await_input_byte_equal": true,
+  "aim_only_runner_hash_pin_change": true,
+  "clojure_copies_byte_equal": true,
+  "HERE_resolution": {
+    "directory": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach/.ημ/diagnostics/input-observation-window",
+    "ROOT": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+    "relative_depth_unchanged": true
+  },
+  "inherited_test_methods_byte_equal": [
+    "test_historical_ready_admits_without_fresh_handoff",
+    "test_fresh_handoff_cannot_replace_either_admission_flag",
+    "test_missing_duplicate_nonfinite_and_other_target_fail",
+    "test_global_prior_commitment_precedes_invalid_target",
+    "test_terminal_prevents_later_input_before_guard_or_command",
+    "test_global_commitment_frame_rejects_incomplete_or_unpaired_evidence",
+    "test_deadlines_use_shared_origin_and_only_success_lifts_phase_limit",
+    "test_late_valid_admission_has_original_work_reserve",
+    "test_snapshot_completion_at_or_after_cutoff_never_admits",
+    "test_successful_target_cannot_be_replaced",
+    "test_idle_supervisor_begins_cleanup_at_cutoff",
+    "test_late_admission_result_can_be_observed_after_phase_cutoff",
+    "test_pending_snapshot_wait_is_clipped_at_cutoff",
+    "test_child_wait_uses_remaining_no_target_budget",
+    "test_terminal_result_closes_run_and_retains_observation",
+    "test_held_key_released_once_when_commitment_appears",
+    "test_postrelease_commitment_precedes_invalid_target_geometry"
+  ],
+  "other_inherited_test_methods_byte_equal": [
+    "setUpClass",
+    "tearDownClass",
+    "setUp",
+    "admit"
+  ],
+  "added_tests": [
+    "test_tab_observation_accepts_delayed_state_after_four_nonmatches_once",
+    "test_tab_unconfirmed_state_uses_observation_budget_without_replay",
+    "test_input_observation_clips_startup_phase_work_and_aim_deadlines",
+    "test_matching_read_returned_after_observation_deadline_is_rejected",
+    "test_matching_read_at_phase_or_aim_cutoff_is_rejected",
+    "test_input_read_error_is_preserved_without_observation_retry",
+    "test_delayed_terminal_frame_stops_observation_without_gesture_replay"
+  ],
+  "copies": {
+    "runner.py": {
+      "predecessor_sha256": "1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab",
+      "new_sha256": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+      "equal": false,
+      "diff": "--- ../commit-ready-approach/runner.py\n+++ runner.py\n@@ -522,18 +522,21 @@\n     def await_input(self, label, predicate):\n         # Read-only observations may repeat. The input gesture never repeats.\n         until = min(self.work_limit(), time.monotonic() + 20)\n-        for attempt in range(3):\n+        attempt = 0\n+        while True:\n+            self.remaining()\n             left = until - time.monotonic()\n             assert left > 0, f\"Input observation deadline: {label}\"\n             output = self.inspect(timeout=min(10, left))\n+            self.remaining()\n+            assert time.monotonic() < until, f\"Input observation deadline: {label}\"\n             state = self.input_state(output)\n             matched = bool(predicate(state))\n             self.event(\"input-observation\", label=label, attempt=attempt, state=state, matched=matched)\n             if matched:\n                 return state\n-            if attempt < 2:\n-                time.sleep(min(0.2, max(0, until - time.monotonic())))\n-        raise AssertionError(f\"Input postcondition unconfirmed: {label}; gesture not retried\")\n+            attempt += 1\n+            time.sleep(min(0.2, max(0, until - time.monotonic())))\n \n     def release_keys(self):\n         if self.x and self.x.poll() is None and \"xvfb\" in self.state:\n"
+    },
+    "aim-client.py": {
+      "predecessor_sha256": "ff435b59f495b09e9341eb3d140a2a8949ea9d1438281364b7b4515af7879331",
+      "new_sha256": "047bf69afe71a166787a940c05ef5a69b731e965e0fda05b8f77b87d6507a848",
+      "equal": false,
+      "diff": "--- ../commit-ready-approach/aim-client.py\n+++ aim-client.py\n@@ -22,7 +22,7 @@\n HERE = Path(__file__).resolve().parent\n ROOT = HERE.parents[2]\n RUNNER = HERE / \"runner.py\"\n-RUNNER_SHA256 = \"1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab\"\n+RUNNER_SHA256 = \"99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22\"\n BASE = \"b395c4049718f7ce015ddf25fc0a192d97821373\"\n MAX_STEPS = 180\n MAX_SECONDS = 120\n"
+    },
+    "snapshot.clj": {
+      "predecessor_sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+      "new_sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+      "equal": true,
+      "diff": ""
+    },
+    "snapshot_client.clj": {
+      "predecessor_sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+      "new_sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+      "equal": true,
+      "diff": ""
+    },
+    "test_protocol.py": {
+      "predecessor_sha256": "069f01b8336be89bcd9270e74a96be9d7b485382fd821081371a82f3ee92aa47",
+      "new_sha256": "ba82c52cba2c8432361ff7bc670adaded85989b7ca67a37ef2a2328d9d796cf9",
+      "equal": false,
+      "diff": "--- ../commit-ready-approach/test_protocol.py\n+++ test_protocol.py\n@@ -298,5 +298,122 @@\n         self.assertEqual(102, self.a.terminal_commitment[\"tick\"])\n \n \n+    def test_tab_observation_accepts_delayed_state_after_four_nonmatches_once(self):\n+        reads, commands, releases = [], [], []\n+        def snapshot(**kwargs):\n+            reads.append(kwargs)\n+            self.clock.sleep(0.1)\n+            output = frame()\n+            return output.replace(\"manual false none\", \"manual true none\") if len(reads) == 6 else output\n+        self.a.inspect = snapshot\n+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)\n+        self.a.release_keys = lambda: releases.append(True)\n+        self.a.action({\"operation\": \"tap\", \"args\": [\"Tab\"]})\n+        observations = [v for k, v in self.a.events if k == \"input-observation\"]\n+        self.assertEqual([False, False, False, False, True], [v[\"matched\"] for v in observations])\n+        self.assertEqual(list(range(5)), [v[\"attempt\"] for v in observations])\n+        self.assertEqual([[\"xdotool\", \"key\", \"--delay\", \"80\", \"Tab\"]], commands)\n+        self.assertEqual([True], releases)\n+        self.assertEqual(6, len(reads))  # one pre-gesture read, then five observations\n+        self.assertLess(self.clock.now, 920.1)\n+\n+    def test_tab_unconfirmed_state_uses_observation_budget_without_replay(self):\n+        reads, commands, releases = [], [], []\n+        def snapshot(**kwargs):\n+            reads.append((self.clock.now, kwargs))\n+            self.clock.sleep(min(0.05, kwargs.get(\"timeout\", 35)))\n+            return frame()\n+        self.a.inspect = snapshot\n+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)\n+        self.a.release_keys = lambda: releases.append(True)\n+        with self.assertRaisesRegex(AssertionError, \"Input observation deadline|Input postcondition unconfirmed\"):\n+            self.a.action({\"operation\": \"tap\", \"args\": [\"Tab\"]})\n+        self.assertGreater(len(reads), 4)\n+        self.assertAlmostEqual(920.05, self.clock.now, places=6)\n+        self.assertEqual([[\"xdotool\", \"key\", \"--delay\", \"80\", \"Tab\"]], commands)\n+        self.assertEqual([True], releases)\n+        for started, kwargs in reads[1:]:\n+            self.assertLessEqual(kwargs[\"timeout\"], min(10, 920.05 - started) + 1e-9)\n+\n+    def test_input_observation_clips_startup_phase_work_and_aim_deadlines(self):\n+        for boundary in (\"startup\", \"no-target\", \"work\", \"aim\"):\n+            with self.subTest(boundary=boundary):\n+                self.clock.now = 900\n+                self.a.starting = boundary == \"startup\"\n+                self.a.startup_deadline = 902 if self.a.starting else 180\n+                self.a.admission = None if boundary == \"no-target\" else {\"target\": 1010}\n+                self.a.no_target_deadline = 902 if boundary == \"no-target\" else 960\n+                self.a.deadline = 902 if boundary == \"work\" else 1470\n+                self.a.aim_deadline = 902 if boundary == \"aim\" else None\n+                reads = []\n+                def snapshot(**kwargs):\n+                    reads.append((self.clock.now, kwargs[\"timeout\"]))\n+                    self.clock.sleep(min(0.1, kwargs[\"timeout\"]))\n+                    return frame()\n+                self.a.inspect = snapshot\n+                expected = self.r.NoTargetDeadline if boundary == \"no-target\" else AssertionError\n+                with self.assertRaises(expected):\n+                    self.a.await_input(\"bounded\", lambda state: state[\"free\"])\n+                self.assertGreater(len(reads), 3)\n+                self.assertAlmostEqual(902, self.clock.now, places=6)\n+                for started, timeout in reads:\n+                    self.assertLessEqual(timeout, 902 - started + 1e-9)\n+\n+    def test_matching_read_returned_after_observation_deadline_is_rejected(self):\n+        calls = []\n+        def snapshot(**kwargs):\n+            calls.append(kwargs)\n+            self.clock.sleep(20.1)  # model a blocking operation exceeding its requested bound\n+            return frame().replace(\"manual false none\", \"manual true none\")\n+        self.a.inspect = snapshot\n+        with self.assertRaisesRegex(AssertionError, \"Input observation deadline\"):\n+            self.a.await_input(\"late\", lambda state: state[\"free\"])\n+        self.assertEqual([{\"timeout\": 10}], calls)\n+\n+    def test_matching_read_at_phase_or_aim_cutoff_is_rejected(self):\n+        for boundary in (\"no-target\", \"aim\"):\n+            with self.subTest(boundary=boundary):\n+                self.clock.now = 900\n+                self.a.admission = None if boundary == \"no-target\" else {\"target\": 1010}\n+                self.a.no_target_deadline = 902 if boundary == \"no-target\" else 960\n+                self.a.aim_deadline = 902 if boundary == \"aim\" else None\n+                def snapshot(**_kwargs):\n+                    self.clock.now = 902\n+                    return frame().replace(\"manual false none\", \"manual true none\")\n+                self.a.inspect = snapshot\n+                expected = self.r.NoTargetDeadline if boundary == \"no-target\" else AssertionError\n+                with self.assertRaises(expected):\n+                    self.a.await_input(\"cutoff\", lambda state: state[\"free\"])\n+\n+    def test_input_read_error_is_preserved_without_observation_retry(self):\n+        failure = TimeoutError(\"fixed snapshot failed\")\n+        snapshot = Mock(side_effect=failure)\n+        self.a.inspect = snapshot\n+        with self.assertRaises(TimeoutError) as raised:\n+            self.a.await_input(\"read-error\", lambda _state: False)\n+        self.assertIs(failure, raised.exception)\n+        snapshot.assert_called_once_with(timeout=10)\n+        self.assertEqual([], self.a.events)\n+\n+    def test_delayed_terminal_frame_stops_observation_without_gesture_replay(self):\n+        calls, commands, releases = [], [], []\n+        def snapshot(**_kwargs):\n+            calls.append(True)\n+            self.clock.sleep(0.1)\n+            output = frame(committed=(1010,)) if len(calls) == 5 else frame()\n+            self.a.observe_commitment(output)\n+            return output\n+        self.a.inspect = snapshot\n+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)\n+        self.a.release_keys = lambda: releases.append(True)\n+        with self.assertRaises(self.r.CommitmentObserved):\n+            self.a.action({\"operation\": \"tap\", \"args\": [\"Tab\"]})\n+        self.assertEqual(5, len(calls))\n+        self.assertEqual([1010], self.a.terminal_commitment[\"eids\"])\n+        self.assertEqual([[\"xdotool\", \"key\", \"--delay\", \"80\", \"Tab\"]], commands)\n+        self.assertEqual([True], releases)\n+\n+\n+\n if __name__ == \"__main__\":\n     unittest.main(verbosity=2)\n"
+    }
+  }
+}
