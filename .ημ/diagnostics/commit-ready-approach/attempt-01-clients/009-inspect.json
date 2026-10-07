@@ -1,0 +1,14 @@
+{
+  "args": [
+    "python3",
+    ".\u03b7\u03bc/diagnostics/commit-ready-approach/runner.py",
+    "inspect",
+    ".\u03b7\u03bc/diagnostics/commit-ready-approach/runs/attempt-01"
+  ],
+  "pid": 3009991,
+  "started_at": "2026-10-07T09:08:21.055713+00:00",
+  "started_monotonic": 31601.114485348,
+  "state": "reaped",
+  "returncode": 0,
+  "elapsed_seconds": 0.7153121660012403
+}

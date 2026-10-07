@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-07T09:27:48.145056+00:00",
+  "preparation_commit": "59ce1c05a963bb81fc52c7b4b6943a5725d23e64",
+  "parent_pr": 51,
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "outcome": "closed-failed-input-acknowledgement-before-approach",
+  "elapsed_seconds": 744.1155346840023,
+  "audit_sha256": "5e2393dfa6123de489dbfb44e8f3b7823ea29bb936f3ed572ecc19eaad896ce2",
+  "root_input_hashes_reverified": 166,
+  "preparation_manifest_entries_reverified": 21,
+  "result_sha256": "b5eddc39d3831ac32bc1da99da3fc82d261445c672e4d950e02f2b1effc2672d",
+  "prior_ledger_bytes": 658807,
+  "prior_ledger_sha256": "ebc00e96e2e5a7a1be5450ffdb81f26e57f7d312c5baa83dfdd29f431a6165e6",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "after_write_id": "1791365267516-0.n5hbo4xipsbcacdvbdm",
+  "scope_limits": "No admitted target/aim/thrust/currentGate; no automatic960 or terminalcommitment runtimepath exercised; manualcadence deviations retained; callbacktiming unknown"
+}

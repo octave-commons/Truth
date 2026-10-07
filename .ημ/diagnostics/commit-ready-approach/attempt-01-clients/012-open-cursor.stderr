@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach/.ημ/diagnostics/commit-ready-approach/runner.py", line 957, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach/.ημ/diagnostics/commit-ready-approach/runner.py", line 936, in main
+    assert response["ok"], "Submitted action failed; await owned closure and do not retry"
+           ~~~~~~~~^^^^^^
+AssertionError: Submitted action failed; await owned closure and do not retry

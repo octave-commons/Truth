@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-07T09:21:58.717947+00:00",
+  "parent_preparation": "59ce1c05a963bb81fc52c7b4b6943a5725d23e64",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "scope": "Closed commit-ready native attempt01 at744.1155s with failure: second Tab gesture postcondition unconfirmed after three same-state readbacks spanning about1.1s; no retry, aim, admission or W. Allfour recorded PIDs are absent, release/cleanup flags clear. Runtime stdout eventually contains UI cursor : free, but it has no event timestamps; do not assert precise callback time or renderer-freeze cause. Source await_input declares20s yet caps itself atthree reads, so the next measurement preparation is a minimal separately frozen derivative using the existing bounded20s observation budget instead of stopping afterthree fast nonmatches. Gesture is still sent once, and original startup180/no-target960/work1470/total1500, activeaim deadlines, remote read bounds and2048snapshot cap remain authoritative. Add pure delayed-acknowledgement, timeout, phase/aim cutoff and no-repeat checks. No native execution, production/input callback change, deadline extension or new input surface is admitted by this preparation scope. Root review plus independent review and release are required before one later fresh run. Existing prepared/raw bundles remain immutable; this owner stays InProgress3. Root may reuse the successfully exercised bounded30s read-only formation polling during a later separately released attempt, stopping before any gameplay command when a candidate appears.",
+  "prior_ledger_bytes": 657025,
+  "prior_ledger_sha256": "7e957beedcb7d72188271a3b6045feab7d94bf09bbcdb7fc4800a633df9ce967",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "after_write_id": "1791364917960-0.pdq8cq7fj18g45v2oui",
+  "author_scope": "Only new files in this directory except root-scope.json. Copy predecessor runner/aim/snapshot/worker/tests with minimum bounded await_input change; no production or old artifact edit. AST/static/byte checks and pure Python tests with subprocess/native/socket operations blocked are allowed. No JVM/native/process launch or board/receipt/Git/publication."
+}

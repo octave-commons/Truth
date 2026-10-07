@@ -584,3 +584,12 @@
   spore: none
   receipt-refs: .ημ/diagnostics/natural-flight-profile/attempt-01-audit.json; root-successor-scope.json
   note: A stricter diagnostic freshness predicate prevented testing intentionally retained production readiness. Match the actual consumer predicate and report stronger checks separately. Automate phase cutoff in the supervisor; root manual polling missed cadence and late STOP must remain a protocol deviation. No spore promoted.
+- ts: 2026-10-07T09:27:48.285992766Z
+  session: /home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach
+  task: Native acknowledgement window failure
+  p-efficiency: 0.55
+  p-friction: 0.65
+  p-skill-candidate: 0.65
+  spore: none
+  receipt-refs: .ημ/diagnostics/commit-ready-approach/attempt-01-audit.json
+  note: Three fast state samples can exhaust a poll count long before a declared wall deadline. Preserve untimestamped callback evidence without inventing latency; wait within the existing bound and never replay an uncertain gesture. Automated formation polls met cadence; manual gaps remain failures. No new spore.

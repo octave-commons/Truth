@@ -1,0 +1,16 @@
+{
+  "pid": 2985836,
+  "at": "2026-10-07T09:03:51.501371+00:00",
+  "identity": {
+    "pid": 2985836,
+    "start": "3133155",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+    "exe": "/usr/bin/python3.12"
+  },
+  "lease_started_at": "2026-10-07T09:03:51.477456+00:00",
+  "lease_started_monotonic": 31331.536222648,
+  "startup_deadline": 31511.536222648,
+  "total_deadline": 32831.536222648
+}
