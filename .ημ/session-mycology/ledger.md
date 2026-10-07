@@ -405,3 +405,12 @@
   spore: none
   receipt-refs: Truth#38,review5438493967,comment4203793322
   note: When a reviewed proposal selects engineering rules, update its live design/index summaries without promoting those rules to accepted or implemented. Preserve historical notes and ledger prefixes; native settlement is distinct from successor approval. Existing provenance practice suffices; no spore.
+- ts: 2026-10-07T15:12:30.856465425Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Prepare and witness pure life-account RED
+  p-efficiency: 0.78
+  p-friction: 0.30
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: life-account-origin-kernel,PID968366
+  note: Keep exact arithmetic and immutable operation history explicit at the small pure boundary; a loaded non-implementing API yields meaningful assertion failures without treating namespace absence as the whole RED. Preserve resource coordination and disclose draft static failures. No spore.

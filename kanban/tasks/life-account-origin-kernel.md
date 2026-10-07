@@ -3,11 +3,11 @@ category: "specs"
 labels: "feature, ecology, accounting, represented-life"
 parent: "life-to-represented-actor-spec"
 type: "task"
-write-id: "1791371246950-0.3v98v68lylrg53qusv"
+write-id: "1791384464558-0.sxdcpig4qh5v5wj0yt"
 points: "3"
 title: "Implement the pure integer life-account and origin kernel"
 priority: "P1"
-status: "incoming"
+status: "in_progress"
 design: "docs/designs/resolution-regimes-and-scale-coupling.md"
 uuid: "life-account-origin-kernel"
 created_at: "2026-10-07T10:48:23.887Z"
@@ -129,5 +129,7 @@ laws only and does not complete the parent specification or make a Gate earned.
 ---
 
 2026-10-07 planning intake: canonical Rheos resolves this manually authored first implementation child under life-to-represented-actor-spec, Incoming with proposed3 points. Root and independent board_scout reviewed exact integer conversion, origin partition, sequential extents, terminal export and immutable replay/revision proposal. Origin0->1, accepted zero operation increments, rejected/replayed/conflicting operations do not; valid-key rejected outcomes must be returned for mandatory later retention. Existing account stays current when historical outcome is replayed. Named law/domain functions and meaningful tests only; no ECS/lifecycle/producer/habitat/clock/render/input, and no PR50 dependency. Existing design and research links resolve; original note prefix and production/test sources remain unchanged. This is a reviewed local proposal, not hosted planning convergence, implementation admission or native life evidence.
+
+2026-10-07 implementation admission: canonical pr-flow status on planning head7e659bb4ce799ae324a2d64f8a7904888a5ecf2c now reports PASS: seven required checks, zero unresolved findings, exact-head CodeRabbit and MiMo approvals, and one completed cohort of all currently available reviewers. Canonical pr-flow Available agents law records hosted Codex account-quota source6036640524 observed11:07:51Z with UNKNOWN reset; it supplies no approval credit. This uses the current shared policy, not a user-approved local substitution or merge authority. Full independent local review fc37d1b410fe6add70dd8869abb93ffadf5290481ba388a0b078417da5276f21 additionally passed the15-file proposal. Existing grounded three-point outcome, non-goals and five acceptance clauses are accepted unchanged. Progress this child through canonical Rheos to InProgress subject to its gates; write named laws and meaningful failing tests, commit witnessed RED, then implement the pure integer account/origin kernel. Root coordinates all JVM tests around native measurement; no concurrent native load, ECS hookup, producer, habitat, rendering, paid Grow, embodiment or Gate claim. Parent acceptance remains open. No merge or auto-merge authorized.
 
 ---

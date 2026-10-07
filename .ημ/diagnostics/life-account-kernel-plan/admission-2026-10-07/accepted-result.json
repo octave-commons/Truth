@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-07T14:47:41.536596+00:00",
+  "argv": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "move",
+    "life-account-origin-kernel",
+    "--to",
+    "accepted",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "returncode": 0
+}

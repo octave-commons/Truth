@@ -1,0 +1,54 @@
+{
+  "namespace_failures": {
+    "domain.life-account-test": 144,
+    "law.life-account-test": 0
+  },
+  "tests": 25,
+  "assertions": 320,
+  "failures": 144,
+  "errors": 0,
+  "child": {
+    "argv": [
+      "clojure",
+      "-J-Xms256m",
+      "-J-Xmx2g",
+      "-M:test",
+      "-n",
+      "law.life-account-test",
+      "-n",
+      "domain.life-account-test"
+    ],
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan",
+    "head": "7e659bb4ce799ae324a2d64f8a7904888a5ecf2c",
+    "start": "2026-10-07T15:08:24.096905+00:00",
+    "timeout_seconds": 180,
+    "env_overrides": {
+      "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g"
+    },
+    "source_before": {
+      "src/law/life_account.clj": "6803cb55d0d0a6852ffb321fa42c8458f800c3eb9d303359c6955d3e8f7817d6",
+      "src/domain/life_account.clj": "64c281e4aae698fdb6038f3c938d798f29c10670aba9e3642f95346b7d9fabb6",
+      "test/law/life_account_test.clj": "7fada2ada9790dfdacb5929887dd88a62cfa49f6f051c9d480c4bff4657789f1",
+      "test/domain/life_account_test.clj": "370117ec5ecdfc77518c1ba543fa35371a1386f59672c40fa30c386c5a08a02f"
+    },
+    "pid": 968366,
+    "exit": 1,
+    "end": "2026-10-07T15:08:32.977676+00:00",
+    "elapsed_seconds": 8.880382745999668,
+    "source_after": {
+      "src/law/life_account.clj": "6803cb55d0d0a6852ffb321fa42c8458f800c3eb9d303359c6955d3e8f7817d6",
+      "src/domain/life_account.clj": "64c281e4aae698fdb6038f3c938d798f29c10670aba9e3642f95346b7d9fabb6",
+      "test/law/life_account_test.clj": "7fada2ada9790dfdacb5929887dd88a62cfa49f6f051c9d480c4bff4657789f1",
+      "test/domain/life_account_test.clj": "370117ec5ecdfc77518c1ba543fa35371a1386f59672c40fa30c386c5a08a02f"
+    },
+    "pid_absent": true,
+    "reaped": true,
+    "sources_unchanged": true
+  },
+  "stdout_sha256": "8885eceae9e8a0ab4eedd225b6bc91a18121bb32650352a810e41ea7e9eaa56d",
+  "stderr_sha256": "29eb9106ee6d8eab5aec264a34e20995b9f3b5903571bd6a4fd24f528a6bf019",
+  "stdout_bytes": 34996,
+  "stderr_bytes": 90,
+  "executed_production_kernel": false,
+  "note": "Only explicit RED placeholders and named laws exist; no arithmetic/state implementation or installed system."
+}

@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-07T15:13:13.686119+00:00",
+  "head": "7e659bb4ce799ae324a2d64f8a7904888a5ecf2c",
+  "root_accepted_red": true,
+  "root_authorized_commit_includes_admission_provenance": true,
+  "root_authorized_offline_green_after_commit": true,
+  "next_jvm_requires_separate_release": true,
+  "prefix_proofs": {
+    ".\u03b7\u03bc/receipts.edn": {
+      "prior_prefix_bytes": 39575,
+      "prior_prefix_sha256": "291d66a0b59824590ba783bb7f7d9edbd69c3fcf478f9a87194821318f4702f2",
+      "preserved": true,
+      "appended_bytes": 1085,
+      "head_prefix_preserved": true
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "prior_prefix_bytes": 25196,
+      "prior_prefix_sha256": "0391741650d97083a9334e4354f3c16fd3935a0a2ac39f1f42f8884681510255",
+      "preserved": true,
+      "appended_bytes": 587,
+      "head_prefix_preserved": true
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "prior_prefix_bytes": 609114,
+      "prior_prefix_sha256": "d2affb442243ceec2c2d07f13acd76904df0b5947e0256ce081fae916aa10652",
+      "preserved": true,
+      "appended_bytes": 0,
+      "head_prefix_preserved": true
+    },
+    "kanban/tasks/life-account-origin-kernel.md": {
+      "prior_prefix_bytes": 9768,
+      "prior_prefix_sha256": "6f48120ccd1d88eb6616ffc229d9d22173ac6005c700e0ec5642774c186fca08",
+      "preserved": true,
+      "appended_bytes": 0
+    }
+  },
+  "run_inputs_unchanged": true,
+  "tracked_existing_src_test_dev_deps_unchanged": true,
+  "initial_static_failures_disclosed": true
+}

@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T14:47:21.490149+00:00",
+  "argv": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "comment",
+    "life-account-origin-kernel",
+    "--text",
+    "2026-10-07 implementation admission: canonical pr-flow status on planning head7e659bb4ce799ae324a2d64f8a7904888a5ecf2c now reports PASS: seven required checks, zero unresolved findings, exact-head CodeRabbit and MiMo approvals, and one completed cohort of all currently available reviewers. Canonical pr-flow Available agents law records hosted Codex account-quota source6036640524 observed11:07:51Z with UNKNOWN reset; it supplies no approval credit. This uses the current shared policy, not a user-approved local substitution or merge authority. Full independent local review fc37d1b410fe6add70dd8869abb93ffadf5290481ba388a0b078417da5276f21 additionally passed the15-file proposal. Existing grounded three-point outcome, non-goals and five acceptance clauses are accepted unchanged. Progress this child through canonical Rheos to InProgress subject to its gates; write named laws and meaningful failing tests, commit witnessed RED, then implement the pure integer account/origin kernel. Root coordinates all JVM tests around native measurement; no concurrent native load, ECS hookup, producer, habitat, rendering, paid Grow, embodiment or Gate claim. Parent acceptance remains open. No merge or auto-merge authorized.",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "returncode": 0,
+  "planning_head": "7e659bb4ce799ae324a2d64f8a7904888a5ecf2c",
+  "policy_sha256": {
+    "/home/err/.agents/skills/pr-flow/SKILL.md": "efe5e0818d673b8aab6f962a711ba80c10b7a1877b24b0e986217601b6042472",
+    "/home/err/.agents/skills/pr-flow/scripts/pr_flow/law.cljc": "3b8d4c99094a3f3ae76a8121c3c912680b54d55978af559a9b747ba06bba808e",
+    "/home/err/.agents/skills/pr-flow/scripts/pr.cljs": "f448613641099bca68294e7d32dda063603863f9483d2538445043580e4516f3"
+  },
+  "local_substitution_approval": "not granted; not used",
+  "merge_authority": false
+}

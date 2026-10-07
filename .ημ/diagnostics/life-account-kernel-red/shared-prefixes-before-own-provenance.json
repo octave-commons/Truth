@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-07T15:11:57.396822+00:00",
+  "head": "7e659bb4ce799ae324a2d64f8a7904888a5ecf2c",
+  "files": {
+    ".\u03b7\u03bc/receipts.edn": {
+      "bytes": 39575,
+      "sha256": "291d66a0b59824590ba783bb7f7d9edbd69c3fcf478f9a87194821318f4702f2"
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "bytes": 25196,
+      "sha256": "0391741650d97083a9334e4354f3c16fd3935a0a2ac39f1f42f8884681510255"
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 609114,
+      "sha256": "d2affb442243ceec2c2d07f13acd76904df0b5947e0256ce081fae916aa10652"
+    },
+    "kanban/tasks/life-account-origin-kernel.md": {
+      "bytes": 9768,
+      "sha256": "6f48120ccd1d88eb6616ffc229d9d22173ac6005c700e0ec5642774c186fca08"
+    }
+  },
+  "note": "Snapshot before this agent appends its receipt/reflection. Existing root admission/card/event/receipt dirt is intentionally preserved and not agent-owned."
+}

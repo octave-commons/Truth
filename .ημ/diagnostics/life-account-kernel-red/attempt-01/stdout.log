@@ -1,0 +1,588 @@
+
+Running tests in #{"test"}
+
+Testing domain.life-account-test
+
+FAIL in (zero-transfer-is-an-accepted-operation-not-a-replay) (life_account_test.clj:153)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (zero-transfer-is-an-accepted-operation-not-a-replay) (life_account_test.clj:155)
+expected: (= 2 (get-in result [:account :revision]))
+  actual: (not (= 2 1))
+
+FAIL in (zero-transfer-is-an-accepted-operation-not-a-replay) (life_account_test.clj:156)
+expected: (true? (get-in result [:outcome :accepted?]))
+  actual: (not (true? nil))
+
+FAIL in (zero-transfer-is-an-accepted-operation-not-a-replay) (life_account_test.clj:157)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 0, :g 0, :L 0}} nil))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:84)
+expected: (true? (:accepted? large))
+  actual: (not (true? false))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:85)
+expected: (= 50000000000000000000000000000000000N (get-in large [:budget :carbon-units]))
+  actual: (not (= 50000000000000000000000000000000000N nil))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:87)
+expected: (= opening-stocks (get-in large [:budget :stocks]))
+  actual: (not (= {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000} nil))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:89)
+expected: (= :zero-origin (:reason tiny))
+  actual: (not (= :zero-origin :domain.life-account/not-implemented))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:90)
+expected: (= 0 (get-in tiny [:budget :carbon-units]))
+  actual: (not (= 0 nil))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:91)
+expected: (= 0 (get-in tiny [:budget :origin-units]))
+  actual: (not (= 0 nil))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:92)
+expected: (= "0000000000000001" (get-in tiny [:budget :witness :mass-bits]))
+  actual: (not (= "0000000000000001" nil))
+
+FAIL in (very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up) (life_account_test.clj:93)
+expected: (= 30517578125N (get-in tiny [:budget :witness :discarded-unit :numerator]))
+  actual: (not (= 30517578125N nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:68)
+expected: (true? (:accepted? result))
+  actual: (not (true? false))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:69)
+expected: (= 89999999999999 (:carbon-units budget))
+  actual: (not (= 89999999999999 nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:70)
+expected: (= 89999999 (:allocation budget))
+  actual: (not (= 89999999 nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:71)
+expected: (= 89 (:origin-units budget))
+  actual: (not (= 89 nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:72)
+expected: (= {:U 0, :S 899910, :B 89, :W 89100000} (:stocks budget))
+  actual: (not (= {:U 0, :S 899910, :B 89, :W 89100000} nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:73)
+expected: (= {:numerator 9837549616616482200413696917N, :denominator 9903520314283042199192993792N} (get-in budget [:witness :discarded-unit]))
+  actual: (not (= {:numerator 9837549616616482200413696917N, :denominator 9903520314283042199192993792N} nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:76)
+expected: (= "3fd3333333333333" (get-in budget [:witness :mass-bits]))
+  actual: (not (= "3fd3333333333333" nil))
+
+FAIL in (exact-product-is-floored-before-any-binary64-rounding) (life_account_test.clj:77)
+expected: (= "3fd3333333333333" (get-in budget [:witness :composition-bits :C]))
+  actual: (not (= "3fd3333333333333" nil))
+
+FAIL in (extent-transfer-conserves-carbon-with-growth-before-loss) (life_account_test.clj:138)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (extent-transfer-conserves-carbon-with-growth-before-loss) (life_account_test.clj:139)
+expected: (= {:U 0, :S 9989999999980, :B 10000000005, :W 990000000000015} (get-in result [:account :stocks]))
+  actual: (not (= {:U 0, :S 9989999999980, :B 10000000005, :W 990000000000015} {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000}))
+
+FAIL in (extent-transfer-conserves-carbon-with-growth-before-loss) (life_account_test.clj:141)
+expected: (= 2 (get-in result [:account :revision]))
+  actual: (not (= 2 1))
+
+FAIL in (extent-transfer-conserves-carbon-with-growth-before-loss) (life_account_test.clj:147)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (extent-transfer-conserves-carbon-with-growth-before-loss) (life_account_test.clj:148)
+expected: (= {:U 0, :S 0, :B 0, :W 10} (get-in result [:account :stocks]))
+  actual: (not (= {:U 0, :S 0, :B 0, :W 10} {:U 0, :S 8, :B 2, :W 0}))
+
+FAIL in (deterministic-running-account-prevents-double-spend) (life_account_test.clj:181)
+expected: (= {:U 0, :S 2, :B 5, :W 3} (:stocks current))
+  actual: (not (= {:U 0, :S 2, :B 5, :W 3} {:U 0, :S 8, :B 2, :W 0}))
+
+FAIL in (deterministic-running-account-prevents-double-spend) (life_account_test.clj:182)
+expected: (= :stale-revision (:reason stale))
+  actual: (not (= :stale-revision :domain.life-account/not-implemented))
+
+FAIL in (deterministic-running-account-prevents-double-spend) (life_account_test.clj:183)
+expected: (= :extent-bounds (:reason overdraw))
+  actual: (not (= :extent-bounds :domain.life-account/not-implemented))
+
+FAIL in (deterministic-running-account-prevents-double-spend) (life_account_test.clj:185)
+expected: (= 2 (:revision current))
+  actual: (not (= 2 1))
+
+FAIL in (conflicting-id-does-not-replace-retained-outcome) (life_account_test.clj:258)
+equal numeric zeros have distinct binary64 request provenance
+expected: (= :conflict (:disposition result))
+  actual: (not (= :conflict :rejected))
+
+FAIL in (conflicting-id-does-not-replace-retained-outcome) (life_account_test.clj:259)
+equal numeric zeros have distinct binary64 request provenance
+expected: (= :conflicting-reuse (:reason result))
+  actual: (not (= :conflicting-reuse :domain.life-account/not-implemented))
+
+FAIL in (conflicting-id-does-not-replace-retained-outcome) (life_account_test.clj:264)
+equal numeric zeros have distinct binary64 request provenance
+expected: (= operation (get-in history [(:op-id operation) :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :origin 10], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 0, :kind :origin, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :material {:mass-kg 2000000.0, :composition {:C 0.5, :O 0.5, :H -0.0}}} nil))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:237)
+expected: (= :accepted (:disposition close-result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:241)
+expected: (= :replayed (:disposition result))
+  actual: (not (= :replayed :rejected))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:241)
+expected: (= :replayed (:disposition result))
+  actual: (not (= :replayed :rejected))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:246)
+expected: (= 2 (:revision closed))
+  actual: (not (= 2 nil))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:247)
+expected: (= :closed (:status closed))
+  actual: (not (= :closed nil))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:248)
+expected: (= 1000000000000000 (:exported closed))
+  actual: (not (= 1000000000000000 nil))
+
+FAIL in (exact-retry-precedes-current-revision-and-closure-checks) (life_account_test.clj:249)
+expected: (= opening-stocks (get-in closed [:terminal :inventory]))
+  actual: (not (= {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000} nil))
+
+FAIL in (new-invalid-key-cannot-claim-a-retained-operation) (life_account_test.clj:290)
+expected: (= :invalid-identity (:reason result))
+  actual: (not (= :invalid-identity :domain.life-account/not-implemented))
+
+FAIL in (new-invalid-key-cannot-claim-a-retained-operation) (life_account_test.clj:290)
+expected: (= :invalid-identity (:reason result))
+  actual: (not (= :invalid-identity :domain.life-account/not-implemented))
+
+FAIL in (new-invalid-key-cannot-claim-a-retained-operation) (life_account_test.clj:290)
+expected: (= :invalid-identity (:reason result))
+  actual: (not (= :invalid-identity :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :invalid-request :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q -1, :g 0, :L 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :invalid-request :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 1/2, :g 0, :L 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :invalid-request :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 1.0, :g 0, :L 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :invalid-request :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 1, :g 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :invalid-request :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 0, :g ##NaN, :L 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :extent-bounds :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 1, :g 2, :L 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :extent-bounds :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 9990000000001, :g 0, :L 0}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :extent-bounds :domain.life-account/not-implemented))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 0, :g 0, :L 10000000001}} nil))
+
+FAIL in (bounded-extents-are-rejected-without-clipping) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:105)
+expected: (= expected (:reason result))
+  actual: (not (= :composition-sum :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:105)
+expected: (= expected (:reason result))
+  actual: (not (= :composition-sum :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:105)
+expected: (= expected (:reason result))
+  actual: (not (= :missing-carbon :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:105)
+expected: (= expected (:reason result))
+  actual: (not (= :missing-carbon :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:105)
+expected: (= expected (:reason result))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:108)
+expected: (true? (:accepted? (account/origin-budget input)))
+  actual: (not (true? false))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (exact-input-sum-is-checked-without-renormalization) (life_account_test.clj:111)
+expected: (= :invalid-material (:reason (account/origin-budget (assoc material :mass-kg mass))))
+  actual: (not (= :invalid-material :domain.life-account/not-implemented))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 7 8))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 7 8))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 4 8))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 1 8))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 0 8))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 0 8))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:204)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (valid-extents-preserve-nonnegative-stock-and-exact-total) (life_account_test.clj:207)
+expected: (= (- 8 q) (:S stocks))
+  actual: (not (= 0 8))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:120)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:121)
+expected: (= 1 (:revision next-account))
+  actual: (not (= 1 nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:122)
+expected: (= account-id (:id next-account))
+  actual: (not (= [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:123)
+expected: (= [account-id :cohort 0] (:lineage next-account))
+  actual: (not (= [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :cohort 0] nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:124)
+expected: (= opening-stocks (:stocks next-account))
+  actual: (not (= {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000} nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:125)
+expected: (= supplied (:source next-account))
+  actual: (not (= {:mass-kg 2000000.0, :composition {:C 0.5, :O 0.5, :H -0.0}} nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:126)
+expected: (= "8000000000000000" (get-in next-account [:witness :composition-bits :H]))
+  actual: (not (= "8000000000000000" nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:127)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :origin 10], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 0, :kind :origin, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :material {:mass-kg 2000000.0, :composition {:C 0.5, :O 0.5, :H -0.0}}} nil))
+
+FAIL in (origin-is-first-accepted-operation-and-retains-input-bits) (life_account_test.clj:129)
+expected: (= [{:kind :origin, :account account-id, :lineage [account-id :cohort 0], :carbon-units 10000000000}] (:effects result))
+  actual: (not (= [{:kind :origin, :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :lineage [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :cohort 0], :carbon-units 10000000000}] []))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:54)
+expected: (true? (:accepted? result))
+  actual: (not (true? false))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:55)
+expected: (= 1000000000000000000000N (:carbon-units budget))
+  actual: (not (= 1000000000000000000000N nil))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:56)
+expected: (= 1000000000000000 (:allocation budget))
+  actual: (not (= 1000000000000000 nil))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:57)
+expected: (= 10000000000 (:origin-units budget))
+  actual: (not (= 10000000000 nil))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:58)
+expected: (= opening-stocks (:stocks budget))
+  actual: (not (= {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000} nil))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:59)
+expected: (= witness (:witness budget))
+  actual: (not (= {:mass-bits "413e848000000000", :composition-bits {:C "3fe0000000000000", :O "3fe0000000000000"}, :discarded-unit {:numerator 0, :denominator 1}} nil))
+
+FAIL in (capped-origin-has-an-exact-nonadditive-partition) (life_account_test.clj:60)
+expected: (= (:allocation budget) (total (:stocks budget)))
+  actual: (not (= nil 0))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:272)
+expected: (= :zero-origin (:reason rejection))
+  actual: (not (= :zero-origin :domain.life-account/not-implemented))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:274)
+expected: (= 0 (get-in rejection [:outcome :revision]))
+  actual: (not (= 0 nil))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:275)
+expected: (= tiny-op (get-in rejection [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :origin 10], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 0, :kind :origin, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :material {:mass-kg 4.9E-324, :composition {:C 1.0}}} nil))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:276)
+expected: (= :replayed (:disposition retry))
+  actual: (not (= :replayed :rejected))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:280)
+expected: (= :accepted (:disposition accepted))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:281)
+expected: (= 1 (get-in accepted [:account :revision]))
+  actual: (not (= 1 nil))
+
+FAIL in (rejected-origin-is-retained-without-reserving-an-account) (life_account_test.clj:282)
+expected: (= 2 (count (retain history accepted)))
+  actual: (not (= 2 0))
+
+FAIL in (malformed-caller-state-fails-before-transaction-admission) (life_account_test.clj:216)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account" (account/apply-operation bad {} operation))
+  actual: nil
+
+FAIL in (malformed-caller-state-fails-before-transaction-admission) (life_account_test.clj:216)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account" (account/apply-operation bad {} operation))
+  actual: nil
+
+FAIL in (malformed-caller-state-fails-before-transaction-admission) (life_account_test.clj:216)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account" (account/apply-operation bad {} operation))
+  actual: nil
+
+FAIL in (malformed-caller-state-fails-before-transaction-admission) (life_account_test.clj:216)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account" (account/apply-operation bad {} operation))
+  actual: nil
+
+FAIL in (malformed-caller-state-fails-before-transaction-admission) (life_account_test.clj:218)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied history" (account/apply-operation opened {(:op-id operation) {}} operation))
+  actual: nil
+
+FAIL in (missing-stock-and-cross-account-operations-do-not-borrow-a-balance) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :missing-account :domain.life-account/not-implemented))
+
+FAIL in (missing-stock-and-cross-account-operations-do-not-borrow-a-balance) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 0, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 0, :g 0, :L 0}} nil))
+
+FAIL in (missing-stock-and-cross-account-operations-do-not-borrow-a-balance) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (missing-stock-and-cross-account-operations-do-not-borrow-a-balance) (life_account_test.clj:42)
+expected: (= reason (:reason result))
+  actual: (not (= :account-mismatch :domain.life-account/not-implemented))
+
+FAIL in (missing-stock-and-cross-account-operations-do-not-borrow-a-balance) (life_account_test.clj:45)
+expected: (= operation (get-in result [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1011 #uuid "10000000-0000-0000-0000-000000000001"] :test 1], :account [:life-origin/v1 1011 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 1, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 0, :g 0, :L 0}} nil))
+
+FAIL in (missing-stock-and-cross-account-operations-do-not-borrow-a-balance) (life_account_test.clj:46)
+expected: (= false (get-in result [:outcome :accepted?]))
+  actual: (not (= false nil))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:302)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:303)
+expected: (= {:U 0, :S 0, :B 0, :W 0} (:stocks closed))
+  actual: (not (= {:U 0, :S 0, :B 0, :W 0} {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000}))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:304)
+expected: (= :unresolved-physical-boundary (get-in closed [:terminal :destination]))
+  actual: (not (= :unresolved-physical-boundary nil))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:305)
+expected: (= :material-changed (get-in closed [:terminal :reason]))
+  actual: (not (= :material-changed nil))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:306)
+expected: (= opening-stocks (get-in closed [:terminal :inventory]))
+  actual: (not (= {:U 0, :S 9990000000000, :B 10000000000, :W 990000000000000} nil))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:307)
+expected: (= (:opening opened) (:exported closed))
+  actual: (not (= 1000000000000000 0))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:312)
+expected: (= :closed (:reason rejected))
+  actual: (not (= :closed :domain.life-account/not-implemented))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:315)
+expected: (= operation (get-in rejected [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :origin 11], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 0, :kind :origin, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :material {:mass-kg 2000000.0, :composition {:C 0.5, :O 0.5}}} nil))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:312)
+expected: (= :closed (:reason rejected))
+  actual: (not (= :closed :domain.life-account/not-implemented))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:315)
+expected: (= operation (get-in rejected [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 2], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 2, :kind :extent, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :amounts {:q 0, :g 0, :L 0}} nil))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:312)
+expected: (= :closed (:reason rejected))
+  actual: (not (= :closed :domain.life-account/not-implemented))
+
+FAIL in (closure-exports-once-and-new-requests-cannot-reopen) (life_account_test.clj:315)
+expected: (= operation (get-in rejected [:retain :request]))
+  actual: (not (= {:op-id [[:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"] :test 3], :account [:life-origin/v1 1010 #uuid "10000000-0000-0000-0000-000000000001"], :expected-revision 2, :kind :close, :cause #uuid "10000000-0000-0000-0000-000000000001", :interval nil, :rule-version :life-origin/v1, :reason :parent-removed} nil))
+
+FAIL in (revision-arithmetic-remains-arbitrary-precision) (life_account_test.clj:193)
+expected: (= :accepted (:disposition result))
+  actual: (not (= :accepted :rejected))
+
+FAIL in (revision-arithmetic-remains-arbitrary-precision) (life_account_test.clj:194)
+expected: (= (inc n) (get-in result [:account :revision]))
+  actual: (not (= 1000000000000000000000000000001N 1000000000000000000000000000000N))
+
+Testing law.life-account-test
+
+Ran 25 tests containing 320 assertions.
+144 failures, 0 errors.

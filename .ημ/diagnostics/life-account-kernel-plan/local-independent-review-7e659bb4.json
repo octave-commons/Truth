@@ -1,0 +1,442 @@
+{
+  "schema": "truth.local-planning-review/v1",
+  "at_utc": "2026-10-07T14:11:15.880702+00:00",
+  "reviewer": {
+    "agent": "/root/board_scout",
+    "kind": "independent local Codex planning review",
+    "independence": "Reviewed the complete current diff and linked evidence myself; earlier root and peer statements are corroborating historical context, not substituted judgment."
+  },
+  "pull_request": "https://github.com/octave-commons/Truth/pull/38",
+  "head": "7e659bb4ce799ae324a2d64f8a7904888a5ecf2c",
+  "base": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "branch": "codex/truth-life-actor-plan",
+  "base_branch": "codex/truth-progression-plan",
+  "verdict": "PASS",
+  "actionable_findings": [],
+  "authority": {
+    "hosted_approval": false,
+    "counts_as_hosted_codex": false,
+    "changes_review_gate": false,
+    "implementation_admission": false,
+    "merge_admission": false,
+    "policy": "This artifact is local quality evidence only. No user authorization to substitute it into hosted planning convergence has been observed by this reviewer. Canonical transition, WIP, RED/GREEN, required checks and merge requirements remain unchanged."
+  },
+  "complete_scope": {
+    "files": 15,
+    "additions": 2007,
+    "deletions": 1,
+    "full_binary_full_index_diff_bytes": 167429,
+    "full_binary_full_index_diff_sha256": "38a9dafa950fdebcb827a3a9573a8a95954692ccda94070f0ed8a970a2a2348a",
+    "omitted_changed_files": [],
+    "files_reviewed": [
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-plan/canonical-intake.json",
+        "head_blob": "6e849061ebf6af676a979ea4f61adc5a6a6fd75d",
+        "bytes": 2506,
+        "sha256": "b9d1ee15629cd8c2edf38fc435a89ba4445979cf66efa618d38951c1fd5333c2",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/diagnostics/life-actor-plan/accounting-refinement.json",
+        "head_blob": "fc9167d89a2b5ff4ce6ee1de0691ccd3fa852daf",
+        "bytes": 6665,
+        "sha256": "ae2e5c215a0456d02c355d3da4dfe15e98710ce9986b1bfc70c837aa2b5c27ca",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/diagnostics/life-actor-plan/authoring.json",
+        "head_blob": "9f23f8fc7f736b1928d5147f7a6dba1e94aad664",
+        "bytes": 27831,
+        "sha256": "1990c79f3b279a17167d9b72d68b94404594709930f7578a4430523cad4e7dfe",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/diagnostics/life-actor-planning/chemistry-prerequisite-audit.json",
+        "head_blob": "6ae2c931433c4231df8ead673a14794aeed68122",
+        "bytes": 16731,
+        "sha256": "8917606e52605c15e4e906cf6f5b31f53e1f93062f12db6d37efeebef33bf18c",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/diagnostics/life-actor-planning/origin-account-contract-audit.json",
+        "head_blob": "82ede520bc33baf020fb4f9937a2194f44151542",
+        "bytes": 8060,
+        "sha256": "1df6504fd088c538c579384eb30a101faa091f2cfe4863e8d0a29eea1dab00d7",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/diagnostics/life-actor-planning/origin-contract-closure.json",
+        "head_blob": "4c298f6d22fffed2570a92de80c74dabbd3cda64",
+        "bytes": 8358,
+        "sha256": "d79462c89894a1c9b040fb08d27a935108f2991a04d50439957240f24be344ae",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/diagnostics/life-actor-planning/origin-contract-scope.json",
+        "head_blob": "fef87b1922208861c4830c52f577d58d4c739f65",
+        "bytes": 2242,
+        "sha256": "7ef08d44cadf74c26579a3ac460d225c884dd0926be1cbe335ddfa9a2bf53739",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/receipts.edn",
+        "head_blob": "dd63485e80d9c4e222164da15f6963b4ae8f84a4",
+        "bytes": 38133,
+        "sha256": "8d580333e6d8a9fc63558f7b328c227ddcaa9872e50a4232467361079d351e3b",
+        "reviewed": true
+      },
+      {
+        "path": ".ημ/session-mycology/ledger.md",
+        "head_blob": "efb51b3f6299a7ae5567040e2f712912dd52be5f",
+        "bytes": 25196,
+        "sha256": "0391741650d97083a9334e4354f3c16fd3935a0a2ac39f1f42f8884681510255",
+        "reviewed": true
+      },
+      {
+        "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "head_blob": "71c7862c93fdc02730f70bc3b67122f14c528221",
+        "bytes": 7459,
+        "sha256": "2424f33cf0528e38fcce8c0f1b98e5136bc87414d0b348cee33cdf86bd524b31",
+        "reviewed": true
+      },
+      {
+        "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "head_blob": "accfcc659e65d320c10072026f06a16555428d1a",
+        "bytes": 38698,
+        "sha256": "8ee8fa3de5a797895d57a474240632cf1f9dd1f3b3f7fbf7aa5b857c46b931c2",
+        "reviewed": true
+      },
+      {
+        "path": "docs/research/ACTORS.md",
+        "head_blob": "aebe85e835466755f55db30832b308dd807bb2c7",
+        "bytes": 4620,
+        "sha256": "133faa620caa646697973c02719300d792b9a8bedf63e8635843de6be65c9dc4",
+        "reviewed": true
+      },
+      {
+        "path": "kanban/tasks/.events/ledger.edn",
+        "head_blob": "f34ec73e98f6aefe06434044dbdde61beff293ce",
+        "bytes": 605409,
+        "sha256": "f2f8d40607a22ded523f0eb878f623d06da960c5e48d144a667727bbb8cb1e39",
+        "reviewed": true
+      },
+      {
+        "path": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+        "head_blob": "38e3be3c611295a3ba4a2f046fe68853217c4f44",
+        "bytes": 10697,
+        "sha256": "7ddf455578ace95c7d2bc513e99994444dbce9537516731e0840c836b6c20c89",
+        "reviewed": true
+      },
+      {
+        "path": "kanban/tasks/life-account-origin-kernel.md",
+        "head_blob": "2e5f8799dd2d8e265425fa7ea7b43f0a5f2ef3ec",
+        "bytes": 8544,
+        "sha256": "cab50cd5a99bc9bd4ad580c2ec2284545fd097a1ebdf36ad64dd39e441855b56",
+        "reviewed": true
+      }
+    ]
+  },
+  "review_body": [
+    "No actionable P0-P3 planning finding remains in this exact 15-file diff. It is a grounded proposal and one bounded pure implementation child; it does not implement a biosphere, certify a natural origin, create an avatar, or earn a Gate.",
+    "Outcome and architecture: the existing decided nested-budget design remains intact. Exact local carbon partitions are included in parent material and do not subtract microscopic mass from astronomical doubles or add gravitating mass. The microbial cohort/individual comparison explicitly leaves historical individuality and embodiment later. Scalar ecology, retained atmospheric species and a historical planet-candidate composition are not promoted into accessible carbon or current habitat evidence.",
+    "Scientific grounding: the primary Monod passages support biomass-versus-cell-count distinction, conditional yield and empirical saturation, not abiogenesis, a death law or universal calibration. Jayathilake Methods supports the additional growth/division/transport/mechanical choices of an individual model. The selected allocation/accessibility/origin fractions and cap are explicitly tunable prescriptions. The pure child adopts no Monod rates, timestep, volume, loss generator or PR50 kinetics.",
+    "Numerical contract: exact binary64 input conversion before multiplication, one floor into integer picogram-C, additional exact composition-sum tolerance, and explicit nonnegative integer bounds form a coherent closed account. The child correctly does not treat the existing loose composition predicate as sum validation. The independently recomputed capped partition balances, and the rounding counterexample below demonstrates why ordinary rounded double multiplication is insufficient.",
+    "Transaction contract: origin 0->1, accepted zero-action increment, immutable mandatory valid-key rejection outcome, stale/conflict rejection, exact replay before current closed/revision checks, and returning unchanged current state with the old outcome are mutually consistent. A rejection outcome does not reserve a parent slot or increment revision; a distinct later valid origin can open. Replaying accepted origin after closure cannot replace closed revision3 with historical revision1. Running-account ordering defeats spending the same snapshot twice.",
+    "Lifecycle/source boundary: current spawn requests still call stellar spawn-clump; current phase-event emission follows materialization/reaping. The note names a proposed uniform non-stellar creation extension, explicit serial ownership declaration, post-fold parent/cause/signature checks and atomic account/entity/outcome application instead of asserting these already exist. Those larger mechanisms are expressly excluded from the three-point child, which returns proposals and does not allocate, scan events, persist or mutate a world.",
+    "Closure and causality: changed/consumed/reaped parent, invalid habitat and retained historical outcome cases are handled separately from a new rejected birth. Terminal export is explicitly an unresolved local-model boundary, not proof of physical destruction or global carbon conservation. Scoped-book identity does not promise deduplication across divergent/reverted worlds. No rewind, phase reset, camera or LOD operation silently replenishes the account.",
+    "Natural applicability: source inspection independently confirms H removal in gas-free disk cores, the beyond-snowline envelope gate, and the stated positive-luminosity seed-temperature bound below225K. Historical scalar-life snapshots omit current physical temperature/composition, so they cannot demonstrate full admission or useful lifetime. The note preserves those negative limits and requires later ordinary-genesis proof without weakening guards.",
+    "Cards and sizing: canonical Rheos reads both parent and child Incoming3. The child has a design/research chain, five testable acceptance groups and explicit non-goals. Proposed3 is reasonable for named laws, exact conversion and one-account transitions only, contingent on actual planning admission. The parent remains unfinished; the four-row future boundary table is not four created stories, and only one initial child is introduced. No PR50 blocker or parent-Done dependency is invented.",
+    "Verification and provenance: all changed files were read, including the historical failed verification explanation and later correction. The six new board events, seven receipts and37 reflection lines preserve exact base prefixes; historical full artifact hashes resolve in Git. The ACTORS/design summary now distinguishes selected proposed mechanics from unimplemented producers. Source/test/tooling is byte-unchanged across the PR. Existing uncommitted receipt dirt was excluded from reviewed input and left untouched.",
+    "Implementation handoff after actual admission: begin meaningful RED at the public named law/domain boundary for bit-exact flooring, origin/zero/tiny inputs, sequential overdraw, retained rejection/retry, stale/conflicting keys, zero acceptance and terminal replay. Pure fixture tests are not native life evidence. Full suite, architecture and strict gates belong to the later implementation; none was run or inferred for this documentation review."
+  ],
+  "counterexamples_checked": [
+    {
+      "case": "rounded double product",
+      "M_binary64_hex": "0x1.999999999999ap-4",
+      "carbon_fraction_binary64_hex": "0x1.3333333333333p-2",
+      "floor_exact_product_in_pg": 30000000000000,
+      "floor_after_rounding_product_in_pg": 29999999999999,
+      "disposition": "The proposed exact-input contract rejects the shortcut; this is an independent derivation, not an executed Clojure kernel test."
+    },
+    {
+      "case": "capped origin",
+      "integer_pg_stocks": {
+        "U": 0,
+        "S": 9990000000000,
+        "B": 10000000000,
+        "W": 990000000000000
+      },
+      "total_pg": 1000000000000000,
+      "revision": 1
+    },
+    {
+      "case": "integer extent algebra",
+      "admitted_small_integer_cases": 7560,
+      "result": "All checked extents conserve sum and nonnegativity. No project implementation was executed."
+    },
+    {
+      "case": "rejected origin then improved context",
+      "disposition": "Exact retry retains rejection/revision0; a distinct key may open at1. Mandatory retained rejection outcome is specified."
+    },
+    {
+      "case": "zero action, stale request, closure, old replay",
+      "revision_trace": [
+        0,
+        1,
+        2,
+        2,
+        3,
+        3
+      ],
+      "disposition": "Old successful outcome is returned without old-state restoration or repeated export; closed remains closed."
+    },
+    {
+      "case": "same snapshot competing resource requests",
+      "disposition": "Caller-supplied deterministic fold and running revisions reject the later stale/overdraw request; kernel does not invent a scheduler."
+    },
+    {
+      "case": "resource-starved illustrative trace",
+      "disposition": "Section5 describes a future producer admitting q=0; selected section7 and child explicitly reject an excessive supplied positive extent, so the kernel has no clipping fallback."
+    },
+    {
+      "case": "ordinary disk birth applicability",
+      "seed_temperature_strict_upper_bound_K": 190.49750726887805,
+      "disposition": "No positive-H warm birth on this path; later evolution not proved impossible. No naturally eligible origin or account lifetime claimed."
+    },
+    {
+      "case": "parent change and copied world",
+      "disposition": "Local terminal export ends coverage; a copied book shares ancestry and cannot be merged for additional credit. Cross-history accounting remains excluded."
+    }
+  ],
+  "verification": {
+    "diff_whitespace_exit": 0,
+    "source_test_tooling_changed_paths": [],
+    "checked_unchanged_roots": [
+      "src",
+      "test",
+      "test-native",
+      "dev",
+      "bin",
+      "deps.edn",
+      ".github",
+      ".clj-kondo",
+      ".lsp",
+      ".splint.edn",
+      ".jscpd.json"
+    ],
+    "base_append_only_proofs": [
+      {
+        "path": "kanban/tasks/.events/ledger.edn",
+        "base_bytes": 595354,
+        "base_sha256": "559edaf1f3031a20539e9fc198ad1a9925470fcf48596824d7effae437021401",
+        "byte_prefix_preserved": true,
+        "appended_lines": 6
+      },
+      {
+        "path": ".ημ/receipts.edn",
+        "base_bytes": 29727,
+        "base_sha256": "fd2537bf125a96321cb06b83003c92acbb72202d589da5b4ce7b36229395ab1f",
+        "byte_prefix_preserved": true,
+        "appended_lines": 7
+      },
+      {
+        "path": ".ημ/session-mycology/ledger.md",
+        "base_bytes": 22267,
+        "base_sha256": "dabd70d9cfcffba3c92476c552c0dd579c32ac4e0f167ddec56e5c22ca3ff08a",
+        "byte_prefix_preserved": true,
+        "appended_lines": 37
+      }
+    ],
+    "historical_prefix_checks": 14,
+    "historical_full_artifact_hashes_verified_in_git": 16,
+    "recorded_source_and_archived_evidence_hash_checks": 57,
+    "relative_links_checked": 35,
+    "heading_fragments_checked": 10,
+    "link_failures": [],
+    "canonical_cli": "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "canonical_cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+    "canonical_cards": [
+      {
+        "uuid": "life-account-origin-kernel",
+        "frontmatter": {
+          "category": "specs",
+          "labels": "feature, ecology, accounting, represented-life",
+          "parent": "life-to-represented-actor-spec",
+          "type": "task",
+          "write-id": "1791371246950-0.3v98v68lylrg53qusv",
+          "points": "3",
+          "title": "Implement the pure integer life-account and origin kernel",
+          "priority": "P1",
+          "status": "incoming",
+          "design": "docs/designs/resolution-regimes-and-scale-coupling.md",
+          "uuid": "life-account-origin-kernel",
+          "created_at": "2026-10-07T10:48:23.887Z"
+        },
+        "canonical_read_stdout_sha256": "295b6f55501da4f24b1860b41d7c2705f55a9e9d3bfc4400f95ead32f7394b3d",
+        "exit": 0
+      },
+      {
+        "uuid": "life-to-represented-actor-spec",
+        "frontmatter": {
+          "category": "tasks",
+          "labels": "research, design, ecology, actors, playable-gate",
+          "parent": "embodied-character-voxel-mode",
+          "type": "task",
+          "write-id": "1791371248795-0.q1jdotimy3frwsy7d2",
+          "points": "3",
+          "title": "Ground the first causal life-to-represented-actor boundary",
+          "priority": "P1",
+          "status": "incoming",
+          "uuid": "life-to-represented-actor-spec",
+          "created_at": "2026-10-06T20:19:09.245Z"
+        },
+        "canonical_read_stdout_sha256": "ba2d5e6d148ecf47578535abd990b0b9d0e72a2c02a6b6f5e0399b364e90f35c",
+        "exit": 0
+      }
+    ],
+    "execution": "Read-only Git/files, canonical Rheos read-task, primary web sources, Python hashing/link checks and arithmetic derivation only; no project namespaces, Clojure/JVM/tests, native processes, Git mutations or remote writes."
+  },
+  "linked_sources_read_and_pinned": [
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "head_sha256": "2424f33cf0528e38fcce8c0f1b98e5136bc87414d0b348cee33cdf86bd524b31"
+    },
+    {
+      "path": "docs/designs/simulation-methods-research.md",
+      "head_sha256": "8e9d17d9cf93a9a0dc3dabf6cda9879e997020c4fcdd7f014b041dbc1e27634c"
+    },
+    {
+      "path": "docs/designs/truth-phase-0-stellar-nebula-design.md",
+      "head_sha256": "51e5a5c4d408b3e09da04f529ccf74bc49258587d32b1cc00474cac3f64507e0"
+    },
+    {
+      "path": "docs/research/atmosphere/planetary-atmosphere-retention-classifier.md",
+      "head_sha256": "d145198651f9d8021b750fc20e1a8664ebf28ca69bc32fcc8df4cc3beb07e67e"
+    },
+    {
+      "path": "docs/research/physics/nebular-chemistry-metal-enrichment.md",
+      "head_sha256": "5fb46b3fc8942bfad5b716167c9fa811d812cb43fe37ec25a7199b9d5c95ba75"
+    },
+    {
+      "path": "src/domain/atmosphere.clj",
+      "head_sha256": "1821620e67f2685892b7071e25f3e47044106279333c5e29482b7518d0e5f5d5"
+    },
+    {
+      "path": "src/domain/chemistry.clj",
+      "head_sha256": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f"
+    },
+    {
+      "path": "src/domain/ecology/state.clj",
+      "head_sha256": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569"
+    },
+    {
+      "path": "src/domain/ecology/system.clj",
+      "head_sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04"
+    },
+    {
+      "path": "src/domain/ecs/core.clj",
+      "head_sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970"
+    },
+    {
+      "path": "src/domain/ecs/event.clj",
+      "head_sha256": "9f208199624dcd1bb94a40c9059dbd88b631f45380155bbdec39022803c1e1c7"
+    },
+    {
+      "path": "src/domain/ecs/timeline.clj",
+      "head_sha256": "67b7d841dc079c33e6835618547afa21662036b1faf91c53e9a1dc9f370d09b3"
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "head_sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9"
+    },
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "head_sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee"
+    },
+    {
+      "path": "src/domain/integrator/core.clj",
+      "head_sha256": "08cbb9a5adbec225476404efaf098980386db16947d09e65c5884549e2dd1489"
+    },
+    {
+      "path": "src/domain/integrator/temperature.clj",
+      "head_sha256": "75ade47ca2ceff9b5deee9575d900ebf4b54c8004ce364784591e56d73b2f55e"
+    },
+    {
+      "path": "src/domain/mass_transfer.clj",
+      "head_sha256": "b61cfeb8e62e6154bcf17039e01bd6e978a7c8032ed51c00387d5a7859f57b57"
+    },
+    {
+      "path": "src/domain/planet_formation/composition.clj",
+      "head_sha256": "471d40398b15baf781a603bd95694c778809bff18da98f2a905c756601aa6630"
+    },
+    {
+      "path": "src/domain/planet_formation/orbit.clj",
+      "head_sha256": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a"
+    },
+    {
+      "path": "src/domain/planet_formation/physics.clj",
+      "head_sha256": "e1493f37c5a1bf87c8a7e9edd7a1bb59ac2938c1cad1dc70f451aed420e523c6"
+    },
+    {
+      "path": "src/domain/stellar/classifier/planet.clj",
+      "head_sha256": "9e0094be9e1876f1a1156f961f99c30cf6e3a7a7eb4e35e54acd953784eff55e"
+    },
+    {
+      "path": "src/domain/stellar/classifier/state.clj",
+      "head_sha256": "b79f901fcac5363fec522705062fdbf75713512551144d2828af812e3d3ffe2e"
+    },
+    {
+      "path": "src/domain/stellar/merge.clj",
+      "head_sha256": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba"
+    },
+    {
+      "path": "src/domain/stellar/seeder.clj",
+      "head_sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884"
+    },
+    {
+      "path": "src/domain/stellar/temperature.clj",
+      "head_sha256": "9095bd74434dc0004bb2db24200d0d6cb5e8fa452c5db91996014e246ab85cd4"
+    },
+    {
+      "path": "src/infra/menu/panels.clj",
+      "head_sha256": "b92fefff01a81949f581de4c6081f8bad5372109e36f65d879d3a19592506a36"
+    },
+    {
+      "path": "src/law/chemistry.clj",
+      "head_sha256": "640d47257a4157676232a94a981a41a1d9ad528c9c36eacf65c437565c4a5066"
+    },
+    {
+      "path": "src/law/composition.clj",
+      "head_sha256": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615"
+    },
+    {
+      "path": "src/law/ecology/schema.clj",
+      "head_sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75"
+    },
+    {
+      "path": "src/law/stellar/orbital/constants.clj",
+      "head_sha256": "8fc73756e353e2595a72b90d7039ae6a7e923531651397bb72419c89793378a6"
+    }
+  ],
+  "primary_sources": [
+    {
+      "url": "https://garcialab.berkeley.edu/courses/papers/Monod1949.pdf",
+      "read_sections": "pp371-373,379-381,383-384 (equation2)",
+      "reviewed_claim": "Biomass/count distinction, conditional yield, empirical nutrient saturation; no selected calibration or abiogenesis."
+    },
+    {
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0181965",
+      "read_sections": "Introduction and Methods: biomass kinetics, nutrient uptake, agent division, mass balance, mechanical relaxation",
+      "reviewed_claim": "Individual representation entails explicit division, transport and mechanics; the paper is not a native implementation or compulsory parameter set."
+    }
+  ],
+  "limits": [
+    "This exact-head local PASS supplies no native provider approval or completed hosted round.",
+    "Future lifecycle, producer, identity retention integration and meaningful timed action remain unimplemented and outside the pure child.",
+    "No natural eligible origin or useful account lifetime is demonstrated; current material-model constraints remain explicit.",
+    "This is a review of a proposed3-point slice, not proof of eventual implementation effort or test success.",
+    "No exhaustive biological validity, physical/global conservation or playable Gate claim."
+  ],
+  "only_authored_path": ".ημ/diagnostics/life-account-kernel-plan/local-independent-review-7e659bb4.json",
+  "existing_uncommitted_receipt_sha256_preserved": "291d66a0b59824590ba783bb7f7d9edbd69c3fcf478f9a87194821318f4702f2"
+}
