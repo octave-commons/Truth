@@ -1,0 +1,3 @@
+src/law/input_intent.cljc 6 forms
+test/law/input_intent_test.clj 5 forms
+test/infra/dev/sculpt_intent_test.clj 29 forms

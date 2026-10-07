@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "rg",
+    "--files",
+    "src",
+    "test",
+    "dev",
+    "resources"
+  ],
+  "exit_code": 2,
+  "error": "rg: resources: No such file or directory (os error 2)",
+  "result": "Static kondo/reader already passed; pin inventory failed before any JVM execution. Retry explicitly records absent resources path."
+}

@@ -1,0 +1,79 @@
+{
+  "argv": [
+    "clojure",
+    "-M:test",
+    "-n",
+    "law.input-intent-test",
+    "-n",
+    "infra.dev.sculpt-intent-test",
+    "-n",
+    "infra.dev.focus-cadence-test",
+    "-n",
+    "infra.dev.window-test",
+    "-n",
+    "infra.render.input-test",
+    "-n",
+    "domain.pilot-resolve-seam-test",
+    "-n",
+    "architecture-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+  "started_utc": "2026-10-07T15:49:45.094751+00:00",
+  "ended_utc": "2026-10-07T15:49:56.829161+00:00",
+  "elapsed_s": 11.741422521998174,
+  "pid": 1192905,
+  "owned_pids_observed": [
+    1192905,
+    1192912
+  ],
+  "process_identity_history": [
+    {
+      "elapsed_s": 0.0017650230001891032,
+      "pid": 1192905,
+      "starttime_ticks": 5568515,
+      "state": "R",
+      "exe": "/usr/bin/env",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan"
+    },
+    {
+      "elapsed_s": 0.10212169999431353,
+      "pid": 1192905,
+      "starttime_ticks": 5568515,
+      "state": "S",
+      "exe": "/usr/bin/bash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan"
+    },
+    {
+      "elapsed_s": 0.20338171899493318,
+      "pid": 1192912,
+      "starttime_ticks": 5568516,
+      "state": "S",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan"
+    },
+    {
+      "elapsed_s": 1.7272386990007362,
+      "pid": 1192905,
+      "starttime_ticks": 5568515,
+      "state": "S",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan"
+    }
+  ],
+  "java_opts": "-Xms256m -Xmx2g",
+  "removed_inherited_option_names": [
+    "JAVA_TOOL_OPTIONS",
+    "JDK_JAVA_OPTIONS",
+    "_JAVA_OPTIONS"
+  ],
+  "work_timeout_s": 175,
+  "cleanup_reserve_s": 5,
+  "timed_out": false,
+  "exit_code": 1,
+  "main_process_reaped": true,
+  "owned_pids_still_present": [],
+  "source_test_changed": [],
+  "source_test_pin_count": 304,
+  "stdout_sha256": "3c65d7a13f4369f83695fcdc662ca3c65623fe0046d73371f6a3ae3bc6e3832c",
+  "stderr_sha256": "19e98ae7831e0ca60a4a35e69da8db69d8afca3c330ce176c5c495c95f1359ea"
+}

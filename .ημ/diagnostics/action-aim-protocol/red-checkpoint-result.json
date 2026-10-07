@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T15:55:03.098095+00:00",
+  "exit_code": 0,
+  "readback_argv": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "read-task",
+    "focus-follows-pilot",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "readback_exit_code": 0,
+  "canonical_status": "in_progress",
+  "estimate": "3",
+  "manifest_rows_verified": 18,
+  "inventory_paths": 19,
+  "prior_ledger_bytes": 644537,
+  "prior_ledger_sha256": "4c97aa8ff91f09410d772ea4f91c2fcafca2d0f3f636086d200558463e20e8ab",
+  "ledger_prefix_preserved": true,
+  "prior_card_sha256": "688d38c583a8c84d0119cc7dad01d4ac09ded503e3f432ab8bd5df1fdbda30c8",
+  "card_after_sha256": "67d1bc794c46661acf9c13be3d3d38ea3b3a0f3ed1142110a8841bc1ecd8aae2"
+}

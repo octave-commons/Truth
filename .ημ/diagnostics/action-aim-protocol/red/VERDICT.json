@@ -1,0 +1,63 @@
+{
+  "at": "2026-10-07T15:52:05.124379+00:00",
+  "head": "7188fbab1400589c5a3ccadb560df6b5120a5f9b",
+  "result": "EXPECTED_ABSENT_API_RED_WITH_PASSING_SEMANTIC_BASELINE",
+  "tests": 56,
+  "assertions": 380,
+  "failures": 13,
+  "errors": 0,
+  "failure_kind": "All 13 failures are explicit absent admitted API assertions; no numerical mismatch assertion failed.",
+  "failing_vars": [
+    "coincident-prepared-focus-keeps-the-domain-anchor-convention",
+    "invalid-capability-rejects-before-callback-installation",
+    "manual-validation-precedence-and-tracking-delegation",
+    "tracking-retains-magnitude-validation-before-its-observer-gate",
+    "one-config-snapshot-governs-mid-drain-arrivals",
+    "absent-and-explicit-nil-host-settings-remain-distinct",
+    "valid-aim-denied-payment-retains-prepared-attention",
+    "opted-in-callback-aims-from-the-current-physical-publication",
+    "reset-and-later-camera-input-remain-ordered-around-contextual-actions",
+    "explicit-callback-submission-retains-press-and-release-semantics",
+    "fifo-payment-and-later-readers-use-persistent-preparation",
+    "nominal-payloads-and-legacy-callables-share-one-failure-guard",
+    "throwing-submission-never-falls-back-to-direct-dispatch"
+  ],
+  "semantic_baseline": {
+    "var": "infra.dev.sculpt-intent-test/legacy-callback-characterizes-published-stale-aim",
+    "observed": "Passed assertions for real callback + queue + sim-loop + production integrator: actual paid anchor equals stale published-focus direction and differs from current Spark-relative direction; both zero and nonzero frame shifts; physical state preserved at action boundary.",
+    "not_observed": "Opted-in contextual behavior is not exercised until its APIs exist; missing APIs are not replaced by test implementations."
+  },
+  "stderr_classification": "Existing infra.dev.window-test/log-frame-error-includes-tick-and-paths deliberately logs ExceptionInfo boom at line116; no test error. Raw stderr preserved.",
+  "source_test_pin_count": 304,
+  "all_pins_unchanged": true,
+  "authored_paths": {
+    "src/law/input_intent.cljc": "55df510b0e8c20cc48ac1a623eafeecb80379cf3f914af58914af3d1447551fb",
+    "test/law/input_intent_test.clj": "37fd4baf59c7508189b21cb0307d04ebbd93b977e53d26ac2e4ad24a9362d3b6",
+    "test/infra/dev/sculpt_intent_test.clj": "819f896586465cc4f2935eb7b234a233d21d5396939a3f1dc576f1e28256eae3"
+  },
+  "production_loop_input_unchanged": {
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "src/infra/render/input.clj": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c"
+  },
+  "static": {
+    "kondo": "0 errors,0 warnings,exit0",
+    "reader": "forms only,empty namespace alias supplied; no evaluated project forms;exit0"
+  },
+  "execution": {
+    "file": "focused-execution.json",
+    "exit_code": 1,
+    "elapsed_s": 11.741422521998174,
+    "owned_pids": [
+      1192905,
+      1192912
+    ],
+    "owned_pids_absent_at_closure": true
+  },
+  "limits": [
+    "No GREEN implementation in loop/input.",
+    "No full suite, strict six-gate run, host-cost run or native-window acceptance.",
+    "No automatic second JVM run; root owns checkpoint and next admission."
+  ],
+  "proposal_sha256": "7779796849a5c17de2ecccfbaf5d1d9824506d65f6b4069dfc7889e05c82fd0c",
+  "admission_comment_sha256": "455b052b6c527db0ad58b301bb6749b88a3361efaa89f7f74ff0ae3e44a2ef13"
+}

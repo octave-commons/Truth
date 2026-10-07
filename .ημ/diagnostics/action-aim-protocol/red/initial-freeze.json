@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-07T15:48:57.930922+00:00",
+  "head": "7188fbab1400589c5a3ccadb560df6b5120a5f9b",
+  "source_test_pin_count": 304,
+  "absent_scan_roots": [
+    "resources"
+  ],
+  "authored_files": {
+    "src/law/input_intent.cljc": "55df510b0e8c20cc48ac1a623eafeecb80379cf3f914af58914af3d1447551fb",
+    "test/law/input_intent_test.clj": "37fd4baf59c7508189b21cb0307d04ebbd93b977e53d26ac2e4ad24a9362d3b6",
+    "test/infra/dev/sculpt_intent_test.clj": "819f896586465cc4f2935eb7b234a233d21d5396939a3f1dc576f1e28256eae3"
+  },
+  "production_loop_input_unchanged": true,
+  "tests_not_yet_executed": true,
+  "static_only": "clj-kondo and BB reader; no project namespaces evaluated",
+  "initial_static_observations": [
+    "Initial kondo found five shadowed core local names; corrected before this frozen check.",
+    "Initial standalone reader lacked intent namespace alias; corrected parser-only setup, no project namespace load."
+  ],
+  "anticipated_results": "Legacy callback/integrator characterization asserts real stale/current anchor mismatch as a passing control. New contextual specifications explicitly fail missing APIs; these are not numerical wrong-anchor failures."
+}
