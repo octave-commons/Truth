@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-07T06:11:55.162718+00:00",
+  "checks": [
+    {
+      "argv": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/native-input-hygiene/callback-probe.clj",
+        ".\u03b7\u03bc/diagnostics/native-input-hygiene/snapshot.clj"
+      ],
+      "exit": 2,
+      "stdout": ".\u03b7\u03bc/diagnostics/native-input-hygiene/snapshot.clj:11:12: warning: duplicate require of infra.menu\nlinting took 40ms, errors: 0, warnings: 1\n",
+      "stderr": "",
+      "disposition": "Combined user-namespace script lint conflates independent disposable-JVM and game-client loads. No source suppression/change; qualify each script in its actual separate lint context below.",
+      "observation": "Repeated source-only combined lint to retain the actual tool exit code; independent per-script passes remain below."
+    },
+    {
+      "command": "Python ast.parse of runner.py (no import/execution)",
+      "exit": 0
+    },
+    {
+      "argv": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/native-input-hygiene/callback-probe.clj"
+      ],
+      "exit": 0,
+      "stdout": "linting took 11ms, errors: 0, warnings: 0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/native-input-hygiene/snapshot.clj"
+      ],
+      "exit": 0,
+      "stdout": "linting took 28ms, errors: 0, warnings: 0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--quiet",
+        "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "--",
+        "src",
+        "dev",
+        "resources",
+        "deps.edn"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "runner_here_root": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+  "runtime_execution": "none",
+  "project_tests": "not run",
+  "native_execution": "none"
+}
