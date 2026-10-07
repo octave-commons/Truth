@@ -521,3 +521,13 @@
   spore: none
   receipt-refs: native-window-close-disposal,b395c404
   note: A verified leaked window does not make intentional simulation retention a defect or extend a measurement card into implementation authority. Size the whole resource lifetime including partial creation, error-mode event polling and stale-owner stop races; require native disappearance separately from fake-handle tests. Preserve primary errors, ordinary restart options and context-ID ownership. No new spore; existing planning and provenance skills suffice.
+
+- ts: 2026-10-07T04:06:22.620691+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Record window-plan acceptance amendment without rewriting event history
+  p-efficiency: 0.94
+  p-friction: 0.12
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: native-window-close-disposal,review5437458020,comment4202906657
+  note: Supported Markdown authoring can be made easier to audit by recording exact later acceptance refinements through a canonical comment; preserve the original creation event and make no replay or implementation claim. Existing provenance skills suffice.

@@ -1,0 +1,82 @@
+{
+  "at": "2026-10-07T04:06:22.620691+00:00",
+  "base": "9a73733d93338d8a0e1abb4034632f992e20e8ec",
+  "review": 5437458020,
+  "finding_comment": 4202906657,
+  "canonical_cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "comment": "Append-only amendment record for PR37 review5437458020 / comment4202906657, inspected head9a73733d93338d8a0e1abb4034632f992e20e8ec. After the original task-created event, the Incoming card was manually refined in AC1 and AC5 before its first planning commit. This records that already-present Markdown refinement explicitly; it does not rewrite the creation event. AC1 added: \"Error-overlay closure preserves its error and live service; the existing simulation pause on that error remains, so this case does not promise ticks advance or silently clear the error.\" AC5 replaced the generic retained-world restart wording with: \"completed full stop then restart with that world and the recorded ordinary nebula launch options (same tick/body-projection route, fresh GL resources) proves real fresh-resource drawing. The retained primary game is untouched.\" These clarify preservation of existing error state and the exact ordinary-nebula launch route required for the later native proof. Current body, scope, parent and Incoming5 status remain unchanged. No source edit, test/native execution, new implementation admission or completed review is asserted.",
+  "canonical_body_sha256": "1c369081b233ee284b454770a94eb2604f324bf3eb92720d001170a8146f2995",
+  "body_unchanged": true,
+  "frontmatter_unchanged_except_write_id": true,
+  "prior_comment_prefix_preserved": true,
+  "canonical_frontmatter": {
+    "category": "tasks",
+    "labels": "hygiene, render, lifecycle",
+    "parent": "f369c598-279c-498d-a64f-45d2ce16ad34",
+    "type": "task",
+    "write-id": "1791345981874-0.2c9qp9n7jsvkbl3f9u3",
+    "points": "5",
+    "title": "Dispose native window on render exit while retaining simulation",
+    "priority": "P1",
+    "status": "incoming",
+    "uuid": "native-window-close-disposal",
+    "created_at": "2026-10-07T03:26:09.798Z"
+  },
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 642350,
+      "before_sha256": "ba7d80df8ecc9a99807d90452845f3056fdc648d3c0b47d8fedc869c3e409ac5",
+      "after_bytes": 643897,
+      "after_sha256": "705b93972bc36451491ea60cd9acd024bec47a3f20e95aa5663cefa4794ca386",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 66168,
+      "before_sha256": "89da88265e7fde95ff9d356e035e7afe041ac17f764e284011cb53ffbf341f95",
+      "after_bytes": 67089,
+      "after_sha256": "6b650374edae30c60e35b9d860cc8945c484a628db1324baee43870851858095",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 35007,
+      "before_sha256": "fde439bf9c29ecde525525a9cd586a74d46b3b9dd4682472a6e6a45b320c024d",
+      "after_bytes": 35618,
+      "after_sha256": "9c520882762c28508d912289ed22dfe20164d163fef6f22d67c7cbbd47c2b063",
+      "original_prefix_preserved": true,
+      "appended_lines": 10
+    }
+  ],
+  "parent_unchanged": {
+    "path": "kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md",
+    "sha256": "b7bbc6751863fe7640bc659c18877f55566312d937c2e4eb8ae16d3b60b6bc52"
+  },
+  "previous_authoring_inventory_unchanged": "c0fe90041574b1bfd6d330b4ff740b36a30c9f900d265b2ff8ca84a1296c9e6f",
+  "closed_artifacts": [
+    {
+      "path": "kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md",
+      "sha256": "a424cdc51bd686f0869a2b229967c1069de7e365d06b8c3607413a8234049393",
+      "bytes": 8517
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "sha256": "705b93972bc36451491ea60cd9acd024bec47a3f20e95aa5663cefa4794ca386",
+      "bytes": 643897
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "sha256": "6b650374edae30c60e35b9d860cc8945c484a628db1324baee43870851858095",
+      "bytes": 67089
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "sha256": "9c520882762c28508d912289ed22dfe20164d163fef6f22d67c7cbbd47c2b063",
+      "bytes": 35618
+    }
+  ],
+  "verification": "No source/test/config change. No runtime/test/native call. git diff --check pass. Original inventory is a prior checkpoint, not current full-file hashes. No board validation or implementation admission."
+}

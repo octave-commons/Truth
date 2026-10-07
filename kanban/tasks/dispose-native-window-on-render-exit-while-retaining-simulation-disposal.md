@@ -3,7 +3,7 @@ category: "tasks"
 labels: "hygiene, render, lifecycle"
 parent: "f369c598-279c-498d-a64f-45d2ce16ad34"
 type: "task"
-write-id: "1791343737631-0.myrdrsbqi6n0a6j5kf6"
+write-id: "1791345981874-0.2c9qp9n7jsvkbl3f9u3"
 points: "5"
 title: "Dispose native window on render exit while retaining simulation"
 priority: "P1"
@@ -109,5 +109,7 @@ remain required. No implementation, executed RED/native result or Done claim.
 ---
 
 Planning only on exact b395c4049718f7ce015ddf25fc0a192d97821373. This new Incoming hygiene child is proposed at 5 points, superseding the historical tentative 3 because partial construction, normal/error exit, resource cleanup and stop ownership form one lifetime invariant. Parent f369c598-279c-498d-a64f-45d2ce16ad34 remains byte-identical and InProgress3 with its measurement scope. Grounded note docs/notes/2026-10-06-native-window-close-lifecycle.md records existing actual Escape evidence, source/API boundaries and later RED/native matrix. Independent source/planning review found no blocker at note60ac1d8904e7addadd5eef388e3a12b278a7ee2eec0b119a8932bd31da363bc9 and pre-comment card89b88ea64fd6ae4f97e5e19c4161be74a0519b1f97e938a6797139c0d9c15bee. Preserve normal running simulation, error-overlay pause/error evidence, exact captured service identity, and original ordinary-nebula launch options on explicit full-stop/restart. Discard unproven foreign-context cached IDs without deleting them in another context; no offscreen architecture or input-neutralization policy expansion. Required native proof uses a disposable secondary JVM/display/free port and never the retained primary game. Cache teardown strategy, test seams, final size and configured review convergence remain prerequisites; this is no implementation admission, executed RED/native result, Ready transition or Done.
+
+Append-only amendment record for PR37 review5437458020 / comment4202906657, inspected head9a73733d93338d8a0e1abb4034632f992e20e8ec. After the original task-created event, the Incoming card was manually refined in AC1 and AC5 before its first planning commit. This records that already-present Markdown refinement explicitly; it does not rewrite the creation event. AC1 added: "Error-overlay closure preserves its error and live service; the existing simulation pause on that error remains, so this case does not promise ticks advance or silently clear the error." AC5 replaced the generic retained-world restart wording with: "completed full stop then restart with that world and the recorded ordinary nebula launch options (same tick/body-projection route, fresh GL resources) proves real fresh-resource drawing. The retained primary game is untouched." These clarify preservation of existing error state and the exact ordinary-nebula launch route required for the later native proof. Current body, scope, parent and Incoming5 status remain unchanged. No source edit, test/native execution, new implementation admission or completed review is asserted.
 
 ---
