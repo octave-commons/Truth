@@ -431,3 +431,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,9c5c889,2026-10-07T01:01:25.553906+00:00
   note: Rebind process, boot, world and GL context after reboot. A Java proc-file available failure is diagnostic I/O, not a game failure; preserve the failed no-install attempt and use a bounded verified read. Inspect actual frames, distinguish HUD time from later world reads, and preserve growing-log prefixes without calling them complete stopped logs. Existing skills suffice; no spore.
+- ts: 2026-10-07T01:36:28.646882558Z
+  session: /home/err/spaces/foresight/.worktrees/truth-native-evidence
+  task: Expose admitted unread PR30 native evidence without changing closed observations
+  p-efficiency: 0.94
+  p-friction: 0.20
+  p-skill-candidate: 0.12
+  spore: none
+  receipt-refs: PR30,review5436467588,90d6c2eb22442d7bb925c80136aabc1ddd7964b4,f369c598-279c-498d-a64f-45d2ce16ad34
+  note: Exact-head binding and a passing verdict do not establish access to compressed material. Preserve original archives and publish byte-exact small textual copies with hashes; count neither local extraction nor derived summaries as native review. Existing skills suffice; no spore or policy change.
