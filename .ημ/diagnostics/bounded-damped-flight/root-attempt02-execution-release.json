@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-07T12:57:05.736888+00:00",
+  "decision": "Root releases one fresh bounded-damped-flight attempt02 after independent exact-byte reversal and AST checks of three path-only root wrappers. Core runner1f871920/aim386a1ca5/cadence3a86998b, all186production hashes and preparation pins verified unchanged. Scope and original1500total1470work960no-target180startup3aim360look20hold3frame limits unchanged; ordinaryD1.5e14/r.8 setup, explicitroot natural-ready target selection after poller reaps, combined bounded flight owns subsequent lane/STOP. No production feature/physics change. Prior attempt01 fully closed and all owned PIDs absent; freshattempt02 path and7898free. Root will monitor formation promptly; no external task during readiness handoff. Primary DISPLAY0/7896 untouched.",
+  "wrappers": [
+    {
+      "old": "root-client.py",
+      "new": "root-client-attempt02.py",
+      "sha256": "4c9bcb2adcaf2332a087cd599573dc9749ebb0e0cccc402f5f77f245d1de3cb5"
+    },
+    {
+      "old": "root-setup.py",
+      "new": "root-setup-attempt02.py",
+      "sha256": "438becaf5948e022cecdc5fe920de1e78fefb8e68edb2a1e8b9d98eda36405d9"
+    },
+    {
+      "old": "root-formation-poller.py",
+      "new": "root-formation-poller-attempt02.py",
+      "sha256": "4343c7b8f73bc70ba55c715b7bc2d3d7ee0677832b27b0511e27092f4b2ee78e"
+    }
+  ],
+  "core_and_production_verified": true,
+  "preparation_proof_sha256": "16bf7eb648472f22489fe553550b1f3e53630c1c2a3a7b0421499ea7a49f6cae",
+  "canonical_comment_success": true
+}

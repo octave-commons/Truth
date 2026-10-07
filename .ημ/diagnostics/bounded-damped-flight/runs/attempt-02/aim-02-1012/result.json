@@ -1,0 +1,80 @@
+{
+  "target": 1012,
+  "invocation": 2,
+  "max_steps": 180,
+  "max_work_seconds": 120,
+  "max_failure_cleanup_seconds": 65,
+  "tolerance_degrees": 0.5,
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "runner_sha256": "1f871920ea12c251e49200680495419052b66f3cf520030a451e2571386e1cc0",
+  "initial_identity": {
+    "supervisor": {
+      "pid": 121086,
+      "start": "4532602",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12"
+    },
+    "app": {
+      "pid": 121108,
+      "start": "4532649",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "xvfb": {
+      "pid": 121100,
+      "start": "4532618",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "display": ":1",
+    "port": 7898,
+    "world": 1393428754,
+    "window": 124007450559184,
+    "x-window": "2097159",
+    "snapshot_client": {
+      "pid": 122145,
+      "start": "4533760",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    }
+  },
+  "scope": "orientation diagnostic only; no thrust, follow, capture or interception",
+  "steps": [
+    {
+      "target": 1012,
+      "tick": 5256,
+      "spark_position": [
+        -2899047012782625.5,
+        -1494113066977065.8,
+        165374174071529.84
+      ],
+      "target_position": [
+        3420070887830288.5,
+        1.889803227316321e+16,
+        -1.4342595079372092e+16
+      ],
+      "distance_m": 2.5811858020571024e+16,
+      "angle_degrees": 0.3812321301012612,
+      "yaw": -107.61000000000001,
+      "pitch": 34.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -107.21716304039666,
+      "desired_pitch": 34.1988000897357,
+      "requested_pixels": [
+        39,
+        -20
+      ]
+    }
+  ],
+  "outcome": "aimed-at-one-published-observation",
+  "elapsed_seconds": 2.53482247699867,
+  "unreaped_client_pids": []
+}

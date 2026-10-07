@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-07T13:28:05.211666+00:00",
+  "scope": "offline closed-file audit only",
+  "attempts": [
+    {
+      "exit_code": 1,
+      "stage": "before EDN parsing/report writes",
+      "finding": "Audit used successful_admission.tick, actual record nests it under successful_admission.geometry.tick; fixed audit reader only.",
+      "tool_chunk": "c3cda2"
+    },
+    {
+      "exit_code": 1,
+      "stage": "raw endpoint arithmetic check, before report writes",
+      "finding": "Audit used sqrt(sum squares), whereas recorded production diagnostic uses math.hypot; one endpoint differed by4m at2.6e16m. Audit changed to exact diagnostic expression; no tolerance/record changes.",
+      "tool_chunk": "1be5f4"
+    },
+    {
+      "exit_code": 0,
+      "tool_chunk": "bf5b0d",
+      "assertions": "All recorded audit assertions passed; raw input bytes unchanged"
+    }
+  ],
+  "audit_script_sha256": "23c23e72d0a38a82a5b70a264d66cf537851557476192900c81e74a6a941c106",
+  "report_sha256": "271c13de2c7a8ef81ab13b0574d7a6c053c92cb750fbbfd5bfb6ebbc5e617989",
+  "summary_sha256": "b10f116ace898c2ba58828ae8d9432a936a30e6b3ed110717fc5e1727b6fce33",
+  "png_visual_read": {
+    "path": "runs/attempt-02/frame-1791377912390942740-ef6784c1.png",
+    "sha256": "5b399d4205f6563cb7949161e2a21eda1d1b3889a22c8bd761cf517ac4a72766",
+    "observed_displayed_tick": 520,
+    "dimensions": [
+      1280,
+      720
+    ],
+    "view": "3rd person",
+    "displayed_stars": 0,
+    "displayed_planets": 0,
+    "limits": "Young frame only; no mature approach pixels or FPS evidence. Central reward text overlaps Actions glyph region."
+  }
+}

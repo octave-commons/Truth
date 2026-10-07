@@ -1,0 +1,560 @@
+{
+  "started_at": "2026-10-07T12:57:44.524417+00:00",
+  "pid": 124697,
+  "state": "passed",
+  "steps": [
+    {
+      "client": "002-inspect",
+      "tick": 209,
+      "controls": [
+        "fit-all",
+        "true",
+        "none",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.97
+    },
+    {
+      "client": "003-manual",
+      "tick": 218,
+      "controls": [
+        "manual",
+        "true",
+        "none",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.97
+    },
+    {
+      "client": "004-open-spark",
+      "tick": 232,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.97
+    },
+    {
+      "client": "005-fine",
+      "tick": 244,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.0E7",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.97
+    },
+    {
+      "client": "006-cruise",
+      "tick": 256,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.97
+    },
+    {
+      "client": "007-half",
+      "tick": 268,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.97
+    },
+    {
+      "client": "008-damping-01",
+      "tick": 282,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.96,
+      "expected_retention": 0.96
+    },
+    {
+      "client": "009-damping-02",
+      "tick": 294,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.95,
+      "expected_retention": 0.95
+    },
+    {
+      "client": "010-damping-03",
+      "tick": 307,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.94,
+      "expected_retention": 0.94
+    },
+    {
+      "client": "011-damping-04",
+      "tick": 318,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.9299999999999999,
+      "expected_retention": 0.9299999999999999
+    },
+    {
+      "client": "012-damping-05",
+      "tick": 327,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.9199999999999999,
+      "expected_retention": 0.9199999999999999
+    },
+    {
+      "client": "013-damping-06",
+      "tick": 339,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.9099999999999999,
+      "expected_retention": 0.9099999999999999
+    },
+    {
+      "client": "014-damping-07",
+      "tick": 350,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8999999999999999,
+      "expected_retention": 0.8999999999999999
+    },
+    {
+      "client": "015-damping-08",
+      "tick": 360,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8899999999999999,
+      "expected_retention": 0.89
+    },
+    {
+      "client": "016-damping-09",
+      "tick": 374,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8799999999999999,
+      "expected_retention": 0.88
+    },
+    {
+      "client": "017-damping-10",
+      "tick": 384,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8699999999999999,
+      "expected_retention": 0.87
+    },
+    {
+      "client": "018-damping-11",
+      "tick": 396,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8599999999999999,
+      "expected_retention": 0.86
+    },
+    {
+      "client": "019-damping-12",
+      "tick": 405,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8499999999999999,
+      "expected_retention": 0.85
+    },
+    {
+      "client": "020-damping-13",
+      "tick": 417,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8399999999999999,
+      "expected_retention": 0.84
+    },
+    {
+      "client": "021-damping-14",
+      "tick": 429,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8299999999999998,
+      "expected_retention": 0.83
+    },
+    {
+      "client": "022-damping-15",
+      "tick": 440,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8199999999999998,
+      "expected_retention": 0.82
+    },
+    {
+      "client": "023-damping-16",
+      "tick": 449,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8099999999999998,
+      "expected_retention": 0.8099999999999999
+    },
+    {
+      "client": "024-damping-17",
+      "tick": 459,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8,
+      "expected_retention": 0.8
+    },
+    {
+      "client": "025-close-spark",
+      "tick": 471,
+      "controls": [
+        "manual",
+        "true",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8
+    },
+    {
+      "client": "026-lock",
+      "tick": 481,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8
+    },
+    {
+      "client": "027-baseline",
+      "tick": 484,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8
+    },
+    {
+      "client": "028-x-plus",
+      "tick": 491,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-88.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8
+    },
+    {
+      "client": "029-x-minus",
+      "tick": 498,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8,
+      "returned_to_baseline": true
+    },
+    {
+      "client": "030-y-plus",
+      "tick": 507,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-22.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8
+    },
+    {
+      "client": "031-y-minus",
+      "tick": 514,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8,
+      "returned_to_baseline": true
+    },
+    {
+      "client": "032-calibration-final",
+      "tick": 519,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "retention": 0.8,
+      "returned_to_baseline": true
+    }
+  ],
+  "baseline": [
+    -90.0,
+    -20.0,
+    0.01
+  ],
+  "ended_at": "2026-10-07T12:58:32.294396+00:00"
+}

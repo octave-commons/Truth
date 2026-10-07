@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-07T13:12:11.550113+00:00",
+  "root_tool63116": "reaped rc0; poller PID absence verified",
+  "snapshot": "attempt-02-clients/poll-22-snapshot.txt",
+  "snapshot_sha256": "a4fe87291b8293af7969847c4da45c370efb2f5c021adb690a0e803692fd5318",
+  "tick": 4269,
+  "observed_ready": [
+    1010,
+    1012
+  ],
+  "selected": 1012,
+  "criterion": "Root explicitly chooses observed ready1012 with smaller angular error58.8263deg versus59.1907deg for1010; distance2.1684068567695344e16m. Controller must independently screen current baseline/range and revalidate; this saved observation is not input admission.",
+  "command": "root-client-attempt02.py 034-flight flight 1012",
+  "no_separate_aim": true
+}

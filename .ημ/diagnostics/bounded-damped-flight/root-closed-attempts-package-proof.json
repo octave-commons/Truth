@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-07T13:32:13.127334+00:00",
+  "method": "Independent root decoder; exactmap paths/hashes/bytecounts/spans/content, alloriginals unchanged, allpublicationmanifest checksums checked. Read-only noextractionoverwrites.",
+  "groups": [
+    {
+      "attempt": "01",
+      "input_files": 479,
+      "input_bytes": 2379322,
+      "direct": 19,
+      "packed": 460,
+      "empty": 217,
+      "publication_paths": 26,
+      "checksums": 25,
+      "all_exact": true
+    },
+    {
+      "attempt": "02",
+      "input_files": 855,
+      "input_bytes": 6205125,
+      "direct": 40,
+      "packed": 815,
+      "empty": 351,
+      "publication_paths": 47,
+      "checksums": 46,
+      "all_exact": true
+    }
+  ]
+}

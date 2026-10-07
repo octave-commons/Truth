@@ -1,0 +1,133 @@
+{
+  "at": "2026-10-07T12:56:09.242852+00:00",
+  "head": "2e8df7319340c1f410aab945b2465135c911713a",
+  "scope": "Root-authorized attempt02 operator path copies only. Preparation does not release startup; root canonical comment and re-release required.",
+  "worktree": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+  "owned_paths": [
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-client-attempt02.py",
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-setup-attempt02.py",
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-formation-poller-attempt02.py",
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-attempt02-preparation.json"
+  ],
+  "copies": [
+    {
+      "original": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-client.py",
+      "copy": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-client-attempt02.py",
+      "original_sha256": "a0a889cf6098ee88066c8a2cce3f4cf48beb8015aab32f558473d609ade67a01",
+      "copy_sha256": "4c9bcb2adcaf2332a087cd599573dc9749ebb0e0cccc402f5f77f245d1de3cb5",
+      "original_bytes": 5926,
+      "copy_bytes": 5926,
+      "replacement_count": 5,
+      "replacement": {
+        "from": "attempt-01",
+        "to": "attempt-02"
+      },
+      "exact_reverse_bytes_equal": true,
+      "syntax_ast_and_compile_pass": true,
+      "changes": [
+        {
+          "line": 2,
+          "before": "\"\"\"Run one root-supplied frozen attempt-01 operation; never retry or select a target.",
+          "after": "\"\"\"Run one root-supplied frozen attempt-02 operation; never retry or select a target."
+        },
+        {
+          "line": 4,
+          "before": "Usage: python3 attempt-01-root-client.py FRESH-STEM OPERATION [ARGS...]",
+          "after": "Usage: python3 attempt-02-root-client.py FRESH-STEM OPERATION [ARGS...]"
+        },
+        {
+          "line": 24,
+          "before": "RUN = FROZEN / \"runs\" / \"attempt-01\"",
+          "after": "RUN = FROZEN / \"runs\" / \"attempt-02\""
+        },
+        {
+          "line": 25,
+          "before": "LOGS = HERE / \"attempt-01-clients\"",
+          "after": "LOGS = HERE / \"attempt-02-clients\""
+        },
+        {
+          "line": 56,
+          "before": "    assert not RUN.exists() if op == \"start\" else RUN.is_dir(), \"Fresh start or existing attempt-01 required\"",
+          "after": "    assert not RUN.exists() if op == \"start\" else RUN.is_dir(), \"Fresh start or existing attempt-02 required\""
+        }
+      ]
+    },
+    {
+      "original": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-setup.py",
+      "copy": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-setup-attempt02.py",
+      "original_sha256": "29c4e725cef54dc8fd54c95680e561fc0204803434b53c0ee58ba79c0d3219c8",
+      "copy_sha256": "438becaf5948e022cecdc5fe920de1e78fefb8e68edb2a1e8b9d98eda36405d9",
+      "original_bytes": 4910,
+      "copy_bytes": 4910,
+      "replacement_count": 3,
+      "replacement": {
+        "from": "attempt-01",
+        "to": "attempt-02"
+      },
+      "exact_reverse_bytes_equal": true,
+      "syntax_ast_and_compile_pass": true,
+      "changes": [
+        {
+          "line": 3,
+          "before": "here=Path(__file__).resolve().parent;root=here.parents[2];base=here;run=base/'runs/attempt-01';logs=here/'attempt-01-clients'",
+          "after": "here=Path(__file__).resolve().parent;root=here.parents[2];base=here;run=base/'runs/attempt-02';logs=here/'attempt-02-clients'"
+        },
+        {
+          "line": 19,
+          "before": "path=here/'attempt-01-calibration.json';assert not path.exists(),'Existing calibration record';path.write_text(json.dumps(report,indent=2)+'\\n');baseline=None",
+          "after": "path=here/'attempt-02-calibration.json';assert not path.exists(),'Existing calibration record';path.write_text(json.dumps(report,indent=2)+'\\n');baseline=None"
+        }
+      ]
+    },
+    {
+      "original": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-formation-poller.py",
+      "copy": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-formation-poller-attempt02.py",
+      "original_sha256": "5fa03bbc1b0c7eaf12b40b5c292e9e9d6b2abe71cc99a6724cc82ce002d547ef",
+      "copy_sha256": "4343c7b8f73bc70ba55c715b7bc2d3d7ee0677832b27b0511e27092f4b2ee78e",
+      "original_bytes": 3146,
+      "copy_bytes": 3146,
+      "replacement_count": 3,
+      "replacement": {
+        "from": "attempt-01",
+        "to": "attempt-02"
+      },
+      "exact_reverse_bytes_equal": true,
+      "syntax_ast_and_compile_pass": true,
+      "changes": [
+        {
+          "line": 3,
+          "before": "here=Path(__file__).resolve().parent;root=here.parents[2];base=here;run=base/'runs/attempt-01';logs=here/'attempt-01-clients'",
+          "after": "here=Path(__file__).resolve().parent;root=here.parents[2];base=here;run=base/'runs/attempt-02';logs=here/'attempt-02-clients'"
+        },
+        {
+          "line": 13,
+          "before": "recordpath=here/'attempt-01-formation-poller.json'",
+          "after": "recordpath=here/'attempt-02-formation-poller.json'"
+        }
+      ]
+    }
+  ],
+  "immutable_core_sha256": {
+    "runner.py": "1f871920ea12c251e49200680495419052b66f3cf520030a451e2571386e1cc0",
+    "aim-client.py": "386a1ca5d8075492668bd0f31c3ec9c17723734ad4fbd89df287718e6df2239e",
+    "cadence_client.py": "3a86998b928b79ba50ee1a0d856d945a654564b72be2f69b576eb3fe4de102d1",
+    "snapshot.clj": "5869caf3e2ec49ff62a376e0c5c07590c0708552a54518c6c98bba78dd455755",
+    "snapshot_client.clj": "e34d43c77f427689a949684528eeb74214f270ccb29a0f6f5c3d7ee0921400ac",
+    "preparation-hashes.json": "04970f596525a244f30c1661b7a81b1dd105c4eb204dee6d00da76c983334593",
+    "SHA256SUMS": "40abcd2d7c209c5545a25023371e3cfe8e36ce3df3034ddef7c11e2818adec81"
+  },
+  "production_diff_vs_head_empty": true,
+  "production_before_after_sha256_equal": true,
+  "production_file_count": 302,
+  "production_inventory_sha256": "0cf32502790777a241ec9b5f7b35479f3d616f87c702172d6ba64cebb6f7f3c8",
+  "checks": "Python ast.parse and compile of bytes only; no imports or execution of operator scripts and no bytecode files. Exact reverse replacement and unchanged original/core/source bytes.",
+  "execution": {
+    "tests": false,
+    "JVM": false,
+    "native": false,
+    "startup": false,
+    "git_mutation": false,
+    "board_mutation": false
+  },
+  "limits": "Only literal attempt-01 -> attempt-02 replacement; original fixed runner/aim/cadence pins, controls and deadlines unchanged. All historical attempt01 files preserved."
+}
