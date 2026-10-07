@@ -1,0 +1,10 @@
+snapshot.clj
+snapshot_client.clj
+runner.py
+short-smoke-client.py
+PLAN.md
+COPY-PROOF.json
+STATIC-CHECKS.json
+preparation-hashes.json
+PREPARATION-FILES.txt
+SHA256SUMS
