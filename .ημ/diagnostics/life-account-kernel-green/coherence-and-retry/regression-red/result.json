@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-Sdeps",
+    "{:paths [\".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src\" \"src\" \"resources\"] :aliases {:kernel-regression {:main-opts [\".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/driver.clj\"]}}}",
+    "-M:test:kernel-regression"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan",
+  "head": "55dce629c2c5d5faa125d13f7019834e08aaebcc",
+  "start": "2026-10-07T15:44:21.255581+00:00",
+  "timeout_seconds": 180,
+  "env_overrides": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "source_before": {
+    "src/law/life_account.clj": "9de4ec6827ab9453fa54008e55780002e27ecde68f26d4f66b826c7bd0301810",
+    "src/domain/life_account.clj": "ea01b902a2c2c776c2a593ed735fa493b1be6c67ab98db7e08afb9496c64db1c",
+    "test/law/life_account_test.clj": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a",
+    "test/domain/life_account_test.clj": "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec"
+  },
+  "preserved_inputs": {
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/snapshot.json": "7d86042427226ecfb80b9b7049b7a3c5ffcd8d045ec6e5f07cf64a927aa4028d",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/law/life_account_test.clj": "4d7074c4ad069b7adaf9d384fd87897d8b60da33ab2abf7abf5d9b77489d6ba9",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/domain/life_account_test.clj": "2129269c67e406d241cb59fcd5f013b2c5ef97a2a58b272382142d61ad4485ce",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/law/life_account.clj": "f235fb152a004d87aff872ce0a74fe843309a1a1433e0f4f59271a7cbca964ce",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/domain/life_account.clj": "cf8d55352f0c5dc2719858516a29d1206f9c568f5ff86ce13c726c8897b1b87c",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/driver.clj": "98e65ecebc93bc7733f5c56d6a79a1bc1dc6c7f66a190f2c6a0b2b3576625620",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/law/life_account_test.clj": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a",
+    ".\u03b7\u03bc/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/domain/life_account_test.clj": "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec"
+  },
+  "wrapper_sha256": "b2890886edc89423612dfdd2f99bd7f6cacf011530aead627f3542fd94351d7e",
+  "pid": 1165740,
+  "proc_start_stat": "1165740 (clojure) R 1165705 1165740 1165740 0 -1 4194304 7 0 0 0 0 0 0 0 20 0 1 0 5536131 458752 0 18446744073709551615 109437409378304 109437409399665 140734841147232 0 0 0 0 0 0 0 0 0 17 21 0 0 0 0 0 109437409413584 109437409415768 109438268338176 140734841150999 140734841151337 140734841151337 140734841155553 0\n",
+  "exit": 1,
+  "end": "2026-10-07T15:44:28.144345+00:00",
+  "elapsed_seconds": 6.888557525002398,
+  "timed_out": false,
+  "reaped": true,
+  "pid_absent": true,
+  "source_after": {
+    "src/law/life_account.clj": "9de4ec6827ab9453fa54008e55780002e27ecde68f26d4f66b826c7bd0301810",
+    "src/domain/life_account.clj": "ea01b902a2c2c776c2a593ed735fa493b1be6c67ab98db7e08afb9496c64db1c",
+    "test/law/life_account_test.clj": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a",
+    "test/domain/life_account_test.clj": "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec"
+  },
+  "preserved_inputs_unchanged": true,
+  "sources_unchanged": true
+}

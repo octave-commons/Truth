@@ -1,0 +1,50 @@
+{:verified-resource "law/life_account.clj", :path "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan/.ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/law/life_account.clj", :sha256 "f235fb152a004d87aff872ce0a74fe843309a1a1433e0f4f59271a7cbca964ce"}
+{:verified-resource "domain/life_account.clj", :path "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan/.ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/domain/life_account.clj", :sha256 "cf8d55352f0c5dc2719858516a29d1206f9c568f5ff86ce13c726c8897b1b87c"}
+{:verified-resource "domain/life_account_test.clj", :path "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan/test/domain/life_account_test.clj", :sha256 "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec"}
+
+Running tests in #{"test"}
+
+Testing domain.life-account-test
+
+FAIL in (supplied-history-cannot-be-newer-closed-or-from-different-opening-material) (life_account_test.clj:312)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair" (account/apply-operation supplied-account supplied-history operation))
+  actual: nil
+
+FAIL in (supplied-history-cannot-be-newer-closed-or-from-different-opening-material) (life_account_test.clj:312)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair" (account/apply-operation supplied-account supplied-history operation))
+  actual: nil
+
+FAIL in (supplied-history-cannot-be-newer-closed-or-from-different-opening-material) (life_account_test.clj:312)
+expected: (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair" (account/apply-operation supplied-account supplied-history operation))
+  actual: nil
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:370)
+expected: (= :conflict (:disposition conflicting))
+  actual: (not (= :conflict :replayed))
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:371)
+expected: (= :conflicting-reuse (:reason conflicting))
+  actual: (not (= :conflicting-reuse :replayed))
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:370)
+expected: (= :conflict (:disposition conflicting))
+  actual: (not (= :conflict :replayed))
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:371)
+expected: (= :conflicting-reuse (:reason conflicting))
+  actual: (not (= :conflicting-reuse :replayed))
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:369)
+expected: (= :replayed (:disposition retry))
+  actual: (not (= :replayed :conflict))
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:370)
+expected: (= :conflict (:disposition conflicting))
+  actual: (not (= :conflict :replayed))
+
+FAIL in (rejected-unordered-payloads-retain-raw-bits-in-members-and-keys) (life_account_test.clj:371)
+expected: (= :conflicting-reuse (:reason conflicting))
+  actual: (not (= :conflicting-reuse :replayed))
+
+Ran 2 tests containing 62 assertions.
+10 failures, 0 errors.

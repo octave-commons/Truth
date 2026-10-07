@@ -1,0 +1,14 @@
+7d86042427226ecfb80b9b7049b7a3c5ffcd8d045ec6e5f07cf64a927aa4028d  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/snapshot.json
+cf8d55352f0c5dc2719858516a29d1206f9c568f5ff86ce13c726c8897b1b87c  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/domain/life_account.clj
+f235fb152a004d87aff872ce0a74fe843309a1a1433e0f4f59271a7cbca964ce  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/src/law/life_account.clj
+2129269c67e406d241cb59fcd5f013b2c5ef97a2a58b272382142d61ad4485ce  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/domain/life_account_test.clj
+4d7074c4ad069b7adaf9d384fd87897d8b60da33ab2abf7abf5d9b77489d6ba9  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/pre-fix/test/law/life_account_test.clj
+e023eda3b8e46d8c5501e588b007b8d59489af61e10ac0c97f792cbe067988c4  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/RESULT.md
+199c738791a1c65ddfc17d9f78e92dada69365403929576e3945ee0d7303b855  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/command.json
+98e65ecebc93bc7733f5c56d6a79a1bc1dc6c7f66a190f2c6a0b2b3576625620  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/driver.clj
+90c118cf1a58f2e6bbebdc153bfe8b54f39772e7a931908bdc0d14369dc508be  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/result.json
+29eb9106ee6d8eab5aec264a34e20995b9f3b5903571bd6a4fd24f528a6bf019  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stderr.log
+19cfd2fcb6f968e553155e474aed607f11402211d0f437008ff6b604431f71a0  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/stdout.log
+36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/domain/life_account_test.clj
+8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/regression-red/test-inputs/test/law/life_account_test.clj
+b2890886edc89423612dfdd2f99bd7f6cacf011530aead627f3542fd94351d7e  .ημ/diagnostics/life-account-kernel-green/coherence-and-retry/run-focused.py
