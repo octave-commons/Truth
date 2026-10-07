@@ -1,0 +1,34 @@
+{
+  "fixed_utc_second": "20261006T205000Z",
+  "runs": [
+    {
+      "script": "demo-capture",
+      "marker": "demo-capture-0",
+      "exit": 1,
+      "diagnostics": ".\u03b7\u03bc/diagnostics/demo-20261006T205000Z-3196131-8auNqP",
+      "runtime_log": "Injected startup failure: demo-capture-0"
+    },
+    {
+      "script": "demo-capture",
+      "marker": "demo-capture-1",
+      "exit": 1,
+      "diagnostics": ".\u03b7\u03bc/diagnostics/demo-20261006T205000Z-3196133-LTfu29",
+      "runtime_log": "Injected startup failure: demo-capture-1"
+    },
+    {
+      "script": "formation-capture",
+      "marker": "formation-capture-0",
+      "exit": 1,
+      "diagnostics": ".\u03b7\u03bc/diagnostics/formation-20261006T205000Z-3196137-nG93Vx",
+      "runtime_log": "Injected startup failure: formation-capture-0"
+    },
+    {
+      "script": "formation-capture",
+      "marker": "formation-capture-1",
+      "exit": 1,
+      "diagnostics": ".\u03b7\u03bc/diagnostics/formation-20261006T205000Z-3196143-a1WxM5",
+      "runtime_log": "Injected startup failure: formation-capture-1"
+    }
+  ],
+  "assertion": "Four concurrent real script invocations allocate distinct diagnostics directories and preserve their own failure marker."
+}

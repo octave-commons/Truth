@@ -338,6 +338,7 @@ No browser, model service, notebook server, or generated imagery is required.
 ```bash
 clojure -M:demo list
 clojure -M:demo check
+clojure -M:demo-test
 bin/demo-capture docs/demo/my-new-capture
 bin/formation-capture docs/demo/my-new-formation 360
 ```
@@ -348,12 +349,17 @@ panel state and runtime errors, probes video dimensions/duration, and stops the
 processes it started. It refuses to compete with an existing server on the chosen port
 (default 7890). For a separate capture alongside your demo, use
 `TRUTH_DEMO_PORT=7891 bin/demo-capture docs/demo/my-new-capture`; both launcher
-and client honor that optional environment variable. Diagnostic output is under `.ημ/diagnostics/demo-<UTC timestamp>/`.
+and client honor that optional environment variable. Diagnostic output is under
+`.ημ/diagnostics/demo-<UTC timestamp>-<PID>-<unique suffix>/`. Each invocation
+allocates its directory atomically, so simultaneous captures cannot overwrite
+each other's diagnostics.
 
 The formation capture starts a fresh paused tick-zero cloud, verifies a visible
 frame, records 360 seconds, and samples live matter states and temperature.
 It eases the camera to the system view after 240 seconds and keeps the volume
-renderer enabled. Its default port is **7891**. It produces the full source
+renderer enabled. Its default port is **7891**; its diagnostics use
+`.ημ/diagnostics/formation-<UTC timestamp>-<PID>-<unique suffix>/`, also
+allocated atomically for each invocation. It produces the full source
 MP4, the 8× GIF, and the slower excerpts above. A shorter duration omits
 excerpts outside its source range. Runtime throughput can change when
 transitions occur; consult the recorded ticks and observations.
