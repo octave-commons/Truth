@@ -1,0 +1,101 @@
+{
+  "at": "2026-10-07T08:02:01.553206+00:00",
+  "python": [
+    {
+      "file": "runner.py",
+      "sha256": "54cff29903228e3a028b73cc23424f41e2d963a0989182c4c0ca023ca57866a3",
+      "check": "ast.parse without import or execution",
+      "passed": true
+    },
+    {
+      "file": "aim-client.py",
+      "sha256": "16b06e287cbadf3997c710a33a4357d700327e3addf5ae25e2f8dd4d7018c914",
+      "check": "ast.parse without import or execution",
+      "passed": true
+    }
+  ],
+  "clj_kondo": {
+    "argv": [
+      "clj-kondo",
+      "--lint",
+      "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/snapshot.clj",
+      "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/snapshot_client.clj"
+    ],
+    "returncode": 0,
+    "stdout": "linting took 62ms, errors: 0, warnings: 0\n",
+    "stderr": ""
+  },
+  "source_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--quiet",
+      "b395c4049718f7ce015ddf25fc0a192d97821373",
+      "--",
+      "src",
+      "dev",
+      "resources",
+      "deps.edn"
+    ],
+    "exit": 0,
+    "files": 186,
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "observed_head": "64f8141b40cfb8db94ea2f005004f068a3f47a72"
+  },
+  "embedded_runner_hash_matches": true,
+  "snapshot_byte_identical": true,
+  "here_root_static_resolution": {
+    "HERE": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile",
+    "ROOT": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+    "matches_worktree": true
+  },
+  "runtime_execution": false,
+  "limits": "Static syntax, exact bytes, source and link checks only. No script import, diagnostic execution, JVM/project namespace/native process, cap/fault injection or long-profile qualification.",
+  "link_checks": [
+    {
+      "target": "root-scope.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/root-scope.json",
+      "exists": true
+    },
+    {
+      "target": "../physical-approach/attempt-01-audit.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/physical-approach/attempt-01-audit.json",
+      "exists": true
+    },
+    {
+      "target": "runner.py",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/runner.py",
+      "exists": true
+    },
+    {
+      "target": "snapshot.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/snapshot.clj",
+      "exists": true
+    },
+    {
+      "target": "snapshot_client.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/snapshot_client.clj",
+      "exists": true
+    },
+    {
+      "target": "aim-client.py",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/aim-client.py",
+      "exists": true
+    },
+    {
+      "target": "../../../src/domain/player/flight.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/src/domain/player/flight.clj",
+      "exists": true
+    },
+    {
+      "target": "COPY-PROOF.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/COPY-PROOF.json",
+      "exists": true
+    },
+    {
+      "target": "STATIC-CHECKS.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.ημ/diagnostics/natural-flight-profile/STATIC-CHECKS.json",
+      "exists": true
+    }
+  ]
+}

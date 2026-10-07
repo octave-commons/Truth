@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-07T08:09:16.583090+00:00",
+  "parent": "64f8141b40cfb8db94ea2f005004f068a3f47a72",
+  "scope_sha256": "2116c4437734b0f37b10a1b619efb1f1f4fa1a704684c0d04c3e5e2de4851c7a",
+  "manifest_sha256": "7d9769a055da65ecc4365b80f72ee0aaa81f62d541190af2b8b94908127a0eaa",
+  "reviewers": [
+    "root",
+    "board_scout"
+  ],
+  "decision": "Authorize exactly one fresh attempt-01 from the frozen reviewed preparation. Root alone operates native runtime. No prior run extended.",
+  "profile": {
+    "work_seconds": 1470,
+    "total_seconds": 1500,
+    "startup_seconds": 180,
+    "target_admission_cutoff_seconds": 960,
+    "port": 7898,
+    "hold_requests": 20,
+    "requested_hold_max_seconds": 2,
+    "aim_invocations": 3,
+    "look_gestures": 360,
+    "pngs": 3
+  },
+  "production": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "claims": "Static preparation approved only. Not qualified movement, embodiment, Gate, or frame performance.",
+  "preflight_errors": [
+    {
+      "phase": "root manifest verification",
+      "error": "First verifier resolved manifest paths from repository root, found no runner.py; no files written or runtime started. Corrected to manifest directory and all nine checks passed."
+    }
+  ]
+}
