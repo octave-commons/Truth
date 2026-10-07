@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-07T10:59:42.588176+00:00",
+  "client": "022-before-first-pulse",
+  "tick": 5223,
+  "range_AU": 170930.71770471713,
+  "angle_degrees": 0.027029591046019586,
+  "D": 37500000000000.0,
+  "N_star_from_preaim_recent_rate": 25,
+  "coast_fraction": 0.04741723427237922,
+  "combined_fraction": 0.08408004427679615,
+  "stored_current_ready": true,
+  "nil_thrust": true,
+  "global_commitment": 0,
+  "closed": false,
+  "parser_probe_note": "First offline calculation incorrectly sliced target row and raised ValueError before output; corrected indexed tagged fields, no runtimecall.",
+  "passes": true
+}

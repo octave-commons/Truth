@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-07T10:55:28.664183+00:00",
+  "sha256": "38835672f94d70467bd4f8aa2d15413ad1d21c611d8d9b1c2db556ef614b2b02",
+  "bytes": 5540,
+  "root_source_review": "PASS. One explicit rootoperation, exact runner/aim hashpins, no automatic target/input/retry. Fresh xb logs preserve complete outputs. Snapshotcopy only inspect/tap/look/click/hold; frame/aim/stop never imply freshsnapshot. Existing frozenclient governsallbounds/identity/cleanup.",
+  "execution_scope": "Outerlogger only, authorized existingoperations and budgets; use afterpollerexit/reap and direct rootchoice. No new inputauthority or control algorithm."
+}

@@ -1,0 +1,16 @@
+{
+  "pid": 3556748,
+  "at": "2026-10-07T10:42:50.433528+00:00",
+  "identity": {
+    "pid": 3556748,
+    "start": "3727049",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "exe": "/usr/bin/python3.12"
+  },
+  "lease_started_at": "2026-10-07T10:42:50.412596+00:00",
+  "lease_started_monotonic": 37270.471360913,
+  "startup_deadline": 37450.471360913,
+  "total_deadline": 38770.471360913
+}

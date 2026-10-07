@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-07T11:25:10.702358+00:00",
+  "canonical_comment": "Attempt02 independent offline audit complete:209 snapshots,4317 raw maps,3,532,597 journalbytes;102 successfulIPC,29looks and2W, allsampledglobalcommitment0. Threeaimgestures required4readbacks, exercising theextendedwindow without causalclaimaboutpriorruns. All66nativechildren/53aimsubclients/52outerclients have reapedrecords; game143 is intentionalcleanup. Images showtick432zero planets andtick6665one star,twelve planets,fivedisks. Audit38c6b45b883dcc11556c6c25fdfdbb35e58e5b7c87391524e258a72deb724175; JSONe1756314c11d9615f7197ab27b60f525c372363f9b0c3ba2947a26e7b5b84517. All707inputs/5,762,617B preserved as69direct+638losslessJSONLmembers,243emptyfiles included; root independently hashed all originals and decoded everymember. Complete firstattempt+200lookpreparation is published in TruthPR55head678ea3d1cd0acb1bac0f59073ce28b8a48786c85. Secondclosedattempt is a separate stacked publication. Finitecadence preparation remains unexecuted; existing owner remainsInProgress3.",
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 674275,
+  "prior_ledger_sha256": "6b2236c39451368cc681f327f3832f1779c212995d57c2a572a087fd075c7972",
+  "events_appended": 1,
+  "root_independent_verification": {
+    "input_files": 707,
+    "bytes": 5762617,
+    "packed_members_decoded": 638,
+    "whole_interval_positive_deltas_recomputed": true,
+    "postpulse_actual_png_viewed": "one star,twelve planets,five disks"
+  },
+  "full_audit_sha256": "e1756314c11d9615f7197ab27b60f525c372363f9b0c3ba2947a26e7b5b84517",
+  "map_sha256": "31a55bf46b68854f0b42d13a961e6db262e9e8d6737e3b118bcb1570039e0b68"
+}

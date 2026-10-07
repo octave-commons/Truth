@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-07T10:42:50.192949+00:00",
+  "prior_outer_invocation": "Failed opening001-start.stdout because log directory absent before Popen; no runner/supervisor or input request created.",
+  "run_directory_absent": true,
+  "repair": "Created required fresh client log directory before actual first runner start."
+}
