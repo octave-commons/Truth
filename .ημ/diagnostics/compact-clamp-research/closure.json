@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-07T09:23:45.623316+00:00",
+  "parent": "7f1fbcae786a7aa4c6b1cb2eed5d79dd71bb6e58",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "note_sha256": "0cceac7798e105ae2cb0265a1e71b88622e85513a7342b9c581b83faa23f08fd",
+  "audit_sha256": "cc39832275cf4ba36b251dcff03d0902e22a9f9e0079bae1f83ac82a6ee57b0b",
+  "root_and_independent_review": "full note/source distinctions reviewed;20filepins and11links verified; no blocker",
+  "prior_ledger_bytes": 656213,
+  "prior_ledger_sha256": "19357077c2999be573881c1f6e65e7a200b9bd3fac514e9c0070ebe3b404b377",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "after_write_id": "1791365025003-0.92gtoxcbfu6f2oqeget",
+  "production_changed": false,
+  "runtime_or_tests_executed": false,
+  "proposal_admitted": false
+}

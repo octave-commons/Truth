@@ -1,0 +1,437 @@
+{
+  "at": "2026-10-07T09:19:41.368671+00:00",
+  "author": "runtime_scout",
+  "kind": "source-only research audit",
+  "parent": "7f1fbcae786a7aa4c6b1cb2eed5d79dd71bb6e58",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "scope_record": ".ημ/diagnostics/compact-clamp-research/root-scope.json",
+  "authorized_outputs": [
+    "docs/notes/2026-10-07-compact-substep-clamp-boundary.md",
+    ".ημ/diagnostics/compact-clamp-research/source-audit.json"
+  ],
+  "files": {
+    "AGENTS.md": {
+      "bytes": 14248,
+      "sha256": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0"
+    },
+    "PROCESS.md": {
+      "bytes": 14027,
+      "sha256": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2"
+    },
+    ".ημ/diagnostics/compact-clamp-research/root-scope.json": {
+      "bytes": 1978,
+      "sha256": "9ddddf4c766ba4c75b1b7d7545684495e7c60b449a0d6dc6dbf47d96bd8113e0"
+    },
+    "deps.edn": {
+      "bytes": 6122,
+      "sha256": "9f858cf2a20418276006fe0ccf16245ab3fb9e2b935649da7f52afa8e9af36ce"
+    },
+    "src/domain/integrator.clj": {
+      "bytes": 4413,
+      "sha256": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88"
+    },
+    "src/domain/integrator/kinematics.clj": {
+      "bytes": 31256,
+      "sha256": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61"
+    },
+    "src/domain/integrator/base.clj": {
+      "bytes": 4271,
+      "sha256": "6b490386437788b5e6b7eae238900c25d93220082d7f9f11af3d7f01091691e6"
+    },
+    "src/domain/genesis/tick.clj": {
+      "bytes": 10517,
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee"
+    },
+    "src/domain/genesis/systems.clj": {
+      "bytes": 5679,
+      "sha256": "8ca3d361dbb3c558dfc16d1235fb5b4c788c9d1b66e0a118936f855b99195ae7"
+    },
+    "src/domain/physics/cache/soa.clj": {
+      "bytes": 7858,
+      "sha256": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94"
+    },
+    "src/domain/ecs/tick.clj": {
+      "bytes": 12734,
+      "sha256": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8"
+    },
+    "src/domain/ecs/parallel.clj": {
+      "bytes": 1726,
+      "sha256": "43ed42d02d38cb454426bf818b4733b4537d610c9e1800a5fbe50a5dcc4771ad"
+    },
+    "src/domain/orbital/kepler.clj": {
+      "bytes": 10903,
+      "sha256": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d"
+    },
+    "docs/designs/multi-timescale-integration.md": {
+      "bytes": 21197,
+      "sha256": "c768e6c40bf970a4239bd4f03eefe89d0505b368f4b032db4acad2a7c06ce1b2"
+    },
+    "test/domain/orbital/multi_timescale_regression_test.clj": {
+      "bytes": 20647,
+      "sha256": "e1f4db0e17f245433c0dafc595e58d94d11a55b02e1c87c9f9134524f51c4c3c"
+    },
+    "test/domain/integrator/universal_substep_test.clj": {
+      "bytes": 34910,
+      "sha256": "b185953fd07329b4588160e76404922b129ff7e5eb29aceeb5bbd300331e6877"
+    },
+    ".ημ/diagnostics/natural-flight-profile/RESULT.md": {
+      "bytes": 9555,
+      "sha256": "3de7106bb4480b0ac8fb4eed91be4c70820597b473d0d8cab49b21b4d6025f1d"
+    },
+    ".ημ/diagnostics/natural-flight-profile/attempt-01-audit.json": {
+      "bytes": 128595,
+      "sha256": "0e8c7f8fc542f3ce4a8d72ffb56849963b37b5c882580fa3a9388899857ece78"
+    },
+    ".ημ/diagnostics/natural-flight-profile/COPY-PROOF.json": {
+      "bytes": 64640,
+      "sha256": "6f46bec5880b55275c09c74c70b95ff4de1abc682e44de42ba80e81d1f9a9158"
+    },
+    ".ημ/diagnostics/natural-flight-profile/runs/attempt-01/002-runtime.stdout": {
+      "bytes": 331439,
+      "sha256": "56fc139b292d6585b5fe1ef7c01711c7f8a7369b63aee044671c2c2f9cb2d74c"
+    }
+  },
+  "note": {
+    "path": "docs/notes/2026-10-07-compact-substep-clamp-boundary.md",
+    "bytes": 12955,
+    "sha256": "0cceac7798e105ae2cb0265a1e71b88622e85513a7342b9c581b83faa23f08fd"
+  },
+  "predecessor_source_verification": {
+    "pin_source": ".ημ/diagnostics/natural-flight-profile/COPY-PROOF.json",
+    "matched": 186,
+    "mismatches": [],
+    "method": "SHA256 of every current file in inherited production_source_hashes; no Git or JVM invocation",
+    "limit": "Confirms inherited file pins, not active-process state or unrelated files"
+  },
+  "closed_run_marker_audit": {
+    "path": ".ημ/diagnostics/natural-flight-profile/runs/attempt-01/002-runtime.stdout",
+    "marker": "K clamp binds:",
+    "occurrences": 4893,
+    "first_three_intact_lines": [
+      {
+        "line": 11,
+        "text": "[kinematics-ws] K clamp binds: eid 1002 demanded 14447 clamped 4096"
+      },
+      {
+        "line": 12,
+        "text": "[kinematics-ws] K clamp binds: eid 1001 demanded 29472 clamped 4096"
+      },
+      {
+        "line": 13,
+        "text": "[kinematics-ws] K clamp binds: eid 1003 demanded 7082 clamped 4096"
+      }
+    ],
+    "limits": [
+      "Literal marker count, not validated per-body event inventory or maximum demand",
+      "Interleaving and absent tick/dt/branch fields prevent unique join to coarse world snapshots",
+      "No ejection, eligibility or flight causality claim"
+    ]
+  },
+  "source_claims": [
+    {
+      "claim": "count formula, warning condition, constants and units",
+      "path": "src/domain/integrator/kinematics.clj",
+      "line_boundaries": [
+        65,
+        79,
+        140,
+        173
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "candidate states and nearest parent",
+      "path": "src/domain/integrator/kinematics.clj",
+      "line_boundaries": [
+        93,
+        138
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "actual dominance return, predicted-position subtraction, world versus pair softening, WH advance",
+      "path": "src/domain/integrator/kinematics.clj",
+      "line_boundaries": [
+        200,
+        292
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "tree gravity, embedded count map including no-parent, complete KDK advance",
+      "path": "src/domain/integrator/kinematics.clj",
+      "line_boundaries": [
+        298,
+        399
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "outer dv, frame subtraction and absorption composition",
+      "path": "src/domain/integrator/kinematics.clj",
+      "line_boundaries": [
+        401,
+        430,
+        516,
+        552
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "SoA all-row work versus due force/parent logic; public docstring is broader",
+      "path": "src/domain/integrator/kinematics.clj",
+      "line_boundaries": [
+        554,
+        609
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "prepared world and integrator result boundary",
+      "path": "src/domain/integrator.clj",
+      "line_boundaries": [
+        38,
+        78
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "prepared caches before fan-out stripped after fold, one-tick influence lag",
+      "path": "src/domain/genesis/tick.clj",
+      "line_boundaries": [
+        78,
+        100
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "actual SoA primitive arrays and predicted position accessor",
+      "path": "src/domain/physics/cache/soa.clj",
+      "line_boundaries": [
+        123,
+        187
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "system futures and frozen world",
+      "path": "src/domain/ecs/tick.clj",
+      "line_boundaries": [
+        160,
+        187
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "entity chunked futures",
+      "path": "src/domain/ecs/parallel.clj",
+      "line_boundaries": [
+        26,
+        39
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "historical WH ceiling contract and frozen-total-force wording",
+      "path": "docs/designs/multi-timescale-integration.md",
+      "line_boundaries": [
+        144,
+        171,
+        323,
+        355
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "below-clamp resolution assertion",
+      "path": "test/domain/orbital/multi_timescale_regression_test.clj",
+      "line_boundaries": [
+        330,
+        341
+      ],
+      "tier": "source read, not executed qualification"
+    },
+    {
+      "claim": "gate-fail, full-time coverage, no-parent, composition and SoA test seams",
+      "path": "test/domain/integrator/universal_substep_test.clj",
+      "line_boundaries": [
+        202,
+        232,
+        387,
+        450,
+        452,
+        516,
+        524,
+        607
+      ],
+      "tier": "source read, not executed qualification"
+    }
+  ],
+  "test_search": {
+    "argv": [
+      "rg",
+      "-n",
+      "substep-count|substep-max-k|K clamp binds",
+      "test",
+      "--glob",
+      "*.clj"
+    ],
+    "exit_code": 0,
+    "stdout": "test/domain/integrator/universal_substep_test.clj:216:          k-exp (kinematics/substep-count\ntest/domain/integrator/universal_substep_test.clj:411:          k-exp (kinematics/substep-count\ntest/domain/integrator/universal_substep_test.clj:484:          k-exp (kinematics/substep-count\ntest/domain/integrator/universal_substep_test.clj:570:          k (kinematics/substep-count\ntest/domain/orbital/multi_timescale_regression_test.clj:330:(deftest substep-count-resolution\ntest/domain/orbital/multi_timescale_regression_test.clj:334:          k (kinematics/substep-count live-dt {:r orbit-radius :mu mu\ntest/domain/orbital/multi_timescale_regression_test.clj:340:      (is (< k kinematics/substep-max-k)\n",
+    "stderr": "",
+    "finding": "These direct references do not establish binding-clamp convergence or error-envelope coverage. Tests were not executed; search is not exhaustive proof about all assertions."
+  },
+  "canonical_ownership_provenance": {
+    "current_scope": "Root-authored scope record is authoritative for this task; InProgress3 at recording",
+    "previous_read_facts": [
+      {
+        "uuid": "universal-compact-substepping",
+        "status": "review",
+        "estimate": 5
+      },
+      {
+        "uuid": "orbit-integration-regression-tests",
+        "status": "review",
+        "estimate": 5
+      }
+    ],
+    "previous_read_method": "Canonical Rheos read-task with artifact SHA83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7 during preceding source-only audit; no new board operation by this authoring step",
+    "limit": "Prior observations, not a refreshed board snapshot or implementation authority"
+  },
+  "installed_clojure_evidence": {
+    "declared_normal_version": "1.11.1",
+    "declaration": "deps.edn:2",
+    "jar_local_path": "/home/err/.m2/repository/org/clojure/clojure/1.11.1/clojure-1.11.1.jar",
+    "jar_sha256": "2381b6e9423ab465151455944903d13a56243d6006b9194afc1bf4f8710cb4de",
+    "entry": "clojure/core.clj",
+    "entry_sha256": "f7acf0932bdac47fb49f1b1a20b22c49cb6c17672f518670abc9b33ac619a05b",
+    "excerpt_start_line": 6487,
+    "excerpt": "  :direct-linking - set to true to use direct static invocation of functions, rather than vars\n    Note that call sites compiled with direct linking will not be affected by var redefinition.\n    Use ^:redef (or ^:dynamic) on a var to prevent direct linking and allow redefinition.\n  See https://clojure.org/reference/compilation for more information.\"",
+    "retrieval": "Read ZIP entry using Python standard library; no class loading, JVM, web fetch or live compiler inspection",
+    "limit": "Installed source documents compiler behavior; active call-site compilation and hook interception remain unverified"
+  },
+  "measurement_proposal": {
+    "implemented": false,
+    "admitted": false,
+    "five_wrappers": [
+      "domain.integrator/run-integrator-phases",
+      "domain.integrator.kinematics/compact-advance",
+      "domain.integrator.kinematics/dominance-gate",
+      "domain.integrator.kinematics/embedded-substep",
+      "domain.integrator.kinematics/substep-count"
+    ],
+    "caps": {
+      "explicit_compact_body_ids": 4,
+      "completed_outer_calls": 64,
+      "admission_elapsed_seconds": 30,
+      "body_call_records": 256,
+      "encoded_export_bytes": 4194304
+    },
+    "bounds_limit": "Fixed record/cardinality proposal, not literal JVM heap or hard OS preemption guarantee; parents are context, no full world/tree retained after active call",
+    "observed_if_qualified": [
+      "actual function arguments",
+      "actual gate map or nil",
+      "actual K return",
+      "raw branch return",
+      "selected final integrator writes"
+    ],
+    "derived_only": [
+      "demanded K and local-step criteria reconstructed from count arguments",
+      "h=dt/K",
+      "decomposition of final outer composition"
+    ],
+    "not_observed": [
+      "every internal gravity sample",
+      "complete KDK initial gravity vector",
+      "final world after other systems/reaping",
+      "natural branch if absent"
+    ],
+    "qualification_pending": [
+      "actual compiled call-chain wrapper sentinel hits",
+      "WH, gate-fail and no-parent branch coverage",
+      "parallel attribution and overlap rejection",
+      "raw physical numerical output equality and original-error identity",
+      "bounded observer overhead and restoration ownership",
+      "separately admitted native evidence"
+    ]
+  },
+  "static_checks": {
+    "local_markdown_links": [
+      {
+        "label": "recorded scope",
+        "target": "../../.ημ/diagnostics/compact-clamp-research/root-scope.json",
+        "resolved_repository_path": ".ημ/diagnostics/compact-clamp-research/root-scope.json"
+      },
+      {
+        "label": "source audit",
+        "target": "../../.ημ/diagnostics/compact-clamp-research/source-audit.json",
+        "resolved_repository_path": ".ημ/diagnostics/compact-clamp-research/source-audit.json"
+      },
+      {
+        "label": "runtime stdout",
+        "target": "../../.ημ/diagnostics/natural-flight-profile/runs/attempt-01/002-runtime.stdout",
+        "resolved_repository_path": ".ημ/diagnostics/natural-flight-profile/runs/attempt-01/002-runtime.stdout"
+      },
+      {
+        "label": "closed run report",
+        "target": "../../.ημ/diagnostics/natural-flight-profile/RESULT.md",
+        "resolved_repository_path": ".ημ/diagnostics/natural-flight-profile/RESULT.md"
+      },
+      {
+        "label": "kinematics.clj lines 140–173",
+        "target": "../../src/domain/integrator/kinematics.clj",
+        "resolved_repository_path": "src/domain/integrator/kinematics.clj"
+      },
+      {
+        "label": "integration design §3.3",
+        "target": "../designs/multi-timescale-integration.md",
+        "resolved_repository_path": "docs/designs/multi-timescale-integration.md"
+      },
+      {
+        "label": "Orbital regression lines 330–341",
+        "target": "../../test/domain/orbital/multi_timescale_regression_test.clj",
+        "resolved_repository_path": "test/domain/orbital/multi_timescale_regression_test.clj"
+      },
+      {
+        "label": "Universal substep tests",
+        "target": "../../test/domain/integrator/universal_substep_test.clj",
+        "resolved_repository_path": "test/domain/integrator/universal_substep_test.clj"
+      },
+      {
+        "label": "Genesis `step-physics`, lines 78–100",
+        "target": "../../src/domain/genesis/tick.clj",
+        "resolved_repository_path": "src/domain/genesis/tick.clj"
+      },
+      {
+        "label": "`run-integrator-phases`, lines 38–65",
+        "target": "../../src/domain/integrator.clj",
+        "resolved_repository_path": "src/domain/integrator.clj"
+      },
+      {
+        "label": "chunked futures",
+        "target": "../../src/domain/ecs/parallel.clj",
+        "resolved_repository_path": "src/domain/ecs/parallel.clj"
+      }
+    ],
+    "trailing_whitespace_lines": [],
+    "one_terminal_newline": true,
+    "json_roundtrip": true,
+    "initial_static_attempt": "Link checker initially rejected planned source-audit.json because it had not yet been written; no output was created. Final check permits only this exact output during construction, then verifies all targets after write.",
+    "operations": "Python pathlib/hashlib/json/re/zipfile plus bounded rg and source reads; no diagnostic-module or project-code imports"
+  },
+  "not_performed": [
+    "instrumentation source authoring",
+    "Var root replacement or namespace reload",
+    "project namespace/JVM/native/process contact",
+    "test or benchmark execution",
+    "board/receipt/Git/publication actions",
+    "current native attempt contact"
+  ],
+  "research_limits": [
+    "Existing design/test claims are not newly reproduced results",
+    "Warning markers cannot distinguish WH/KDK or establish ejection cause",
+    "Five-wrapper feasibility remains proposed; direct-linking interception unverified",
+    "No ceiling, clock, parent-state, solver, force or registry change authorized"
+  ]
+}
