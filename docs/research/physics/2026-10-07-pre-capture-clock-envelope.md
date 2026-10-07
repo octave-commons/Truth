@@ -80,7 +80,7 @@ The budgets must cover every relevant input snapshot, not only the final endpoin
 
 (己, p=0.99) These are proposed tests to write after design admission, not tests executed here:
 
-- Named pure validators reject nonfinite/zero/negative/fractional-below-1 h, malformed cap/mode and invalid finite budgets without changing the prior world. Explicit 1 s/1 day endpoints and absent Auto are covered.
+- Named pure validators reject nonfinite/zero/negative h, malformed cap/mode and invalid finite budgets without changing the prior world. Reject `0 < h < 1` only for upward requests after manual use; preserve never-manual Auto and equal/downward fractional steps as uncertified legacy paths. Explicit 1 s/1 day manual-cap endpoints and absent Auto are covered.
 - Pure precedence examples prove a manual cap beats auto's min1e7 and time slip; no cap reproduces the old Auto result; auto-derived softening is identical. Gate disable and post-commit policy delegation remain explicit separate cases.
 - Boundary traces prove the exact consumed h, `sim-time += h`, effective tick and next-h publication; all fan-out systems share the same frozen choice. No position/velocity/mass/spin writer is added.
 - Analytic fixed-h released/held laws cover r=.80/.97/.999, finite pending channels, full Fine/Cruise range and endpoint h values. Verify the response and path bound, not implementation call counts. A fixed-D test should correctly show invariant equilibrium displacement but **changed** speed/acceleration.
