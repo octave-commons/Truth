@@ -1,0 +1,952 @@
+{
+  "format": "lossless-utf8-jsonl-v1",
+  "archive": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-publication/host-cost-evidence.jsonl",
+  "archive_sha256": "4c5cd90498033538ec7a50e8963c0c470d05b7f8bed0501f59362ed026a5b917",
+  "originals_retained_locally": true,
+  "entries": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/CLOSED-FILES.txt",
+      "bytes": 761,
+      "sha256": "fabc3104fd8b1bf23ed9132342c876e09864ed6465d92445f80bf0486c0c8ec6",
+      "line": 1,
+      "byte_start": 0,
+      "byte_end": 958
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/PLAN.md",
+      "bytes": 9191,
+      "sha256": "515881e76d6045652ee57388ac5a48b618e6c091331f782de770e5551e5ce16c",
+      "line": 2,
+      "byte_start": 958,
+      "byte_end": 10458
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/SHA256SUMS",
+      "bytes": 2796,
+      "sha256": "9f0c41ebf3f7ddf69e75952ba32802fbac402d42d0eca54103b9c6aa9dcc171c",
+      "line": 3,
+      "byte_start": 10458,
+      "byte_end": 13445
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/STATIC-CHECKS.json",
+      "bytes": 5753,
+      "sha256": "847661b585768e4207e9af2b43eb35c0ee7d545d514589df9092ee2ecff119e5",
+      "line": 4,
+      "byte_start": 13445,
+      "byte_end": 19781
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/baseline-overlay/infra/dev/window/loop.clj",
+      "bytes": 25295,
+      "sha256": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+      "line": 5,
+      "byte_start": 19781,
+      "byte_end": 45815
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/baseline-overlay/infra/render/input.clj",
+      "bytes": 12345,
+      "sha256": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c",
+      "line": 6,
+      "byte_start": 45815,
+      "byte_end": 58716
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/criterium-source-audit.json",
+      "bytes": 1196,
+      "sha256": "7a6ae87b12e5827ade2ed10a5528c8cc2c88e97f2580ee3842f8584af999fe8c",
+      "line": 7,
+      "byte_start": 58716,
+      "byte_end": 60194
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/criterium-source-excerpts.txt",
+      "bytes": 13136,
+      "sha256": "41795c061826b42a67e01c3849446d2fd53375eec088d023ee2462a27b68993a",
+      "line": 8,
+      "byte_start": 60194,
+      "byte_end": 73900
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/evidence/host_cost.clj",
+      "bytes": 12133,
+      "sha256": "4de04d6ee76d2dd04ec6a7a3ca55f8a90c8c8295aada9a40ae7b038e8dc5d723",
+      "line": 9,
+      "byte_start": 73900,
+      "byte_end": 86510
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/fixture.edn",
+      "bytes": 506,
+      "sha256": "6e7a8c49c87258c995bd5e8950856338ff4804b93dc5ad37da70c5f325cea18d",
+      "line": 10,
+      "byte_start": 86510,
+      "byte_end": 87191
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/loaded-source-pins.edn",
+      "bytes": 34464,
+      "sha256": "99e72fee58ddf1b33e76ad9d58ad7206ad0d21f1078ac87cea29564767e58427",
+      "line": 11,
+      "byte_start": 87191,
+      "byte_end": 123638
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/pre-review/host_cost.clj.txt",
+      "bytes": 11193,
+      "sha256": "423c4f82b9b669eb823408d837700d8e0e6fc797fee54a5ffacb1f1f65602bca",
+      "line": 12,
+      "byte_start": 123638,
+      "byte_end": 135292
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/pre-review/record.json",
+      "bytes": 666,
+      "sha256": "3e79916f1b35a922117349cc7af7f44ee1d3176d0d2bc105af4c10aa1fbcb3d8",
+      "line": 13,
+      "byte_start": 135292,
+      "byte_end": 136179
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/pre-review/supervisor.py.txt",
+      "bytes": 11285,
+      "sha256": "972ee80ec9e7764a85db394badc99af6f7c7db4989167d426c72dbf955fcd4eb",
+      "line": 14,
+      "byte_start": 136179,
+      "byte_end": 148195
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/preparation-hashes.json",
+      "bytes": 971,
+      "sha256": "3176ae4124a4ab080cfc76ebd4eb02ac78496384145615a3b14f00efc0bad8a5",
+      "line": 15,
+      "byte_start": 148195,
+      "byte_end": 149390
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/review-repair.patch",
+      "bytes": 8251,
+      "sha256": "838d6b9dda3a5b4e1c5d92623240798f4f7d600da43ad23bb8ef5a8083e4df4d",
+      "line": 16,
+      "byte_start": 149390,
+      "byte_end": 158044
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/checks.edn",
+      "bytes": 21407,
+      "sha256": "2ca75bfadeed8d194a487a1c210f9704fa3bd59419e6b732cf083c65e26e219b",
+      "line": 17,
+      "byte_start": 158044,
+      "byte_end": 180291
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/command.json",
+      "bytes": 1075,
+      "sha256": "005ebd4ed643ecef992ab61a54518c63f05c879c6cbf74577d190f7311ff544d",
+      "line": 18,
+      "byte_start": 180291,
+      "byte_end": 181645
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/complete.edn",
+      "bytes": 171,
+      "sha256": "d806830ebbcc2b1ecad955391a2bfa4d5d7782de16e8aa39a4d95f82aa248a57",
+      "line": 19,
+      "byte_start": 181645,
+      "byte_end": 182000
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/empty.edn",
+      "bytes": 5369,
+      "sha256": "188ecc0026bc32c50c608d3dd055a26a4e1f2bf57227b3f3683a187c40e24d0c",
+      "line": 20,
+      "byte_start": 182000,
+      "byte_end": 187728
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/legacy-16.edn",
+      "bytes": 5464,
+      "sha256": "1e45918f1f10b7e2f33b1ee748673498a20ac0a9ad5457c264084fe47ac1a3d2",
+      "line": 21,
+      "byte_start": 187728,
+      "byte_end": 193557
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/load-before.json",
+      "bytes": 1980,
+      "sha256": "6f49fa40543267a03ba950cbf2c95115fef8d60f03cc39753290df70633a9758",
+      "line": 22,
+      "byte_start": 193557,
+      "byte_end": 195954
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/loaded-resources.edn",
+      "bytes": 38723,
+      "sha256": "58b5e723676bb4a1ee10f6b0d8ba352fde8cab2c91e8162dfd9a71724113435b",
+      "line": 23,
+      "byte_start": 195954,
+      "byte_end": 236856
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/sculpt-1.edn",
+      "bytes": 5543,
+      "sha256": "60e2e8bb1474761362156c2859e66e39298e096c3ddc570d4f300a14956554bd",
+      "line": 24,
+      "byte_start": 236856,
+      "byte_end": 242763
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/sculpt-8.edn",
+      "bytes": 5595,
+      "sha256": "d73a6487c72c5c9483e84478c06d12c11a47955b7202dd63aca775f2ad156182",
+      "line": 25,
+      "byte_start": 242763,
+      "byte_end": 248723
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 26,
+      "byte_start": 248723,
+      "byte_end": 248897
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/runs/baseline-01/stdout.log",
+      "bytes": 107,
+      "sha256": "aef35835d8ac315cbf37c1228d565575c58f5b9b07bc2fcd64c3a71d11afe082",
+      "line": 27,
+      "byte_start": 248897,
+      "byte_end": 249185
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/source-pins.json",
+      "bytes": 37780,
+      "sha256": "8655564c195678c8942e11740da21ec1a9f889696e569bb855e2ed0ba09f3164",
+      "line": 28,
+      "byte_start": 249185,
+      "byte_end": 288980
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/format-01.json",
+      "bytes": 520,
+      "sha256": "28ce6e2cd9305ea615411c0ea0faa42e5613a0e72787d677b0dc9eb023680483",
+      "line": 29,
+      "byte_start": 288980,
+      "byte_end": 289709
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/format-qualified.json",
+      "bytes": 581,
+      "sha256": "3124ea5556f158495b7cb6835869603e771f9b23eaac78ae0e01ae4c026ca82e",
+      "line": 30,
+      "byte_start": 289709,
+      "byte_end": 290511
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/kondo-01.json",
+      "bytes": 205,
+      "sha256": "89428306711b8faaf4610869b76455ef424c381f701f591392b967587b442ba5",
+      "line": 31,
+      "byte_start": 290511,
+      "byte_end": 290905
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/kondo-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 32,
+      "byte_start": 290905,
+      "byte_end": 291074
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/kondo-01.stdout",
+      "bytes": 1578,
+      "sha256": "dd052418ea096cfc903f86f9d3e59575b647fb2adb47a3efa0a2a1b38996c976",
+      "line": 33,
+      "byte_start": 291074,
+      "byte_end": 292834
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/kondo-final.json",
+      "bytes": 340,
+      "sha256": "683ac246a9c2b14896557c0ccd73d564778589a9226b99d39145b7175bd90eda",
+      "line": 34,
+      "byte_start": 292834,
+      "byte_end": 293382
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/kondo-qualified.json",
+      "bytes": 340,
+      "sha256": "3b2a373f7de58f318b8dcd64dde6dd00c20e58cecb87dd2be0578a8f4dd3e143",
+      "line": 35,
+      "byte_start": 293382,
+      "byte_end": 293934
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/preparation-reader.json",
+      "bytes": 405,
+      "sha256": "f34d266a04cc96b7330b36fb1db149c92b4b80aeaf9ea927440ca7e622a45bf0",
+      "line": 36,
+      "byte_start": 293934,
+      "byte_end": 294547
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/reader-01.json",
+      "bytes": 716,
+      "sha256": "14d74e1f604d33fe65e325dbbd37bbb8fb72e3ab377b103e8132518e931a6e65",
+      "line": 37,
+      "byte_start": 294547,
+      "byte_end": 295471
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/reader-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 38,
+      "byte_start": 295471,
+      "byte_end": 295641
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/reader-01.stdout",
+      "bytes": 362,
+      "sha256": "699f5db2c6dc00fea15b4ed44a0bc76afc9d003197fa8d2ea0d2d0ef87d0c439",
+      "line": 39,
+      "byte_start": 295641,
+      "byte_end": 296178
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/reader-final.json",
+      "bytes": 1138,
+      "sha256": "035d84a35b2310f53995b4d3df25e30199bf67693b905e5ef06f42546ea13c94",
+      "line": 40,
+      "byte_start": 296178,
+      "byte_end": 297547
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/reader-qualified.json",
+      "bytes": 1138,
+      "sha256": "035d84a35b2310f53995b4d3df25e30199bf67693b905e5ef06f42546ea13c94",
+      "line": 41,
+      "byte_start": 297547,
+      "byte_end": 298920
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/static/resource-pins.json",
+      "bytes": 986,
+      "sha256": "c157deb2637ecc07eca643235806b7ca199bed11045faccd452e7e4c8303bc78",
+      "line": 42,
+      "byte_start": 298920,
+      "byte_end": 300137
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost/supervisor.py",
+      "bytes": 11768,
+      "sha256": "51cb05a13eadbb5748537a1bb4ef6b5a9e38c232eab8a748aacfe2aef1b12dcb",
+      "line": 43,
+      "byte_start": 300137,
+      "byte_end": 312633
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/CLOSED-FILES.txt",
+      "bytes": 821,
+      "sha256": "a6e896214d49514e92f0a4d0cc781d857cdab22cc6fd6757f9d98025cbc5db67",
+      "line": 44,
+      "byte_start": 312633,
+      "byte_end": 313659
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/PLAN.md",
+      "bytes": 6674,
+      "sha256": "ad43abb37340015790de62e7132b80d9db1b96f3d2d725db83c9bdba594ac8d0",
+      "line": 45,
+      "byte_start": 313659,
+      "byte_end": 320605
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/PRIOR-EVIDENCE.json",
+      "bytes": 7937,
+      "sha256": "9cdd0553f391817e7492b0e70082594d6192976758321372284266aeba73d2c9",
+      "line": 46,
+      "byte_start": 320605,
+      "byte_end": 329096
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/SHA256SUMS",
+      "bytes": 3186,
+      "sha256": "d8c19cf431d757a64684055459b066424d83b11f6e8dc48620972d6d2c48e4fe",
+      "line": 47,
+      "byte_start": 329096,
+      "byte_end": 332481
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/STATIC-CHECKS.json",
+      "bytes": 4818,
+      "sha256": "070b26dfb95ae4de1bd593b9a269eb5e37eac8f7b69c4195fbfa195c86bae3f8",
+      "line": 48,
+      "byte_start": 332481,
+      "byte_end": 337809
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/baseline-overlay/infra/dev/window/loop.clj",
+      "bytes": 25295,
+      "sha256": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+      "line": 49,
+      "byte_start": 337809,
+      "byte_end": 363846
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/baseline-overlay/infra/render/input.clj",
+      "bytes": 12345,
+      "sha256": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c",
+      "line": 50,
+      "byte_start": 363846,
+      "byte_end": 376750
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/criterium-source-audit.json",
+      "bytes": 1196,
+      "sha256": "7a6ae87b12e5827ade2ed10a5528c8cc2c88e97f2580ee3842f8584af999fe8c",
+      "line": 51,
+      "byte_start": 376750,
+      "byte_end": 378231
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/criterium-source-excerpts.txt",
+      "bytes": 13136,
+      "sha256": "41795c061826b42a67e01c3849446d2fd53375eec088d023ee2462a27b68993a",
+      "line": 52,
+      "byte_start": 378231,
+      "byte_end": 391940
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/evidence/host_cost.clj",
+      "bytes": 12133,
+      "sha256": "4de04d6ee76d2dd04ec6a7a3ca55f8a90c8c8295aada9a40ae7b038e8dc5d723",
+      "line": 53,
+      "byte_start": 391940,
+      "byte_end": 404553
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/fixture.edn",
+      "bytes": 506,
+      "sha256": "6e7a8c49c87258c995bd5e8950856338ff4804b93dc5ad37da70c5f325cea18d",
+      "line": 54,
+      "byte_start": 404553,
+      "byte_end": 405237
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/green-01/execution.json",
+      "bytes": 551,
+      "sha256": "03044a840b953b8005eaccca80e9ad5cf455399aad67bac96875d905be64235b",
+      "line": 55,
+      "byte_start": 405237,
+      "byte_end": 406010
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/green-01/stderr.log",
+      "bytes": 1391,
+      "sha256": "ad46e5dc91bfa91240354fb029c27876b8d75ac53d85dfd763030415e0ed93a7",
+      "line": 56,
+      "byte_start": 406010,
+      "byte_end": 407588
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/green-01/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 57,
+      "byte_start": 407588,
+      "byte_end": 407757
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/green-01/supervisor.py",
+      "bytes": 15431,
+      "sha256": "da81766c854c5a354e5c2fc3e74d4c65baa17a99eaf036bf51a5ef7fa449be42",
+      "line": 58,
+      "byte_start": 407757,
+      "byte_end": 424116
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/green-01/test_supervisor.py",
+      "bytes": 10079,
+      "sha256": "d9ee7d709b98c939e563c00dcf7f2ab741ee78a398defcbb5398e2a22fea7348",
+      "line": 59,
+      "byte_start": 424116,
+      "byte_end": 434868
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/loaded-source-pins.edn",
+      "bytes": 34464,
+      "sha256": "99e72fee58ddf1b33e76ad9d58ad7206ad0d21f1078ac87cea29564767e58427",
+      "line": 60,
+      "byte_start": 434868,
+      "byte_end": 471318
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/preparation-hashes.json",
+      "bytes": 1063,
+      "sha256": "893a80cf0213c4de45b4792b6ffe356636460786135f7fc70b59617b1eb96cba",
+      "line": 61,
+      "byte_start": 471318,
+      "byte_end": 472614
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified/execution.json",
+      "bytes": 594,
+      "sha256": "1c6a144d53966c55fc5e1188bd4bf9dc6985a81ea02591b30e6a828f7a866379",
+      "line": 62,
+      "byte_start": 472614,
+      "byte_end": 473431
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified/stderr.log",
+      "bytes": 1547,
+      "sha256": "92e52231efada8b6c298506bd9513fb8986effb33029e0e92a33accd8a0e961a",
+      "line": 63,
+      "byte_start": 473431,
+      "byte_end": 475167
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 64,
+      "byte_start": 475167,
+      "byte_end": 475337
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified/supervisor.py",
+      "bytes": 15431,
+      "sha256": "da81766c854c5a354e5c2fc3e74d4c65baa17a99eaf036bf51a5ef7fa449be42",
+      "line": 65,
+      "byte_start": 475337,
+      "byte_end": 491697
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified/test_supervisor.py",
+      "bytes": 11272,
+      "sha256": "d67bef6981755138aac14bd05edbd358270443f0614cc40fb5bea6327189036c",
+      "line": 66,
+      "byte_start": 491697,
+      "byte_end": 503689
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified-02/execution.json",
+      "bytes": 541,
+      "sha256": "80ad0045d61c3657b18f8aac53def6c21f506fecc1f60f63cf1c39893aadc01c",
+      "line": 67,
+      "byte_start": 503689,
+      "byte_end": 504456
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified-02/stderr.log",
+      "bytes": 1707,
+      "sha256": "4c28505e31b0100d0ddf061e883f40bed35b0084243f7920031000f450da5197",
+      "line": 68,
+      "byte_start": 504456,
+      "byte_end": 506356
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified-02/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 69,
+      "byte_start": 506356,
+      "byte_end": 506529
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified-02/supervisor.py",
+      "bytes": 15813,
+      "sha256": "1e166af5c24717b8b391ffe877c951507a777cf14d6aa9beb2c44a69716dec83",
+      "line": 70,
+      "byte_start": 506529,
+      "byte_end": 523284
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/qualified-02/test_supervisor.py",
+      "bytes": 11808,
+      "sha256": "8c3aa9773fe9dd943b0a50c79d7f7a59aef7da09ac4674e367b7a0c5fcbc26ac",
+      "line": 71,
+      "byte_start": 523284,
+      "byte_end": 535832
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/red/execution.json",
+      "bytes": 562,
+      "sha256": "cdd935cae0511f77b23c9c927b468d0eafb64fdab33de0525c9fb6cda1748bdc",
+      "line": 72,
+      "byte_start": 535832,
+      "byte_end": 536611
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/red/stderr.log",
+      "bytes": 19852,
+      "sha256": "7e4614e619deb374db47b598cf5e19ceadb4062b2bfaf4882dc6588aa3f65962",
+      "line": 73,
+      "byte_start": 536611,
+      "byte_end": 557082
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/red/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 74,
+      "byte_start": 557082,
+      "byte_end": 557246
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/red/supervisor.py",
+      "bytes": 11768,
+      "sha256": "51cb05a13eadbb5748537a1bb4ef6b5a9e38c232eab8a748aacfe2aef1b12dcb",
+      "line": 75,
+      "byte_start": 557246,
+      "byte_end": 569749
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/red/test_supervisor.py",
+      "bytes": 10079,
+      "sha256": "d9ee7d709b98c939e563c00dcf7f2ab741ee78a398defcbb5398e2a22fea7348",
+      "line": 76,
+      "byte_start": 569749,
+      "byte_end": 580496
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/repair.patch",
+      "bytes": 13479,
+      "sha256": "a0baae724c8a4378a023e437ee7b89e479f5da2b5608880e8ab7c465d5f23ccf",
+      "line": 77,
+      "byte_start": 580496,
+      "byte_end": 594714
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/checks.edn",
+      "bytes": 21407,
+      "sha256": "2ca75bfadeed8d194a487a1c210f9704fa3bd59419e6b732cf083c65e26e219b",
+      "line": 78,
+      "byte_start": 594714,
+      "byte_end": 616964
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/command.json",
+      "bytes": 1087,
+      "sha256": "036d5338cb9b4ac8e1c2e3daea11a288d41a433bf959565fa66482746893419a",
+      "line": 79,
+      "byte_start": 616964,
+      "byte_end": 618333
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/complete.edn",
+      "bytes": 171,
+      "sha256": "d806830ebbcc2b1ecad955391a2bfa4d5d7782de16e8aa39a4d95f82aa248a57",
+      "line": 80,
+      "byte_start": 618333,
+      "byte_end": 618691
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/empty.edn",
+      "bytes": 5352,
+      "sha256": "dbb646dcfdfa8fc34c611d3efd21e04e154cfa0add261599a53e5eb0326d820c",
+      "line": 81,
+      "byte_start": 618691,
+      "byte_end": 624407
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/execution.json",
+      "bytes": 5454,
+      "sha256": "faad9df7ca9e048a168a0bb83d104599695ce7681be4a9579e47c8c4f98d29d3",
+      "line": 82,
+      "byte_start": 624407,
+      "byte_end": 630498
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/legacy-16.edn",
+      "bytes": 5461,
+      "sha256": "8837e52796046a4886ef5adf274916a566c5e5744fddf55c043136cb5f79db12",
+      "line": 83,
+      "byte_start": 630498,
+      "byte_end": 636326
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/load-after.json",
+      "bytes": 2213,
+      "sha256": "d60aacafa8dcb5280968aff754787cce8af10051cff0ad38877ac2a4e80e78f4",
+      "line": 84,
+      "byte_start": 636326,
+      "byte_end": 638982
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/load-before.json",
+      "bytes": 2213,
+      "sha256": "e3891295a784522b7e56cb5b1410ae616f75496aaa27070c0d6abf53c3aa665c",
+      "line": 85,
+      "byte_start": 638982,
+      "byte_end": 641639
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/loaded-resources.edn",
+      "bytes": 38729,
+      "sha256": "326a5e084e70d3e24d9f37c557eb1a92bf247e96cf9c6e617137718a30a08b7d",
+      "line": 86,
+      "byte_start": 641639,
+      "byte_end": 682550
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/ownership.jsonl",
+      "bytes": 2246,
+      "sha256": "f8181d895d6f5ccd12ae9afcb454f6b778aa2c370bd762997102b1aa23e75df8",
+      "line": 87,
+      "byte_start": 682550,
+      "byte_end": 685216
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/primary-identity.json",
+      "bytes": 209,
+      "sha256": "77e0858701eba7579e03f5a63ed6c408c4a0fb290de97d068462e9999e4e7d5a",
+      "line": 88,
+      "byte_start": 685216,
+      "byte_end": 685644
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/sculpt-1.edn",
+      "bytes": 5545,
+      "sha256": "d3ce4b239ae3f93d0b5aef20d2bf30cbeac8b355637659b49ba73c3888c54796",
+      "line": 89,
+      "byte_start": 685644,
+      "byte_end": 691556
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/sculpt-8.edn",
+      "bytes": 5568,
+      "sha256": "aaa1e1ed050133314b358c74662c8d87693012e519d3a1bb9c53e3fb36d9e428",
+      "line": 90,
+      "byte_start": 691556,
+      "byte_end": 697489
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 91,
+      "byte_start": 697489,
+      "byte_end": 697666
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/baseline-02/stdout.log",
+      "bytes": 107,
+      "sha256": "aef35835d8ac315cbf37c1228d565575c58f5b9b07bc2fcd64c3a71d11afe082",
+      "line": 92,
+      "byte_start": 697666,
+      "byte_end": 697957
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/checks.edn",
+      "bytes": 21407,
+      "sha256": "2ca75bfadeed8d194a487a1c210f9704fa3bd59419e6b732cf083c65e26e219b",
+      "line": 93,
+      "byte_start": 697957,
+      "byte_end": 720208
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/command.json",
+      "bytes": 1218,
+      "sha256": "b4b42fd623adaa147f6ec70219ef99dd7b75f510f2436b4eb981d386fa2b9736",
+      "line": 94,
+      "byte_start": 720208,
+      "byte_end": 721703
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/complete.edn",
+      "bytes": 171,
+      "sha256": "b2bcaf9f814f298d35bd10347fd7fd77082b995dae04a3658390f3db71e9272c",
+      "line": 95,
+      "byte_start": 721703,
+      "byte_end": 722062
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/empty.edn",
+      "bytes": 5337,
+      "sha256": "644fbeb4a1b2dffd757c822f5c0a172a43af53061da28c6b5e9fd1d7b0d1d24b",
+      "line": 96,
+      "byte_start": 722062,
+      "byte_end": 727763
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/execution.json",
+      "bytes": 5253,
+      "sha256": "1618fdeeda19b0aeae2317ada0d698c264213677846fb9c227f9113b3ae78383",
+      "line": 97,
+      "byte_start": 727763,
+      "byte_end": 733629
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/legacy-16.edn",
+      "bytes": 5451,
+      "sha256": "4ce8533e0f52f4bcab33c0f5506e447efee08fa9fc31c58eb4b1c6519016a571",
+      "line": 98,
+      "byte_start": 733629,
+      "byte_end": 739449
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/load-after.json",
+      "bytes": 2212,
+      "sha256": "b6c2633e77f6859206bf303819e860306a751f36a8c1cb06820424f8b917060a",
+      "line": 99,
+      "byte_start": 739449,
+      "byte_end": 742105
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/load-before.json",
+      "bytes": 2212,
+      "sha256": "83e9ef56d33d582465c6e499b1a4c15d4154d7140393591f12d9d6627cbc867e",
+      "line": 100,
+      "byte_start": 742105,
+      "byte_end": 744762
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/loaded-resources.edn",
+      "bytes": 38603,
+      "sha256": "3a4dc0b2d8ed49cc6200ce6851d7af7f91d62d3c7efed790017637d60641b70d",
+      "line": 101,
+      "byte_start": 744762,
+      "byte_end": 785548
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/ownership.jsonl",
+      "bytes": 2128,
+      "sha256": "f37cc47c5029c06e19b98499f6d9d110019f939cb5c7b2bd1d54dbe123eb0b56",
+      "line": 102,
+      "byte_start": 785548,
+      "byte_end": 788081
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/primary-identity.json",
+      "bytes": 209,
+      "sha256": "0ae0ec71b73c9cef361f7c8d2f612f806ba300971368fe428ce51cacbe576a08",
+      "line": 103,
+      "byte_start": 788081,
+      "byte_end": 788510
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/sculpt-1.edn",
+      "bytes": 5538,
+      "sha256": "6042b36fb040a6cbd3e5453e5b3d6b9dc34636b3b5b62332a625f6838e8027dc",
+      "line": 104,
+      "byte_start": 788510,
+      "byte_end": 794415
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/sculpt-8.edn",
+      "bytes": 5607,
+      "sha256": "437a36b9afe99de808052f9729a590047542ef8668dcdd09b7af03b7f5e98415",
+      "line": 105,
+      "byte_start": 794415,
+      "byte_end": 800389
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 106,
+      "byte_start": 800389,
+      "byte_end": 800567
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/runs/candidate-01/stdout.log",
+      "bytes": 108,
+      "sha256": "9ad8794713d66b7f3d7a249a983337c69afc43ad404101be3a062c1be3ae8bd1",
+      "line": 107,
+      "byte_start": 800567,
+      "byte_end": 800860
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/source-pins.json",
+      "bytes": 37780,
+      "sha256": "8655564c195678c8942e11740da21ec1a9f889696e569bb855e2ed0ba09f3164",
+      "line": 108,
+      "byte_start": 800860,
+      "byte_end": 840658
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/supervisor.py",
+      "bytes": 15813,
+      "sha256": "1e166af5c24717b8b391ffe877c951507a777cf14d6aa9beb2c44a69716dec83",
+      "line": 109,
+      "byte_start": 840658,
+      "byte_end": 857400
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02/test_supervisor.py",
+      "bytes": 11808,
+      "sha256": "8c3aa9773fe9dd943b0a50c79d7f7a59aef7da09ac4674e367b7a0c5fcbc26ac",
+      "line": 110,
+      "byte_start": 857400,
+      "byte_end": 869935
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02-release-comment01.json",
+      "bytes": 1977,
+      "sha256": "f7d6886f259db313b2e541bf7dbc5f4c465eec1644243cc70de723fa5f902bf1",
+      "line": 111,
+      "byte_start": 869935,
+      "byte_end": 872159
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02-release-comment02.json",
+      "bytes": 1339,
+      "sha256": "87887e27a7206404ff654b858f20329d5392e54993558170d7f064d6380c36b6",
+      "line": 112,
+      "byte_start": 872159,
+      "byte_end": 873741
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02-root-closure.json",
+      "bytes": 437,
+      "sha256": "565c28c7d414a4f82616c3c8accc440ede523c8dae09420a67fd21f7abacf299",
+      "line": 113,
+      "byte_start": 873741,
+      "byte_end": 874384
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02-root-release01.json",
+      "bytes": 989,
+      "sha256": "5e8672dac0de3a2c0c2f47cf889568530862110bab3dba9e7ed44298fe4dc889",
+      "line": 114,
+      "byte_start": 874384,
+      "byte_end": 875613
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-02-root-release02.json",
+      "bytes": 691,
+      "sha256": "217213890524219983cf5efc5f2c7b6071761eb98cbc0096bd185c101f320be3",
+      "line": 115,
+      "byte_start": 875613,
+      "byte_end": 876533
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-baseline01-resource-audit.json",
+      "bytes": 2059,
+      "sha256": "1d4980815f04996025335e6e3632ff3a606d29e288e87b93f50d8a8182b1ce0a",
+      "line": 116,
+      "byte_start": 876533,
+      "byte_end": 878945
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-baseline01-root-closure.json",
+      "bytes": 2445,
+      "sha256": "3a366f372ab3e0261bee0a554c639bc023b074309d03260e83213bfee4f22b14",
+      "line": 117,
+      "byte_start": 878945,
+      "byte_end": 881763
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-host-cost-root-review-01.json",
+      "bytes": 1537,
+      "sha256": "22dff575497b91f6b07e0c4e8837cd46c18effcf220101a3d70481061c62c531",
+      "line": 118,
+      "byte_start": 881763,
+      "byte_end": 883569
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "current_GREEN_source_hashes": {
+    "src/infra/dev/window/loop.clj": "ef70bad85801842314c31afb5fd4875ca0e6ce3f50e694f864a9fe4ab55fb789",
+    "src/infra/render/input.clj": "67b098214f84c75e2436e14880b953ed70bc33ace4034ad460edf918be1ab59f",
+    "test/infra/dev/sculpt_intent_test.clj": "2bb8dd3c4a5204444576161463060c44702af211cf315f338882dafdb7828ab8"
+  },
+  "focused": {
+    "tests": 56,
+    "assertions": 544,
+    "failures": 0,
+    "errors": 0
+  },
+  "full": {
+    "tests": 967,
+    "assertions": 17006,
+    "failures": 0,
+    "errors": 0
+  },
+  "strict": "all6PASS",
+  "gate_closed": "2026-10-07T16:25:50.864486Z",
+  "cost_baseline_elapsed_s": 57.637810159001674,
+  "cost_candidate_elapsed_s": 58.33586514300259,
+  "cost_output_bytes_equal": true,
+  "interpretation": "Qualified source unchanged; runtime costs transparently reported, originalfailedsupervisor retained; packaging/receipts/cardcomments do not require repeating passedproductiontests. No hostedapproval or gameplay claim."
+}

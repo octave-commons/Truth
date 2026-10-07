@@ -1,0 +1,263 @@
+{
+  "argv": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "move",
+    "focus-follows-pilot",
+    "--to",
+    "review",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+  "started_utc": "2026-10-07T16:24:10.764668+00:00",
+  "ended_utc": "2026-10-07T16:25:50.864486+00:00",
+  "elapsed_s": 100.09982658700028,
+  "pid": 1410395,
+  "process_group": 1410395,
+  "owned_pids_observed": [
+    1410395,
+    1410564,
+    1410565,
+    1410574,
+    1415270,
+    1415271,
+    1415273,
+    1416045,
+    1416694,
+    1417044,
+    1418343,
+    1419708,
+    1419709,
+    1419711,
+    1420740,
+    1420741,
+    1422810
+  ],
+  "process_identity_history": [
+    {
+      "pid": 1410395,
+      "starttime_ticks": 5775082,
+      "pgid": 1410395,
+      "state": "R",
+      "exe": "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.0008391359951929189
+    },
+    {
+      "pid": 1410564,
+      "starttime_ticks": 5775155,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/bin/dash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.8100513959943783
+    },
+    {
+      "pid": 1410565,
+      "starttime_ticks": 5775156,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/bin/bash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.8107368009950733
+    },
+    {
+      "pid": 1410574,
+      "starttime_ticks": 5775163,
+      "pgid": 1410395,
+      "state": "R",
+      "exe": "/usr/bin/cat",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.8113578249976854
+    },
+    {
+      "pid": 1410565,
+      "starttime_ticks": 5775156,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.9124157810001634
+    },
+    {
+      "pid": 1410565,
+      "starttime_ticks": 5775156,
+      "pgid": 1410395,
+      "state": "Z",
+      "exe": null,
+      "cwd": null,
+      "elapsed_s": 45.25832400699437
+    },
+    {
+      "pid": 1415270,
+      "starttime_ticks": 5779613,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/bin/dash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 45.36147583699494
+    },
+    {
+      "pid": 1415271,
+      "starttime_ticks": 5779613,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/bin/bash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 45.362527356999635
+    },
+    {
+      "pid": 1415273,
+      "starttime_ticks": 5779616,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/local/bin/clj-kondo",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 45.36313283399795
+    },
+    {
+      "pid": 1416045,
+      "starttime_ticks": 5780209,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/local/bin/clj-kondo",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 51.34308340899588
+    },
+    {
+      "pid": 1416694,
+      "starttime_ticks": 5780963,
+      "pgid": 1410395,
+      "state": "R",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 58.844939884998894
+    },
+    {
+      "pid": 1416694,
+      "starttime_ticks": 5780963,
+      "pgid": 1410395,
+      "state": "Z",
+      "exe": null,
+      "cwd": null,
+      "elapsed_s": 62.297290452996094
+    },
+    {
+      "pid": 1417044,
+      "starttime_ticks": 5781315,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 62.39811771400127
+    },
+    {
+      "pid": 1417044,
+      "starttime_ticks": 5781315,
+      "pgid": 1410395,
+      "state": "R",
+      "exe": null,
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 71.84671536999667
+    },
+    {
+      "pid": 1418343,
+      "starttime_ticks": 5782276,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/local/bin/clojure-lsp",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 71.9475011579998
+    },
+    {
+      "pid": 1419708,
+      "starttime_ticks": 5782944,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/bin/bash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 78.63860582599591
+    },
+    {
+      "pid": 1419709,
+      "starttime_ticks": 5782944,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/home/err/.volta/bin/volta-shim",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 78.63873222099937
+    },
+    {
+      "pid": 1419711,
+      "starttime_ticks": 5782944,
+      "pgid": 1410395,
+      "state": "R",
+      "exe": "/home/err/.volta/tools/image/node/24.14.1/bin/node",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 78.6388313629941
+    },
+    {
+      "pid": 1420740,
+      "starttime_ticks": 5783122,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/bin/dash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 80.48906159999751
+    },
+    {
+      "pid": 1420741,
+      "starttime_ticks": 5783122,
+      "pgid": 1410395,
+      "state": "R",
+      "exe": "/home/err/.volta/tools/image/node/24.14.1/bin/node",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 80.48912033299712
+    },
+    {
+      "pid": 1420741,
+      "starttime_ticks": 5783122,
+      "pgid": 1410395,
+      "state": "Z",
+      "exe": null,
+      "cwd": null,
+      "elapsed_s": 87.40845449199696
+    },
+    {
+      "pid": 1422810,
+      "starttime_ticks": 5783826,
+      "pgid": 1410395,
+      "state": "S",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 87.50893119999819
+    },
+    {
+      "pid": 1422810,
+      "starttime_ticks": 5783826,
+      "pgid": 1410395,
+      "state": "Z",
+      "exe": null,
+      "cwd": null,
+      "elapsed_s": 99.98547075099486
+    }
+  ],
+  "java_opts": "-Xms256m -Xmx2g",
+  "removed_inherited_option_names": [
+    "JAVA_TOOL_OPTIONS",
+    "JDK_JAVA_OPTIONS",
+    "_JAVA_OPTIONS"
+  ],
+  "work_timeout_s": 1490,
+  "cleanup_reserve_s": 10,
+  "timed_out": false,
+  "exit_code": 0,
+  "main_process_reaped": true,
+  "owned_pids_still_present": [],
+  "source_test_pin_count": 304,
+  "source_test_changed": [],
+  "stdout_sha256": "9afeb2ce13fe744577c6296072a79742444e19c8da4f5fa252cd0ecd07f23e5e",
+  "stderr_sha256": "f37e114085da81eba1f84e60675ca975244188a03451fec62ba035a94dd73ef1",
+  "runner_sha256": "aa74a631dc3ab1a7b5427b076e2a936a56a340c06a655c19d2d940371239a2c5"
+}

@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-07T16:31:24.396086+00:00",
+  "prefixes": {
+    ".\u03b7\u03bc/receipts.edn": {
+      "bytes": 70067,
+      "sha256": "2ca5f2f58fa11f1d81d33b82efbf50820373170f1df5902697df809439eafd24"
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "bytes": 35739,
+      "sha256": "de0ace29342d80891daa7daa64349121bdd8ebddf4781b3a03696d03f433f506"
+    }
+  },
+  "all_prefixes_preserved": true
+}

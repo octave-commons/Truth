@@ -476,6 +476,24 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,8487159
   note: Merged developer aliases can require a separate suite even when src/test bytes are unchanged. Guard the exact composition before and after each sequential command, retain actual timeout behavior and raw nonblocking diagnostics, and keep old loaded-native evidence bound to its original source. No new spore; existing qualification discipline suffices.
+- ts: 2026-10-07T02:08:52.364714925Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Specify action aim timing without hiding host queue compatibility or payment ordering
+  p-efficiency: 0.88
+  p-friction: 0.25
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,760ea79d,2026-10-07-manual-sculpt-aim-timing
+  note: A current focus law does not alone fix action timing: anonymous world updates need explicit iteration context, and persistent versus action-local preparation changes later-reader observations. State the chosen ordering, malformed-context precedence and plain-Atom/IFn compatibility before RED; preserve earlier proposals through canonical superseding comments. Existing planning and receipt skills suffice; no new spore.
+- ts: 2026-10-07T02:54:44.013982Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Correct a pinned citation without conflating infrastructure failure with source style
+  p-efficiency: 0.9
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,47571e4,review5436893734,comment4202416214
+  note: Verify the exact pinned blob before changing adjacent line references; preserve the behavioral statement and proposed status. Inspect the underlying hosted error before repeating a wrapper label as a code defect. Broad historical-note search was unnecessary once the review named the target; prefer exact paths. No new spore; existing review and evidence skills suffice.
 - ts: 2026-10-07T02:19:01.548058Z
   session: /home/err/spaces/foresight/.worktrees/truth-current-composition
   task: Characterize a failed asynchronous handoff without inventing cancellation
@@ -512,3 +530,30 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T16:31:24.396086+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Qualify contextual Sculpt consumption without weakening historical evidence
+  p-efficiency: 0.76
+  p-friction: 0.31
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,f0c4710a,green-qualification
+  note: An absent-API RED guard can hide a new matrix oracle error. Keep the observed RED unchanged, preserve each failed GREEN version, derive exact per-verb costs from existing law, and let canonical gates expose owned style debt. Check all new test formatting before the expensive gate. No new spore; existing RED/GREEN and receipt skills suffice.
+- ts: 2026-10-07T17:50:22.857784810Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Sculpt matched host-cost and publication closure
+  p-efficiency: 0.81
+  p-friction: 0.27
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: .ημ/diagnostics/action-aim-host-cost-publication/RESULT.md
+  note: A workload completion marker cannot qualify a failed supervisor. Keep process membership independent of optional metadata, persist ownership immediately, and preserve failedraws. Compare identical outputs and expose action-cost increases; do not infer FPS. Lossless publication keeps every byte while reducing path count. No new spore.
+- ts: 2026-10-07T20:16:56.800743565Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Sculpt append-only publication provenance correction
+  p-efficiency: 0.78
+  p-friction: 0.32
+  p-skill-candidate: 0.30
+  spore: none
+  receipt-refs: .ημ/diagnostics/action-aim-provenance-correction-01/CLARIFICATION.json
+  note: A saved producer changed after a failed inventory attempt cannot attest to the earlier invocation. Preserve original bytes, mark unavailable commands unknown, and separate a newly derived byte-equivalent replay from historical execution. Inspect manifest path roots and gh slurp nesting before verification. Existing evidence discipline covers this; no new spore or promotion.

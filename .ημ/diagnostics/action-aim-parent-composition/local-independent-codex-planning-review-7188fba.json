@@ -1,0 +1,206 @@
+{
+  "review_kind": "independent local planning-content review",
+  "reviewer": "Codex collaboration agent /root/sculpt_plan_review",
+  "at": "2026-10-07T14:37:50.017141+00:00",
+  "repository": "octave-commons/Truth",
+  "pr": 36,
+  "url": "https://github.com/octave-commons/Truth/pull/36",
+  "head": "7188fbab1400589c5a3ccadb560df6b5120a5f9b",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "verdict": "PASS",
+  "findings": [],
+  "verdict_scope": "No actionable content blocker in the complete seven-file planning diff. This is LOCAL evidence only: not native approval, review-round credit, implementation admission, merge authorization, board validation, or gameplay acceptance.",
+  "scope": {
+    "diff_command": "git diff --binary b395c4049718f7ce015ddf25fc0a192d97821373 7188fbab1400589c5a3ccadb560df6b5120a5f9b",
+    "diff_bytes": 66880,
+    "diff_sha256": "7b461f44306a815ab878d0730a6ee4a67129e7e5626b99c685022e98255e4113",
+    "all_seven_file_diffs_reviewed": true,
+    "full_substantive_documents_reviewed": [
+      "docs/designs/spark-flight-and-camera.md",
+      "docs/notes/2026-10-07-manual-sculpt-aim-timing.md",
+      "kanban/tasks/focus-follows-pilot.md"
+    ],
+    "evidence_scope": "Read the complete union proof, every added receipt/reflection/event and surrounding diff context; inspected and independently verified byte preservation without interpreting Rheos semantics. Complete historical ledgers were not reread as narrative.",
+    "pr_body_read_in_full": true,
+    "pr_body_sha256": "49123a82706e0bafceb3c950c080fd21f5f7693e3cb206515ee7b82105219597",
+    "changed_files": [
+      {
+        "path": ".ημ/diagnostics/action-aim-parent-composition/union-proof.json",
+        "bytes": 1490,
+        "sha256": "edaf9069fbcec5645d3602f96ac6ecbed29cdd6d240790a1023122087ba7d239"
+      },
+      {
+        "path": ".ημ/receipts.edn",
+        "bytes": 70067,
+        "sha256": "2ca5f2f58fa11f1d81d33b82efbf50820373170f1df5902697df809439eafd24"
+      },
+      {
+        "path": ".ημ/session-mycology/ledger.md",
+        "bytes": 35739,
+        "sha256": "de0ace29342d80891daa7daa64349121bdd8ebddf4781b3a03696d03f433f506"
+      },
+      {
+        "path": "docs/designs/spark-flight-and-camera.md",
+        "bytes": 27575,
+        "sha256": "396eb70a86e0594847d2cb4b4c48178a51cf8403d96d95ccfbbdf5619468c7c9"
+      },
+      {
+        "path": "docs/notes/2026-10-07-manual-sculpt-aim-timing.md",
+        "bytes": 15039,
+        "sha256": "4eaa38fb1c377c031e270a9c4b5faf65a72242032a6aaa84225b4346ef94e09f"
+      },
+      {
+        "path": "kanban/tasks/.events/ledger.edn",
+        "bytes": 642552,
+        "sha256": "e8cc03c7ace8e83b0e4793f84fd853ee3d33a946d5b2623fd3e1c78987bfae8e"
+      },
+      {
+        "path": "kanban/tasks/focus-follows-pilot.md",
+        "bytes": 26623,
+        "sha256": "d3384d6c233ed01cf62097da30f1df3fc15adb5fd88461a8b4084a2ed799c138"
+      }
+    ],
+    "pinned_supporting_source": [
+      {
+        "path": "src/infra/render/input.clj",
+        "sha256": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "src/infra/dev/window/loop.clj",
+        "sha256": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "src/domain/player/focus.clj",
+        "sha256": "7ffeafd0a3826d400318458d3128e9181ecfed82c93c8d303cae102b8d5f1b2a",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "src/domain/voxel/sculpt.clj",
+        "sha256": "807f7eb41c406d71bdab1d31512de8fcdd7065d8eef2d1b804ad5a098ba5bf5f",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "src/law/narrowing.clj",
+        "sha256": "e7e503e7197b37774babda62cf59c93f49e168221eb64f9491c434b26a47749b",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "test/infra/dev/focus_cadence_test.clj",
+        "sha256": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "test/domain/pilot_resolve_seam_test.clj",
+        "sha256": "34d6cd24b91bb79b9fa5b5ac561ac9bee97c8e75396e2efe35d9e6d3fe18f48a",
+        "equals_note_pinned_source": true
+      },
+      {
+        "path": "test/infra/render/input_test.clj",
+        "sha256": "e9f835558f61e7c83fd4eaf230fb530c60ec20d489411b5fbb65ffacfdd75969",
+        "equals_note_pinned_source": true
+      }
+    ],
+    "additional_inspected_evidence": [
+      "test/infra/dev/window_test.clj:40-104",
+      "test/domain/voxel_sculpt_test.clj:42-166,309-361",
+      "src/domain/genesis/tick.clj:80-100,167-175",
+      "src/domain/player/state.clj:20-35"
+    ]
+  },
+  "assessments": [
+    {
+      "dimension": "Outcome and source grounding",
+      "result": "PASS",
+      "reason": "The actual GLFW press callback calls request-op through IntentAtom; queued actions drain before sim-loop prepares manual focus. Real cadence tests expose published pre-fold attention versus moved/recentered physical positions. The older pilot seam explicitly calls focus-follow before request-op, so it does not prove ordinary queued timing. The note correctly treats the new gap as source-derived and the amendment as proposed."
+    },
+    {
+      "dimension": "Mechanism and uniformity",
+      "result": "PASS",
+      "reason": "A named validated contextual entry is a bounded extension of the existing queue, guarded application and single simulation owner. Explicit dev-window opt-in prevents absent-capability plain Atom clients from acquiring manual-mode semantics. Legacy IFn, including map/keyword callables, reset and result guards remain specified. The plan rejects hidden config rereads, callable identity dispatch, blanket per-intent preparation and a second action path."
+    },
+    {
+      "dimension": "Timing, FIFO and payment",
+      "result": "PASS",
+      "reason": "One mode/offset projection C_n per iteration and each serial W_j define the consumer state, including mid-drain arrivals. Host changes after snapshot defer; prior world changes remain FIFO. Persistent preparation intentionally changes later-reader attention even on valid-aim denied payment. Existing request-op remains responsible for target/palette/funds and immutable paid records; final preparation and Jacobi fold timing remain unchanged."
+    },
+    {
+      "dimension": "Validation and failure semantics",
+      "result": "PASS",
+      "reason": "The manual-only no-observer shortcut is explicit. With an observer present, offset/position failures precede domain gates and preserve W_j within the same Throwable guard. Successful preparation with denied gates returns P_j without payment. Tracking calls unchanged request-op, retaining verb/magnitude validation before the observer gate. Absent keys versus explicit nil, visible stderr errors, malformed capability/context, recovery and no fallback are specified."
+    },
+    {
+      "dimension": "Acceptance and verification",
+      "result": "PASS",
+      "reason": "The RED matrix requires actual opted-in callback, IntentAtom and sim-loop after a real integrator fold, non-collinear motion and common translations, snapshot races/mid-drain arrivals, interleaving/payment/reader outcomes, invalid-input combinations, compatibility, press/repeat/release, and real sculpt fan-out. Existing tests are correctly distinguished from future RED and natural gameplay acceptance."
+    },
+    {
+      "dimension": "Estimate, dependencies, risks and non-goals",
+      "result": "PASS within stated planning scope",
+      "reason": "Three points is reasonable for this design continuation and plausibly for one bounded adapter/composition repair with existing domain functions. Exact named representation/validators and final implementation sizing remain explicit admission prerequisites; a broader queue/API change triggers breakdown into payload compatibility and action ordering. Current base contains the necessary callback/queue/focus/sculpt infrastructure; no new hard feature dependency is concealed. G/H/J placement, pursuit, HUD lag, new controls/costs, creation/embodiment and Gate production are explicitly outside this amendment. Existing card gameplay acceptance stays open."
+    },
+    {
+      "dimension": "Evidence and history preservation",
+      "result": "PASS",
+      "reason": "All changed worktree files equal exact-head blobs, relevant source/tests equal the note pinned revision, and production/test/config paths have no PR delta. The union proof reproduces exact common prefix plus both complete appends; the receipt file has only the later 916-byte composition receipt after the proved union. Earlier comments are explicitly superseded rather than silently rewritten."
+    }
+  ],
+  "local_checks": {
+    "git_diff_check": "PASS",
+    "note_links": "11 occurrences / 9 unique targets exist; design fragment verified; reciprocal design note link exists",
+    "source_test_config_delta": "none",
+    "ledger_byte_checks": [
+      {
+        "path": ".ημ/receipts.edn",
+        "verified": "common base + complete ours append + complete theirs append",
+        "extra_head_bytes_after_proved_union": 916
+      },
+      {
+        "path": ".ημ/session-mycology/ledger.md",
+        "verified": "common base + complete ours append + complete theirs append",
+        "extra_head_bytes_after_proved_union": 0
+      },
+      {
+        "path": "kanban/tasks/.events/ledger.edn",
+        "verified": "common base + complete ours append + complete theirs append",
+        "extra_head_bytes_after_proved_union": 0
+      }
+    ],
+    "new_tests_executed": false,
+    "jvm_or_native_actions": false
+  },
+  "canonical_pr_status_observed": {
+    "command": "nbb -cp /home/err/.agents/skills/pr-flow/scripts /home/err/.agents/skills/pr-flow/scripts/pr.cljs status octave-commons/Truth 36",
+    "exit_code": 0,
+    "checks_pass": 7,
+    "unresolved_threads": 0,
+    "exact_head_approvals": [
+      "coderabbit",
+      "mimo"
+    ],
+    "planning_rounds_completed": 0,
+    "planning_rounds_soft_minimum": 5,
+    "configured_cohort": [
+      "coderabbit",
+      "codex",
+      "mimo"
+    ],
+    "gate": "BLOCKED: review loop requires five completed rounds or unanimous current-head approval with findings settled"
+  },
+  "limits": [
+    "No source, tests, card, status, ledger, config or runtime was edited.",
+    "No hosted approval was published and no remote write, review request, commit or push occurred.",
+    "No newly executed RED, build, native gameplay, performance, approach/commitment/sculpt/Gate result is claimed.",
+    "Local substitution for hosted Codex has no granted user waiver in this review; root owns any policy resolution and actual admission.",
+    "Exact contextual representation and named boundary validators remain prerequisites before implementation, as the plan already states."
+  ],
+  "reflection_for_coordinator": {
+    "efficiency": 0.88,
+    "friction": 0.16,
+    "skill_candidate": 0.1,
+    "spore": "none",
+    "lesson": "Read the actual callback and serial consumption boundary together: domain-only seam tests can prove geometry while missing host timing. Local evidence and native review admission remain distinct.",
+    "ledger_append": "deferred to coordinator because this lane is authorized to create only this review artifact"
+  }
+}

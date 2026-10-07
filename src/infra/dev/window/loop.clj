@@ -15,6 +15,7 @@
    which is exactly the failure this layer exists to make visible. These are the
    only justified `catch Throwable` sites in the tree outside
    `domain.ecs.tick/run-parallel`."
+  (:refer-clojure :exclude [update])
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
@@ -27,6 +28,7 @@
    [infra.render.units :as units]
    [infra.menu :as menu]
    [infra.camera :as cam]
+   [law.input-intent :as intent-law]
    [law.narrowing :as narrowing])
   (:import
    (org.lwjgl.glfw GLFW)
@@ -45,28 +47,55 @@
             "IntentAtom: world mutations must go through swap!/reset! (intents)")))
   (reset [_ v] (.add queue (constantly v)) v))
 
+(defrecord ^{:doc "Nominal opt-in update consuming the current serial world and iteration context."}
+ ContextualIntent [update])
+
+(defn enqueue-contextual!
+  "Enqueue an opt-in update on the existing IntentAtom queue.
+
+   Validation and execution belong to guarded consumption, not callback time."
+  [^IntentAtom intents update-fn]
+  (.add ^java.util.concurrent.ConcurrentLinkedQueue (.-queue intents)
+        (->ContextualIntent update-fn))
+  @intents)
+
+(defn- iteration-context
+  "Project one immutable host context, preserving absent versus explicit nil."
+  [cfg]
+  {:manual? (= :manual (:mode cfg :manual))
+   :focus-offset (:focus-offset cfg [0.0 0.0 0.0])})
+
 ;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
 ;; namespace's header.
 #_{:splint/disable [lint/catch-throwable]}
 (defn- apply-intent
   "Apply one serial world update; log a failure and retain the previous world.
    Non-map results are dropped, preserving the intent queue's existing guard."
-  [w f]
-  (try
-    (let [w' (f w)]
-      (if (map? w') w' w))
-    (catch Throwable t
-      (binding [*out* *err*]
-        (println "[INTENT ERROR]" (.getMessage t)))
-      w)))
+  ([w entry] (apply-intent w entry nil))
+  ([w entry context]
+   (try
+     (let [w' (if (instance? ContextualIntent entry)
+                (do
+                  (when-not (intent-law/contextual-entry? entry)
+                    (throw (ex-info "Invalid contextual intent payload" {:entry entry})))
+                  (when-not (intent-law/iteration-context? context)
+                    (throw (ex-info "Invalid iteration context" {:context context})))
+                  ((:update entry) w context))
+                (entry w))]
+       (if (map? w') w' w))
+     (catch Throwable t
+       (binding [*out* *err*]
+         (println "[INTENT ERROR]" (.getMessage t)))
+       w))))
 
 (defn- drain-intents
   "Apply every queued intent in arrival order through the serial update guard."
-  [w ^java.util.concurrent.ConcurrentLinkedQueue queue]
-  (loop [w w]
-    (if-let [f (.poll queue)]
-      (recur (apply-intent w f))
-      w)))
+  ([w queue] (drain-intents w queue nil))
+  ([w ^java.util.concurrent.ConcurrentLinkedQueue queue context]
+   (loop [w w]
+     (if-let [entry (.poll queue)]
+       (recur (apply-intent w entry context))
+       w))))
 
 (defn delete-mesh
   "Release the GPU buffers for a mesh map."
@@ -133,7 +162,8 @@
       (when-not @stop-atom
         (let [t0  (System/nanoTime)
               cfg @config-atom
-              w0  (cond-> (drain-intents @world-atom intent-queue)
+              context (iteration-context cfg)
+              w0  (cond-> (drain-intents @world-atom intent-queue context)
                     (= :manual (:mode cfg :manual))
                     (apply-intent #(let [offset (:focus-offset cfg [0.0 0.0 0.0])]
                                      (when-not (narrowing/focus-offset? offset)
@@ -471,7 +501,8 @@
                            :camera-atom camera-atom
                            :keys-atom ks
                            :config-atom config-atom
-                           :world-atom world-intents})
+                           :world-atom world-intents
+                           :submit-contextual! (partial enqueue-contextual! world-intents)})
       (while (and (not @stop-atom)
                   (render-frame-once {:window window
                                       :world-atom world-intents

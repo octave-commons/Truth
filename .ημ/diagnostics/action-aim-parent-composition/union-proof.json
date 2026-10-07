@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-07T02:56:56.163001+00:00",
+  "base": "760ea79d017f4e012943789f896dfdfdb0a173b1",
+  "ours": "dbd51adfa665753bb1f350a6925e7f7c16ca14c8",
+  "theirs": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "mechanism": "git merge-file --union; byte proof only, no Rheos parsing or card-state reconciliation",
+  "files": [
+    {
+      "path": ".\u03b7\u03bc/receipts.edn",
+      "base_bytes": 57050,
+      "ours_append_bytes": 5359,
+      "theirs_append_bytes": 6742,
+      "base_sha256": "46278d7cf096142b77d2fce07e2db4b543cfeb2ace64e446a226bbdfa31c05f9",
+      "merged_sha256": "9d53d25660a14e529a5c87ee2f5d9b81175b366b63456a08c88f1e620378a700",
+      "exact_base_then_ours_then_theirs": true
+    },
+    {
+      "path": ".\u03b7\u03bc/session-mycology/ledger.md",
+      "base_bytes": 31510,
+      "ours_append_bytes": 1525,
+      "theirs_append_bytes": 2704,
+      "base_sha256": "9a66f006394f9ccde058381a341c0419715554db4bfd8dd9430761ce8c0f4e76",
+      "merged_sha256": "de0ace29342d80891daa7daa64349121bdd8ebddf4781b3a03696d03f433f506",
+      "exact_base_then_ours_then_theirs": true
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "base_bytes": 628173,
+      "ours_append_bytes": 8091,
+      "theirs_append_bytes": 6288,
+      "base_sha256": "7a2adcb165aef14ae03186265a2e88b3dbaa38961f8b56e99f0a3dd1f77d74d7",
+      "merged_sha256": "e8cc03c7ace8e83b0e4793f84fd853ee3d33a946d5b2623fd3e1c78987bfae8e",
+      "exact_base_then_ours_then_theirs": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "clj-kondo",
+    "--lint",
+    "src/law/input_intent.cljc",
+    "test/law/input_intent_test.clj",
+    "test/infra/dev/sculpt_intent_test.clj"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+  "started_utc": "2026-10-07T15:48:25.522406+00:00",
+  "ended_utc": "2026-10-07T15:48:25.637105+00:00",
+  "pid": 1186312,
+  "exit_code": 0,
+  "reaped": true,
+  "source_hashes": {
+    "src/law/input_intent.cljc": "55df510b0e8c20cc48ac1a623eafeecb80379cf3f914af58914af3d1447551fb",
+    "test/law/input_intent_test.clj": "37fd4baf59c7508189b21cb0307d04ebbd93b977e53d26ac2e4ad24a9362d3b6",
+    "test/infra/dev/sculpt_intent_test.clj": "819f896586465cc4f2935eb7b234a233d21d5396939a3f1dc576f1e28256eae3"
+  }
+}

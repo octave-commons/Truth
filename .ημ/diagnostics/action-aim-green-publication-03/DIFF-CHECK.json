@@ -1,0 +1,105 @@
+{
+  "at": "2026-10-07T17:57:32.778417+00:00",
+  "full_diff_check": {
+    "exit": 2,
+    "stdout": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch:12: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch:18: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch:76: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.patch:6: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.patch:24: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:24: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:73: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:87: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:129: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:178: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:182: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:233: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch:238: trailing whitespace.\n+ \n",
+    "stderr": ""
+  },
+  "findings": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch",
+      "line": 12,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch",
+      "line": 18,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch",
+      "line": 76,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.patch",
+      "line": 6,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.patch",
+      "line": 24,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 24,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 73,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 87,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 129,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 178,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 182,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 233,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "line": 238,
+      "raw_hex": "200a",
+      "meaning": "Required unified-diff blank context line; lossless immutable evidence"
+    }
+  ],
+  "other_published_paths_diff_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      ".",
+      ":(exclude).\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch",
+      ":(exclude).\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.patch",
+      ":(exclude).\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "decision": "Preserve raw unified patches byte-exact; their blank context markers are evidence syntax, not source whitespace. No source/check configuration changed. Fullcheck is recorded failed; all other current published files pass."
+}

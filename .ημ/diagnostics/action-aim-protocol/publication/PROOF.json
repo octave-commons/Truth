@@ -1,0 +1,17 @@
+{
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "source_head": "f0c4710a8306aa634af9f49859c11451515ed912",
+  "original_files": 97,
+  "original_bytes": 489499,
+  "direct_files": 25,
+  "packed_files": 72,
+  "packed_original_bytes": 327347,
+  "encoded_archive_bytes": 352345,
+  "empty_files_preserved": 18,
+  "every_packed_file_byte_roundtrip_equal": true,
+  "all_originals_unchanged": true,
+  "partition_complete_disjoint": true,
+  "effective_cumulative_publication_paths": 74,
+  "root_only_staging_required": true,
+  "note": "No Git index mutation. Packed files stay local; root stages only the explicit publication list. Historical manifests can be verified after reconstructing exact original paths via this map. Current sources and passing output remain direct."
+}

@@ -1,0 +1,204 @@
+{
+  "at_utc": "2026-10-07T17:55:44.162060+00:00",
+  "reviewer": "intent_research",
+  "context": "Independent offline evidence/package review; no JVM, benchmark, native action, production/test or board mutation. Babashka used only clojure.edn/read-string and JSON conversion of existing evidence.",
+  "verdict": "PASS: no publication-blocking discrepancy found; measured cost increases retained, no universal performance acceptance inferred.",
+  "package": {
+    "archive": ".ημ/diagnostics/action-aim-host-cost-publication/host-cost-evidence.jsonl",
+    "sha256": "4c5cd90498033538ec7a50e8963c0c470d05b7f8bed0501f59362ed026a5b917",
+    "original_files": 118,
+    "original_bytes": 826803,
+    "encoded_bytes": 883569,
+    "empty_originals": 9,
+    "unique_paths": true,
+    "exact_discovery_membership_and_Path_order": true,
+    "all_contiguous_line_byte_offsets_verified": true,
+    "every_decoded_byte_length_hash_equals_local_original": true,
+    "package_and_originals_unchanged_during_review": true,
+    "frozen_publication_files": {
+      ".ημ/diagnostics/action-aim-host-cost-publication/AUXILIARY-MAP.json": "160e4f6a403f45852663929ced648ea20ef62073cd3c8cf1d11bd467b2499c36",
+      ".ημ/diagnostics/action-aim-host-cost-publication/package.py": "091e87806e3c9999bd11472e0db6e022fa0f1733d0752d93d5ed21dce82d0775",
+      ".ημ/diagnostics/action-aim-host-cost-publication/metrics.json": "caf9fcf61c74a85a6a0f689adc6016edf97e16362f5d1b5c96eebf113373e154",
+      ".ημ/diagnostics/action-aim-host-cost-publication/summarize.bb": "dc11c1315db9fd0a749cfb5aee0455675e918ec09e21f82cd8341f0ed0acbb99",
+      ".ημ/diagnostics/action-aim-host-cost-publication/PROOF.json": "012755bf05a56c2125f64a193cfd156be285e1e829e67d3b5e5e73dd43ab6bbe",
+      ".ημ/diagnostics/action-aim-host-cost-publication/RESULT.md": "4a55946108de68e993bb6ff4714368350d762e296e531f21e0cfd903c7210fd7",
+      ".ημ/diagnostics/action-aim-host-cost-publication/host-cost-evidence.jsonl": "4c5cd90498033538ec7a50e8963c0c470d05b7f8bed0501f59362ed026a5b917"
+    }
+  },
+  "runs": {
+    "baseline-02": {
+      "execution_sha256": "faad9df7ca9e048a168a0bb83d104599695ce7681be4a9579e47c8c4f98d29d3",
+      "elapsed_s": 57.637810159001674,
+      "pid_pgid": 1846490,
+      "primary_starttime_ticks": 6228964,
+      "observed_pids_currently_absent": [
+        1846490,
+        1846497
+      ],
+      "artifacts_verified": 14,
+      "clean_recorded_closure": true,
+      "empty_stderr": true,
+      "command_sha256": "036d5338cb9b4ac8e1c2e3daea11a288d41a433bf959565fa66482746893419a"
+    },
+    "candidate-01": {
+      "execution_sha256": "1618fdeeda19b0aeae2317ada0d698c264213677846fb9c227f9113b3ae78383",
+      "elapsed_s": 58.33586514300259,
+      "pid_pgid": 1866501,
+      "primary_starttime_ticks": 6247786,
+      "observed_pids_currently_absent": [
+        1866501,
+        1866508
+      ],
+      "artifacts_verified": 14,
+      "clean_recorded_closure": true,
+      "empty_stderr": true,
+      "command_sha256": "b4b42fd623adaa147f6ec70219ef99dd7b75f510f2436b4eb981d386fa2b9736"
+    }
+  },
+  "metrics": {
+    "all_eight_EDN_cases_equal_metrics_json": true,
+    "raw_thread_summary_distributions_independently_recomputed": 24,
+    "table": {
+      "baseline-02": {
+        "empty": {
+          "cpu_median_us": 0.025182499999999997,
+          "allocation_median_bytes": 72.112,
+          "criterium_mean_us": 0.04002509877391814,
+          "criterium_interval_us": [
+            0.02924117012758025,
+            0.06252525404786767
+          ],
+          "outlier_variance": 0.8268307255609334
+        },
+        "legacy-16": {
+          "cpu_median_us": 5.6281384999999995,
+          "allocation_median_bytes": 6792.112,
+          "criterium_mean_us": 5.633849575598922,
+          "criterium_interval_us": [
+            3.6430494473531128,
+            8.539303539319903
+          ],
+          "outlier_variance": 0.828114749379146
+        },
+        "sculpt-1": {
+          "cpu_median_us": 4.480511000000001,
+          "allocation_median_bytes": 10344.112,
+          "criterium_mean_us": 7.938474553241767,
+          "criterium_interval_us": [
+            5.550861549254173,
+            11.732486826170435
+          ],
+          "outlier_variance": 0.8266630372398972
+        },
+        "sculpt-8": {
+          "cpu_median_us": 39.380839,
+          "allocation_median_bytes": 82400.112,
+          "criterium_mean_us": 33.64900697586727,
+          "criterium_interval_us": [
+            32.27663037330317,
+            35.69654449472097
+          ],
+          "outlier_variance": 0.153752253487811
+        }
+      },
+      "candidate-01": {
+        "empty": {
+          "cpu_median_us": 0.0466415,
+          "allocation_median_bytes": 136.112,
+          "criterium_mean_us": 0.06062664218766043,
+          "criterium_interval_us": [
+            0.038160463546577504,
+            0.10425115340047697
+          ],
+          "outlier_variance": 0.8294469573825404
+        },
+        "legacy-16": {
+          "cpu_median_us": 4.4657685,
+          "allocation_median_bytes": 6856.112,
+          "criterium_mean_us": 4.816054667459757,
+          "criterium_interval_us": [
+            3.9098254519994553,
+            7.059137216996915
+          ],
+          "outlier_variance": 0.8214722062136746
+        },
+        "sculpt-1": {
+          "cpu_median_us": 10.0481605,
+          "allocation_median_bytes": 23784.112,
+          "criterium_mean_us": 15.49153215694562,
+          "criterium_interval_us": [
+            10.989891606790648,
+            21.288046086925895
+          ],
+          "outlier_variance": 0.8251224826428472
+        },
+        "sculpt-8": {
+          "cpu_median_us": 91.241815,
+          "allocation_median_bytes": 189528.112,
+          "criterium_mean_us": 119.10315781600599,
+          "criterium_interval_us": [
+            77.48949887808527,
+            154.05087820992273
+          ],
+          "outlier_variance": 0.8236893696816143
+        }
+      }
+    },
+    "allocation_delta_bytes": {
+      "empty": 64.0,
+      "legacy-16": 64.0,
+      "sculpt-1": 13440.000000000002,
+      "sculpt-8": 107128.0
+    },
+    "cpu_ratio_sculpt_1": 2.2426371679480304,
+    "cpu_ratio_sculpt_8": 2.3169088652478935,
+    "criterium_mean_ratio_sculpt_8": 3.5395742258137237
+  },
+  "equivalence": {
+    "checks_bytes_identical": true,
+    "checks_sha256": "2ca75bfadeed8d194a487a1c210f9704fa3bd59419e6b732cf083c65e26e219b",
+    "scope": "Exact frozen benchmark fixture/results only; aligned starting aim intentionally equalizes outputs. It does not prove all-world equivalence or independently retest the stale-aim behavior."
+  },
+  "source_qualification": {
+    "baseline_commit": "f0c4710a8306aa634af9f49859c11451515ed912",
+    "baseline_overlay_exact_git_bytes": [
+      "src/infra/dev/window/loop.clj",
+      "src/infra/render/input.clj"
+    ],
+    "current_candidate_source_pins_unchanged": 182,
+    "loaded_resources": {
+      "baseline-02": {
+        "total_loaded_resource_records": 181,
+        "matching_source_pins": 181
+      },
+      "candidate-01": {
+        "total_loaded_resource_records": 181,
+        "matching_source_pins": 181
+      }
+    },
+    "prior_full_gate_source_test_config_pins_unchanged": 304,
+    "prior_gate_execution_sha256": "289d837a8f87ed3657e80b8efdb2a011bab1e143dbac13b45af88de09c1ff1be",
+    "prior_full_counts": {
+      "tests": 967,
+      "assertions": 17006,
+      "failures": 0,
+      "errors": 0
+    },
+    "all_six_strict_stages_and_native_move_output_verified": true,
+    "no_tests_rerun": true
+  },
+  "claim_limits": [
+    "The reported cost increases are real measurements of this diagnostic; publication acceptance is coordinator judgment, not a predeclared numerical performance threshold.",
+    "Eight-action median thread CPU below 0.1 ms on this host is supported; Criterium mean is about 0.119 ms and is separately reported.",
+    "High variance, one matched pair and endpoint host census do not establish a universal latency bound or legacy speedup.",
+    "No tick, renderer, FPS, native gameplay, Gate or flight result is demonstrated by these queue measurements.",
+    "Recorded closure and current /proc absence cover observed identities; supervisor polling explicitly may miss short-lived children.",
+    "Original baseline-01 failed supervisor closure remains preserved and excluded from the matched performance conclusion."
+  ],
+  "audit_method_correction": "The initial independent inventory check compared sorted path strings with the author script sorted pathlib.Path order and failed that ordering assumption. Corrected check uses Path ordering and independently proves identical membership, uniqueness, contiguous offsets and every byte. No package discrepancy or mutation occurred.",
+  "production_files_current": {
+    "src/infra/dev/window/loop.clj": "ef70bad85801842314c31afb5fd4875ca0e6ce3f50e694f864a9fe4ab55fb789",
+    "src/infra/render/input.clj": "67b098214f84c75e2436e14880b953ed70bc33ace4034ad460edf918be1ab59f",
+    "test/infra/dev/sculpt_intent_test.clj": "2bb8dd3c4a5204444576161463060c44702af211cf315f338882dafdb7828ab8"
+  }
+}

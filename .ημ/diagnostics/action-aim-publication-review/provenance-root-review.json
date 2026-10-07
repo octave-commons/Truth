@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-07T20:16:38.156429+00:00",
+  "verdict": "PASS source-grounded provenance correction; historical command remains UNKNOWN",
+  "review_id": 5447659078,
+  "root_comment": 4211390330,
+  "thread": "PRRT_kwDOTDahac6qEutz",
+  "manifest_sha256": "8d3bc624154d2126e42ae1b0e48cc96d0166303be4e378e5f17377d501db40a8",
+  "source_review": "Root read original producer/docs/repair record, full native review and exact inline, correction and derived replay source. No additional body findings. Independent assessment pending separately before publication.",
+  "verification": "Root replay tool9b57aa exit0; byte-identical archive/map/proof/final74pathinventory;97local originals compared,8oldpublicationpinsunchanged. Newbundle35records165688decodedB10empties exactroundtrip. No game/JVM or production/test change.",
+  "root_display_error": "Initial tool74ac19 treated gh --slurp nested review pages as one list; AttributeError before any writes. Complete nested native records then read using flattening; no source or evidence mutation.",
+  "root_manifest_error": "Initial tool2fe1ca resolved repository-relative SHA256SUMS against package directory and failed FileNotFound before any writes. Correct root-relative verification passed; original manifest unchanged.",
+  "tests_rerun": "No Clojure tests needed for documentation-only clarification; existing focused/full/strict/cost source pins remain unchanged.",
+  "old_pr_head": "4bd980c8e2ce8f881c7987237b8cda9e462dceda",
+  "limits": "New derived reproduction verifies bytes; it does not recover original command or provide hosted approval. No gameplay completion."
+}

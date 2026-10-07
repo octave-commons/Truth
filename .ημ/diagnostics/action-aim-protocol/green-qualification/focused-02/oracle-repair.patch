@@ -1,0 +1,26 @@
+diff --git a/test/infra/dev/sculpt_intent_test.clj b/test/infra/dev/sculpt_intent_test.clj
+index 76dca43..32cf5a2 100644
+--- a/test/infra/dev/sculpt_intent_test.clj
++++ b/test/infra/dev/sculpt_intent_test.clj
+@@ -218,9 +218,9 @@
+ 
+ (deftest explicit-callback-submission-retains-press-and-release-semantics
+   (when-let [{:keys [enqueue]} (contextual-api)]
+-    (doseq [[glfw-key mods verb] [[GLFW/GLFW_KEY_T 0 :uplift]
+-                             [GLFW/GLFW_KEY_T GLFW/GLFW_MOD_SHIFT :volcanism]
+-                             [GLFW/GLFW_KEY_Y 0 :erosion]]]
++    (doseq [[glfw-key mods verb remaining] [[GLFW/GLFW_KEY_T 0 :uplift 18.0]
++                                          [GLFW/GLFW_KEY_T GLFW/GLFW_MOD_SHIFT :volcanism 17.0]
++                                          [GLFW/GLFW_KEY_Y 0 :erosion 18.5]]]
+       (let [[w _ _] (armed-world)
+             published (atom w)
+             queue (ConcurrentLinkedQueue.)
+@@ -237,7 +237,7 @@
+         (let [drained (@#'loop/drain-intents w queue
+                        {:manual? true :focus-offset zero-offset})]
+           (is (= [verb] (mapv :verb (:voxel/sculpt-ops drained))))
+-          (is (= 18.0 (:resonance (player/get-observer drained)))))))))
++          (is (= remaining (:resonance (player/get-observer drained)))))))))
+ 
+ (deftest invalid-capability-rejects-before-callback-installation
+   (when (contextual-api)

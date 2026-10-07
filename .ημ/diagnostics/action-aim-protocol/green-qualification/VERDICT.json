@@ -1,0 +1,49 @@
+{
+  "at": "2026-10-07T16:31:24.396086+00:00",
+  "status": "CORRECTNESS_AND_CANONICAL_STATIC_GATE_PASS",
+  "red_commit": "f0c4710a8306aa634af9f49859c11451515ed912",
+  "planning_parent": "7188fbab1400589c5a3ccadb560df6b5120a5f9b",
+  "current_source_tests": {
+    "src/law/input_intent.cljc": "55df510b0e8c20cc48ac1a623eafeecb80379cf3f914af58914af3d1447551fb",
+    "src/infra/dev/window/loop.clj": "ef70bad85801842314c31afb5fd4875ca0e6ce3f50e694f864a9fe4ab55fb789",
+    "src/infra/render/input.clj": "67b098214f84c75e2436e14880b953ed70bc33ace4034ad460edf918be1ab59f",
+    "test/law/input_intent_test.clj": "37fd4baf59c7508189b21cb0307d04ebbd93b977e53d26ac2e4ad24a9362d3b6",
+    "test/infra/dev/sculpt_intent_test.clj": "2bb8dd3c4a5204444576161463060c44702af211cf315f338882dafdb7828ab8"
+  },
+  "focused_02": {
+    "tests": 56,
+    "assertions": 544,
+    "failures": 0,
+    "errors": 0,
+    "exit_code": 0,
+    "scope": "before style-only sqrt/indent correction"
+  },
+  "canonical_gate_02": {
+    "tests": 967,
+    "assertions": 17006,
+    "failures": 0,
+    "errors": 0,
+    "strict_all_six_pass": true,
+    "exit_code": 0,
+    "ended_utc": "2026-10-07T16:25:50.864486+00:00",
+    "elapsed_s": 100.099826587,
+    "main_pid_pgid": 1410395,
+    "observed_pids": 17,
+    "remaining_observed_pids": [],
+    "source_test_pins_unchanged": 304,
+    "canonical_status": "review",
+    "estimate": "3"
+  },
+  "preserved_failures": {
+    "focused_01": "2 oracle assertion failures; original RED missing-API guard had prevented this matrix executing; corrected per-verb expected balances18/17/18.5",
+    "canonical_gate_01": "full suite passed967/17006; Splint two Math/sqrt warnings and formatter only owned host test; transition refused exit3",
+    "canonical_gate_02/format-fix": "BB diagnostic expression missing closing delimiter; parse failed before formatter; corrected format-fix-02 passed"
+  },
+  "historical_integrity": "RED and green-source bundles unchanged. Their historical manifests name original test bytes; current test differs by documented oracle/math/format repairs. Original bytes are in RED commit and focused-inputs.json; do not interpret historical path checksum as current-source qualification.",
+  "limits": [
+    "No native/GL window or gameplay execution",
+    "No host-loop performance claim; protocol proposed separately, not executed",
+    "No hosted successor review, merge, Done, commit or push in this turn"
+  ],
+  "receipt_and_card": "Canonical qualification comment/readback recorded against existing focus-follows-pilot; no local board parser"
+}

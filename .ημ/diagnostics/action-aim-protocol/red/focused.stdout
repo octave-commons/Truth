@@ -1,0 +1,84 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.pilot-resolve-seam-test
+
+Testing infra.dev.focus-cadence-test
+
+Testing infra.dev.sculpt-intent-test
+
+FAIL in (coincident-prepared-focus-keeps-the-domain-anchor-convention) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (invalid-capability-rejects-before-callback-installation) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (manual-validation-precedence-and-tracking-delegation) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (tracking-retains-magnitude-validation-before-its-observer-gate) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (one-config-snapshot-governs-mid-drain-arrivals) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (absent-and-explicit-nil-host-settings-remain-distinct) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (valid-aim-denied-payment-retains-prepared-attention) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (opted-in-callback-aims-from-the-current-physical-publication) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (reset-and-later-camera-input-remain-ordered-around-contextual-actions) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (explicit-callback-submission-retains-press-and-release-semantics) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (fifo-payment-and-later-readers-use-persistent-preparation) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (nominal-payloads-and-legacy-callables-share-one-failure-guard) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+FAIL in (throwing-submission-never-falls-back-to-direct-dispatch) (sculpt_intent_test.clj:30)
+Missing admitted contextual APIs: [:enqueue :record :request]
+expected: (empty? missing)
+  actual: (not (empty? (:enqueue :record :request)))
+
+Testing infra.dev.window-test
+
+Testing infra.render.input-test
+
+Testing law.input-intent-test
+
+Ran 56 tests containing 380 assertions.
+13 failures, 0 errors.
