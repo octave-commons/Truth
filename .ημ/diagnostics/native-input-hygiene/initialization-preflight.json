@@ -1,0 +1,456 @@
+{
+  "created_at": "2026-10-07T06:30:04.735224+00:00",
+  "preparation_only": true,
+  "proposed_command": "python3 .\u03b7\u03bc/diagnostics/native-input-hygiene/initialized-completion-client.py attempt-03 --port 7898",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "new_artifact": {
+    "path": "initialized-completion-client.py",
+    "sha256": "13f5feaad7bc117ca4a8541063f25212ecd71329ab8b1283859e8064c3adfd7b",
+    "python_ast_parse": "passed; file not imported/executed"
+  },
+  "parent_artifact": {
+    "path": "completion-client.py",
+    "sha256": "e9453242c7244c87d27b4f6cd23a143b066d7e3f44bd5bb1bb4b3a13e33e441c",
+    "unchanged": true
+  },
+  "exact_diff": "--- completion-client.py\n+++ initialized-completion-client.py\n@@ -1,7 +1,7 @@\n #!/usr/bin/env python3\n \"\"\"Complete one fresh input-only smoke through the frozen runner CLI.\n \n-Usage: python3 completion-client.py attempt-02 --port 7898\n+Usage: python3 initialized-completion-client.py attempt-03 --port 7898\n No native APIs, process discovery, world access, or input retry occurs here.\n Only directly created runner CLIENT processes are owned by this controller;\n the unchanged detached runner supervisor owns the game and its cleanup.\n@@ -22,7 +22,8 @@\n RUNNER = HERE / \"runner.py\"\n RUNNER_SHA256 = \"c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17\"\n BASE = \"b395c4049718f7ce015ddf25fc0a192d97821373\"\n-SEQUENCE = ((\"tap\", \"r\"), (\"tap\", \"Tab\"),\n+SEQUENCE = ((\"tap\", \"r\"), (\"click\", \"spark\"), (\"click\", \"spark\"),\n+            (\"tap\", \"Tab\"),\n             (\"look\", \"100\", \"0\"), (\"look\", \"-100\", \"0\"),\n             (\"look\", \"0\", \"100\"), (\"look\", \"0\", \"-100\"),\n             (\"tap\", \"Tab\"), (\"tap\", \"Tab\"))\n@@ -77,7 +78,7 @@\n \n     def invoke(self, operation, *args):\n         assert hashlib.sha256(RUNNER.read_bytes()).hexdigest() == RUNNER_SHA256\n-        if operation in (\"tap\", \"look\"):\n+        if operation in (\"tap\", \"look\", \"click\"):\n             self.ready(read_json(self.run / \"state.json\"))\n             assert self.work_deadline - time.monotonic() >= 40, \"Input reserve exhausted; no gesture submitted\"\n         self.sequence += 1\n",
+  "changes": [
+    "Usage names initialized client and fresh attempt-03.",
+    "Fixed sequence inserts ordinary Spark open and close before the first Tab/look.",
+    "Click joins tap/look in the unchanged 40-work-second minimum reserve check."
+  ],
+  "unchanged_contract": [
+    "Only frozen runner CLI performs native operations.",
+    "Same strict exit/JSON/stored result/ready identity checks before each next action.",
+    "Same one request per gesture; no input retries.",
+    "Same 270-second work and 300-second absolute supervisor budget.",
+    "Same at-most-one stop and directly owned client cleanup.",
+    "All look assertions and frozen snapshot guards unchanged."
+  ],
+  "source_basis": {
+    "path": "src/infra/render/input.clj",
+    "sha256": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c",
+    "lines": "207-231, especially 214-217",
+    "observed_source_law": "Each callback records cursor; the first callback seeds last-pos and clears fst without updating camera. Later callbacks derive dx/dy and apply look only in manual-look mode.",
+    "bounded_inference": "Attempt02 nil cursor then [740,360] without yaw change is consistent with first-callback initialization. No production change or native delivery regression is established. Ordinary menu pointer motion before the look sequence supplies the prior cursor event; its existing click/readback assertions remain mandatory."
+  },
+  "attempt02_audit": {
+    "run": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/runs/attempt-02",
+    "started_at": "2026-10-07T06:25:56.573619+00:00",
+    "ended_at": "2026-10-07T06:26:56.420691+00:00",
+    "supervisor_elapsed_seconds": 59.84709634400133,
+    "controller_elapsed_seconds": 60.36492671900123,
+    "outcome": "failed look postcondition with ample remaining budget; not a timeout",
+    "event_counts": {
+      "command": 19,
+      "spawn": 19,
+      "exit": 17,
+      "ready": 1,
+      "request": 3,
+      "input-observation": 5,
+      "look-expectation": 1,
+      "failure": 1,
+      "reaped": 19
+    },
+    "requests": [
+      {
+        "request": {
+          "id": "1791354372662877379-e9e3bc6f",
+          "at": "2026-10-07T06:26:12.663064+00:00",
+          "operation": "tap",
+          "args": [
+            "r"
+          ]
+        },
+        "elapsed_seconds": 16.142362230999424,
+        "result": {
+          "ok": true,
+          "finished_at": "2026-10-07T06:26:22.739869+00:00"
+        }
+      },
+      {
+        "request": {
+          "id": "1791354382902258438-3aa00d0c",
+          "at": "2026-10-07T06:26:22.902288+00:00",
+          "operation": "tap",
+          "args": [
+            "Tab"
+          ]
+        },
+        "elapsed_seconds": 26.3716720299999,
+        "result": {
+          "ok": true,
+          "finished_at": "2026-10-07T06:26:33.712623+00:00"
+        }
+      },
+      {
+        "request": {
+          "id": "1791354394029775800-65f06a8c",
+          "at": "2026-10-07T06:26:34.029816+00:00",
+          "operation": "look",
+          "args": [
+            "100",
+            "0"
+          ]
+        },
+        "elapsed_seconds": 37.55336442499902,
+        "result": {
+          "ok": false,
+          "error": "AssertionError('Input postcondition unconfirmed: look; gesture not retried')",
+          "finished_at": "2026-10-07T06:26:55.952486+00:00"
+        }
+      }
+    ],
+    "request_totals": {
+      "submitted": 3,
+      "ok_true": 2,
+      "ok_false": 1
+    },
+    "spawn_reap_coverage": {
+      "spawn_events": 19,
+      "unique_child_pids": 19,
+      "raw_reap_events": 19,
+      "unique_reaped_pids": 19,
+      "complete": true,
+      "complete_start_boot_cwd_exe_samples": 19,
+      "ordinary_exit_codes": {
+        "0": 17
+      },
+      "reap_codes": {
+        "0": 18,
+        "143": 1
+      }
+    },
+    "controller_clients": {
+      "spawns": 5,
+      "exits": 5,
+      "exits_reaped": true,
+      "codes": {
+        "0": 4,
+        "1": 1
+      }
+    },
+    "look_expectation": [
+      {
+        "at": "2026-10-07T06:26:38.945531+00:00",
+        "elapsed_seconds": 42.371946289000334,
+        "kind": "look-expectation",
+        "requested_pixels": [
+          100,
+          0
+        ],
+        "before": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": null
+        },
+        "expected_yaw": -89.0,
+        "expected_pitch": -20.0,
+        "tolerance_degrees": 0.02
+      }
+    ],
+    "input_observations": [
+      {
+        "at": "2026-10-07T06:26:22.739733+00:00",
+        "elapsed_seconds": 26.166155620998325,
+        "kind": "input-observation",
+        "label": "tap-r",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": null
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:26:33.712545+00:00",
+        "elapsed_seconds": 37.13895947600031,
+        "kind": "input-observation",
+        "label": "tap-Tab",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": null
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:26:44.306516+00:00",
+        "elapsed_seconds": 47.73292597099862,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            740.0,
+            360.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T06:26:50.319219+00:00",
+        "elapsed_seconds": 53.745647818999714,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            740.0,
+            360.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T06:26:55.952381+00:00",
+        "elapsed_seconds": 59.378799568999966,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 2,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            740.0,
+            360.0
+          ]
+        },
+        "matched": false
+      }
+    ],
+    "failure": [
+      {
+        "at": "2026-10-07T06:26:55.952968+00:00",
+        "elapsed_seconds": 59.37938028500139,
+        "kind": "failure",
+        "error": "AssertionError('Input postcondition unconfirmed: look; gesture not retried')"
+      }
+    ],
+    "completed_sequence": [
+      [
+        "tap",
+        "r"
+      ],
+      [
+        "tap",
+        "Tab"
+      ]
+    ],
+    "omitted": [
+      "-100X",
+      "+100Y",
+      "-100Y",
+      "two final Tab gestures"
+    ],
+    "no_gesture_repeat": true,
+    "cleanup": {
+      "cleanup_errors": [],
+      "unreaped_children": [],
+      "budget_exceeded": false,
+      "mouse_pending": false,
+      "mouse_release_uncertain": false
+    },
+    "controller_error_interpretation": "The second bare AssertionError records close() rejecting outcome failed rather than operator-stop. It is not a cleanup error. The stop CLI raced normal failure cleanup, returned zero with failed closure, and was not retried.",
+    "process_absence_limit": "Root independently reported owned PIDs absent; this audit uses only stored records and performed no process inspection or native call."
+  },
+  "unchanged_files": {
+    "source_hash_count": 186,
+    "all_source_hashes_match": true,
+    "preparation_hash_count": 4,
+    "all_preparation_hashes_match": true,
+    "original_manifest": [
+      {
+        "path": "runner.py",
+        "sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+        "matches": true
+      },
+      {
+        "path": "snapshot.clj",
+        "sha256": "45d752a5122e498da1f4bbc39dd5233e07d3662a5c55a0e58311d72339bae03a",
+        "matches": true
+      },
+      {
+        "path": "callback-probe.clj",
+        "sha256": "dcad4e35765727108db06ea4c502f9577e9f7a780bdadd9cd140c9b94d70260e",
+        "matches": true
+      },
+      {
+        "path": "PLAN.md",
+        "sha256": "a49de3fe4e1c114be068c436aef0c8e85fcb9226956fd0212a2015dff76b382c",
+        "matches": true
+      },
+      {
+        "path": "preparation-hashes.json",
+        "sha256": "79382b6e5d900fce3fca57d7b3fb278a4e36619ff772c431c96982df822640a7",
+        "matches": true
+      },
+      {
+        "path": "COPY-PROOF.json",
+        "sha256": "563bd3f679a5f4d260f4a0303032cec11fab4b8b3c4ce28a913dccf87c05e5bf",
+        "matches": true
+      },
+      {
+        "path": "STATIC-CHECKS.json",
+        "sha256": "b0eb41e8215318a84814f96e40f8c50c5297894a8c89a294f867b41e1a74421f",
+        "matches": true
+      },
+      {
+        "path": "PREPARATION-FILES.txt",
+        "sha256": "53186002550c5883eb9b681253baf6d801e30f43ab44ebaa4df5a8e78ff4931d",
+        "matches": true
+      }
+    ]
+  },
+  "raw_evidence": [
+    {
+      "path": "runs/attempt-02/operations.jsonl",
+      "bytes": 25822,
+      "sha256": "b51f38f86232a5f2409ef154bdc2a92f1e10a412153993cab977874b4bfad2c3"
+    },
+    {
+      "path": "runs/attempt-02/closed.json",
+      "bytes": 1501,
+      "sha256": "a5102a76ba82f9c5637d688d593f432c1a726be582d4c4064b5ceace4935325a"
+    },
+    {
+      "path": "runs/attempt-02/state.json",
+      "bytes": 1501,
+      "sha256": "a5102a76ba82f9c5637d688d593f432c1a726be582d4c4064b5ceace4935325a"
+    },
+    {
+      "path": "runs/attempt-02/source-hashes.json",
+      "bytes": 18753,
+      "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61"
+    },
+    {
+      "path": "runs/attempt-02/preparation-hashes.json",
+      "bytes": 345,
+      "sha256": "79382b6e5d900fce3fca57d7b3fb278a4e36619ff772c431c96982df822640a7"
+    },
+    {
+      "path": "completion-client-runs/attempt-02/controller.jsonl",
+      "bytes": 8105,
+      "sha256": "92265ae1c3833cee5e1fc17da87924d66e4a6073248a744f094990880e74f85b"
+    },
+    {
+      "path": "completion-client-runs/attempt-02/result.json",
+      "bytes": 3008,
+      "sha256": "b9ef94a93a166336df706ff19ce7bc8eb238d6fb81d4299c0daf3fdba22a10e9"
+    },
+    {
+      "path": "runs/attempt-02/results/1791354372662877379-e9e3bc6f.json",
+      "bytes": 70,
+      "sha256": "f1834ad1f7d0c7dc42c1f431378b0f4699c443612b401495d92d341802fcfca4"
+    },
+    {
+      "path": "runs/attempt-02/results/1791354382902258438-3aa00d0c.json",
+      "bytes": 70,
+      "sha256": "a18bfaad8393d7c0f203464764b5629e2a6cb74c2832093cc6e3e3452dff2c44"
+    },
+    {
+      "path": "runs/attempt-02/results/1791354394029775800-65f06a8c.json",
+      "bytes": 162,
+      "sha256": "b239c1fa4636894d52e2832bb237e354250d3a1bd5a81a8283beeba0baed4ff6"
+    },
+    {
+      "path": "runs/attempt-02/003-inspect.stdout",
+      "bytes": 3631,
+      "sha256": "4b083248296979f464c4682d4945e77a95569a952f5bc8f1cd8c36017000ad66"
+    },
+    {
+      "path": "runs/attempt-02/006-inspect.stdout",
+      "bytes": 3598,
+      "sha256": "5335ae6689907a9fef2ea5684848d2a2fe6f03985674f16a353c0f7902cfaaef"
+    },
+    {
+      "path": "runs/attempt-02/009-inspect.stdout",
+      "bytes": 3578,
+      "sha256": "65c57be67237e61ae403507570f7e2def6907e9927c88aeb0bf4e828da01a15f"
+    },
+    {
+      "path": "runs/attempt-02/010-inspect.stdout",
+      "bytes": 3577,
+      "sha256": "ecb2e3dc8e2a776fc1909f2702c3941da933877345051f2a848c3ff5603e94b9"
+    },
+    {
+      "path": "runs/attempt-02/013-inspect.stdout",
+      "bytes": 3579,
+      "sha256": "276be0e8fba527febdefd652d9222cd790d7d10e2bae8e9e367150b796ccfd54"
+    },
+    {
+      "path": "runs/attempt-02/014-inspect.stdout",
+      "bytes": 3571,
+      "sha256": "455ff319a100c6a18c18cf741424db73a38210626426285606794d7e7512affa"
+    },
+    {
+      "path": "runs/attempt-02/016-inspect.stdout",
+      "bytes": 3607,
+      "sha256": "005e1f7b10de4e39922ddfdf70f1867ad5cfbae8204dd80a040efcf3ffe2990d"
+    },
+    {
+      "path": "runs/attempt-02/017-inspect.stdout",
+      "bytes": 3603,
+      "sha256": "99a9e0ffdbfa4263972122651edf9c9a763d205f0f404456cb681d02ae404a1e"
+    },
+    {
+      "path": "runs/attempt-02/018-inspect.stdout",
+      "bytes": 3606,
+      "sha256": "d310a8be39c1b373e6b7790aecf659d5d9eac08e05d75fa957e2e9c9a98d666a"
+    }
+  ],
+  "limits": [
+    "No execution of the new initialized client or attempt03 during preparation.",
+    "No prior artifact or raw log altered.",
+    "No movement, natural target approach, binding, commitment, or Gate acceptance claimed.",
+    "First-event initialization is a source-backed explanation, not an instrumented historical native event trace."
+  ]
+}
