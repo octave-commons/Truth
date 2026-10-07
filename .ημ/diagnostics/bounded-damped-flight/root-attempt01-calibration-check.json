@@ -1,0 +1,90 @@
+{
+  "at": "2026-10-07T12:39:22.657350+00:00",
+  "root_tool_session": 30870,
+  "root_observed_exit_code": 0,
+  "setup_pid": 12823,
+  "setup_pid_absent": true,
+  "calibration_sha256": "b4553df89dd160615850dbfc0874a09a359ef76c3ff56a35cc54fc624753b3e5",
+  "last": {
+    "client": "032-calibration-final",
+    "tick": 582,
+    "controls": [
+      "manual",
+      "false",
+      "none",
+      "1.5E14",
+      "-90.0",
+      "-20.0",
+      "0.01",
+      "true",
+      "false"
+    ],
+    "nil_thrust": true,
+    "retention": 0.8,
+    "returned_to_baseline": true
+  },
+  "state": {
+    "started_at": "2026-10-07T12:36:07.046321+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "port": 7898,
+    "budget_seconds": 1500,
+    "work_budget_seconds": 1470,
+    "startup_budget_seconds": 180,
+    "startup_deadline": 44246.983821707,
+    "startup_origin": "Caller monotonic instant before preflight; shared by all processes",
+    "supervisor": {
+      "pid": 6756,
+      "start": "4406702",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12"
+    },
+    "supervisor_monotonic_started": 44066.983821707,
+    "stage": "ready",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "frames": 1,
+    "looks": 4,
+    "holds": 0,
+    "aim_invocations": 0,
+    "aim_target": null,
+    "active_aim": null,
+    "aim_deadline": null,
+    "successful_admission": null,
+    "terminal_commitment": null,
+    "no_target_deadline": 45026.983821707,
+    "display": ":1",
+    "xvfb": {
+      "pid": 6766,
+      "start": "4406712",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 6798,
+      "start": "4406743",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "snapshot_client": {
+      "pid": 8114,
+      "start": "4407850",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 1929158757,
+    "window": 140418252160160,
+    "x-window": "2097159"
+  },
+  "note": "All17ordinarydampingsteps andfourlooks acknowledged; youngframe complete. Poller nowownsrootcommandlane."
+}
