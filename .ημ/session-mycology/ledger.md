@@ -458,3 +458,12 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,3d912230,2026-10-07T01:09:14.143016+00:00
   note: A large first-pair effect justifies one unchanged reverse pair with shared native pause and exact source/input guards. Keep the original adverse result, do not pool a favorable estimate, and distinguish failure to reproduce from disproving a regression. Repeat observed cleanup work does not provide a universal upper bound. Existing skills suffice; no new spore.
+- ts: 2026-10-07T01:22:27.988182606Z
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Separate reachable disabled-emitter bugs from conditional stale-component cases
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,4f4eb63
+  note: Empty-column merge semantics identify stale ownership, but lifecycle order determines whether the retained payload is nonzero: ordinary thermal expiry first writes zero ease, which still invokes a clamp. Trace actual control paths and consumers before claiming repeated force or heat. Preserve existing card owners and serialize comments after gated transitions. No new spore; existing audit discipline suffices.

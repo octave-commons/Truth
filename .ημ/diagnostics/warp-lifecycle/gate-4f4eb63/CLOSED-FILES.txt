@@ -1,0 +1,15 @@
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/CLOSED-FILES.txt
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/RESULT.md
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/SHA256SUMS
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/audit-comment.stderr
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/audit-comment.stdout
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/audit-comment.txt
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/card-after.stderr
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/card-after.stdout
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/closure-verification.json
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/command.json
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/gate.stderr
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/gate.stdout
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/prepared-command.json
+.ημ/diagnostics/warp-lifecycle/gate-4f4eb63/result.json
+.ημ/diagnostics/warp-lifecycle/other-disabled-emitter-audit.md
