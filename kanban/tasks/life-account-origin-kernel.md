@@ -3,11 +3,11 @@ category: "specs"
 labels: "feature, ecology, accounting, represented-life"
 parent: "life-to-represented-actor-spec"
 type: "task"
-write-id: "1791398023310-0.g1zsn58o66f8fu4w601"
+write-id: "1791401683501-0.i1ouvu0n38d3abzrykh"
 points: "3"
 title: "Implement the pure integer life-account and origin kernel"
 priority: "P1"
-status: "review"
+status: "in_progress"
 design: "docs/designs/resolution-regimes-and-scale-coupling.md"
 uuid: "life-account-origin-kernel"
 created_at: "2026-10-07T10:48:23.887Z"
@@ -141,5 +141,9 @@ laws only and does not complete the parent specification or make a Gate earned.
 Review5446390998 at ecf78775fbd8069fb86386b9d00401bf47476bab, native thread PRRT_kwDOTDahac6qCHgh/comment4210309826, identifies a locally provable close-once history contradiction. Root verified accepted close outcome revision2 with closed account revision3 passes current entry-consistent? although close increments exactly once and later operations reject without changing revision. Reopen only this accepted-close equality boundary. Write meaningful law and real apply-operation regressions first, preserve partial-history older origin/extent compatibility, rejected/other-account entries and exact valid close/retry behavior, then minimal predicate correction, full test/strict gate. This is pure account boundary work; no ECS producer, biological progression or Gate claim. CodeRabbit included review remains reserved for the corrected head after fresh dedup; no paid capacity, merge or auto-merge.
 
 Review5446390998 close-revision correction verified. RED commit5822d2a:35tests457assertions3 failures0errors, exactly impossible greater terminal revision through law/replay/new request. Minimal GREEN adds accepted-close equality only; older nonterminal partial history and rejected/other-account entries preserved. Focused35/4570F0E. First full gate941/16196pass but cljfmt refused; raw failure preserved. One-indent formatter correction followed by fresh canonical gate02:941tests16196assertions0F0E and all six strict gates PASS in96.378s, Review admitted. Root independently verified304pins and all16observed process identities absent. Closure SHA256 f8f3a2e545bb6ee1d85c18cb20376de3a807f22a75abeca8d0cccf282e00fe59. No domain arithmetic/ECS/biological/Gate progression or native service change. Publish bounded complete evidence and fresh code review next; no merge/auto-merge.
+
+Confirmed review5446881815/comment4210730351 duplicate-origin history finding: two accepted origins for the relevant same account are contradictory even with distinct operation counters and identical material. Root read actual law/domain plus all three new tests and whole frozen supervisor; independent author agrees. Preserve partial/empty/rejected/other-account history controls. Release exactly one focused RED red-01 at supervisor efe29bbc20f2dea55bf0adbdc94fd21b0eca1970e05424e3beeb8bb1d32136fd, manifest fec84172ed67a186282be6c9d7eeb9eaa4a24cd53298dc0d908f573d2cc57e40,316pins verified. Predict38tests508assertions4failures0errors; prediction is not observation.110swork120stotal sanitized1GiB2CPU mainJVM, owned group/start identity/raw logs/reap. Prior238native+5clock/Rheos PIDs absent. No concurrent JVM/native, retry or extension; production unchanged, retained primary untouched. Return card to InProgress for this review repair.
+
+Observed RED for review5446881815/comment4210730351, 2026-10-07: actual focused law.life-account-test + domain.life-account-test at unchanged production4256634 ran38 tests/508 assertions/4 intended failures/0 errors in4.095704s, raw exit1. Two failures show operation-context? accepting two supplied same-account accepted origins with distinct operation ids; two show actual apply-operation replaying either contradictory retained opening instead of refusing the pair. Single/empty/partial/rejected/other-account history controls and prior terminal-revision controls pass. All316 source/preparation pins remained exact; owned2443186/2443193 absent and primary reaped, root closuref4d22833. Preserve every raw artifact. Record and commit this RED before the narrowly authorized law-only same-account accepted-origin uniqueness repair; no production change, GREEN test, full gate, native claim or push yet.
 
 ---

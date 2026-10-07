@@ -1,0 +1,321 @@
+{
+  "at": "2026-10-07T19:36:56.402753+00:00",
+  "context": "\u5df1",
+  "confidence": 1.0,
+  "status": "OBSERVED RED; production unchanged; GREEN not yet authored",
+  "head": "42566341ceb6ede9b5f7c1c7f8013ab59d4e1192",
+  "finding": {
+    "review": 5446881815,
+    "comment": 4210730351,
+    "thread": "PRRT_kwDOTDahac6qDIeZ",
+    "scope": "Reject locally contradictory supplied same-account accepted origin histories before retry lookup."
+  },
+  "observation": {
+    "tests": 38,
+    "assertions": 508,
+    "failures": 4,
+    "errors": 0,
+    "raw_exit": 1,
+    "elapsed_s": 4.095703669998329,
+    "protected_pins_unchanged": 316,
+    "failure_classes": [
+      "two law operation-context? acceptance failures",
+      "two actual apply-operation replay refusal failures"
+    ],
+    "controls": "Single, empty, partial old origin/extent, rejected and unrelated-account entries pass; prior terminal revision tests are unchanged.",
+    "meaning": "Two supplied accepted openings contradict a single account. No duplicate material transfer or global complete-history claim."
+  },
+  "source_test_pins": {
+    "src/law/life_account.clj": "76812c44715ef050748d3c20a93e39e28b616d592911ba316b94609497fdbd81",
+    "src/domain/life_account.clj": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a",
+    "test/law/life_account_test.clj": "57b6a5720d8784787b09c7d9dc5fe7aa20b0b01f7186efe486d90771787d513c",
+    "test/domain/life_account_test.clj": "0402ab797b1e99da98f992c61e3c54f9f2779f798ab999f52cce0ad2201c665f"
+  },
+  "exact_raw": {
+    "stdout.log": "\nRunning tests in #{\"test\"}\n\nTesting domain.life-account-test\n\nFAIL in (contradictory-accepted-openings-reject-before-either-operation-can-replay) (life_account_test.clj:439)\nexpected: (thrown-with-msg? clojure.lang.ExceptionInfo #\"Invalid supplied account/history pair\" (account/apply-operation current history operation))\n  actual: nil\n\nFAIL in (contradictory-accepted-openings-reject-before-either-operation-can-replay) (life_account_test.clj:439)\nexpected: (thrown-with-msg? clojure.lang.ExceptionInfo #\"Invalid supplied account/history pair\" (account/apply-operation current history operation))\n  actual: nil\n\nTesting law.life-account-test\n\nFAIL in (supplied-accepted-origins-are-unique-for-the-relevant-account) (life_account_test.clj:234)\ntwo same-account accepted origins\nexpected: (= valid? (law/operation-context? {:account current, :history history, :requested-account requested}))\n  actual: (not (= false true))\n\nFAIL in (supplied-accepted-origins-are-unique-for-the-relevant-account) (life_account_test.clj:234)\nrequested id cannot hide the supplied account\nexpected: (= valid? (law/operation-context? {:account current, :history history, :requested-account requested}))\n  actual: (not (= false true))\n\nRan 38 tests containing 508 assertions.\n4 failures, 0 errors.\n",
+    "stderr.log": "",
+    "command.json": "{\n  \"argv\": [\n    \"/usr/local/bin/clojure\",\n    \"-Srepro\",\n    \"-J-Xms128m\",\n    \"-J-Xmx1g\",\n    \"-J-XX:ActiveProcessorCount=2\",\n    \"-M:test\",\n    \"-n\",\n    \"law.life-account-test\",\n    \"-n\",\n    \"domain.life-account-test\"\n  ],\n  \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\",\n  \"started_utc\": \"2026-10-07T19:26:35.027112+00:00\",\n  \"main_jvm_options\": [\n    \"-J-Xms128m\",\n    \"-J-Xmx1g\",\n    \"-J-XX:ActiveProcessorCount=2\"\n  ],\n  \"tools_deps_jvm_options\": \"-Xms64m -Xmx256m -XX:ActiveProcessorCount=2\",\n  \"removed_inherited_jvm_option_keys\": [\n    \"JAVA_OPTS\"\n  ],\n  \"java_executable\": \"/usr/lib/jvm/java-21-openjdk-amd64/bin/java\",\n  \"work_s\": 110.0,\n  \"total_s\": 120.0,\n  \"boot_id\": \"b04f7fb6-ea65-4b47-8866-73e24a6887f6\"\n}\n",
+    "execution.json": "{\n  \"status\": \"complete\",\n  \"test_namespace\": \"law.life-account-test + domain.life-account-test (expected RED)\",\n  \"started_utc\": \"2026-10-07T19:26:35.027112+00:00\",\n  \"ended_utc\": \"2026-10-07T19:26:39.122812+00:00\",\n  \"elapsed_s\": 4.095703669998329,\n  \"work_budget_s\": 110.0,\n  \"total_budget_s\": 120.0,\n  \"total_deadline_exceeded\": false,\n  \"error\": null,\n  \"timed_out\": false,\n  \"exit_code\": 1,\n  \"pid_pgid\": 2443186,\n  \"primary_identity\": {\n    \"pid\": 2443186,\n    \"state\": \"S\",\n    \"pgid\": 2443186,\n    \"starttime_ticks\": 6869510,\n    \"metadata_errors\": {},\n    \"exe\": \"/usr/bin/bash\",\n    \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\"\n  },\n  \"test_summary\": {\n    \"tests\": 38,\n    \"assertions\": 508,\n    \"failures\": 4,\n    \"errors\": 0\n  },\n  \"primary_reaped\": true,\n  \"observed_identities\": [\n    {\n      \"pid\": 2443186,\n      \"state\": \"S\",\n      \"pgid\": 2443186,\n      \"starttime_ticks\": 6869510,\n      \"metadata_errors\": {},\n      \"exe\": \"/usr/bin/bash\",\n      \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\",\n      \"elapsed_s\": 0.025095282995607704\n    },\n    {\n      \"pid\": 2443193,\n      \"state\": \"R\",\n      \"pgid\": 2443186,\n      \"starttime_ticks\": 6869512,\n      \"metadata_errors\": {},\n      \"exe\": \"/usr/bin/bash\",\n      \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\",\n      \"elapsed_s\": 0.03482113798963837\n    },\n    {\n      \"pid\": 2443186,\n      \"state\": \"S\",\n      \"pgid\": 2443186,\n      \"starttime_ticks\": 6869510,\n      \"metadata_errors\": {},\n      \"exe\": \"/usr/lib/jvm/java-21-openjdk-amd64/bin/java\",\n      \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\",\n      \"elapsed_s\": 0.05044427499524318\n    }\n  ],\n  \"remaining_group\": [],\n  \"remaining_observed\": [],\n  \"cleanup\": [],\n  \"cleanup_errors\": [],\n  \"membership_unknown\": [],\n  \"source_changed\": [],\n  \"preparation_changed\": [],\n  \"preparation_hashes\": {\n    \"supervisor.py\": \"efe29bbc20f2dea55bf0adbdc94fd21b0eca1970e05424e3beeb8bb1d32136fd\",\n    \"supervisor.diff\": \"9784135c9bf16ffea70efc5cd6eb68697173256788a6f4c32f7f02815afbbf1a\",\n    \"source-pins.json\": \"6fa120d6628cae09928bb7ee32faf9558434db72082c8a87548b9bffaa3cc786\",\n    \"PROVENANCE.json\": \"b5a0704ffe0fe99805b1825cbf90913d339da261bf4601ef985bffef751f680c\",\n    \"PLAN.md\": \"97e2b10945c6a69a22d056ded80606d49f22699dc5a1900d5de9e69772c30acc\"\n  },\n  \"artifacts\": {\n    \"stdout.log\": \"76183083f87cb9d5927ca98c700708ef6bd22dee2111958b82bf14a319a6adaa\",\n    \"stderr.log\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\n    \"command.json\": \"667c4af7f6dd421d2b337d7d4a0c0f4e77f33be1c2847b04e4efff399cba88ca\",\n    \"ownership.jsonl\": \"2d691db544cb3790c99dc7b2049f34551cb35b69d5e2af216589667a58c01cfe\",\n    \"primary-identity.json\": \"6409cd8fc88e4e30c1081d8a43ab93db5f690bd639b4d3e4fbf71be83ad6f094\"\n  },\n  \"limit\": \"Polling may miss short children. Stat controls membership; optional exe/cwd denial is metadata. Unreadable membership or cleanup errors fail closure. Spawn/identity events are flushed/fsynced. OS/filesystem stalls can delay enforcement or prevent final persistence.\"\n}\n",
+    "ownership.jsonl": "{\"event\": \"spawn\", \"pid\": 2443186, \"expected_pgid\": 2443186, \"start_new_session\": true, \"at\": \"2026-10-07T19:26:35.044293+00:00\", \"elapsed_s\": 0.017207571989274584}\n{\"event\": \"identity\", \"identity\": {\"pid\": 2443186, \"state\": \"S\", \"pgid\": 2443186, \"starttime_ticks\": 6869510, \"metadata_errors\": {}, \"exe\": \"/usr/bin/bash\", \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\"}, \"at\": \"2026-10-07T19:26:35.052271+00:00\", \"elapsed_s\": 0.02518629899714142}\n{\"event\": \"identity\", \"identity\": {\"pid\": 2443193, \"state\": \"R\", \"pgid\": 2443186, \"starttime_ticks\": 6869512, \"metadata_errors\": {}, \"exe\": \"/usr/bin/bash\", \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\"}, \"at\": \"2026-10-07T19:26:35.061963+00:00\", \"elapsed_s\": 0.03487785600009374}\n{\"event\": \"identity\", \"identity\": {\"pid\": 2443186, \"state\": \"S\", \"pgid\": 2443186, \"starttime_ticks\": 6869510, \"metadata_errors\": {}, \"exe\": \"/usr/lib/jvm/java-21-openjdk-amd64/bin/java\", \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\"}, \"at\": \"2026-10-07T19:26:35.077581+00:00\", \"elapsed_s\": 0.05049039098958019}\n{\"event\": \"cleanup\", \"exit_code\": 1, \"remaining_group\": [], \"remaining_observed\": [], \"membership_unknown\": [], \"cleanup_errors\": [], \"at\": \"2026-10-07T19:26:39.114842+00:00\", \"elapsed_s\": 4.087761365997721}\n",
+    "primary-identity.json": "{\n  \"pid\": 2443186,\n  \"state\": \"S\",\n  \"pgid\": 2443186,\n  \"starttime_ticks\": 6869510,\n  \"metadata_errors\": {},\n  \"exe\": \"/usr/bin/bash\",\n  \"cwd\": \"/home/err/spaces/foresight/.worktrees/truth-life-actor-plan\"\n}\n"
+  },
+  "root_closure": {
+    "at": "2026-10-07T19:27:27.629152+00:00",
+    "observed": {
+      "tests": 38,
+      "assertions": 508,
+      "failures": 4,
+      "errors": 0
+    },
+    "elapsed_s": 4.095703669998329,
+    "raw_exit": 1,
+    "pins_verified": 316,
+    "processes_absent": [
+      2443186,
+      2443193
+    ],
+    "primary_reaped": true,
+    "cleanup_errors": [],
+    "files": {
+      "stdout.log": {
+        "bytes": 1278,
+        "sha256": "76183083f87cb9d5927ca98c700708ef6bd22dee2111958b82bf14a319a6adaa"
+      },
+      "stderr.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "command.json": {
+        "bytes": 750,
+        "sha256": "667c4af7f6dd421d2b337d7d4a0c0f4e77f33be1c2847b04e4efff399cba88ca"
+      },
+      "ownership.jsonl": {
+        "bytes": 1315,
+        "sha256": "2d691db544cb3790c99dc7b2049f34551cb35b69d5e2af216589667a58c01cfe"
+      },
+      "execution.json": {
+        "bytes": 3115,
+        "sha256": "dec7e5d22696bdd9cf0039e442afd1db21eec3fa910e15647396ec2bee34336f"
+      },
+      "primary-identity.json": {
+        "bytes": 209,
+        "sha256": "6409cd8fc88e4e30c1081d8a43ab93db5f690bd639b4d3e4fbf71be83ad6f094"
+      }
+    },
+    "meaning": "Expected two context-uniqueness plus two actual domain-replay refusal failures;0errors; all control assertions pass. No production changed."
+  },
+  "root_closure_sha256": "f4d228330cc3a58ca31be20c26f93f33d50f99af96406e81100a8c1cdeaa844e",
+  "preserved_raw_inventory": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-before.json",
+      "bytes": 1168,
+      "sha256": "ef082abd66f1b4a1f3f67538c1274c76711eb52580e610fea8c03f1a32154f7b"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-comment.json",
+      "bytes": 2257,
+      "sha256": "1ba6a51e987dc448cefc236b3bc5a20be3c07942ccdcab8d278d22d705889871"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-comment.txt",
+      "bytes": 905,
+      "sha256": "e898d155173c509aff3c9a6461590a4dee06dfdf12b80d7bf226e0d2b3fd317d"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-read-after.json",
+      "bytes": 18339,
+      "sha256": "5343d2a0b28a3fb63674e6fe45df7cdff4b9b01e19e7feaad04a92bba23967d2"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-read-before.json",
+      "bytes": 17429,
+      "sha256": "50c8123eafdd6b139c5d4c43e0ffd01981f5c2cfe947a9aa845ac432ffae7873"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-readback-proof.json",
+      "bytes": 424,
+      "sha256": "3a0dfa7dd26e3fe02aae7409914de2b51ca174d21edfc201354da670105292ab"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-receipt.json",
+      "bytes": 1231,
+      "sha256": "9ff1ab16a6a36bf79000b3a851d99abb01e8e04aa653cc083e5360cb5a9d3d5b"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-reflection.json",
+      "bytes": 1025,
+      "sha256": "5d76ffb2fc76e70e014f7b82f4b3d4eb3e1538b26508350571a658664a3d43a1"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/RED-PROPOSAL.md",
+      "bytes": 1755,
+      "sha256": "179159148fb1966e09b826ade6bd6c33032c7578f6e2c743a1febc0c4ac68663"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/SHA256SUMS",
+      "bytes": 988,
+      "sha256": "d5f8549daf58826b05dfc686152703b9ea92d1e702b5c55cc2d143050633741b"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/after/test/domain/life_account_test.clj",
+      "bytes": 24626,
+      "sha256": "0402ab797b1e99da98f992c61e3c54f9f2779f798ab999f52cce0ad2201c665f"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/after/test/law/life_account_test.clj",
+      "bytes": 13344,
+      "sha256": "57b6a5720d8784787b09c7d9dc5fe7aa20b0b01f7186efe486d90771787d513c"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/before/test/domain/life_account_test.clj",
+      "bytes": 21868,
+      "sha256": "2b5aef651c9ee14ea92a9144246f6ec959e1e1641d00a7009310856014a382e9"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/before/test/law/life_account_test.clj",
+      "bytes": 11538,
+      "sha256": "aec64f817b0cec79135795979c559feb5ae7372f8976add4c588051bdb66f82a"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/before.json",
+      "bytes": 289003,
+      "sha256": "8aadd204394c74890b8e9f3a3bc28935782b1e023bb5c349970b7583662f25ad"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/kondo-command.json",
+      "bytes": 406,
+      "sha256": "f50c83566244423eb8a75201f2b7e28d5e760f3efa1b8b53dbb2ff8eee9a4a16"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/kondo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/kondo.stdout.json",
+      "bytes": 100,
+      "sha256": "3599bf672908c8c99e0cf1b269516348dce468a12145786342066fcf946daf73"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/preparation.json",
+      "bytes": 4891,
+      "sha256": "88d1322fae70cfdd9f2e93565d0f0c138f4f0d2823def00e35d78f0c55106318"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-preparation/tests.diff",
+      "bytes": 5188,
+      "sha256": "4175cd409278b49e924408b412ac8bec2f8e0c9a5a0681dbf6f772cd17cc454d"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/PLAN.md",
+      "bytes": 2638,
+      "sha256": "97e2b10945c6a69a22d056ded80606d49f22699dc5a1900d5de9e69772c30acc"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/PREPARATION-FILES.txt",
+      "bytes": 128,
+      "sha256": "059ee9fd2236f56bade83ff45bba4ea7f27801a0db00699ac382e336dea66bae"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/PROVENANCE.json",
+      "bytes": 1749,
+      "sha256": "b5a0704ffe0fe99805b1825cbf90913d339da261bf4601ef985bffef751f680c"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/SHA256SUMS",
+      "bytes": 579,
+      "sha256": "fec84172ed67a186282be6c9d7eeb9eaa4a24cd53298dc0d908f573d2cc57e40"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/preparation-hashes.json",
+      "bytes": 439,
+      "sha256": "2c8560427889d88862634eb6783f13f2cd3905730fbd0fa46f291e343bd247f1"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/root-closure.json",
+      "bytes": 1298,
+      "sha256": "f4d228330cc3a58ca31be20c26f93f33d50f99af96406e81100a8c1cdeaa844e"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/root-comment.json",
+      "bytes": 2327,
+      "sha256": "75d882f97efbdf2ff774099d580c235260c6565cc14bbddaccff42d902c0446e"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/root-in-progress.json",
+      "bytes": 417,
+      "sha256": "ea7e170e2a39d66b3ea7a6e6e852e7e597cc6fefc96f0ccea3ae6911d1c4408c"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/root-release.json",
+      "bytes": 3764,
+      "sha256": "06e40fef2d4e09e8641cd7469f42a1537a1aac50eb189c5603676306eed9adca"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/command.json",
+      "bytes": 750,
+      "sha256": "667c4af7f6dd421d2b337d7d4a0c0f4e77f33be1c2847b04e4efff399cba88ca"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/execution.json",
+      "bytes": 3115,
+      "sha256": "dec7e5d22696bdd9cf0039e442afd1db21eec3fa910e15647396ec2bee34336f"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/ownership.jsonl",
+      "bytes": 1315,
+      "sha256": "2d691db544cb3790c99dc7b2049f34551cb35b69d5e2af216589667a58c01cfe"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/primary-identity.json",
+      "bytes": 209,
+      "sha256": "6409cd8fc88e4e30c1081d8a43ab93db5f690bd639b4d3e4fbf71be83ad6f094"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/runs/red-01/stdout.log",
+      "bytes": 1278,
+      "sha256": "76183083f87cb9d5927ca98c700708ef6bd22dee2111958b82bf14a319a6adaa"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/source-pins.json",
+      "bytes": 34434,
+      "sha256": "6fa120d6628cae09928bb7ee32faf9558434db72082c8a87548b9bffaa3cc786"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/supervisor.diff",
+      "bytes": 3594,
+      "sha256": "9784135c9bf16ffea70efc5cd6eb68697173256788a6f4c32f7f02815afbbf1a"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/red-runner/supervisor.py",
+      "bytes": 14727,
+      "sha256": "efe29bbc20f2dea55bf0adbdc94fd21b0eca1970e05424e3beeb8bb1d32136fd"
+    }
+  ],
+  "canonical_comment_readback": {
+    "path": ".\u03b7\u03bc/diagnostics/life-duplicate-origin-review-fix/checkpoint-readback-proof.json",
+    "sha256": "3a0dfa7dd26e3fe02aae7409914de2b51ca174d21edfc201354da670105292ab",
+    "status": "in_progress",
+    "points": 3
+  },
+  "historical_prefixes": {
+    "kanban/tasks/life-account-origin-kernel.md": {
+      "bytes": 16330,
+      "sha256": "721f52279ffcf67b67089a02b3e0f9cc3f45e1cd6e8c58e399a4c51c03fce6bf"
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 619669,
+      "sha256": "6642b39f1af635778f00d34a81e835319899c36fa88bfbb4287b0db1fce7934e"
+    },
+    ".\u03b7\u03bc/receipts.edn": {
+      "bytes": 44173,
+      "sha256": "695aabfdc975c54e76c6968e2cd27865bc33ea30cccb61e985efc70a9027b667"
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "bytes": 27911,
+      "sha256": "1cf9dff3972fc735a00c2769dbbb7bb107acea8cdb913cf528fa9884083c6f19"
+    },
+    "src/law/life_account.clj": {
+      "bytes": 12448,
+      "sha256": "76812c44715ef050748d3c20a93e39e28b616d592911ba316b94609497fdbd81"
+    },
+    "src/domain/life_account.clj": {
+      "bytes": 8299,
+      "sha256": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a"
+    },
+    "test/law/life_account_test.clj": {
+      "bytes": 13344,
+      "sha256": "57b6a5720d8784787b09c7d9dc5fe7aa20b0b01f7186efe486d90771787d513c"
+    },
+    "test/domain/life_account_test.clj": {
+      "bytes": 24626,
+      "sha256": "0402ab797b1e99da98f992c61e3c54f9f2779f798ab999f52cce0ad2201c665f"
+    }
+  },
+  "next": "Commit exact RED/test/evidence and append-only companions. Then add only same-relevant-account accepted-origin uniqueness to operation-context?; no test or production-domain rewrite. Focused GREEN and canonical gate require separate root release. No push."
+}

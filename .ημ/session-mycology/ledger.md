@@ -441,3 +441,12 @@
   spore: none
   receipt-refs: life-close-revision-publication/RESULT.md,review5446390998
   note: A supplied terminal close outcome proves a stronger equality than nonterminal revision bounds. Exercise actual replay and older-history controls. Preserve failed formatting gate and raw proof; package losslessly with independent reconstruction. Existing skills cover this; no spore.
+- ts: 2026-10-07T19:35:58.634201331Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Reproduce duplicate accepted life-account openings before replay
+  p-efficiency: 0.88
+  p-friction: 0.16
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: life-duplicate-origin-review-fix/RED-OBSERVED.json,review5446881815,root-closuref4d22833
+  note: Per-entry history coherence does not prove cross-entry uniqueness. Exercise real replay using two individually valid retained origins and preserve partial/unrelated-account controls. Canonical readback combines comment paragraphs, so verify an exact suffix once without replaying a successful mutation. Distinguish contradictory supplied history from duplicate stock transfer. Existing skills suffice; no spore.

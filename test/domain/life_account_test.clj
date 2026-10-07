@@ -424,3 +424,53 @@
         (is (= closed (:account rejected)))
         (is (empty? (:effects rejected)))
         (is (= operation (get-in rejected [:retain :request])))))))
+
+(deftest contradictory-accepted-openings-reject-before-either-operation-can-replay
+  (let [first-op (origin 10 material)
+        second-op (origin 11 material)
+        first-result (account/apply-operation nil {} first-op)
+        second-result (account/apply-operation nil {} second-op)
+        current (:account first-result)
+        history (-> {} (retain first-result) (retain second-result))]
+    (is (= :accepted (:disposition first-result) (:disposition second-result)))
+    (is (= current (:account second-result)))
+    (is (law/history? history))
+    (doseq [operation [first-op second-op]]
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair"
+                            (account/apply-operation current history operation))))))
+
+(deftest origin-uniqueness-preserves-partial-and-rejected-replay-histories
+  (let [operation (origin 10 material)
+        accepted (account/apply-operation nil {} operation)
+        current (:account accepted)
+        history (retain {} accepted)
+        extent-op (request :extent 1 1 {:amounts {:q 20 :g 12 :L 7}})
+        advanced (account/apply-operation current history extent-op)
+        rejected-op (origin 11 material)
+        rejected (account/apply-operation current history rejected-op)
+        other-id [:life-origin/v1 1011 cause]
+        other-op (assoc (origin 12 material) :account other-id
+                        :op-id [other-id :origin 12])
+        other (account/apply-operation nil {} other-op)]
+    (doseq [[label supplied supplied-history retry expected]
+            [["single origin" current history operation (:outcome accepted)]
+             ["older origin without intervening history" (:account advanced) history
+              operation (:outcome accepted)]
+             ["extent-only partial history" (:account advanced) (retain {} advanced)
+              extent-op (:outcome advanced)]
+             ["rejected second origin" current (retain history rejected)
+              rejected-op (:outcome rejected)]
+             ["other-account origin" current (retain history other)
+              operation (:outcome accepted)]]]
+      (testing label
+        (let [result (account/apply-operation supplied supplied-history retry)]
+          (is (law/history? supplied-history))
+          (is (= :replayed (:disposition result)))
+          (is (= expected (:outcome result)))
+          (is (= supplied (:account result)))
+          (is (nil? (:retain result)))
+          (is (empty? (:effects result))))))
+    (testing "empty supplied history does not invalidate a new operation"
+      (let [result (account/apply-operation current {} extent-op)]
+        (is (= :accepted (:disposition result)))
+        (is (= (:account advanced) (:account result)))))))

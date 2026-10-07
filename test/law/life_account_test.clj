@@ -203,3 +203,34 @@
   (is (not (law/same-payload? (float -0.0) -0.0)))
   (is (not (law/same-payload? [1 2] '(1 2))))
   (is (law/same-payload? {:a #{1 2} :b [-0.0]} {:b [-0.0] :a #{2 1}})))
+
+(deftest supplied-accepted-origins-are-unique-for-the-relevant-account
+  (let [entry (fn [id counter accepted?]
+                (let [op-id [id :origin counter]]
+                  {:request (assoc request :account id :op-id op-id)
+                   :outcome {:op-id op-id :accepted? accepted?
+                             :reason (if accepted? :origin :stale-revision)
+                             :revision 1}}))
+        first-origin (entry account-id 10 true)
+        second-origin (entry account-id 11 true)
+        other-id [:life-origin/v1 1011 cause]]
+    (doseq [[label current requested entries valid?]
+            [["two same-account accepted origins" account account-id
+              [first-origin second-origin] false]
+             ["requested id cannot hide the supplied account" account other-id
+              [first-origin second-origin] false]
+             ["single accepted origin" account account-id [first-origin] true]
+             ["empty history" account account-id [] true]
+             ["partial older origin" (assoc account :revision 3) account-id
+              [second-origin] true]
+             ["a rejected origin is not another opening" account account-id
+              [first-origin (entry account-id 11 false)] true]
+             ["other accounts are not globally audited" account account-id
+              [first-origin (entry other-id 11 true) (entry other-id 12 true)] true]]]
+      (let [history (into {} (map (fn [retained]
+                                    [(get-in retained [:request :op-id]) retained]))
+                          entries)]
+        (is (law/history? history) label)
+        (is (= valid? (law/operation-context? {:account current :history history
+                                               :requested-account requested}))
+            label)))))
