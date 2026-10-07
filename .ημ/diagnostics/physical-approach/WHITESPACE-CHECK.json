@@ -1,0 +1,6 @@
+{
+  "raw_whitespace_exception": ".\u03b7\u03bc/diagnostics/physical-approach/completion-client-runs/attempt-01/18-stop.stdout:61: new blank line at EOF",
+  "raw_bytes_preserved": true,
+  "all_other_staged_whitespace_exit": 0,
+  "limit": "The blank is actual runner JSON stdout plus print newline; no raw transcript was reformatted."
+}

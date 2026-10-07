@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-07T07:00:31.095091+00:00",
+  "head": "a29447c994e65e5b78c4e01efa4c11aec8d32206",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "comment": "2026-10-07 next physical-approach preparation follows successful guarded smoke a29447c. Prepare a separately frozen diagnostic driver using the qualified fixed read-only connection and ordinary native controls, with no production/world setter or fixture. Add balanced bounded movement holds and actual thrust-release/tick/position/velocity readback; expose only existing visible Thrust down/up menu actions with clamped-value acknowledgement. Keep <=100px acknowledged look steps and cursor initialization. Consolidate raw response evidence in append-only ID/byte-offset journals with bounded count/bytes, preserving all responses and explicit failures. Prepare a serialized diagnostic pilot for finite geometry-based aiming at a currently existing eligible natural planet, and bounded coarse/intermediate/Fine measured flight without teleport/follow substitution; no successful interception is presumed. Start with a short separately bounded hold/menu/readback qualification, then review a separate1470s work/1500s total ordinary formation/approach configuration. No runtime starts from this preparation comment. Every action requires same owned PID/start/boot/cwd/display/port/world/window and source pins; reserves and owned cleanup remain enforced. Owner stays InProgress3; this is measurement tooling under existing verification scope, not a new product feature or board admission.",
+  "body_frontmatter_preserved": true,
+  "comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 644968,
+  "prior_ledger_sha256": "5c8d1a24d4b603677a0aa19d213fd779ab45fe6a7bc1f36cab2c2f722d732b25",
+  "events_appended": 1
+}

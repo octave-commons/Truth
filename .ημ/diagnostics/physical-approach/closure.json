@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-07T07:37:38.331091+00:00",
+  "preparation_commit": "6dc48ccb1f37c5f7193bcbd70291862a71f32768",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "comment": "2026-10-07 physical-input attempt-01 closed PASS on production b395c404, frozen preparation6dc48ccb. Native43.104s/controller43.598s, all16 ordinary operations and50 fixed snapshots;619 decoded response messages/354583 exact UTF8 bytes independently audited. Fine Thrust1e7 -> up2e7 -> down1e7; W requested2s/actualrelease2.029316s; tick173nil ->177 exact camera-forward vector ->193nil after release. Early tick190 still showed thrust and is retained.35 native/helper children and18 controller clients reaped; cleanoperator-stop; rootconfirmed4ownedPIDsabsent. Source186/runprep6/manifest10stable. Independent audit05758b28 and RESULT.md preserve limits; no planet, aim, approach, binding, sculpt, Gate, media or FPS proof. Owner remainsInProgress3. Next preparation only: separate1470work/1500total ordinary-nebula profile with one shared absolute startup deadline/caller cleanup reserve, existing fixed snapshot/identity/source guards, finite explicit-target orientation and bounded ordinary physical holds with measured distance before/after. Use currently eligible natural target, no teleport/follow/retarget/substitution, no active budget extension. Reserve enough time for owned media and closure; all media must be actual owned-window captures. Review frozen derivative and qualified journal evidence before any fresh longer execution. The inherited140s start-client wait can expire before90+35+35startup phases; successful fast runs do not establish that path unreachable. Closed preparations/results remain immutable.",
+  "canonical_result": "{\n  \"ok\": true,\n  \"uuid\": \"f369c598-279c-498d-a64f-45d2ce16ad34\",\n  \"comment\": \"2026-10-07 physical-input attempt-01 closed PASS on production b395c404, frozen preparation6dc48ccb. Native43.104s/controller43.598s, all16 ordinary operations and50 fixed snapshots;619 decoded response messages/354583 exact UTF8 bytes independently audited. Fine Thrust1e7 -> up2e7 -> down1e7; W requested2s/actualrelease2.029316s; tick173nil ->177 exact camera-forward vector ->193nil after release. Early tick190 still showed thrust and is retained.35 native/helper children and18 controller clients reaped; cleanoperator-stop; rootconfirmed4ownedPIDsabsent. Source186/runprep6/manifest10stable. Independent audit05758b28 and RESULT.md preserve limits; no planet, aim, approach, binding, sculpt, Gate, media or FPS proof. Owner remainsInProgress3. Next preparation only: separate1470work/1500total ordinary-nebula profile with one shared absolute startup deadline/caller cleanup reserve, existing fixed snapshot/identity/source guards, finite explicit-target orientation and bounded ordinary physical holds with measured distance before/after. Use currently eligible natural target, no teleport/follow/retarget/substitution, no active budget extension. Reserve enough time for owned media and closure; all media must be actual owned-window captures. Review frozen derivative and qualified journal evidence before any fresh longer execution. The inherited140s start-client wait can expire before90+35+35startup phases; successful fast runs do not establish that path unreachable. Closed preparations/results remain immutable.\"\n}",
+  "body_frontmatter_preserved": true,
+  "comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 646759,
+  "prior_ledger_sha256": "c503693b9585c7ba071b869ca01f549c0f760ccb1b11514b3eb3d157e0a9c842",
+  "events_appended": 1,
+  "audit_sha256": "05758b288028599ba9a9db0b56679d6fd0435deb1af089e976364926a676ad0c",
+  "controller_result_sha256": "3a4f4b84f53cf835a128ccacc31e61d06de2ec3d333930a3b112f90d8ab6747e",
+  "owned_pids_absent": {
+    "supervisor": true,
+    "app": true,
+    "xvfb": true,
+    "snapshot_client": true
+  },
+  "read_attempt_note": "Initial read at07:36 used flags before verb, received CLI help and JSON decode failure; corrected verb-first read before any mutation."
+}
