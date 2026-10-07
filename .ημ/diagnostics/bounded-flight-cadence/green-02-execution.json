@@ -1,0 +1,11 @@
+{
+  "phase": "GREEN attempt2 including actual adapter fake-child checks",
+  "at": "2026-10-07T11:27:59.262359+00:00",
+  "argv": [
+    "python3",
+    ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/test_cadence.py"
+  ],
+  "script_sha256": "1d2d8de2c859db8243ebe1efacc07ecd183e4e7b021ddf104336c4d28c1cb028",
+  "tests_sha256": "33db2d1fd21cd988ec0ed6fe780333eafa6c4592cdf45b3fdc33f519564e0a53",
+  "exit_code": 0
+}

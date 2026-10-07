@@ -1,0 +1,272 @@
+{
+  "started_at": "2026-10-07T10:43:30.260569+00:00",
+  "pid": 3560115,
+  "state": "passed",
+  "steps": [
+    {
+      "client": "002-inspect",
+      "tick": 286,
+      "controls": [
+        "fit-all",
+        "true",
+        "none",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "003-manual",
+      "tick": 297,
+      "controls": [
+        "manual",
+        "true",
+        "none",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "004-open-spark",
+      "tick": 314,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "005-fine",
+      "tick": 326,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.0E7",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "006-cruise",
+      "tick": 337,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "3.0E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "007-half",
+      "tick": 354,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "1.5E14",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "008-quarter",
+      "tick": 366,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "7.5E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "009-eighth",
+      "tick": 375,
+      "controls": [
+        "manual",
+        "true",
+        "spark",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "010-close-spark",
+      "tick": 383,
+      "controls": [
+        "manual",
+        "true",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "false",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "011-lock",
+      "tick": 391,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "012-baseline",
+      "tick": 397,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "013-x-plus",
+      "tick": 403,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-88.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "014-x-minus",
+      "tick": 409,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "returned_to_baseline": true
+    },
+    {
+      "client": "015-y-plus",
+      "tick": 415,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-22.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true
+    },
+    {
+      "client": "016-y-minus",
+      "tick": 425,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "returned_to_baseline": true
+    },
+    {
+      "client": "017-calibration-final",
+      "tick": 430,
+      "controls": [
+        "manual",
+        "false",
+        "none",
+        "3.75E13",
+        "-90.0",
+        "-20.0",
+        "0.01",
+        "true",
+        "false"
+      ],
+      "nil_thrust": true,
+      "returned_to_baseline": true
+    }
+  ],
+  "baseline": [
+    -90.0,
+    -20.0,
+    0.01
+  ],
+  "ended_at": "2026-10-07T10:43:49.346779+00:00"
+}

@@ -1,0 +1,120 @@
+{
+  "at": "2026-10-07T11:01:53.801513+00:00",
+  "geometry_source": "Actual AST-extracted pure functions from frozen runner+aim, no module top-level or runtime call.",
+  "rows": [
+    {
+      "target": 1010,
+      "tick": 5677,
+      "spark_position": [
+        -3400319259575864.5,
+        -2894498850057049.5,
+        846694521547250.4
+      ],
+      "target_position": [
+        7150361238365736.0,
+        1.7449470049444026e+16,
+        -1.236474426812245e+16
+      ],
+      "distance_m": 2.6452524349231804e+16,
+      "angle_degrees": 0.05106969831908679,
+      "yaw": -117.38,
+      "pitch": 29.92,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.41191652631444,
+      "desired_pitch": 29.962932679349837,
+      "requested_pixels": [
+        -3,
+        -4
+      ],
+      "client": "023-pulse-one",
+      "started_monotonic": 38300.61964663,
+      "dt": 4138029443.01184,
+      "sim_time": 62470703885659.36,
+      "spark_velocity": [
+        618.1257144870797,
+        1193.5806393674254,
+        -773.4322875019743
+      ],
+      "D": 37500000000000.0,
+      "range_AU": 176824.20361636742
+    },
+    {
+      "target": 1010,
+      "tick": 5803,
+      "spark_position": [
+        -3336280464629845.5,
+        -2732648590860717.0,
+        731871640105303.2
+      ],
+      "target_position": [
+        7237774383236216.0,
+        1.7652043524642978e+16,
+        -1.250383710135614e+16
+      ],
+      "distance_m": 2.6505288047073876e+16,
+      "angle_degrees": 0.049468462777010294,
+      "yaw": -117.38,
+      "pitch": 29.92,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.41691040461782,
+      "desired_pitch": 29.95773708191867,
+      "requested_pixels": [
+        -4,
+        -4
+      ],
+      "client": "024-pulse-one-coast-a",
+      "started_monotonic": 38330.2687924,
+      "dt": 4138029443.01184,
+      "sim_time": 62992095595479.33,
+      "spark_velocity": [
+        11.870945417888173,
+        22.972168603674255,
+        -14.784388256265334
+      ],
+      "D": 37500000000000.0,
+      "range_AU": 177176.9071514858
+    },
+    {
+      "target": 1010,
+      "tick": 5914,
+      "spark_position": [
+        -3347662284794386.5,
+        -2721390252906470.0,
+        715558958667902.8
+      ],
+      "target_position": [
+        7318196207023866.0,
+        1.782793294480229e+16,
+        -1.2624527813684038e+16
+      ],
+      "distance_m": 2.6720649998554716e+16,
+      "angle_degrees": 0.053348814397289945,
+      "yaw": -117.38,
+      "pitch": 29.92,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.43098138949149,
+      "desired_pitch": 29.94990344111226,
+      "requested_pixels": [
+        -5,
+        -3
+      ],
+      "client": "025-pulse-one-coast-b",
+      "started_monotonic": 38352.252562361,
+      "dt": 4138029443.01184,
+      "sim_time": 63451416863654.06,
+      "spark_velocity": [
+        0.41326597188438813,
+        0.819531010522096,
+        -0.44108125967240813
+      ],
+      "D": 37500000000000.0,
+      "range_AU": 178616.51287898122
+    }
+  ],
+  "closed": false,
+  "coast_fraction": 0.0453768901604408,
+  "combined_fraction": 0.08046211451129709,
+  "N_star": 25,
+  "screen_passes": true,
+  "last_hold": null
+}

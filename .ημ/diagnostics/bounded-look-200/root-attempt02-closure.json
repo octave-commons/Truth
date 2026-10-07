@@ -1,0 +1,133 @@
+{
+  "at": "2026-10-07T11:04:04.750152+00:00",
+  "closed": {
+    "started_at": "2026-10-07T10:42:50.528883+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "port": 7898,
+    "budget_seconds": 1500,
+    "work_budget_seconds": 1470,
+    "startup_budget_seconds": 180,
+    "startup_deadline": 37450.471360913,
+    "startup_origin": "Caller monotonic instant before preflight; shared by all processes",
+    "supervisor": {
+      "pid": 3556748,
+      "start": "3727049",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12"
+    },
+    "supervisor_monotonic_started": 37270.471360913,
+    "stage": "closed",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "frames": 2,
+    "looks": 29,
+    "holds": 2,
+    "aim_invocations": 1,
+    "aim_target": 1010,
+    "active_aim": null,
+    "aim_deadline": null,
+    "successful_admission": {
+      "target": 1010,
+      "elapsed_seconds": 825.6351221130026,
+      "geometry": {
+        "target": 1010,
+        "stored_candidate": true,
+        "ready_to_commit": true,
+        "fresh_handoff": true,
+        "tick": 4686,
+        "dt": 4138029443.01184,
+        "sim_time": 58369916707630.875,
+        "spark_position": [
+          -3135110407249997.0,
+          -2944369161398453.0,
+          951563056488085.8
+        ],
+        "target_position": [
+          6628879652893333.0,
+          1.5911167023024508e+16,
+          -1.1246974238504466e+16
+        ],
+        "spark_velocity": [
+          0.14243905805209145,
+          0.15092649929492052,
+          -0.04677100802735586
+        ],
+        "target_velocity": [
+          4090.431500901349,
+          3998.1989362557374,
+          -259.90643945975376
+        ],
+        "relative_position": [
+          9763990060143330.0,
+          1.885553618442296e+16,
+          -1.2198537294992552e+16
+        ],
+        "relative_velocity": [
+          4090.289061843297,
+          3998.0480097564423,
+          -259.8596684517264
+        ],
+        "distance_m": 2.4488182023865828e+16
+      },
+      "no_prior_commitment": true
+    },
+    "terminal_commitment": null,
+    "no_target_deadline": 38230.471360913,
+    "display": ":1",
+    "xvfb": {
+      "pid": 3556786,
+      "start": "3727068",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 3556795,
+      "start": "3727088",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "snapshot_client": {
+      "pid": 3557657,
+      "start": "3728017",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 808234507,
+    "window": 140589513982352,
+    "x-window": "2097159",
+    "outcome": "operator-stop",
+    "cleanup_errors": [],
+    "ended_at": "2026-10-07T11:03:44.354852+00:00",
+    "elapsed_seconds": 1253.9422724719989,
+    "budget_exceeded": false,
+    "cleanup_deadline": 38550.807734719,
+    "total_budget_exceeded": false,
+    "key_pending": null,
+    "key_release_uncertain": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "unreaped_children": []
+  },
+  "root_principal_pids_absent": {
+    "3556748": true,
+    "3556786": true,
+    "3556795": true,
+    "3557657": true
+  },
+  "stop_reason": "Two successive pulse/coast intervals without net range contraction: +1791.733610877AU and +576.896047751AU. No furtherW. Frame requested immediately before confirming analysis, thenstop.",
+  "aim": "Completed70.1956outersec/69.6688controllersec, finaltick5000 angle0.004112773deg, no unreapedaimclients.",
+  "root_delays": "Formationreadytoadmission~86seconds; aimend10:57:45 tofirstW11:00:00; pulse1to2~132seconds. These command/deliberation/coast gaps materially limit outcome.",
+  "remaining_goal": "No sustained approach/binding/commitment/embodiment/Gate; sourceandnativeinputverified, no impossiblepilotingclaim.",
+  "audit_status": "Independent fullclosedaudit pending"
+}

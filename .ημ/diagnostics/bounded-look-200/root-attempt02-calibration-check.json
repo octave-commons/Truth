@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-07T10:44:38.544834+00:00",
+  "calibration_passed": true,
+  "baseline_tick": 397,
+  "final_tick": 430,
+  "setup_pid_absent": true,
+  "frame_client_reaped_exit0": true,
+  "same_run_counters": {
+    "looks": 4,
+    "holds": 0,
+    "frames": 1,
+    "aim_invocations": 0
+  },
+  "calibration_sha256": "7929eef3a4f1694ffb247762742f9145b8ed728e909d4af6a2d479e2aa2abf72"
+}

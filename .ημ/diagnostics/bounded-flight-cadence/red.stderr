@@ -1,0 +1,248 @@
+test_actual_pre_keydown_baseline_not_earlier_inspect (__main__.Checks.test_actual_pre_keydown_baseline_not_earlier_inspect) ... ERROR
+test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) ... 
+  test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'D': 75000000000000.0}) ... ERROR
+  test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'yaw': 180.01}) ... ERROR
+  test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'mode': 'follow-selection'}) ... ERROR
+  test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'world': 99}) ... ERROR
+  test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'ready': 'false'}) ... ERROR
+test_cleanup_failure_is_not_reported_as_clean_completion (__main__.Checks.test_cleanup_failure_is_not_reported_as_clean_completion) ... ERROR
+test_expired_phase_admits_no_command_except_stop (__main__.Checks.test_expired_phase_admits_no_command_except_stop) ... ERROR
+test_late_matching_reply_is_rejected_without_hold (__main__.Checks.test_late_matching_reply_is_rejected_without_hold) ... ERROR
+test_missing_hold_baseline_stops_before_coast_or_second_gesture (__main__.Checks.test_missing_hold_baseline_stops_before_coast_or_second_gesture) ... ERROR
+test_nonfinite_geometry_and_inherited_envelope_excess_stop (__main__.Checks.test_nonfinite_geometry_and_inherited_envelope_excess_stop) ... 
+  test_nonfinite_geometry_and_inherited_envelope_excess_stop (__main__.Checks.test_nonfinite_geometry_and_inherited_envelope_excess_stop) (changed={'distance': nan}) ... ERROR
+  test_nonfinite_geometry_and_inherited_envelope_excess_stop (__main__.Checks.test_nonfinite_geometry_and_inherited_envelope_excess_stop) (changed={'speed': 37510000000000.0}) ... ERROR
+test_read_error_identity_preserved_and_no_gesture_replay (__main__.Checks.test_read_error_identity_preserved_and_no_gesture_replay) ... ERROR
+test_reservation_is_not_replenished_or_duplicated (__main__.Checks.test_reservation_is_not_replenished_or_duplicated) ... ERROR
+test_saved_result_binding_rejects_false_success (__main__.Checks.test_saved_result_binding_rejects_false_success) ... ok
+test_terminal_precedes_invalid_target_and_closes_without_hold (__main__.Checks.test_terminal_precedes_invalid_target_and_closes_without_hold) ... ERROR
+test_three_fixed_pulses_and_spaced_advancing_coasts (__main__.Checks.test_three_fixed_pulses_and_spaced_advancing_coasts) ... ERROR
+
+======================================================================
+ERROR: test_actual_pre_keydown_baseline_not_earlier_inspect (__main__.Checks.test_actual_pre_keydown_baseline_not_earlier_inspect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 131, in test_actual_pre_keydown_baseline_not_earlier_inspect
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'D': 75000000000000.0})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 148, in test_changed_D_camera_mode_world_and_readiness_stop
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'yaw': 180.01})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 148, in test_changed_D_camera_mode_world_and_readiness_stop
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'mode': 'follow-selection'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 148, in test_changed_D_camera_mode_world_and_readiness_stop
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'world': 99})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 148, in test_changed_D_camera_mode_world_and_readiness_stop
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) (changed={'ready': 'false'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 148, in test_changed_D_camera_mode_world_and_readiness_stop
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_cleanup_failure_is_not_reported_as_clean_completion (__main__.Checks.test_cleanup_failure_is_not_reported_as_clean_completion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 199, in test_cleanup_failure_is_not_reported_as_clean_completion
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_expired_phase_admits_no_command_except_stop (__main__.Checks.test_expired_phase_admits_no_command_except_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 188, in test_expired_phase_admits_no_command_except_stop
+    self.assertEqual("failed", self.run_cadence()["outcome"])
+                               ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_late_matching_reply_is_rejected_without_hold (__main__.Checks.test_late_matching_reply_is_rejected_without_hold)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 193, in test_late_matching_reply_is_rejected_without_hold
+    self.assertEqual("failed", self.run_cadence()["outcome"])
+                               ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_missing_hold_baseline_stops_before_coast_or_second_gesture (__main__.Checks.test_missing_hold_baseline_stops_before_coast_or_second_gesture)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 176, in test_missing_hold_baseline_stops_before_coast_or_second_gesture
+    self.assertEqual("failed", self.run_cadence()["outcome"])
+                               ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_nonfinite_geometry_and_inherited_envelope_excess_stop (__main__.Checks.test_nonfinite_geometry_and_inherited_envelope_excess_stop) (changed={'distance': nan})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 157, in test_nonfinite_geometry_and_inherited_envelope_excess_stop
+    self.assertEqual("failed", self.run_cadence()["outcome"])
+                               ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_nonfinite_geometry_and_inherited_envelope_excess_stop (__main__.Checks.test_nonfinite_geometry_and_inherited_envelope_excess_stop) (changed={'speed': 37510000000000.0})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 157, in test_nonfinite_geometry_and_inherited_envelope_excess_stop
+    self.assertEqual("failed", self.run_cadence()["outcome"])
+                               ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_read_error_identity_preserved_and_no_gesture_replay (__main__.Checks.test_read_error_identity_preserved_and_no_gesture_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 181, in test_read_error_identity_preserved_and_no_gesture_replay
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_reservation_is_not_replenished_or_duplicated (__main__.Checks.test_reservation_is_not_replenished_or_duplicated)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 163, in test_reservation_is_not_replenished_or_duplicated
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_terminal_precedes_invalid_target_and_closes_without_hold (__main__.Checks.test_terminal_precedes_invalid_target_and_closes_without_hold)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 138, in test_terminal_precedes_invalid_target_and_closes_without_hold
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+======================================================================
+ERROR: test_three_fixed_pulses_and_spaced_advancing_coasts (__main__.Checks.test_three_fixed_pulses_and_spaced_advancing_coasts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 120, in test_three_fixed_pulses_and_spaced_advancing_coasts
+    result = self.run_cadence()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/test_cadence.py", line 113, in run_cadence
+    result = self.cadence.run()
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.ημ/diagnostics/bounded-flight-cadence/cadence_client.py", line 193, in run
+    raise NotImplementedError("RED: finite cadence, screens and unconditional closure not implemented")
+NotImplementedError: RED: finite cadence, screens and unconditional closure not implemented
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.026s
+
+FAILED (errors=16)

@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-07T10:56:22.311563+00:00",
+  "root_explicit_target": 1010,
+  "global_commitment": 0,
+  "actual_stored_ready": true,
+  "fresh_handoff": true,
+  "nil_thrust": true,
+  "endpoints": [
+    {
+      "client": "poll-20",
+      "tick": 4074,
+      "wall_monotonic": 37979.354964001,
+      "range_m": null
+    },
+    {
+      "client": "poll-21",
+      "tick": 4228,
+      "wall_monotonic": 38009.355819684,
+      "range_m": 2.356530920155201e+16
+    },
+    {
+      "client": "019-coast-before-aim",
+      "tick": 4383,
+      "wall_monotonic": 38037.431075924,
+      "range_m": 2.3876831914227748e+16
+    },
+    {
+      "client": "020-coast-before-aim",
+      "tick": 4476,
+      "wall_monotonic": 38054.57226049,
+      "range_m": 2.4062936090821816e+16
+    }
+  ],
+  "observed_rates": [
+    5.133186920640569,
+    5.520875701898615,
+    5.425529352532923
+  ],
+  "N_star": 25,
+  "D": 37500000000000.0,
+  "range_AU": 160850.7927166761,
+  "coast_fraction": 0.05038869718240563,
+  "combined_fraction": 0.08934903005539968,
+  "passes": true,
+  "heuristic_only": true
+}

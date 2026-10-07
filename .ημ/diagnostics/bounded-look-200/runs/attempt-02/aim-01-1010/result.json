@@ -1,0 +1,705 @@
+{
+  "target": 1010,
+  "invocation": 1,
+  "max_steps": 180,
+  "max_work_seconds": 120,
+  "max_failure_cleanup_seconds": 65,
+  "tolerance_degrees": 0.5,
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "runner_sha256": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a",
+  "initial_identity": {
+    "supervisor": {
+      "pid": 3556748,
+      "start": "3727049",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12"
+    },
+    "app": {
+      "pid": 3556795,
+      "start": "3727088",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "xvfb": {
+      "pid": 3556786,
+      "start": "3727068",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "display": ":1",
+    "port": 7898,
+    "world": 808234507,
+    "window": 140589513982352,
+    "x-window": "2097159",
+    "snapshot_client": {
+      "pid": 3557657,
+      "start": "3728017",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    }
+  },
+  "scope": "orientation diagnostic only; no thrust, follow, capture or interception",
+  "steps": [
+    {
+      "target": 1010,
+      "tick": 4689,
+      "spark_position": [
+        -3135599903432205.0,
+        -2944251663672697.0,
+        951313462693476.0
+      ],
+      "target_position": [
+        6631210759074350.0,
+        1.5916141871618408e+16,
+        -1.1250433738320594e+16
+      ],
+      "distance_m": 2.4494645732909812e+16,
+      "angle_degrees": 56.41516544332661,
+      "yaw": -90.0,
+      "pitch": -20.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37727434584441,
+      "desired_pitch": 29.876977347901562,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4702,
+      "spark_position": [
+        -3137720720358931.5,
+        -2943735547289109.0,
+        950227680918104.4
+      ],
+      "target_position": [
+        6641160033956982.0,
+        1.5935574304092754e+16,
+        -1.1265433109293172e+16
+      ],
+      "distance_m": 2.4520954667653536e+16,
+      "angle_degrees": 53.76563405508996,
+      "yaw": -92.0,
+      "pitch": -18.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38271675127015,
+      "desired_pitch": 29.87915492250099,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4717,
+      "spark_position": [
+        -3142654452854972.5,
+        -2937497154165397.0,
+        950230943596244.1
+      ],
+      "target_position": [
+        6646652613515101.0,
+        1.5962951171343876e+16,
+        -1.128148870712459e+16
+      ],
+      "distance_m": 2.4549387881549296e+16,
+      "angle_degrees": 51.121568424151896,
+      "yaw": -94.0,
+      "pitch": -16.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38146728249156,
+      "desired_pitch": 29.884253692280826,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4730,
+      "spark_position": [
+        -3144784085861917.0,
+        -2936950816675479.5,
+        949129324858314.4
+      ],
+      "target_position": [
+        6653462038267842.0,
+        1.5984864222639834e+16,
+        -1.129650865974063e+16
+      ],
+      "distance_m": 2.457633742323977e+16,
+      "angle_degrees": 48.482284635441246,
+      "yaw": -96.0,
+      "pitch": -14.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37638725120475,
+      "desired_pitch": 29.885573233014007,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4741,
+      "spark_position": [
+        -3146578779304130.5,
+        -2936497241926208.5,
+        948188491609062.9
+      ],
+      "target_position": [
+        6661597831446993.0,
+        1.600334916179173e+16,
+        -1.1309227735228702e+16
+      ],
+      "distance_m": 2.4600048023978704e+16,
+      "angle_degrees": 45.858053828523964,
+      "yaw": -98.0,
+      "pitch": -12.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37780263957129,
+      "desired_pitch": 29.885476457036667,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4752,
+      "spark_position": [
+        -3148372742365853.0,
+        -2936037472162393.5,
+        947240631611359.5
+      ],
+      "target_position": [
+        6669956734605055.0,
+        1.6019639106233814e+16,
+        -1.1321940089786704e+16
+      ],
+      "distance_m": 2.462214580083223e+16,
+      "angle_degrees": 43.25492719538466,
+      "yaw": -100.0,
+      "pitch": -10.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38246220386037,
+      "desired_pitch": 29.887499814736245,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4767,
+      "spark_position": [
+        -3155672377586625.5,
+        -2933499464609608.0,
+        942318691477960.5
+      ],
+      "target_position": [
+        6673258547831681.0,
+        1.6043238716283242e+16,
+        -1.1342911213530498e+16
+      ],
+      "distance_m": 2.4650585164285956e+16,
+      "angle_degrees": 40.67561470801018,
+      "yaw": -102.0,
+      "pitch": -8.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38172975966692,
+      "desired_pitch": 29.892534291809454,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4778,
+      "spark_position": [
+        -3161979872866839.5,
+        -2932514727240416.5,
+        940389240554294.0
+      ],
+      "target_position": [
+        6674237822827596.0,
+        1.6062002665794194e+16,
+        -1.1356603378917056e+16
+      ],
+      "distance_m": 2.467303988232337e+16,
+      "angle_degrees": 38.12095102790907,
+      "yaw": -104.0,
+      "pitch": -6.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37715852607747,
+      "desired_pitch": 29.894066031728272,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4789,
+      "spark_position": [
+        -3163773859439451.5,
+        -2932042527637269.5,
+        939433350046763.0
+      ],
+      "target_position": [
+        6681787209651799.0,
+        1.6080842401945478e+16,
+        -1.1369314494607294e+16
+      ],
+      "distance_m": 2.46967637477876e+16,
+      "angle_degrees": 35.602155201949834,
+      "yaw": -106.0,
+      "pitch": -4.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37675891509689,
+      "desired_pitch": 29.89388218705686,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4801,
+      "spark_position": [
+        -3165718823301934.5,
+        -2931522065254694.5,
+        938385641379671.8
+      ],
+      "target_position": [
+        6691130697339155.0,
+        1.6099286602281798e+16,
+        -1.138317170656872e+16
+      ],
+      "distance_m": 2.4721446893167996e+16,
+      "angle_degrees": 33.13057591489339,
+      "yaw": -108.0,
+      "pitch": -2.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38152320507949,
+      "desired_pitch": 29.895239032310275,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4814,
+      "spark_position": [
+        -3167825543331131.0,
+        -2930950444253428.5,
+        937241581666158.1
+      ],
+      "target_position": [
+        6699055897280411.0,
+        1.6117747873038974e+16,
+        -1.1398171959385726e+16
+      ],
+      "distance_m": 2.47461246294257e+16,
+      "angle_degrees": 30.71549743295182,
+      "yaw": -110.0,
+      "pitch": 0.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38334014208014,
+      "desired_pitch": 29.89939587588809,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4830,
+      "spark_position": [
+        -3170416659854097.5,
+        -2930236651195471.5,
+        935820878921890.8
+      ],
+      "target_position": [
+        6706952909229309.0,
+        1.614349481766164e+16,
+        -1.1416615871031716e+16
+      ],
+      "distance_m": 2.4778061978531116e+16,
+      "angle_degrees": 28.365640345732857,
+      "yaw": -112.0,
+      "pitch": 2.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37746942450104,
+      "desired_pitch": 29.9023383725579,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4839,
+      "spark_position": [
+        -3171873730133206.0,
+        -2929831126100344.5,
+        935014551532765.1
+      ],
+      "target_position": [
+        6712890164839764.0,
+        1.6159019497383252e+16,
+        -1.142697771897678e+16
+      ],
+      "distance_m": 2.4797411725443628e+16,
+      "angle_degrees": 26.098294100470593,
+      "yaw": -114.0,
+      "pitch": 4.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37643947388499,
+      "desired_pitch": 29.902096421312116,
+      "requested_pixels": [
+        -200,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4852,
+      "spark_position": [
+        -3173977598145749.0,
+        -2929239083896570.0,
+        933842995954782.0
+      ],
+      "target_position": [
+        6722999311921975.0,
+        1.6179620107970832e+16,
+        -1.1441938264581902e+16
+      ],
+      "distance_m": 2.4824556660324868e+16,
+      "angle_degrees": 23.938156188374457,
+      "yaw": -116.0,
+      "pitch": 6.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38081812919337,
+      "desired_pitch": 29.90277990820225,
+      "requested_pixels": [
+        -138,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4867,
+      "spark_position": [
+        -3178181314685797.0,
+        -2929397427973623.5,
+        934319157866485.5
+      ],
+      "target_position": [
+        6730743043927708.0,
+        1.62002198220326e+16,
+        -1.1457349710440148e+16
+      ],
+      "distance_m": 2.48532190152145e+16,
+      "angle_degrees": 21.907031512159392,
+      "yaw": -117.38,
+      "pitch": 8.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38364329822674,
+      "desired_pitch": 29.907031245658207,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4876,
+      "spark_position": [
+        -3179697714189337.0,
+        -2929007175464797.0,
+        933558368766852.6
+      ],
+      "target_position": [
+        6735007148233245.0,
+        1.6214043477038892e+16,
+        -1.1467638551846372e+16
+      ],
+      "distance_m": 2.4870614102934708e+16,
+      "angle_degrees": 19.909303491012793,
+      "yaw": -117.38,
+      "pitch": 10.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38086368261533,
+      "desired_pitch": 29.909303474694436,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4890,
+      "spark_position": [
+        -3188989950044434.5,
+        -2942818450781647.0,
+        924210556672232.1
+      ],
+      "target_position": [
+        6735935954619249.0,
+        1.6223401952366424e+16,
+        -1.1491803344358134e+16
+      ],
+      "distance_m": 2.4899910842123372e+16,
+      "angle_degrees": 17.909857999369578,
+      "yaw": -117.38,
+      "pitch": 12.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37666973538526,
+      "desired_pitch": 29.90985773252413,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4900,
+      "spark_position": [
+        -3190629006057591.5,
+        -2942389161130518.5,
+        923253598183840.5
+      ],
+      "target_position": [
+        6743441006289938.0,
+        1.6240021014882886e+16,
+        -1.1503340504221248e+16
+      ],
+      "distance_m": 2.4921293067515056e+16,
+      "angle_degrees": 15.90964092884553,
+      "yaw": -117.38,
+      "pitch": 14.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37846089200113,
+      "desired_pitch": 29.909640865418744,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4914,
+      "spark_position": [
+        -3192864430570823.0,
+        -2941660769038965.5,
+        921973761832393.8
+      ],
+      "target_position": [
+        6753844879347746.0,
+        1.6260838651575328e+16,
+        -1.1519420475175932e+16
+      ],
+      "distance_m": 2.494917434816986e+16,
+      "angle_degrees": 13.91201935546292,
+      "yaw": -117.38,
+      "pitch": 16.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38372049734622,
+      "desired_pitch": 29.912018936848373,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4923,
+      "spark_position": [
+        -3194300907972393.5,
+        -2941187841189955.0,
+        921145758280928.6
+      ],
+      "target_position": [
+        6759001393235970.0,
+        1.627383000240509e+16,
+        -1.1529748464504674e+16
+      ],
+      "distance_m": 2.4966175205183344e+16,
+      "angle_degrees": 11.91472585685748,
+      "yaw": -117.38,
+      "pitch": 18.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38397574400639,
+      "desired_pitch": 29.914725306091746,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4939,
+      "spark_position": [
+        -3196852315968136.0,
+        -2940336389062279.5,
+        919666740604171.5
+      ],
+      "target_position": [
+        6767075986585621.0,
+        1.6299660750060218e+16,
+        -1.1548109220249816e+16
+      ],
+      "distance_m": 2.4998055815241356e+16,
+      "angle_degrees": 9.917323579388293,
+      "yaw": -117.38,
+      "pitch": 20.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37854426116535,
+      "desired_pitch": 29.917323491932024,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4948,
+      "spark_position": [
+        -3198285879486493.5,
+        -2939852613727969.0,
+        918829656794042.5
+      ],
+      "target_position": [
+        6772913197403436.0,
+        1.6315211725895402e+16,
+        -1.155842943692277e+16
+      ],
+      "distance_m": 2.5017280192813628e+16,
+      "angle_degrees": 7.917046359365703,
+      "yaw": -117.38,
+      "pitch": 22.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37729560845476,
+      "desired_pitch": 29.917045986984473,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4958,
+      "spark_position": [
+        -3199879065091322.5,
+        -2939312401639980.5,
+        917893663727948.6
+      ],
+      "target_position": [
+        6780609978880485.0,
+        1.633163184288122e+16,
+        -1.1569877864109104e+16
+      ],
+      "distance_m": 2.5038448261898016e+16,
+      "angle_degrees": 5.91692705874333,
+      "yaw": -117.38,
+      "pitch": 24.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.3797961275768,
+      "desired_pitch": 29.916927055957295,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4971,
+      "spark_position": [
+        -3205423180299021.0,
+        -2955539065192837.5,
+        919672629715571.5
+      ],
+      "target_position": [
+        6786645496064003.0,
+        1.6333907769873946e+16,
+        -1.1581740064240394e+16
+      ],
+      "distance_m": 2.5064108102636056e+16,
+      "angle_degrees": 3.919153666549439,
+      "yaw": -117.38,
+      "pitch": 26.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38447329810472,
+      "desired_pitch": 29.919151676259997,
+      "requested_pixels": [
+        0,
+        -200
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 4987,
+      "spark_position": [
+        -3213368826965417.5,
+        -2955941557462033.5,
+        919405860605172.0
+      ],
+      "target_position": [
+        6789852571798483.0,
+        1.6356522570708214e+16,
+        -1.1598760123800476e+16
+      ],
+      "distance_m": 2.5094624696689156e+16,
+      "angle_degrees": 1.9231896506478108,
+      "yaw": -117.38,
+      "pitch": 28.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.38267121931034,
+      "desired_pitch": 29.923188230773377,
+      "requested_pixels": [
+        0,
+        -192
+      ]
+    },
+    {
+      "target": 1010,
+      "tick": 5000,
+      "spark_position": [
+        -3222478453639054.5,
+        -2955023937896839.5,
+        916408566017707.2
+      ],
+      "target_position": [
+        6789914352606966.0,
+        1.6378640123168388e+16,
+        -1.1615372589897528e+16
+      ],
+      "distance_m": 2.5121387594486984e+16,
+      "angle_degrees": 0.0041127732564204015,
+      "yaw": -117.38,
+      "pitch": 29.92,
+      "sensitivity": 0.01,
+      "desired_yaw": -117.37844301790271,
+      "desired_pitch": 29.923885086835735,
+      "requested_pixels": [
+        0,
+        0
+      ]
+    }
+  ],
+  "outcome": "aimed-at-one-published-observation",
+  "elapsed_seconds": 69.66882925199752,
+  "unreaped_client_pids": []
+}
