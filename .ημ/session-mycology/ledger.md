@@ -368,3 +368,12 @@
   spore: none
   receipt-refs: 2026-10-07T03:26:35.656948Z, review5437247456
   note: A resolving Markdown file link does not prove a line fragment still names the cited policy; inspect actual heading text after insertions. Bounded citation repair only, with original verification limits retained.
+- ts: 2026-10-07T03:53:30.588819482Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Compare the first represented-life boundary under existing Incoming3 ownership
+  p-efficiency: 0.9
+  p-friction: 0.18
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: life-to-represented-actor-spec,98b847ce75491bdccacf2ec3a7476d451270bf49
+  note: A normalized life score cannot fund a conserved organism. Distinguish representation admission from abiogenesis, cohort identity from individual history, and a primary-supported rate shape from calibrated ecology. Trace generic lifecycle ownership before promising atomic resource settlement. Publish the bounded decision boundary with explicit missing producers instead of assigning readiness by prose. Independent reviews closed; no spore created or promoted.

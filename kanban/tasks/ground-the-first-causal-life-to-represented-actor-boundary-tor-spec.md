@@ -3,7 +3,7 @@ category: "tasks"
 labels: "research, design, ecology, actors, playable-gate"
 parent: "embodied-character-voxel-mode"
 type: "task"
-write-id: "1791318933567-0.jmkcf6yovpmj7tx5yi"
+write-id: "1791345209862-0.gm8solrmhln9ubbk0yx"
 points: "3"
 title: "Ground the first causal life-to-represented-actor boundary"
 priority: "P1"
@@ -42,5 +42,9 @@ Independent source/model review plus a small labeled derivation or disposable mo
 Anthropomorphic labels can conceal absent mechanism, and overly detailed biology can consume the whole project. Keep one causal, visible actor boundary as the deliverable; broader civilization and Gate rules remain later specifications.
 
 ---
+
 Planning refinement from independent review, included while this card is Incoming: coordinate modeled time units and update cadence with committed-clock-executable-policy; this is a semantic reference, not a fabricated blocking dependency on independent research. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+
+Design-only continuation at PR12 base 98b847ce75491bdccacf2ec3a7476d451270bf49: docs/notes/2026-10-07-first-represented-life-boundary.md and resolution-regimes-and-scale-coupling.md section 6.1 compare an individual with a provisionally preferred microbial cohort. The proposed carbon account and nutrient-limited reference rate are grounded in Monod1949 and Jayathilake2017, with no calibration adopted. Cohort representation partitions already accounted living stock; normalized ecology biomass is not that budget and no organism/avatar/phase jump is claimed. Actual local-budget/habitat producers, elapsed-time integration, loss law, durable identity/LOD history and single-writer-compatible generic birth/removal settlement remain implementation blockers. Current request materialization still creates stellar clumps. Worked valid/retry/invalid/resource-loss/same-fold-removal traces and later real-pipeline/native acceptance requirements are recorded. This continuation does not complete the implementation-level specification acceptance or admit code; status and points remain Incoming3. Independent board_scout and runtime_scout source/accounting reviews found no blocker to publishing the proposal; board_scout also checked both primary full texts. Final note SHA256 b5466b3696e881f7414b2bd4f9f17ffbfc6765cbc340fdd815b57d6e276b3b3b; design SHA256 4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463. Documentation-only: local links and whitespace checked; no source/tests/native/commit/push/review request. Existing source/body/history remain preserved.
+
 ---

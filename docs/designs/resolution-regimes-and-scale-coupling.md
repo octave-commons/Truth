@@ -94,6 +94,24 @@ This numeric boundary is *why* B is a distinct regime, not just "smaller seeds."
   nondeterminism (fixed seed still differs run-to-run) before regenerate-from-seed
   is trustworthy.
 
+### 6.1 Proposed first represented-life boundary (2026-10-07)
+
+This subsection is **unaccepted design continuation** under the existing
+[`life-to-represented-actor-spec` Incoming3 owner](../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md).
+It does not change the decided single-ECS, nested-budget or aggregate/detail
+architecture above. The [grounded comparison and worked traces](../notes/2026-10-07-first-represented-life-boundary.md)
+provisionally prefer a persistent microbial cohort over an individual as the first
+resource-using representation. A cohort is neither an organism biography nor an
+avatar; normalized ecology biomass cannot fund its admission.
+
+The candidate uses a planet-local carbon account and a nutrient-limited reference
+rate, without adopting calibration, death rules or a numerical clock/integrator.
+An actual local-budget producer, habitat contract, durable identity/LOD history
+and single-writer-compatible birth/removal settlement remain required decisions.
+Current lifecycle requests all create stellar clumps; generic component creation
+is a missing boundary, not an existing biological producer. No implementation,
+phase advancement or Gate prerequisite is declared satisfied by this proposal.
+
 ## 7. Roadmap position
 
 - **Now / Phase 0:** seed-and-grow (A). Parcel grain stays ~669 M⊕ (compute-locked
