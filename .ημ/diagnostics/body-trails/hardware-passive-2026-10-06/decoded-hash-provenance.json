@@ -1,0 +1,34 @@
+{
+  "scope": "complete closed client outputs",
+  "gzip_mtime": 0,
+  "files": [
+    {
+      "original_untracked": "install.stdout",
+      "committed_gzip": "install.stdout.gz",
+      "decoded_bytes": 107,
+      "decoded_sha256": "3d2cebb1dd9ffcc7c97eba0451ae4ab6ff6ea6ae7cceec495ebf9a02e0b215ae",
+      "gzip_sha256": "e4456401c4590c205a72a88f2a4307bf9b0093b9e6dda7cf85f0262bcbd3df2c"
+    },
+    {
+      "original_untracked": "install.stderr",
+      "committed_gzip": "install.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "original_untracked": "restore.stdout",
+      "committed_gzip": "restore.stdout.gz",
+      "decoded_bytes": 633,
+      "decoded_sha256": "1a1fe5f4b8be9afdbe6536b9a749bfb83d6d9a3fb20bc14b90fdd2e416b13ece",
+      "gzip_sha256": "7fe1539aa2c74e14440a94ae09a1076d1065a1b123d3717278232c85b99175dc"
+    },
+    {
+      "original_untracked": "restore.stderr",
+      "committed_gzip": "restore.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    }
+  ]
+}

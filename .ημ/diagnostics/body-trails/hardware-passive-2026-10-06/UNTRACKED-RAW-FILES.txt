@@ -1,0 +1,4 @@
+install.stderr
+install.stdout
+restore.stderr
+restore.stdout

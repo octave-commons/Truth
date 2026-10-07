@@ -404,3 +404,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,be832d7,PID4070721
   note: Separate lost-session status from a fresh launch. Capture the actual invoked render facade after scene/HUD, on its owner thread before swap; the screenshot helper creates another context and advances world work. Preserve actual framebuffer dimensions and distinguish after-scene world readback from rendered input. Verify restoration and active-log prefixes, not screenshot-derived FPS. No spore warranted.
+- ts: 2026-10-07T00:03:07.442314566Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Separate exact native trail attribution and age-out from visual readability
+  p-efficiency: 0.90
+  p-friction: 0.20
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: body-trails-ringbuffer,4805fae,PID4070721
+  note: Pair the actual body projection input with its unchanged full-scene call; later published world reads can be several ticks ahead. Production trail entity tags distinguish magnetic loops without filtering or color guesses. A whole simulation horizon and declining emitted alpha can still occupy only two pixels at fit-all, so preserve the failed readability claim. Restore exact callable/key presence and retain raw evidence; no spore warranted.

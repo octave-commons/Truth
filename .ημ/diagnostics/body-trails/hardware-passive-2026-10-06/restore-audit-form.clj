@@ -1,0 +1,15 @@
+(let [r (load-file "/home/err/spaces/foresight/.worktrees/truth-focus-cadence/.ημ/diagnostics/body-trails/hardware-passive-2026-10-06/restore.clj")
+      s @infra.dev.window.lifecycle/service-state w @(:world s) cfg @(:config s)]
+  (assert (= 4070721 (.pid (java.lang.ProcessHandle/current))))
+  (assert (= 275227937 (System/identityHashCode (:world s))))
+  (assert (= 129843170276688 (:window s)))
+  (prn {:restored (:restored r)
+        :observer (select-keys (:state r) [:phase :active? :capture-attempts :body-calls :scene-calls :unpaired-frames
+                                         :errors :scene-root-restored? :bodies-config-restored?])
+        :pid (.pid (java.lang.ProcessHandle/current)) :world-atom-identity (System/identityHashCode (:world s))
+        :window (:window s) :render-worker-alive (.isAlive ^Thread (:thread s))
+        :sim-worker-alive (.isAlive ^Thread (:sim-thread s))
+        :service-error (some-> (:error s) str) :ui-error (some-> (:ui/error-state cfg) str)
+        :config (select-keys cfg [:mode :selection :follow-eid :ui/active-domain :volumetric?])
+        :world (select-keys w [:tick :genesis/sim-time :arc/current :demo/scenario :demo/fixture?])
+        :states (frequencies (vals (get-in w [:components domain.ecs.components/matter-state])))}))

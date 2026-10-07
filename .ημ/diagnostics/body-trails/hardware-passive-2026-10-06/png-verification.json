@@ -1,0 +1,26 @@
+[
+  {
+    "path": "captures/pid-4070721-frame-01.png",
+    "bytes": 605237,
+    "width": 1264,
+    "height": 1490,
+    "sha256": "07ce43c68f1e7789bdcc382803b9ae42130b2285f9ddc5c3a004e05e976111ab",
+    "visual_inspection": "original image viewed by board_scout and root; readable star/planet fading not established"
+  },
+  {
+    "path": "captures/pid-4070721-frame-02.png",
+    "bytes": 605542,
+    "width": 1264,
+    "height": 1490,
+    "sha256": "f7ea33bf41df83ba7e8b7b67d86c00d18fd641d4e9b4d6e4a3eb7c93efdc66e9",
+    "visual_inspection": "original image viewed by board_scout and root; readable star/planet fading not established"
+  },
+  {
+    "path": "captures/pid-4070721-frame-03.png",
+    "bytes": 603645,
+    "width": 1264,
+    "height": 1490,
+    "sha256": "ed656dc903a45a90a2c654268d2f39a58a7f7c4261852d243a50d89a8e18c71c",
+    "visual_inspection": "original image viewed by board_scout and root; readable star/planet fading not established"
+  }
+]

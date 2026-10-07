@@ -1,0 +1,8 @@
+{
+  "reviewer": "intent_research",
+  "kind": "independent source-only review",
+  "result": "no blockers",
+  "limitation": "An original-bodies exception remains handled by the production host guard; explicit operator restore required if no normal frame reaches the deadline.",
+  "originals_once_unchanged": true,
+  "no_runtime_calls_by_reviewer": true
+}
