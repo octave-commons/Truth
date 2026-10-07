@@ -1,0 +1,8 @@
+{
+  "path": "incoming-source.diff",
+  "trailing_whitespace_lines": [
+    38,
+    40
+  ],
+  "interpretation": "Preserved exact git diff context/output, not modified source; no raw-byte cleanup."
+}

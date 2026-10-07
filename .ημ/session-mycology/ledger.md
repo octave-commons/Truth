@@ -413,3 +413,12 @@
   spore: none
   receipt-refs: focus-follows-pilot,2b30e5055bc793e4c9152425356f535ba3e5d2f6
   note: Reuse the existing finite-vector predicate behind a named compiled Malli law, and invoke it before the domain call inside established containment. Real boundary tests catch silent NaN and extra-coordinate acceptance that exception tests miss. Record a post-test docstring correction separately, then bind full qualification to final source. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:01:15.005453Z
+  session: /home/err/spaces/foresight/.worktrees/truth-kepler-cost
+  task: Qualify the composed focus repair and allocation-only solver on the final merge
+  p-efficiency: 0.98
+  p-friction: 0.04
+  p-skill-candidate: 0.1
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,6b160b2dc63e923be5badad7d2de846d74c99093,2026-10-07T00:01:15.005453Z
+  note: Bind final composition checks to exact HEAD and immutable source hashes, retain earlier benchmark ancestry, and avoid treating correctness-run durations as fresh performance evidence. Keep raw captured patch whitespace explicit and prior closed bundles unchanged. Existing skills suffice; no new spore.
