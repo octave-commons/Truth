@@ -1,0 +1,754 @@
+{
+  "at": "2026-10-07T07:12:15.336296+00:00",
+  "worktree": "/home/err/spaces/foresight/.worktrees/truth-condensed-water-research",
+  "observed_head": "8f9ee36b8848e046e40eb5fb36ab4cbab5ab6946",
+  "inspected_source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "research_publication": "8f9ee36b8848e046e40eb5fb36ab4cbab5ab6946",
+  "owner": "a4744132-2328-4cb2-a550-e1328d346673",
+  "scope": "Design only, Incoming3 unchanged; root owns all board/provenance changes",
+  "design": {
+    "path": "docs/designs/condensed-water-inventory-boundary.md",
+    "sha256": "5ca573b02dc209ad893511329b0b2e129b5dc0bed45a4a45e753ecff6ff85c4a"
+  },
+  "command": {
+    "invocation": "python3 - <<'PY' (standard-library Fraction arithmetic and audit; exact arithmetic body below)",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "arithmetic_source": "from fractions import Fraction as F\nE = (\"H\",\"He\",\"D\",\"He3\",\"Li7\",\"C\",\"N\",\"O\",\"Ne\",\"Na\",\"Mg\",\"Al\",\"Si\",\"S\",\"Ca\",\"Fe\",\"Ni\")\ndef amounts(**xs):\n    return {e:F(xs.get(e,0)) for e in E}\ndef total(x):\n    return sum(x.values(),F(0))\ndef add(*xs):\n    return {e:sum((x[e] for x in xs),F(0)) for e in E}\ndef scale(x,k):\n    return {e:v*k for e,v in x.items()}\ndef subtract(x,y):\n    return {e:x[e]-y[e] for e in E}\ndef allocate(b,rs,rg,eta,f):\n    a=subtract(subtract(b,rs),rg)\n    assert min(a.values())>=0 and 0<=eta<=1 and 0<=f<=1\n    q=eta*min(a[\"H\"]/(2*F(\"1.008\")),a[\"O\"]/F(\"15.999\"))\n    water=amounts(H=2*F(\"1.008\")*q,O=F(\"15.999\")*q)\n    wi,wv=scale(water,f),scale(water,1-f)\n    u=subtract(a,water)\n    p={\"other-solid\":rs,\"other-gas\":rg,\"water-ice\":wi,\"water-vapor\":wv,\"unassigned\":u}\n    assert add(*p.values())==b\n    return q,p\ndef draw(p,mc,mg):\n    s=add(p[\"other-solid\"],p[\"water-ice\"])\n    g=add(p[\"other-gas\"],p[\"water-vapor\"])\n    S,G=total(s),total(g)\n    if not (0<=mc<=S and 0<=mg<=G):\n        return {\"outcome\":\"phase-overdraw\",\"input\":p,\"unchanged\":p}\n    a=mc/S if S else F(0)\n    b=mg/G if G else F(0)\n    child={}\n    remaining={}\n    for k,v in p.items():\n        fraction=a if k in (\"other-solid\",\"water-ice\") else b if k in (\"other-gas\",\"water-vapor\") else F(0)\n        child[k]=scale(v,fraction)\n        remaining[k]=scale(v,1-fraction)\n    assert add(*p.values())==add(*remaining.values(),*child.values())\n    assert total(add(*child.values()))==mc+mg\n    assert all(x>=0 for comp in remaining.values() for x in comp.values())\n    return {\"outcome\":\"planned\",\"child\":child,\"remaining\":remaining}\nzero=amounts()\nstockA=amounts(H=\"2.016\",O=\"23.9985\",C=\"12.011\")\ngasA=amounts(O=\"15.999\",C=\"12.011\")\nqA,pA=allocate(stockA,zero,gasA,F(1),F(1))\ndrawA=draw(pA,F(\"4.50375\"),F(\"14.005\"))\nassert qA==F(1,2)\nassert add(*drawA[\"child\"].values())==amounts(H=\".504\",O=\"11.99925\",C=\"6.0055\")\nassert add(*drawA[\"remaining\"].values())==amounts(H=\"1.512\",O=\"11.99925\",C=\"6.0055\")\nstockB=amounts(O=\"23.9985\",C=\"12.011\")\nqB,pB=allocate(stockB,zero,gasA,F(1),F(1))\ndrawB=draw(pB,F(0),F(0))\nrejectB=draw(pB,F(\"0.001\"),F(0))\nassert qB==0 and drawB[\"remaining\"]==pB and rejectB[\"outcome\"]==\"phase-overdraw\"\nstockC=amounts(H=\"2.016\",O=\"15.999\")\nqC,pC=allocate(stockC,zero,zero,F(1),F(1,10))\nS=total(add(pC[\"other-solid\"],pC[\"water-ice\"]))\nG=total(add(pC[\"other-gas\"],pC[\"water-vapor\"]))\nhypothetical=scale(stockC,F(1,5))\nassert S==F(\"1.8015\") and G==F(\"16.2135\")\nassert hypothetical==amounts(H=\".4032\",O=\"3.1998\")\nassert all(hypothetical[e]<=stockC[e] for e in E)\nrejectC=draw(pC,F(\"3.603\"),F(0))\nassert rejectC[\"outcome\"]==\"phase-overdraw\" and rejectC[\"unchanged\"]==pC\nqD,pD=allocate(stockC,zero,zero,F(1),F(1))\ndrawD1=draw(pD,F(\"6.005\"),F(0))\ndrawD2=draw(drawD1[\"remaining\"],F(\"12.01\"),F(0))\nrejectD3=draw(drawD2[\"remaining\"],F(\".001\"),F(0))\nassert add(*drawD1[\"child\"].values())==amounts(H=\".672\",O=\"5.333\")\nassert add(*drawD1[\"remaining\"].values())==amounts(H=\"1.344\",O=\"10.666\")\nassert add(*drawD2[\"remaining\"].values())==zero\nassert rejectD3[\"outcome\"]==\"phase-overdraw\"\nassert add(*drawD1[\"child\"].values(),*drawD2[\"child\"].values())==stockC\nraw={\n \"A\":{\"stock\":stockA,\"other-solid\":zero,\"other-gas\":gasA,\"eta\":F(1),\"f\":F(1),\"water-kmol\":qA,\"allocation\":pA,\"request\":{\"core\":F(\"4.50375\"),\"gas\":F(\"14.005\")},\"draw\":drawA},\n \"B\":{\"stock\":stockB,\"other-solid\":zero,\"other-gas\":gasA,\"eta\":F(1),\"f\":F(1),\"water-kmol\":qB,\"allocation\":pB,\"zero-draw\":drawB,\"positive-solid-reject\":rejectB},\n \"C\":{\"stock\":stockC,\"other-solid\":zero,\"other-gas\":zero,\"eta\":F(1),\"f\":F(1,10),\"water-kmol\":qC,\"allocation\":pC,\"solid-mass\":S,\"gas-mass\":G,\"request\":{\"core\":F(\"3.603\"),\"gas\":F(0)},\"hypothetical-total-element-draw\":hypothetical,\"result\":rejectC},\n \"D\":{\"stock\":stockC,\"other-solid\":zero,\"other-gas\":zero,\"eta\":F(1),\"f\":F(1),\"allocation\":pD,\"requests\":[F(\"6.005\"),F(\"12.01\"),F(\".001\")],\"first\":drawD1,\"second\":drawD2,\"third\":rejectD3}}\ndef encode(x):\n    if isinstance(x,F): return [x.numerator,x.denominator]\n    if isinstance(x,dict): return {k:encode(v) for k,v in x.items()}\n    if isinstance(x,list): return [encode(v) for v in x]\n    return x\nraw=encode(raw)\n",
+    "exit_condition": "All assertions pass before design-audit.json is written"
+  },
+  "four_traces": {
+    "A": {
+      "stock": {
+        "element-map": {
+          "H": [252, 125],
+          "C": [12011, 1000],
+          "O": [47997, 2000]
+        }
+      },
+      "other-solid": {
+        "element-map": {}
+      },
+      "other-gas": {
+        "element-map": {
+          "C": [12011, 1000],
+          "O": [15999, 1000]
+        }
+      },
+      "eta": [1, 1],
+      "f": [1, 1],
+      "water-kmol": [1, 2],
+      "allocation": {
+        "other-solid": {
+          "element-map": {}
+        },
+        "other-gas": {
+          "element-map": {
+            "C": [12011, 1000],
+            "O": [15999, 1000]
+          }
+        },
+        "water-ice": {
+          "element-map": {
+            "H": [126, 125],
+            "O": [15999, 2000]
+          }
+        },
+        "water-vapor": {
+          "element-map": {}
+        },
+        "unassigned": {
+          "element-map": {
+            "H": [126, 125]
+          }
+        }
+      },
+      "request": {
+        "core": [3603, 800],
+        "gas": [2801, 200]
+      },
+      "draw": {
+        "outcome": "planned",
+        "child": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {
+              "C": [12011, 2000],
+              "O": [15999, 2000]
+            }
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [63, 125],
+              "O": [15999, 4000]
+            }
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        },
+        "remaining": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {
+              "C": [12011, 2000],
+              "O": [15999, 2000]
+            }
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [63, 125],
+              "O": [15999, 4000]
+            }
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {
+              "H": [126, 125]
+            }
+          }
+        }
+      }
+    },
+    "B": {
+      "stock": {
+        "element-map": {
+          "C": [12011, 1000],
+          "O": [47997, 2000]
+        }
+      },
+      "other-solid": {
+        "element-map": {}
+      },
+      "other-gas": {
+        "element-map": {
+          "C": [12011, 1000],
+          "O": [15999, 1000]
+        }
+      },
+      "eta": [1, 1],
+      "f": [1, 1],
+      "water-kmol": [0, 1],
+      "allocation": {
+        "other-solid": {
+          "element-map": {}
+        },
+        "other-gas": {
+          "element-map": {
+            "C": [12011, 1000],
+            "O": [15999, 1000]
+          }
+        },
+        "water-ice": {
+          "element-map": {}
+        },
+        "water-vapor": {
+          "element-map": {}
+        },
+        "unassigned": {
+          "element-map": {
+            "O": [15999, 2000]
+          }
+        }
+      },
+      "zero-draw": {
+        "outcome": "planned",
+        "child": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        },
+        "remaining": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {
+              "C": [12011, 1000],
+              "O": [15999, 1000]
+            }
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {
+              "O": [15999, 2000]
+            }
+          }
+        }
+      },
+      "positive-solid-reject": {
+        "outcome": "phase-overdraw",
+        "input": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {
+              "C": [12011, 1000],
+              "O": [15999, 1000]
+            }
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {
+              "O": [15999, 2000]
+            }
+          }
+        },
+        "unchanged": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {
+              "C": [12011, 1000],
+              "O": [15999, 1000]
+            }
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {
+              "O": [15999, 2000]
+            }
+          }
+        }
+      }
+    },
+    "C": {
+      "stock": {
+        "element-map": {
+          "H": [252, 125],
+          "O": [15999, 1000]
+        }
+      },
+      "other-solid": {
+        "element-map": {}
+      },
+      "other-gas": {
+        "element-map": {}
+      },
+      "eta": [1, 1],
+      "f": [1, 10],
+      "water-kmol": [1, 1],
+      "allocation": {
+        "other-solid": {
+          "element-map": {}
+        },
+        "other-gas": {
+          "element-map": {}
+        },
+        "water-ice": {
+          "element-map": {
+            "H": [126, 625],
+            "O": [15999, 10000]
+          }
+        },
+        "water-vapor": {
+          "element-map": {
+            "H": [1134, 625],
+            "O": [143991, 10000]
+          }
+        },
+        "unassigned": {
+          "element-map": {}
+        }
+      },
+      "solid-mass": [3603, 2000],
+      "gas-mass": [32427, 2000],
+      "request": {
+        "core": [3603, 1000],
+        "gas": [0, 1]
+      },
+      "hypothetical-total-element-draw": {
+        "element-map": {
+          "H": [252, 625],
+          "O": [15999, 5000]
+        }
+      },
+      "result": {
+        "outcome": "phase-overdraw",
+        "input": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [126, 625],
+              "O": [15999, 10000]
+            }
+          },
+          "water-vapor": {
+            "element-map": {
+              "H": [1134, 625],
+              "O": [143991, 10000]
+            }
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        },
+        "unchanged": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [126, 625],
+              "O": [15999, 10000]
+            }
+          },
+          "water-vapor": {
+            "element-map": {
+              "H": [1134, 625],
+              "O": [143991, 10000]
+            }
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        }
+      }
+    },
+    "D": {
+      "stock": {
+        "element-map": {
+          "H": [252, 125],
+          "O": [15999, 1000]
+        }
+      },
+      "other-solid": {
+        "element-map": {}
+      },
+      "other-gas": {
+        "element-map": {}
+      },
+      "eta": [1, 1],
+      "f": [1, 1],
+      "allocation": {
+        "other-solid": {
+          "element-map": {}
+        },
+        "other-gas": {
+          "element-map": {}
+        },
+        "water-ice": {
+          "element-map": {
+            "H": [252, 125],
+            "O": [15999, 1000]
+          }
+        },
+        "water-vapor": {
+          "element-map": {}
+        },
+        "unassigned": {
+          "element-map": {}
+        }
+      },
+      "requests": [
+        [1201, 200],
+        [1201, 100],
+        [1, 1000]
+      ],
+      "first": {
+        "outcome": "planned",
+        "child": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [84, 125],
+              "O": [5333, 1000]
+            }
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        },
+        "remaining": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [168, 125],
+              "O": [5333, 500]
+            }
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        }
+      },
+      "second": {
+        "outcome": "planned",
+        "child": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {
+              "H": [168, 125],
+              "O": [5333, 500]
+            }
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        },
+        "remaining": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        }
+      },
+      "third": {
+        "outcome": "phase-overdraw",
+        "input": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        },
+        "unchanged": {
+          "other-solid": {
+            "element-map": {}
+          },
+          "other-gas": {
+            "element-map": {}
+          },
+          "water-ice": {
+            "element-map": {}
+          },
+          "water-vapor": {
+            "element-map": {}
+          },
+          "unassigned": {
+            "element-map": {}
+          }
+        }
+      }
+    }
+  },
+  "verification": {
+    "arithmetic": "four independent exact rational traces pass; phase-overdraw outcomes intentional; no empirical calibration",
+    "local_links": [
+      {
+        "target": "../../.\u03b7\u03bc/diagnostics/condensed-water-research/design-scope.json",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../research/physics/2026-10-07-condensed-water-material-budget.md",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../AGENTS.md#no-special-cases--everything-rides-the-uniform-path",
+        "exists": true,
+        "anchor_verified": true
+      },
+      {
+        "target": "../../PROCESS.md#grounding-research--design--task",
+        "exists": true,
+        "anchor_verified": true
+      },
+      {
+        "target": "planetary-disk-rework.md",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/ecs/registry.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/stellar/seeder.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/stellar/sink.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/stellar/disc_evolution.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/mass_transfer.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/planet_formation/seed.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/planet_formation/physics.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/genesis/bootstrap.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/integrator/core.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/genesis/summary.clj",
+        "exists": true,
+        "anchor_verified": false
+      },
+      {
+        "target": "../../src/domain/stellar/seeder.clj",
+        "exists": true,
+        "anchor_verified": false
+      }
+    ],
+    "protected_source_test_deps_diff_empty": true,
+    "no_jvm_native_tests_benchmark": true,
+    "water_compartment_shape": "Design additionally requires each water map to contain only H/O in exact model mass ratio; this is a future validator requirement, not an executed validator test.",
+    "stored_water_compartments_checked": 36,
+    "stored_water_shape_check": "For every stored water-ice/water-vapor map, nonzero keys subset H/O and H*(15999/1000)=O*2*(126/125) exactly. Checked retained stored results without rerunning the toy or a production validator."
+  },
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "PROCESS.md",
+      "sha256": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/law/composition.clj",
+      "sha256": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/chemistry.clj",
+      "sha256": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/planet_formation/composition.clj",
+      "sha256": "471d40398b15baf781a603bd95694c778809bff18da98f2a905c756601aa6630",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/planet_formation/seed.clj",
+      "sha256": "47cbc999b09125fd576c56899ca68964e3d737e0aa552d1a7757340b6779e548",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/planet_formation/physics.clj",
+      "sha256": "e1493f37c5a1bf87c8a7e9edd7a1bb59ac2938c1cad1dc70f451aed420e523c6",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/mass_transfer.clj",
+      "sha256": "b61cfeb8e62e6154bcf17039e01bd6e978a7c8032ed51c00387d5a7859f57b57",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/stellar/sink.clj",
+      "sha256": "28aa3fae49bbebdf158c379f84c63c30a2d147cfe33e55056650768974ae55a7",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/stellar/seeder.clj",
+      "sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/stellar/disc_evolution.clj",
+      "sha256": "a26ed34f6ba8c58ac37c5954d6938408d3b8469abef57635e19f4393ae8c8ceb",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/stellar/merge.clj",
+      "sha256": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/integrator/core.clj",
+      "sha256": "08cbb9a5adbec225476404efaf098980386db16947d09e65c5884549e2dd1489",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/genesis/summary.clj",
+      "sha256": "64afe4d1bdbcc690c3c9c74e41d8c3afc5a5845b03c14ed13e9fa45fc6094d34",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "src/domain/ecs/registry.clj",
+      "sha256": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+      "matches_inspected_source": true
+    },
+    {
+      "path": "docs/designs/planetary-disk-rework.md",
+      "sha256": "f56c7539dbf983934267a1608631d2487424f81df8e5fa4c24320da34afa783d",
+      "matches_inspected_source": true
+    }
+  ],
+  "published_research": [
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.md",
+      "sha256": "5ac7505b055f8bbad0845bb90003ad9cee047a6dad4225ccc0f3894981e8ecd6",
+      "byte_identical_to_published": true
+    },
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.py",
+      "sha256": "74bda76b1e7192139e6b97d16d88b0441c029804c27fcf7766f8fc232dd0f950",
+      "byte_identical_to_published": true
+    },
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.json",
+      "sha256": "2ac21e30e2e50124114e5ecc8ccd0ae242d04e12c1801cef401f863a9867e9fc",
+      "byte_identical_to_published": true
+    },
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.png",
+      "sha256": "5fb1a7f7feddfecda82f6d9ea1b2ac66773722a49f8d71b5097c3e92f678fe6d",
+      "byte_identical_to_published": true
+    }
+  ],
+  "owned_inventory": [
+    "docs/designs/condensed-water-inventory-boundary.md",
+    ".\u03b7\u03bc/diagnostics/condensed-water-research/design-audit.json"
+  ],
+  "limits": [
+    "Fraction toy mirrors the stated algebra for arithmetic verification; it is not a production implementation or Clojure test.",
+    "No proof of physical stock provenance, chemistry, phase rates, settlement atomicity, performance or native water/life.",
+    "Independent local design review closed without blocker; root owns publication and configured hosted review/admission."
+  ],
+  "diagnostic_encoding": {
+    "quantity": "reduced [numerator,denominator] exact rational",
+    "element-map": "All17keys exist in computed inputs/results. A diagnostic object with sole key element-map omits exactly [0,1] entries; missing keys expand to [0,1]. This is lossless storage only, not an alternative admitted kernel input.",
+    "elements": [
+      "Al",
+      "C",
+      "Ca",
+      "D",
+      "Fe",
+      "H",
+      "He",
+      "He3",
+      "Li7",
+      "Mg",
+      "N",
+      "Na",
+      "Ne",
+      "Ni",
+      "O",
+      "S",
+      "Si"
+    ],
+    "roundtrip_exact": true
+  },
+  "independent_review": {
+    "reviewer": "board_scout",
+    "design_sha256": "5ca573b02dc209ad893511329b0b2e129b5dc0bed45a4a45e753ecff6ff85c4a",
+    "reviewed_audit_sha256": "c525aff0b699fd64be93e52b7eb8f9666bc36d6e66a906a25677807aabe7e3da",
+    "verdict": "No planning blocker",
+    "scope": "Read full contract/traces/source table; independently checked A-D arithmetic, separate phase bounds, stoichiometry and all17 cited source hashes against b395. No execution, edits, hosted approval or implementation admission."
+  }
+}

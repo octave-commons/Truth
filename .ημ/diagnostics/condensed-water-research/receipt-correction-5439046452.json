@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-07T07:45:24.209323+00:00",
+  "review_id": 5439046452,
+  "original_commit": "72f51cd8f4e964686fec42fc9f9ed83f225957e3",
+  "original_path": ".\u03b7\u03bc/receipts.edn",
+  "original_line": 61,
+  "original_ts": "2026-10-07T07:19:30.691609+00:00",
+  "original_line_sha256_excluding_newline": "4138c92858fcb13055bec61723fbc519558a7fed6ede541c9c09ee432617a93e",
+  "original_kind_type": "string",
+  "correction_kind_type": "keyword",
+  "original_prefix_bytes": 66304,
+  "original_prefix_sha256": "f84beb5242d1cf0e79d89c2b710050c6e90922f2fc622fa3e4c9a80232b98448",
+  "prefix_preserved": true,
+  "one_canonical_correction_appended": true,
+  "canonical_filter_argv": [
+    "rr-last.bb",
+    "--kind",
+    "catalog",
+    "--limit",
+    "1"
+  ],
+  "canonical_filter_output": "# Last receipts: /home/err/spaces/foresight/.worktrees/truth-condensed-water-research/.\u03b7\u03bc/receipts.edn\n{:pi \"Truth\", :tests \"Canonical rr-last.bb --kind catalog --limit1 selects this correction; original receipt prefix preserved byte-for-byte.\", :refs \"PR47 review5439046452; original2026-10-07T07:19:30.691609+00:00 at72f51cd8f4e964686fec42fc9f9ed83f225957e3 line61 sha2564138c92858fcb13055bec61723fbc519558a7fed6ede541c9c09ee432617a93e\", :dod \"Restore keyword-filtered discovery of water design publication evidence\", :manifest \".\u03b7\u03bc/diagnostics/condensed-water-research/receipt-correction-5439046452.json\", :note \"Correction and restatement of the referenced design-publication receipt: its kind was incorrectly serialized as string catalog and is invisible to keyword kind filtering. This canonical :catalog entry restores discoverability without rewriting historical bytes. The publication remains the bounded proposed conserved-water allocation and finite phase-draw design5ca573b0, auditdc587131, four exact traces/36water compartment checks/16links/17source pins. No new execution, source change, calibration, stock producer, board admission or completed hosted convergence is claimed; the original record and evidence remain inspectable.\", :ts \"2026-10-07T07:45:24.085102088Z\", :host \"local\", :kind :catalog, :origin \"a4744132-2328-4cb2-a550-e1328d346673\", :owner \"codex-root\"}\n",
+  "source_and_design_unchanged": true,
+  "limit": "The original malformed type remains immutable evidence. This is a discoverable correction/restatement, not history repair or a new publication/execution occurrence."
+}

@@ -1,0 +1,157 @@
+{
+  "at": "2026-10-07T07:19:30.691609+00:00",
+  "head_before_commit": "8f9ee36b8848e046e40eb5fb36ab4cbab5ab6946",
+  "branch": "codex/truth-water-inventory-plan",
+  "base_branch": "codex/truth-condensed-water-research",
+  "parent_pr": "https://github.com/octave-commons/Truth/pull/44",
+  "owner": "a4744132-2328-4cb2-a550-e1328d346673",
+  "state": "Incoming / 3 unchanged",
+  "canonical_cli": {
+    "path": "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7"
+  },
+  "canonical_comment": "Design continuation closed for local publication review: docs/designs/condensed-water-inventory-boundary.md (SHA256 5ca573b02dc209ad893511329b0b2e129b5dc0bed45a4a45e753ecff6ff85c4a), with exact-rational trace/source audit .ημ/diagnostics/condensed-water-research/design-audit.json (SHA256 dc5871315ea98365d7b54ecf913fd80bdf9d8e28de5ec23d8cfb26310fa324a9). Proposed choices are explicit 17-element common-basis stock, supplied versioned reservations and reaction/phase fractions, water stoichiometry, separate finite phase draw bounds, and returned-compartment sequencing. Missing stock is unsupported; known zero is empty. Four constructed rational traces pass independent recombination, including phase-overdraw and exhaustion; 36 stored water maps satisfy the selected H/O relation. Root and board-scout local design reviews found no planning blocker. All 17 cited source blobs match b395c404, 16 local links resolve, and the four published research files remain byte-identical to PR44 head 8f9ee36. This is a proposed design, not physical calibration, stock production, settlement atomicity, Clojure test/native evidence, feature readiness or review convergence. Donor inflow/outflow integration, binary64 residual policy, actual chemistry/phase producers and normal-formation proof remain separate prerequisites. Body, Incoming status and 3-point estimate remain unchanged. Publication is a successor planning PR over PR44; closure/prefix evidence is .ημ/diagnostics/condensed-water-research/design-closure.json.",
+  "canonical_mutation": {
+    "ok": true,
+    "uuid": "a4744132-2328-4cb2-a550-e1328d346673",
+    "comment": "Design continuation closed for local publication review: docs/designs/condensed-water-inventory-boundary.md (SHA256 5ca573b02dc209ad893511329b0b2e129b5dc0bed45a4a45e753ecff6ff85c4a), with exact-rational trace/source audit .ημ/diagnostics/condensed-water-research/design-audit.json (SHA256 dc5871315ea98365d7b54ecf913fd80bdf9d8e28de5ec23d8cfb26310fa324a9). Proposed choices are explicit 17-element common-basis stock, supplied versioned reservations and reaction/phase fractions, water stoichiometry, separate finite phase draw bounds, and returned-compartment sequencing. Missing stock is unsupported; known zero is empty. Four constructed rational traces pass independent recombination, including phase-overdraw and exhaustion; 36 stored water maps satisfy the selected H/O relation. Root and board-scout local design reviews found no planning blocker. All 17 cited source blobs match b395c404, 16 local links resolve, and the four published research files remain byte-identical to PR44 head 8f9ee36. This is a proposed design, not physical calibration, stock production, settlement atomicity, Clojure test/native evidence, feature readiness or review convergence. Donor inflow/outflow integration, binary64 residual policy, actual chemistry/phase producers and normal-formation proof remain separate prerequisites. Body, Incoming status and 3-point estimate remain unchanged. Publication is a successor planning PR over PR44; closure/prefix evidence is .ημ/diagnostics/condensed-water-research/design-closure.json."
+  },
+  "canonical_readback": {
+    "uuid": "a4744132-2328-4cb2-a550-e1328d346673",
+    "frontmatter": {
+      "category": "tasks",
+      "labels": "research, chemistry, material-inventory, playable-life",
+      "parent": "roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection",
+      "type": "task",
+      "write-id": "1791357570047-0.zlop4yp1q576y8xbwq",
+      "points": "3",
+      "title": "Ground condensed water material and inventory-aware retention",
+      "priority": "P1",
+      "status": "incoming",
+      "uuid": "a4744132-2328-4cb2-a550-e1328d346673",
+      "created_at": "2026-10-07T06:23:11.629Z"
+    },
+    "sections": [
+      {
+        "type": "body",
+        "content": "## Outcome\n\nGround a minimal conserved distinction between free nebular hydrogen and hydrogen chemically bound in condensed water or hydrated solids, and distinguish atmospheric escape capability from available material inventory. This is a research/design-refinement task, not permission to modify the accepted planet-seeding model.\n\n## Grounding and scope\n\nThe existing nebular-chemistry-and-composition-spec intentionally excludes free gas-former elements from core grains. Current source also excludes hydrogen carried by water-bearing solids. The completed ecology-m5-phase3-atmosphere-retention model classifies retention capability; its research section8.1 leaves inventory intersection open. Inspect existing docs/research/physics/nebular-chemistry-metal-enrichment.md and docs/research/atmosphere/planetary-atmosphere-retention-classifier.md first, then verify a small primary-source literature set.\n\nResearch the smallest stoichiometrically bounded condensed-water partition consistent with elemental mass conservation and the existing one-ECS model. Describe oxygen competition, gas/solid accounting and normalization, temperature/pressure applicability and which choices remain toy prescriptions. Define how inventory may constrain a retained-species projection without claiming an atmosphere or accessible biological substrate. Record source pin b395c404 and source-derived limits independently from literature and proposals. Related proposed life contract is Truth PR38; its H/O/C/N guard is not weakened here.\n\n## Non-goals\n\nNo production/test/config changes, full molecular reaction network, first-principles abiogenesis, new biological rate, forced world, calibrated planet distribution, acceptance of PR38, or reopening of completed cards. No native or JVM experiments during research authoring. Toy calculations may characterize stoichiometry only and must be explicitly labeled and reproducible.\n\n## Acceptance criteria\n\n- One dated research notebook in docs/research/physics with primary-source citations, equations, explicit applicability limits and pure Clojure pseudocode for later review.\n- A small reproducible arithmetic table/experiment separates conservation checks from empirical calibration; no fabricated benchmark or native result.\n- Cross-links to the accepted grain-filter and retention research, source audit and existing chemistry roadmap explain the new distinction.\n- Candidate design/implementation boundaries are independently reviewed and each later feature can be sized at most5; this task admits none of them.\n- Research INDEX and ACTORS record the interactive research output without inventing a scheduled actor or changing prior entries.\n\n## Verification\n\nValidate links and source pins, independently review elemental/mass balance and regime claims, preserve raw numerical inputs/results if run, append Receipt River and reflection. Planning PR review and canonical admission remain separate from research completion."
+      },
+      {
+        "type": "comment",
+        "content": "Research handoff for this Incoming 3-point owner: docs/research/physics/2026-10-07-condensed-water-material-budget.md (SHA256 5ac7505b055f8bbad0845bb90003ad9cee047a6dad4225ccc0f3894981e8ecd6) recovers the existing grain-filter and retention evidence, verifies three primary full texts, and proposes a common-basis elemental water allocation. Explicit H/O reservations, conversion/phase inputs, and separate solid/gas draw bounds conserve amounts before normalization. Stored exact-rational toy evidence contains seven admitted balanced cases, one overspend rejection and a 21-point oxygen-reservation sensitivity sweep; this is not empirical or native calibration. Independent board-scout review confirmed source applicability, stored arithmetic and figure, and its phase-overdraw finding is resolved. INDEX and ACTORS additions preserve their prior byte prefixes. Source pin b395c4049718f7ce015ddf25fc0a192d97821373 is unchanged; no production/test/config, JVM, native, or service work. Research remains a draft with unaccepted oxygen chemistry, reaction extent, phase conditions, numerical policy and donor depletion choices. It creates neither an atmosphere nor represented life and does not weaken PR38 guards. Card status/points/body remain Incoming/3/original; implementation admission and hosted review remain separate. Closure/provenance: .ημ/diagnostics/condensed-water-research/closure.json.\n\n2026-10-07 bounded design continuation on PR44 research head8f9ee36, same Incoming3 owner. Specify a versioned pure condensed-water allocation and finite phase-extraction contract grounded in the published material-budget research. Choose common elemental kg/exact rational reference arithmetic, explicit model-versioned reservations, bounded reaction extent and phase fraction, rejection rules and donor/child conservation. Require explicit finite donor stock; missing stock remains unsupported, never reconstructed silently from host-star composition. Work four traces: oxygen-limited, zero H, phase overdraw despite identical normalized compositions, sequential donor exhaustion. Map all disk inflow/outflow ownership seams, distinguish capacity from actual reacted material and retention capability from inventory. Record the absent disk elemental-supply integration and binary64 residual policy as separate prerequisites; no formation code, material stock, natural-water/life claim or implementation admission follows from this document. New design docs/designs/condensed-water-inventory-boundary.md may reference the earlier parcel-disk proposal without adopting it. Existing card state, estimate and body remain unchanged; canonical append-only comment records scope.\n\nDesign continuation closed for local publication review: docs/designs/condensed-water-inventory-boundary.md (SHA256 5ca573b02dc209ad893511329b0b2e129b5dc0bed45a4a45e753ecff6ff85c4a), with exact-rational trace/source audit .ημ/diagnostics/condensed-water-research/design-audit.json (SHA256 dc5871315ea98365d7b54ecf913fd80bdf9d8e28de5ec23d8cfb26310fa324a9). Proposed choices are explicit 17-element common-basis stock, supplied versioned reservations and reaction/phase fractions, water stoichiometry, separate finite phase draw bounds, and returned-compartment sequencing. Missing stock is unsupported; known zero is empty. Four constructed rational traces pass independent recombination, including phase-overdraw and exhaustion; 36 stored water maps satisfy the selected H/O relation. Root and board-scout local design reviews found no planning blocker. All 17 cited source blobs match b395c404, 16 local links resolve, and the four published research files remain byte-identical to PR44 head 8f9ee36. This is a proposed design, not physical calibration, stock production, settlement atomicity, Clojure test/native evidence, feature readiness or review convergence. Donor inflow/outflow integration, binary64 residual policy, actual chemistry/phase producers and normal-formation proof remain separate prerequisites. Body, Incoming status and 3-point estimate remain unchanged. Publication is a successor planning PR over PR44; closure/prefix evidence is .ημ/diagnostics/condensed-water-research/design-closure.json."
+      }
+    ],
+    "source-path": "/home/err/spaces/foresight/.worktrees/truth-condensed-water-research/kanban/tasks/ground-condensed-water-material-and-inventory-aware-retention-8d346673.md"
+  },
+  "preservation": {
+    "body_equal": true,
+    "frontmatter_equal_except_write_id": true,
+    "prior_comment_prefix_preserved": true,
+    "source_test_config_unchanged": true,
+    "research_branch_head_unchanged": true
+  },
+  "prefix_proofs": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "pre_closure_bytes": 641713,
+      "pre_closure_sha256": "f340cfa81422dd93088a9de9a19955eac801ff5d2b4d26d87c38d15e2138dd2e",
+      "pre_closure_prefix_preserved": true,
+      "published_prefix_bytes": 640033,
+      "published_prefix_sha256": "f392bca63f100d74a6cd46969ec582686c263ca289f8f3beb73c96eac20cb3ad",
+      "published_prefix_preserved": true,
+      "appended_since_pre_closure": 1925,
+      "sha256": "fdc70fe27438532dd0e2bfaf26e7041b323cddb1dfdd2528992b671e4212d829"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "pre_closure_bytes": 65059,
+      "pre_closure_sha256": "a252d87c33c35fd10a72c3db17152752af5d8e1f1bafc48c713b89c8fda09248",
+      "pre_closure_prefix_preserved": true,
+      "published_prefix_bytes": 65059,
+      "published_prefix_sha256": "a252d87c33c35fd10a72c3db17152752af5d8e1f1bafc48c713b89c8fda09248",
+      "published_prefix_preserved": true,
+      "appended_since_pre_closure": 1245,
+      "sha256": "f84beb5242d1cf0e79d89c2b710050c6e90922f2fc622fa3e4c9a80232b98448"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "pre_closure_bytes": 34879,
+      "pre_closure_sha256": "36ca91656ce12acb2cb84c4d0c08138ebf49427de9bfc4708b9b5bac6e19149a",
+      "pre_closure_prefix_preserved": true,
+      "published_prefix_bytes": 34879,
+      "published_prefix_sha256": "36ca91656ce12acb2cb84c4d0c08138ebf49427de9bfc4708b9b5bac6e19149a",
+      "published_prefix_preserved": true,
+      "appended_since_pre_closure": 599,
+      "sha256": "2fdb83f4464ebb254a5adf53f0bb6c7dc7c6a9608684d5838c14528e375d701b"
+    }
+  ],
+  "published_research": [
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.md",
+      "sha256": "5ac7505b055f8bbad0845bb90003ad9cee047a6dad4225ccc0f3894981e8ecd6",
+      "byte_identical_to_published": true
+    },
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.py",
+      "sha256": "74bda76b1e7192139e6b97d16d88b0441c029804c27fcf7766f8fc232dd0f950",
+      "byte_identical_to_published": true
+    },
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.json",
+      "sha256": "2ac21e30e2e50124114e5ecc8ccd0ae242d04e12c1801cef401f863a9867e9fc",
+      "byte_identical_to_published": true
+    },
+    {
+      "path": "docs/research/physics/2026-10-07-condensed-water-material-budget.png",
+      "sha256": "5fb1a7f7feddfecda82f6d9ea1b2ac66773722a49f8d71b5097c3e92f678fe6d",
+      "byte_identical_to_published": true
+    }
+  ],
+  "explicit_staging_paths": [
+    "docs/designs/condensed-water-inventory-boundary.md",
+    ".ημ/diagnostics/condensed-water-research/design-audit.json",
+    ".ημ/diagnostics/condensed-water-research/design-scope.json",
+    ".ημ/diagnostics/condensed-water-research/design-closure.json",
+    "kanban/tasks/ground-condensed-water-material-and-inventory-aware-retention-8d346673.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md"
+  ],
+  "file_hashes_except_self": [
+    {
+      "path": "docs/designs/condensed-water-inventory-boundary.md",
+      "sha256": "5ca573b02dc209ad893511329b0b2e129b5dc0bed45a4a45e753ecff6ff85c4a"
+    },
+    {
+      "path": ".ημ/diagnostics/condensed-water-research/design-audit.json",
+      "sha256": "dc5871315ea98365d7b54ecf913fd80bdf9d8e28de5ec23d8cfb26310fa324a9"
+    },
+    {
+      "path": ".ημ/diagnostics/condensed-water-research/design-scope.json",
+      "sha256": "b99a2d679769947f2aa001cca62d727d45c69c08edcf35087028f062b1c941ee"
+    },
+    {
+      "path": "kanban/tasks/ground-condensed-water-material-and-inventory-aware-retention-8d346673.md",
+      "sha256": "0eb39e3645fce63b09bfe35545f7b6956ca750a4f3649f5b715352ed84cceab1"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "sha256": "fdc70fe27438532dd0e2bfaf26e7041b323cddb1dfdd2528992b671e4212d829"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "sha256": "f84beb5242d1cf0e79d89c2b710050c6e90922f2fc622fa3e4c9a80232b98448"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "sha256": "2fdb83f4464ebb254a5adf53f0bb6c7dc7c6a9608684d5838c14528e375d701b"
+    }
+  ],
+  "publication_policy": {
+    "ready_pr": true,
+    "auto_merge": false,
+    "manual_review_requests": false,
+    "source_or_board_admission": false
+  },
+  "limits": "Local proposed-design review only. No JVM/native/performance/empirical result; hosted successor qualification remains pending."
+}
