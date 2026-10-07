@@ -1,0 +1,3339 @@
+{
+  "audit_at": "2026-10-07T09:24:59.685085+00:00",
+  "audit_scope": "Offline saved evidence only; BB clojure.edn/cheshire data decoding and Python byte/math checks. No project namespace, JVM, native, process inspection, Git, board or network operation. Only these two audit files authored.",
+  "verdict": "EVIDENCE INTEGRITY PASS; NATIVE INPUT ATTEMPT FAILED before aim/approach.",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "preparation_commit_reported_by_root": "59ce1c0",
+  "manifest_sha256": "ea70f70ecf5a15227f022e9b2f2042e9bd8dbf965bc665dd37f1387c3469a729",
+  "closed": {
+    "started_at": "2026-10-07T09:03:51.550117+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+    "port": 7898,
+    "budget_seconds": 1500,
+    "work_budget_seconds": 1470,
+    "startup_budget_seconds": 180,
+    "startup_deadline": 31511.536222648,
+    "startup_origin": "Caller monotonic instant before preflight; shared by all processes",
+    "supervisor": {
+      "pid": 2985836,
+      "start": "3133155",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+      "exe": "/usr/bin/python3.12"
+    },
+    "supervisor_monotonic_started": 31331.536222648,
+    "stage": "closed",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "frames": 1,
+    "looks": 0,
+    "holds": 0,
+    "aim_invocations": 0,
+    "aim_target": null,
+    "active_aim": null,
+    "aim_deadline": null,
+    "successful_admission": null,
+    "terminal_commitment": null,
+    "no_target_deadline": 32291.536222648,
+    "display": ":1",
+    "xvfb": {
+      "pid": 2985845,
+      "start": "3133163",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 2985932,
+      "start": "3133386",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "snapshot_client": {
+      "pid": 2987284,
+      "start": "3134593",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 51122017,
+    "window": 135914576296432,
+    "x-window": "2097159",
+    "work_error": "AssertionError('Input postcondition unconfirmed: tap-Tab; gesture not retried')",
+    "outcome": "failed",
+    "cleanup_errors": [],
+    "ended_at": "2026-10-07T09:16:15.592976+00:00",
+    "elapsed_seconds": 744.1155346840023,
+    "budget_exceeded": false,
+    "cleanup_deadline": 32103.79797818,
+    "total_budget_exceeded": false,
+    "key_pending": null,
+    "key_release_uncertain": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "unreaped_children": []
+  },
+  "snapshot_audit": {
+    "requests": 35,
+    "decoded_messages": 529,
+    "utf8_bytes": 337000,
+    "connection_opens": 1,
+    "connection_closes": 1,
+    "remote_errors": 0,
+    "sequential_ids": true,
+    "raw_spans_contiguous_exact": true,
+    "request_result_consumption_one_each": true,
+    "previous_consumed_before_next_request": true,
+    "final_operational_output_exact": true,
+    "max_response_bytes": 20857,
+    "per_response_cap": 4194304,
+    "run_cap": 134217728,
+    "request_cap": 2048,
+    "spans": [
+      {
+        "id": "0001",
+        "messages": 13,
+        "byte-start": 0,
+        "byte-end": 4990,
+        "raw-bytes": 4990,
+        "elapsed-ms": 330.080219
+      },
+      {
+        "id": "0002",
+        "messages": 12,
+        "byte-start": 4990,
+        "byte-end": 10029,
+        "raw-bytes": 5039,
+        "elapsed-ms": 118.388368
+      },
+      {
+        "id": "0003",
+        "messages": 12,
+        "byte-start": 10029,
+        "byte-end": 15113,
+        "raw-bytes": 5084,
+        "elapsed-ms": 122.380611
+      },
+      {
+        "id": "0004",
+        "messages": 12,
+        "byte-start": 15113,
+        "byte-end": 20171,
+        "raw-bytes": 5058,
+        "elapsed-ms": 206.518929
+      },
+      {
+        "id": "0005",
+        "messages": 12,
+        "byte-start": 20171,
+        "byte-end": 25237,
+        "raw-bytes": 5066,
+        "elapsed-ms": 97.548165
+      },
+      {
+        "id": "0006",
+        "messages": 12,
+        "byte-start": 25237,
+        "byte-end": 30293,
+        "raw-bytes": 5056,
+        "elapsed-ms": 181.623138
+      },
+      {
+        "id": "0007",
+        "messages": 12,
+        "byte-start": 30293,
+        "byte-end": 35376,
+        "raw-bytes": 5083,
+        "elapsed-ms": 69.638848
+      },
+      {
+        "id": "0008",
+        "messages": 12,
+        "byte-start": 35376,
+        "byte-end": 40464,
+        "raw-bytes": 5088,
+        "elapsed-ms": 98.184197
+      },
+      {
+        "id": "0009",
+        "messages": 16,
+        "byte-start": 40464,
+        "byte-end": 52605,
+        "raw-bytes": 12141,
+        "elapsed-ms": 170.827559
+      },
+      {
+        "id": "0010",
+        "messages": 16,
+        "byte-start": 52605,
+        "byte-end": 64769,
+        "raw-bytes": 12164,
+        "elapsed-ms": 186.215992
+      },
+      {
+        "id": "0011",
+        "messages": 16,
+        "byte-start": 64769,
+        "byte-end": 76932,
+        "raw-bytes": 12163,
+        "elapsed-ms": 79.669603
+      },
+      {
+        "id": "0012",
+        "messages": 16,
+        "byte-start": 76932,
+        "byte-end": 89099,
+        "raw-bytes": 12167,
+        "elapsed-ms": 63.753442
+      },
+      {
+        "id": "0013",
+        "messages": 16,
+        "byte-start": 89099,
+        "byte-end": 101300,
+        "raw-bytes": 12201,
+        "elapsed-ms": 63.821906
+      },
+      {
+        "id": "0014",
+        "messages": 16,
+        "byte-start": 101300,
+        "byte-end": 113467,
+        "raw-bytes": 12167,
+        "elapsed-ms": 115.295928
+      },
+      {
+        "id": "0015",
+        "messages": 16,
+        "byte-start": 113467,
+        "byte-end": 125684,
+        "raw-bytes": 12217,
+        "elapsed-ms": 131.069115
+      },
+      {
+        "id": "0016",
+        "messages": 16,
+        "byte-start": 125684,
+        "byte-end": 137896,
+        "raw-bytes": 12212,
+        "elapsed-ms": 47.307611
+      },
+      {
+        "id": "0017",
+        "messages": 16,
+        "byte-start": 137896,
+        "byte-end": 150109,
+        "raw-bytes": 12213,
+        "elapsed-ms": 72.700324
+      },
+      {
+        "id": "0018",
+        "messages": 12,
+        "byte-start": 150109,
+        "byte-end": 155296,
+        "raw-bytes": 5187,
+        "elapsed-ms": 67.029207
+      },
+      {
+        "id": "0019",
+        "messages": 12,
+        "byte-start": 155296,
+        "byte-end": 160499,
+        "raw-bytes": 5203,
+        "elapsed-ms": 100.653545
+      },
+      {
+        "id": "0020",
+        "messages": 12,
+        "byte-start": 160499,
+        "byte-end": 165701,
+        "raw-bytes": 5202,
+        "elapsed-ms": 53.281225
+      },
+      {
+        "id": "0021",
+        "messages": 12,
+        "byte-start": 165701,
+        "byte-end": 170926,
+        "raw-bytes": 5225,
+        "elapsed-ms": 255.609339
+      },
+      {
+        "id": "0022",
+        "messages": 12,
+        "byte-start": 170926,
+        "byte-end": 176152,
+        "raw-bytes": 5226,
+        "elapsed-ms": 184.7803
+      },
+      {
+        "id": "0023",
+        "messages": 12,
+        "byte-start": 176152,
+        "byte-end": 181369,
+        "raw-bytes": 5217,
+        "elapsed-ms": 290.775995
+      },
+      {
+        "id": "0024",
+        "messages": 12,
+        "byte-start": 181369,
+        "byte-end": 186591,
+        "raw-bytes": 5222,
+        "elapsed-ms": 65.95066
+      },
+      {
+        "id": "0025",
+        "messages": 12,
+        "byte-start": 186591,
+        "byte-end": 191812,
+        "raw-bytes": 5221,
+        "elapsed-ms": 67.807953
+      },
+      {
+        "id": "0026",
+        "messages": 12,
+        "byte-start": 191812,
+        "byte-end": 197033,
+        "raw-bytes": 5221,
+        "elapsed-ms": 221.863219
+      },
+      {
+        "id": "0027",
+        "messages": 12,
+        "byte-start": 197033,
+        "byte-end": 202255,
+        "raw-bytes": 5222,
+        "elapsed-ms": 73.840466
+      },
+      {
+        "id": "0028",
+        "messages": 12,
+        "byte-start": 202255,
+        "byte-end": 207477,
+        "raw-bytes": 5222,
+        "elapsed-ms": 261.833096
+      },
+      {
+        "id": "0029",
+        "messages": 12,
+        "byte-start": 207477,
+        "byte-end": 212721,
+        "raw-bytes": 5244,
+        "elapsed-ms": 229.965673
+      },
+      {
+        "id": "0030",
+        "messages": 24,
+        "byte-start": 212721,
+        "byte-end": 233578,
+        "raw-bytes": 20857,
+        "elapsed-ms": 446.162602
+      },
+      {
+        "id": "0031",
+        "messages": 24,
+        "byte-start": 233578,
+        "byte-end": 254262,
+        "raw-bytes": 20684,
+        "elapsed-ms": 362.587649
+      },
+      {
+        "id": "0032",
+        "messages": 24,
+        "byte-start": 254262,
+        "byte-end": 274977,
+        "raw-bytes": 20715,
+        "elapsed-ms": 146.603909
+      },
+      {
+        "id": "0033",
+        "messages": 24,
+        "byte-start": 274977,
+        "byte-end": 295661,
+        "raw-bytes": 20684,
+        "elapsed-ms": 63.552472
+      },
+      {
+        "id": "0034",
+        "messages": 24,
+        "byte-start": 295661,
+        "byte-end": 316315,
+        "raw-bytes": 20654,
+        "elapsed-ms": 231.426648
+      },
+      {
+        "id": "0035",
+        "messages": 24,
+        "byte-start": 316315,
+        "byte-end": 337000,
+        "raw-bytes": 20685,
+        "elapsed-ms": 80.072809
+      }
+    ],
+    "summaries": [
+      {
+        "id": "0001",
+        "tick": 51,
+        "wall_ms": 1791363855255,
+        "utc": "2026-10-07T09:04:15.255000+00:00",
+        "dt": 27476250092.90994,
+        "arc": "arc/genesis-nebula-collapse",
+        "counts": {
+          "nebula": 1000
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "fit-all",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0002",
+        "tick": 413,
+        "wall_ms": 1791363891544,
+        "utc": "2026-10-07T09:04:51.544000+00:00",
+        "dt": 27497006023.347794,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 999,
+          "protostar": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "fit-all",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0003",
+        "tick": 474,
+        "wall_ms": 1791363899117,
+        "utc": "2026-10-07T09:04:59.117000+00:00",
+        "dt": 27489834990.075115,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "fit-all",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0004",
+        "tick": 478,
+        "wall_ms": 1791363899659,
+        "utc": "2026-10-07T09:04:59.659000+00:00",
+        "dt": 27482528229.59477,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0005",
+        "tick": 606,
+        "wall_ms": 1791363919006,
+        "utc": "2026-10-07T09:05:19.006000+00:00",
+        "dt": 27427469996.869823,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0006",
+        "tick": 608,
+        "wall_ms": 1791363919322,
+        "utc": "2026-10-07T09:05:19.322000+00:00",
+        "dt": 27423443648.10592,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0007",
+        "tick": 612,
+        "wall_ms": 1791363919759,
+        "utc": "2026-10-07T09:05:19.759000+00:00",
+        "dt": 27426921255.112305,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0008",
+        "tick": 615,
+        "wall_ms": 1791363920185,
+        "utc": "2026-10-07T09:05:20.185000+00:00",
+        "dt": 27424032837.60872,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0009",
+        "tick": 618,
+        "wall_ms": 1791363920730,
+        "utc": "2026-10-07T09:05:20.730000+00:00",
+        "dt": 27444689765.502766,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0010",
+        "tick": 760,
+        "wall_ms": 1791363941936,
+        "utc": "2026-10-07T09:05:41.936000+00:00",
+        "dt": 27383482143.357002,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 991,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0011",
+        "tick": 762,
+        "wall_ms": 1791363942146,
+        "utc": "2026-10-07T09:05:42.146000+00:00",
+        "dt": 27375138230.63466,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 990,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0012",
+        "tick": 765,
+        "wall_ms": 1791363942493,
+        "utc": "2026-10-07T09:05:42.493000+00:00",
+        "dt": 27371352770.91572,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 990,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0013",
+        "tick": 766,
+        "wall_ms": 1791363942762,
+        "utc": "2026-10-07T09:05:42.762000+00:00",
+        "dt": 27370139761.43064,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 990,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 300000000000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0014",
+        "tick": 768,
+        "wall_ms": 1791363943183,
+        "utc": "2026-10-07T09:05:43.183000+00:00",
+        "dt": 27368135709.224968,
+        "arc": "arc/genesis-protostar",
+        "counts": {
+          "nebula": 990,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0015",
+        "tick": 1028,
+        "wall_ms": 1791363980808,
+        "utc": "2026-10-07T09:06:20.808000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 976,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0016",
+        "tick": 1030,
+        "wall_ms": 1791363981025,
+        "utc": "2026-10-07T09:06:21.025000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 976,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0017",
+        "tick": 1032,
+        "wall_ms": 1791363981449,
+        "utc": "2026-10-07T09:06:21.449000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 976,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0018",
+        "tick": 1034,
+        "wall_ms": 1791363981875,
+        "utc": "2026-10-07T09:06:21.875000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 976,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0019",
+        "tick": 1507,
+        "wall_ms": 1791364053419,
+        "utc": "2026-10-07T09:07:33.419000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 952,
+          "star": 1,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": true,
+        "body_omitted": 0
+      },
+      {
+        "id": "0020",
+        "tick": 1511,
+        "wall_ms": 1791364053876,
+        "utc": "2026-10-07T09:07:33.876000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 952,
+          "star": 1,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0021",
+        "tick": 1805,
+        "wall_ms": 1791364101703,
+        "utc": "2026-10-07T09:08:21.703000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 944,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0022",
+        "tick": 2215,
+        "wall_ms": 1791364172618,
+        "utc": "2026-10-07T09:09:32.618000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 939,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0023",
+        "tick": 2838,
+        "wall_ms": 1791364269233,
+        "utc": "2026-10-07T09:11:09.233000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 934,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0024",
+        "tick": 3023,
+        "wall_ms": 1791364299673,
+        "utc": "2026-10-07T09:11:39.673000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 931,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0025",
+        "tick": 3212,
+        "wall_ms": 1791364330575,
+        "utc": "2026-10-07T09:12:10.575000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 926,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0026",
+        "tick": 3401,
+        "wall_ms": 1791364361269,
+        "utc": "2026-10-07T09:12:41.269000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 923,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0027",
+        "tick": 3586,
+        "wall_ms": 1791364391890,
+        "utc": "2026-10-07T09:13:11.890000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 922,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0028",
+        "tick": 3768,
+        "wall_ms": 1791364422757,
+        "utc": "2026-10-07T09:13:42.757000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 922,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0029",
+        "tick": 3937,
+        "wall_ms": 1791364453424,
+        "utc": "2026-10-07T09:14:13.424000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 921,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0030",
+        "tick": 4102,
+        "wall_ms": 1791364483973,
+        "utc": "2026-10-07T09:14:43.973000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 921,
+          "planet": 12,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0031",
+        "tick": 4319,
+        "wall_ms": 1791364527918,
+        "utc": "2026-10-07T09:15:27.918000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 905,
+          "planet": 12,
+          "star": 1,
+          "brown-dwarf": 3,
+          "protostar": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0032",
+        "tick": 4538,
+        "wall_ms": 1791364572391,
+        "utc": "2026-10-07T09:16:12.391000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 888,
+          "planet": 12,
+          "star": 1,
+          "brown-dwarf": 2,
+          "protostar": 3
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0033",
+        "tick": 4540,
+        "wall_ms": 1791364572711,
+        "utc": "2026-10-07T09:16:12.711000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 888,
+          "planet": 12,
+          "star": 1,
+          "brown-dwarf": 2,
+          "protostar": 3
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0034",
+        "tick": 4541,
+        "wall_ms": 1791364573289,
+        "utc": "2026-10-07T09:16:13.289000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 888,
+          "planet": 12,
+          "star": 1,
+          "brown-dwarf": 2,
+          "protostar": 3
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      {
+        "id": "0035",
+        "tick": 4543,
+        "wall_ms": 1791364573719,
+        "utc": "2026-10-07T09:16:13.719000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 888,
+          "planet": 12,
+          "star": 1,
+          "brown-dwarf": 2,
+          "protostar": 3
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      }
+    ]
+  },
+  "operations": {
+    "submitted": 19,
+    "success": 18,
+    "failure": 1,
+    "by_operation": {
+      "click": 3,
+      "inspect": 12,
+      "tap": 3,
+      "frame": 1
+    },
+    "input_requests": 6,
+    "successful_input_requests": 5,
+    "failed_input_requests": 1,
+    "no_aim_or_look_or_hold": true,
+    "failed_request_id": "1791364571906382066-35bab36a",
+    "failed_result": {
+      "ok": false,
+      "error": "AssertionError('Input postcondition unconfirmed: tap-Tab; gesture not retried')",
+      "finished_at": "2026-10-07T09:16:13.738869+00:00"
+    },
+    "input_postcondition_attempts": [
+      {
+        "at": "2026-10-07T09:16:12.738319+00:00",
+        "elapsed_seconds": 741.2608858820022,
+        "label": "tap-Tab",
+        "attempt": 0,
+        "matched": false,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        }
+      },
+      {
+        "at": "2026-10-07T09:16:13.322685+00:00",
+        "elapsed_seconds": 741.8452697310022,
+        "label": "tap-Tab",
+        "attempt": 1,
+        "matched": false,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        }
+      },
+      {
+        "at": "2026-10-07T09:16:13.738786+00:00",
+        "elapsed_seconds": 742.2613487000017,
+        "label": "tap-Tab",
+        "attempt": 2,
+        "matched": false,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        }
+      }
+    ]
+  },
+  "process_evidence": {
+    "spawned_unique_children": 22,
+    "all_spawned_have_one_reaped_record": true,
+    "reaped": [
+      {
+        "label": "003-snapshot-client",
+        "pid": 2987284,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.842866+00:00"
+      },
+      {
+        "label": "004-window-id",
+        "pid": 2988049,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.842999+00:00"
+      },
+      {
+        "label": "005-focus-owned-window",
+        "pid": 2988050,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.843054+00:00"
+      },
+      {
+        "label": "006-tap",
+        "pid": 2991567,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.843098+00:00"
+      },
+      {
+        "label": "007-release-keys",
+        "pid": 2991568,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.843140+00:00"
+      },
+      {
+        "label": "008-menu-position",
+        "pid": 2993063,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.843177+00:00"
+      },
+      {
+        "label": "009-menu-press",
+        "pid": 2993128,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.843211+00:00"
+      },
+      {
+        "label": "010-release-mouse",
+        "pid": 2993129,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844256+00:00"
+      },
+      {
+        "label": "011-menu-position",
+        "pid": 2994775,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844294+00:00"
+      },
+      {
+        "label": "012-menu-press",
+        "pid": 2994875,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844328+00:00"
+      },
+      {
+        "label": "013-release-mouse",
+        "pid": 2994881,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844361+00:00"
+      },
+      {
+        "label": "014-menu-position",
+        "pid": 3001025,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844394+00:00"
+      },
+      {
+        "label": "015-menu-press",
+        "pid": 3001039,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844428+00:00"
+      },
+      {
+        "label": "016-release-mouse",
+        "pid": 3001040,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844462+00:00"
+      },
+      {
+        "label": "017-tap",
+        "pid": 3006477,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844497+00:00"
+      },
+      {
+        "label": "018-release-keys",
+        "pid": 3006497,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844529+00:00"
+      },
+      {
+        "label": "019-frame",
+        "pid": 3009240,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844563+00:00"
+      },
+      {
+        "label": "020-tap",
+        "pid": 3051689,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844595+00:00"
+      },
+      {
+        "label": "021-release-keys",
+        "pid": 3051690,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844628+00:00"
+      },
+      {
+        "label": "022-release-keys",
+        "pid": 3051829,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:13.844660+00:00"
+      },
+      {
+        "label": "002-runtime",
+        "pid": 2985932,
+        "returncode": 143,
+        "at": "2026-10-07T09:16:15.276797+00:00"
+      },
+      {
+        "label": "001-xvfb",
+        "pid": 2985845,
+        "returncode": 0,
+        "at": "2026-10-07T09:16:15.592879+00:00"
+      }
+    ],
+    "outer_clients": [
+      {
+        "metadata": "attempt-01-clients/001-start.json",
+        "pid": 2985827,
+        "started_at": "2026-10-07T09:03:51.415983+00:00",
+        "started_monotonic": 31331.474756743,
+        "elapsed_seconds": 24.071041203002096,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "start",
+        "args": [
+          "--port",
+          "7898"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/002-inspect.json",
+        "pid": 2990958,
+        "started_at": "2026-10-07T09:04:51.126661+00:00",
+        "started_monotonic": 31391.185435089,
+        "elapsed_seconds": 0.5408390470001905,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791363891233861668-5e8750a9",
+        "ok": true,
+        "snapshots": [
+          "0002"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/003-manual.json",
+        "pid": 2991448,
+        "started_at": "2026-10-07T09:04:58.701156+00:00",
+        "started_monotonic": 31398.759929554,
+        "elapsed_seconds": 1.1663571630015213,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "tap",
+        "args": [
+          "r"
+        ],
+        "request": "1791363898808454874-27f81133",
+        "ok": true,
+        "snapshots": [
+          "0003",
+          "0004"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/004-open-spark.json",
+        "pid": 2993013,
+        "started_at": "2026-10-07T09:05:18.561393+00:00",
+        "started_monotonic": 31418.620166049,
+        "elapsed_seconds": 2.298304542000551,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "click",
+        "args": [
+          "spark"
+        ],
+        "request": "1791363918813938864-c983a814",
+        "ok": true,
+        "snapshots": [
+          "0005",
+          "0006",
+          "0007",
+          "0008",
+          "0009"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/005-fine.json",
+        "pid": 2994707,
+        "started_at": "2026-10-07T09:05:41.502988+00:00",
+        "started_monotonic": 31441.561760203,
+        "elapsed_seconds": 1.865098914000555,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "click",
+        "args": [
+          "fine"
+        ],
+        "request": "1791363941650276304-f8853a54",
+        "ok": true,
+        "snapshots": [
+          "0010",
+          "0011",
+          "0012",
+          "0013",
+          "0014"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/006-close-spark.json",
+        "pid": 3000929,
+        "started_at": "2026-10-07T09:06:20.275092+00:00",
+        "started_monotonic": 31480.333864642,
+        "elapsed_seconds": 1.6912427309980558,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "click",
+        "args": [
+          "spark"
+        ],
+        "request": "1791363980471035121-380600bd",
+        "ok": true,
+        "snapshots": [
+          "0015",
+          "0016",
+          "0017",
+          "0018"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/007-lock-look.json",
+        "pid": 3006458,
+        "started_at": "2026-10-07T09:07:32.935357+00:00",
+        "started_monotonic": 31552.994130997,
+        "elapsed_seconds": 1.0631511509964184,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "tap",
+        "args": [
+          "Tab"
+        ],
+        "request": "1791364053248380836-469fc803",
+        "ok": true,
+        "snapshots": [
+          "0019",
+          "0020"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/008-frame-initial.json",
+        "pid": 3009203,
+        "started_at": "2026-10-07T09:08:10.476187+00:00",
+        "started_monotonic": 31590.534960843,
+        "elapsed_seconds": 0.90058506999776,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "frame",
+        "args": [],
+        "request": "1791364090667274287-ff01040f",
+        "ok": true,
+        "snapshots": []
+      },
+      {
+        "metadata": "attempt-01-clients/009-inspect.json",
+        "pid": 3009991,
+        "started_at": "2026-10-07T09:08:21.055713+00:00",
+        "started_monotonic": 31601.114485348,
+        "elapsed_seconds": 0.7153121660012403,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364101145547656-b6a0d0cd",
+        "ok": true,
+        "snapshots": [
+          "0021"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/010-inspect.json",
+        "pid": 3017820,
+        "started_at": "2026-10-07T09:09:32.072591+00:00",
+        "started_monotonic": 31672.131362298,
+        "elapsed_seconds": 0.7358093279981404,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364172295546564-c402b3a8",
+        "ok": true,
+        "snapshots": [
+          "0022"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/011-candidate-inspect.json",
+        "pid": 3048127,
+        "started_at": "2026-10-07T09:15:27.074253+00:00",
+        "started_monotonic": 32027.133026391,
+        "elapsed_seconds": 1.1423844470009499,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364527379939435-a2cdffd9",
+        "ok": true,
+        "snapshots": [
+          "0031"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/012-open-cursor.json",
+        "pid": 3051654,
+        "started_at": "2026-10-07T09:16:11.561146+00:00",
+        "started_monotonic": 32071.619918974,
+        "elapsed_seconds": 4.230511951998778,
+        "returncode": 1,
+        "state": "reaped",
+        "operation": "tap",
+        "args": [
+          "Tab"
+        ],
+        "request": "1791364571906382066-35bab36a",
+        "ok": false,
+        "snapshots": [
+          "0032",
+          "0033",
+          "0034",
+          "0035"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-00.json",
+        "pid": 3026265,
+        "started_at": "2026-10-07T09:11:08.507921+00:00",
+        "started_monotonic": 31768.56669272,
+        "elapsed_seconds": 0.8638233710007626,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364268759308811-7fd9d57f",
+        "ok": true,
+        "snapshots": [
+          "0023"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-01.json",
+        "pid": 3028749,
+        "started_at": "2026-10-07T09:11:39.374476+00:00",
+        "started_monotonic": 31799.433246113,
+        "elapsed_seconds": 0.4393294350011274,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364299571753338-4f785310",
+        "ok": true,
+        "snapshots": [
+          "0024"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-02.json",
+        "pid": 3031001,
+        "started_at": "2026-10-07T09:12:09.821452+00:00",
+        "started_monotonic": 31829.880223089,
+        "elapsed_seconds": 0.8872450769995339,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364330217704849-f6905486",
+        "ok": true,
+        "snapshots": [
+          "0025"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-03.json",
+        "pid": 3033496,
+        "started_at": "2026-10-07T09:12:40.713798+00:00",
+        "started_monotonic": 31860.772568297,
+        "elapsed_seconds": 0.7156434919997992,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364360975218388-eb73eb84",
+        "ok": true,
+        "snapshots": [
+          "0026"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-04.json",
+        "pid": 3035921,
+        "started_at": "2026-10-07T09:13:11.432397+00:00",
+        "started_monotonic": 31891.491168535,
+        "elapsed_seconds": 0.6229352209993522,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364391581770234-02a5fd93",
+        "ok": true,
+        "snapshots": [
+          "0027"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-05.json",
+        "pid": 3038554,
+        "started_at": "2026-10-07T09:13:42.058537+00:00",
+        "started_monotonic": 31922.117307761,
+        "elapsed_seconds": 0.8212197670000023,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364422233271874-5f4d4eec",
+        "ok": true,
+        "snapshots": [
+          "0028"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-06.json",
+        "pid": 3041992,
+        "started_at": "2026-10-07T09:14:12.882435+00:00",
+        "started_monotonic": 31952.941198554,
+        "elapsed_seconds": 0.6270679510016635,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364453064566460-e39bae4e",
+        "ok": true,
+        "snapshots": [
+          "0029"
+        ]
+      },
+      {
+        "metadata": "attempt-01-clients/poll-07.json",
+        "pid": 3044850,
+        "started_at": "2026-10-07T09:14:43.510341+00:00",
+        "started_monotonic": 31983.56911235,
+        "elapsed_seconds": 0.8797448270015593,
+        "returncode": 0,
+        "state": "reaped",
+        "operation": "inspect",
+        "args": [],
+        "request": "1791364483637862896-e542ca4a",
+        "ok": true,
+        "snapshots": [
+          "0030"
+        ]
+      }
+    ],
+    "outer_exit_counts": {
+      "0": 19,
+      "1": 1
+    },
+    "root_absence_record": "root-closure-observation.json",
+    "root_absence_sha256": "2feeffa18b297cc66816678994ac43e983d6b17aeae2e868a7a5718e9959280e",
+    "root_verified_absent_roles": [
+      "supervisor",
+      "xvfb",
+      "app",
+      "snapshot_client"
+    ],
+    "auditor_did_not_query_processes": true,
+    "poller_parent_scope": "Root tool command transcript, not independently saved parent process telemetry"
+  },
+  "tab_failure": {
+    "command": {
+      "at": "2026-10-07T09:16:12.410067+00:00",
+      "elapsed_seconds": 740.9326400669997,
+      "kind": "command",
+      "command": [
+        "xdotool",
+        "key",
+        "--delay",
+        "80",
+        "Tab"
+      ],
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+      "display": ":1",
+      "port": 7898,
+      "stdout": "020-tap.stdout",
+      "stderr": "020-tap.stderr",
+      "file_limit_bytes": 33554432
+    },
+    "tap_exit": {
+      "at": "2026-10-07T09:16:12.535584+00:00",
+      "elapsed_seconds": 741.0582143710017,
+      "kind": "exit",
+      "label": "tap",
+      "returncode": 0
+    },
+    "post_tap_key_release_exit": {
+      "at": "2026-10-07T09:16:12.591542+00:00",
+      "elapsed_seconds": 741.1141139400024,
+      "kind": "exit",
+      "label": "release-keys",
+      "returncode": 0
+    },
+    "last_readback_minus_first_seconds": 1.0004628179995052,
+    "release_to_last_readback_seconds": 1.1472347599992645,
+    "command_start_to_failure_seconds": 1.3290718250027567,
+    "readbacks": [
+      {
+        "id": "0032",
+        "tick": 4538,
+        "wall_ms": 1791364572391,
+        "utc": "2026-10-07T09:16:12.391000+00:00",
+        "config": {
+          "mode": "manual",
+          "ui/active-domain": null,
+          "ui/cursor-free?": false,
+          "cursor": [
+            274.0,
+            13.0
+          ],
+          "look-sensitivity": 0.01,
+          "ui/applied-cursor": 212995
+        },
+        "camera": {
+          "position": [
+            -3.1732513171137122,
+            -50.356005574006915,
+            -15.876048217448755
+          ],
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "distance": 50.0,
+          "target": [
+            -3.173251317113715,
+            -3.3713745347114936,
+            1.2249589488346786
+          ]
+        }
+      },
+      {
+        "id": "0033",
+        "tick": 4540,
+        "wall_ms": 1791364572711,
+        "utc": "2026-10-07T09:16:12.711000+00:00",
+        "config": {
+          "mode": "manual",
+          "ui/active-domain": null,
+          "ui/cursor-free?": false,
+          "cursor": [
+            274.0,
+            13.0
+          ],
+          "look-sensitivity": 0.01,
+          "ui/applied-cursor": 212995
+        },
+        "camera": {
+          "position": [
+            -3.173723647155974,
+            -50.356335112246434,
+            -15.876082161568299
+          ],
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "distance": 50.0,
+          "target": [
+            -3.1737236471559767,
+            -3.3717040729510126,
+            1.2249250047151363
+          ]
+        }
+      },
+      {
+        "id": "0034",
+        "tick": 4541,
+        "wall_ms": 1791364573289,
+        "utc": "2026-10-07T09:16:13.289000+00:00",
+        "config": {
+          "mode": "manual",
+          "ui/active-domain": null,
+          "ui/cursor-free?": false,
+          "cursor": [
+            274.0,
+            13.0
+          ],
+          "look-sensitivity": 0.01,
+          "ui/applied-cursor": 212995
+        },
+        "camera": {
+          "position": [
+            -3.173723647155974,
+            -50.356335112246434,
+            -15.876082161568299
+          ],
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "distance": 50.0,
+          "target": [
+            -3.1737236471559767,
+            -3.3717040729510126,
+            1.2249250047151363
+          ]
+        }
+      },
+      {
+        "id": "0035",
+        "tick": 4543,
+        "wall_ms": 1791364573719,
+        "utc": "2026-10-07T09:16:13.719000+00:00",
+        "config": {
+          "mode": "manual",
+          "ui/active-domain": null,
+          "ui/cursor-free?": false,
+          "cursor": [
+            274.0,
+            13.0
+          ],
+          "look-sensitivity": 0.01,
+          "ui/applied-cursor": 212995
+        },
+        "camera": {
+          "position": [
+            -3.173723647155974,
+            -50.356335112246434,
+            -15.876082161568299
+          ],
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "distance": 50.0,
+          "target": [
+            -3.1737236471559767,
+            -3.3717040729510126,
+            1.2249250047151363
+          ]
+        }
+      }
+    ],
+    "declared_observation_ceiling_s": 20,
+    "attempt_cap": 3,
+    "actual_exit_due_to_three_unmatched_reads": true,
+    "untimestamped_runtime_cursor_lines": [
+      {
+        "line": 10,
+        "text": "UI cursor : locked"
+      },
+      {
+        "line": 1505,
+        "text": "UI cursor : free"
+      }
+    ],
+    "limit": "No gesture retry. Exit0 of xdotool is not proof of callback delivery timing. Final stdout free label comes from code printing after config swap, but has no timestamp and no later snapshot corroboration. Do not infer delivery failure, loss, renderer freeze, callback timing or cause."
+  },
+  "cadence": {
+    "all_snapshot_intervals": [
+      {
+        "from": "0001",
+        "to": "0002",
+        "ticks": [
+          51,
+          413
+        ],
+        "seconds": 36.289,
+        "ticks_per_wall_second": 9.975474661743228
+      },
+      {
+        "from": "0002",
+        "to": "0003",
+        "ticks": [
+          413,
+          474
+        ],
+        "seconds": 7.573,
+        "ticks_per_wall_second": 8.05493199524627
+      },
+      {
+        "from": "0003",
+        "to": "0004",
+        "ticks": [
+          474,
+          478
+        ],
+        "seconds": 0.542,
+        "ticks_per_wall_second": 7.380073800738007
+      },
+      {
+        "from": "0004",
+        "to": "0005",
+        "ticks": [
+          478,
+          606
+        ],
+        "seconds": 19.347,
+        "ticks_per_wall_second": 6.616012818524835
+      },
+      {
+        "from": "0005",
+        "to": "0006",
+        "ticks": [
+          606,
+          608
+        ],
+        "seconds": 0.316,
+        "ticks_per_wall_second": 6.329113924050633
+      },
+      {
+        "from": "0006",
+        "to": "0007",
+        "ticks": [
+          608,
+          612
+        ],
+        "seconds": 0.437,
+        "ticks_per_wall_second": 9.153318077803204
+      },
+      {
+        "from": "0007",
+        "to": "0008",
+        "ticks": [
+          612,
+          615
+        ],
+        "seconds": 0.426,
+        "ticks_per_wall_second": 7.042253521126761
+      },
+      {
+        "from": "0008",
+        "to": "0009",
+        "ticks": [
+          615,
+          618
+        ],
+        "seconds": 0.545,
+        "ticks_per_wall_second": 5.504587155963303
+      },
+      {
+        "from": "0009",
+        "to": "0010",
+        "ticks": [
+          618,
+          760
+        ],
+        "seconds": 21.206,
+        "ticks_per_wall_second": 6.69621805149486
+      },
+      {
+        "from": "0010",
+        "to": "0011",
+        "ticks": [
+          760,
+          762
+        ],
+        "seconds": 0.21,
+        "ticks_per_wall_second": 9.523809523809524
+      },
+      {
+        "from": "0011",
+        "to": "0012",
+        "ticks": [
+          762,
+          765
+        ],
+        "seconds": 0.347,
+        "ticks_per_wall_second": 8.645533141210375
+      },
+      {
+        "from": "0012",
+        "to": "0013",
+        "ticks": [
+          765,
+          766
+        ],
+        "seconds": 0.269,
+        "ticks_per_wall_second": 3.717472118959108
+      },
+      {
+        "from": "0013",
+        "to": "0014",
+        "ticks": [
+          766,
+          768
+        ],
+        "seconds": 0.421,
+        "ticks_per_wall_second": 4.750593824228028
+      },
+      {
+        "from": "0014",
+        "to": "0015",
+        "ticks": [
+          768,
+          1028
+        ],
+        "seconds": 37.625,
+        "ticks_per_wall_second": 6.910299003322259
+      },
+      {
+        "from": "0015",
+        "to": "0016",
+        "ticks": [
+          1028,
+          1030
+        ],
+        "seconds": 0.217,
+        "ticks_per_wall_second": 9.216589861751153
+      },
+      {
+        "from": "0016",
+        "to": "0017",
+        "ticks": [
+          1030,
+          1032
+        ],
+        "seconds": 0.424,
+        "ticks_per_wall_second": 4.716981132075472
+      },
+      {
+        "from": "0017",
+        "to": "0018",
+        "ticks": [
+          1032,
+          1034
+        ],
+        "seconds": 0.426,
+        "ticks_per_wall_second": 4.694835680751174
+      },
+      {
+        "from": "0018",
+        "to": "0019",
+        "ticks": [
+          1034,
+          1507
+        ],
+        "seconds": 71.544,
+        "ticks_per_wall_second": 6.6113161131611315
+      },
+      {
+        "from": "0019",
+        "to": "0020",
+        "ticks": [
+          1507,
+          1511
+        ],
+        "seconds": 0.457,
+        "ticks_per_wall_second": 8.752735229759299
+      },
+      {
+        "from": "0020",
+        "to": "0021",
+        "ticks": [
+          1511,
+          1805
+        ],
+        "seconds": 47.827,
+        "ticks_per_wall_second": 6.147155372488344
+      },
+      {
+        "from": "0021",
+        "to": "0022",
+        "ticks": [
+          1805,
+          2215
+        ],
+        "seconds": 70.915,
+        "ticks_per_wall_second": 5.781569484594232
+      },
+      {
+        "from": "0022",
+        "to": "0023",
+        "ticks": [
+          2215,
+          2838
+        ],
+        "seconds": 96.615,
+        "ticks_per_wall_second": 6.448274077524195
+      },
+      {
+        "from": "0023",
+        "to": "0024",
+        "ticks": [
+          2838,
+          3023
+        ],
+        "seconds": 30.44,
+        "ticks_per_wall_second": 6.077529566360052
+      },
+      {
+        "from": "0024",
+        "to": "0025",
+        "ticks": [
+          3023,
+          3212
+        ],
+        "seconds": 30.902,
+        "ticks_per_wall_second": 6.116108989709404
+      },
+      {
+        "from": "0025",
+        "to": "0026",
+        "ticks": [
+          3212,
+          3401
+        ],
+        "seconds": 30.694,
+        "ticks_per_wall_second": 6.1575552225190595
+      },
+      {
+        "from": "0026",
+        "to": "0027",
+        "ticks": [
+          3401,
+          3586
+        ],
+        "seconds": 30.621,
+        "ticks_per_wall_second": 6.041605434179158
+      },
+      {
+        "from": "0027",
+        "to": "0028",
+        "ticks": [
+          3586,
+          3768
+        ],
+        "seconds": 30.867,
+        "ticks_per_wall_second": 5.896264619172579
+      },
+      {
+        "from": "0028",
+        "to": "0029",
+        "ticks": [
+          3768,
+          3937
+        ],
+        "seconds": 30.667,
+        "ticks_per_wall_second": 5.510809665112335
+      },
+      {
+        "from": "0029",
+        "to": "0030",
+        "ticks": [
+          3937,
+          4102
+        ],
+        "seconds": 30.549,
+        "ticks_per_wall_second": 5.401158794068546
+      },
+      {
+        "from": "0030",
+        "to": "0031",
+        "ticks": [
+          4102,
+          4319
+        ],
+        "seconds": 43.945,
+        "ticks_per_wall_second": 4.937990670155877
+      },
+      {
+        "from": "0031",
+        "to": "0032",
+        "ticks": [
+          4319,
+          4538
+        ],
+        "seconds": 44.473,
+        "ticks_per_wall_second": 4.924336114046725
+      },
+      {
+        "from": "0032",
+        "to": "0033",
+        "ticks": [
+          4538,
+          4540
+        ],
+        "seconds": 0.32,
+        "ticks_per_wall_second": 6.25
+      },
+      {
+        "from": "0033",
+        "to": "0034",
+        "ticks": [
+          4540,
+          4541
+        ],
+        "seconds": 0.578,
+        "ticks_per_wall_second": 1.7301038062283738
+      },
+      {
+        "from": "0034",
+        "to": "0035",
+        "ticks": [
+          4541,
+          4543
+        ],
+        "seconds": 0.43,
+        "ticks_per_wall_second": 4.651162790697675
+      }
+    ],
+    "gaps_over60s": [
+      {
+        "from": "0018",
+        "to": "0019",
+        "ticks": [
+          1034,
+          1507
+        ],
+        "seconds": 71.544,
+        "ticks_per_wall_second": 6.6113161131611315
+      },
+      {
+        "from": "0021",
+        "to": "0022",
+        "ticks": [
+          1805,
+          2215
+        ],
+        "seconds": 70.915,
+        "ticks_per_wall_second": 5.781569484594232
+      },
+      {
+        "from": "0022",
+        "to": "0023",
+        "ticks": [
+          2215,
+          2838
+        ],
+        "seconds": 96.615,
+        "ticks_per_wall_second": 6.448274077524195
+      }
+    ],
+    "maximum_gap_s": 96.615,
+    "automatic_poller_snapshots": [
+      "0023",
+      "0024",
+      "0025",
+      "0026",
+      "0027",
+      "0028",
+      "0029",
+      "0030"
+    ],
+    "automatic_poller_intervals": [
+      {
+        "from": "0023",
+        "to": "0024",
+        "ticks": [
+          2838,
+          3023
+        ],
+        "seconds": 30.44,
+        "ticks_per_wall_second": 6.077529566360052
+      },
+      {
+        "from": "0024",
+        "to": "0025",
+        "ticks": [
+          3023,
+          3212
+        ],
+        "seconds": 30.902,
+        "ticks_per_wall_second": 6.116108989709404
+      },
+      {
+        "from": "0025",
+        "to": "0026",
+        "ticks": [
+          3212,
+          3401
+        ],
+        "seconds": 30.694,
+        "ticks_per_wall_second": 6.1575552225190595
+      },
+      {
+        "from": "0026",
+        "to": "0027",
+        "ticks": [
+          3401,
+          3586
+        ],
+        "seconds": 30.621,
+        "ticks_per_wall_second": 6.041605434179158
+      },
+      {
+        "from": "0027",
+        "to": "0028",
+        "ticks": [
+          3586,
+          3768
+        ],
+        "seconds": 30.867,
+        "ticks_per_wall_second": 5.896264619172579
+      },
+      {
+        "from": "0028",
+        "to": "0029",
+        "ticks": [
+          3768,
+          3937
+        ],
+        "seconds": 30.667,
+        "ticks_per_wall_second": 5.510809665112335
+      },
+      {
+        "from": "0029",
+        "to": "0030",
+        "ticks": [
+          3937,
+          4102
+        ],
+        "seconds": 30.549,
+        "ticks_per_wall_second": 5.401158794068546
+      }
+    ],
+    "max_automatic_interval_s": 30.902,
+    "poller_meta": {
+      "tool_exec_session": 36050,
+      "tool_reported_exit": 0,
+      "max_observations": 20,
+      "actual_observations": 8,
+      "interval_sleep_seconds": 30,
+      "clipped_to_original_no_target_deadline": true,
+      "stopped_reason": "first observed stored+ready row, no target selection or gameplay input",
+      "outer_client_metadata": "attempt-01-clients/poll-00.json throughpoll-07.json",
+      "scope": "Root tool command transcript, not independently saved parent process telemetry"
+    },
+    "formation_bracket": {
+      "before": {
+        "id": "0029",
+        "tick": 3937,
+        "wall_ms": 1791364453424,
+        "utc": "2026-10-07T09:14:13.424000+00:00",
+        "dt": 9805806756.909203,
+        "arc": "arc/genesis-accretion",
+        "counts": {
+          "nebula": 921,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      "first_observed": {
+        "id": "0030",
+        "tick": 4102,
+        "wall_ms": 1791364483973,
+        "utc": "2026-10-07T09:14:43.973000+00:00",
+        "dt": 4138029443.01184,
+        "arc": "arc/genesis-planets-formed",
+        "counts": {
+          "nebula": 921,
+          "planet": 12,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 2
+        },
+        "global_commitment_count": 0,
+        "stored_ready_ids": [
+          1010,
+          1011,
+          1012
+        ],
+        "fresh_handoff_count": 0,
+        "displacement": 10000000.0,
+        "host_mode": "manual",
+        "cursor_free": false,
+        "body_omitted": 0
+      },
+      "seconds": 30.549,
+      "exact_birth_or_candidate_admission_time_unobserved": true
+    }
+  },
+  "natural_targets": [
+    {
+      "id": "0030",
+      "tick": 4102,
+      "utc": "2026-10-07T09:14:43.973000+00:00",
+      "ready_bodies": [
+        {
+          "eid": 1010,
+          "matter-state": "planet",
+          "physical-distance-au": 163734.800207975,
+          "ready-to-commit?": true,
+          "per-body-eligible?": null,
+          "current-parent": null,
+          "published-focus-overlap?": false,
+          "commitment": null
+        },
+        {
+          "eid": 1011,
+          "matter-state": "planet",
+          "physical-distance-au": 166032.66257557733,
+          "ready-to-commit?": true,
+          "per-body-eligible?": false,
+          "current-parent": {
+            "id": 491,
+            "matter-state": "star",
+            "position": [
+              7410122422436657.0,
+              1.6241250991350824e+16,
+              -1.0150082421857322e+16
+            ],
+            "velocity": [
+              208.65826879819997,
+              425.47888811199664,
+              -271.17486661167544
+            ],
+            "mass": 5.579337892497166e+29,
+            "radius": 321146771.9161069,
+            "luminosity": 1e+29
+          },
+          "published-focus-overlap?": false,
+          "commitment": null
+        },
+        {
+          "eid": 1012,
+          "matter-state": "planet",
+          "physical-distance-au": 166838.17656870314,
+          "ready-to-commit?": true,
+          "per-body-eligible?": false,
+          "current-parent": {
+            "id": 491,
+            "matter-state": "star",
+            "position": [
+              7410122422436657.0,
+              1.6241250991350824e+16,
+              -1.0150082421857322e+16
+            ],
+            "velocity": [
+              208.65826879819997,
+              425.47888811199664,
+              -271.17486661167544
+            ],
+            "mass": 5.579337892497166e+29,
+            "radius": 321146771.9161069,
+            "luminosity": 1e+29
+          },
+          "published-focus-overlap?": false,
+          "commitment": null
+        }
+      ]
+    },
+    {
+      "id": "0031",
+      "tick": 4319,
+      "utc": "2026-10-07T09:15:27.918000+00:00",
+      "ready_bodies": [
+        {
+          "eid": 1010,
+          "matter-state": "planet",
+          "physical-distance-au": 154761.2412231545,
+          "ready-to-commit?": true,
+          "per-body-eligible?": null,
+          "current-parent": null,
+          "published-focus-overlap?": false,
+          "commitment": null
+        },
+        {
+          "eid": 1011,
+          "matter-state": "planet",
+          "physical-distance-au": 168237.22528013264,
+          "ready-to-commit?": true,
+          "per-body-eligible?": false,
+          "current-parent": {
+            "id": 491,
+            "matter-state": "star",
+            "position": [
+              7534018571329711.0,
+              1.6608184760350348e+16,
+              -1.0378144843845518e+16
+            ],
+            "velocity": [
+              208.39600566672453,
+              424.2597363326478,
+              -270.58323870331157
+            ],
+            "mass": 5.611958582232189e+29,
+            "radius": 320843363.2145948,
+            "luminosity": 1e+29
+          },
+          "published-focus-overlap?": false,
+          "commitment": null
+        },
+        {
+          "eid": 1012,
+          "matter-state": "planet",
+          "physical-distance-au": 169488.28069030176,
+          "ready-to-commit?": true,
+          "per-body-eligible?": null,
+          "current-parent": null,
+          "published-focus-overlap?": false,
+          "commitment": null
+        }
+      ]
+    },
+    {
+      "id": "0035",
+      "tick": 4543,
+      "utc": "2026-10-07T09:16:13.719000+00:00",
+      "ready_bodies": [
+        {
+          "eid": 1010,
+          "matter-state": "planet",
+          "physical-distance-au": 145825.6090374982,
+          "ready-to-commit?": true,
+          "per-body-eligible?": null,
+          "current-parent": null,
+          "published-focus-overlap?": false,
+          "commitment": null
+        },
+        {
+          "eid": 1011,
+          "matter-state": "planet",
+          "physical-distance-au": 172458.85153703974,
+          "ready-to-commit?": true,
+          "per-body-eligible?": false,
+          "current-parent": {
+            "id": 491,
+            "matter-state": "star",
+            "position": [
+              7695107082607885.0,
+              1.6984901196002298e+16,
+              -1.0612268948141358e+16
+            ],
+            "velocity": [
+              208.01438548289173,
+              423.31806432872025,
+              -269.9768435031509
+            ],
+            "mass": 5.634722379796286e+29,
+            "radius": 320530467.8022471,
+            "luminosity": 1e+29
+          },
+          "published-focus-overlap?": false,
+          "commitment": null
+        },
+        {
+          "eid": 1012,
+          "matter-state": "planet",
+          "physical-distance-au": 172206.2789880628,
+          "ready-to-commit?": true,
+          "per-body-eligible?": null,
+          "current-parent": null,
+          "published-focus-overlap?": false,
+          "commitment": null
+        }
+      ]
+    }
+  ],
+  "all_global_commitments_zero": true,
+  "all_published_thrust_nil_and_binding_scar_empty": true,
+  "root_target_intent": {
+    "id": 1010,
+    "reason": "nearest ofthree stored+ready naturalplanets atsample4319",
+    "recorded_range_au": 154761.2412231545,
+    "proposed_D": 37500000000000.0,
+    "not_applied": true,
+    "successful_supervisor_admission": false
+  },
+  "unapplied_motion_advice": {
+    "status": "derived advice only, not applied; no supervisor target admission",
+    "max_automatic_poll_rate": 6.1575552225190595,
+    "N_star_for_two_seconds": 27,
+    "proposed_D": 37500000000000.0,
+    "coast_au": 8105.061885750483,
+    "coast_fraction": 0.05237139364928956,
+    "pulse_plus_coast_au": 14873.206347047284,
+    "pulse_plus_coast_fraction": 0.09610420690282005,
+    "next_larger_D": 75000000000000.0,
+    "next_larger_coast_fraction": 0.10474278729857912,
+    "paired_ids": [
+      "0030",
+      "0031"
+    ],
+    "paired_ticks": [
+      4102,
+      4319
+    ],
+    "elapsed_wall_seconds": 43.945,
+    "range_au": [
+      163734.800207975,
+      154761.2412231545
+    ],
+    "range_delta_au": -8973.558984820498,
+    "range_change_au_per_wall_s": -204.1997720974058,
+    "relative_chord_au": [
+      -8999.475374467725,
+      -6239.748319275616,
+      1027.390796752109
+    ],
+    "relative_chord_magnitude_au": 10999.115780498214,
+    "limits": "Endpoint relative motion without thrust, not a velocity-times-dt prediction, interception bound or FPS benchmark."
+  },
+  "media": [
+    {
+      "path": "runs/attempt-01/frame-1791364090667274287-ff01040f.png",
+      "sha256": "05524f5ef67c3a233abf07e0258c9f917e4930efa480d2e8f68a551d00a6cdfa",
+      "bytes": 251305,
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "verification": {
+    "source_files": 186,
+    "all_current_source_match_run_hashes_and_preparation_base_inventory": true,
+    "runtime_prep_pins": {
+      "runner.py": "1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab",
+      "aim-client.py": "ff435b59f495b09e9341eb3d140a2a8949ea9d1438281364b7b4515af7879331",
+      "snapshot_client.clj": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+      "snapshot.clj": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+      "PLAN.md": "7393de21f4e554091b978ed592171a0051094e88eda923373ce83669f840dc06",
+      "test_protocol.py": "069f01b8336be89bcd9270e74a96be9d7b485382fd821081371a82f3ee92aa47"
+    },
+    "preparation_manifest_entries": 21,
+    "all_prep_hashes_match": true,
+    "input_files_unchanged_during_audit": true
+  },
+  "input_inventory": {
+    "SHA256SUMS": {
+      "sha256": "ea70f70ecf5a15227f022e9b2f2042e9bd8dbf965bc665dd37f1387c3469a729",
+      "bytes": 1810
+    },
+    "SOURCE-EQUALITY.json": {
+      "sha256": "373081f73cf5df495e65f7b51539a5a9d6cb191dabf14e036c7d9d38f8e93d50",
+      "bytes": 39336
+    },
+    "attempt-01-clients/001-start.json": {
+      "sha256": "589159d814efa2db791b30089d9969b16d547aaf42d8de66da567acfcb9f30ad",
+      "bytes": 400
+    },
+    "attempt-01-clients/001-start.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/001-start.stdout": {
+      "sha256": "923ced39ca99dd3288662b48b37e349e9a94117c699e71b30f58cf53e9245ed1",
+      "bytes": 2005
+    },
+    "attempt-01-clients/002-inspect.json": {
+      "sha256": "7aa066e5a651a976dceb14028c3e2916fff6da8edce4c41b806bdf67acd6d738",
+      "bytes": 376
+    },
+    "attempt-01-clients/002-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/002-inspect.stdout": {
+      "sha256": "aff4baf70b645664739418584cf59c6036a77e07e94b69d750abe09b754b4c53",
+      "bytes": 115
+    },
+    "attempt-01-clients/003-manual.json": {
+      "sha256": "9b74ea3e14273a3a5e80c32bab8470593a110766541bc82a99d1a3b832488bf7",
+      "bytes": 381
+    },
+    "attempt-01-clients/003-manual.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/003-manual.stdout": {
+      "sha256": "0a5772185dfd12e34f146aef710ae2727280c8a915c2a47e40028638994a65e0",
+      "bytes": 115
+    },
+    "attempt-01-clients/004-open-spark.json": {
+      "sha256": "83066c64762e103271c80060e82f3bad64532640b5b961778437ee60e37281a1",
+      "bytes": 386
+    },
+    "attempt-01-clients/004-open-spark.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/004-open-spark.stdout": {
+      "sha256": "ad161695bef6d88ca9da9a4b6845ea3e8ec576df8ec26ac65b77936dcd5ed58e",
+      "bytes": 115
+    },
+    "attempt-01-clients/005-fine.json": {
+      "sha256": "eef9c04462e8ed53b31e58ef9b68dc55aeaaacacae8616bfdbee5fac46fb911a",
+      "bytes": 385
+    },
+    "attempt-01-clients/005-fine.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/005-fine.stdout": {
+      "sha256": "03e93e5232691f1ad65ae7d94298773d0235cbed9e5f1036d38b91307ac1e3be",
+      "bytes": 115
+    },
+    "attempt-01-clients/006-close-spark.json": {
+      "sha256": "02f995554b7791e057ffad0e1b154c6330c45a4f00280b26bce297fbe2426a0f",
+      "bytes": 387
+    },
+    "attempt-01-clients/006-close-spark.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/006-close-spark.stdout": {
+      "sha256": "bc42af27908822204d2d46ad3aed4be6a762d04a709a9aafb3a1dc113ab026bf",
+      "bytes": 115
+    },
+    "attempt-01-clients/007-lock-look.json": {
+      "sha256": "32363814c9d6eb5352d2dd0a26b99b87c158c596e120111de85fbe643c0a5716",
+      "bytes": 383
+    },
+    "attempt-01-clients/007-lock-look.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/007-lock-look.stdout": {
+      "sha256": "78a275d2ee6f22b7110cb0cb65d08e1377274b2017bfc5e153ee21a31b98079f",
+      "bytes": 115
+    },
+    "attempt-01-clients/008-frame-initial.json": {
+      "sha256": "c4cdb5cd52c935677be24c771e5c212e72d3ae0f79c971c6e689563fcb5f0850",
+      "bytes": 372
+    },
+    "attempt-01-clients/008-frame-initial.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/008-frame-initial.stdout": {
+      "sha256": "aa5abb5bd54a4c73745d67c77e5cae0e5adf8a92748c06db7c669f5ab27e345d",
+      "bytes": 115
+    },
+    "attempt-01-clients/009-inspect.json": {
+      "sha256": "e2ab696961cba86a24ca53b59689d17715ed2a68bc6d17059800c78a4674639f",
+      "bytes": 376
+    },
+    "attempt-01-clients/009-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/009-inspect.stdout": {
+      "sha256": "7371374e241c5fc4056ac57e5e1dfcbbcf74275911376b8a1996f656d8116443",
+      "bytes": 115
+    },
+    "attempt-01-clients/010-inspect.json": {
+      "sha256": "4bf0f2c28c56ba6dbdc1f15ec28aa7feb39889eadc7f18c36f3c5b1cd7b72452",
+      "bytes": 376
+    },
+    "attempt-01-clients/010-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/010-inspect.stdout": {
+      "sha256": "982ac51d48ca520534438061c7927b1727e53ac0c1e584a13dd247d4464d9df1",
+      "bytes": 115
+    },
+    "attempt-01-clients/011-candidate-inspect.json": {
+      "sha256": "6ea17c7f77a7190e08d582f6afdfc4c390a94cf000f86c22c1cb4c09d1c61749",
+      "bytes": 376
+    },
+    "attempt-01-clients/011-candidate-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/011-candidate-inspect.stdout": {
+      "sha256": "5bbd792c4b073429c188e397d08c35c70317a1ac242c455bda5f58a1efa67df7",
+      "bytes": 115
+    },
+    "attempt-01-clients/012-open-cursor.json": {
+      "sha256": "fb45cfe17307ac1922dbf370c038d5cd413f2bf6aeea1fe54bb4b910d535d987",
+      "bytes": 382
+    },
+    "attempt-01-clients/012-open-cursor.stderr": {
+      "sha256": "c8a842e78fc02f8118a4603cdb0741317eeb67cb3e89c89f17129a2a1407f244",
+      "bytes": 569
+    },
+    "attempt-01-clients/012-open-cursor.stdout": {
+      "sha256": "bf3d8edd0e78b4109abfab4163d36e7cb0ccacd848825c8c24b9a8e0781243a6",
+      "bytes": 210
+    },
+    "attempt-01-clients/poll-00.json": {
+      "sha256": "3f7b4be889e13294397b77575e94dac8a72092af20e96aa443a1728895109419",
+      "bytes": 375
+    },
+    "attempt-01-clients/poll-00.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-00.stdout": {
+      "sha256": "cd98fb2ee37f3d51009b9e54e4dc236d99a3e5781695786fee3d3f4d2b6d60df",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-01.json": {
+      "sha256": "dd905549c9e18e1147c81cfa76095657e119572e3d5f758fb4fd01083c9cf7f1",
+      "bytes": 376
+    },
+    "attempt-01-clients/poll-01.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-01.stdout": {
+      "sha256": "d5bbacfeeaac014095db497785dc3cae64281df351da7717edc3af348cc2d7e7",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-02.json": {
+      "sha256": "df34d71be0495781aa434d0cfaff82ab1c21e16839c7d16ce7fa04c37d1be3f6",
+      "bytes": 376
+    },
+    "attempt-01-clients/poll-02.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-02.stdout": {
+      "sha256": "e0174f1da92b3eabcb6e3f9a6acd5994a4375c3cf62766e970c34b37f46e3b62",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-03.json": {
+      "sha256": "57dee880a46b103f11b28b80a12a22da042f42dbb1f18d9b91cfe1ff608ff78e",
+      "bytes": 376
+    },
+    "attempt-01-clients/poll-03.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-03.stdout": {
+      "sha256": "f956beb3963a84bc102606f93eaf09ba771eb70b08352330775b9c40dea58c93",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-04.json": {
+      "sha256": "00b1ac850c3f1c073fc8e660c5a181369b107fa7a0e331623d6f4f8a94cec1d5",
+      "bytes": 376
+    },
+    "attempt-01-clients/poll-04.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-04.stdout": {
+      "sha256": "083669f59c9b6a1a35a1dd999a7a3995bd65fad5723953d05dcce2d086968395",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-05.json": {
+      "sha256": "95b301eae725a84187f3324844e9f34e11a7d21e5b9899069ac78628735e2c7d",
+      "bytes": 376
+    },
+    "attempt-01-clients/poll-05.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-05.stdout": {
+      "sha256": "788362a6f1d351c68b056559997da9c4fde3264e5f4bdf2cb324080318940945",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-06.json": {
+      "sha256": "915896a55d85f2766527859cbb974f5fd718ccd4e2688d26d284954c24364d4b",
+      "bytes": 376
+    },
+    "attempt-01-clients/poll-06.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-06.stdout": {
+      "sha256": "68a62c841e33066722eb35537d957498a82c751ca0847a7dc08a276e8d99c05e",
+      "bytes": 115
+    },
+    "attempt-01-clients/poll-07.json": {
+      "sha256": "771bd512e43eed8b262f69ff11518831ff79f949d35045f4a7e162a9b414d561",
+      "bytes": 375
+    },
+    "attempt-01-clients/poll-07.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "attempt-01-clients/poll-07.stdout": {
+      "sha256": "ee3b708b68f9f06c87da5bb5661f8b59864e5dab375732c55dd116331bde6d89",
+      "bytes": 115
+    },
+    "root-closure-observation.json": {
+      "sha256": "2feeffa18b297cc66816678994ac43e983d6b17aeae2e868a7a5718e9959280e",
+      "bytes": 3074
+    },
+    "root-execution-release.json": {
+      "sha256": "14181bc513318dfac58bde439f8c5cb4d6731540b77c7d20d676a4b4244d6b52",
+      "bytes": 2898
+    },
+    "runs/attempt-01/001-xvfb.stderr": {
+      "sha256": "2469f66a930ba9ffe3f3e4c63757e39c18423ae06d18c698253227f32217b205",
+      "bytes": 2480
+    },
+    "runs/attempt-01/001-xvfb.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/002-runtime.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/002-runtime.stdout": {
+      "sha256": "537796f5b1fe6f004aebeeb905c18e3fb4280349c38cd31d58d3b6d44c083024",
+      "bytes": 101660
+    },
+    "runs/attempt-01/003-snapshot-client.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/003-snapshot-client.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/004-window-id.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/004-window-id.stdout": {
+      "sha256": "c2b401c52534ca4003a9ff1ed1aef38ffcea2021dae51b222c16208cc00a7fd4",
+      "bytes": 8
+    },
+    "runs/attempt-01/005-focus-owned-window.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/005-focus-owned-window.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/006-tap.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/006-tap.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/007-release-keys.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/007-release-keys.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/008-menu-position.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/008-menu-position.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/009-menu-press.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/009-menu-press.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/010-release-mouse.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/010-release-mouse.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/011-menu-position.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/011-menu-position.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/012-menu-press.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/012-menu-press.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/013-release-mouse.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/013-release-mouse.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/014-menu-position.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/014-menu-position.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/015-menu-press.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/015-menu-press.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/016-release-mouse.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/016-release-mouse.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/017-tap.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/017-tap.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/018-release-keys.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/018-release-keys.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/019-frame.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/019-frame.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/020-tap.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/020-tap.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/021-release-keys.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/021-release-keys.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/022-release-keys.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/022-release-keys.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/STOP": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/closed.json": {
+      "sha256": "638c00050a84dfb96d3d9bcd40b8331d517ce6effb6048c492708e5be99b18b7",
+      "bytes": 2488
+    },
+    "runs/attempt-01/display.txt": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2
+    },
+    "runs/attempt-01/frame-1791364090667274287-ff01040f.png": {
+      "sha256": "05524f5ef67c3a233abf07e0258c9f917e4930efa480d2e8f68a551d00a6cdfa",
+      "bytes": 251305
+    },
+    "runs/attempt-01/operations.jsonl": {
+      "sha256": "12bbc8d992fcdf36cedc8d85fda3089f667da67f112c5a715371171304b39e64",
+      "bytes": 53603
+    },
+    "runs/attempt-01/operator.lock": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/preparation-hashes.json": {
+      "sha256": "3689e67a41c3e5ac370fa376f9189b80079230a458631007887f518e8e31f7b8",
+      "bytes": 523
+    },
+    "runs/attempt-01/requests/1791363891233861668-5e8750a9.json": {
+      "sha256": "4ba31a76e9ab5e7aaf5fdc799689a84e33e867e50990255056b57ba121c711bc",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791363898808454874-27f81133.json": {
+      "sha256": "72f81b5f0f0703a724200a39829e52f9f2cb08044d14ae42156e7756a4582942",
+      "bytes": 134
+    },
+    "runs/attempt-01/requests/1791363918813938864-c983a814.json": {
+      "sha256": "f46fac4d19d9f0fd4f9acf221fe532287a113cc8b4adc9a1a5f7f94d9724ec88",
+      "bytes": 140
+    },
+    "runs/attempt-01/requests/1791363941650276304-f8853a54.json": {
+      "sha256": "7ce42b513d88331ee8977f849e34be20a76faa9c7e0611ab51f8eef8fdda3afc",
+      "bytes": 139
+    },
+    "runs/attempt-01/requests/1791363980471035121-380600bd.json": {
+      "sha256": "0d82e21b24154abc9b9a70b8f4a807e1ffc3f120e572e4d67719198c2bba53e9",
+      "bytes": 140
+    },
+    "runs/attempt-01/requests/1791364053248380836-469fc803.json": {
+      "sha256": "2dbe5e234dc86b2ab1181e413e4dd62f980f3ce402476e17d70254ed4ecd5cdc",
+      "bytes": 136
+    },
+    "runs/attempt-01/requests/1791364090667274287-ff01040f.json": {
+      "sha256": "945ee86f5225262d56e1bca8c426e3e798e19253073e1ba1d3aac0f6a7c6fc6e",
+      "bytes": 125
+    },
+    "runs/attempt-01/requests/1791364101145547656-b6a0d0cd.json": {
+      "sha256": "29143a3883af30d4908062eb65e11f4360b8112d8f25b1903f365dbfbed74554",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364172295546564-c402b3a8.json": {
+      "sha256": "3712590a615ae70a034617dfc6b470961ed11930464104b80dc970475c356bee",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364268759308811-7fd9d57f.json": {
+      "sha256": "5068ad119efa104359aaff84f269b57dd8ea3836d34d7cc8b999fecc32ad32a1",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364299571753338-4f785310.json": {
+      "sha256": "81ef37c090c907e5a980484959df704e1788e3523f526c4f58d365ae1b6e7e1e",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364330217704849-f6905486.json": {
+      "sha256": "99ff9e40dbb8d40b2dd1e8e72fab60087ec7963b047772fb0892a584cde7f60c",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364360975218388-eb73eb84.json": {
+      "sha256": "c01ad83c542bfcfe728e094b99b76e8ee7df8aeccbd1cc85134903c7c826bd76",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364391581770234-02a5fd93.json": {
+      "sha256": "1533ff9fc8261b32eaa91ab133370274c8c9dd76c36ab15aba84fb8ec5c6f6c0",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364422233271874-5f4d4eec.json": {
+      "sha256": "8e3517d10efe9ee8d77a7c6bcfa23feefe7f82409a0bf533cc3cb3cc65d3083e",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364453064566460-e39bae4e.json": {
+      "sha256": "c7666224173d30c3fdd8a5abed4eb0d50eeb320e3fec1990e078763f3ba27a89",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364483637862896-e542ca4a.json": {
+      "sha256": "cfa4925fe073ec78024fc3005bc3768b643674eedbdfc08dfc1c24e6346aa353",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364527379939435-a2cdffd9.json": {
+      "sha256": "29eb2823c301ce5434bfc1d3c8b39e5e666a7428da6caceaa2643fd80402c3d1",
+      "bytes": 127
+    },
+    "runs/attempt-01/requests/1791364571906382066-35bab36a.json": {
+      "sha256": "b61c600bc8df1d37087b063ff5563e32b92da8ea3c51676855e4a3ddb6985bbf",
+      "bytes": 136
+    },
+    "runs/attempt-01/results/1791363891233861668-5e8750a9.json": {
+      "sha256": "65e151e8eb292a557cf56688efcaf73ce08668f18b66a1ce059c3d9926a2051d",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791363898808454874-27f81133.json": {
+      "sha256": "908a1391a3bbb1e89d329e4ca793ecb8a7ce4d28ebaf0619a93ba6b02fbdf428",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791363918813938864-c983a814.json": {
+      "sha256": "60daa528b7f7fae8fe7c043447da4221f437dcbadd299f4b9165ae0b1e537b60",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791363941650276304-f8853a54.json": {
+      "sha256": "105a053e6aacb84a5ce20e7697a141b763b46573d7dc749f5d67816dbd9c1895",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791363980471035121-380600bd.json": {
+      "sha256": "b355b4760ebeb75c3a17c9a7550b399aa2c754566259ede4131675bb5e7421b6",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364053248380836-469fc803.json": {
+      "sha256": "35c1420e9da49034a843b5eb7ff16f2b5cebd13859d79cc7cb128e330e7ef5e1",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364090667274287-ff01040f.json": {
+      "sha256": "b8a2a02ac3762cec06196bb8caa80d87816ae114326fb3b40f984a3bc83d3825",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364101145547656-b6a0d0cd.json": {
+      "sha256": "6137d0b3eb64d83ff16f4f19b32b257e2f3de05a15e8982f3cc7e010878c0d51",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364172295546564-c402b3a8.json": {
+      "sha256": "d078aa08b3302d09a6e7591d76a7363ff0d9d176f0a5f8a67d425b9abbb4b2c9",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364268759308811-7fd9d57f.json": {
+      "sha256": "c24ccb0a28db49910439dc267cfdcd4a3eac8406e170cd0c2131228d28e72066",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364299571753338-4f785310.json": {
+      "sha256": "551135599fc4c42d350a22542d491c30b7bc137a3606e6430f5b59faa7cbaecb",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364330217704849-f6905486.json": {
+      "sha256": "62df68fb43d3beb912dc59655d5b36768ffd63ef425dd84274aaf76e0374c008",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364360975218388-eb73eb84.json": {
+      "sha256": "368705b2a61f2aa99c585af9a8bbe91f4360461ceb11baf0f495eaff490a71be",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364391581770234-02a5fd93.json": {
+      "sha256": "959ef4c8a9a2a5679ab6a611685167235df145d2faa09661c1792aab98f2b907",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364422233271874-5f4d4eec.json": {
+      "sha256": "8cfc6eb849de95da3746eae912ce906f484e9c1c0067faea3d8f5742c72ea23c",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364453064566460-e39bae4e.json": {
+      "sha256": "d93cbd86afe87e0812805f68dc94063d222aedb0cff18f19fb1fbd350f234436",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364483637862896-e542ca4a.json": {
+      "sha256": "6087c45e0edad8def5129a56d395e8808bb9eb12a20d5c4c8097539c045db7de",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364527379939435-a2cdffd9.json": {
+      "sha256": "64941d68626428690e745fb3db3a9b4a1d9eb8f1b7311dfa9dcfbd853acae89e",
+      "bytes": 70
+    },
+    "runs/attempt-01/results/1791364571906382066-35bab36a.json": {
+      "sha256": "5a1ec3268ebae49e842f0d460ffbdc23aaad37dfa411e770755e7f990bdc298c",
+      "bytes": 165
+    },
+    "runs/attempt-01/snapshot-client-close": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/snapshot-client-config.edn": {
+      "sha256": "9ab714671fcb4a3ccf108d2b764a293be85408f6fb8dd13e804c29627a2432d4",
+      "bytes": 214
+    },
+    "runs/attempt-01/snapshot-client-ready": {
+      "sha256": "ed1a545bb85e55816bbf9566b028b2a0bc456b88f49f6f266c0401048824194b",
+      "bytes": 6
+    },
+    "runs/attempt-01/snapshot-current-request.edn": {
+      "sha256": "dd98c1105f7320c2c7c05b3bc1cb88e2ea3d9c9827d420bd038d4eddf6b043ad",
+      "bytes": 31
+    },
+    "runs/attempt-01/snapshot-current.result": {
+      "sha256": "ee41a170c310524cc8f9000c41894beff06fa86544019b230230520df13c2958",
+      "bytes": 8
+    },
+    "runs/attempt-01/snapshot-current.stdout": {
+      "sha256": "ae0905917b93171d173f1cdcbea77dcb18f03bf8bc0721491dba616c73562d60",
+      "bytes": 18911
+    },
+    "runs/attempt-01/snapshot-messages.edn": {
+      "sha256": "9063379d2f6607841656e1c830ecb349128bc6bb825eb53a193662b244b588c6",
+      "bytes": 337000
+    },
+    "runs/attempt-01/snapshot-requests.edn": {
+      "sha256": "3156f7329ef6a6a43de0411ff36f9feb4bb638d9c7aba685fa9d255c8b1b721e",
+      "bytes": 26220
+    },
+    "runs/attempt-01/source-hashes.json": {
+      "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61",
+      "bytes": 18753
+    },
+    "runs/attempt-01/state.json": {
+      "sha256": "638c00050a84dfb96d3d9bcd40b8331d517ce6effb6048c492708e5be99b18b7",
+      "bytes": 2488
+    },
+    "runs/attempt-01/supervisor-launch.json": {
+      "sha256": "14b9a46d892d61d15c6a66a24414ac558f13dcc656763474cbb7c6c28955a7a0",
+      "bytes": 496
+    },
+    "runs/attempt-01/supervisor.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/attempt-01/supervisor.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "limits": [
+    "No supervisor target admission; 1010 was root intent only.",
+    "D changed from Cruise to Fine only; proposed3.75e13 was never applied.",
+    "No aim/look/thrust/pursuit, sustained overlap, binding, commitment, sculpt, embodiment or Gate.",
+    "Fresh handoff and stored/current readiness are separate observations; no present habitability inference.",
+    "Automatic T960 no-target and terminal-commitment runtime paths were not exercised because failure occurred atT744.1155.",
+    "One early full-display PNG before natural targets, no video or observed post-formation visual proof.",
+    "Current source hashes and recorded base inventory prove files, not a fresh gameplay test suite or benchmark."
+  ]
+}

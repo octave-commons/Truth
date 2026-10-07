@@ -1,0 +1,86 @@
+{
+  "at": "2026-10-07T09:20:11.955912+00:00",
+  "closed_sha256": "638c00050a84dfb96d3d9bcd40b8331d517ce6effb6048c492708e5be99b18b7",
+  "current_boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "process_absence": {
+    "supervisor": {
+      "recorded": {
+        "pid": 2985836,
+        "start": "3133155",
+        "state": "R",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+        "exe": "/usr/bin/python3.12"
+      },
+      "proc_pid_exists": false
+    },
+    "xvfb": {
+      "recorded": {
+        "pid": 2985845,
+        "start": "3133163",
+        "state": "S",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+        "exe": "/usr/bin/Xvfb"
+      },
+      "proc_pid_exists": false
+    },
+    "app": {
+      "recorded": {
+        "pid": 2985932,
+        "start": "3133386",
+        "state": "S",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+        "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+      },
+      "proc_pid_exists": false
+    },
+    "snapshot_client": {
+      "recorded": {
+        "pid": 2987284,
+        "start": "3134593",
+        "state": "S",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-ready-candidate-approach",
+        "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+      },
+      "proc_pid_exists": false
+    }
+  },
+  "read_only_poller": {
+    "tool_exec_session": 36050,
+    "tool_reported_exit": 0,
+    "max_observations": 20,
+    "actual_observations": 8,
+    "interval_sleep_seconds": 30,
+    "clipped_to_original_no_target_deadline": true,
+    "stopped_reason": "first observed stored+ready row, no target selection or gameplay input",
+    "outer_client_metadata": "attempt-01-clients/poll-00.json throughpoll-07.json",
+    "scope": "Root tool command transcript, not independently saved parent process telemetry"
+  },
+  "root_target_intent": {
+    "id": 1010,
+    "reason": "nearest ofthree stored+ready naturalplanets atsample4319",
+    "recorded_range_au": 154761.2412231545,
+    "proposed_D": 37500000000000.0,
+    "not_applied": true,
+    "successful_supervisor_admission": false
+  },
+  "late_callback_log": {
+    "file": "runs/attempt-01/002-runtime.stdout",
+    "sha256": "537796f5b1fe6f004aebeeb905c18e3fb4280349c38cd31d58d3b6d44c083024",
+    "occurrences": [
+      [
+        10,
+        "UI cursor : locked"
+      ],
+      [
+        1505,
+        "UI cursor : free"
+      ]
+    ],
+    "limit": "stdout lacks event timestamps; line ordering does not identify exact callback time relative to snapshot observations. Key callback source prints label after config swap, so event eventually reached callback; no late config snapshot was captured."
+  },
+  "native_outcome": "failed tap-Tab postcondition; no retry/aim/thrust; cleanup clear; not a gameplay success"
+}

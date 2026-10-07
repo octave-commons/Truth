@@ -1,0 +1,6 @@
+{
+  "full_changed_diff_exit": 2,
+  "full_output": ".ημ/diagnostics/commit-ready-approach/runs/attempt-01/002-runtime.stdout:797: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1001 demanded 29906 [kinematics-ws] K clamp binds: eidclamped  40961002 \n.ημ/diagnostics/commit-ready-approach/runs/attempt-01/002-runtime.stdout:1016: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1003 demanded 7202 clamped 4096[kinematics-ws] K clamp binds: eid \n.ημ/diagnostics/commit-ready-approach/runs/attempt-01/002-runtime.stdout:1023: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1003 demanded 7204 [kinematics-ws] K clamp binds: eidclamped  40961002 \n.ημ/diagnostics/commit-ready-approach/runs/attempt-01/002-runtime.stdout:1376: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1001 demanded 30117 [kinematics-ws] K clamp binds: eidclamped  40961003 demanded 7243 clamped \n.ημ/diagnostics/commit-ready-approach/runs/attempt-01/002-runtime.stdout:1463: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1003 1001demanded  7234 clamped demanded 409630175 clamped \n",
+  "nonraw_changed_paths_exit": 0,
+  "raw_bytes_preserved": true
+}
