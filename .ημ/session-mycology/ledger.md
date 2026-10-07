@@ -359,3 +359,12 @@
   spore: none
   receipt-refs: 2026-10-07T02:51:37.172779747Z
   note: Separate palette identity from price before treating two numbers as a conflict: Genesis Grow and planetary Biosphere are different unlocks. Follow canonical economy authority rather than a newer draft wholesale. An inert helper and post-fold event precedent do not prove a paid native interaction or atomic settlement. Keep missing price, clock and representation decisions explicit; preserve Incoming and append provenance. Independent review identified lifecycle reaping order, now recorded. No spore created or promoted.
+- ts: 2026-10-07T03:26:35.656948Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Repair two semantic source citations after Grow design expansion
+  p-efficiency: 0.85
+  p-friction: 0.25
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: 2026-10-07T03:26:35.656948Z, review5437247456
+  note: A resolving Markdown file link does not prove a line fragment still names the cited policy; inspect actual heading text after insertions. Bounded citation repair only, with original verification limits retained.

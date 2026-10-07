@@ -58,7 +58,7 @@ code through ordinary UI. The accepted [flight design §5.2](../designs/spark-fl
 labels these views debug/cinematic, so this cannot close the explicit manual
 flight acceptance. It also cannot create life or a fresh eligible candidate.
 The superseded Commit-menu description is not authority to add a bypass button:
-[The First Narrowing §3](../designs/the-first-narrowing-star-to-planet.md#L83)
+[The First Narrowing §3](../designs/the-first-narrowing-star-to-planet.md#L94)
 makes commitment a sustained-attention horizon.
 
 ## Reopen the data-only time lock, then define its consumer precisely
@@ -72,7 +72,7 @@ Canonical title searches for time/Time, lock, cadence, and scheduler found no
 separate implementation card. Record this gap on the existing UUID and reopen
 the unmet acceptance through Rheos; do not create another “completed lock”.
 
-(世, p=0.99) [Commitment & Resonance §5](../designs/commitment-and-resonance.md#L130)
+(世, p=0.99) [Commitment & Resonance §5](../designs/commitment-and-resonance.md#L240)
 already supplies the product policy: immediate neighborhood (including the
 committed world and moons) gets 1 simulation second per wall second, optionally
 slower; regional/global work uses the same ECS at lower update frequency. It

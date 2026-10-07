@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, ecology, input, playable-gate"
 parent: "embodied-character-voxel-mode"
 type: "task"
-write-id: "1791341383104-0.wun97mu4u92z8dtwb6"
+write-id: "1791343570689-0.tjenojemowoon7d35y"
 points: "3"
 title: "Specify one causal native biosphere action on the committed world"
 priority: "P1"
@@ -46,5 +46,7 @@ The inherited helper may assume a different phase/target or charge resources inc
 Planning refinement from independent review, included while this card is Incoming: coordinate time-unit and cadence decisions with committed-clock-executable-policy. Independent interface research may proceed while that policy is reviewed; any consumer that depends on unresolved clock semantics must identify the dependency explicitly. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
 
 Design-only continuation on existing PR12 lineage96b19f086707388e43f272e5ec87a3a7378d4c4c: docs/designs/commitment-and-resonance.md §4.4.1 now proposes one Grow request on the already committed world; the older prototype entry links to it. Recovered authority distinguishes Agency activation from Resonance unlock, Genesis Grow1 from committed Biosphere2, and existing prokaryotic helper effects from represented organisms. The proposed existing-queue → sole ecology writer → serial post-fold payment/result boundary grants no implementation admission. Activation amount, cooldown clock, unlock/request/result representation, budget/dedup ownership, passive ordering and same-fold target removal remain explicit blocking review decisions; current reaping order means event precedent alone is not atomic payment proof. Existing committed-clock-executable-policy remains separate. Independent source/authority review found no blocker to publishing this proposal; all17 added local links/heading fragments resolve and diff whitespace is clean. Source/tests/runtime unchanged; no native action, test run, state transition, key binding, card body rewrite or review request. Preserve Incoming3 until the design and later consumer prerequisites are actually reviewed.
+
+PR12 MiMo review5437247456 found two inaccurate route-audit line citations on 0be81e75bc9cbca4929f793a8bbfdffa85d8543b. Verified actual section headings and corrected First Narrowing section3 from L83 to L94 and Commitment and Resonance section5 from L130 to L240. The latter moved because the Grow proposal inserted 110 lines. Earlier added-link existence verification did not verify these two existing semantic citation targets; this comment narrows that verification claim. No design, source, tests, runtime, card body or status change. Incoming3 and all unresolved Grow admission choices remain.
 
 ---
