@@ -1,0 +1,197 @@
+{
+  "status": "ADMISSION_ONLY_PUBLICATION_DRAFT_VERIFIED",
+  "at": "2026-10-07T21:28:54.483396+00:00",
+  "producer_saved_before_initial_build": {
+    "path": ".ημ/diagnostics/active-influence-admission-publication/package.py",
+    "sha256": "d2b4f4535ac8642fd872fe4bfa674c9eb82eff62438c2668f60e216d470ecb67"
+  },
+  "source_AST_parse": "PASS; no import/effect execution",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        ".ημ/diagnostics/active-influence-admission-publication/package.py"
+      ],
+      "at": "2026-10-07T21:28:53.820081+00:00",
+      "elapsed_s": 0.002409724998869933,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        ".ημ/diagnostics/active-influence-admission-publication/package.py",
+        "--build"
+      ],
+      "at": "2026-10-07T21:28:53.822590+00:00",
+      "elapsed_s": 0.296742867998546,
+      "exit": 0,
+      "stdout": "{\n  \"verified\": true,\n  \"mode\": {\n    \"build\": true,\n    \"verify_originals\": false,\n    \"extract\": null\n  },\n  \"packed\": 14,\n  \"decoded_bytes\": 766281,\n  \"archive_bytes\": 806043,\n  \"empty_files\": 0,\n  \"direct_companions\": 6,\n  \"staging_paths\": 11,\n  \"cumulative_paths\": 16,\n  \"MAP_sha256\": \"ca0d3f1cfefc4c140f8fbfbe15883149e1c451bb86ef3aba86c2360c6dbdc595\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        ".ημ/diagnostics/active-influence-admission-publication/package.py"
+      ],
+      "at": "2026-10-07T21:28:54.119554+00:00",
+      "elapsed_s": 0.07916838800883852,
+      "exit": 0,
+      "stdout": "{\n  \"verified\": true,\n  \"mode\": {\n    \"build\": false,\n    \"verify_originals\": false,\n    \"extract\": null\n  },\n  \"packed\": 14,\n  \"decoded_bytes\": 766281,\n  \"archive_bytes\": 806043,\n  \"empty_files\": 0,\n  \"direct_companions\": 6,\n  \"staging_paths\": 11,\n  \"cumulative_paths\": 16,\n  \"MAP_sha256\": \"ca0d3f1cfefc4c140f8fbfbe15883149e1c451bb86ef3aba86c2360c6dbdc595\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        ".ημ/diagnostics/active-influence-admission-publication/package.py",
+        "--verify-originals"
+      ],
+      "at": "2026-10-07T21:28:54.198934+00:00",
+      "elapsed_s": 0.12966568500269204,
+      "exit": 0,
+      "stdout": "{\n  \"verified\": true,\n  \"mode\": {\n    \"build\": false,\n    \"verify_originals\": true,\n    \"extract\": null\n  },\n  \"packed\": 14,\n  \"decoded_bytes\": 766281,\n  \"archive_bytes\": 806043,\n  \"empty_files\": 0,\n  \"direct_companions\": 6,\n  \"staging_paths\": 11,\n  \"cumulative_paths\": 16,\n  \"MAP_sha256\": \"ca0d3f1cfefc4c140f8fbfbe15883149e1c451bb86ef3aba86c2360c6dbdc595\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "HEAD",
+        "--",
+        ".ημ/receipts.edn",
+        ".ημ/session-mycology/ledger.md",
+        "docs/designs/player-active-influence.md",
+        "kanban/tasks/.events/ledger.edn",
+        "kanban/tasks/remove-passive-halo-invert-influence.md"
+      ],
+      "at": "2026-10-07T21:28:54.415613+00:00",
+      "elapsed_s": 0.04327851800189819,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        ".ημ/diagnostics/active-influence-admission-publication/MAP.json"
+      ],
+      "at": "2026-10-07T21:28:54.458975+00:00",
+      "elapsed_s": 0.004954520001774654,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        ".ημ/diagnostics/active-influence-admission-publication/STAGING.txt"
+      ],
+      "at": "2026-10-07T21:28:54.463978+00:00",
+      "elapsed_s": 0.004717229996458627,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl"
+      ],
+      "at": "2026-10-07T21:28:54.468732+00:00",
+      "elapsed_s": 0.006926789996214211,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        ".ημ/diagnostics/active-influence-admission-publication/package.py"
+      ],
+      "at": "2026-10-07T21:28:54.475693+00:00",
+      "elapsed_s": 0.0030515109974658117,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        ".ημ/diagnostics/active-influence-admission/root-result.json"
+      ],
+      "at": "2026-10-07T21:28:54.478782+00:00",
+      "elapsed_s": 0.002257735002785921,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "whitespace": {
+    "tracked_against_HEAD": [
+      ".ημ/receipts.edn",
+      ".ημ/session-mycology/ledger.md",
+      "docs/designs/player-active-influence.md",
+      "kanban/tasks/.events/ledger.edn",
+      "kanban/tasks/remove-passive-halo-invert-influence.md"
+    ],
+    "new_against_dev_null": [
+      ".ημ/diagnostics/active-influence-admission-publication/GENERATION.json",
+      ".ημ/diagnostics/active-influence-admission-publication/MAP.json",
+      ".ημ/diagnostics/active-influence-admission-publication/STAGING.txt",
+      ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl",
+      ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      ".ημ/diagnostics/active-influence-admission/root-result.json"
+    ],
+    "result": "PASS for all existing files above. Final GENERATION bytes will be checked separately after this record is written; not retroactively claimed. no-index exit1 with empty diagnostics denotes clean present diff."
+  },
+  "files_bound_before_this_record": [
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      "bytes": 12983,
+      "sha256": "d2b4f4535ac8642fd872fe4bfa674c9eb82eff62438c2668f60e216d470ecb67"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl",
+      "bytes": 806043,
+      "sha256": "95a261ada203c5b53658f63a434de6424098ce02404da03b6a18c27780c94b7c"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/MAP.json",
+      "bytes": 15535,
+      "sha256": "ca0d3f1cfefc4c140f8fbfbe15883149e1c451bb86ef3aba86c2360c6dbdc595"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/STAGING.txt",
+      "bytes": 587,
+      "sha256": "16ac4ae3b52a5f0bc115f6aea780b238395da0afa7e1ce7028f68c885f4b2b0a"
+    }
+  ],
+  "index": "Empty at verification; parent stages exact paths and runs cached diff-check before committing.",
+  "scope": "All twelve root admission originals preserved: eleven packed plus root-result direct; exact old design and preparation/append inputs also packed. No new runtime, board or source operation; prior raw decode-error classification remains rooted in root-result. No missing traceback or historical command invented."
+}

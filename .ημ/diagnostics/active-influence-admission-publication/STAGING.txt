@@ -1,0 +1,11 @@
+.ημ/diagnostics/active-influence-admission-publication/GENERATION.json
+.ημ/diagnostics/active-influence-admission-publication/MAP.json
+.ημ/diagnostics/active-influence-admission-publication/STAGING.txt
+.ημ/diagnostics/active-influence-admission-publication/evidence.jsonl
+.ημ/diagnostics/active-influence-admission-publication/package.py
+.ημ/diagnostics/active-influence-admission/root-result.json
+.ημ/receipts.edn
+.ημ/session-mycology/ledger.md
+docs/designs/player-active-influence.md
+kanban/tasks/.events/ledger.edn
+kanban/tasks/remove-passive-halo-invert-influence.md

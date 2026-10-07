@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-07T07:09:12.866887+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "owner": "remove-passive-halo-invert-influence",
+  "comment": "2026-10-07 design refinement only; Todo2 is historical authored state, not proof of current Ready admission. Source/history recovery found no chosen post-redesign paid-well compensation. Write a bounded research-backed design preserving BOTH owner outcomes: remove passive focus-centered force and strengthen deliberate paid fields. Proposed experiment selects default mass factor0.5->1.0, retains15 agency cost,4e15m Plummer scale,600tick TTL, current falloff/decay/cap/lifecycle, and explicitly includes repulsor symmetry. This is a proposed toy gameplay default for review and later measurement, not empirically calibrated balance or an always-double acceleration claim. Enumerate current emitter/registry/integrator/SoA/orbital/facade/bootstrap/menu/readout removals; preserve physical Spark gravity, dark-matter field and shared paid influence helpers. Acceptance requires actual pipeline absence of passive force under focus changes, stronger uncapped matched-input paid effect with cap/payment/no-funds/expiry invariants, and later ordinary G gathering evidence. Correct stale scope and conservation/ejection claims in the design rather than silently narrowing the task. No production code, new feature admission, state transition, tuning runtime or Done claim. Detailed implementation size remains to be assessed against full scope after design review; owner body/state/estimate remain unchanged here.",
+  "body_frontmatter_preserved": true,
+  "comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 634461,
+  "prior_ledger_sha256": "1b3c25bdee52edc8026ab37403f47c81cf7f37fb0086dc2eaa0fd8dafe1fab8e",
+  "events_appended": 1,
+  "canonical_frontmatter": {
+    "category": "specs",
+    "labels": [
+      "domain",
+      "physics",
+      "player",
+      "spark-redesign"
+    ],
+    "write-id": "1791356952282-0.ciwce7zfh9wx6akyqn9",
+    "source": "kanban/tasks/remove-passive-halo-invert-influence.md",
+    "title": "Invert influence: remove the passive spark halo, strengthen paid wells",
+    "priority": "P1",
+    "status": "todo",
+    "estimate": "2",
+    "uuid": "remove-passive-halo-invert-influence",
+    "created_at": "2026-07-23T00:00:00Z"
+  }
+}
