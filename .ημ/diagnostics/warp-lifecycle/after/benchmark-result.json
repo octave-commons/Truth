@@ -1,0 +1,22 @@
+{
+  "exit_code": 0,
+  "completed_at": "2026-10-07T00:54:40.308681+00:00",
+  "pid": 212179,
+  "reaped": true,
+  "source_sha256": {
+    "src/domain/intervention.clj": "eed4697f04bf96ce8bdabc0e08b64c63bd296a0d9cc958b49574bbef643c74a8",
+    "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+    "src/domain/integrator.clj": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+    "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+    "src/domain/physics/cache/soa.clj": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+    "src/domain/stellar/merge.clj": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+    "src/domain/ecs/registry.clj": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+    "test/domain/warp_lifecycle_test.clj": "3c15b3fae0194f0d413a347224d6e7f835af90825c16781a699859bb472393ad",
+    "bench/gates_of_truth/bench.clj": "df2abd5cc5270f6843e2e7d3d078402e46ecbe774af5eb74529bab219743b3a1",
+    "bench/gates_of_truth/bench/phase0.clj": "9d7d731106cb3161658c87546cf20125e48acb1610d2a472a8cbd93d94bef543",
+    ".\u03b7\u03bc/diagnostics/warp-lifecycle/evidence/warp.clj": "deba81148f3b94a19de736beb54dab9c36eb43a10a9c2f14c3d460e8eea40ed2",
+    ".\u03b7\u03bc/diagnostics/warp-lifecycle/fixtures.edn": "2c275009a46b8bc813bd1541e7b3bdb73d51e1e7d2112b8aa0a1962f3b6fa096"
+  },
+  "source_unchanged": true,
+  "log_sha256": "bfc027bc6c79e1794e2597c6adcd37e2eb8aca3c979fd09b8a4f2d4b4dd2f0ad"
+}

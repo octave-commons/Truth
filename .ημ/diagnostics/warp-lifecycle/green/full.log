@@ -1,0 +1,288 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing benchmark-coverage-test
+
+Testing domain.arc-test
+
+Testing domain.chemistry-system-test
+
+Testing domain.chemistry-test
+
+Testing domain.classifier-test
+
+Testing domain.collision-malleability-test
+
+Testing domain.commitment-test
+
+Testing domain.condensation-seeder-test
+
+Testing domain.debris-reaper-test
+
+Testing domain.differentiation-test
+
+Testing domain.disk-evolution-test
+[disk-evolution] fragment spawn blocked: hill-clamp-below-floor eid 0 {:branch :gi, :r-hill-max-m 2.5580997604403305E10, :floor-m 4.487936121E10}
+[disk-evolution] fragment spawn blocked: clump-scale-disk eid 0 {:branch :gi, :r-disk-m 1.495978646927621E15, :gate-m 1.495978707E13}
+
+Testing domain.dominant-star-test
+
+Testing domain.ecology-test
+
+Testing domain.ecs.core-test
+
+Testing domain.ecs.dsl-test
+
+Testing domain.ecs.event-test
+
+Testing domain.ecs.ledger-test
+
+Testing domain.ecs.parallel-integration-test
+
+Testing domain.ecs.rewind-test
+
+Testing domain.ecs.tick-test
+
+Testing domain.ecs.timeline-test
+
+Testing domain.em-field-substrate-test
+
+Testing domain.em-lorentz-test
+
+Testing domain.em-test
+
+Testing domain.eos-test
+
+Testing domain.field-cell-test
+
+Testing domain.field-test
+
+Testing domain.focus-conservation-test
+
+Testing domain.focus-zone-test
+
+Testing domain.force-accumulator-test
+
+Testing domain.formation-integration-test
+
+Testing domain.formation-test
+
+Testing domain.genesis.formation-progress-test
+
+Testing domain.genesis.handoff-test
+
+Testing domain.genesis-seed-test
+
+Testing domain.genesis-test
+
+Testing domain.gravity.barnes-hut-test
+
+Testing domain.gravity.dark-matter-test
+
+Testing domain.gravity.pair-softening-test
+
+Testing domain.hydro-test
+
+Testing domain.integrator.universal-substep-test
+[fling-test] K observed at 5 AU, dt=80 yr (parent-orbit criterion): 142
+[fling-test] max per-tick |Δv| over 1000 ticks: 13354.933910102105 m/s; max separation: 5.232640649001779 AU; E_J span: 184216.17256879807 vs |E0| = 2.883781984398975E9 ; z-crossings: 305 vs full-time ≈ 14179
+[no-parent-test] K observed (acceleration criterion, no orbit): 112
+[uniform-test] K observed (acceleration criterion, no gravity sources): 15
+[slingshot-test] raw-Euler one-tick kick at periapsis (a·dt): 593286.4511859198 m/s
+[slingshot-test] max per-tick |Δv|: 15882.065963301036 ; r range (AU): [9.046166136999053 19.27632431459561] ; E range: [-3.8419272363080636E7 -3.2885281004241325E7] vs E0 = -3.553638832641485E7 ; L/L0 range: [1.0074833900273419 1.187982339567031]
+
+Testing domain.interior-test
+
+Testing domain.intervention-test
+
+Testing domain.life-arc-test
+
+Testing domain.lod-test
+
+Testing domain.mass-transfer-test
+
+Testing domain.mhd-force-test
+
+Testing domain.motion-trail-test
+
+Testing domain.naming-test
+
+Testing domain.narrative-test
+
+Testing domain.narrowing-test
+
+Testing domain.observer-influence-test
+
+Testing domain.orbital.kepler-reuse-test
+
+Testing domain.orbital.kepler-test
+
+Testing domain.orbital.multi-timescale-regression-test
+Observed K at 5 AU, dt=80 yr, live softening: 142
+
+Testing domain.orbital.split-test
+
+Testing domain.orbital.system-test
+
+Testing domain.orbital-stability-test
+
+Testing domain.physics.cache-test
+
+Testing domain.physics.collision-test
+
+Testing domain.physics.soa-cache-test
+
+Testing domain.pilot-resolve-seam-test
+
+Testing domain.player-test
+
+Testing domain.profile-test
+
+Testing domain.regime-test
+
+Testing domain.rotation-test
+
+Testing domain.spark-body-test
+
+Testing domain.spatial.index-test
+
+Testing domain.stellar-classification-test
+
+Testing domain.stellar-test
+
+Testing domain.stellar-wind-test
+
+Testing domain.structure-test
+
+Testing domain.time-slip-test
+
+Testing domain.voxel-carve-test
+
+Testing domain.voxel-focus-test
+
+Testing domain.voxel-load-test
+
+Testing domain.voxel-sculpt-test
+
+Testing domain.warp-lifecycle-test
+
+Testing domain.world-bootstrap-test
+
+Testing infra.appearance-test
+
+Testing infra.camera-test
+
+Testing infra.dev.focus-cadence-test
+
+Testing infra.dev.window-test
+clojure.lang.ExceptionInfo: boom {:x 1}
+	at infra.dev.window_test$fn__33410.invokeStatic(window_test.clj:116)
+	at infra.dev.window_test$fn__33410.invoke(window_test.clj:113)
+	at clojure.test$test_var$fn__9856.invoke(test.clj:717)
+	at clojure.test$test_var.invokeStatic(test.clj:717)
+	at clojure.test$test_var.invoke(test.clj:708)
+	at clojure.test$test_vars$fn__9882$fn__9887.invoke(test.clj:735)
+	at infra.dev.window_test$eval33316$fn__33317.invoke(window_test.clj:18)
+	at clojure.test$compose_fixtures$fn__9850$fn__9851.invoke(test.clj:694)
+	at clojure.test$default_fixture.invokeStatic(test.clj:687)
+	at clojure.test$default_fixture.invoke(test.clj:683)
+	at clojure.test$compose_fixtures$fn__9850.invoke(test.clj:694)
+	at clojure.test$test_vars$fn__9882.invoke(test.clj:735)
+	at clojure.test$default_fixture.invokeStatic(test.clj:687)
+	at clojure.test$default_fixture.invoke(test.clj:683)
+	at clojure.test$test_vars.invokeStatic(test.clj:731)
+	at clojure.test$test_all_vars.invokeStatic(test.clj:737)
+	at clojure.test$test_ns.invokeStatic(test.clj:758)
+	at clojure.test$test_ns.invoke(test.clj:743)
+	at clojure.core$map$fn__5935.invoke(core.clj:2772)
+	at clojure.lang.LazySeq.sval(LazySeq.java:42)
+	at clojure.lang.LazySeq.seq(LazySeq.java:51)
+	at clojure.lang.Cons.next(Cons.java:39)
+	at clojure.lang.RT.next(RT.java:713)
+	at clojure.core$next__5451.invokeStatic(core.clj:64)
+	at clojure.core$reduce1.invokeStatic(core.clj:946)
+	at clojure.core$reduce1.invokeStatic(core.clj:936)
+	at clojure.core$merge_with.invokeStatic(core.clj:3076)
+	at clojure.core$merge_with.doInvoke(core.clj:3068)
+	at clojure.lang.RestFn.applyTo(RestFn.java:139)
+	at clojure.core$apply.invokeStatic(core.clj:669)
+	at clojure.test$run_tests.invokeStatic(test.clj:768)
+	at clojure.test$run_tests.doInvoke(test.clj:768)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$apply.invoke(core.clj:662)
+	at cognitect.test_runner$test.invokeStatic(test_runner.clj:74)
+	at cognitect.test_runner$test.invoke(test_runner.clj:62)
+	at cognitect.test_runner$_main.invokeStatic(test_runner.clj:127)
+	at cognitect.test_runner$_main.doInvoke(test_runner.clj:115)
+	at clojure.lang.RestFn.invoke(RestFn.java:397)
+	at clojure.lang.AFn.applyToHelper(AFn.java:152)
+	at clojure.lang.RestFn.applyTo(RestFn.java:132)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.main$main_opt.invokeStatic(main.clj:514)
+	at clojure.main$main_opt.invoke(main.clj:510)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+
+Testing infra.flight-precision-test
+
+Testing infra.input-test
+
+Testing infra.inspect-test
+
+Testing infra.main-test
+
+Testing infra.menu-test
+
+Testing infra.render.asset-test
+
+Testing infra.render.field-test
+
+Testing infra.render.input-test
+
+Testing infra.render.material-test
+
+Testing infra.render.passes-test
+
+Testing infra.render.scene.voxel-test
+
+Testing infra.render.shader-test
+
+Testing infra.render.trail-test
+
+Testing infra.render.units-test
+
+Testing infra.render-test
+
+Testing law.composition-test
+
+Testing law.contract-test
+
+Testing law.ledger-test
+
+Testing law.pair-softening-test
+
+Testing law.plasma-test
+
+Testing law.registry-test
+
+Testing law.render-test
+
+Testing law.seed-contract-test
+
+Testing law.stellar-halo-test
+
+Testing law.voxel-test
+
+Testing shape.core-test
+
+Testing shape.spatial-test
+
+Ran 948 tests containing 16775 assertions.
+0 failures, 0 errors.

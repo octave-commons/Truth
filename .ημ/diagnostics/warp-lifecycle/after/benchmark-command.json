@@ -1,0 +1,36 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-Sdeps",
+    "{:paths [\"src\" \"resources\" \"test\" \"bench\" \".\u03b7\u03bc/diagnostics/warp-lifecycle\"] :deps {criterium/criterium {:mvn/version \"0.4.6\"}}}",
+    "-M",
+    "-m",
+    "evidence.warp",
+    "after",
+    "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle/.\u03b7\u03bc/diagnostics/warp-lifecycle/fixtures.edn",
+    "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle/.\u03b7\u03bc/diagnostics/warp-lifecycle/after"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle",
+  "started_at": "2026-10-07T00:53:34.816595+00:00",
+  "source_sha256": {
+    "src/domain/intervention.clj": "eed4697f04bf96ce8bdabc0e08b64c63bd296a0d9cc958b49574bbef643c74a8",
+    "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+    "src/domain/integrator.clj": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+    "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+    "src/domain/physics/cache/soa.clj": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+    "src/domain/stellar/merge.clj": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+    "src/domain/ecs/registry.clj": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+    "test/domain/warp_lifecycle_test.clj": "3c15b3fae0194f0d413a347224d6e7f835af90825c16781a699859bb472393ad",
+    "bench/gates_of_truth/bench.clj": "df2abd5cc5270f6843e2e7d3d078402e46ecbe774af5eb74529bab219743b3a1",
+    "bench/gates_of_truth/bench/phase0.clj": "9d7d731106cb3161658c87546cf20125e48acb1610d2a472a8cbd93d94bef543",
+    ".\u03b7\u03bc/diagnostics/warp-lifecycle/evidence/warp.clj": "deba81148f3b94a19de736beb54dab9c36eb43a10a9c2f14c3d460e8eea40ed2",
+    ".\u03b7\u03bc/diagnostics/warp-lifecycle/fixtures.edn": "2c275009a46b8bc813bd1541e7b3bdb73d51e1e7d2112b8aa0a1962f3b6fa096"
+  },
+  "head": "14bd31890acdab3b9983c6780295b42f4a065c55",
+  "source_diff": "diff --git a/src/domain/ecs/registry.clj b/src/domain/ecs/registry.clj\nindex 1c2c49b..9840036 100644\n--- a/src/domain/ecs/registry.clj\n+++ b/src/domain/ecs/registry.clj\n@@ -157,7 +157,7 @@\n    ;; transient that writes its own accel channel, summed by motion.\n    {:id     :warp\n     :ns     'domain.intervention\n-    :reads  #{c/position c/mass}\n+    :reads  #{c/position c/mass c/accel-warp}\n     :writes #{c/accel-warp}}\n \n    ;; Spark-redesign card 1: the static dark-matter halo. A very massive,\ndiff --git a/src/domain/intervention.clj b/src/domain/intervention.clj\nindex 3351e2e..baafe45 100644\n--- a/src/domain/intervention.clj\n+++ b/src/domain/intervention.clj\n@@ -110,20 +110,23 @@\n           (sp/v* d (* sign (/ g dist))))))))\n \n (defn warp-acceleration-system\n-  \"Write-set system (sole writer of accel.warp): sum every active warp's halo\n-   field onto each body, then cap the summed per-tick \u0394v at the influence\n+  \"Emit active warp forces and remove prior contributions that no longer apply.\n+\n+   Sole writer of accel.warp: sum every active warp's halo field onto each body,\n+   then cap the summed per-tick \u0394v at the influence\n    ceiling (`player/influence-reference` \u2014 the dt backstop; a sane field never\n-   hits it). Returns a full replacement map each tick, so a body that has\n-   drifted out of every warp simply has no entry \u2192 zero force (auto-clearing,\n-   no stale push). No-op map when there are no interventions.\"\n+   hits it). Explicit removals clear expired, removed or out-of-range forces at\n+   the fold; the integrator still consumes the prior channel's final Jacobi kick.\"\n   []\n   {:id     :warp\n    :writes #{c/accel-warp}\n    :run    (fn [world]\n-             (let [ivs  (filterv #(warp-kinds (:kind %)) (:genesis/interventions world))\n-                   tick (:tick world)]\n+             (let [ivs   (filterv #(warp-kinds (:kind %)) (:genesis/interventions world))\n+                   tick  (:tick world)\n+                   prior (keys (get-in world [:components c/accel-warp]))]\n                (if (empty? ivs)\n-                 {c/accel-warp {}}\n+                 (merge {c/accel-warp {}}\n+                        (tick/contribution-write-set c/accel-warp {} prior))\n                  ;; Evaluate at drift-predicted positions: the kick lands next\n                  ;; tick, and a point-attractor evaluated one drift stale is a\n                  ;; negatively-damped spring (see pcache/predicted-position-fn).\n@@ -135,17 +138,21 @@\n                                            default-well-mass-factor))}\n                        a-max  (/ (double dv-cap) (max 1.0 dt))\n                        pos-of (pcache/predicted-position-fn world)]\n-                   {c/accel-warp\n-                    (into {}\n-                          (keep (fn [eid]\n-                                  (let [pos (pos-of eid)\n-                                        a   (reduce (fn [acc iv]\n-                                                      (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))\n-                                                    zero3 ivs)\n-                                        l   (sp/len a)]\n-                                    (when (pos? l)\n-                                      [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))\n-                          (ecs/entities-with world c/position c/mass))}))))})\n+                   (merge\n+                    {c/accel-warp {}}\n+                    (tick/contribution-write-set\n+                     c/accel-warp\n+                     (into {}\n+                           (keep (fn [eid]\n+                                   (let [pos (pos-of eid)\n+                                         a   (reduce (fn [acc iv]\n+                                                       (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))\n+                                                     zero3 ivs)\n+                                         l   (sp/len a)]\n+                                     (when (pos? l)\n+                                       [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))\n+                           (ecs/entities-with world c/position c/mass))\n+                     prior))))))})\n \n ;; --- Lifecycle --------------------------------------------------------------\n \n",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "baseline_command_sha256": "2a04dc7502d6cb1695c021b270f17129ba973b624d7f72a92c53fa60b4b5d78f",
+  "pid": 212179
+}

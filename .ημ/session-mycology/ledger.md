@@ -440,3 +440,12 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,e434a838,2026-10-07T00:42:16.192666+00:00
   note: Ordinary world snapshots can contain registered callables. Preserve the rejected serialization and encode only an exact known handler with key, identity and source guards; keep ordinary EDN strict. Time finite clearing from the same frozen input, and never treat fast missing work as a correctness target. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:57:39.358245+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Restore warp clearing without disguising its measured cost
+  p-efficiency: 0.9
+  p-friction: 0.2
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,14bd318,2026-10-07T00:57:39.358245+00:00
+  note: Preserve an existing explicit-empty write-set shape while adding canonical removals. Freeze real failed qualification attempts; record formatting corrections as exact reversible bytes rather than claiming original hashes passed. Required cleanup costs work, but a large broad-control slowdown remains unresolved even when background load differs. No new spore; existing evidence discipline covers the pattern.

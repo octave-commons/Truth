@@ -1,0 +1,12 @@
+{
+  "authorized_scope": "Three indentation lines only; original frozen RED and fixtures unchanged",
+  "lines": [
+    39,
+    110,
+    111
+  ],
+  "sha256_before": "2904ab8158f595ab22bf0638df0100784c9acb94989b42a659d13efbf0153b0c",
+  "sha256_after": "3c15b3fae0194f0d413a347224d6e7f835af90825c16781a699859bb472393ad",
+  "reverse_exact_bytes": true,
+  "corrected_at": "2026-10-07T00:50:46.801546+00:00"
+}

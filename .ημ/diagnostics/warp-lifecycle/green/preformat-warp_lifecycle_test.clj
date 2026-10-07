@@ -36,7 +36,7 @@
   ;; gravity contribution to prove clearing one owner does not erase another.
   (let [snapshot (cond-> world soa? cache/build-physics-soa)]
     (-> (tick/run-parallel snapshot [(iv/warp-acceleration-system)
-                                     (integrator/integrator-system 1.0)])
+                                    (integrator/integrator-system 1.0)])
         cache/strip-physics-soa
         (update :tick inc)
         iv/expire-interventions)))
@@ -107,8 +107,8 @@
         (is (close-vector? (sp/v+ (value outside departing c/velocity) background)
                            (value coast departing c/velocity)))
         (is (close-vector? (-> (value outside remaining c/velocity)
-                               (sp/v+ background)
-                               (sp/v+ (value outside remaining c/accel-warp)))
+                              (sp/v+ background)
+                              (sp/v+ (value outside remaining c/accel-warp)))
                            (value coast remaining c/velocity))
             "the same integrator continues to consume the valid active force")
         (is (= (get-in world [:components c/accel-gravity])

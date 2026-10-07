@@ -125,8 +125,7 @@
                    tick  (:tick world)
                    prior (keys (get-in world [:components c/accel-warp]))]
                (if (empty? ivs)
-                 (merge {c/accel-warp {}}
-                        (tick/contribution-write-set c/accel-warp {} prior))
+                 (tick/contribution-write-set c/accel-warp {} prior)
                  ;; Evaluate at drift-predicted positions: the kick lands next
                  ;; tick, and a point-attractor evaluated one drift stale is a
                  ;; negatively-damped spring (see pcache/predicted-position-fn).
@@ -138,21 +137,19 @@
                                            default-well-mass-factor))}
                        a-max  (/ (double dv-cap) (max 1.0 dt))
                        pos-of (pcache/predicted-position-fn world)]
-                   (merge
-                    {c/accel-warp {}}
-                    (tick/contribution-write-set
-                     c/accel-warp
-                     (into {}
-                           (keep (fn [eid]
-                                   (let [pos (pos-of eid)
-                                         a   (reduce (fn [acc iv]
-                                                       (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))
-                                                     zero3 ivs)
-                                         l   (sp/len a)]
-                                     (when (pos? l)
-                                       [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))
-                           (ecs/entities-with world c/position c/mass))
-                     prior))))))})
+                   (tick/contribution-write-set
+                    c/accel-warp
+                    (into {}
+                          (keep (fn [eid]
+                                  (let [pos (pos-of eid)
+                                        a   (reduce (fn [acc iv]
+                                                      (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))
+                                                    zero3 ivs)
+                                        l   (sp/len a)]
+                                    (when (pos? l)
+                                      [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))
+                          (ecs/entities-with world c/position c/mass))
+                    prior)))))})
 
 ;; --- Lifecycle --------------------------------------------------------------
 

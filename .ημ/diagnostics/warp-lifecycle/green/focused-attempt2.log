@@ -1,0 +1,13 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.intervention-test
+
+Testing domain.warp-lifecycle-test
+
+Testing law.registry-test
+
+Ran 36 tests containing 225 assertions.
+0 failures, 0 errors.

@@ -1,0 +1,12 @@
+{
+  "utc_before": "2026-10-07T00:54:58.283220+00:00",
+  "pid": 131581,
+  "start_ticks": "125503",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+  "before_state": "T",
+  "signal": "SIGCONT",
+  "reason": "Matched AFTER process212179 exited0 and reaped; resume same owned native process, no restart.",
+  "after_state": "R",
+  "utc_after": "2026-10-07T00:54:58.283782+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:cljfmt",
+    "check",
+    "src/domain/intervention.clj",
+    "src/domain/ecs/registry.clj",
+    "test/domain/warp_lifecycle_test.clj"
+  ],
+  "exit_code": 1,
+  "completed_at": "2026-10-07T00:49:45.857877+00:00"
+}
