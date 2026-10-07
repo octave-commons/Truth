@@ -531,3 +531,13 @@
   spore: none
   receipt-refs: native-window-close-disposal,review5437458020,comment4202906657
   note: Supported Markdown authoring can be made easier to audit by recording exact later acceptance refinements through a canonical comment; preserve the original creation event and make no replay or implementation claim. Existing provenance skills suffice.
+
+- ts: 2026-10-07T04:23:25.987964+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Specify unshared-context retirement and expose cache-entry concurrency requirements before implementation
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth#37,ef2728c,review5437458020,native-window-close-disposal
+  note: A teardown inventory cannot infer context ownership from numeric GL IDs. Scope whole-context retirement separately from host cache exclusion and service-generation ownership; exposing the remaining concurrency restriction is more truthful than claiming ID comparison solves it. No spore.

@@ -154,3 +154,138 @@ requires reviewed scope/size, a legal InProgress claim, committed failing RED,
 the relevant ordinary/native tests and the full repository gates. If resolving
 context ownership expands into offscreen/reload architecture, refine the scope
 before code instead of stretching this five-point estimate.
+
+## Cache retirement and test-seam audit — 2026-10-07
+
+This appendix proposes a concrete refinement of behavior 3; it does not admit
+implementation. The audit read source at `9a73733d93338d8a0e1abb4034632f992e20e8ec`
+and verified that it is unchanged at the provenance-only successor
+`ef2728c546e8248f8b31ea2e99169e0de2ec26ab`. No new native reproduction or test run
+was performed. The owner remains Incoming 5.
+
+### Actual resource inventory
+
+| Allocation or retained reference | Source boundary and proposed retirement |
+| --- | --- |
+| Visible GLFW window, context and default framebuffer | [window.clj:59](../../src/infra/render/window.clj#L59) uses `share = NULL`. Its constructor owns a successfully allocated handle even if make-current, swap-interval or capability initialization subsequently throws. Destroy this exact window/context once, outside callbacks, on its existing render owner. |
+| Six built-in shader programs and intermediate shader objects | [shader.clj:29](../../src/infra/render/shader.clj#L29), [cache:73](../../src/infra/render/shader.clj#L73), [built-ins:458](../../src/infra/render/shader.clj#L458). Cache entries contain ID/hash, not context identity. Failed compilation or replacement can leave an object absent from the final cache. Drop host cache references; context destruction reclaims objects actually owned by the closing context. Do not call `invalidate-all!` here. |
+| Sphere and cube VAO/VBOs held directly in service config | [loop.clj:79](../../src/infra/dev/window/loop.clj#L79) uploads these without the asset cache. Clear `:mesh`, `:cube-mesh` and all six `*-program` config handles for the captured service; retain unrelated settings. The latest config is not an inventory of every allocation. |
+| Generic asset mesh/texture caches | [asset.clj:23](../../src/infra/render/asset.clj#L23) stores VAO/VBO/optional EBO entries; [line 47](../../src/infra/render/asset.clj#L47) stores texture IDs. No production caller of `mesh!` or `texture!` was found, but these public caches can retain IDs. A host-only discard must clear them without the existing GL-delete helpers. `dispose-all!` is therefore unsuitable. |
+| Froxel 3D texture and staging buffers | [volume.clj:70](../../src/infra/render/volume.clj#L70) holds a raw texture ID plus CPU float array/direct buffer; its cache is resolution-keyed, not context-keyed. Existing `reset-volume-cache!` already drops these references without GL deletion. `delete-volume` is a deliberate no-op. The direct buffers are JVM-managed, not explicit `memFree` allocations. |
+| Per-pass VAO/VBOs | [mesh.clj:104](../../src/infra/render/mesh.clj#L104), [scene/setup.clj:89](../../src/infra/render/scene/setup.clj#L89), [hud.clj:28](../../src/infra/render/hud.clj#L28) allocate geometry for solids, volume, particles, lines, sprites, rectangles and text. Several normal-path deletes are not protected by `finally`; exceptions can orphan IDs outside every cache. Destroying their context covers these objects without expanding this card into each pass. |
+| Offscreen context, FBO, color texture, depth renderbuffer and meshes | [window.clj:71](../../src/infra/render/window.clj#L71), [FBO:80](../../src/infra/render/window.clj#L80), [render-to-file:173](../../src/infra/render/window.clj#L173). These belong to a different unshared context. Its entry replaces global shader/volume references; its success-only cleanup does not restore the visible context. The visible finalizer must neither delete these numeric IDs nor claim to retire a leaked offscreen window. |
+| Four per-window LWJGL callbacks | [input.clj:253](../../src/infra/render/input.clj#L253) installs key, cursor, button and scroll callbacks. Free these callback allocations before destroying their own window; context destruction alone does not free the Java/native callback wrappers. |
+| Process resources and pure projections | [window.clj:48](../../src/infra/render/window.clj#L48) installs the process-global GLFW error callback. Leave it, GLFW termination and the GL loader process-owned. Leave the CPU-only body/particle projection caches alone; they contain no GL IDs. No other retained GPU allocation family was found in the renderer source search. |
+
+The `ensure-resources` comparison also permits repeated sphere uploads when
+`:requested-subdivisions` is nil, and its upload effects occur inside `swap!`.
+This is an audit observation explaining why enumerating the last config cannot
+prove complete disposal. Repairing that allocation path is outside this child.
+
+### Proposed teardown choice: no explicit GL-object deletion
+
+Use **zero `glDelete*` calls in the close finalizer**, even for apparently known
+config IDs. Both constructors explicitly request unshared contexts. The
+[OpenGL specification, §5.1.1](https://registry.khronos.org/OpenGL/specs/gl/glspec46.core.pdf#page=76)
+states that destruction of the last context in a sharing group reclaims its
+objects and other resources; reclamation is not a promise of immediate physical
+memory release. This is the general lifetime rule, not a proposal to upgrade
+Truth's OpenGL 3.3 request or its LWJGL 3.3.3 dependencies.
+
+[GLFW destruction](https://www.glfw.org/docs/latest/group__window.html) retires
+the window and context, forbids destruction from a callback or while current on
+another thread, and specifies main-thread ownership. The existing Linux worker
+limitation stated above remains. Explicitly detach the closing context if it is
+current on the owner; clear that thread's LWJGL capabilities and destroy the
+owned window. An unexpected different current context is diagnostic evidence,
+not permission to delete or destroy that context. The closing owner must not
+make an unknown context current to clean a cache.
+
+[LWJGL's GL contract](https://javadoc.lwjgl.org/org/lwjgl/opengl/GL.html)
+requires capabilities to be cleared when their context is destroyed.
+[glfwFreeCallbacks](https://javadoc.lwjgl.org/org/lwjgl/glfw/Callbacks.html)
+resets/frees callbacks attached to one window, excluding the global error and
+monitor callbacks. These are current API references; this audit did not execute
+a new version-specific binding test.
+
+Keep all host discard, callback, detach, capabilities and window-destruction
+stages inside the captured owner's finalization, with independent attempts after
+failure. Remove only its published handle; retain the original render/setup
+failure and record cleanup failures separately. A failed destruction must not be
+reported as successful disposal or permit an overlapping replacement owner.
+Partial construction needs the same bounded retirement inside `create-window`,
+because the outer loop has no handle when that function throws before returning.
+
+GLFW failures are not necessarily Java exceptions: its void destruction call
+reports through the [per-thread GLFW error channel](https://www.glfw.org/docs/latest/intro_guide.html#error_handling).
+The proposed retirement adapter must preserve any pre-existing error separately
+and collect/copy the owner thread's stage error, without replacing the global
+error callback. A normal Java return alone is not proof of successful native
+retirement. Reading `glfwGetError` consumes that error state; record this behavior
+explicitly, and do not confuse it with OpenGL's separate `glGetError` flags.
+
+### Cache exclusion is a real remaining admission decision
+
+Service-generation matching protects service state; it does **not** prove that
+process-global caches are unused by another renderer. The normal screenshot
+request is [called synchronously on the same render thread](../../src/infra/dev/window/loop.clj#L101),
+so it finishes or unwinds before that owner's finalizer. However, direct public
+`render-to-file` calls can enter from another thread, and there is currently no
+common exclusion guard. A `glfwGetCurrentContext` check only describes the
+calling thread and cannot establish absence of another cache user.
+
+The smallest proposed enforcement is one renderer-entry ownership guard in the
+existing render/window boundary: acquire before GLFW initialization or cache
+work; keep ownership through visible-loop finalization or the complete offscreen
+call; allow same-thread nesting for the existing screenshot call; reject a
+foreign-thread entry before native allocation or any cache mutation. This is
+bounded entry exclusion, not context-keyed caches, a render scheduler or a new
+window manager. It must be exception-safe and release only its own acquisition.
+The visible finalizer may discard global caches only while it still owns that
+guard. If ownership cannot be established, report the invariant failure and
+preserve foreign cache contents rather than silently clearing them.
+
+**The guard and its foreign-entry rejection are proposed API behavior requiring
+review and size confirmation before RED admission.** It does not repair the
+nested screenshot's context restoration, leaked offscreen partial construction,
+or caller-thread reload helpers. Arbitrary concurrent calls into low-level
+shader/asset/reload functions remain outside the supported lifetime guarantee;
+do not present this entry guard as protection from those calls. If that broader
+concurrency guarantee is required, this five-point story must be replanned.
+Likewise, service start/stop must serialize claiming and releasing a generation:
+the current separate validate/read and reset steps cannot alone deny simultaneous
+starts. No cache discard is safe on behalf of an obsolete generation.
+
+### Smallest meaningful RED boundary
+
+The first RED should exercise an observable lifetime defect in the existing
+production path, not merely a missing cleanup function. No result is claimed by
+the following test plan.
+
+| Layer | Concrete seam and observation |
+| --- | --- |
+| Actual owner-loop close | In a disposable native test JVM, create a real context and install the production callbacks through `window-loop`. Close through the real key callback/close flag, then require owner return and matching published-handle removal. Baseline leaves the handle/window. Bound the error-overlay case so its missing event polling cannot hang the suite. The final ordinary-player acceptance still uses real Escape and external X11 disappearance. Never pass a fake pointer to a raw GLFW call. |
+| Service ownership | Real worker/latch fixtures can test interruption and the existing join deadline without a native handle. Require retention of the same service while either worker lives, no off-thread GLFW call, and no stale stop/finalizer clearing a newer stop/thread identity even when a numeric handle repeats. Simultaneous start claims must admit at most one generation. |
+| Host cache discard and entry exclusion | Seed foreign-looking numeric IDs in the existing cache atoms; trap GL-delete seams and require host discard to call none. Preserve unrelated config and pure projection caches. Exercise a live owner plus a foreign-thread renderer entry: rejection must precede context creation/cache mutation. Same-thread nesting must return to the outer ownership count; cleanup failure must not release someone else's ownership. These proposed seams do not exist yet. |
+| Constructor/finalizer failures | Add the smallest redefable native-effect seams for allocation/context initialization and retirement. Fail after allocation, during callback setup and at each cleanup stage; require remaining attempts, original-error preservation and one owned retirement. Existing raw static calls cannot be fault-injected with ordinary Var redefinition: obtain root agreement on a behavior-neutral seam checkpoint or pair these additional cases with the implementation after the real owner-loop RED is committed. Do not claim fake-handle spies verify the native allocation boundary. |
+| Real reuse | Use the existing `:native-render-test` suite pattern in a separate process, then the ordinary-nebula Escape/full-stop/restart procedure above. Confirm fresh compilation and real drawing without stale-ID errors, retaining the world and recorded tick/projection options. Do not use `glIs*` or any GLFW query on a destroyed pointer as evidence. |
+
+This refines the existing five-point story without adding gameplay, new resource
+caches or allocation optimizations. Zero-delete teardown resolves the resource-ID
+ambiguity; entry exclusion, generation claim atomicity and the exact fault seams
+still require review before the story can be called implementation-ready.
+
+Audited SHA-256 values (unchanged at both inspected revisions):
+
+```text
+817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14  src/infra/render/window.clj
+3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067  src/infra/dev/window/loop.clj
+ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c  src/infra/dev/window/lifecycle.clj
+6cb178a94a8a05566b963d64ab76b102023332d5446fdd2d3772b62019653172  src/infra/render/shader.clj
+585b32dadb8913da1963fb054833d664fae2d9a39337b6f416414fe389eae1c7  src/infra/render/asset.clj
+0811b4977f41e2b25db17a696f265c423d51edf7f441ccbaf71a3af33abc30ee  src/infra/render/volume.clj
+6fce67c9bf2a0c4061cb74d8493bc6fef5ee56fb6921b8252181045235551384  src/infra/render/mesh.clj
+a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7  src/infra/render/scene/setup.clj
+8b63d1a1797ae0be97ccdacdb76fb25097303604a77f8fe50a1020e6fa176cb0  src/infra/render/hud.clj
+d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c  src/infra/render/input.clj
+```
