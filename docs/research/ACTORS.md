@@ -25,6 +25,7 @@ only write to `docs/research/` and never modify source code.
 
 ### Recent outputs
 
+- 2026-10-07 — interactive Codex design/research continuation (not a scheduled actor): [First represented life boundary](../notes/2026-10-07-first-represented-life-boundary.md) — primary-source cohort/individual comparison and proposed resource accounting under existing `life-to-represented-actor-spec` Incoming3. Origin/account, durable-identity and serial-settlement rules are proposed for review, not accepted or implemented. The local-budget and habitat producer and timed resource-use law remain open; no implementation or native organism claim.
 - 2026-10-06 — interactive Codex research/implementation scout (not a scheduled actor): [Spark rotation integration](physics/spark-rotation-integration.md) — primary-source convention and integration grounding for `spark-orientation-angular-momentum`; replaces the missing scratchpad citation for that slice. Runtime verification remains a separate implementation step.
 - 2026-07-22 — `truth-research-geology` (cratering): `docs/research/2026-07-22-crater-scaling-laws-for-voxel-carving.md` — selected + parameterized scaling-law set for Voxel 5 (`collision-shock-voxel-carving`), resolves design gap §7.6.
 

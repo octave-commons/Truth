@@ -1,0 +1,173 @@
+{
+  "at": "2026-10-07T18:38:47.016643+00:00",
+  "reviewer": "runtime_scout",
+  "verdict": "PASS",
+  "blockers": [],
+  "scope": "Independent file/data/source review and read-only recorded-PID existence check. No JVM, native connection, test execution, source edit, board or publication operation.",
+  "publication": {
+    "map_sha256": "39b4bbacb25d06d6e135f32598878b217ea1d2b11ef300c5e09cb6972ff689e5",
+    "archive_sha256": "36a7624d92374fe7ef85ecfeba9b98fda2a69d118d1a79181f65dbed4af192ee",
+    "result_sha256": "e45b990b0833e2b837f08ed9da989ffea5677dc080cb10d03cd4c1aea3d58e92",
+    "original_files": 72,
+    "original_bytes": 526016,
+    "archive_bytes": 566192,
+    "empty_originals": [
+      ".ημ/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/stdout.log",
+      ".ημ/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/stderr.log",
+      ".ημ/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/stderr.log"
+    ],
+    "roundtrip": "All UTF-8 JSON text reconstructed in memory and compared byte-for-byte to originals; every original hash, length and map line, byte offset and line length matched.",
+    "coverage": "Exact set equality with the entire current life-close-revision-review-fix file tree; no missing, extra, duplicate, escaped or symlink-backed paths.",
+    "final_publication_files": [
+      "MAP.json",
+      "RESULT.md",
+      "evidence.jsonl",
+      "independent-review.json"
+    ]
+  },
+  "gate02": {
+    "closure_sha256": "f8f3a2e545bb6ee1d85c18cb20376de3a807f22a75abeca8d0cccf282e00fe59",
+    "execution_sha256": "00037bb9c980fa222bfee190530b600825fe0aa97d0865374f2ff834ee6372ac",
+    "status": "complete",
+    "exit_code": 0,
+    "test_summary": {
+      "tests": 941,
+      "assertions": 16196,
+      "failures": 0,
+      "errors": 0
+    },
+    "strict_stages": [
+      "clj-kondo",
+      "structural smells",
+      "Splint",
+      "clojure-lsp",
+      "jscpd",
+      "cljfmt"
+    ],
+    "raw_verdict": "no blocking findings",
+    "canonical_transition_observed_in_stdout": "life-account-origin-kernel: in_progress -> review",
+    "elapsed_s": 96.37830796399794,
+    "work_budget_s": 900.0,
+    "total_budget_s": 910.0,
+    "ended_utc": "2026-10-07T18:31:50.731083+00:00",
+    "source_pins_verified": 304,
+    "source_pins_sha256": "3c025c18cf178d1b5527bdfa4ff7073f2ad4a24f869e02c2db95acaad0892eae",
+    "execution_artifact_hashes_verified": {
+      "stdout.log": "d37019c6118d1e9e46eeb4e650230582963df9295a8d19dff885f3be30320af5",
+      "stderr.log": "0163859fb1c1d7efb0872268ffea918f3119f846ea75c52fceec755225555c61",
+      "command.json": "366e5bfb5d2e1d69d201d682bbc6d099f58d2eec343cc0b240f8803131b63ca9",
+      "ownership.jsonl": "ccea152eea7146fdbf1f96b4ad5a3505662cdcb48e9aa008e0a792339401886c",
+      "primary-identity.json": "6c9cda16c6c47d008b6ac9b25bfc6eb7c69fc3efbf0f7f33f9ed8fae8b95efe1"
+    },
+    "preparation_hashes_verified": {
+      "supervisor.py": "55fe3ee4401559f20d6748ef08c5e7db09003fa8bdec2c9992e99f3bc58eca87",
+      "source-pins.json": "3c025c18cf178d1b5527bdfa4ff7073f2ad4a24f869e02c2db95acaad0892eae"
+    }
+  },
+  "process_closure": {
+    "fresh_check_at": "2026-10-07T18:38:47.016643+00:00",
+    "all_recorded_pids_absent": [
+      2133414,
+      2133426,
+      2133427,
+      2137178,
+      2137179,
+      2137181,
+      2137551,
+      2138447,
+      2138984,
+      2139896,
+      2140411,
+      2140412,
+      2140414,
+      2140581,
+      2140582,
+      2141332
+    ],
+    "primary_identity": {
+      "pid": 2133414,
+      "state": "R",
+      "pgid": 2133414,
+      "starttime_ticks": 6531442,
+      "metadata_errors": {},
+      "exe": "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan"
+    },
+    "primary_reaped": true,
+    "ownership_pid_set_equals_execution_and_root_closure": true,
+    "recorded_remaining_group": [],
+    "recorded_remaining_observed": [],
+    "recorded_membership_unknown": [],
+    "recorded_cleanup_errors": []
+  },
+  "source_and_tests": {
+    "pins": {
+      "src/law/life_account.clj": "76812c44715ef050748d3c20a93e39e28b616d592911ba316b94609497fdbd81",
+      "src/domain/life_account.clj": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a",
+      "test/law/life_account_test.clj": "aec64f817b0cec79135795979c559feb5ae7372f8976add4c588051bdb66f82a",
+      "test/domain/life_account_test.clj": "2b5aef651c9ee14ea92a9144246f6ec959e1e1641d00a7009310856014a382e9"
+    },
+    "review": "Equality is restricted to supplied same-account accepted close history, retaining the closed-state check. Older origin/extent, absent history, rejected entries and other-account entries retain their existing rules. Actual apply-operation regressions reject impossible lower and greater terminal revisions before replay or late rejection; valid close/retry/late-rejection controls remain.",
+    "boundary": "Domain operation arithmetic and ECS integration unchanged; the law guard supplies the correction.",
+    "formatting": "Final source includes docstring rewrap and one law-test indentation correction after the preserved failed formatting gate."
+  },
+  "prior_outcomes_preserved": [
+    {
+      "path": ".ημ/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01",
+      "execution_sha256": "20a2d92d17ef986ee88830866a6bb9d174e808dbeb4ed3ee40d9be429f91114c",
+      "exit_code": 1,
+      "recorded_summary": {
+        "tests": 35,
+        "assertions": 457,
+        "failures": 3,
+        "errors": 0
+      },
+      "independently_parsed_stdout_summary": {
+        "tests": 35,
+        "assertions": 457,
+        "failures": 3,
+        "errors": 0
+      },
+      "primary_reaped": true
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01",
+      "execution_sha256": "eb93e7edccb5fe680827a3fc0be0f2f1989db54264b9db7b049283e8f6e5cde9",
+      "exit_code": 0,
+      "recorded_summary": {
+        "tests": 35,
+        "assertions": 457,
+        "failures": 0,
+        "errors": 0
+      },
+      "independently_parsed_stdout_summary": {
+        "tests": 35,
+        "assertions": 457,
+        "failures": 0,
+        "errors": 0
+      },
+      "primary_reaped": true
+    },
+    {
+      "path": ".ημ/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01",
+      "execution_sha256": "f3989d5f0bfcc4e61d839a95b18876395a9c944538a43397a4f6ce03a00b5a2a",
+      "exit_code": 3,
+      "recorded_summary": null,
+      "independently_parsed_stdout_summary": {
+        "tests": 941,
+        "assertions": 16196,
+        "failures": 0,
+        "errors": 0
+      },
+      "primary_reaped": true
+    }
+  ],
+  "limits": [
+    "Current gate verified from stored raw output and execution records; no reviewer rerun.",
+    "Fresh absence covers all 16 recorded PIDs. Polling can miss short-lived children, so this is not an exhaustive historical process census.",
+    "Nonempty stderr includes the existing intentional infra.dev.window-test boom stack trace; the full summary is zero failures/errors. Strict success means no blocking findings, not zero advisory/duplication output.",
+    "Gate-01 execution.json has null test_summary; its successful full test totals above were independently parsed from stdout, while its overall exit remains 3 for formatting failure.",
+    "Root-stated cumulative PR count of 100 was not independently recomputed against a remote PR base. This audit adds exactly one file, the fourth publication file.",
+    "No hosted approval, native gameplay acceptance, or performance conclusion is supplied."
+  ]
+}

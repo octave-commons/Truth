@@ -1,0 +1,172 @@
+{
+  "kind": "source-audit-and-proposed-design-choices",
+  "at_utc": "2026-10-07T06:18:12.730796+00:00",
+  "owner": "life-to-represented-actor-spec",
+  "source_head": "e2d6893df3fd1505587300cb9ea687350205c2b9",
+  "progression_base": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "authorization": "root origin-contract-scope.json; note + this diagnostic only",
+  "note": {
+    "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "before_sha256": "5b12236638545182a019a3a6e853eed6086b1192caceee639f05852acd017c01",
+    "after_sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417",
+    "previous_proposal_preserved_in_git": "e2d6893df3fd1505587300cb9ea687350205c2b9",
+    "rewrite": "Existing research/source comparison retained; previous unselected options superseded explicitly by proposed sections6–8."
+  },
+  "sources": [
+    {
+      "path": "src/domain/chemistry.clj",
+      "sha256": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/law/composition.clj",
+      "sha256": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/law/ecology/schema.clj",
+      "sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/ecology/state.clj",
+      "sha256": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/ecology/system.clj",
+      "sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/ecs/core.clj",
+      "sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/ecs/event.clj",
+      "sha256": "9f208199624dcd1bb94a40c9059dbd88b631f45380155bbdec39022803c1e1c7",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "sha256": "4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "docs/designs/simulation-methods-research.md",
+      "sha256": "8e9d17d9cf93a9a0dc3dabf6cda9879e997020c4fcdd7f014b041dbc1e27634c",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "docs/research/physics/nebular-chemistry-metal-enrichment.md",
+      "sha256": "5fb46b3fc8942bfad5b716167c9fa811d812cb43fe37ec25a7199b9d5c95ba75",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/planet_formation/composition.clj",
+      "sha256": "471d40398b15baf781a603bd95694c778809bff18da98f2a905c756601aa6630",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/planet_formation/physics.clj",
+      "sha256": "e1493f37c5a1bf87c8a7e9edd7a1bb59ac2938c1cad1dc70f451aed420e523c6",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/planet_formation/orbit.clj",
+      "sha256": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "src/domain/stellar/classifier/planet.clj",
+      "sha256": "9e0094be9e1876f1a1156f961f99c30cf6e3a7a7eb4e35e54acd953784eff55e",
+      "equals_pinned_head": true
+    },
+    {
+      "path": "docs/research/atmosphere/planetary-atmosphere-retention-classifier.md",
+      "sha256": "d145198651f9d8021b750fc20e1a8664ebf28ca69bc32fcc8df4cc3beb07e67e",
+      "equals_pinned_head": true
+    }
+  ],
+  "selected_model": {
+    "name": "life-origin/v1",
+    "carbon_quantum_kg": "1/1000000000000000",
+    "source": "exact represented bulk mass times elemental carbon fraction; floor once",
+    "parent_allocation_divisor": 1000000,
+    "allocation_cap_kg_carbon": 1,
+    "accessible_fraction": "1/100",
+    "origin_fraction_of_accessible": "1/1000",
+    "numeric_parameters_tier": "explicit tunable prescription; not measured biological constants",
+    "no_scalar_biomass_to_mass_conversion": true,
+    "authority": "local account is authoritative for its living carbon; existing toy scalar kept separate",
+    "material_change_policy": "close modeled compartment, export bookkeeping to unresolved physical boundary, preserve history; no implied physical transport or biological extinction",
+    "reopening": "none in v1",
+    "owner": "one serial settlement within existing lifecycle; physical mass/momentum remain integrator-owned",
+    "rate_law": "not selected or implied by origin/account interface"
+  },
+  "verification": {
+    "all_local_links_and_anchors_resolve": true,
+    "local_link_count": 27,
+    "source_deps_dev_tests_bin_ci_equal_head": true,
+    "scoped_diff_check_pass": true,
+    "jvm_tests_benchmarks_native_calls": "none",
+    "board_or_ledger_edits_by_author": "None during design audit; later canonical publication comment and append-only receipts, if performed, are recorded separately in origin-contract-closure.json.",
+    "independent_review": {
+      "reviewer": "/root/intent_research",
+      "note_sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417",
+      "verdict": "No remaining publication blocker in source-only review; not native approval or implementation admission.",
+      "corrections": [
+        "Scope identity/retry to one persisted book/world lineage; no cross-fork uniqueness.",
+        "Scope reset guarantee to ecological phase resets with the same book retained.",
+        "Validate ecology before living predicate.",
+        "Record no observed complete final-parent origin eligibility; historical H=0 candidate records and missing current composition/physical temperature.",
+        "Correct fractions count.",
+        "Explicit ordinary core/envelope birth H/temperature applicability gap, retention/inventory separation and unobserved useful account lifetime; origin guards retained."
+      ]
+    }
+  },
+  "limits": [
+    "No global elemental disk-to-life audit is claimed.",
+    "No source, rate-driven metabolism or first resource action implemented.",
+    "Terminal policy intentionally limits coverage on any material change.",
+    "Incoming3 and canonical planning/admission requirements remain unchanged.",
+    "Source-derived birth applicability and lifetime limits are explicit; the separately owned chemistry-prerequisite-audit.json is a source audit, not model/runtime qualification."
+  ],
+  "archived_evidence": [
+    {
+      "commit": "5740c2783a5689752c7bed0d45f923081e8c2ce3",
+      "path": ".ημ/diagnostics/playable-foundation/natural-seed42/observations.edn",
+      "sha256": "e58a686f80a36f5eb32a6a8ec70e6183901ce2a60c2bf2a5509d1d69dcd3a0f1"
+    },
+    {
+      "commit": "5740c2783a5689752c7bed0d45f923081e8c2ce3",
+      "path": ".ημ/diagnostics/playable-foundation/natural-seed43/observations.edn",
+      "sha256": "31cd378c665e1ed56cd64e5b5284dbc6d1969e492647d3dc8d044654bfa9538c"
+    },
+    {
+      "commit": "5740c2783a5689752c7bed0d45f923081e8c2ce3",
+      "path": ".ημ/diagnostics/playable-foundation/natural-seed43/observe.clj",
+      "sha256": "5c3a2a75e3aee1df76174c8ad402420f6f5d6ad1d4aa88356b51d942198dac36"
+    }
+  ],
+  "applicability": {
+    "scope": "ordinary core/envelope seed path with positive stellar luminosity",
+    "hydrogen_free_core": true,
+    "positive_envelope_requires_beyond_snowline": true,
+    "surface_temperature_upper_bound_K": 190.49750726887805,
+    "birth_does_not_meet_both_H_and_temperature_guards": true,
+    "later_parent_ineligibility_not_proven": true,
+    "native_origin_or_useful_lifetime_observed": false
+  }
+}

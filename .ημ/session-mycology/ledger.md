@@ -368,3 +368,94 @@
   spore: none
   receipt-refs: 2026-10-07T03:26:35.656948Z, review5437247456
   note: A resolving Markdown file link does not prove a line fragment still names the cited policy; inspect actual heading text after insertions. Bounded citation repair only, with original verification limits retained.
+- ts: 2026-10-07T03:53:30.588819482Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Compare the first represented-life boundary under existing Incoming3 ownership
+  p-efficiency: 0.9
+  p-friction: 0.18
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: life-to-represented-actor-spec,98b847ce75491bdccacf2ec3a7476d451270bf49
+  note: A normalized life score cannot fund a conserved organism. Distinguish representation admission from abiogenesis, cohort identity from individual history, and a primary-supported rate shape from calibrated ecology. Trace generic lifecycle ownership before promising atomic resource settlement. Publish the bounded decision boundary with explicit missing producers instead of assigning readiness by prose. Independent reviews closed; no spore created or promoted.
+
+- ts: 2026-10-07T04:21:49.479080+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Refine finite carbon transactions and terminal habitat accounting without inventing a biological producer
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth#38,77a962a5,review5437526683,life-to-represented-actor-spec
+  note: Small biological accounting kernels need finite representable debits and durable terminal dispositions as well as balanced equations. Keep source budgets and runtime producers separate from those engineering invariants. Existing provenance and pure-boundary skills suffice; no spore.
+- ts: 2026-10-07T06:20:03.289064503Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Select a concrete first-life account contract without hiding source applicability limits
+  p-efficiency: 0.87
+  p-friction: 0.22
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: Truth#38,life-to-represented-actor-spec,origin-contract-closure.json
+  note: Separate bulk material, modeled accessibility and living origin; a finite accounting prescription does not establish a reachable native habitat. Check the joint guards against actual seeding equations before calling a proposal implementable, preserve negative evidence, and scope dedupe to persisted history rather than universal identity. Existing source/provenance skills suffice; no spore created or promoted.
+- ts: 2026-10-07T06:39:58.357897414Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Keep first-life summaries synchronized with proposal refinement
+  p-efficiency: 0.96
+  p-friction: 0.08
+  p-skill-candidate: 0.08
+  spore: none
+  receipt-refs: Truth#38,review5438493967,comment4203793322
+  note: When a reviewed proposal selects engineering rules, update its live design/index summaries without promoting those rules to accepted or implemented. Preserve historical notes and ledger prefixes; native settlement is distinct from successor approval. Existing provenance practice suffices; no spore.
+- ts: 2026-10-07T15:12:30.856465425Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Prepare and witness pure life-account RED
+  p-efficiency: 0.78
+  p-friction: 0.30
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: life-account-origin-kernel,PID968366
+  note: Keep exact arithmetic and immutable operation history explicit at the small pure boundary; a loaded non-implementing API yields meaningful assertion failures without treating namespace absence as the whole RED. Preserve resource coordination and disclose draft static failures. No spore.
+- ts: 2026-10-07T15:50:41.458665440Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Life-account exact retry and local history coherence qualification
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: life-account-kernel-green/focused-closure.json,d80c83783fd2fc974b0698e60dfc1b2a41361979
+  note: Independent review caught ordinary equality leaking into unordered raw-bit request comparison. Fully tagged multiplicity-preserving keys address the bounded contract; a source-pinned overlay established actual RED without rewriting working source. Preserve incorrect oracle evidence and distinguish pre-fix passes. No spore; existing red-green and exact-boundary practice applies.
+- ts: 2026-10-07T16:16:51.791440927Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Qualify the pure life-account kernel through the canonical gate
+  p-efficiency: 0.78
+  p-friction: 0.30
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: life-account-kernel-green/canonical-gate-attempt-02,result PID1288803
+  note: Canonical full-gate execution found owned style debt after focused correctness passed. Preserve the failed gate and reviewed source; repair only the named idioms, prove formatter-only indentation, then rerun the actual transition gate once. Keep Review separate from hosted code approval and pure accounting separate from natural life. Existing skills cover this; no spore.
+- ts: 2026-10-07T18:42:01.129799407Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Repair contradictory terminal life-account history and publish qualified evidence
+  p-efficiency: 0.80
+  p-friction: 0.25
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: life-close-revision-publication/RESULT.md,review5446390998
+  note: A supplied terminal close outcome proves a stronger equality than nonterminal revision bounds. Exercise actual replay and older-history controls. Preserve failed formatting gate and raw proof; package losslessly with independent reconstruction. Existing skills cover this; no spore.
+- ts: 2026-10-07T19:35:58.634201331Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Reproduce duplicate accepted life-account openings before replay
+  p-efficiency: 0.88
+  p-friction: 0.16
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: life-duplicate-origin-review-fix/RED-OBSERVED.json,review5446881815,root-closuref4d22833
+  note: Per-entry history coherence does not prove cross-entry uniqueness. Exercise real replay using two individually valid retained origins and preserve partial/unrelated-account controls. Canonical readback combines comment paragraphs, so verify an exact suffix once without replaying a successful mutation. Distinguish contradictory supplied history from duplicate stock transfer. Existing skills suffice; no spore.
+- ts: 2026-10-07T20:24:00.828713813Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Life duplicate-origin qualification and exact publication provenance
+  p-efficiency: 0.80
+  p-friction: 0.30
+  p-skill-candidate: 0.24
+  spore: none
+  receipt-refs: .ημ/diagnostics/life-duplicate-origin-publication/MAP.json
+  note: Validate supplied history coherence before idempotent replay. Read actual canonical metadata field names before asserting; retain primary as an explicit exemption from temporary validation ownership. Save the producer before generation and provide separate read-only verification, preserving failed attempts and unexecuted drafts. Source and offline confidence do not establish gameplay. No new spore or promotion.

@@ -1,0 +1,30 @@
+{
+  "src/law/life_account.clj": {
+    "before": "9de4ec6827ab9453fa54008e55780002e27ecde68f26d4f66b826c7bd0301810",
+    "after_splint": "9de4ec6827ab9453fa54008e55780002e27ecde68f26d4f66b826c7bd0301810",
+    "after_format": "22c12fb4e6cf3f1c46dee45fd770d73bc326efba662effe86123efaa9e8c72e6",
+    "format_only_leading_indentation": true,
+    "exact_eight_replacement_reverse": true
+  },
+  "src/domain/life_account.clj": {
+    "before": "ea01b902a2c2c776c2a593ed735fa493b1be6c67ab98db7e08afb9496c64db1c",
+    "after_splint": "c5e9d31b4e21b4b0379f35bdb2c75cbe61c1020399764d8b6a895ec3053a10e3",
+    "after_format": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a",
+    "format_only_leading_indentation": true,
+    "exact_eight_replacement_reverse": true
+  },
+  "test/law/life_account_test.clj": {
+    "before": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a",
+    "after_splint": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a",
+    "after_format": "96de33b0d20368b13846375201dc249035b0953fe2c0bef4c8a538e36c0a6eba",
+    "format_only_leading_indentation": true,
+    "exact_eight_replacement_reverse": true
+  },
+  "test/domain/life_account_test.clj": {
+    "before": "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec",
+    "after_splint": "5787e3e7551fd2fcecc519fee14859fd840f64d46f6cc1debaca8ac3da2f387f",
+    "after_format": "1390313ee327df7fcac345546ff05600ecc9b935e3f3ee8adb63d30500374665",
+    "format_only_leading_indentation": true,
+    "exact_eight_replacement_reverse": true
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T15:33:44.714464+00:00",
+  "files": {
+    "src/law/life_account.clj": {
+      "sha256": "f235fb152a004d87aff872ce0a74fe843309a1a1433e0f4f59271a7cbca964ce",
+      "bytes": 10856
+    },
+    "src/domain/life_account.clj": {
+      "sha256": "cf8d55352f0c5dc2719858516a29d1206f9c568f5ff86ce13c726c8897b1b87c",
+      "bytes": 8835
+    },
+    "test/law/life_account_test.clj": {
+      "sha256": "4d7074c4ad069b7adaf9d384fd87897d8b60da33ab2abf7abf5d9b77489d6ba9",
+      "bytes": 7935
+    },
+    "test/domain/life_account_test.clj": {
+      "sha256": "2129269c67e406d241cb59fcd5f013b2c5ef97a2a58b272382142d61ad4485ce",
+      "bytes": 17581
+    }
+  },
+  "limits": "Includes the drafted nil-account guard, not yet executed; precedes root-authorized inverse-pair and LIFE-RETRY-BITS-1 correction. Preserved for a future root-released focused RED of new tests, not an observed failure yet."
+}

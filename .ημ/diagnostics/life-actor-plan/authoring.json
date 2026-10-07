@@ -1,0 +1,425 @@
+{
+  "base": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "recorded_at": "2026-10-07T03:46:55.775396+00:00",
+  "paths": {
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 595354,
+      "sha256": "559edaf1f3031a20539e9fc198ad1a9925470fcf48596824d7effae437021401"
+    },
+    ".ημ/receipts.edn": {
+      "bytes": 29727,
+      "sha256": "fd2537bf125a96321cb06b83003c92acbb72202d589da5b4ce7b36229395ab1f"
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "bytes": 22267,
+      "sha256": "dabd70d9cfcffba3c92476c552c0dd579c32ac4e0f167ddec56e5c22ca3ff08a"
+    },
+    "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md": {
+      "bytes": 3920,
+      "sha256": "8bdfb362f4f21e3d15037e45e4163df7a717b44547fa00d1dd474d21a8d94a1c"
+    },
+    "docs/designs/resolution-regimes-and-scale-coupling.md": {
+      "bytes": 5474,
+      "sha256": "d8f5eb1db161e7d3ba94a382baff8bca497f77959bccf21d1e49b1ed3e881aa0"
+    },
+    "docs/research/ACTORS.md": {
+      "bytes": 4064,
+      "sha256": "3cd75e66f41c44f58a3ffd7e877feb1b03584836fb1d672d219077f3a30271fe"
+    },
+    "src/domain/ecology/system.clj": {
+      "bytes": 4714,
+      "sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04"
+    },
+    "src/domain/ecology/state.clj": {
+      "bytes": 8151,
+      "sha256": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569"
+    },
+    "src/law/ecology/schema.clj": {
+      "bytes": 2996,
+      "sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75"
+    },
+    "src/domain/genesis/bootstrap.clj": {
+      "bytes": 17495,
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9"
+    },
+    "src/domain/genesis/tick.clj": {
+      "bytes": 10517,
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee"
+    },
+    "src/domain/stellar/seeder.clj": {
+      "bytes": 8046,
+      "sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884"
+    },
+    "src/domain/ecs/core.clj": {
+      "bytes": 6649,
+      "sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970"
+    },
+    "src/domain/ecs/event.clj": {
+      "bytes": 3505,
+      "sha256": "9f208199624dcd1bb94a40c9059dbd88b631f45380155bbdec39022803c1e1c7"
+    },
+    "src/infra/menu/panels.clj": {
+      "bytes": 15504,
+      "sha256": "b92fefff01a81949f581de4c6081f8bad5372109e36f65d879d3a19592506a36"
+    }
+  },
+  "canonical_cli": {
+    "path": "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7"
+  },
+  "canonical_owner_before": {
+    "uuid": "life-to-represented-actor-spec",
+    "frontmatter": {
+      "category": "tasks",
+      "labels": "research, design, ecology, actors, playable-gate",
+      "parent": "embodied-character-voxel-mode",
+      "type": "task",
+      "write-id": "1791318933567-0.jmkcf6yovpmj7tx5yi",
+      "points": "3",
+      "title": "Ground the first causal life-to-represented-actor boundary",
+      "priority": "P1",
+      "status": "incoming",
+      "uuid": "life-to-represented-actor-spec",
+      "created_at": "2026-10-06T20:19:09.245Z"
+    },
+    "sections": [
+      {
+        "type": "body",
+        "content": "## Context\nThe embodied Gate epic explicitly requires intervening phase specifications. Current ecology is a scalar model ending at complex life; no social actor, civilization, avatar or Gate-producing system exists. Phase 5 allows temporary control of an actual historically produced individual, which still requires a causal actor/history model.\n\nGrounding: `docs/notes/2026-10-06-playable-gate-route-audit.md`, `docs/designs/gates-of-truth-world-gen-phases.md` Phases 2-5, `docs/designs/simulation-methods-research.md`, the original Gate vision, current ecology/arc laws and the single-ECS architecture.\n\nCoordinate modeled time units and update cadence with `committed-clock-executable-policy`; this is a semantic reference, not a fabricated blocking dependency on independent research.\n\n## Outcome\nA grounded specification of the first life-to-represented-actor boundary, small enough to implement without inventing a civilization from a scalar flag.\n\n## Scope\nResearch the minimum ecological and individual/behavioral state needed for a persistent actor with one meaningful environmental action. Separate observed simulation state, derived model quantities and fictional product choices. Define identity, birth/admission conditions, resource/material interaction, failure/death, causal events, persistence and one visible projection in the existing world. Propose at most two initial implementation stories, each at most five points.\n\n## Non-goals\nNo society-scale simulation, full evolution model, arbitrary sentience score, injected avatar, instant civilization, Gate object, network synchronization or new ECS/runtime. Do not break the embodiment epic into implementation work before its prerequisite phase laws exist.\n\n## Acceptance criteria\n- Primary sources support any selected scientific/modeling claim, with explicit applicability and limits; existing bibliography alone is not evidence that a method is implemented.\n- At least two plausible minimal models are compared against causal continuity, determinism, computational cost and the intended first player-observable behavior.\n- The chosen specification contains reusable shapes/laws and names every producer, owner and consumer; a scalar complex-life tag alone cannot create a historically rich actor.\n- Worked traces cover a valid birth/action, lack of resources, invalid habitat, repeated admission and actor loss; retained events preserve provenance.\n- Proposed implementation stories have explicit RED production-boundary tests and a native acceptance path tied to a naturally produced world. Future embodiment/Gate dependencies remain visible and unresolved where appropriate.\n\n## Verification\nIndependent source/model review plus a small labeled derivation or disposable model where useful. Record reproducibility assumptions and performance bounds. No fixture or research toy counts as native game acceptance.\n\n## Risks\nAnthropomorphic labels can conceal absent mechanism, and overly detailed biology can consume the whole project. Keep one causal, visible actor boundary as the deliverable; broader civilization and Gate rules remain later specifications."
+      },
+      {
+        "type": "comment",
+        "content": "Planning refinement from independent review, included while this card is Incoming: coordinate modeled time units and update cadence with committed-clock-executable-policy; this is a semantic reference, not a fabricated blocking dependency on independent research. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged."
+      }
+    ],
+    "source-path": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan/kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md"
+  },
+  "link_checks": [
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/gates-of-truth-world-gen-phases.md#phase-2-emergence-of-life",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/simulation-methods-research.md#open-research-questions",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../research/physics/nebula-to-life-fsm.md",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecology/state.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/law/ecology/schema.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecology/system.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/genesis/bootstrap.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/stellar/seeder.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/core.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/event.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "2026-10-06-two-seed-natural-formation.md",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/commitment-and-resonance.md#441-committed-world-grow--bounded-proposal-2026-10-07",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/components.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/genesis/tick.clj",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../kanban/tasks/specify-the-executable-committed-world-clock-and-later-history-contract-e-policy.md",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../notes/2026-10-07-first-represented-life-boundary.md",
+      "exists": true,
+      "heading_found": true
+    },
+    {
+      "file": "docs/research/ACTORS.md",
+      "target": "../notes/2026-10-07-first-represented-life-boundary.md",
+      "exists": true,
+      "heading_found": true
+    }
+  ],
+  "external_sources": [
+    {
+      "title": "Monod1949, The Growth of Bacterial Cultures",
+      "url": "https://garcialab.berkeley.edu/courses/papers/Monod1949.pdf",
+      "access": "Full original text, pp371–373,379–381,383–384; equation2; no calibration adopted",
+      "access_date": "2026-10-07"
+    },
+    {
+      "title": "Jayathilake et al2017, A mechanistic Individual-based Model of microbial communities",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0181965",
+      "access": "Full text, Methods: growth/decay, agent division, nutrient balance; model comparison only",
+      "access_date": "2026-10-07"
+    }
+  ],
+  "prefix_checks_before_comment": {
+    "kanban/tasks/.events/ledger.edn": {
+      "original_bytes": 595354,
+      "unchanged_prefix": true
+    },
+    ".ημ/receipts.edn": {
+      "original_bytes": 29727,
+      "unchanged_prefix": true
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "original_bytes": 22267,
+      "unchanged_prefix": true
+    }
+  },
+  "source_checks": {
+    "src/domain/ecology/system.clj": {
+      "sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04",
+      "unchanged": true
+    },
+    "src/domain/ecology/state.clj": {
+      "sha256": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569",
+      "unchanged": true
+    },
+    "src/law/ecology/schema.clj": {
+      "sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75",
+      "unchanged": true
+    },
+    "src/domain/genesis/bootstrap.clj": {
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "unchanged": true
+    },
+    "src/domain/genesis/tick.clj": {
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+      "unchanged": true
+    },
+    "src/domain/stellar/seeder.clj": {
+      "sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884",
+      "unchanged": true
+    },
+    "src/domain/ecs/core.clj": {
+      "sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970",
+      "unchanged": true
+    },
+    "src/domain/ecs/event.clj": {
+      "sha256": "9f208199624dcd1bb94a40c9059dbd88b631f45380155bbdec39022803c1e1c7",
+      "unchanged": true
+    },
+    "src/infra/menu/panels.clj": {
+      "sha256": "b92fefff01a81949f581de4c6081f8bad5372109e36f65d879d3a19592506a36",
+      "unchanged": true
+    }
+  },
+  "canonical_comment": {
+    "text": "Design-only continuation at PR12 base 98b847ce75491bdccacf2ec3a7476d451270bf49: docs/notes/2026-10-07-first-represented-life-boundary.md and resolution-regimes-and-scale-coupling.md section 6.1 compare an individual with a provisionally preferred microbial cohort. The proposed carbon account and nutrient-limited reference rate are grounded in Monod1949 and Jayathilake2017, with no calibration adopted. Cohort representation partitions already accounted living stock; normalized ecology biomass is not that budget and no organism/avatar/phase jump is claimed. Actual local-budget/habitat producers, elapsed-time integration, loss law, durable identity/LOD history and single-writer-compatible generic birth/removal settlement remain implementation blockers. Current request materialization still creates stellar clumps. Worked valid/retry/invalid/resource-loss/same-fold-removal traces and later real-pipeline/native acceptance requirements are recorded. This continuation does not complete the implementation-level specification acceptance or admit code; status and points remain Incoming3. Independent board_scout and runtime_scout source/accounting reviews found no blocker to publishing the proposal; board_scout also checked both primary full texts. Final note SHA256 b5466b3696e881f7414b2bd4f9f17ffbfc6765cbc340fdd815b57d6e276b3b3b; design SHA256 4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463. Documentation-only: local links and whitespace checked; no source/tests/native/commit/push/review request. Existing source/body/history remain preserved.",
+    "exit_code": 0,
+    "stdout": "{\n  \"ok\": true,\n  \"uuid\": \"life-to-represented-actor-spec\",\n  \"comment\": \"Design-only continuation at PR12 base 98b847ce75491bdccacf2ec3a7476d451270bf49: docs/notes/2026-10-07-first-represented-life-boundary.md and resolution-regimes-and-scale-coupling.md section 6.1 compare an individual with a provisionally preferred microbial cohort. The proposed carbon account and nutrient-limited reference rate are grounded in Monod1949 and Jayathilake2017, with no calibration adopted. Cohort representation partitions already accounted living stock; normalized ecology biomass is not that budget and no organism/avatar/phase jump is claimed. Actual local-budget/habitat producers, elapsed-time integration, loss law, durable identity/LOD history and single-writer-compatible generic birth/removal settlement remain implementation blockers. Current request materialization still creates stellar clumps. Worked valid/retry/invalid/resource-loss/same-fold-removal traces and later real-pipeline/native acceptance requirements are recorded. This continuation does not complete the implementation-level specification acceptance or admit code; status and points remain Incoming3. Independent board_scout and runtime_scout source/accounting reviews found no blocker to publishing the proposal; board_scout also checked both primary full texts. Final note SHA256 b5466b3696e881f7414b2bd4f9f17ffbfc6765cbc340fdd815b57d6e276b3b3b; design SHA256 4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463. Documentation-only: local links and whitespace checked; no source/tests/native/commit/push/review request. Existing source/body/history remain preserved.\"\n}\n",
+    "stderr": ""
+  },
+  "canonical_owner_after": {
+    "uuid": "life-to-represented-actor-spec",
+    "frontmatter": {
+      "category": "tasks",
+      "labels": "research, design, ecology, actors, playable-gate",
+      "parent": "embodied-character-voxel-mode",
+      "type": "task",
+      "write-id": "1791345209862-0.gm8solrmhln9ubbk0yx",
+      "points": "3",
+      "title": "Ground the first causal life-to-represented-actor boundary",
+      "priority": "P1",
+      "status": "incoming",
+      "uuid": "life-to-represented-actor-spec",
+      "created_at": "2026-10-06T20:19:09.245Z"
+    },
+    "sections": [
+      {
+        "type": "body",
+        "content": "## Context\nThe embodied Gate epic explicitly requires intervening phase specifications. Current ecology is a scalar model ending at complex life; no social actor, civilization, avatar or Gate-producing system exists. Phase 5 allows temporary control of an actual historically produced individual, which still requires a causal actor/history model.\n\nGrounding: `docs/notes/2026-10-06-playable-gate-route-audit.md`, `docs/designs/gates-of-truth-world-gen-phases.md` Phases 2-5, `docs/designs/simulation-methods-research.md`, the original Gate vision, current ecology/arc laws and the single-ECS architecture.\n\nCoordinate modeled time units and update cadence with `committed-clock-executable-policy`; this is a semantic reference, not a fabricated blocking dependency on independent research.\n\n## Outcome\nA grounded specification of the first life-to-represented-actor boundary, small enough to implement without inventing a civilization from a scalar flag.\n\n## Scope\nResearch the minimum ecological and individual/behavioral state needed for a persistent actor with one meaningful environmental action. Separate observed simulation state, derived model quantities and fictional product choices. Define identity, birth/admission conditions, resource/material interaction, failure/death, causal events, persistence and one visible projection in the existing world. Propose at most two initial implementation stories, each at most five points.\n\n## Non-goals\nNo society-scale simulation, full evolution model, arbitrary sentience score, injected avatar, instant civilization, Gate object, network synchronization or new ECS/runtime. Do not break the embodiment epic into implementation work before its prerequisite phase laws exist.\n\n## Acceptance criteria\n- Primary sources support any selected scientific/modeling claim, with explicit applicability and limits; existing bibliography alone is not evidence that a method is implemented.\n- At least two plausible minimal models are compared against causal continuity, determinism, computational cost and the intended first player-observable behavior.\n- The chosen specification contains reusable shapes/laws and names every producer, owner and consumer; a scalar complex-life tag alone cannot create a historically rich actor.\n- Worked traces cover a valid birth/action, lack of resources, invalid habitat, repeated admission and actor loss; retained events preserve provenance.\n- Proposed implementation stories have explicit RED production-boundary tests and a native acceptance path tied to a naturally produced world. Future embodiment/Gate dependencies remain visible and unresolved where appropriate.\n\n## Verification\nIndependent source/model review plus a small labeled derivation or disposable model where useful. Record reproducibility assumptions and performance bounds. No fixture or research toy counts as native game acceptance.\n\n## Risks\nAnthropomorphic labels can conceal absent mechanism, and overly detailed biology can consume the whole project. Keep one causal, visible actor boundary as the deliverable; broader civilization and Gate rules remain later specifications."
+      },
+      {
+        "type": "comment",
+        "content": "Planning refinement from independent review, included while this card is Incoming: coordinate modeled time units and update cadence with committed-clock-executable-policy; this is a semantic reference, not a fabricated blocking dependency on independent research. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.\n\nDesign-only continuation at PR12 base 98b847ce75491bdccacf2ec3a7476d451270bf49: docs/notes/2026-10-07-first-represented-life-boundary.md and resolution-regimes-and-scale-coupling.md section 6.1 compare an individual with a provisionally preferred microbial cohort. The proposed carbon account and nutrient-limited reference rate are grounded in Monod1949 and Jayathilake2017, with no calibration adopted. Cohort representation partitions already accounted living stock; normalized ecology biomass is not that budget and no organism/avatar/phase jump is claimed. Actual local-budget/habitat producers, elapsed-time integration, loss law, durable identity/LOD history and single-writer-compatible generic birth/removal settlement remain implementation blockers. Current request materialization still creates stellar clumps. Worked valid/retry/invalid/resource-loss/same-fold-removal traces and later real-pipeline/native acceptance requirements are recorded. This continuation does not complete the implementation-level specification acceptance or admit code; status and points remain Incoming3. Independent board_scout and runtime_scout source/accounting reviews found no blocker to publishing the proposal; board_scout also checked both primary full texts. Final note SHA256 b5466b3696e881f7414b2bd4f9f17ffbfc6765cbc340fdd815b57d6e276b3b3b; design SHA256 4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463. Documentation-only: local links and whitespace checked; no source/tests/native/commit/push/review request. Existing source/body/history remain preserved."
+      }
+    ],
+    "source-path": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan/kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md"
+  },
+  "verification_attempt1": {
+    "outcome": "assertion failed after successful comment; investigating canonical readback before claiming preservation",
+    "remaining_shell_receipt_reflection": "subsequent append commands still ran; catalog assertion will be qualified after inspection",
+    "cause": "The verifier incorrectly assumed every successful Rheos comment adds a new parsed section. Canonical output instead appends within its existing comment section; source body is unchanged."
+  },
+  "canonical_preservation": {
+    "body_exact": true,
+    "frontmatter_except_write_id_exact": true,
+    "existing_comment_exact_prefix": true,
+    "one_successful_cli_comment": true,
+    "no_state_transition": true
+  },
+  "reviews": [
+    {
+      "reviewer": "board_scout",
+      "note_sha256": "b5466b3696e881f7414b2bd4f9f17ffbfc6765cbc340fdd815b57d6e276b3b3b",
+      "design_sha256": "4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463",
+      "scope": "Independent source/authority, primary full texts and proposed accounting",
+      "result": "No blocker to publishing unaccepted Incoming3 continuation; no implementation admission"
+    },
+    {
+      "reviewer": "runtime_scout",
+      "note_sha256": "8b9ca575fe30527de147d302e610c9f7bd4f562684714820103b3e5acd7d628b",
+      "design_sha256": "4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463",
+      "scope": "Independent source/accounting/lifecycle; no independent paper fetch",
+      "subsequent_delta": "One source citation label and anchor corrected to actual Open Research Questions; accounting/lifecycle unchanged",
+      "result": "No blocker to proposed publication; budget/clock/lifecycle/identity remain prerequisites"
+    }
+  ],
+  "final_prefix_checks": {
+    "kanban/tasks/.events/ledger.edn": {
+      "original_bytes": 595354,
+      "prefix_sha256": "559edaf1f3031a20539e9fc198ad1a9925470fcf48596824d7effae437021401",
+      "unchanged_prefix": true,
+      "appended_bytes": 1968,
+      "appended_lines": 1
+    },
+    ".ημ/receipts.edn": {
+      "original_bytes": 29727,
+      "prefix_sha256": "fd2537bf125a96321cb06b83003c92acbb72202d589da5b4ce7b36229395ab1f",
+      "unchanged_prefix": true,
+      "appended_bytes": 3783,
+      "appended_lines": 3
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "original_bytes": 22267,
+      "prefix_sha256": "dabd70d9cfcffba3c92476c552c0dd579c32ac4e0f167ddec56e5c22ca3ff08a",
+      "unchanged_prefix": true,
+      "appended_bytes": 832,
+      "appended_lines": 9
+    }
+  },
+  "closed_at": "2026-10-07T03:54:48.091823+00:00",
+  "staging_paths": [
+    "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "docs/designs/resolution-regimes-and-scale-coupling.md",
+    "docs/research/ACTORS.md",
+    "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    ".ημ/diagnostics/life-actor-plan/authoring.json"
+  ],
+  "final_artifact_hashes_except_this_inventory": {
+    "docs/notes/2026-10-07-first-represented-life-boundary.md": {
+      "bytes": 17052,
+      "sha256": "b5466b3696e881f7414b2bd4f9f17ffbfc6765cbc340fdd815b57d6e276b3b3b"
+    },
+    "docs/designs/resolution-regimes-and-scale-coupling.md": {
+      "bytes": 6740,
+      "sha256": "4c16181afd3b128f854df162ef9c878b10095e37ed9e0d27ee070c9a44aae463"
+    },
+    "docs/research/ACTORS.md": {
+      "bytes": 4495,
+      "sha256": "d29b6d4a804157166c1f7d3841a2c1f67e39fbabe8117c2a1f5e6ba5e5ce2a32"
+    },
+    "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md": {
+      "bytes": 5499,
+      "sha256": "fe1ac52378635f12e0c0c1c7f1479b8bfdcd93949a55c7cee0a0ee32e79fb65f"
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 597322,
+      "sha256": "699df990bd0f66904c3becaeb9d557facd74024518ad4c34ac0ac127d911da2d"
+    },
+    ".ημ/receipts.edn": {
+      "bytes": 33510,
+      "sha256": "d0a2a6c71958384e8dfbf8fa4b9aee104b9283cde805af17aaf84d73ebac4b75"
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "bytes": 23099,
+      "sha256": "a959c489cbee83d7e879113c833670c23a0a696f56e070b994678498b2517552"
+    }
+  },
+  "verification": {
+    "git_diff_check_exit": 0,
+    "new_note_inventory_whitespace": true,
+    "protected_path_diff": "",
+    "head_unchanged": true,
+    "canonical_state": "incoming",
+    "points": "3",
+    "local_path_heading_checks": 20,
+    "tests": "None: documentation-only, no JVM, production test, benchmark or native actions",
+    "implementation_admitted": false,
+    "card_specification_acceptance_completed": false,
+    "commits_pushes_review_requests": "None; root owns publication",
+    "spore": "None"
+  }
+}

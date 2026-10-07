@@ -1,0 +1,30 @@
+{
+  "tool": "clj-kondo",
+  "inputs": [
+    "src/law/life_account.clj",
+    "src/domain/life_account.clj",
+    "test/law/life_account_test.clj",
+    "test/domain/life_account_test.clj"
+  ],
+  "attempts": [
+    {
+      "exit": 3,
+      "errors": 1,
+      "warnings": 3,
+      "output": "test/domain/life_account_test.clj:22:22: warning: Shadowed var: clojure.core/sequence\ntest/domain/life_account_test.clj:28:16: warning: Shadowed var: clojure.core/sequence\ntest/domain/life_account_test.clj:156:9: warning: Prefer (true? x) over (= true x)\ntest/law/life_account_test.clj:71:76: error: Unmatched bracket: unexpected )"
+    },
+    {
+      "exit": 3,
+      "errors": 1,
+      "warnings": 0,
+      "output": "test/law/life_account_test.clj:103:79: error: Unmatched bracket: unexpected )"
+    },
+    {
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "output": "linting took 185ms, errors: 0, warnings: 0"
+    }
+  ],
+  "provenance": "Transcribed exact diagnostic lines from completed tool outputs; initial draft source bytes were not frozen and no earlier JVM run occurred."
+}
