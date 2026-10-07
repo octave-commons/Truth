@@ -432,3 +432,12 @@
   spore: none
   receipt-refs: life-account-kernel-green/canonical-gate-attempt-02,result PID1288803
   note: Canonical full-gate execution found owned style debt after focused correctness passed. Preserve the failed gate and reviewed source; repair only the named idioms, prove formatter-only indentation, then rerun the actual transition gate once. Keep Review separate from hosted code approval and pure accounting separate from natural life. Existing skills cover this; no spore.
+- ts: 2026-10-07T18:42:01.129799407Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Repair contradictory terminal life-account history and publish qualified evidence
+  p-efficiency: 0.80
+  p-friction: 0.25
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: life-close-revision-publication/RESULT.md,review5446390998
+  note: A supplied terminal close outcome proves a stronger equality than nonterminal revision bounds. Exercise actual replay and older-history controls. Preserve failed formatting gate and raw proof; package losslessly with independent reconstruction. Existing skills cover this; no spore.

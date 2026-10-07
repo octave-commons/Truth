@@ -256,7 +256,9 @@
       (false? (:accepted? outcome))
       (and account
            (<= (:revision outcome) (:revision account))
-           (or (not= :close (:kind request)) (= :closed (:status account)))
+           (or (not= :close (:kind request))
+               (and (= :closed (:status account))
+                    (= (:revision outcome) (:revision account))))
            (or (not= :origin (:kind request))
                (same-payload? (:material request) (:source account))))))
 
@@ -264,8 +266,9 @@
   "Reject locally provable contradictions between supplied account and history.
 
    Same-account acceptance requires current state at least as recent, terminal
-   state after closure, and unchanged opening material. Account/history retain
-   their separate validators; absence of entries never proves completeness."
+   state at the accepted close revision, and unchanged opening material.
+   Account/history retain their separate validators; absence of entries never
+   proves completeness."
   [{:keys [account history requested-account] :as context}]
   (and (context-shape? context)
        (every? #(entry-consistent? account (if account (:id account) requested-account) %)

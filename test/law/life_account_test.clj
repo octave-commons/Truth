@@ -193,7 +193,7 @@
           (let [history (if entry {(get-in entry [:request :op-id]) entry} {})]
             (is (law/history? history) label)
             (is (law/operation-context? (assoc context :account (assoc closed :revision revision)
-                                                :history history))
+                                               :history history))
                 label)))))))
 
 (deftest comparison-tags-do-not-collide-with-user-data

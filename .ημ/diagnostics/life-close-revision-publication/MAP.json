@@ -1,0 +1,588 @@
+{
+  "at": "2026-10-07T18:34:20.428599+00:00",
+  "format": "One UTF-8 JSON object per line; text field decodes to exact original UTF-8 bytes, including empty files. No encoding compression, source omission or destructive deletion. All originals retained at their paths.",
+  "archive": "evidence.jsonl",
+  "archive_sha256": "36a7624d92374fe7ef85ecfeba9b98fda2a69d118d1a79181f65dbed4af192ee",
+  "archive_bytes": 566192,
+  "original_files": 72,
+  "original_bytes": 526016,
+  "empty_originals": 3,
+  "entries": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/GATE-01-CLOSURE.json",
+      "bytes": 659,
+      "sha256": "8bdf23cb2193f2a56aff0d08f2852883ee00caf3fc23021b7e16105fc796fb98",
+      "line": 1,
+      "archive_byte_offset": 0,
+      "archive_line_bytes": 884
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/GATE-02-CLOSURE.json",
+      "bytes": 1076,
+      "sha256": "f8f3a2e545bb6ee1d85c18cb20376de3a807f22a75abeca8d0cccf282e00fe59",
+      "line": 2,
+      "archive_byte_offset": 884,
+      "archive_line_bytes": 1359
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/GREEN-BOARD-COMMENT.json",
+      "bytes": 1019,
+      "sha256": "ae75ed814c53a8733c9ac85fd7af41180d2dd179a626dcdeb21a37b61df56e36",
+      "line": 3,
+      "archive_byte_offset": 2243,
+      "archive_line_bytes": 1243
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/GREEN-FOCUSED.json",
+      "bytes": 1552,
+      "sha256": "1663736f2c512afaa5ed05eec49b75c5ceba284cd9fcad9ca8a0ac95aebbb28e",
+      "line": 4,
+      "archive_byte_offset": 3486,
+      "archive_line_bytes": 1799
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/RED-OBSERVED.json",
+      "bytes": 2678,
+      "sha256": "500a1c45ea45d16a177083dc6da5c75a8e6ca0ecf34240328b87582dbadb6246",
+      "line": 5,
+      "archive_byte_offset": 5285,
+      "archive_line_bytes": 3017
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/board-00.json",
+      "bytes": 1084,
+      "sha256": "63619938fa66c1666ead200f0f583e3c2e86d6bb554d48876bea33fef0ec8e05",
+      "line": 6,
+      "archive_byte_offset": 8302,
+      "archive_line_bytes": 1302
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/board-01.json",
+      "bytes": 149,
+      "sha256": "e5bfdf5d8f7da7d80fb81b8678afb36d9e7eaddd40bee23922786f6d96353fd3",
+      "line": 7,
+      "archive_byte_offset": 9604,
+      "archive_line_bytes": 342
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/board-02.json",
+      "bytes": 15345,
+      "sha256": "4ca43b9f2c0e46f9ad95397053a132af06aac8f4b4299e4fa34b02b82bd8c37e",
+      "line": 8,
+      "archive_byte_offset": 9946,
+      "archive_line_bytes": 15966
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/preparation-hashes.json",
+      "bytes": 180,
+      "sha256": "64920288e64706bd0b22e854a8807deac394e9e1b123d246d47c87f5989d8305",
+      "line": 9,
+      "archive_byte_offset": 25912,
+      "archive_line_bytes": 389
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/root-release.json",
+      "bytes": 662,
+      "sha256": "493ddf661c3622d27d49a90507974da04fc49f25d065afae21abc788de3d2176",
+      "line": 10,
+      "archive_byte_offset": 26301,
+      "archive_line_bytes": 908
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01/command.json",
+      "bytes": 756,
+      "sha256": "ddc2033a4e6e64397cfb0f1ab09b1bf239a533eee65a27cf8cb624e6e311abbd",
+      "line": 11,
+      "archive_byte_offset": 27209,
+      "archive_line_bytes": 1028
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01/execution.json",
+      "bytes": 12197,
+      "sha256": "f3989d5f0bfcc4e61d839a95b18876395a9c944538a43397a4f6ce03a00b5a2a",
+      "line": 12,
+      "archive_byte_offset": 28237,
+      "archive_line_bytes": 13634
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01/ownership.jsonl",
+      "bytes": 10875,
+      "sha256": "047c9ce2573bd1b070fd73dd0a21b344efe94f0ebca82b838303ee5dd49c11c2",
+      "line": 13,
+      "archive_byte_offset": 41871,
+      "archive_line_bytes": 12188
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01/primary-identity.json",
+      "bytes": 246,
+      "sha256": "5ef33f93fb511b36f5d0edefb6a376161e4f04e44a182da090f1f0da23d16803",
+      "line": 14,
+      "archive_byte_offset": 54059,
+      "archive_line_bytes": 483
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01/stderr.log",
+      "bytes": 3121,
+      "sha256": "d663559705795d111b952332a80f05a3d0465ba8c4ce99ef7016ccadcb79c6d9",
+      "line": 15,
+      "archive_byte_offset": 54542,
+      "archive_line_bytes": 3428
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/runs/gate-01/stdout.log",
+      "bytes": 18910,
+      "sha256": "23d2125039a6b55efb7855b1177d57a6fb9d981c607415eb08a98a1e7e8ba606",
+      "line": 16,
+      "archive_byte_offset": 57970,
+      "archive_line_bytes": 19684
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/source-pins.json",
+      "bytes": 32454,
+      "sha256": "517b42ef21fb1642e57522009f175c04157fa476d104643b09dd6521d95fd0d6",
+      "line": 17,
+      "archive_byte_offset": 77654,
+      "archive_line_bytes": 34217
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate/supervisor.py",
+      "bytes": 14686,
+      "sha256": "f4555d285c9021aa70266226c706e57848b280e6b7e96060d885e7f677b25302",
+      "line": 18,
+      "archive_byte_offset": 111871,
+      "archive_line_bytes": 15583
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/preparation-hashes.json",
+      "bytes": 180,
+      "sha256": "05cc443143f18ed5d7fc8a381507f9bc04e6a2bf4751d389407f4d76a519dce1",
+      "line": 19,
+      "archive_byte_offset": 127454,
+      "archive_line_bytes": 392
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/root-release.json",
+      "bytes": 923,
+      "sha256": "e606eb66c6cbcfe1ca2dda92648b3c66149b80f147276495492226fd511ec085",
+      "line": 20,
+      "archive_byte_offset": 127846,
+      "archive_line_bytes": 1183
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/runs/gate-02/command.json",
+      "bytes": 756,
+      "sha256": "366e5bfb5d2e1d69d201d682bbc6d099f58d2eec343cc0b240f8803131b63ca9",
+      "line": 21,
+      "archive_byte_offset": 129029,
+      "archive_line_bytes": 1031
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/runs/gate-02/execution.json",
+      "bytes": 12262,
+      "sha256": "00037bb9c980fa222bfee190530b600825fe0aa97d0865374f2ff834ee6372ac",
+      "line": 22,
+      "archive_byte_offset": 130060,
+      "archive_line_bytes": 13717
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/runs/gate-02/ownership.jsonl",
+      "bytes": 10897,
+      "sha256": "ccea152eea7146fdbf1f96b4ad5a3505662cdcb48e9aa008e0a792339401886c",
+      "line": 23,
+      "archive_byte_offset": 143777,
+      "archive_line_bytes": 12221
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/runs/gate-02/primary-identity.json",
+      "bytes": 246,
+      "sha256": "6c9cda16c6c47d008b6ac9b25bfc6eb7c69fc3efbf0f7f33f9ed8fae8b95efe1",
+      "line": 24,
+      "archive_byte_offset": 155998,
+      "archive_line_bytes": 486
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/runs/gate-02/stderr.log",
+      "bytes": 3033,
+      "sha256": "0163859fb1c1d7efb0872268ffea918f3119f846ea75c52fceec755225555c61",
+      "line": 25,
+      "archive_byte_offset": 156484,
+      "archive_line_bytes": 3342
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/runs/gate-02/stdout.log",
+      "bytes": 18889,
+      "sha256": "d37019c6118d1e9e46eeb4e650230582963df9295a8d19dff885f3be30320af5",
+      "line": 26,
+      "archive_byte_offset": 159826,
+      "archive_line_bytes": 19666
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/source-pins.json",
+      "bytes": 32454,
+      "sha256": "3c025c18cf178d1b5527bdfa4ff7073f2ad4a24f869e02c2db95acaad0892eae",
+      "line": 27,
+      "archive_byte_offset": 179492,
+      "archive_line_bytes": 34220
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/canonical-gate-02/supervisor.py",
+      "bytes": 14686,
+      "sha256": "55fe3ee4401559f20d6748ef08c5e7db09003fa8bdec2c9992e99f3bc58eca87",
+      "line": 28,
+      "archive_byte_offset": 213712,
+      "archive_line_bytes": 15586
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/finding.txt",
+      "bytes": 15818,
+      "sha256": "dd7bebd2d822e44e163de9fba50b9ff85876ef6e87240dfb825e471d6c529e5d",
+      "line": 29,
+      "archive_byte_offset": 229298,
+      "archive_line_bytes": 16484
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/before/src/law/life_account.clj",
+      "bytes": 12445,
+      "sha256": "153dcd49b052f2784a6609eb642d7996ae22d44cb20c1812dea7c1b3ba34ee42",
+      "line": 30,
+      "archive_byte_offset": 245782,
+      "archive_line_bytes": 12946
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/before/test/domain/life_account_test.clj",
+      "bytes": 21868,
+      "sha256": "2b5aef651c9ee14ea92a9144246f6ec959e1e1641d00a7009310856014a382e9",
+      "line": 31,
+      "archive_byte_offset": 258728,
+      "archive_line_bytes": 22544
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/before/test/law/life_account_test.clj",
+      "bytes": 11539,
+      "sha256": "7fc1271287e482530ba9d6d92ad25fbcc303823f6d3118713f45d05fbebb3d54",
+      "line": 32,
+      "archive_byte_offset": 281272,
+      "archive_line_bytes": 11981
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/preparation-hashes.json",
+      "bytes": 180,
+      "sha256": "1281121f0e627e9872b9a671a2e96d5eb18867d6a0a8289515d147fee8fa100a",
+      "line": 33,
+      "archive_byte_offset": 293253,
+      "archive_line_bytes": 385
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/root-release.json",
+      "bytes": 872,
+      "sha256": "fc79d1d5739723b841f02742c66b571b3659d393c333e70fc33490e3edf5e98a",
+      "line": 34,
+      "archive_byte_offset": 293638,
+      "archive_line_bytes": 1116
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/command.json",
+      "bytes": 793,
+      "sha256": "f3c930668f58e7f95f3f3087891b4d7bc8e7a0563d630b49a1e801bb45f732be",
+      "line": 35,
+      "archive_byte_offset": 294754,
+      "archive_line_bytes": 1077
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/execution.json",
+      "bytes": 3345,
+      "sha256": "3bbd38579f792851af1690eeecafec563fad79495d6a012e45ecdc4e0ee5db3b",
+      "line": 36,
+      "archive_byte_offset": 295831,
+      "archive_line_bytes": 3860
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/ownership.jsonl",
+      "bytes": 1795,
+      "sha256": "2a0e2372185e799cf9f85812526f2bb697057cca09aa413bf2cf826bc25f0694",
+      "line": 37,
+      "archive_byte_offset": 299691,
+      "archive_line_bytes": 2182
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/primary-identity.json",
+      "bytes": 209,
+      "sha256": "a0ac984d90822163b08281808a507e58754dd920b11b488e8a4aefe0d9862d85",
+      "line": 38,
+      "archive_byte_offset": 301873,
+      "archive_line_bytes": 444
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/stderr.log",
+      "bytes": 43,
+      "sha256": "a9929bf66448647a0b21eb01fdaced00ffb3a68aa392bbdf1973b7af4a6f809d",
+      "line": 39,
+      "archive_byte_offset": 302317,
+      "archive_line_bytes": 238
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/runs/format-01/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 40,
+      "archive_byte_offset": 302555,
+      "archive_line_bytes": 193
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/source-pins.json",
+      "bytes": 32208,
+      "sha256": "d0cc58c9ffcd2b227e39d5e7d47614c9b7ff347ff1e75f7faad6732a2e0dffef",
+      "line": 41,
+      "archive_byte_offset": 302748,
+      "archive_line_bytes": 33952
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/format-fix/supervisor.py",
+      "bytes": 14239,
+      "sha256": "5e065a0152c9c6147fbac535b283866ade4c2304a66cdef91c061c35a5838da1",
+      "line": 42,
+      "archive_byte_offset": 336700,
+      "archive_line_bytes": 15106
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/preparation-hashes.json",
+      "bytes": 180,
+      "sha256": "c63cf3bfe0823d839ec19741033b508b38e39a7e48aa7871a012c88a3b6c0635",
+      "line": 43,
+      "archive_byte_offset": 351806,
+      "archive_line_bytes": 388
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/root-release.json",
+      "bytes": 611,
+      "sha256": "39cf8681b1a085c965e4b7addea2a5f99f2d80b10aa755d9b7209b9f2677998a",
+      "line": 44,
+      "archive_byte_offset": 352194,
+      "archive_line_bytes": 842
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/command.json",
+      "bytes": 750,
+      "sha256": "06f333a04ae83a35d4728965739a010c20b4e2c310cee49009b576ce60cf3894",
+      "line": 45,
+      "archive_byte_offset": 353036,
+      "archive_line_bytes": 1036
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/execution.json",
+      "bytes": 3134,
+      "sha256": "eb93e7edccb5fe680827a3fc0be0f2f1989db54264b9db7b049283e8f6e5cde9",
+      "line": 46,
+      "archive_byte_offset": 354072,
+      "archive_line_bytes": 3626
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/ownership.jsonl",
+      "bytes": 1489,
+      "sha256": "20dfa801acc833322cc6b5c61b94f3ddcca5e45c9364234fe9d71e65d3d8622e",
+      "line": 47,
+      "archive_byte_offset": 357698,
+      "archive_line_bytes": 1845
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/primary-identity.json",
+      "bytes": 239,
+      "sha256": "0562c8d959dbbaf04b88d0be351bdd5683e69b7831fdbe8d62b9f926ff7add77",
+      "line": 48,
+      "archive_byte_offset": 359543,
+      "archive_line_bytes": 476
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 49,
+      "archive_byte_offset": 360019,
+      "archive_line_bytes": 195
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/runs/green-01/stdout.log",
+      "bytes": 156,
+      "sha256": "80f8f26219025199fadcf6e30ceb7c5aadf83971fef8709977a780ceb6c04e17",
+      "line": 50,
+      "archive_byte_offset": 360214,
+      "archive_line_bytes": 364
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/source-pins.json",
+      "bytes": 32208,
+      "sha256": "d0cc58c9ffcd2b227e39d5e7d47614c9b7ff347ff1e75f7faad6732a2e0dffef",
+      "line": 51,
+      "archive_byte_offset": 360578,
+      "archive_line_bytes": 33955
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/green-focused/supervisor.py",
+      "bytes": 14560,
+      "sha256": "1aa62f85fcccb9ff4b058fcca81ddd5babd6fe14f4cf11469e5f9751dcf60b27",
+      "line": 52,
+      "archive_byte_offset": 394533,
+      "archive_line_bytes": 15447
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/preparation-hashes.json",
+      "bytes": 180,
+      "sha256": "0f459d9dade7fe8d781822333b27f6d401717ccbdb5c002e6865fb15cdeb5cc2",
+      "line": 53,
+      "archive_byte_offset": 409980,
+      "archive_line_bytes": 388
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/root-release.json",
+      "bytes": 583,
+      "sha256": "527659db9ea93eab0ed1bc5f3c92c4622b17deadc50c120b0079dd9e8836ca99",
+      "line": 54,
+      "archive_byte_offset": 410368,
+      "archive_line_bytes": 809
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/command.json",
+      "bytes": 750,
+      "sha256": "4c519a251e5e2a85b38462d8c483aacb95060d82421fc3c47a9f3e2fe4733140",
+      "line": 55,
+      "archive_byte_offset": 411177,
+      "archive_line_bytes": 1034
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/execution.json",
+      "bytes": 2879,
+      "sha256": "20a2d92d17ef986ee88830866a6bb9d174e808dbeb4ed3ee40d9be429f91114c",
+      "line": 56,
+      "archive_byte_offset": 412211,
+      "archive_line_bytes": 3344
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/ownership.jsonl",
+      "bytes": 1345,
+      "sha256": "8644fb87814553f959f5f0e6c207c1a4bb196fde647f58490a0f738c764585d4",
+      "line": 57,
+      "archive_byte_offset": 415555,
+      "archive_line_bytes": 1683
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/primary-identity.json",
+      "bytes": 209,
+      "sha256": "1902a6f0e6a0fc4ff77a8fb57e244efe5646a2d86f5d1e81e3e801eb458adb4d",
+      "line": 58,
+      "archive_byte_offset": 417238,
+      "archive_line_bytes": 444
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 59,
+      "archive_byte_offset": 417682,
+      "archive_line_bytes": 193
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/runs/red-01/stdout.log",
+      "bytes": 1168,
+      "sha256": "947a998255cd5aeaf393fa0e1375e6b5d4209dca093d92d5e9d1a412d9563744",
+      "line": 60,
+      "archive_byte_offset": 417875,
+      "archive_line_bytes": 1394
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/source-pins.json",
+      "bytes": 32208,
+      "sha256": "ae513916a02a8bc5ccdcec1cdbf93e227c52d2e4a32aa91b1d18f59e2291419a",
+      "line": 61,
+      "archive_byte_offset": 419269,
+      "archive_line_bytes": 33955
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-execution/supervisor.py",
+      "bytes": 14569,
+      "sha256": "2efb39f5d094b1d62558dce2dd7e32c414a2ba4e77db4221c75f82b761e1e722",
+      "line": 62,
+      "archive_byte_offset": 453224,
+      "archive_line_bytes": 15456
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/CLOSED-FILES.txt",
+      "bytes": 708,
+      "sha256": "3ca9e46908159aa92c1d5865842edfd9d3a1fa30684f7ff2faa49d1b7cc6029a",
+      "line": 63,
+      "archive_byte_offset": 468680,
+      "archive_line_bytes": 909
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/README.md",
+      "bytes": 4009,
+      "sha256": "82fb3ff74d17b97a9a2fc0f67fb4d61bb33adfae6b3f58065af9fcee259b4d80",
+      "line": 64,
+      "archive_byte_offset": 469589,
+      "archive_line_bytes": 4270
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/SHA256SUMS",
+      "bytes": 1226,
+      "sha256": "9f950c7ff2600636e4d645b3fe55c0cd444fdd19becea68df34dc1da86f19002",
+      "line": 65,
+      "archive_byte_offset": 473859,
+      "archive_line_bytes": 1421
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/STATIC-CHECKS.json",
+      "bytes": 1364,
+      "sha256": "6515aeea7445054a419fe411e02a52aa36bc1c1a9875143a36f6500e920afc38",
+      "line": 66,
+      "archive_byte_offset": 475280,
+      "archive_line_bytes": 1696
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/before.json",
+      "bytes": 37844,
+      "sha256": "58b7a3fdbbd4befc3987a1f7a90dae7722e22929b191812815339cb6c6a7bf3c",
+      "line": 67,
+      "archive_byte_offset": 476976,
+      "archive_line_bytes": 40546
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/domain-test-before.clj",
+      "bytes": 20297,
+      "sha256": "1390313ee327df7fcac345546ff05600ecc9b935e3f3ee8adb63d30500374665",
+      "line": 68,
+      "archive_byte_offset": 517522,
+      "archive_line_bytes": 20925
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/law-test-before.clj",
+      "bytes": 8345,
+      "sha256": "96de33b0d20368b13846375201dc249035b0953fe2c0bef4c8a538e36c0a6eba",
+      "line": 69,
+      "archive_byte_offset": 538447,
+      "archive_line_bytes": 8707
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/red-preparation/tests.diff",
+      "bytes": 5778,
+      "sha256": "b55a0e9713ce37bb674e99aa7a97a1b9984eb3fd16dc45a92e0e07a59ccb5661",
+      "line": 70,
+      "archive_byte_offset": 547154,
+      "archive_line_bytes": 6085
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/review.txt",
+      "bytes": 3397,
+      "sha256": "d57ad7b70504f8c6d2bbf959d67b134e75463d908a433adaa3d98d13a32de695",
+      "line": 71,
+      "archive_byte_offset": 553239,
+      "archive_line_bytes": 3701
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/life-close-revision-review-fix/status.txt",
+      "bytes": 8501,
+      "sha256": "f73d24dc3708025317a5b6ecba1845fb1a6771b216933bf4d29ea5db87804e19",
+      "line": 72,
+      "archive_byte_offset": 556940,
+      "archive_line_bytes": 9252
+    }
+  ]
+}
