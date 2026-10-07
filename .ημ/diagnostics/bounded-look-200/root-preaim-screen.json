@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-07T10:34:00.306407+00:00",
+  "closed": false,
+  "target": 1010,
+  "global_commitment": "TRUTH_COMMITMENT 4335 0",
+  "endpoints": [
+    {
+      "client": "poll-18",
+      "tick": 4008,
+      "time": 36657.004225358,
+      "range_m": null
+    },
+    {
+      "client": "poll-19",
+      "tick": 4164,
+      "time": 36687.010345349,
+      "range_m": 2.2921498032862004e+16
+    },
+    {
+      "client": "018-coast-before-aim",
+      "tick": 4243,
+      "time": 36703.688456323,
+      "range_m": 2.3075568455538576e+16
+    },
+    {
+      "client": "019-coast-before-aim",
+      "tick": 4335,
+      "time": 36721.648329894,
+      "range_m": 2.3255551965582164e+16
+    }
+  ],
+  "observed_rates": [
+    5.198939417918802,
+    4.736747472370855,
+    5.122530492004194
+  ],
+  "N_star": 23,
+  "D": 75000000000000.0,
+  "range_AU": 155453.76319037518,
+  "coast_fraction": 0.10427617472115736,
+  "combined_fraction": 0.17845201034754762,
+  "passes": false,
+  "heuristic_only": true
+}

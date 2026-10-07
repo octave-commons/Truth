@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-07T10:25:10.613721+00:00",
+  "reviewer": "board_scout",
+  "finding": "Formation poller checks stored-ready before nonzero globalcommitment; if both exist, stopreasoncanlabelready despite driverterminalcommitment.",
+  "scope": "Reportingprecedence only; bothconditionsstop, driveralreadyobservescommitmentandcloses. No targetchosen bypoller.",
+  "active_source_sha256": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa",
+  "current_action": "Preserve pinned active source. Root must inspect authoritative closedstate/globalcommitment before anyselection; never inferadmissionfrompollerreason. No staleactivefilepatch or extendedlease.",
+  "required_future_fix": "In a fresh operatorcopy checkglobalcommitment before ready and verifybothpresentcase. This sourcebug remainsopen; no correctedcodeclaim.",
+  "setup_review": "Nootherconcreteissue insetupsequence; youngnative\u00b1200calibration subsequentlypassed."
+}

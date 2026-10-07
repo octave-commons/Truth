@@ -1,0 +1,15 @@
+{
+  "args": [
+    "python3",
+    ".\u03b7\u03bc/diagnostics/bounded-look-200/runner.py",
+    "click",
+    ".\u03b7\u03bc/diagnostics/bounded-look-200/runs/attempt-01",
+    "spark"
+  ],
+  "pid": 3512431,
+  "started_at": "2026-10-07T10:34:14.071390+00:00",
+  "started_monotonic": 36754.130164125,
+  "state": "reaped",
+  "returncode": 1,
+  "elapsed_seconds": 1.848378837996279
+}
