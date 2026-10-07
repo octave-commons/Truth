@@ -548,3 +548,12 @@
   spore: none
   receipt-refs: .ημ/diagnostics/action-aim-host-cost-publication/RESULT.md
   note: A workload completion marker cannot qualify a failed supervisor. Keep process membership independent of optional metadata, persist ownership immediately, and preserve failedraws. Compare identical outputs and expose action-cost increases; do not infer FPS. Lossless publication keeps every byte while reducing path count. No new spore.
+- ts: 2026-10-07T20:16:56.800743565Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Sculpt append-only publication provenance correction
+  p-efficiency: 0.78
+  p-friction: 0.32
+  p-skill-candidate: 0.30
+  spore: none
+  receipt-refs: .ημ/diagnostics/action-aim-provenance-correction-01/CLARIFICATION.json
+  note: A saved producer changed after a failed inventory attempt cannot attest to the earlier invocation. Preserve original bytes, mark unavailable commands unknown, and separate a newly derived byte-equivalent replay from historical execution. Inspect manifest path roots and gh slurp nesting before verification. Existing evidence discipline covers this; no new spore or promotion.

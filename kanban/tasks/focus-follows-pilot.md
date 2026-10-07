@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
-write-id: "1791395267342-0.0q2x70v6i6c3uwyu377"
+write-id: "1791404198858-0.8xz1fynrsr00fe3o0"
 source: "kanban/tasks/focus-follows-pilot.md"
 title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
 priority: "P1"
@@ -184,5 +184,7 @@ Root releases one baseline-only host cost attempt under repaired frozen profile 
 Host-cost repaired baseline-02 COMPLETE57.637810s exit0 at17:40:47UTC, durablePGID1846490/start6228964 reaped and child1846497absent. All14artifacthashes/prep/source verified; no cleanup errors/unknown membership. Root separately releases one candidate-01 against exact baseline checks and frozen d8c19cf4, 170swork180total, no retry/extension. Four actualFIFO cases/defaultCriterium and exactwholeoutputEDN guards unchanged. No performance claim until matched result reviewed.
 
 Matched host-cost baseline02 and candidate01 completed in57.638s/58.336s under170work180total, each all14artifacthashes verified and ownedPIDs reaped/absent. Checks.edn byte-identical. MedianCPU microseconds empty0.025→0.047, legacy16 5.63→4.47, sculpt1 4.48→10.05, sculpt8 39.38→91.24. Allocations +64B empty/legacy,+13440B oneSculpt,+107128B eightSculpt. These are measured increases, no speedup/FPS/tickclaim; variance high and no predeclared numericthreshold. Root accepts publication for review of bounded on-demand serialinputcost with correctnessguards retained. Costbundle includes118originals826803B losslessly, includingfailedfirstsupervisor/RED/repair/actualruns; rawfilesunchanged. Existing focused56/544/full967/17006/all6strictPASS sourcepins remain unchanged. No new JVM or native release; no gameplaycompletion.
+
+Review5447659078 root4211390330 identified publication provenance gap: old saved package.py is post-inventory-repair and cannot rerun over exclusive-create frozen archive. Root read full native review and source and verified append-only correction .ημ/diagnostics/action-aim-provenance-correction-01 (manifest8d3bc624154d2126e42ae1b0e48cc96d0166303be4e378e5f17377d501db40a8). Exact historical repair command remains UNKNOWN; new explicitly derived read-only replay reconstructs identical archive/map/proof/74pathinventory. All97originals72packed25direct/18empty intact;35native+verification records losslessly bundled. Old scripts/docs/archive and all source/test bytes untouched; no JVM/native required. Review3 remains. Root publishes after independent correction audit; no hosted successor approval/Gate claim.
 
 ---

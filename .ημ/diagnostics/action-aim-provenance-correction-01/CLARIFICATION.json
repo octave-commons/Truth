@@ -1,0 +1,414 @@
+{
+  "context": "己",
+  "confidence": 0.99,
+  "at": "2026-10-07T20:13:28.335270+00:00",
+  "title": "Append-only clarification of the Sculpt publication producer and derived replay",
+  "scope": "Publication provenance only; no gameplay, physics, source/test or qualification change.",
+  "head_assessed": "4bd980c8e2ce8f881c7987237b8cda9e462dceda",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "finding": {
+    "review_id": 5447659078,
+    "review_node_id": "PRR_kwDOTDahac8AAAABRLSuRg",
+    "review_state": "COMMENTED",
+    "submitted_at": "2026-10-07T20:01:42Z",
+    "review_url": "https://github.com/octave-commons/Truth/pull/36#pullrequestreview-5447659078",
+    "root_comment_id": 4211390330,
+    "comment_node_id": "PRRC_kwDOTDahac77BLd6",
+    "comment_url": "https://github.com/octave-commons/Truth/pull/36#discussion_r4211390330",
+    "thread_id": "PRRT_kwDOTDahac6qEutz",
+    "item_id": "cr-comment:v1:20ead7f4412a8d40c9e71f4f",
+    "current_unresolved": true,
+    "outdated": false,
+    "review_run_id": "46d14c62-36c5-466a-94b4-b8618d4bed98",
+    "publication_id": "d728744f-0e6a-484e-9134-694d93c4513a",
+    "attempt_id": "665b6e75-1d06-43f3-99d1-cd290e524f20"
+  },
+  "observed_historical_records": [
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/PACKAGING.md",
+      "lines": "5,13",
+      "fact": "The saved-producer wording and final correction paragraph did not distinguish the post-repair saved source from the first draft-producing version. This new artifact supplies that distinction without changing the historical document."
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/package.py",
+      "lines": "46,70-76",
+      "fact": "The preserved script is the post-inventory-repair version: it already uses git diff --name-only -z with NUL splitting and includes INVENTORY-REPAIR.json. Its exclusive xb archive creation occurs before metadata writes; running it over the frozen archive exits before regenerating map, inventory or proof."
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/INVENTORY-REPAIR.json",
+      "fact": "The preserved failure record embeds the first 73-path inventory and its digest, including 32 quoted display names, and records a NUL-separated path repair with unchanged raw inputs/archive/mapping. The record does not preserve the actual shell command or metadata-regeneration transcript."
+    }
+  ],
+  "unknown_historical_command": "UNKNOWN. The exact command sequence originally used to regenerate metadata after the quoted-path failure is absent from the inspected evidence. Output equivalence below cannot establish that command, and neither this recipe nor the post-repair saved script is presented as its recovery.",
+  "derived_recipe": {
+    "classification": "New reproducibility/verification steps, executed on 2026-10-07; not an attestation of historical command execution.",
+    "command": {
+      "cwd": "Truth checkout root",
+      "argv": [
+        "python3",
+        "-B",
+        ".ημ/diagnostics/action-aim-provenance-correction-01/replay.py"
+      ]
+    },
+    "source_sha256": "bbc655cd2ac48e43d2c64ab0d6f95fa0177d7f26398c0261f70f99cbb28c2695",
+    "steps": [
+      "Pin eight historical publication files. Parse only the two literal direct-file policy sets from saved package.py using Python AST; never import or execute that producer.",
+      "Decode 72 archive records in memory and read 25 direct files. Validate original lengths/digests, classify by saved literal policy, reproduce exact archive encoding/order/offsets and mapping bytes.",
+      "Check the embedded draft digest; decode its 32 quoted UTF-8 names using literal byte parsing, retain all 73 paths, add INVENTORY-REPAIR.json and sort/newline-join. Compare exact final 74-path inventory bytes.",
+      "Recompute proof counts and partition from exact file bytes; carry historical base, source_head, note, staging flag and past preservation declarations explicitly as historical inputs. Compare exact proof bytes without claiming their historical execution was replayed.",
+      "Compare every retained original when present and all eight old publication files again. Packed files absent in a fresh checkout can be decoded in memory; direct files are required. The actual recorded run compared all 97 retained originals.",
+      "Print a verification result only. No Git, subprocess, network, JVM, native input, extraction, archive creation, metadata rewriting or staging occurs inside replay.py."
+    ],
+    "fresh_checkout_limit": "Packed originals may be absent locally; their archived bytes are still hash-verified. Reconstructing a historical all_originals_unchanged or originals_retained_locally field is not a present-day claim that absent files exist. The recorded execution had no absent originals.",
+    "historical_manifest_limit": "Old SHA256SUMS itself is pinned; this replay does not claim all current mutable ledger companions still match their historic hashes or derive the current PR path set.",
+    "final_execution": {
+      "kind": "Newly derived verification; final source explicitly distinguishes carried historical metadata from present comparison",
+      "started": "2026-10-07T20:12:38.702712+00:00",
+      "ended": "2026-10-07T20:12:38.882601+00:00",
+      "argv": [
+        "python3",
+        "-B",
+        ".ημ/diagnostics/action-aim-provenance-correction-01/replay.py"
+      ],
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "timeout_seconds": 10,
+      "exit": 0,
+      "elapsed_seconds": 0.17989128699991852,
+      "stdout_bytes": 1399,
+      "stderr_bytes": 0,
+      "stdout_sha256": "7e3242aead559f4904554bfd14ba60d2647d82f5e7b25ece4e3bc2969741f234",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "replay_sha256": "bbc655cd2ac48e43d2c64ab0d6f95fa0177d7f26398c0261f70f99cbb28c2695"
+    },
+    "result": {
+      "result": "PASS",
+      "kind": "derived-read-only-replay",
+      "historical_regeneration_command": "UNKNOWN; this command is a newly derived verification recipe",
+      "regenerated_exact": {
+        "historical-evidence.jsonl": "482499697aaeb20a8084ccb1dee7f479cbc6b6233f87f710fe22a0fca549f062",
+        "AUXILIARY-MAP.json": "bf263f55884b49aa1bac391708ff9f81c5765f83ffd6ca95f7d81e45e4636afb",
+        "PROOF.json": "8be8eb2888e4068ca4da7cda7ec243999c9dc0bf4c8a3a214ca7e5b0ccd8a5f5",
+        "PUBLICATION-FILES.txt": "a8f70af4b53b384f566611edc3e7998cdff41ec2f7e114aee7e2aa23c78752bc"
+      },
+      "pinned_old_publication_files": 8,
+      "old_publication_bytes_unchanged": true,
+      "draft_paths": 73,
+      "quoted_draft_paths": 32,
+      "final_inventory_paths": 74,
+      "original_files": 97,
+      "original_bytes": 489499,
+      "packed_files": 72,
+      "packed_bytes": 327347,
+      "empty_packed_files": 18,
+      "direct_files": 25,
+      "retained_local_originals_compared": 97,
+      "packed_originals_absent_locally": 0,
+      "carried_historical_metadata": [
+        "base",
+        "source_head",
+        "root_only_staging_required",
+        "note",
+        "all_originals_unchanged",
+        "map.originals_retained_locally"
+      ],
+      "limits": "Byte-equivalent derived outputs do not identify or prove the historical regeneration command. No current Git inventory or current ledger-hash claim; frozen SHA256SUMS itself is pinned but later companion appends are outside this replay."
+    }
+  },
+  "preservation": {
+    "at": "2026-10-07T20:12:38.896272+00:00",
+    "result": "PASS",
+    "protected_files": 138,
+    "all_old_protocol_files_and_five_current_sources_tests_byte_equal": true,
+    "old_protocol_file_set_unchanged": true,
+    "before_sha256": "5d9eeae5e0ab2fef2b0d584b1188eef6f7b71bf689a6267d605ec29d8760174d",
+    "no_source_test_Git_board_native_JVM_mutation": "Only new correction/evidence files authored; verification Python read-only"
+  },
+  "native_review_completion_and_policy_snapshot": {
+    "request_id": 6045687140,
+    "request_created_at": "2026-10-07T19:54:44Z",
+    "request_head": "4bd980c8e2ce8f881c7987237b8cda9e462dceda",
+    "recorded_prior_cooldown_expiry": "2026-10-07T19:52:33Z",
+    "prior_expiry_tier": "Writer request records this prior repository cooldown; this assessment did not fetch the earlier other-PR native limit notice.",
+    "completion_reply_id": 6045689641,
+    "reply_created_at": "2026-10-07T19:54:53Z",
+    "reply_updated_at": "2026-10-07T20:01:49Z",
+    "reply_text": "Full review finished.",
+    "coverage_comment_id": 6029474307,
+    "coverage_updated_at": "2026-10-07T20:01:45Z",
+    "native_footer": "Included allowance; up to1 included review/hour;0 remain after this review.",
+    "CodeRabbit_check": "SUCCESS; GitHub check timestamps are sentinel0001, so native review/reply timestamps establish completion.",
+    "next_exact_retry_time": "UNKNOWN from this PR native footer; do not fabricate an exact reset from the rate. Root owns shared repository cooldown scheduling and future request."
+  },
+  "canonical_status_when_assessed": {
+    "fetched_at": "2026-10-07T20:05:11Z",
+    "CodeRabbit": "completed",
+    "deterministic_checks_pass": 8,
+    "threads": 2,
+    "unresolved_P2": 1,
+    "current_approvals": [
+      "mimo"
+    ],
+    "completed_code_rounds": 1,
+    "available_participants": [
+      "coderabbit",
+      "mimo"
+    ],
+    "gate": "BLOCKED by unsettled/unresolved thread and convergence; local assessment supplies no approval or settlement.",
+    "Codex_quota_source": 6029473068
+  },
+  "evidence": {
+    "archive": "EVIDENCE.jsonl",
+    "format": "lossless-utf8-jsonl-v1, one path/bytes/sha256/text record per original",
+    "sha256": "ee00b2e4152dba344080b601605e5677447e724b2d4cbf04ae66eeba0497787a",
+    "records": 35,
+    "original_bytes": 165688,
+    "encoded_bytes": 181799,
+    "empty_originals": 10,
+    "all_records_exact_byte_roundtrip_against_retained_local_originals": true,
+    "includes": "Full native review bodies/comments/threads, read-only request transcripts, status/checks, exact-head assessment, preservation pins and both new replay executions. Attempt01 source is retained; final source only clarifies carried historical metadata.",
+    "index": [
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/ASSESSMENT.json",
+        "bytes": 8798,
+        "sha256": "180cebabbcd9126092547716d2c8c4890bd555a9850c8d3edb45d1e43da6adb9"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/checks.command.json",
+        "bytes": 324,
+        "sha256": "fc036ebdae7c5bf5456266922dc2c790a2778d98388aa2a6f34d4ca3fb07f837"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/checks.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/checks.stdout",
+        "bytes": 2601,
+        "sha256": "62a5865468f285a2827df2dcf19bdfab8dc9c90fb5b493205ef8d3280aa75062"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/correction-inputs-before.json",
+        "bytes": 30072,
+        "sha256": "5d9eeae5e0ab2fef2b0d584b1188eef6f7b71bf689a6267d605ec29d8760174d"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/correction-preservation.json",
+        "bytes": 427,
+        "sha256": "946b15229d58fec32a7f10b005e363d0984ca8dbd6106283c94e7e82cf77c9fd"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay-attempt01-source.py",
+        "bytes": 9275,
+        "sha256": "5b57ac58d11fbad1debf92f54150691faafe0fa208dc3fd62844b6392bfb2282"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay-final.command.json",
+        "bytes": 808,
+        "sha256": "e47c9291c265291ad6a0d6a083ab1a1cdf9e0c6ea371a9fd59af7fa68283ca35"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay-final.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay-final.stdout",
+        "bytes": 1399,
+        "sha256": "7e3242aead559f4904554bfd14ba60d2647d82f5e7b25ece4e3bc2969741f234"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay.command.json",
+        "bytes": 754,
+        "sha256": "c7889b96f1293f86efc3e27797aa8c042a6cda99606a3e631d1c15289b6d7a4d"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/derived-replay.stdout",
+        "bytes": 1330,
+        "sha256": "5b851ffa78457680fc80e1efb687345be632e21316cf5b98f52ca8112d4f879d"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/issue-comments.command.json",
+        "bytes": 455,
+        "sha256": "3af804f91c64ad546a616c79b8c8e9e6fcb18569dd06a6e7808a983bb372abb8"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/issue-comments.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/issue-comments.stdout",
+        "bytes": 36048,
+        "sha256": "dc16a3999ce1099105ca45e6dcfb048caa6fa2d141a465c9fb2ff26545e1d2a8"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/native-threads.command.json",
+        "bytes": 726,
+        "sha256": "7bdc1cea26b94a3d3c6d5674d57b7a39eed1ef991212e7aea78e6e209dff92fc"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/native-threads.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/native-threads.stdout",
+        "bytes": 6574,
+        "sha256": "c535afba32e6f72cf7c69b85da9c94eea38fd1b1a46e97b3236e398cc1d3ef55"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/pull.command.json",
+        "bytes": 412,
+        "sha256": "5c6207428ead2e9dd5409044dcff71748ad0c16e63015d9366732d725641fa6e"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/pull.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/pull.stdout",
+        "bytes": 18633,
+        "sha256": "3d5f512637c0b9b9376d70ea45dd5a2caca681add98ff5620d396d7207a76913"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/review-comments.command.json",
+        "bytes": 454,
+        "sha256": "fdd077082f11ca7bc5ef93e04ccac351a004cac25e030d0f442d40542e14dc1d"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/review-comments.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/review-comments.stdout",
+        "bytes": 17574,
+        "sha256": "0b3a98501fa7c09526663f470da35cd0c226918fc20237c6b6c072bdcbd9d998"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/reviews.command.json",
+        "bytes": 453,
+        "sha256": "6503e2f8f49b638b20d6de003ba98aa5be61f8080661be363ebc4ca266753af4"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/reviews.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/reviews.stdout",
+        "bytes": 23767,
+        "sha256": "a1079fc27f41f3a9ab56b6210a8ca78330b43c4826a5404ffa1fecc3c120acd3"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/source-and-reconstruction.json",
+        "bytes": 2449,
+        "sha256": "e74bdde2e56ecc630a881dd06066d6e45b63d3c9f72f4a98371ebd7d09c73c40"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/status.command.json",
+        "bytes": 524,
+        "sha256": "232db211852e4c38a53db87d725dd1d56c9940abe321b5506dfda8ef56f99b36"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/status.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/status.stdout",
+        "bytes": 734,
+        "sha256": "3f25ef6cc23e6476a9a81f3904b994b840657e399a9e16311ca01d33bf2ef648"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/threads.command.json",
+        "bytes": 538,
+        "sha256": "2d86ddde2b2a9fc8cada917164d7dc3d99244d224d035bb0380e60a4f89329ba"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/threads.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/action-aim-review-4bd980c/threads.stdout",
+        "bytes": 559,
+        "sha256": "fa01af7b58808325bf060316b8de228e572172bc1fc58c173eff6bf30998ba43"
+      }
+    ]
+  },
+  "historical_publication_pins": [
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/package.py",
+      "bytes": 4902,
+      "sha256": "598aa247878bbc565575ce4e80f98c8370844aabec66a5244244641ba5a1e688",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/PACKAGING.md",
+      "bytes": 2987,
+      "sha256": "9db0388447b1dd68a85d402f9e3becedfbc287e4caab2e591066f86791f61d3e",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/INVENTORY-REPAIR.json",
+      "bytes": 5994,
+      "sha256": "528292a51c9ea1b1856e11dbf8326456c29bb22bfd1514b3233c26ff4c251bd6",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/PROOF.json",
+      "bytes": 777,
+      "sha256": "8be8eb2888e4068ca4da7cda7ec243999c9dc0bf4c8a3a214ca7e5b0ccd8a5f5",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/PUBLICATION-FILES.txt",
+      "bytes": 4851,
+      "sha256": "a8f70af4b53b384f566611edc3e7998cdff41ec2f7e114aee7e2aa23c78752bc",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/AUXILIARY-MAP.json",
+      "bytes": 27132,
+      "sha256": "bf263f55884b49aa1bac391708ff9f81c5765f83ffd6ca95f7d81e45e4636afb",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/historical-evidence.jsonl",
+      "bytes": 352345,
+      "sha256": "482499697aaeb20a8084ccb1dee7f479cbc6b6233f87f710fe22a0fca549f062",
+      "exact_head_byte_equal": true
+    },
+    {
+      "path": ".ημ/diagnostics/action-aim-protocol/publication/SHA256SUMS",
+      "bytes": 9608,
+      "sha256": "ba8adf8d347b27d1b3def7d7e29ed75b152cf70514ac767828684cb67503dd9e",
+      "tier": "Pinned filesystem byte preservation; seven other finding-related files independently matched assessed head."
+    }
+  ],
+  "publication": {
+    "explicit_new_paths": [
+      ".ημ/diagnostics/action-aim-provenance-correction-01/CLARIFICATION.json",
+      ".ημ/diagnostics/action-aim-provenance-correction-01/EVIDENCE.jsonl",
+      ".ημ/diagnostics/action-aim-provenance-correction-01/replay.py",
+      ".ημ/diagnostics/action-aim-provenance-correction-01/SHA256SUMS"
+    ],
+    "raw_evidence_staging": "Do not stage action-aim-review-4bd980c separately; its exact contents are bundled here. Old publication inventory and PACKAGING.md are preserved, not regenerated for this addition.",
+    "count_limit": "Parent reported 89 current cumulative paths; these four are a proposed addition, not a new Git-derived count. Root owns final explicit staging, actual count, commit and publication."
+  },
+  "verdict": "LOCAL_CORRECTION_VERIFIED; independent final review and root publication/settlement remain separate.",
+  "limits": [
+    "No new production RED/GREEN applies to this provenance-only clarification; prior focused/full qualification claims are unchanged.",
+    "Local analysis is not a native approval, finding settlement, review-cycle credit or merge authorization.",
+    "No hosted writes, review request, board action, Git mutation, JVM or native run was performed."
+  ],
+  "next_action": "Independent runtime_scout/root review of these four pinned files, followed by root-owned finding-bound publication and settlement."
+}

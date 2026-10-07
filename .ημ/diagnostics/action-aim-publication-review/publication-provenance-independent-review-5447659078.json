@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-07T20:18:51.200907+00:00",
+  "reviewer": "runtime_scout",
+  "context": "\u5df1",
+  "confidence": 0.99,
+  "verdict": "PASS append-only provenance correction; valid P2 source gap accurately disclosed, no correction blocker found.",
+  "native_finding": {
+    "review_id": 5447659078,
+    "root_comment_id": 4211390330,
+    "thread_id": "PRRT_kwDOTDahac6qEutz",
+    "item_id": "cr-comment:v1:20ead7f4412a8d40c9e71f4f",
+    "review_url": "https://github.com/octave-commons/Truth/pull/36#pullrequestreview-5447659078",
+    "comment_url": "https://github.com/octave-commons/Truth/pull/36#discussion_r4211390330"
+  },
+  "assessed_head": "4bd980c8e2ce8f881c7987237b8cda9e462dceda",
+  "scope": "Filesystem/source/AST and in-memory byte comparison only. No original producer or new replay execution by this reviewer, no Git/board/PR/runtime/native action. Only this separate assessment file is written.",
+  "correction_pins": {
+    "CLARIFICATION.json": {
+      "bytes": 20999,
+      "sha256": "6e4f25b71f78b11fad0a68b37584e9e15f160b09b6b2ad62fe019528f79d45c8"
+    },
+    "EVIDENCE.jsonl": {
+      "bytes": 181799,
+      "sha256": "ee00b2e4152dba344080b601605e5677447e724b2d4cbf04ae66eeba0497787a"
+    },
+    "replay.py": {
+      "bytes": 9377,
+      "sha256": "bbc655cd2ac48e43d2c64ab0d6f95fa0177d7f26398c0261f70f99cbb28c2695"
+    },
+    "SHA256SUMS": {
+      "bytes": 404,
+      "sha256": "8d3bc624154d2126e42ae1b0e48cc96d0166303be4e378e5f17377d501db40a8"
+    }
+  },
+  "observed": [
+    "Full native review5447659078 and comment4211390330 were read. Exactly one actionable provenance item is identified; no game/source defect is claimed by this item.",
+    "Saved historical package.py is post-repair: -z/NUL decoding and repair-record inclusion differ from preserved first inventory. Its xb archive creation would stop a repeat before metadata regeneration; this source fact is established without executing it.",
+    "All eight historical publication pins and all138 protected protocol/source/test pins match. Old protocol file set is unchanged.",
+    "All35 bundled evidence records/165688 decoded bytes/10 empty records roundtrip exactly to local originals; bundle index is complete and unique.",
+    "Embedded draft SHA matches. Decoding its32 quoted names, retaining73 paths and adding the repair record reconstructs exact74-path inventory.",
+    "All72 packed rows/327347 bytes/18 empty records and25 direct originals match. Independent reconstruction using saved literal policy sets reproduced archive and map byte-for-byte before reading final replay result.",
+    "Proof numerical fields recompute from those97 originals/489499 total bytes and exact inventory; base/source_head/note/staging and historical-preservation declarations are carried, explicitly not rediscovered."
+  ],
+  "replay_source_review": {
+    "read_only": true,
+    "source_import_or_execution_of_old_package": false,
+    "independent_replay_rerun": false,
+    "imports": [
+      "pathlib",
+      "ast",
+      "hashlib",
+      "json"
+    ],
+    "behavior": "Pins eight inputs, AST-reads only literal direct-file sets, decodes packed originals in memory, recomputes encoding/order/offsets/map/inventory and proof counts, compares retained originals, and prints JSON. No file-write or subprocess path.",
+    "fresh_checkout": "Packed originals may be absent; direct files remain required. Carried historical presence/preservation flags are listed separately from present local comparisons.",
+    "producer_execution_readback": "Author final replay exit0/0.179891s is evidence read from bundled command/stdout/stderr, not an execution by this reviewer. Source pin matches frozen replay."
+  },
+  "verification_note": "Initial independent blanket forbidden-import substring check matched os within PurePosixPath and stopped before any artifact write. Corrected to exact AST module names; all imports are pathlib, ast, hashlib and json. This was a reviewer-check false positive, not a source finding.",
+  "unknown_and_limits": [
+    "Exact historical metadata-regeneration shell command remains UNKNOWN. A deterministic modern reconstruction cannot establish which commands ran then.",
+    "The correction truthfully replaces ambiguity with post-repair-source attribution and a newly derived recipe; it must not be described in settlement as recovering or recording the original unknown command.",
+    "Historical SHA256SUMS is preserved, not repurposed as current ledger or current PR inventory proof.",
+    "No native approval, finding settlement, new qualification run, merge permission or automatic publication follows from this local review."
+  ],
+  "finding_disposition_recommendation": "Root may publish the append-only correction and explain it as corrected producer attribution plus newly reproducible verification, explicitly retaining the historical-command gap. Leave all prior script/document/archive hashes unchanged. Root owns native finding-bound settlement.",
+  "next": "Root reviews the four pinned correction files and this verdict before publication."
+}
