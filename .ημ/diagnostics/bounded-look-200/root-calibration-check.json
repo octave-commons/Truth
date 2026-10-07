@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-07T10:23:36.576437+00:00",
+  "calibration": "passed",
+  "baseline_tick": 368,
+  "final_tick": 396,
+  "angles": {
+    "011-baseline": [
+      "-90.0",
+      "-20.0",
+      "0.01"
+    ],
+    "012-x-plus": [
+      "-88.0",
+      "-20.0",
+      "0.01"
+    ],
+    "013-x-minus": [
+      "-90.0",
+      "-20.0",
+      "0.01"
+    ],
+    "014-y-plus": [
+      "-90.0",
+      "-22.0",
+      "0.01"
+    ],
+    "015-y-minus": [
+      "-90.0",
+      "-20.0",
+      "0.01"
+    ],
+    "016-calibration-final": [
+      "-90.0",
+      "-20.0",
+      "0.01"
+    ]
+  },
+  "setup_process_pid": 3455296,
+  "setup_process_absent": true,
+  "tool_setup_session": 74505,
+  "tool_exit": 0,
+  "root_operator_hashes_verified": {
+    "root-setup.py": "e9b0ec5cbaffba8b9ceb2317137a33c449fc5f94a085134d967848e2f14e489a",
+    "root-formation-poller.py": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa"
+  },
+  "young_frame_result": {
+    "request": "1791368564756266015-0f08a53d",
+    "ok": true,
+    "finished_at": "2026-10-07T10:22:45.539972+00:00"
+  }
+}

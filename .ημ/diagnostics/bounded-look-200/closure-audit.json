@@ -1,0 +1,591 @@
+{
+  "audit_at": "2026-10-07T10:43:57.048653+00:00",
+  "auditor": "/root/intent_research",
+  "context": "己",
+  "confidence": 1.0,
+  "scope": "Closed attempt-01 only. Offline JSON/UTF-8/raw-byte parsing, file hashing and arithmetic; no driver imports, tests, JVM, game, process probes, board or Git operations. Only closure-audit.json and closure-audit.md written.",
+  "method": "Extract literal EDN :id/:out/:value strings using JSON-compatible escaped-string decoding, verify complete raw byte slices and done records; never eval EDN. Protocol fields are paired to the same returned world. Host config/camera are separately sampled, not atomic with that world.",
+  "verdict": "Native calibration succeeded; overall attempt FAILED on operator request that violated locked-cursor menu precondition. Safe bounded cleanup evidenced; no target admission, aim, W, approach or commitment achieved.",
+  "source": {
+    "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "current_files_equal_launch_and_base_manifest": 186,
+    "runtime_pins": {
+      "runner.py": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a",
+      "aim-client.py": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10",
+      "snapshot_client.clj": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+      "snapshot.clj": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+      "PLAN.md": "713d5c60bf41127e099c837c619b0995e9b73c026c805209c71e12c4acf39a6f",
+      "test_protocol.py": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec"
+    },
+    "closed_preparation_sha256": "fae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e",
+    "closed_checksums_verified": 16,
+    "operator_sources": {
+      "root-setup.py": "e9b0ec5cbaffba8b9ceb2317137a33c449fc5f94a085134d967848e2f14e489a",
+      "root-formation-poller.py": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa"
+    },
+    "historical_base_method": "Compared current bytes to both launch hashes and recorded b395 SOURCE-EQUALITY; no fresh Git query."
+  },
+  "identity": {
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "port": 7898,
+    "display": ":1",
+    "world": 1558902476,
+    "window": 132442363675584,
+    "x-window": "2097159",
+    "supervisor": {
+      "pid": 3451533,
+      "start": "3600495",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12"
+    },
+    "xvfb": {
+      "pid": 3451543,
+      "start": "3600505",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 3451673,
+      "start": "3600717",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "snapshot_client": {
+      "pid": 3452818,
+      "start": "3601771",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    }
+  },
+  "journal": {
+    "snapshot_count": 65,
+    "id_first": "0001",
+    "id_last": "0065",
+    "tick_first": 47,
+    "tick_last": 4490,
+    "raw_maps": 913,
+    "raw_utf8_bytes": 543254,
+    "request_events": 132,
+    "all_starts_finishes_contiguous": true,
+    "every_byte_partitioned_once": true,
+    "one_value_and_done_each": true,
+    "worker_outcomes_all_ok": true,
+    "nrepl_err_messages": 0,
+    "all_operations_consumed_stdout_lengths_match": true,
+    "global_commitment_all_zero": true,
+    "all_thrust_nil": true,
+    "all_fixture_false_and_nebula": true,
+    "all_published_body_overlap_false": true,
+    "last_snapshot_is_failed_click_precondition": true
+  },
+  "operations": {
+    "events": 402,
+    "ipc_requests": 39,
+    "ipc_by_operation": {
+      "inspect": 25,
+      "tap": 2,
+      "click": 7,
+      "look": 4,
+      "frame": 1
+    },
+    "ipc_success": 38,
+    "ipc_failed": 1,
+    "native_commands": 33,
+    "native_menu_presses": 6,
+    "calibration_looks": 4,
+    "aim_invocations": 0,
+    "held_W": 0,
+    "frames": 1,
+    "ack_groups": 18,
+    "ack_observations": 26,
+    "ack_group_lengths": {
+      "1": 11,
+      "2": 6,
+      "3": 1
+    },
+    "max_observations": 3,
+    "more_than_three_observation_window_exercised": false,
+    "look_ack_observation_counts": [
+      1,
+      1,
+      1,
+      2
+    ],
+    "calibration_camera_values": [
+      [
+        -88.0,
+        -20.0
+      ],
+      [
+        -90.0,
+        -20.0
+      ],
+      [
+        -90.0,
+        -22.0
+      ],
+      [
+        -90.0,
+        -20.0
+      ]
+    ],
+    "final_calibration_tick": 396,
+    "frame": {
+      "path": "runs/attempt-01/frame-1791368564756266015-0f08a53d.png",
+      "bytes": 173050,
+      "sha256": "19f1bf1d40b46bbd0b51ec40add2c4c7584bbcc0df08dc29e543bb25247979d0"
+    },
+    "frame_dimensions": [
+      1280,
+      720
+    ],
+    "frame_context": "One young ordinary-world X11 image; root frame record binds near tick398. No mature-planet visual/aim/capture proof."
+  },
+  "formation": {
+    "polls": 20,
+    "polls_00_to_18_no_planets": true,
+    "poll18_tick": 4008,
+    "first_observed_poll": "poll-19",
+    "first_observed_snapshot_id": "0062",
+    "first_observed_tick": 4164,
+    "planet_rows": 12,
+    "stored_current_ready_ids": [
+      1010,
+      1011,
+      1012
+    ],
+    "fresh_handoff_at_poll19": [
+      1010
+    ],
+    "poller_selects_target": false,
+    "poller_reason": "stored-ready-observed-no-selection",
+    "poller_ended_at": "2026-10-07T10:33:07.556201+00:00",
+    "endpoint_ranges": [
+      {
+        "client": "poll-19",
+        "tick": 4164,
+        "range_au": 153220.75057357087,
+        "stored_ready_fresh": [
+          "true",
+          "true",
+          "true"
+        ]
+      },
+      {
+        "client": "018-coast-before-aim",
+        "tick": 4243,
+        "range_au": 154250.64773691713,
+        "stored_ready_fresh": [
+          "true",
+          "true",
+          "true"
+        ]
+      },
+      {
+        "client": "019-coast-before-aim",
+        "tick": 4335,
+        "range_au": 155453.76319037518,
+        "stored_ready_fresh": [
+          "true",
+          "true",
+          "true"
+        ]
+      }
+    ],
+    "screen_target": 1010,
+    "screen_is_not_successful_target_admission": true,
+    "screen": {
+      "N_star": 23,
+      "D_m_per_tick": 75000000000000.0,
+      "observed_ticks_per_second": [
+        5.198939417918802,
+        4.736747472370855,
+        5.122530492004194
+      ],
+      "range_au": 155453.76319037518,
+      "coast_fraction": 0.10427617472115736,
+      "combined_fraction": 0.17845201034754762,
+      "passes": false
+    },
+    "observed_delay_poll19_to_first_coast_seconds": 16.67811097399681,
+    "poller_reporting_bug": "Stored-ready is checked before nonzero global commitment. Either stops, but simultaneous truth could mislabel the reason. Preserved source is not fixed. Every actual paired commitment observation here is zero; this did not cause the run failure."
+  },
+  "failure": {
+    "request_id": "1791369254174771460-b17e51ce",
+    "request_elapsed": 749.422839456005,
+    "operation": "click spark",
+    "snapshot_id": "0065",
+    "tick": 4490,
+    "input_state": [
+      "manual",
+      "false",
+      "none",
+      "7.5E13",
+      "-90.0",
+      "-20.0",
+      "0.01",
+      "true",
+      "false"
+    ],
+    "source": "runner.py:696-700",
+    "required": "manual AND cursor-free AND no pending pick",
+    "failed_predicate": "cursor-free=false",
+    "result": {
+      "ok": false,
+      "error": "AssertionError()",
+      "finished_at": "2026-10-07T10:34:14.948897+00:00"
+    },
+    "failure_elapsed": 750.0746844960013,
+    "native_commands_after_request": [
+      [
+        "xdotool",
+        "keyup",
+        "r",
+        "Tab"
+      ]
+    ],
+    "no_menu_position_or_press_after_failed_request": true,
+    "no_retry": true,
+    "interpretation": "Operator omitted unlock before asking to reopen Spark. This is not evidence of failed native click delivery, a lost Tab acknowledgement or target-control impossibility."
+  },
+  "closure": {
+    "ended_at": "2026-10-07T10:34:15.732769+00:00",
+    "elapsed_seconds": 750.8583047260036,
+    "original_total_budget": 1500,
+    "original_no_target_cutoff": 960,
+    "successful_admission": null,
+    "cleanup_errors": [],
+    "unreaped_children": [],
+    "supervisor_children_spawned_and_reaped": 33,
+    "child_returncodes": {
+      "0": 32,
+      "143": 1
+    },
+    "last_child_reap_elapsed": 750.8579211010001,
+    "outer_clients": 40,
+    "outer_returncodes": {
+      "0": 39,
+      "1": 1
+    },
+    "last_outer_reap_elapsed": 751.0452703830015,
+    "outer_failed_click_reaps_after_closed": true,
+    "principal_absence": {
+      "source": "root-attempt01-closure.json",
+      "at": "2026-10-07T10:36:53.166905+00:00",
+      "root_observed": {
+        "3451533": true,
+        "3451543": true,
+        "3451673": true,
+        "3452818": true
+      },
+      "independent_live_probe_by_auditor": false
+    },
+    "heap_limits": "Game explicit 256MiB/2GiB; snapshot client explicit64MiB/256MiB; published game max heap2147483648 on every snapshot. Native commands record32MiB per-child output ceilings; snapshot worker128MiB. No observed file limit reached."
+  },
+  "stderr": [
+    {
+      "path": "runs/attempt-01/001-xvfb.stderr",
+      "bytes": 2480,
+      "sha256": "2469f66a930ba9ffe3f3e4c63757e39c18423ae06d18c698253227f32217b205"
+    },
+    {
+      "path": "attempt-01-clients/020-spark-open.stderr",
+      "bytes": 543,
+      "sha256": "9db771813f9098e0cd6601bf10d8c26fa0b31926413abd7c4d5494846825552a"
+    }
+  ],
+  "runtime_log": {
+    "bytes": 74035,
+    "literal_K_clamp_binds_count": 1089,
+    "case_insensitive_exception_error_warn_nan_infinity_matches": {
+      "exception": 0,
+      "error": 0,
+      "warn": 0,
+      "NaN": 0,
+      "Infinity": 0
+    },
+    "limits": "Interleaved clamp text is not a parsed per-tick solver trace or causal attribution. No GL error observer/FPS measurement."
+  },
+  "prelaunch_manifest_repair": {
+    "initial_manifest_sha256": "61868e1428bb030c19aebf049639c20d6925bc95dbd1e593ab59d59afbf036c6",
+    "preserved_original_utf8_verified": true,
+    "initial_shape_incompatible_with_reader": true,
+    "fixed_flat_six_pin_map_sha256": "4c06446b1034e73ad7d831dc2627a3eb9aec9c53684d75968e3a9dba72dbb62f",
+    "all_six_executable_test_plan_pins_unchanged": true,
+    "recorded_actual_reader_probe_passed": true,
+    "audit_did_not_rerun_probe_or_tests": true,
+    "initial_error_not_represented_as_native_failure": true
+  },
+  "limits": [
+    "No successful target admission or target aim; root screening1010 is distinct from driver acceptance.",
+    "No W or pulse response, close approach, sustained binding, commitment, sculpt, embodiment or Gate.",
+    "Four young-world200px callbacks do not prove mature aiming performance.",
+    "All acknowledgement groups used at most3 observations; extended observation allowance not exercised.",
+    "No late deadline, all input gestures or native hard-stop universal guarantee established by this one early failure.",
+    "Natural first formation is a sampled interval: no planets at poll18/tick4008,12 at poll19/tick4164; no exact birth tick inferred.",
+    "Published-world overlap observations are not actual binding-consumer-input histories.",
+    "Only root independently probed process absence; auditor read immutable records.",
+    "No evidence packaging or attempt02 source included. No native PNG visual interpretation by this audit."
+  ],
+  "raw_input_inventory": {
+    "files": 335,
+    "bytes": 1384602,
+    "serialization": "UTF-8 ordered SHA256 two spaces byte-size two spaces path newline, sorted by absolute path; paths relative to this diagnostic directory",
+    "inventory_sha256": "febd9b70981860391a4ead361fbf84c2b88e68191fb28d1ddd1e294b7ba77754",
+    "selection": "Exact listed historical top-level preparation/operator records, runs/attempt-01 recursively and attempt-01-clients recursively. Excludes all attempt02 preparation and both audit outputs.",
+    "top_level_paths": [
+      "COPY-PROOF.json",
+      "PLAN.md",
+      "PREPARATION-FILES.txt",
+      "SHA256SUMS",
+      "SOURCE-EQUALITY.json",
+      "STATIC-CHECKS.json",
+      "WHITESPACE-CHECK.json",
+      "aim-client.py",
+      "calibration.json",
+      "formation-poller.json",
+      "manifest-shape-repair.json",
+      "preparation-hashes.json",
+      "pure-tests-green.stderr",
+      "pure-tests-green.stdout",
+      "pure-tests-red.stderr",
+      "pure-tests-red.stdout",
+      "root-calibration-check.json",
+      "root-copy-review.json",
+      "root-execution-release.json",
+      "root-formation-poller.py",
+      "root-operator-review-limitation.json",
+      "root-preaim-screen.json",
+      "root-scope.json",
+      "root-setup.py",
+      "runner.py",
+      "snapshot.clj",
+      "snapshot_client.clj",
+      "test_protocol.py",
+      "root-attempt01-closure.json"
+    ],
+    "all_selected_bytes_rechecked_unchanged_before_and_after_write": true
+  },
+  "critical_artifacts": [
+    {
+      "path": "COPY-PROOF.json",
+      "bytes": 7635,
+      "sha256": "90c4e8f0162734725cf38957a85dadc8c1f3cc0cf415756a9b6849a63a264d11"
+    },
+    {
+      "path": "PLAN.md",
+      "bytes": 7278,
+      "sha256": "713d5c60bf41127e099c837c619b0995e9b73c026c805209c71e12c4acf39a6f"
+    },
+    {
+      "path": "PREPARATION-FILES.txt",
+      "bytes": 314,
+      "sha256": "dbca33eb6b719b6df82c77809c1c9a811c084e50afa1eb553bec0575df61888b"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 1359,
+      "sha256": "fae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e"
+    },
+    {
+      "path": "SOURCE-EQUALITY.json",
+      "bytes": 27968,
+      "sha256": "ee6f89869a35d370b1478664709eb67cf39ac382d96b9c755b625b0297989070"
+    },
+    {
+      "path": "STATIC-CHECKS.json",
+      "bytes": 8031,
+      "sha256": "8408689bbcce8c4f0eafd54790c20d7e4e1f249059f35cc974bc8cddff4e102a"
+    },
+    {
+      "path": "aim-client.py",
+      "bytes": 14169,
+      "sha256": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10"
+    },
+    {
+      "path": "calibration.json",
+      "bytes": 4351,
+      "sha256": "0945676dcfe247d39a46f55dc57424567f5937937843e7fe37947d3688d260d4"
+    },
+    {
+      "path": "formation-poller.json",
+      "bytes": 4932,
+      "sha256": "b6078a4d2266f84f654504523d774c38a2f10d117bf0445ec9c82b21cf64c32e"
+    },
+    {
+      "path": "manifest-shape-repair.json",
+      "bytes": 16382,
+      "sha256": "d0ebdd29bf86c4c3ac1394b1a8f7341240a863857727b8887b798e7e4c869038"
+    },
+    {
+      "path": "preparation-hashes.json",
+      "bytes": 523,
+      "sha256": "4c06446b1034e73ad7d831dc2627a3eb9aec9c53684d75968e3a9dba72dbb62f"
+    },
+    {
+      "path": "pure-tests-green.stderr",
+      "bytes": 4661,
+      "sha256": "028dff5eeffa29ebbc67e57eefc1be62a3fbb7bfdfa078a964ff17bcbaafdf57"
+    },
+    {
+      "path": "pure-tests-red.stderr",
+      "bytes": 15123,
+      "sha256": "2728f028ce71be9ad34f539ccb56fca4ac811ee37d9df913b6211a522f176c79"
+    },
+    {
+      "path": "root-calibration-check.json",
+      "bytes": 1063,
+      "sha256": "9dc99b9fd0d8433e5f5c7c498fb07be935f19271659fd80d5269f74b4cac5910"
+    },
+    {
+      "path": "root-copy-review.json",
+      "bytes": 933,
+      "sha256": "b0f0e0216ca37417b1c4bede4c5afdf010dba055ca9f58666a16e4e5125d7bef"
+    },
+    {
+      "path": "root-execution-release.json",
+      "bytes": 3065,
+      "sha256": "40cf142aafc98e761ae62c02a685c7a3d647e68c67a12807ffbc3fe85a593f98"
+    },
+    {
+      "path": "root-formation-poller.py",
+      "bytes": 2768,
+      "sha256": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa"
+    },
+    {
+      "path": "root-operator-review-limitation.json",
+      "bytes": 949,
+      "sha256": "0f782a4b87d73b62de74e4aaff8953a7d63a4c9ab7f2dd2e9a2c7a8e18f21c19"
+    },
+    {
+      "path": "root-preaim-screen.json",
+      "bytes": 987,
+      "sha256": "f10fdcfff0ff3971a227187c84ca8516e0e9de62d085d44d6d6c2cc620493011"
+    },
+    {
+      "path": "root-scope.json",
+      "bytes": 2366,
+      "sha256": "37dca1cc0528c38db7aa93e1e9d8c1fc83f547f2b1e303b8903b845f1c9d9072"
+    },
+    {
+      "path": "root-setup.py",
+      "bytes": 3613,
+      "sha256": "e9b0ec5cbaffba8b9ceb2317137a33c449fc5f94a085134d967848e2f14e489a"
+    },
+    {
+      "path": "runner.py",
+      "bytes": 54870,
+      "sha256": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a"
+    },
+    {
+      "path": "snapshot.clj",
+      "bytes": 10301,
+      "sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a"
+    },
+    {
+      "path": "snapshot_client.clj",
+      "bytes": 10905,
+      "sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03"
+    },
+    {
+      "path": "test_protocol.py",
+      "bytes": 25726,
+      "sha256": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec"
+    },
+    {
+      "path": "root-attempt01-closure.json",
+      "bytes": 4734,
+      "sha256": "40a1596e2c7bedf0a492ffd50b6d0f7053a32f8d9f44ad3703156fb3b1a520b7"
+    },
+    {
+      "path": "runs/attempt-01/closed.json",
+      "bytes": 2385,
+      "sha256": "4815a9214b1c9de720f1df9f5926739c7814014517385b438a79d871ffc0c24d"
+    },
+    {
+      "path": "runs/attempt-01/state.json",
+      "bytes": 2385,
+      "sha256": "4815a9214b1c9de720f1df9f5926739c7814014517385b438a79d871ffc0c24d"
+    },
+    {
+      "path": "runs/attempt-01/operations.jsonl",
+      "bytes": 90856,
+      "sha256": "6cb838a13da43a4702a33c3881671f7404c527cbbda6db72dfdc5980ac862219"
+    },
+    {
+      "path": "runs/attempt-01/snapshot-messages.edn",
+      "bytes": 543254,
+      "sha256": "ab4b47d4a8196803852098f6e62c5e8e5f30e07a2c60003ea0ed724d225e2a8c"
+    },
+    {
+      "path": "runs/attempt-01/snapshot-requests.edn",
+      "bytes": 47669,
+      "sha256": "4b6a383b9e206a89b35944a6b649e4c08afd4af8edc562aa3ac9faa27cc9c0ca"
+    },
+    {
+      "path": "runs/attempt-01/snapshot-current.stdout",
+      "bytes": 20078,
+      "sha256": "58e32747a1fdb05e70e8e224f307ef5e8581e456326a0d550171813c6d8da8ed"
+    },
+    {
+      "path": "runs/attempt-01/snapshot-current.result",
+      "bytes": 8,
+      "sha256": "917f54f3f6bc7d8f369702f850fdb3c1e395c10af530df4c8470c75afc2d518d"
+    },
+    {
+      "path": "runs/attempt-01/source-hashes.json",
+      "bytes": 18753,
+      "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61"
+    },
+    {
+      "path": "runs/attempt-01/preparation-hashes.json",
+      "bytes": 523,
+      "sha256": "4c06446b1034e73ad7d831dc2627a3eb9aec9c53684d75968e3a9dba72dbb62f"
+    },
+    {
+      "path": "runs/attempt-01/supervisor-launch.json",
+      "bytes": 485,
+      "sha256": "8a211b970887c797d5c4ddd17b5610fbfc015485c17a4cba28f1933e822570e7"
+    },
+    {
+      "path": "runs/attempt-01/002-runtime.stdout",
+      "bytes": 74035,
+      "sha256": "cc8ca7c16e0d2ff5576bdf353eee3d00522f96e82112559fcebbf621ae216992"
+    },
+    {
+      "path": "runs/attempt-01/001-xvfb.stderr",
+      "bytes": 2480,
+      "sha256": "2469f66a930ba9ffe3f3e4c63757e39c18423ae06d18c698253227f32217b205"
+    },
+    {
+      "path": "runs/attempt-01/frame-1791368564756266015-0f08a53d.png",
+      "bytes": 173050,
+      "sha256": "19f1bf1d40b46bbd0b51ec40add2c4c7584bbcc0df08dc29e543bb25247979d0"
+    },
+    {
+      "path": "attempt-01-clients/020-spark-open.json",
+      "bytes": 376,
+      "sha256": "e099c1015c6dcd3c4d4629a5b1b2034160af42c22f3c34309457d937c3a0c1f9"
+    },
+    {
+      "path": "attempt-01-clients/020-spark-open.stdout",
+      "bytes": 147,
+      "sha256": "912e33faaab48328056ec014a8bf1836df67336a9a7fec0569680eef633d461e"
+    },
+    {
+      "path": "attempt-01-clients/020-spark-open.stderr",
+      "bytes": 543,
+      "sha256": "9db771813f9098e0cd6601bf10d8c26fa0b31926413abd7c4d5494846825552a"
+    }
+  ],
+  "offline_assertions_passed": 3600,
+  "audit_development_note": "An initial offline assertion compared consumed stdout length to :out fragments alone and failed. Corrected to the actual worker contract (:out fragments plus returned :value and newline), then all 3600 assertions passed. No native input or evidence changed."
+}

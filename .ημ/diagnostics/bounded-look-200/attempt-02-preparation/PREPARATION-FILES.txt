@@ -1,0 +1,11 @@
+COPY-PROOF.json
+PLAN.md
+STATIC-CHECKS.json
+pure-tests-result.json
+pure-tests.stderr
+pure-tests.stdout
+root-formation-poller.py
+root-setup.py
+test_operators.py
+PREPARATION-FILES.txt
+SHA256SUMS

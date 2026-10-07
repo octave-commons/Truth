@@ -1,0 +1,205 @@
+{
+  "at": "2026-10-07T10:04:16.240052+00:00",
+  "scope": "Diagnostic preparation only. Python AST/static/hash reads and pure protocol tests; no JVM, native service/input, project namespaces, sockets, board/Git action.",
+  "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "instructions": {
+    "AGENTS.md": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0",
+    "PROCESS.md": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2"
+  },
+  "python_ast": {
+    "runner.py": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a",
+    "aim-client.py": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10",
+    "test_protocol.py": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec"
+  },
+  "pure_tests": {
+    "command": [
+      "python3",
+      "-B",
+      ".ημ/diagnostics/bounded-look-200/test_protocol.py"
+    ],
+    "output_redirection": "Separate stdout/stderr files preserved for each invocation.",
+    "blockers": "Inherited ExitStack forbids subprocess Popen/run/check_output/check_call/call, socket.socket, os signal/process-launch calls and native identity; actual native command methods in action tests use explicit recorders. No live process inspected.",
+    "test_sha256": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec",
+    "inherited_methods": 24,
+    "added_methods": 6,
+    "red": {
+      "runner_sha256": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+      "aim_sha256": "047bf69afe71a166787a940c05ef5a69b731e965e0fda05b8f77b87d6507a848",
+      "stdout": "pure-tests-red.stdout",
+      "stderr": "pure-tests-red.stderr",
+      "tests": 30,
+      "failures_including_subcases": 10,
+      "errors": 0,
+      "all24_inherited_tests_passed": true,
+      "actual_tool_result": {
+        "chunk_id": "c457f0",
+        "wall_time_seconds": 0.062683307,
+        "exit_code": 1,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    "green": {
+      "runner_sha256": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a",
+      "aim_sha256": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10",
+      "stdout": "pure-tests-green.stdout",
+      "stderr": "pure-tests-green.stderr",
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "actual_tool_result": {
+        "chunk_id": "be1d1c",
+        "wall_time_seconds": 0.173478717,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  },
+  "clojure_lint": {
+    "new_run": false,
+    "reason": "Both Clojure files are byte-identical; no new project or JVM load. Reuse predecessor exact-file static records.",
+    "previous_static_path": "../input-observation-window/STATIC-CHECKS.json",
+    "previous_static_sha256": "a8fff021efffe9d00bbcde22cda36890b01c08f5e22ebd557f51621bee2b69de",
+    "records": [
+      {
+        "command": [
+          "clj-kondo",
+          "--lint",
+          ".ημ/diagnostics/commit-ready-approach/snapshot.clj",
+          "--cache",
+          "false"
+        ],
+        "exit": 0,
+        "errors": 0,
+        "warnings": 0,
+        "sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+        "stdout": "kondo-snapshot.stdout",
+        "stderr": "kondo-snapshot.stderr"
+      },
+      {
+        "command": [
+          "clj-kondo",
+          "--lint",
+          ".ημ/diagnostics/commit-ready-approach/snapshot_client.clj",
+          "--cache",
+          "false"
+        ],
+        "exit": 0,
+        "errors": 0,
+        "warnings": 0,
+        "sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+        "stdout": "kondo-worker.stdout",
+        "stderr": "kondo-worker.stderr"
+      }
+    ]
+  },
+  "source_hashes_verified": 186,
+  "local_markdown_links": [
+    {
+      "label": "root-recorded scope",
+      "target": "root-scope.json",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/root-scope.json"
+    },
+    {
+      "label": "observation-window plan",
+      "target": "../input-observation-window/PLAN.md",
+      "repository_path": ".ημ/diagnostics/input-observation-window/PLAN.md"
+    },
+    {
+      "label": "closed-run observation",
+      "target": "../input-observation-window/root-closure-observation.json",
+      "repository_path": ".ημ/diagnostics/input-observation-window/root-closure-observation.json"
+    },
+    {
+      "label": "runner",
+      "target": "runner.py",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/runner.py"
+    },
+    {
+      "label": "aim client",
+      "target": "aim-client.py",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/aim-client.py"
+    },
+    {
+      "label": "snapshot.clj",
+      "target": "snapshot.clj",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/snapshot.clj"
+    },
+    {
+      "label": "snapshot_client.clj",
+      "target": "snapshot_client.clj",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/snapshot_client.clj"
+    },
+    {
+      "label": "test_protocol.py",
+      "target": "test_protocol.py",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/test_protocol.py"
+    },
+    {
+      "label": "RED log",
+      "target": "pure-tests-red.stderr",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/pure-tests-red.stderr"
+    },
+    {
+      "label": "GREEN log",
+      "target": "pure-tests-green.stderr",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/pure-tests-green.stderr"
+    },
+    {
+      "label": "STATIC-CHECKS.json",
+      "target": "STATIC-CHECKS.json",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/STATIC-CHECKS.json"
+    },
+    {
+      "label": "COPY-PROOF.json",
+      "target": "COPY-PROOF.json",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/COPY-PROOF.json"
+    },
+    {
+      "label": "SOURCE-EQUALITY.json",
+      "target": "SOURCE-EQUALITY.json",
+      "repository_path": ".ημ/diagnostics/bounded-look-200/SOURCE-EQUALITY.json"
+    }
+  ],
+  "trailing_whitespace": {
+    "runner.py": [],
+    "aim-client.py": [],
+    "test_protocol.py": [],
+    "PLAN.md": []
+  },
+  "immutable_predecessor_checks": {
+    "runner.py": "99f211d2b831e212b2e5eed5c05fcca939a99759c91ba60073d61ba0cc178b22",
+    "aim-client.py": "047bf69afe71a166787a940c05ef5a69b731e965e0fda05b8f77b87d6507a848",
+    "snapshot.clj": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+    "snapshot_client.clj": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+    "test_protocol.py": "ba82c52cba2c8432361ff7bc670adaded85989b7ca67a37ef2a2328d9d796cf9",
+    "PLAN.md": "83c3aa90a66df9e526a2ac71271a3528172bcd921afbc11c24ac0872aea3d488",
+    "SHA256SUMS": "17b8437302c780e0e97f72ad68552fa0700c55bd173b3e33b18a3b6bc95fc1bd"
+  },
+  "root_scope_sha256": "37dca1cc0528c38db7aa93e1e9d8c1fc83f547f2b1e303b8903b845f1c9d9072",
+  "not_qualified": [
+    "Actual 200-pixel native callback delivery or acknowledged calibration",
+    "Real delayed delivery beyond three observations",
+    "Real fresh-process cleanup, cancellation or preemption",
+    "Mature-world latency improvement or successful aim",
+    "Physical approach, binding, commitment, embodiment or Gate"
+  ],
+  "preparation_manifest_contract": {
+    "repair_record": "manifest-shape-repair.json",
+    "repair_record_sha256": "d0ebdd29bf86c4c3ac1394b1a8f7341240a863857727b8887b798e7e4c869038",
+    "flat_manifest_sha256": "4c06446b1034e73ad7d831dc2627a3eb9aec9c53684d75968e3a9dba72dbb62f",
+    "actual_reader_sha256": "50bf67e5cc0d5a362d13c0dabde4b56ae2e45f0b07044d96c6e8e9e8cdaafe6e",
+    "exact_keys": [
+      "runner.py",
+      "aim-client.py",
+      "snapshot_client.clj",
+      "snapshot.clj",
+      "PLAN.md",
+      "test_protocol.py"
+    ],
+    "observed_initial_file_not_found": "at",
+    "corrected_reader_passed": true,
+    "qualification_scope": "Actual existing pure file/hash reader only; no startup/runtime/native execution. Previous executable tests retained unchanged."
+  }
+}

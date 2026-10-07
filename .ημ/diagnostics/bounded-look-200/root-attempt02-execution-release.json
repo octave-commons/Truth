@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-07T10:42:07.913332+00:00",
+  "canonical_comment": "Root independently reviewed and releases one fresh bounded-look-200 attempt02. Attempt01 remains closed FAILED and all four owned PIDs are absent; no continuation or gesture retry. New operator preparation checksum manifest 0bc45b19b2215d3cbfe6250abcfa5bbd7c6e0f631063a780fcc192d7b4979d34: setup adds a third ordinary acknowledged halving to provisional D3.75e13 before locking; four separately acknowledged +/-200 calibration movements must return baseline, nil thrust and current global0. Poller gives global commitment and closure priority over ready reporting, selects no target, preserves 30-second cadence and max32. Ten offline tests pass; frozen runner/aim/preparation17 and production186 remain unchanged. Root will commit explicit preparation before launch, verify port7898 free, use a fresh attempt02 directory, and keep primary display0/7896 untouched. Shared180 startup,960 no-admitted-target,1470 work,1500 total, cleanup30/caller45;3aims120sec,360looks,20requested<=2secW,3PNGs remain unchanged. Root waits for setup/poller completion before each next stage; authoritative global/closed state precedes target selection. Two fresh coast reads and current range screen determine explicit natural target/D; no W before fresh heading<=0.5 and released thrust. Any later menu adjustment must separately acknowledge Tab unlock, Spark open, down, Spark close, Tab lock, fresh geometry. Stop on uncertainty, invalidity, unsafe residual, overshoot or two noncontracting pulse/coast intervals. No world setters, seed-pointing, retargeting, production tuning, or gameplay completion claim.",
+  "root_independent_source_review": "Read complete setup, poller, tests and PLAN; no findings. Newclassifier pure terminal/closed priority; exactfreshpaths and 3 initial ordinary reductions. Root repeated all checksum rows and protected originals.",
+  "new_checksums_verified": 10,
+  "original_checksums_verified": 16,
+  "old_owned_pids_absent": true,
+  "port7898_bind_preflight": "passed thenreleased",
+  "new_run_directory_absent": true,
+  "runtime_started": false,
+  "execution_release": "one freshattempt02 after explicitpreparationcommit",
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "prior_ledger_bytes": 670203,
+  "prior_ledger_sha256": "63408c809a8e813dcb5c69853d922eb443f2f35513e3796168c754dd27111dba",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "after_write_id": "1791369727340-0.f4a5yp0c78bfkpnnkde"
+}

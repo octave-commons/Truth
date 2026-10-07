@@ -1,0 +1,15 @@
+test_closed_takes_priority_over_ready (__main__.OperatorTests.test_closed_takes_priority_over_ready) ... ok
+test_commitment_takes_priority_over_ready_and_closed (__main__.OperatorTests.test_commitment_takes_priority_over_ready_and_closed) ... ok
+test_empty_terminal_world_still_stops (__main__.OperatorTests.test_empty_terminal_world_still_stops) ... ok
+test_fresh_attempt_and_record_paths (__main__.OperatorTests.test_fresh_attempt_and_record_paths) ... ok
+test_no_target_continues_observation (__main__.OperatorTests.test_no_target_continues_observation) ... ok
+test_poller_has_no_target_selection_or_gameplay_command (__main__.OperatorTests.test_poller_has_no_target_selection_or_gameplay_command) ... ok
+test_poller_uses_same_snapshot_commitment_and_current_closed_file (__main__.OperatorTests.test_poller_uses_same_snapshot_commitment_and_current_closed_file) ... ok
+test_ready_alone_stops_without_selection (__main__.OperatorTests.test_ready_alone_stops_without_selection) ... ok
+test_setup_preserves_four_separate_looks_and_final_inspection (__main__.OperatorTests.test_setup_preserves_four_separate_looks_and_final_inspection) ... ok
+test_setup_reduces_cruise_three_times_before_lock (__main__.OperatorTests.test_setup_reduces_cruise_three_times_before_lock) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.048s
+
+OK

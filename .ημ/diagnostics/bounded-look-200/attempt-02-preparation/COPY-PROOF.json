@@ -1,0 +1,89 @@
+{
+  "scope": "Separate attempt-02 operator copies only; no driver, game, prior evidence or board change.",
+  "protected_before": {
+    "runner.py": {
+      "bytes": 54870,
+      "sha256": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a"
+    },
+    "aim-client.py": {
+      "bytes": 14169,
+      "sha256": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10"
+    },
+    "snapshot.clj": {
+      "bytes": 10301,
+      "sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a"
+    },
+    "snapshot_client.clj": {
+      "bytes": 10905,
+      "sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03"
+    },
+    "test_protocol.py": {
+      "bytes": 25726,
+      "sha256": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec"
+    },
+    "PLAN.md": {
+      "bytes": 7278,
+      "sha256": "713d5c60bf41127e099c837c619b0995e9b73c026c805209c71e12c4acf39a6f"
+    },
+    "pure-tests-red.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pure-tests-red.stderr": {
+      "bytes": 15123,
+      "sha256": "2728f028ce71be9ad34f539ccb56fca4ac811ee37d9df913b6211a522f176c79"
+    },
+    "pure-tests-green.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pure-tests-green.stderr": {
+      "bytes": 4661,
+      "sha256": "028dff5eeffa29ebbc67e57eefc1be62a3fbb7bfdfa078a964ff17bcbaafdf57"
+    },
+    "COPY-PROOF.json": {
+      "bytes": 7635,
+      "sha256": "90c4e8f0162734725cf38957a85dadc8c1f3cc0cf415756a9b6849a63a264d11"
+    },
+    "SOURCE-EQUALITY.json": {
+      "bytes": 27968,
+      "sha256": "ee6f89869a35d370b1478664709eb67cf39ac382d96b9c755b625b0297989070"
+    },
+    "STATIC-CHECKS.json": {
+      "bytes": 8031,
+      "sha256": "8408689bbcce8c4f0eafd54790c20d7e4e1f249059f35cc974bc8cddff4e102a"
+    },
+    "manifest-shape-repair.json": {
+      "bytes": 16382,
+      "sha256": "d0ebdd29bf86c4c3ac1394b1a8f7341240a863857727b8887b798e7e4c869038"
+    },
+    "preparation-hashes.json": {
+      "bytes": 523,
+      "sha256": "4c06446b1034e73ad7d831dc2627a3eb9aec9c53684d75968e3a9dba72dbb62f"
+    },
+    "PREPARATION-FILES.txt": {
+      "bytes": 314,
+      "sha256": "dbca33eb6b719b6df82c77809c1c9a811c084e50afa1eb553bec0575df61888b"
+    },
+    "SHA256SUMS": {
+      "bytes": 1359,
+      "sha256": "fae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e"
+    },
+    "root-setup.py": {
+      "bytes": 3613,
+      "sha256": "e9b0ec5cbaffba8b9ceb2317137a33c449fc5f94a085134d967848e2f14e489a"
+    },
+    "root-formation-poller.py": {
+      "bytes": 2768,
+      "sha256": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa"
+    },
+    "root-scope.json": {
+      "bytes": 2366,
+      "sha256": "37dca1cc0528c38db7aa93e1e9d8c1fc83f547f2b1e303b8903b845f1c9d9072"
+    }
+  },
+  "diffs": {
+    "root-setup.py": "--- ../root-setup.py\n+++ root-setup.py\n@@ -1,6 +1,6 @@\n from pathlib import Path\n import subprocess,json,time,datetime,re,os\n-base=Path('.\u03b7\u03bc/diagnostics/bounded-look-200');run=base/'runs/attempt-01';logs=base/'attempt-01-clients'\n+base=Path('.\u03b7\u03bc/diagnostics/bounded-look-200');run=base/'runs/attempt-02';logs=base/'attempt-02-clients'\n def invoke(stemname,op,extra):\n  stem=logs/stemname;args=['python3',str(base/'runner.py'),op,str(run),*extra]\n  start=time.monotonic();at=datetime.datetime.now(datetime.timezone.utc).isoformat()\n@@ -13,9 +13,9 @@\n  print(stemname,rc,stem.with_suffix('.stdout').read_text(),flush=True)\n  if rc:print(stem.with_suffix('.stderr').read_text(),flush=True);raise RuntimeError('Submitted action failed; no retry: '+stemname)\n  return (run/'snapshot-current.stdout').read_text()\n-plan=[('002-inspect','inspect',[]),('003-manual','tap',['r']),('004-open-spark','click',['spark']),('005-fine','click',['fine']),('006-cruise','click',['cruise']),('007-half','click',['thrust-down']),('008-quarter','click',['thrust-down']),('009-close-spark','click',['spark']),('010-lock','tap',['Tab']),('011-baseline','inspect',[]),('012-x-plus','look',['200','0']),('013-x-minus','look',['-200','0']),('014-y-plus','look',['0','200']),('015-y-minus','look',['0','-200']),('016-calibration-final','inspect',[])]\n+plan=[('002-inspect','inspect',[]),('003-manual','tap',['r']),('004-open-spark','click',['spark']),('005-fine','click',['fine']),('006-cruise','click',['cruise']),('007-half','click',['thrust-down']),('008-quarter','click',['thrust-down']),('009-eighth','click',['thrust-down']),('010-close-spark','click',['spark']),('011-lock','tap',['Tab']),('012-baseline','inspect',[]),('013-x-plus','look',['200','0']),('014-x-minus','look',['-200','0']),('015-y-plus','look',['0','200']),('016-y-minus','look',['0','-200']),('017-calibration-final','inspect',[])]\n report={'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'pid':os.getpid(),'state':'running','steps':[]}\n-path=base/'calibration.json';path.write_text(json.dumps(report,indent=2)+'\\n');baseline=None\n+path=base/'attempt-02-calibration.json';path.write_text(json.dumps(report,indent=2)+'\\n');baseline=None\n try:\n  for stem,op,args in plan:\n   snap=invoke(stem,op,args);flight=re.findall(r'^TRUTH_FLIGHT (.+)$',snap,re.M);controls=re.findall(r'^TRUTH_INPUT_STATE (.+)$',snap,re.M);commit=re.findall(r'^TRUTH_COMMITMENT (.+)$',snap,re.M)\n@@ -23,19 +23,19 @@\n   f=flight[0].split();c=controls[0].split()\n   assert f[-3:]==['nil']*3 and commit[0].split()[1]=='0','Unexpected thrust/commitment during setup'\n   step={'client':stem,'tick':int(f[0]),'controls':c,'nil_thrust':True};report['steps'].append(step)\n-  if stem=='011-baseline':\n+  if stem=='012-baseline':\n    assert c[:3]==['manual','false','none'] and c[-2:]==['true','false']\n    baseline=[float(c[4]),float(c[5]),float(c[6])];assert abs(baseline[2]-.01)<1e-12 and abs(baseline[1])<87\n    report['baseline']=baseline\n-  if stem in ['013-x-minus','015-y-minus','016-calibration-final']:\n+  if stem in ['014-x-minus','016-y-minus','017-calibration-final']:\n    assert baseline is not None and abs(float(c[4])-baseline[0])<=.02 and abs(float(c[5])-baseline[1])<=.02 and float(c[6])==baseline[2]\n-   assert c[:3]==['manual','false','none'] and c[-2:]==['true','false'] and float(c[3])==7.5e13\n+   assert c[:3]==['manual','false','none'] and c[-2:]==['true','false'] and float(c[3])==3.75e13\n    step['returned_to_baseline']=True\n   path.write_text(json.dumps(report,indent=2)+'\\n')\n   print(json.dumps(step),flush=True)\n  report.update(state='passed',ended_at=datetime.datetime.now(datetime.timezone.utc).isoformat())\n  path.write_text(json.dumps(report,indent=2)+'\\n')\n- invoke('017-young-frame','frame',[])\n+ invoke('018-young-frame','frame',[])\n except BaseException as error:\n  report.update(state='failed',error=repr(error),ended_at=datetime.datetime.now(datetime.timezone.utc).isoformat());path.write_text(json.dumps(report,indent=2)+'\\n')\n  try:invoke('setup-failure-stop','stop',[])\n",
+    "root-formation-poller.py": "--- ../root-formation-poller.py\n+++ root-formation-poller.py\n@@ -1,7 +1,15 @@\n from pathlib import Path\n import subprocess,json,time,datetime,re,os\n-base=Path('.\u03b7\u03bc/diagnostics/bounded-look-200');run=base/'runs/attempt-01';logs=base/'attempt-01-clients'\n-recordpath=base/'formation-poller.json'\n+base=Path('.\u03b7\u03bc/diagnostics/bounded-look-200');run=base/'runs/attempt-02';logs=base/'attempt-02-clients'\n+def observation_stop_reason(commitment_count, ready_ids, run_closed):\n+ if commitment_count:\n+  return 'commitment-observed'\n+ if run_closed:\n+  return 'run-closed'\n+ if ready_ids:\n+  return 'stored-ready-observed-no-selection'\n+ return None\n+recordpath=base/'attempt-02-formation-poller.json'\n start=time.monotonic();origin=json.loads((run/'supervisor-launch.json').read_text())['lease_started_monotonic']\n record={'pid':os.getpid(),'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'started_monotonic':start,'original_no_target_deadline':origin+960,'maximum_polls':32,'cadence_seconds':30,'selects_target':False,'state':'running','observations':[]}\n recordpath.write_text(json.dumps(record,indent=2)+'\\n')\n@@ -26,8 +34,8 @@\n   ready=[s[0] for s in candidates if s[2:4]==['true','true']]\n   observation={'at':at,'elapsed':time.monotonic()-origin,'tick':int(flight[0].split()[0]),'commitment':commit[0],'ready_ids':ready,'candidate_rows':len(candidates),'client':stem.name}\n   record['observations'].append(observation);recordpath.write_text(json.dumps(record,indent=2)+'\\n');print(json.dumps(observation),flush=True)\n-  if ready:reason='stored-ready-observed-no-selection';break\n-  if commit[0].split()[1]!='0':reason='commitment-observed';break\n+  observed_stop=observation_stop_reason(int(commit[0].split()[1]),ready,(run/'closed.json').exists())\n+  if observed_stop:reason=observed_stop;break\n   time.sleep(max(0,min(t+30,origin+960)-time.monotonic()))\n finally:\n  record.update(state='closed',ended_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),elapsed=time.monotonic()-start,reason=reason)\n"
+  }
+}
