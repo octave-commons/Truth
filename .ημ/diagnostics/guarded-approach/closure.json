@@ -1,0 +1,80 @@
+{
+  "at": "2026-10-07T06:58:34.633502+00:00",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "preparation_commit": "36692669c439043696a09e3c5144b899878b4718",
+  "source_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "controller_outcome": "passed",
+  "native_closure": {
+    "started_at": "2026-10-07T06:51:24.904197+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+    "port": 7898,
+    "budget_seconds": 300,
+    "work_budget_seconds": 270,
+    "supervisor": {
+      "pid": 2248619,
+      "start": "2338489",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/bin/python3.12"
+    },
+    "stage": "closed",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "display": ":1",
+    "xvfb": {
+      "pid": 2248627,
+      "start": "2338497",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 2248633,
+      "start": "2338508",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "snapshot_client": {
+      "pid": 2250969,
+      "start": "2339790",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 1380350231,
+    "window": 125476463786560,
+    "x-window": "2097159",
+    "outcome": "operator-stop",
+    "cleanup_errors": [],
+    "ended_at": "2026-10-07T06:52:00.102357+00:00",
+    "elapsed_seconds": 35.198185564000596,
+    "budget_exceeded": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "unreaped_children": []
+  },
+  "root_owned_pids_absent": [
+    2248619,
+    2248633,
+    2248627,
+    2250969
+  ],
+  "audit_sha256": "a4484d0f5bab7844d60850e750c10523e4099c3c005910684735e3e509e3a8c7",
+  "all186_source_and5_prep_hashes_match": true,
+  "card_body_and_frontmatter_preserved": true,
+  "comment_prefix_preserved": true,
+  "prior_ledger_bytes": 643277,
+  "prior_ledger_sha256": "6a1abc5cff8bf7a96b1e9bff97fc649c10fe04d7995bcbb6465cc3ac36a40fe7",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "comment": "2026-10-07 guarded persistent snapshot smoke closed successfully on unchanged production b395c404, preparation PR45 at36692669. Fresh ordinary nebula attempt-01 ran 06:51:24.904-06:52:00.102 UTC (35.198s supervisor;35.871s controller). All12 requested operations passed: two read-only inspections, R, balanced Spark open/close, Tab lock, plus/minus100px on both camera axes, Tab free/lock. All29 sequential snapshot requests completed in one recorded worker;270 raw messages,152369 encoded bytes, no remote errors. Four early observations waited for expected state without replaying input. Median supervisor snapshot roundtrip111.67ms is descriptive young-world data, not isolated performance or mature-world qualification. All186 production and5 preparation hashes stable. All24 unique children and14 controller clients reaped; worker0, game143 for owned stop; root confirmed all4 owned PIDs absent. No cleanup errors, mouse uncertainty or budget excess. RESULT.md, attempt-01-audit.json and closure.json preserve full limits. No thrust, physical approach, binding, commitment, embodiment, Gate or visual-quality proof. Existing owner remains InProgress3. Next separately scoped ordinary approach may use this fixed read route; no continuation or budget extension of the closed smoke.",
+  "raw_evidence_formatting": "The raw stop-client stdout preserves its original additional blank line at EOF (line58); all other changed paths pass git diff --check."
+}
