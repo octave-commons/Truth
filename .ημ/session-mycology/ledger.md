@@ -396,3 +396,12 @@
   spore: none
   receipt-refs: Truth#38,life-to-represented-actor-spec,origin-contract-closure.json
   note: Separate bulk material, modeled accessibility and living origin; a finite accounting prescription does not establish a reachable native habitat. Check the joint guards against actual seeding equations before calling a proposal implementable, preserve negative evidence, and scope dedupe to persisted history rather than universal identity. Existing source/provenance skills suffice; no spore created or promoted.
+- ts: 2026-10-07T06:39:58.357897414Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Keep first-life summaries synchronized with proposal refinement
+  p-efficiency: 0.96
+  p-friction: 0.08
+  p-skill-candidate: 0.08
+  spore: none
+  receipt-refs: Truth#38,review5438493967,comment4203793322
+  note: When a reviewed proposal selects engineering rules, update its live design/index summaries without promoting those rules to accepted or implemented. Preserve historical notes and ledger prefixes; native settlement is distinct from successor approval. Existing provenance practice suffices; no spore.

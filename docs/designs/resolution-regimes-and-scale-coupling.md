@@ -106,8 +106,11 @@ avatar; normalized ecology biomass cannot fund its admission.
 
 The candidate uses a planet-local carbon account and a nutrient-limited reference
 rate, without adopting calibration, death rules or a numerical clock/integrator.
-An actual local-budget producer, habitat contract, durable identity/LOD history
-and single-writer-compatible birth/removal settlement remain required decisions.
+The note proposes an origin/account prescription, durable identity and serial
+settlement for review; these rules remain unaccepted and unimplemented. The
+producer for the local budget and habitat checks, the timed resource-use law,
+and implementation of identity/LOD retention and serial settlement remain
+outstanding.
 Current lifecycle requests all create stellar clumps; generic component creation
 is a missing boundary, not an existing biological producer. No implementation,
 phase advancement or Gate prerequisite is declared satisfied by this proposal.
