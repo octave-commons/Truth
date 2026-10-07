@@ -1,0 +1,559 @@
+#!/usr/bin/env python3
+"""Pure diagnostic framing/deadline checks; no JVM, native child or socket allowed.
+
+Synthetic strings below characterize the observation protocol only. They are not
+game worlds, natural formation evidence, or production predicate evaluations.
+"""
+import contextlib
+import importlib.util
+from pathlib import Path
+import socket
+import subprocess
+import tempfile
+import unittest
+from unittest.mock import Mock, patch
+
+HERE = Path(__file__).resolve().parent
+
+
+def forbidden(*_args, **_kwargs):
+    raise AssertionError("Subprocess/native/process operation forbidden in pure checks")
+
+
+def load_runner():
+    spec = importlib.util.spec_from_file_location("commit_ready_protocol", HERE / "runner.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class Clock:
+    def __init__(self, now=900.0):
+        self.now = now
+
+    def monotonic(self):
+        return self.now
+
+    def sleep(self, seconds):
+        self.now += seconds
+
+
+def frame(stored="true", ready="true", fresh="false", committed=(), tick=100,
+          target=1010, position="10 0 0", thrust="nil nil nil"):
+    return (f"TRUTH_APPROACH_ID 11 22\n"
+            f"TRUTH_COMMITMENT {tick} {len(committed)}" + "".join(f" {v}" for v in committed) + "\n"
+            f"TRUTH_FLIGHT {tick} 500 1 1 0 0 0 0 0 0 {thrust}\n"
+            "TRUTH_INPUT_STATE manual false none 10000000 180 0 0.01 true false\n"
+            "TRUTH_INPUT_CURSOR 640 360\n"
+            f"TRUTH_COMMIT_TARGET {target} planet {stored} {ready} {fresh} {position} 0 0 0\n")
+
+
+class ProtocolChecks(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.blockers = contextlib.ExitStack()
+        for name in ("Popen", "run", "check_output", "check_call", "call"):
+            cls.blockers.enter_context(patch.object(subprocess, name, side_effect=forbidden))
+        cls.blockers.enter_context(patch.object(socket, "socket", side_effect=forbidden))
+        cls.r = load_runner()
+        for name in ("kill", "killpg", "system", "fork", "posix_spawn", "posix_spawnp"):
+            if hasattr(cls.r.os, name):
+                cls.blockers.enter_context(patch.object(cls.r.os, name, side_effect=forbidden))
+        cls.blockers.enter_context(patch.object(cls.r, "identity", side_effect=forbidden))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.blockers.close()
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix="pure-check-", dir=HERE)
+        self.addCleanup(self.tmp.cleanup)
+        self.clock = Clock()
+        self.stack = contextlib.ExitStack()
+        self.addCleanup(self.stack.close)
+        self.stack.enter_context(patch.object(self.r.time, "monotonic", self.clock.monotonic))
+        self.stack.enter_context(patch.object(self.r.time, "sleep", self.clock.sleep))
+        self.a = self.r.Attempt.__new__(self.r.Attempt)
+        a = self.a
+        a.directory = Path(self.tmp.name)
+        (a.directory / "requests").mkdir()
+        (a.directory / "results").mkdir()
+        a.started = 0.0
+        a.starting = False
+        a.startup_deadline = 180.0
+        a.no_target_deadline = 960.0
+        a.deadline = 1470.0
+        a.cleanup_deadline = 1500.0
+        a.admission = a.target = a.terminal_commitment = a.active_aim = a.aim_deadline = None
+        a.state = {}
+        a.frames = a.looks = a.holds = a.aims = a.snapshot_seq = 0
+        a.key_pending = None
+        a.key_release_uncertain = a.mouse_pending = a.mouse_release_uncertain = False
+        a.children = []
+        a.snapshot_client = a.app = a.x = None
+        a.events = []
+        a.event = lambda kind, **data: a.events.append((kind, data))
+        a.guard = lambda **_kwargs: a.remaining()
+
+    def admit(self, output=None):
+        self.a.inspect = lambda **_kwargs: frame() if output is None else output
+        self.a.action({"operation": "aim-start", "args": ["1010"]})
+
+    def test_historical_ready_admits_without_fresh_handoff(self):
+        self.admit()
+        self.assertEqual(1010, self.a.target)
+        self.assertFalse(self.a.admission["geometry"]["fresh_handoff"])
+        self.assertEqual(1020, self.a.aim_deadline)
+
+    def test_fresh_handoff_cannot_replace_either_admission_flag(self):
+        for stored, ready in (("false", "true"), ("true", "false"), ("false", "false")):
+            with self.subTest(stored=stored, ready=ready), self.assertRaises(AssertionError):
+                self.admit(frame(stored=stored, ready=ready, fresh="true"))
+            self.assertIsNone(self.a.target)
+            self.assertIsNone(self.a.admission)
+            self.assertEqual(960, self.a.work_limit())
+
+    def test_missing_duplicate_nonfinite_and_other_target_fail(self):
+        valid = frame()
+        target_line = valid.splitlines()[-1] + "\n"
+        for output in (valid.replace(target_line, ""), valid + target_line,
+                       frame(position="nan 0 0"), frame(position="10 inf 0"), frame(target=1011)):
+            with self.subTest(output=output), self.assertRaises(AssertionError):
+                self.admit(output)
+            self.assertIsNone(self.a.admission)
+            self.assertIsNone(self.a.target)
+
+    def test_global_prior_commitment_precedes_invalid_target(self):
+        with self.assertRaises(self.r.CommitmentObserved):
+            self.admit(frame(stored="false", ready="false", committed=(7, 1010), position="nan 0 0"))
+        self.assertEqual([7, 1010], self.a.terminal_commitment["eids"])
+        self.assertIsNone(self.a.admission)
+        self.assertIsNone(self.a.target)
+
+    def test_terminal_prevents_later_input_before_guard_or_command(self):
+        self.a.terminal_commitment = {"tick": 100, "count": 1, "eids": [1010]}
+        self.a.guard = forbidden
+        self.a.command = forbidden
+        for operation in ("tap", "look", "click", "hold", "aim-start", "aim-end"):
+            with self.subTest(operation=operation), self.assertRaises(self.r.CommitmentObserved):
+                self.a.action({"operation": operation, "args": []})
+
+    def test_global_commitment_frame_rejects_incomplete_or_unpaired_evidence(self):
+        for line in ("TRUTH_COMMITMENT 100 2 1010", "TRUTH_COMMITMENT 100 2 7 7",
+                     "TRUTH_COMMITMENT 101 0", "TRUTH_COMMITMENT 100 -1"):
+            output = frame().replace("TRUTH_COMMITMENT 100 0", line)
+            with self.subTest(line=line), self.assertRaises(AssertionError):
+                self.r.commitment_frame(output)
+
+    def test_deadlines_use_shared_origin_and_only_success_lifts_phase_limit(self):
+        self.assertEqual(960, self.a.work_limit())
+        self.a.starting = True
+        self.assertEqual(180, self.a.work_limit())
+        self.a.starting = False
+        self.a.target = 1010  # even a stray tentative assignment cannot lift cutoff
+        self.assertEqual(960, self.a.work_limit())
+        self.clock.now = 960
+        with self.assertRaises(self.r.NoTargetDeadline):
+            self.a.remaining()
+
+    def test_late_valid_admission_has_original_work_reserve(self):
+        self.clock.now = 959.5
+        self.admit()
+        self.assertEqual(959.5, self.a.admission["elapsed_seconds"])
+        self.assertEqual(1079.5, self.a.aim_deadline)
+        self.a.active_aim = self.a.aim_deadline = None
+        self.assertEqual(1470, self.a.work_limit())
+
+    def test_snapshot_completion_at_or_after_cutoff_never_admits(self):
+        for finish in (960, 960.1):
+            self.clock.now = 959
+            def snapshot(**_kwargs):
+                self.clock.now = finish
+                return frame()
+            self.a.inspect = snapshot
+            with self.subTest(finish=finish), self.assertRaises(self.r.NoTargetDeadline):
+                self.a.action({"operation": "aim-start", "args": ["1010"]})
+            self.assertIsNone(self.a.target)
+            self.assertIsNone(self.a.admission)
+
+    def test_successful_target_cannot_be_replaced(self):
+        self.admit()
+        self.a.active_aim = self.a.aim_deadline = None
+        with self.assertRaisesRegex(AssertionError, "no retarget"):
+            self.a.action({"operation": "aim-start", "args": ["1011"]})
+
+    def test_idle_supervisor_begins_cleanup_at_cutoff(self):
+        self.clock.now = 959.95
+        self.a.start = lambda: None
+        self.a.app = self.a.x = Mock()
+        self.a.app.poll.return_value = None
+        released = []
+        self.a.release = lambda: released.append(self.clock.now)
+        self.a.run()
+        self.assertEqual([960], released)
+        self.assertEqual("no-target-deadline", self.a.state["outcome"])
+        self.assertEqual(990, self.a.cleanup_deadline)
+
+    def test_late_admission_result_can_be_observed_after_phase_cutoff(self):
+        caller_here = self.a.directory / "caller"
+        directory = caller_here / "runs" / "only-pure-data"
+        (directory / "requests").mkdir(parents=True)
+        (directory / "results").mkdir()
+        self.clock.now = 959.99
+        self.r.save(directory / "state.json", {"stage": "ready", "supervisor": {},
+                    "supervisor_monotonic_started": 0.0, "no_target_deadline": 960.0,
+                    "successful_admission": None})
+        def completion_wait(seconds):
+            self.clock.sleep(seconds)
+            requests = list((directory / "requests").glob("*.json"))
+            self.assertEqual(1, len(requests))
+            # A pure completion timing model, not actual world admission evidence.
+            self.r.save(directory / "results" / requests[0].name,
+                        {"ok": True, "accepted_monotonic": 959.999, "published_monotonic": self.clock.now})
+        self.stack.enter_context(patch.object(self.r.time, "sleep", completion_wait))
+        self.stack.enter_context(patch.object(self.r, "HERE", caller_here))
+        self.stack.enter_context(patch.object(self.r, "same_process", lambda _saved: {}))
+        self.stack.enter_context(patch.object(self.r.signal, "signal", Mock()))
+        self.stack.enter_context(patch.object(self.r.sys, "argv",
+            ["runner.py", "aim-start", str(directory), "1010"]))
+        self.stack.enter_context(contextlib.redirect_stdout(__import__("io").StringIO()))
+        self.assertEqual(0, self.r.main())
+        self.assertGreater(self.clock.now, 960)
+        self.assertFalse((directory / "STOP").exists())
+
+    def test_pending_snapshot_wait_is_clipped_at_cutoff(self):
+        self.clock.now = 959.99
+        self.a.snapshot_client = Mock()
+        self.a.snapshot_client.poll.return_value = None
+        with self.assertRaises(self.r.NoTargetDeadline):
+            self.a.inspect(timeout=35)
+        requests = [v for k, v in self.a.events if k == "snapshot-request"]
+        self.assertEqual(1, len(requests))
+        self.assertLessEqual(requests[0]["timeout_seconds"], 0.011)
+        self.assertEqual(960, self.clock.now)
+
+    def test_child_wait_uses_remaining_no_target_budget(self):
+        self.clock.now = 959.75
+        child = Mock()
+        child.wait.return_value = 0
+        self.a.finish(child, 5, "pure mocked helper")
+        child.wait.assert_called_once_with(timeout=0.25)
+
+    def test_terminal_result_closes_run_and_retains_observation(self):
+        request = self.a.directory / "requests" / "one.json"
+        request.write_text('{"operation":"inspect"}')
+        self.a.app = self.a.x = Mock()
+        self.a.app.poll.return_value = None
+        self.a.start = lambda: None
+        self.a.inspect = lambda: self.a.observe_commitment(frame(committed=(1010,)))
+        released = []
+        self.a.release = lambda: released.append(True)
+        self.a.run()
+        result = self.r.json.loads((self.a.directory / "results" / "one.json").read_text())
+        self.assertEqual("commitment-observed", result["outcome"])
+        self.assertTrue(result["ok"])
+        self.assertEqual([1010], result["terminal_commitment"]["eids"])
+        self.assertEqual("commitment-observed", self.a.state["outcome"])
+        self.assertEqual([True], released)
+
+    def test_held_key_released_once_when_commitment_appears(self):
+        self.a.admission = {"target": 1010}
+        self.a.target = 1010
+        reads = iter((frame(), frame(committed=(1010,), ready="false", position="nan 0 0")))
+        def snapshot(**_kwargs):
+            output = next(reads)
+            self.a.observe_commitment(output)
+            return output
+        self.a.inspect = snapshot
+        commands = []
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        self.a.state["xvfb"] = {"test": "no actual PID"}
+        self.stack.enter_context(patch.object(self.r, "same_process", lambda _saved: {}))
+        with self.assertRaises(self.r.CommitmentObserved):
+            self.a.hold(["w", "2"])
+        self.assertEqual([["xdotool", "keydown", "w"], ["xdotool", "keyup", "w"]], commands)
+        self.assertIsNone(self.a.key_pending)
+        self.assertFalse(self.a.key_release_uncertain)
+        self.assertEqual([1010], self.a.terminal_commitment["eids"])
+
+    def test_postrelease_commitment_precedes_invalid_target_geometry(self):
+        self.a.admission = {"target": 1010}
+        self.a.target = 1010
+        reads = iter((frame(), frame(tick=101, thrust="1 0 0"),
+                      frame(tick=102, committed=(1010,), ready="false", position="nan 0 0")))
+        def snapshot(**_kwargs):
+            output = next(reads)
+            self.a.observe_commitment(output)
+            return output
+        self.a.inspect = snapshot
+        commands = []
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        self.a.state["xvfb"] = {"test": "no actual PID"}
+        self.stack.enter_context(patch.object(self.r, "same_process", lambda _saved: {}))
+        with self.assertRaises(self.r.CommitmentObserved):
+            self.a.hold(["w", "2"])
+        self.assertEqual(2, len(commands))
+        self.assertEqual(["xdotool", "keyup", "w"], commands[-1])
+        self.assertIsNone(self.a.key_pending)
+        self.assertEqual(102, self.a.terminal_commitment["tick"])
+
+
+    def test_tab_observation_accepts_delayed_state_after_four_nonmatches_once(self):
+        reads, commands, releases = [], [], []
+        def snapshot(**kwargs):
+            reads.append(kwargs)
+            self.clock.sleep(0.1)
+            output = frame()
+            return output.replace("manual false none", "manual true none") if len(reads) == 6 else output
+        self.a.inspect = snapshot
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        self.a.release_keys = lambda: releases.append(True)
+        self.a.action({"operation": "tap", "args": ["Tab"]})
+        observations = [v for k, v in self.a.events if k == "input-observation"]
+        self.assertEqual([False, False, False, False, True], [v["matched"] for v in observations])
+        self.assertEqual(list(range(5)), [v["attempt"] for v in observations])
+        self.assertEqual([["xdotool", "key", "--delay", "80", "Tab"]], commands)
+        self.assertEqual([True], releases)
+        self.assertEqual(6, len(reads))  # one pre-gesture read, then five observations
+        self.assertLess(self.clock.now, 920.1)
+
+    def test_tab_unconfirmed_state_uses_observation_budget_without_replay(self):
+        reads, commands, releases = [], [], []
+        def snapshot(**kwargs):
+            reads.append((self.clock.now, kwargs))
+            self.clock.sleep(min(0.05, kwargs.get("timeout", 35)))
+            return frame()
+        self.a.inspect = snapshot
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        self.a.release_keys = lambda: releases.append(True)
+        with self.assertRaisesRegex(AssertionError, "Input observation deadline|Input postcondition unconfirmed"):
+            self.a.action({"operation": "tap", "args": ["Tab"]})
+        self.assertGreater(len(reads), 4)
+        self.assertAlmostEqual(920.05, self.clock.now, places=6)
+        self.assertEqual([["xdotool", "key", "--delay", "80", "Tab"]], commands)
+        self.assertEqual([True], releases)
+        for started, kwargs in reads[1:]:
+            self.assertLessEqual(kwargs["timeout"], min(10, 920.05 - started) + 1e-9)
+
+    def test_input_observation_clips_startup_phase_work_and_aim_deadlines(self):
+        for boundary in ("startup", "no-target", "work", "aim"):
+            with self.subTest(boundary=boundary):
+                self.clock.now = 900
+                self.a.starting = boundary == "startup"
+                self.a.startup_deadline = 902 if self.a.starting else 180
+                self.a.admission = None if boundary == "no-target" else {"target": 1010}
+                self.a.no_target_deadline = 902 if boundary == "no-target" else 960
+                self.a.deadline = 902 if boundary == "work" else 1470
+                self.a.aim_deadline = 902 if boundary == "aim" else None
+                reads = []
+                def snapshot(**kwargs):
+                    reads.append((self.clock.now, kwargs["timeout"]))
+                    self.clock.sleep(min(0.1, kwargs["timeout"]))
+                    return frame()
+                self.a.inspect = snapshot
+                expected = self.r.NoTargetDeadline if boundary == "no-target" else AssertionError
+                with self.assertRaises(expected):
+                    self.a.await_input("bounded", lambda state: state["free"])
+                self.assertGreater(len(reads), 3)
+                self.assertAlmostEqual(902, self.clock.now, places=6)
+                for started, timeout in reads:
+                    self.assertLessEqual(timeout, 902 - started + 1e-9)
+
+    def test_matching_read_returned_after_observation_deadline_is_rejected(self):
+        calls = []
+        def snapshot(**kwargs):
+            calls.append(kwargs)
+            self.clock.sleep(20.1)  # model a blocking operation exceeding its requested bound
+            return frame().replace("manual false none", "manual true none")
+        self.a.inspect = snapshot
+        with self.assertRaisesRegex(AssertionError, "Input observation deadline"):
+            self.a.await_input("late", lambda state: state["free"])
+        self.assertEqual([{"timeout": 10}], calls)
+
+    def test_matching_read_at_phase_or_aim_cutoff_is_rejected(self):
+        for boundary in ("no-target", "aim"):
+            with self.subTest(boundary=boundary):
+                self.clock.now = 900
+                self.a.admission = None if boundary == "no-target" else {"target": 1010}
+                self.a.no_target_deadline = 902 if boundary == "no-target" else 960
+                self.a.aim_deadline = 902 if boundary == "aim" else None
+                def snapshot(**_kwargs):
+                    self.clock.now = 902
+                    return frame().replace("manual false none", "manual true none")
+                self.a.inspect = snapshot
+                expected = self.r.NoTargetDeadline if boundary == "no-target" else AssertionError
+                with self.assertRaises(expected):
+                    self.a.await_input("cutoff", lambda state: state["free"])
+
+    def test_input_read_error_is_preserved_without_observation_retry(self):
+        failure = TimeoutError("fixed snapshot failed")
+        snapshot = Mock(side_effect=failure)
+        self.a.inspect = snapshot
+        with self.assertRaises(TimeoutError) as raised:
+            self.a.await_input("read-error", lambda _state: False)
+        self.assertIs(failure, raised.exception)
+        snapshot.assert_called_once_with(timeout=10)
+        self.assertEqual([], self.a.events)
+
+    def test_delayed_terminal_frame_stops_observation_without_gesture_replay(self):
+        calls, commands, releases = [], [], []
+        def snapshot(**_kwargs):
+            calls.append(True)
+            self.clock.sleep(0.1)
+            output = frame(committed=(1010,)) if len(calls) == 5 else frame()
+            self.a.observe_commitment(output)
+            return output
+        self.a.inspect = snapshot
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        self.a.release_keys = lambda: releases.append(True)
+        with self.assertRaises(self.r.CommitmentObserved):
+            self.a.action({"operation": "tap", "args": ["Tab"]})
+        self.assertEqual(5, len(calls))
+        self.assertEqual([1010], self.a.terminal_commitment["eids"])
+        self.assertEqual([["xdotool", "key", "--delay", "80", "Tab"]], commands)
+        self.assertEqual([True], releases)
+
+
+
+    def load_aim_module(self):
+        spec = importlib.util.spec_from_file_location("bounded_look_aim", HERE / "aim-client.py")
+        module = importlib.util.module_from_spec(spec)
+        with patch.dict(self.r.sys.modules, {"runner": self.r}):
+            spec.loader.exec_module(module)
+        return module
+
+    def camera_frame(self, yaw, pitch, desired_yaw, desired_pitch):
+        import math
+        y, p = math.radians(desired_yaw), math.radians(desired_pitch)
+        position = [-1000 * math.cos(p) * math.cos(y),
+                    -1000 * math.cos(p) * math.sin(y), -1000 * math.sin(p)]
+        return frame(position=" ".join(map(str, position))).replace(
+            "10000000 180 0 0.01 true false", f"10000000 {yaw} {pitch} 0.01 true false")
+
+    def test_two_hundred_pixel_axis_bound_accepts_one_acknowledged_gesture(self):
+        for dx, dy in ((200, 0), (-200, 0), (0, 200), (0, -200), (200, -200)):
+            with self.subTest(dx=dx, dy=dy):
+                self.a.looks = 0
+                before = frame()
+                after = before.replace("10000000 180 0 0.01 true false",
+                    f"10000000 {180 + dx * 0.01} {-dy * 0.01} 0.01 true false")
+                self.a.inspect = Mock(side_effect=[before, after])
+                commands = []
+                self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+                self.a.action({"operation": "look", "args": [str(dx), str(dy)]})
+                self.assertEqual([["xdotool", "mousemove_relative", "--", str(dx), str(dy)]], commands)
+                self.assertEqual(2, self.a.inspect.call_count)
+                self.assertEqual(1, self.a.looks)
+                self.assertTrue(self.a.events[-1][1]["matched"])
+
+    def test_two_hundred_one_pixels_rejected_before_read_or_native_command(self):
+        for dx, dy in ((201, 0), (-201, 0), (0, 201), (0, -201), (200, 201)):
+            with self.subTest(dx=dx, dy=dy):
+                self.a.inspect = Mock(side_effect=forbidden)
+                self.a.command = Mock(side_effect=forbidden)
+                with self.assertRaisesRegex(AssertionError, "Small look steps only"):
+                    self.a.action({"operation": "look", "args": [str(dx), str(dy)]})
+                self.a.inspect.assert_not_called()
+                self.a.command.assert_not_called()
+                self.assertEqual(0, self.a.looks)
+
+    def test_aim_geometry_clamps_both_axes_and_reduces_heading_error(self):
+        aim = self.load_aim_module()
+        for yaw, pitch, expected in ((10, -5, [200, 200]), (-10, 5, [-200, -200])):
+            with self.subTest(yaw=yaw, pitch=pitch):
+                before = aim.geometry(self.camera_frame(0, 0, yaw, pitch), 1010)
+                self.assertEqual(expected, before["requested_pixels"])
+                dx, dy = before["requested_pixels"]
+                after = aim.geometry(self.camera_frame(dx * 0.01, -dy * 0.01, yaw, pitch), 1010)
+                self.assertLess(after["angle_degrees"], before["angle_degrees"])
+                self.assertEqual([0.0, 0.0, 0.0], before["spark_position"])
+                self.assertEqual(before["target_position"], after["target_position"])
+
+    def test_aim_geometry_rounds_small_errors_without_forcing_a_step(self):
+        aim = self.load_aim_module()
+        for yaw, pitch, expected in ((0.006, -0.014, [1, 1]),
+                                     (-0.006, 0.014, [-1, -1]),
+                                     (0.004, -0.004, [0, 0])):
+            with self.subTest(yaw=yaw, pitch=pitch):
+                result = aim.geometry(self.camera_frame(0, 0, yaw, pitch), 1010)
+                self.assertEqual(expected, result["requested_pixels"])
+                self.assertAlmostEqual(yaw, result["desired_yaw"], places=8)
+                self.assertAlmostEqual(pitch, result["desired_pitch"], places=8)
+
+    def test_aim_geometry_wraps_yaw_at_seam_without_long_way_gesture(self):
+        aim = self.load_aim_module()
+        for current, wanted, expected in ((179, -179, [200, 0]), (-179, 179, [-200, 0])):
+            with self.subTest(current=current, wanted=wanted):
+                result = aim.geometry(self.camera_frame(current, 0, wanted, 0), 1010)
+                self.assertEqual(expected, result["requested_pixels"])
+                self.assertAlmostEqual(2.0, result["angle_degrees"], places=8)
+
+    def test_larger_look_preserves_existing_pitch_limit_and_unsupported_target_rejection(self):
+        before = frame().replace("10000000 180 0 0.01 true false",
+                                 "10000000 180 88.5 0.01 true false")
+        after = before.replace("180 88.5", "180 89")
+        self.a.inspect = Mock(side_effect=[before, after])
+        commands = []
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        self.a.action({"operation": "look", "args": ["0", "-200"]})
+        self.assertEqual([["xdotool", "mousemove_relative", "--", "0", "-200"]], commands)
+        self.assertEqual(89, self.a.events[-1][1]["state"]["pitch"])
+        aim = self.load_aim_module()
+        with self.assertRaisesRegex(AssertionError, "outside actual pitch range"):
+            aim.geometry(self.camera_frame(0, 0, 0, 89.5), 1010)
+
+
+
+    def test_damping_down_balanced_click_observes_actual_additive_bound(self):
+        commands, releases, reads = [], [], []
+        def snapshot(**_kwargs):
+            reads.append(True)
+            # before, cursor-position acknowledgement, then damping acknowledgement
+            r = .97 if len(reads) < 3 else .96
+            return (frame().replace("manual false none", "manual true spark")
+                    .replace("TRUTH_INPUT_CURSOR 640 360", "TRUTH_INPUT_CURSOR 1217 449")
+                    + f"TRUTH_DAMPING_STATE {r}\nTRUTH_DAMPING_KNOB -0.01 0.01 0.8 0.999\nTRUTH_APPROACH_HIT damping-down 1217 449\n")
+        self.a.inspect = snapshot
+        self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+        def release():
+            self.a.mouse_pending = False
+            releases.append(True)
+        self.a.release_mouse = release
+        self.a.action({"operation": "click", "args": ["damping-down"]})
+        self.assertEqual([["xdotool", "mousemove", "1217", "449"], ["xdotool", "mousedown", "1"]], commands)
+        self.assertEqual([True], releases)
+        self.assertEqual(3, len(reads))
+        expectation = next(v for k, v in self.a.events if k == "damping-knob-expectation")
+        self.assertAlmostEqual(.96, expectation["expected"])
+
+    def test_damping_click_rejects_camera_or_sensitivity_mutation_without_replay(self):
+        for suffix in ("181 0 0.01", "180 1 0.01", "180 0 0.02"):
+            with self.subTest(suffix=suffix):
+                self.clock.now = 900
+                reads, commands, releases = [], [], []
+                def snapshot(**_kwargs):
+                    reads.append(True); self.clock.sleep(.05)
+                    r = .97 if len(reads) < 3 else .96
+                    raw = (frame().replace("manual false none", "manual true spark")
+                           .replace("TRUTH_INPUT_CURSOR 640 360", "TRUTH_INPUT_CURSOR 1217 449")
+                           + f"TRUTH_DAMPING_STATE {r}\nTRUTH_DAMPING_KNOB -0.01 0.01 0.8 0.999\nTRUTH_APPROACH_HIT damping-down 1217 449\n")
+                    return raw.replace("180 0 0.01", suffix) if len(reads) >= 3 else raw
+                self.a.inspect = snapshot
+                self.a.command = lambda argv, *_args, **_kwargs: commands.append(argv)
+                def release():
+                    self.a.mouse_pending = False; releases.append(True)
+                self.a.release_mouse = release
+                with self.assertRaisesRegex(AssertionError, "Input observation deadline"):
+                    self.a.action({"operation": "click", "args": ["damping-down"]})
+                self.assertEqual(1, sum(cmd[1] == "mousedown" for cmd in commands))
+                self.assertEqual([True], releases)
+
+    def test_damping_state_rejects_missing_duplicate_and_nonfinite(self):
+        for raw in ("", "TRUTH_DAMPING_STATE nan\n", "TRUTH_DAMPING_STATE .8\nTRUTH_DAMPING_STATE .8\n"):
+            with self.subTest(raw=raw), self.assertRaises(AssertionError):
+                self.a.retention_state(raw)
+        self.assertEqual(.8, self.a.retention_state("TRUTH_DAMPING_STATE .8\n"))
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

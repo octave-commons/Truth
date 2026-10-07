@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-07T12:23:34.100354+00:00",
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        ".\u03b7\u03bc/diagnostics/bounded-damped-flight/test_protocol.py"
+      ],
+      "exit_code": 0,
+      "elapsed": 0.3692975530066178
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        ".\u03b7\u03bc/diagnostics/bounded-damped-flight/test_cadence.py"
+      ],
+      "exit_code": 0,
+      "elapsed": 0.27657122000528034
+    }
+  ],
+  "hashes": {
+    "runner.py": "1f871920ea12c251e49200680495419052b66f3cf520030a451e2571386e1cc0",
+    "cadence_client.py": "3a86998b928b79ba50ee1a0d856d945a654564b72be2f69b576eb3fe4de102d1",
+    "test_protocol.py": "e0a6f220ad246985e9af019c42584b2227a8979c61f266714fd9d361831fad01",
+    "test_cadence.py": "4879e47c244e82eb333b3db3648b63ce50755d833c3fc5613c132a4315afa7e4"
+  }
+}

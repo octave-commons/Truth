@@ -1,0 +1,78 @@
+{
+  "at": "2026-10-07T12:26:56.349476+00:00",
+  "copies": [
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-look-200/runner.py",
+      "destination": "runner.py",
+      "before_sha256": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a",
+      "after_sha256": "1f871920ea12c251e49200680495419052b66f3cf520030a451e2571386e1cc0",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-look-200/aim-client.py",
+      "destination": "aim-client.py",
+      "before_sha256": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10",
+      "after_sha256": "386a1ca5d8075492668bd0f31c3ec9c17723734ad4fbd89df287718e6df2239e",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-look-200/snapshot.clj",
+      "destination": "snapshot.clj",
+      "before_sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+      "after_sha256": "5869caf3e2ec49ff62a376e0c5c07590c0708552a54518c6c98bba78dd455755",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-look-200/snapshot_client.clj",
+      "destination": "snapshot_client.clj",
+      "before_sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+      "after_sha256": "e34d43c77f427689a949684528eeb74214f270ccb29a0f6f5c3d7ee0921400ac",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/cadence_client.py",
+      "destination": "cadence_client.py",
+      "before_sha256": "1d2d8de2c859db8243ebe1efacc07ecd183e4e7b021ddf104336c4d28c1cb028",
+      "after_sha256": "3a86998b928b79ba50ee1a0d856d945a654564b72be2f69b576eb3fe4de102d1",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/root-setup.py",
+      "destination": "root-setup.py",
+      "before_sha256": "148574266a57c7716262040d143c96baf5f4a281c31858db57c521fa33b5b7b5",
+      "after_sha256": "29c4e725cef54dc8fd54c95680e561fc0204803434b53c0ee58ba79c0d3219c8",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/root-formation-poller.py",
+      "destination": "root-formation-poller.py",
+      "before_sha256": "626b30581dcc9e43cec56b2057b9c832be5718a403cb73ab402fa51950f376f4",
+      "after_sha256": "5fa03bbc1b0c7eaf12b40b5c292e9e9d6b2abe71cc99a6724cc82ce002d547ef",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/root-client.py",
+      "destination": "root-client.py",
+      "before_sha256": "b82cad822cf271d96ee5dcfcb864e1a00528eb12561cf34e8c1f7453cc8fe51c",
+      "after_sha256": "a0a889cf6098ee88066c8a2cce3f4cf48beb8015aab32f558473d609ade67a01",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-look-200/test_protocol.py",
+      "destination": "test_protocol.py",
+      "before_sha256": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec",
+      "after_sha256": "e0a6f220ad246985e9af019c42584b2227a8979c61f266714fd9d361831fad01",
+      "identical": false
+    },
+    {
+      "source": ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/test_cadence.py",
+      "destination": "test_cadence.py",
+      "before_sha256": "33db2d1fd21cd988ec0ed6fe780333eafa6c4592cdf45b3fdc33f519564e0a53",
+      "after_sha256": "4879e47c244e82eb333b3db3648b63ce50755d833c3fc5613c132a4315afa7e4",
+      "identical": false
+    }
+  ],
+  "diff_sha256": "6c1f8d9dbef55862a7bfae3811bfa54f5ed69b602dd5d1c95ded6bb9945d3f20",
+  "worker_delta": "Only fixed snapshot SHA256 changed; transport/journal bytes otherwise identical.",
+  "old_bundles_unchanged": true
+}

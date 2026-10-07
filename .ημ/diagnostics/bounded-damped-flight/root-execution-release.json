@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-07T12:32:17.002754+00:00",
+  "decision": "Root independently releases one fresh bounded-damped-flight attempt01 using manifest40abcd2d7c209c5545a25023371e3cfe8e36ce3df3034ddef7c11e2818adec81 and controller3a86998b928b79ba50ee1a0d856d945a654564b72be2f69b576eb3fe4de102d1.62offline tests rerunbyroot PASS, independentreview PASS,186production/11runtimepins and69prepinputs verified;47historicalfiles independently decoded exact. SetupD1.5e14/r0.8 throughordinary17decrements/fourcalibrationlooks; read-onlyformationpoller mustreap before rootexplicitnaturalreadytarget selection. Combinedcontroller twofreshbaselines/preaimrangescreen then initialboundedaim immediatelyfollowed by one60sphase, atmost3same-targetaim/pulsestages, refinements<=20s, >=25sreservebefore2sW. Preserve consumedC/conditionaltail,D/r/dt/world/observer and all original1500total/1470work/960admission/180startup/3aim/360look/20hold/3frame caps. Everyadmittedoutcome ownedSTOP; no replay orremotecancellationclaim. Rootexclusivecommandlane; no othernative/localJVM work whileactive. Freshpath/port7898free/priorPIDsabsent; retainedDISPLAY0/7896untouched. Commit and publishprep beforelaunch. This is diagnosticexecutionrelease, not gameplaycompletion or productionfeatureadmission.",
+  "manifest_sha256": "40abcd2d7c209c5545a25023371e3cfe8e36ce3df3034ddef7c11e2818adec81",
+  "independent_review_sha256": "a659149ccf353beff912ca9df3b8c9bf0f79e313200da3f1d5ad3b6e47763aa3",
+  "root_tests": {
+    "protocol": 33,
+    "cadence": 29,
+    "exit_codes": [
+      0,
+      0
+    ]
+  },
+  "core_pins": {
+    "runner.py": "1f871920ea12c251e49200680495419052b66f3cf520030a451e2571386e1cc0",
+    "aim-client.py": "386a1ca5d8075492668bd0f31c3ec9c17723734ad4fbd89df287718e6df2239e",
+    "snapshot.clj": "5869caf3e2ec49ff62a376e0c5c07590c0708552a54518c6c98bba78dd455755",
+    "snapshot_client.clj": "e34d43c77f427689a949684528eeb74214f270ccb29a0f6f5c3d7ee0921400ac",
+    "cadence_client.py": "3a86998b928b79ba50ee1a0d856d945a654564b72be2f69b576eb3fe4de102d1",
+    "root-setup.py": "29c4e725cef54dc8fd54c95680e561fc0204803434b53c0ee58ba79c0d3219c8",
+    "root-formation-poller.py": "5fa03bbc1b0c7eaf12b40b5c292e9e9d6b2abe71cc99a6724cc82ce002d547ef",
+    "root-client.py": "a0a889cf6098ee88066c8a2cce3f4cf48beb8015aab32f558473d609ade67a01",
+    "test_protocol.py": "e0a6f220ad246985e9af019c42584b2227a8979c61f266714fd9d361831fad01",
+    "test_cadence.py": "4879e47c244e82eb333b3db3648b63ce50755d833c3fc5613c132a4315afa7e4",
+    "PLAN.md": "9b0dcac66154d42764c50bdec50066e851a5567b7ea84cbd2d9c41126cbad979"
+  },
+  "production_hashes_verified": 186,
+  "published_inputs": 28,
+  "original_inputs": 69,
+  "decoded_history": 47,
+  "canonical_content_and_ledger_prefix_preserved": true,
+  "fresh_run_path": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01",
+  "prior_owned_pids_absent": true,
+  "port7898_free": true,
+  "native_execution_yet": false
+}

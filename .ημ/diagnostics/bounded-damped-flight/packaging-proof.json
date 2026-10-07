@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-07T12:29:02.420407+00:00",
+  "frozen_inputs": 69,
+  "packed": 47,
+  "direct": 22,
+  "publication_paths": 28,
+  "all_originals_retained": true,
+  "all_original_bytes_unchanged": true,
+  "every_packed_byte_roundtrip_equal": true,
+  "packed_original_bytes": 428030,
+  "bundle_bytes": 452290,
+  "bundle_sha256": "b5c6cfee7a7a4adb863960b4830c473062e391c07c58942d04db31a67c21611a",
+  "map_sha256": "d2f51fb5e973902e35e9d8dcaa71c450dacf02b998e77b4a98f9501ea3256847",
+  "publication_list_sha256": "e68261abf30eaf9d448772feb3d5597f6959e00c20934c72c6ddd6b9af74914d",
+  "script_sha256": "96f658b6b235e3bd8be4042b8771f0064ccdd2ce2b56bd11390166ac3c71c48a",
+  "final_green_kept_direct": "green-qualified",
+  "source_or_runtime_changes": false,
+  "packaging_note_sha256": "a877589aef5c7c90387c0a09cc0bb47164717b79d0dbcef51cea895797b61bf9"
+}
