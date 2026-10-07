@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-07T06:23:12.329815+00:00",
+  "owner": "a4744132-2328-4cb2-a550-e1328d346673",
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "canonical_runtime_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "prior_ledger_bytes": 634461,
+  "prior_ledger_sha256": "1b3c25bdee52edc8026ab37403f47c81cf7f37fb0086dc2eaa0fd8dafe1fab8e",
+  "ledger_prefix_preserved": true,
+  "task": {
+    "uuid": "a4744132-2328-4cb2-a550-e1328d346673",
+    "frontmatter": {
+      "category": "tasks",
+      "labels": "research, chemistry, material-inventory, playable-life",
+      "parent": "roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection",
+      "type": "task",
+      "write-id": "1791354191629-0.f0gmjwhd99cwyzmgzm1",
+      "points": "3",
+      "title": "Ground condensed water material and inventory-aware retention",
+      "priority": "P1",
+      "status": "incoming",
+      "uuid": "a4744132-2328-4cb2-a550-e1328d346673",
+      "created_at": "2026-10-07T06:23:11.629Z"
+    },
+    "sections": [
+      {
+        "type": "body",
+        "content": "## Outcome\n\nGround a minimal conserved distinction between free nebular hydrogen and hydrogen chemically bound in condensed water or hydrated solids, and distinguish atmospheric escape capability from available material inventory. This is a research/design-refinement task, not permission to modify the accepted planet-seeding model.\n\n## Grounding and scope\n\nThe existing nebular-chemistry-and-composition-spec intentionally excludes free gas-former elements from core grains. Current source also excludes hydrogen carried by water-bearing solids. The completed ecology-m5-phase3-atmosphere-retention model classifies retention capability; its research section8.1 leaves inventory intersection open. Inspect existing docs/research/physics/nebular-chemistry-metal-enrichment.md and docs/research/atmosphere/planetary-atmosphere-retention-classifier.md first, then verify a small primary-source literature set.\n\nResearch the smallest stoichiometrically bounded condensed-water partition consistent with elemental mass conservation and the existing one-ECS model. Describe oxygen competition, gas/solid accounting and normalization, temperature/pressure applicability and which choices remain toy prescriptions. Define how inventory may constrain a retained-species projection without claiming an atmosphere or accessible biological substrate. Record source pin b395c404 and source-derived limits independently from literature and proposals. Related proposed life contract is Truth PR38; its H/O/C/N guard is not weakened here.\n\n## Non-goals\n\nNo production/test/config changes, full molecular reaction network, first-principles abiogenesis, new biological rate, forced world, calibrated planet distribution, acceptance of PR38, or reopening of completed cards. No native or JVM experiments during research authoring. Toy calculations may characterize stoichiometry only and must be explicitly labeled and reproducible.\n\n## Acceptance criteria\n\n- One dated research notebook in docs/research/physics with primary-source citations, equations, explicit applicability limits and pure Clojure pseudocode for later review.\n- A small reproducible arithmetic table/experiment separates conservation checks from empirical calibration; no fabricated benchmark or native result.\n- Cross-links to the accepted grain-filter and retention research, source audit and existing chemistry roadmap explain the new distinction.\n- Candidate design/implementation boundaries are independently reviewed and each later feature can be sized at most5; this task admits none of them.\n- Research INDEX and ACTORS record the interactive research output without inventing a scheduled actor or changing prior entries.\n\n## Verification\n\nValidate links and source pins, independently review elemental/mass balance and regime claims, preserve raw numerical inputs/results if run, append Receipt River and reflection. Planning PR review and canonical admission remain separate from research completion."
+      }
+    ],
+    "source-path": "/home/err/spaces/foresight/.worktrees/truth-condensed-water-research/kanban/tasks/ground-condensed-water-material-and-inventory-aware-retention-8d346673.md"
+  },
+  "scope": "Research only; no implementation admission"
+}

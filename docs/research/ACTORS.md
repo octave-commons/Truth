@@ -64,3 +64,14 @@ All research notebooks are written to `docs/research/<domain>/` and indexed in
 - A promotion path to `domain/` code
 
 See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
+
+
+### Interactive research addition — 2026-10-07
+
+- Interactive Codex intent-research scout (not a scheduled actor):
+  [Condensed water material budget](physics/2026-10-07-condensed-water-material-budget.md),
+  owned by Incoming 3-point task `a4744132-2328-4cb2-a550-e1328d346673`.
+  Primary-source grounding and an exact-rational accounting toy separate free H,
+  water-bound H, competing oxygen allocations and inventory-aware retention.
+  Phase/reservation chemistry and donor depletion remain unaccepted design choices;
+  this output establishes neither native material eligibility nor represented life.

@@ -1,0 +1,1174 @@
+{
+  "atomic_masses_kg_per_kmol": {
+    "H": {
+      "exact": "126/125",
+      "display": 1.008
+    },
+    "O": {
+      "exact": "15999/1000",
+      "display": 15.999
+    }
+  },
+  "cases": [
+    {
+      "case": "cold_capacity",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "reserved_gas_kg": {},
+        "reserved_solid_kg": {},
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_kg": {
+          "exact": "3603/200",
+          "display": 18.015
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/1000",
+            "display": 15.999
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        },
+        "vapor_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_kg": {
+          "exact": "3603/200",
+          "display": 18.015
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "O": {
+            "exact": "15999/1000",
+            "display": 15.999
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        }
+      }
+    },
+    {
+      "case": "CO_and_silica_compete",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "reserved_gas_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "O": {
+            "exact": "15999/1000",
+            "display": 15.999
+          }
+        },
+        "reserved_solid_kg": {
+          "O": {
+            "exact": "8",
+            "display": 8.0
+          },
+          "Si": {
+            "exact": "112340/15999",
+            "display": 7.021688855553472
+          }
+        },
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "7999/15999",
+          "display": 0.4999687480467529
+        },
+        "ice_kg": {
+          "exact": "9606799/1066600",
+          "display": 9.006936996062255
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "5376/5333",
+            "display": 1.008063003937746
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "67398383/3199800",
+            "display": 21.063311144446526
+          }
+        },
+        "vapor_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_kg": {
+          "exact": "9606799/1066600",
+          "display": 9.006936996062255
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "671916/666625",
+            "display": 1.007936996062254
+          },
+          "O": {
+            "exact": "7999/1000",
+            "display": 7.999
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        }
+      }
+    },
+    {
+      "case": "partial_ice",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "1/2",
+          "display": 0.5
+        },
+        "reserved_gas_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "O": {
+            "exact": "15999/1000",
+            "display": 15.999
+          }
+        },
+        "reserved_solid_kg": {
+          "O": {
+            "exact": "8",
+            "display": 8.0
+          },
+          "Si": {
+            "exact": "112340/15999",
+            "display": 7.021688855553472
+          }
+        },
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "7999/15999",
+          "display": 0.4999687480467529
+        },
+        "ice_kg": {
+          "exact": "9606799/2133200",
+          "display": 4.503468498031127
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "5376/5333",
+            "display": 1.008063003937746
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "67398383/3199800",
+            "display": 21.063311144446526
+          }
+        },
+        "vapor_kg": {
+          "exact": "9606799/2133200",
+          "display": 4.503468498031127
+        },
+        "water_kg": {
+          "exact": "9606799/1066600",
+          "display": 9.006936996062255
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "335958/666625",
+            "display": 0.503968498031127
+          },
+          "O": {
+            "exact": "7999/2000",
+            "display": 3.9995
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "335958/666625",
+            "display": 0.503968498031127
+          },
+          "O": {
+            "exact": "7999/2000",
+            "display": 3.9995
+          }
+        }
+      }
+    },
+    {
+      "case": "warm_vapor",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "reserved_gas_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "O": {
+            "exact": "15999/1000",
+            "display": 15.999
+          }
+        },
+        "reserved_solid_kg": {
+          "O": {
+            "exact": "8",
+            "display": 8.0
+          },
+          "Si": {
+            "exact": "112340/15999",
+            "display": 7.021688855553472
+          }
+        },
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "7999/15999",
+          "display": 0.4999687480467529
+        },
+        "ice_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "5376/5333",
+            "display": 1.008063003937746
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "67398383/3199800",
+            "display": 21.063311144446526
+          }
+        },
+        "vapor_kg": {
+          "exact": "9606799/1066600",
+          "display": 9.006936996062255
+        },
+        "water_kg": {
+          "exact": "9606799/1066600",
+          "display": 9.006936996062255
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "671916/666625",
+            "display": 1.007936996062254
+          },
+          "O": {
+            "exact": "7999/1000",
+            "display": 7.999
+          }
+        }
+      }
+    },
+    {
+      "case": "no_H",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "reserved_gas_kg": {},
+        "reserved_solid_kg": {},
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "ice_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        },
+        "vapor_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        }
+      }
+    },
+    {
+      "case": "all_O_reserved",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "reserved_gas_kg": {
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          }
+        },
+        "reserved_solid_kg": {},
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "ice_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        },
+        "vapor_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        }
+      }
+    },
+    {
+      "case": "no_chemical_conversion",
+      "input": {
+        "extent_fraction": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "ice_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "reserved_gas_kg": {},
+        "reserved_solid_kg": {},
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "accepted_arithmetic",
+      "output": {
+        "balance_error_kg": {
+          "C": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "He": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "Si": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "extent_kmol": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "ice_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "unassigned_elements_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        },
+        "vapor_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_kg": {
+          "exact": "0",
+          "display": 0.0
+        },
+        "water_solid_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        },
+        "water_vapor_elements_kg": {
+          "H": {
+            "exact": "0",
+            "display": 0.0
+          },
+          "O": {
+            "exact": "0",
+            "display": 0.0
+          }
+        }
+      }
+    },
+    {
+      "case": "over_reserved_reject",
+      "input": {
+        "extent_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "ice_fraction": {
+          "exact": "1",
+          "display": 1.0
+        },
+        "reserved_gas_kg": {
+          "O": {
+            "exact": "16499/500",
+            "display": 32.998
+          }
+        },
+        "reserved_solid_kg": {},
+        "stock_kg": {
+          "C": {
+            "exact": "12011/1000",
+            "display": 12.011
+          },
+          "H": {
+            "exact": "252/125",
+            "display": 2.016
+          },
+          "He": {
+            "exact": "2589/100",
+            "display": 25.89
+          },
+          "O": {
+            "exact": "15999/500",
+            "display": 31.998
+          },
+          "Si": {
+            "exact": "5617/200",
+            "display": 28.085
+          }
+        }
+      },
+      "outcome": "rejected",
+      "reason": "reservation exceeds element stock"
+    }
+  ],
+  "conservation": "All seven admitted cases have exactly zero element residual and nonnegative compartments. One over-reservation rejects.",
+  "limitations": "Reservations/extent/phase fractions are explicit inputs. No pressure law, hydrate kinetics, global disk depletion, biological availability or performance claim.",
+  "oxygen_sweep": [
+    {
+      "reserved_O_fraction": {
+        "exact": "0",
+        "display": 0.0
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "1/20",
+        "display": 0.05
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "1/10",
+        "display": 0.1
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "3/20",
+        "display": 0.15
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "1/5",
+        "display": 0.2
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "1/4",
+        "display": 0.25
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "3/10",
+        "display": 0.3
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "7/20",
+        "display": 0.35
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "2/5",
+        "display": 0.4
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "9/20",
+        "display": 0.45
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "1/2",
+        "display": 0.5
+      },
+      "water_kg": {
+        "exact": "3603/200",
+        "display": 18.015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "11/20",
+        "display": 0.55
+      },
+      "water_kg": {
+        "exact": "32427/2000",
+        "display": 16.2135
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "3/5",
+        "display": 0.6
+      },
+      "water_kg": {
+        "exact": "3603/250",
+        "display": 14.412
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "13/20",
+        "display": 0.65
+      },
+      "water_kg": {
+        "exact": "25221/2000",
+        "display": 12.6105
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "7/10",
+        "display": 0.7
+      },
+      "water_kg": {
+        "exact": "10809/1000",
+        "display": 10.809
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "3/4",
+        "display": 0.75
+      },
+      "water_kg": {
+        "exact": "3603/400",
+        "display": 9.0075
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "4/5",
+        "display": 0.8
+      },
+      "water_kg": {
+        "exact": "3603/500",
+        "display": 7.206
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "17/20",
+        "display": 0.85
+      },
+      "water_kg": {
+        "exact": "10809/2000",
+        "display": 5.4045
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "9/10",
+        "display": 0.9
+      },
+      "water_kg": {
+        "exact": "3603/1000",
+        "display": 3.603
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "19/20",
+        "display": 0.95
+      },
+      "water_kg": {
+        "exact": "3603/2000",
+        "display": 1.8015
+      }
+    },
+    {
+      "reserved_O_fraction": {
+        "exact": "1",
+        "display": 1.0
+      },
+      "water_kg": {
+        "exact": "0",
+        "display": 0.0
+      }
+    }
+  ],
+  "python": "3.12.3",
+  "scope": "Exact rational constructed-budget experiment; not a planetary observation, empirical calibration or production test.",
+  "script_sha256": "74bda76b1e7192139e6b97d16d88b0441c029804c27fcf7766f8fc232dd0f950"
+}
