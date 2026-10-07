@@ -43,7 +43,7 @@
     (is (= before (:account result)))
     (is (empty? (:effects result)))
     (is (= operation (get-in result [:retain :request])))
-    (is (= false (get-in result [:outcome :accepted?])))
+    (is (false? (get-in result [:outcome :accepted?])))
     (is (= (:outcome result) (get-in result [:retain :outcome])))
     result))
 
@@ -68,8 +68,8 @@
     (is (true? (:accepted? result)))
     (is (= 89999999999999 (:carbon-units budget)))
     (is (= 89999999 (:allocation budget)))
-    (is (= 89 (:origin-units budget)))
-    (is (= {:U 0 :S 899910 :B 89 :W 89100000} (:stocks budget)))
+    (is (= 899 (:origin-units budget)))
+    (is (= {:U 0 :S 899100 :B 899 :W 89100000} (:stocks budget)))
     (is (= {:numerator 9837549616616482200413696917N
             :denominator 9903520314283042199192993792N}
            (get-in budget [:witness :discarded-unit])))
@@ -78,17 +78,17 @@
 
 (deftest very-large-carbon-and-subnormal-input-do-not-overflow-or-round-up
   (let [large (account/origin-budget {:mass-kg 1.0e20
-                                    :composition {:C 0.5 :O 0.5}})
+                                      :composition {:C 0.5 :O 0.5}})
         tiny (account/origin-budget {:mass-kg Double/MIN_VALUE
-                                   :composition {:C 1.0}})]
+                                     :composition {:C 1.0}})]
     (is (true? (:accepted? large)))
     (is (= 50000000000000000000000000000000000N
            (get-in large [:budget :carbon-units])))
     (is (= opening-stocks (get-in large [:budget :stocks])))
-    (is (= false (:accepted? tiny)))
+    (is (false? (:accepted? tiny)))
     (is (= :zero-origin (:reason tiny)))
-    (is (= 0 (get-in tiny [:budget :carbon-units])))
-    (is (= 0 (get-in tiny [:budget :origin-units])))
+    (is (zero? (get-in tiny [:budget :carbon-units])))
+    (is (zero? (get-in tiny [:budget :origin-units])))
     (is (= "0000000000000001" (get-in tiny [:budget :witness :mass-bits])))
     (is (= 30517578125N (get-in tiny [:budget :witness :discarded-unit :numerator])))))
 
@@ -101,7 +101,7 @@
            [{:C 0.5 :unknown 0.5} :invalid-material]]]
     (let [input (assoc material :composition composition)
           result (account/origin-budget input)]
-      (is (= false (:accepted? result)))
+      (is (false? (:accepted? result)))
       (is (= expected (:reason result)))
       (is (nil? (:budget result)))))
   (let [input (assoc material :composition {:C 0.5 :O 0.5000009})]
@@ -205,7 +205,7 @@
         (is (= 10 (total stocks)))
         (is (every? #(and (integer? %) (not (neg? %))) (vals stocks)))
         (is (= (- 8 q) (:S stocks)))
-        (is (= 0 (:U stocks)))))))
+        (is (zero? (:U stocks)))))))
 
 (deftest malformed-caller-state-fails-before-transaction-admission
   (let [operation (request :extent 1 1 {:amounts {:q 0 :g 0 :L 0}})]
@@ -271,7 +271,7 @@
         accepted (account/apply-operation nil history (origin 11 material))]
     (is (= :zero-origin (:reason rejection)))
     (is (nil? (:account rejection)))
-    (is (= 0 (get-in rejection [:outcome :revision])))
+    (is (zero? (get-in rejection [:outcome :revision])))
     (is (= tiny-op (get-in rejection [:retain :request])))
     (is (= :replayed (:disposition retry)))
     (is (= (:outcome rejection) (:outcome retry)))
@@ -280,6 +280,42 @@
     (is (= :accepted (:disposition accepted)))
     (is (= 1 (get-in accepted [:account :revision])))
     (is (= 2 (count (retain history accepted))))))
+
+(deftest accepted-same-account-history-cannot-fund-a-second-opening-with-missing-state
+  (let [operation (origin 10 material)
+        accepted (account/apply-operation nil {} operation)
+        history (retain {} accepted)]
+    (is (= :accepted (:disposition accepted)))
+    (doseq [next-request [operation (origin 11 material)]]
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair"
+                            (account/apply-operation nil history next-request))))
+    (is (= 1 (count history)))
+    (is (= (:outcome accepted) (get-in history [(:op-id operation) :outcome])))
+    (is (= 1 (get-in accepted [:account :revision])))))
+
+(deftest supplied-history-cannot-be-newer-closed-or-from-different-opening-material
+  (let [operation (origin 10 material)
+        accepted (account/apply-operation nil {} operation)
+        current (:account accepted)
+        history (retain {} accepted)
+        action (request :extent 1 1 {:amounts {:q 0 :g 0 :L 0}})
+        advanced (account/apply-operation current history action)
+        newer-history (retain history advanced)
+        close-op (request :close 2 1 {:reason :parent-removed})
+        closed (account/apply-operation current history close-op)
+        closed-history (retain history closed)
+        changed-source (assoc-in current [:source :composition] {:C 0.25 :O 0.75})]
+    (doseq [[supplied-account supplied-history]
+            [[current newer-history]
+             [(assoc current :revision 2) closed-history]
+             [changed-source history]]]
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair"
+                            (account/apply-operation supplied-account supplied-history operation))))
+    (is (= current (:account accepted)))
+    (is (= 1 (count history)))
+    (is (= 2 (count newer-history) (count closed-history)))
+    (testing "missing history is not evidence of contradiction or completeness"
+      (is (= :accepted (:disposition (account/apply-operation current {} action)))))))
 
 (deftest new-invalid-key-cannot-claim-a-retained-operation
   (doseq [operation [(dissoc (origin 10 material) :op-id)
@@ -292,6 +328,54 @@
       (is (nil? (:outcome result)))
       (is (nil? (:retain result)))
       (is (empty? (:effects result))))))
+
+(deftest rejected-nonfinite-material-replays-by-raw-bits
+  (let [nan-a (Double/longBitsToDouble 9221120237041090561)
+        nan-b (Double/longBitsToDouble 9221120237041090562)
+        operation (origin 10 (assoc material :mass-kg nan-a))
+        rejected (account/apply-operation nil {} operation)
+        history (retain {} rejected)
+        retry (account/apply-operation nil history operation)
+        conflict (account/apply-operation nil history
+                                          (assoc-in operation [:material :mass-kg] nan-b))]
+    (is (= :invalid-request (:reason rejected)))
+    (is (law/history? history))
+    (is (= 1 (count history)))
+    (is (= :replayed (:disposition retry)))
+    (is (= (:outcome rejected) (:outcome retry)))
+    (is (nil? (:retain retry)))
+    (is (= :conflict (:disposition conflict)))
+    (is (= (:outcome rejected) (:outcome conflict)))
+    (is (nil? (:retain conflict)))
+    (is (nil? (:account rejected)))
+    (is (= 9221120237041090561
+           (Double/doubleToRawLongBits (get-in history [(:op-id operation) :request :material :mass-kg]))))))
+
+(deftest rejected-unordered-payloads-retain-raw-bits-in-members-and-keys
+  (let [nan-a (Double/longBitsToDouble 9221120237041090561)
+        nan-b (Double/longBitsToDouble 9221120237041090562)]
+    (doseq [[first-payload changed-payload]
+            [[#{-0.0} #{0.0}]
+             [{:nested {-0.0 :value}} {:nested {0.0 :value}}]
+             [#{nan-a} #{nan-b}]
+             [{:nested {nan-a :value}} {:nested {nan-b :value}}]
+             [{:nested #{[-0.0]}} {:nested #{[0.0]}}]]]
+      (let [operation (origin 10 first-payload)
+            rejected (account/apply-operation nil {} operation)
+            history (retain {} rejected)
+            retry (account/apply-operation nil history operation)
+            conflicting (account/apply-operation nil history (origin 10 changed-payload))]
+        (is (= :invalid-request (:reason rejected)))
+        (is (= :replayed (:disposition retry)))
+        (is (= :conflict (:disposition conflicting)))
+        (is (= :conflicting-reuse (:reason conflicting)))
+        (is (= (:outcome rejected) (:outcome retry) (:outcome conflicting)))
+        (is (nil? (:retain retry)))
+        (is (nil? (:retain conflicting)))
+        (is (empty? (:effects retry)))
+        (is (empty? (:effects conflicting)))
+        (is (nil? (:account retry)))
+        (is (nil? (:account conflicting)))))))
 
 (deftest closure-exports-once-and-new-requests-cannot-reopen
   (let [close-op (request :close 1 1 {:reason :material-changed})

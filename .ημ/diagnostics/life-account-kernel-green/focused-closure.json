@@ -1,0 +1,64 @@
+{
+  "at_utc": "2026-10-07T15:50:05.746440+00:00",
+  "head": "d80c83783fd2fc974b0698e60dfc1b2a41361979",
+  "source_pins": {
+    "src/law/life_account.clj": "9de4ec6827ab9453fa54008e55780002e27ecde68f26d4f66b826c7bd0301810",
+    "src/domain/life_account.clj": "ea01b902a2c2c776c2a593ed735fa493b1be6c67ab98db7e08afb9496c64db1c",
+    "test/law/life_account_test.clj": "8a2aaa538039663e2dbc4bda81eacc7e20449e27fab5bc76fce346e45322888a",
+    "test/domain/life_account_test.clj": "36a3bac05c70abe42d71135a38a5f610bace0549fb74d1ce741d1a01e32d17ec"
+  },
+  "independent_review": {
+    "path": ".\u03b7\u03bc/diagnostics/life-account-kernel-green/local-independent-source-review.json",
+    "sha256": "419d36cd5d3e4738243cc72c7edc45c3a7d95bc91a2558f2fe531e74344d37cb",
+    "verdict": "PASS_SOURCE_REVIEW_PENDING_VALIDATION",
+    "scope": "All four exact hashes; artifact left immutable after execution."
+  },
+  "observed_runs": [
+    {
+      "path": "attempt-01",
+      "tests": 28,
+      "assertions": 347,
+      "failures": 2,
+      "errors": 0,
+      "meaning": "Incorrect test oracle, preserved and corrected with root approval; source copies retained."
+    },
+    {
+      "path": "attempt-02",
+      "tests": 28,
+      "assertions": 347,
+      "failures": 0,
+      "errors": 0,
+      "meaning": "Pre-coherence/pre-comparator candidate only."
+    },
+    {
+      "path": "coherence-and-retry/regression-red",
+      "tests": 2,
+      "assertions": 62,
+      "failures": 10,
+      "errors": 0,
+      "meaning": "Preserved pre-fix law/domain overlay, current two regression vars, exact resource guards; no namespace error. Diagnostic checkpoint d80c837."
+    },
+    {
+      "path": "coherence-and-retry/focused-green",
+      "tests": 33,
+      "assertions": 426,
+      "failures": 0,
+      "errors": 0,
+      "meaning": "Current four frozen reviewed hashes. Exit0, reaped, source unchanged."
+    }
+  ],
+  "full_suite": "NOT_RUN",
+  "all_six_strict": "NOT_RUN",
+  "next_boundary_assessment": {
+    "path": ".\u03b7\u03bc/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+    "sha256": "13743b0bb8c4e74e7835d49f921eb7f37735767989c8c6e3b20b594ef4e46a05",
+    "status": "Sizing recommendation only; not source/card admission",
+    "authoring_diagnostic": "Initial Python print of metadata raised NameError after completed file write; subsequently hash/read verified without reauthoring."
+  },
+  "limits": [
+    "JVM .clj exact arithmetic only; no portable-host equivalence claim",
+    "Valid supplied data and locally provable pair consistency, not verified global history",
+    "No ECS/book/producers/habitat/clock/render/input/organism/Gate integration",
+    "No full-gate, hosted code review or performance claim"
+  ]
+}

@@ -77,6 +77,10 @@
                 [:request :map]
                 [:outcome ::outcome]]
    ::history [:map-of ::op-id ::retention]
+   ::operation-context [:map {:closed true}
+                        [:account [:maybe ::account]]
+                        [:history ::history]
+                        [:requested-account ::account-id]]
    ::effect [:map
              [:kind [:enum :origin :extent :close]]
              [:account ::account-id]]
@@ -100,11 +104,29 @@
 (def ^:private account-shape? (m/validator ::account options))
 (def ^:private request-shape? (m/validator ::request options))
 (def ^:private history-shape? (m/validator ::history options))
+(def ^:private context-shape? (m/validator ::operation-context options))
 (def ^:private result-shape? (m/validator ::result options))
 
-(def ^:export budget-result?
-  "Validate the named numerical-budget result shape."
-  (m/validator ::budget-result options))
+(def ^:private budget-result-shape? (m/validator ::budget-result options))
+
+(defn- fractional-unit? [{numerator-value :numerator denominator-value :denominator}]
+  (< numerator-value denominator-value))
+
+(defn budget-result?
+  "Validate a numerical budget, including the strictly fractional remainder.
+
+   A zero-origin rejection may expose its computed budget. Invalid material
+   exposes no budget; an accepted result always has positive origin stock."
+  [value]
+  (and (budget-result-shape? value)
+       (if-let [{:keys [allocation origin-units stocks witness]} (:budget value)]
+         (and (<= allocation 1000000000000000)
+              (= allocation (reduce +' 0 (vals stocks)))
+              (zero? (:U stocks))
+              (= origin-units (:B stocks))
+              (fractional-unit? (:discarded-unit witness))
+              (= (:accepted? value) (pos? origin-units)))
+         (false? (:accepted? value)))))
 
 (defn material?
   "Validate finite binary64 material using canonical elemental membership.
@@ -131,6 +153,7 @@
   [value]
   (and (account-shape? value)
        (material? (:source value))
+       (fractional-unit? (get-in value [:witness :discarded-unit]))
        (= (:lineage value) [(:id value) :cohort 0])
        (= (:opening value)
           (+' (:exported value) (reduce +' 0 (vals (:stocks value)))))
@@ -163,17 +186,87 @@
 (defn history?
   "Validate supplied immutable outcome entries and their operation keys.
 
-   A rejected request need not pass its payload schema. Its valid identity and
-   matching outcome remain mandatory; persistence is the caller's obligation."
+   Accepted entries require a well-formed request and an adjacent accepted
+   revision. Rejected payloads may be invalid. This checks supplied structure,
+   not past stock admission, physical cause or completeness of global history."
   [value]
   (and (history-shape? value)
        (every? (fn [[op-id {:keys [request outcome]}]]
                  (and (identity? request)
-                      (= op-id (:op-id request) (:op-id outcome))))
+                      (= op-id (:op-id request) (:op-id outcome))
+                      (or (false? (:accepted? outcome))
+                          (and (request? request)
+                               (= (:revision outcome) (inc' (:expected-revision request)))
+                               (= (:reason outcome)
+                                  (case (:kind request)
+                                    :origin :origin
+                                    :extent :extent
+                                    :close :closed-account))
+                               (or (not= :origin (:kind request))
+                                   (zero? (:expected-revision request)))))))
                value)))
 
 (defn result?
-  "Validate the named transition result and any returned current account."
+  "Validate current state, retained outcome and disposition relationships.
+
+   Historical retries may report an older revision than the current account;
+   new accepted operations must report the resulting current revision."
   [value]
-  (and (result-shape? value)
-       (or (nil? (:account value)) (account? (:account value)))))
+  (let [{:keys [account outcome retain effects disposition]} value]
+    (and (result-shape? value)
+         (or (nil? account) (account? account))
+         (or (nil? retain)
+             (and (= outcome (:outcome retain))
+                  (history? {(:op-id outcome) retain})))
+         (case disposition
+           :accepted (and account retain (true? (:accepted? outcome))
+                          (= (:revision account) (:revision outcome))
+                          (= (:reason value) (:reason outcome)))
+           :rejected (and (empty? effects)
+                          (if outcome
+                            (and retain (false? (:accepted? outcome)))
+                            (nil? retain)))
+           (:replayed :conflict) (and outcome (nil? retain) (empty? effects))))))
+
+(defn- payload-key [value]
+  (cond
+    (double? value) [:binary64 (Double/doubleToRawLongBits value)]
+    (instance? Float value) [:binary32 (Float/floatToRawIntBits value)]
+    (map? value) [:map (frequencies (map (fn [[field item]]
+                                           [(payload-key field) (payload-key item)])
+                                         value))]
+    (set? value) [:set (frequencies (map payload-key value))]
+    (vector? value) [:vector (mapv payload-key value)]
+    (list? value) [:list (mapv payload-key value)]
+    (sequential? value) [:sequence (mapv payload-key value)]
+    :else [:scalar value]))
+
+(defn same-payload?
+  "Compare immutable Clojure data with raw floating-point bits at every position.
+
+   Tags prevent user values from colliding with encoded nodes. Frequencies retain
+   unordered multiplicity, including distinct NaN keys/members with equal bits.
+   This private comparison form is not serialization or a persisted identifier;
+   opaque or mutable objects are outside the portable-request contract."
+  [left right]
+  (= (payload-key left) (payload-key right)))
+
+(defn- entry-consistent? [account account-id {:keys [request outcome]}]
+  (or (not= account-id (:account request))
+      (false? (:accepted? outcome))
+      (and account
+           (<= (:revision outcome) (:revision account))
+           (or (not= :close (:kind request)) (= :closed (:status account)))
+           (or (not= :origin (:kind request))
+               (same-payload? (:material request) (:source account))))))
+
+(defn operation-context?
+  "Reject locally provable contradictions between supplied account and history.
+
+   Same-account acceptance requires current state at least as recent, terminal
+   state after closure, and unchanged opening material. Account/history retain
+   their separate validators; absence of entries never proves completeness."
+  [{:keys [account history requested-account] :as context}]
+  (and (context-shape? context)
+       (every? #(entry-consistent? account (if account (:id account) requested-account) %)
+               (vals history))))

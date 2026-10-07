@@ -1,0 +1,31 @@
+{
+  "at_utc": "2026-10-07T16:20:39.840471+00:00",
+  "base": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "head_before_green": "d80c83783fd2fc974b0698e60dfc1b2a41361979",
+  "original_files": 143,
+  "original_bytes": 1048832,
+  "direct_original_files": 22,
+  "packed_original_files": 121,
+  "packed_original_bytes": 935150,
+  "empty_packed_files": 16,
+  "archive_bytes": 994329,
+  "archive_sha256": "38e43b56842970c1a8d5dbe664149373d5654a3fed947b1ceba9d535354707a7",
+  "archive_map_sha256": "767d0fd9c4d93262e59e86b7df861f379aec885d02ced62da82de0087b3cf153",
+  "script_sha256": "11b02d8ee5662200bfdf275e1811e976dc27f1e77a9c817d49b33dd3450aa1a8",
+  "all_packed_byte_roundtrips_equal": true,
+  "all_raw_files_unchanged": true,
+  "disjoint_complete_partition": true,
+  "already_committed_paths_preserved": 66,
+  "stage_paths": 37,
+  "new_publication_paths": 29,
+  "cumulative_pr_path_count": 95,
+  "no_runtime_board_source_or_git_mutation": true,
+  "workflow": {
+    "path": ".github/workflows/eta-mu-review.yml",
+    "sha256": "62e748a7ab204159ba375407d41324768f26d53afa79b15febc58c8b00228a3a",
+    "upstream_pin": "09a4454480baa67f6fdc40f6f73f5e48ef0457d1",
+    "review_timeout_minutes": 45,
+    "explicit_120_input": false,
+    "source": "inspected exact upstream Git blob, review job line 1004; unchanged"
+  }
+}

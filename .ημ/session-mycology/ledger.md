@@ -414,3 +414,21 @@
   spore: none
   receipt-refs: life-account-origin-kernel,PID968366
   note: Keep exact arithmetic and immutable operation history explicit at the small pure boundary; a loaded non-implementing API yields meaningful assertion failures without treating namespace absence as the whole RED. Preserve resource coordination and disclose draft static failures. No spore.
+- ts: 2026-10-07T15:50:41.458665440Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Life-account exact retry and local history coherence qualification
+  p-efficiency: 0.75
+  p-friction: 0.35
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: life-account-kernel-green/focused-closure.json,d80c83783fd2fc974b0698e60dfc1b2a41361979
+  note: Independent review caught ordinary equality leaking into unordered raw-bit request comparison. Fully tagged multiplicity-preserving keys address the bounded contract; a source-pinned overlay established actual RED without rewriting working source. Preserve incorrect oracle evidence and distinguish pre-fix passes. No spore; existing red-green and exact-boundary practice applies.
+- ts: 2026-10-07T16:16:51.791440927Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Qualify the pure life-account kernel through the canonical gate
+  p-efficiency: 0.78
+  p-friction: 0.30
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: life-account-kernel-green/canonical-gate-attempt-02,result PID1288803
+  note: Canonical full-gate execution found owned style debt after focused correctness passed. Preserve the failed gate and reviewed source; repair only the named idioms, prove formatter-only indentation, then rerun the actual transition gate once. Keep Review separate from hosted code approval and pure accounting separate from natural life. Existing skills cover this; no spore.

@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "move",
+    "life-account-origin-kernel",
+    "--to",
+    "review",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan",
+  "head_before": "d80c83783fd2fc974b0698e60dfc1b2a41361979",
+  "head_contains_green": false,
+  "start": "2026-10-07T16:06:47.621279+00:00",
+  "wall_timeout_seconds": 1500,
+  "environment_override": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "removed_inherited_jvm_variable_names": [
+    "JAVA_OPTS",
+    "JVM_OPTS"
+  ],
+  "source_count": 322,
+  "candidate_pins": {
+    "src/law/life_account.clj": "22c12fb4e6cf3f1c46dee45fd770d73bc326efba662effe86123efaa9e8c72e6",
+    "src/domain/life_account.clj": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a",
+    "test/law/life_account_test.clj": "96de33b0d20368b13846375201dc249035b0953fe2c0bef4c8a538e36c0a6eba",
+    "test/domain/life_account_test.clj": "1390313ee327df7fcac345546ff05600ecc9b935e3f3ee8adb63d30500374665"
+  },
+  "cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "supervisor_sha256": "fd05e83ae96ff797812cfb0a80e0d3d3d0debcaea751bc5cc467a38fc366d742",
+  "pid": 1288803,
+  "pgid": 1288803,
+  "exit": 0,
+  "end": "2026-10-07T16:08:25.715304+00:00",
+  "elapsed_seconds": 98.07659536800202,
+  "timed_out": false,
+  "cleanup": [],
+  "leader_reaped": true,
+  "pid_absent": true,
+  "remaining_group": {},
+  "observed_process_count": 16,
+  "head_after": "d80c83783fd2fc974b0698e60dfc1b2a41361979",
+  "all_source_pins_unchanged": true,
+  "candidate_pins_unchanged": true
+}

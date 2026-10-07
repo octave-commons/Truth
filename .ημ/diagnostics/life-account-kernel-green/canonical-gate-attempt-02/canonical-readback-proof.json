@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-10-07T16:14:03.891199+00:00",
+  "status_before": "in_progress",
+  "status_after": "review",
+  "points": "3",
+  "body_and_comments_unchanged_during_move": true,
+  "frontmatter_only_status_and_write_id_changed": true,
+  "stdout_move_observed": true,
+  "current_source_matches_gate": true,
+  "source_pins": {
+    "src/law/life_account.clj": "22c12fb4e6cf3f1c46dee45fd770d73bc326efba662effe86123efaa9e8c72e6",
+    "src/domain/life_account.clj": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a",
+    "test/law/life_account_test.clj": "96de33b0d20368b13846375201dc249035b0953fe2c0bef4c8a538e36c0a6eba",
+    "test/domain/life_account_test.clj": "1390313ee327df7fcac345546ff05600ecc9b935e3f3ee8adb63d30500374665"
+  }
+}

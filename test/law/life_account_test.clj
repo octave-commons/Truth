@@ -15,7 +15,7 @@
 (def ^:private account
   {:id account-id :lineage [account-id :cohort 0] :revision 1 :status :open
    :opening 1000000000000000 :stocks {:U 0 :S 9990000000000 :B 10000000000
-                                    :W 990000000000000}
+                                      :W 990000000000000}
    :exported 0 :source material :witness witness :terminal nil})
 (def ^:private request
   {:op-id [account-id :origin 10] :account account-id :expected-revision 0
@@ -68,7 +68,7 @@
     (let [large 1000000000000000000000000000000N]
       (is (law/account? (assoc account :revision large)))
       (is (not (law/account? (assoc account :opening large
-                                   :stocks {:U 0 :B 0 :S large :W 0})))))))
+                                    :stocks {:U 0 :B 0 :S large :W 0})))))))
 
 (deftest closed-account-is-history-not-another-active-stock
   (let [closed (assoc account :revision 2 :status :closed
@@ -100,4 +100,54 @@
     (is (law/history? {(:op-id bad) entry}))
     (is (not (law/history? {(:op-id bad) (assoc entry :request (dissoc bad :op-id))})))
     (is (not (law/history? {(:op-id bad) (assoc-in entry [:outcome :op-id]
-                                                [account-id :origin 11])})))))
+                                                   [account-id :origin 11])})))))
+
+(deftest discarded-unit-is-strictly-less-than-one
+  (let [budget {:carbon-units 1000000000000000000000N
+                :allocation 1000000000000000 :origin-units 10000000000
+                :stocks (:stocks account) :witness witness}
+        result {:accepted? true :reason :origin :budget budget}]
+    (is (law/budget-result? result))
+    (doseq [fraction [{:numerator 1 :denominator 1}
+                      {:numerator 2 :denominator 1}
+                      {:numerator -1 :denominator 2}
+                      {:numerator 0 :denominator 0}]]
+      (is (not (law/budget-result? (assoc-in result [:budget :witness :discarded-unit] fraction))))
+      (is (not (law/account? (assoc-in account [:witness :discarded-unit] fraction)))))))
+
+(deftest accepted-history-requires-valid-request-and-matching-accepted-revision
+  (let [outcome {:op-id (:op-id request) :accepted? true :reason :origin :revision 1}
+        entry {:request request :outcome outcome}
+        valid {(:op-id request) entry}]
+    (is (law/history? valid))
+    (doseq [bad [(assoc-in entry [:request :expected-revision] -1)
+                 (update entry :request dissoc :material)
+                 (assoc-in entry [:outcome :revision] 2)
+                 (assoc-in entry [:outcome :revision] 0)
+                 (assoc-in entry [:outcome :reason] :invalid-request)]]
+      (is (not (law/history? {(:op-id request) bad}))))
+    (is (not (law/history? {(:op-id request)
+                            (-> entry
+                                (assoc-in [:request :expected-revision] 2)
+                                (assoc-in [:outcome :revision] 3))})))))
+
+(deftest absent-account-check-is-local-to-supplied-same-account-acceptance
+  (let [outcome {:op-id (:op-id request) :accepted? true :reason :origin :revision 1}
+        context {:account nil :requested-account account-id
+                 :history {(:op-id request) {:request request :outcome outcome}}}]
+    (is (not (law/operation-context? context)))
+    (is (law/operation-context? (assoc context :account account)))
+    (is (law/operation-context? (assoc context :history {})))
+    (is (law/operation-context? (assoc context :requested-account [:life-origin/v1 1011 cause])))
+    (is (law/operation-context? (-> context
+                                    (assoc-in [:history (:op-id request) :outcome :accepted?] false)
+                                    (assoc-in [:history (:op-id request) :outcome :revision] 0)
+                                    (assoc-in [:history (:op-id request) :outcome :reason] :zero-origin))))))
+
+(deftest comparison-tags-do-not-collide-with-user-data
+  (is (not (law/same-payload? -0.0 [:binary64 Long/MIN_VALUE])))
+  (is (not (law/same-payload? #{-0.0} #{0.0})))
+  (is (not (law/same-payload? {-0.0 :value} {0.0 :value})))
+  (is (not (law/same-payload? (float -0.0) -0.0)))
+  (is (not (law/same-payload? [1 2] '(1 2))))
+  (is (law/same-payload? {:a #{1 2} :b [-0.0]} {:b [-0.0] :a #{2 1}})))

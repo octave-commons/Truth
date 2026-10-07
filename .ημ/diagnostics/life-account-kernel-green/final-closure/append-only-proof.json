@@ -1,0 +1,36 @@
+{
+  "head": "d80c83783fd2fc974b0698e60dfc1b2a41361979",
+  "body_unchanged": true,
+  "prior_comments_preserved": true,
+  "frontmatter_only_write_id_changed": true,
+  "status": "review",
+  "paths": {
+    ".ημ/receipts.edn": {
+      "head_prefix_bytes": 41432,
+      "head_prefix_sha256": "19c492d5e2e1612c9772d6ae8e552801da5e52d2a33af714ba89dc023bb5a8ec",
+      "pre_closure_bytes": 42317,
+      "pre_closure_sha256": "91efcd873cedfce270e7254c14727db2a16acda3172fd79c5442cacb02f247ce",
+      "after_bytes": 43368,
+      "after_sha256": "ef6eb27e5e5aef68cc85b63a10ff14bea28d5763b8bcf1ae1d3712e38c72bb2d",
+      "both_prefixes_preserved": true
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "head_prefix_bytes": 25783,
+      "head_prefix_sha256": "756c01fb13c9ba76cf79d2a4534403da200d8810503482ed16278502e54062f6",
+      "pre_closure_bytes": 26539,
+      "pre_closure_sha256": "7d9240c75a970a918f1317b26bc8f60575f50a7579a30b0938d49958e9ee6341",
+      "after_bytes": 27267,
+      "after_sha256": "d6f50712e13b263982af8f2b1fb2b633af1584b5186917bd0ef58e690f23f648",
+      "both_prefixes_preserved": true
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "head_prefix_bytes": 609114,
+      "head_prefix_sha256": "d2affb442243ceec2c2d07f13acd76904df0b5947e0256ce081fae916aa10652",
+      "pre_closure_bytes": 612854,
+      "pre_closure_sha256": "020a7d288aa1fdf0896d1a0c726cbd61b416183c17e24dc439404a9c8ab43e92",
+      "after_bytes": 614516,
+      "after_sha256": "26bb48bdac2e92fd864588873b4cf2673a638c3029abb1ca5d7db1a321425c03",
+      "both_prefixes_preserved": true
+    }
+  }
+}
