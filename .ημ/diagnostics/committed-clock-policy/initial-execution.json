@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-10-07T04:10:55.091180+00:00",
+  "finished_at": "2026-10-07T04:10:55.131234+00:00",
+  "command": [
+    "bb",
+    ".\u03b7\u03bc/diagnostics/committed-clock-policy/arithmetic.clj"
+  ],
+  "exit_code": 0,
+  "head": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "probe_sha256": "96e5b0290d646a095bc56d400491058832cf168229ec2cd823c4ba4a1529f952",
+  "reaped": true,
+  "scope": "Clojure/JVM-number arithmetic under Babashka; no project namespace loaded, no physics, native, nREPL, production edits or RED/GREEN claim"
+}

@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-10-07T04:16:31.942842+00:00",
+  "finished_at": "2026-10-07T04:16:31.970877+00:00",
+  "command": [
+    "bb",
+    ".\u03b7\u03bc/diagnostics/committed-clock-policy/arithmetic.clj"
+  ],
+  "exit_code": 0,
+  "head": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "probe_sha256": "507df102b453f7db5ebf5f8506e4f07f289e2ae215f286fd18d2ec0a5669d8f6",
+  "reaped": true,
+  "scope": "All-success isolated arithmetic. Raw interval named wall-interval-ns; total-active-wall-ns correctly excludes paused interval. Earlier diagnostic sources/outputs preserved with exact hashes. No project namespace/native/production test."
+}

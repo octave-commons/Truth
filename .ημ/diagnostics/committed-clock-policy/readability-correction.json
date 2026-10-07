@@ -1,0 +1,159 @@
+{
+  "at": "2026-10-07T05:08:03.398301+00:00",
+  "base": "87643ae8b0742b55decc072b5cb4470cc5bb23c9",
+  "uuid": "committed-clock-executable-policy",
+  "scope": "Research/design only; no production implementation or admitted Ready scope",
+  "canonical_cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "canonical_frontmatter": {
+    "category": "tasks",
+    "labels": "design, pacing, narrowing, playable-gate",
+    "parent": "narrowing-commitment-horizon",
+    "type": "task",
+    "write-id": "1791349682800-0.t76k2zjuvq13eove9l",
+    "points": "3",
+    "title": "Specify the executable committed-world clock and later history contract",
+    "priority": "P1",
+    "status": "incoming",
+    "uuid": "committed-clock-executable-policy",
+    "created_at": "2026-10-06T20:19:08.597Z"
+  },
+  "body_unchanged": true,
+  "prior_comment_prefix_preserved": true,
+  "note": {
+    "path": "docs/notes/2026-10-07-committed-clock-accounting.md",
+    "sha256": "b715ff4878bc053621e44773640e21441fab84ae7b6d86127d9b343de9ccf4f4",
+    "prior_note_prefix_preserved": true,
+    "prior_bytes": 14311
+  },
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 597295,
+      "before_sha256": "b26987dbf7ad01468146c32c5ddc52cd11a75e82c63275bab83dcaf960f77a2f",
+      "after_bytes": 599732,
+      "after_sha256": "5ba0efa72517bf00af107a4c42d95bdddee070d1585306ba7faf47a1f7c6d8a1",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 30989,
+      "before_sha256": "9d5c1198300fb655463e33463836f6121e9c82f453d7af2ec947516ec9f1192f",
+      "after_bytes": 31871,
+      "after_sha256": "4dff8e187dd147004572cffa61f0759c4a170c32601978c74add974abb8293fd",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 22949,
+      "before_sha256": "25040abcb45924858af250c4f5ccbf255de8236de67ced2b70a1114e7dc9d338",
+      "after_bytes": 23512,
+      "after_sha256": "8aca7cb6e7f21d51d4ca1e7a91150c7d0dbd949121fb99e21e065fd90230500e",
+      "original_prefix_preserved": true,
+      "appended_lines": 10
+    }
+  ],
+  "independent_review": [
+    "intent_research read full exact-head APPROVED MiMo body and canonical card; confirmed explicit cosmetic wording recommendation",
+    "root verified scoped restatement against unchanged note and existing closure"
+  ],
+  "local_path_and_line_checks": {
+    "count": 17,
+    "targets": [
+      "2026-10-06-playable-gate-route-audit.md#reopen-the-data-only-time-lock-then-define-its-consumer-precisely",
+      "../designs/commitment-and-resonance.md#5-post-commitment-lod-and-tick-rate",
+      "../designs/gates-of-truth-world-gen-phases.md",
+      "../designs/multi-timescale-integration.md",
+      "../research/physics/multi-timescale-integration-jacobi-ecs.md",
+      "../../src/domain/narrowing.clj#L290",
+      "../../src/infra/dev/window/loop.clj#L120",
+      "../../src/domain/genesis/tick.clj#L178",
+      "../../src/domain/arc.clj#L282",
+      "../../src/domain/lod.clj#L47",
+      "../../src/domain/integrator/base.clj#L75",
+      "../../src/domain/player/flight.clj#L79",
+      "../../src/domain/stellar/classifier/state.clj#L247",
+      "../../src/domain/planet_formation/seed.clj#L46",
+      "../../.ημ/diagnostics/committed-clock-policy/arithmetic.clj",
+      "../../.ημ/diagnostics/committed-clock-policy/arithmetic.stdout.edn",
+      "../../.ημ/diagnostics/committed-clock-policy/execution.json"
+    ],
+    "limits": "File existence and numerical line bounds checked; named fragments manually inspected, not a board validation."
+  },
+  "source_files_unchanged": [
+    {
+      "path": "src/domain/narrowing.clj",
+      "sha256": "19ff9b4f0b9d73b327f6602756ef6b8c10d79fa53838572ef2c964bc5c064d22"
+    },
+    {
+      "path": "src/law/narrowing.clj",
+      "sha256": "99637d7d05c58bb4c186f1bf153db7aa4bb59f9645dc0acf46c5d72dbc6a3bb2"
+    },
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee"
+    },
+    {
+      "path": "src/domain/arc.clj",
+      "sha256": "34af0838056b4206e81281f75a1aee81e404782abd5b998dc73c950cac7c1759"
+    },
+    {
+      "path": "src/domain/pacing.clj",
+      "sha256": "bdda144e92b23d6b82c114e3dfd908b946cebfbe713a05699d839f5b7e020279"
+    },
+    {
+      "path": "src/domain/lod.clj",
+      "sha256": "73a7e501ba1a3e66aba640c4532d0cc972d59a13c1bed2ad76cf6c0bbb59b857"
+    },
+    {
+      "path": "src/domain/integrator/base.clj",
+      "sha256": "6b490386437788b5e6b7eae238900c25d93220082d7f9f11af3d7f01091691e6"
+    },
+    {
+      "path": "src/domain/player/flight.clj",
+      "sha256": "005b6f5bcb33093e93a76b26e4663af71358cd7535dc7022ff5c74bbe872a5b2"
+    },
+    {
+      "path": "src/infra/dev/window/loop.clj",
+      "sha256": "79683f0ee0ddc0319765b51a7186e57a04316caf4e9d56953fa6ba63533a1bf9"
+    },
+    {
+      "path": "src/domain/stellar/classifier/state.clj",
+      "sha256": "b79f901fcac5363fec522705062fdbf75713512551144d2828af812e3d3ffe2e"
+    },
+    {
+      "path": "src/domain/planet_formation/seed.clj",
+      "sha256": "47cbc999b09125fd576c56899ca68964e3d737e0aa552d1a7757340b6779e548"
+    }
+  ],
+  "closed_artifacts_excluding_inventory": [
+    {
+      "path": "docs/notes/2026-10-07-committed-clock-accounting.md",
+      "bytes": 14311,
+      "sha256": "b715ff4878bc053621e44773640e21441fab84ae7b6d86127d9b343de9ccf4f4"
+    },
+    {
+      "path": "kanban/tasks/specify-the-executable-committed-world-clock-and-later-history-contract-e-policy.md",
+      "bytes": 7767,
+      "sha256": "5a629f46ad9eb6a3b6710c53c1bd9e6ba68b63b95de31589553d68af3ab07255"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 599732,
+      "sha256": "5ba0efa72517bf00af107a4c42d95bdddee070d1585306ba7faf47a1f7c6d8a1"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 31871,
+      "sha256": "4dff8e187dd147004572cffa61f0759c4a170c32601978c74add974abb8293fd"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 23512,
+      "sha256": "8aca7cb6e7f21d51d4ca1e7a91150c7d0dbd949121fb99e21e065fd90230500e"
+    }
+  ],
+  "verification": "Canonical readback preserves body, non-write-id frontmatter and all prior comments; ledger/receipt prefixes intact; note and production sources unchanged; local link and whitespace checks pass; no new tests or native runs",
+  "limits": "Readability-only canonical comment append; no new arithmetic result, design choice, test qualification, production clock or native execution."
+}
