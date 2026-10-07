@@ -422,3 +422,12 @@
   spore: none
   receipt-refs: perf-tick-residual-gap-to-60fps,6b160b2dc63e923be5badad7d2de846d74c99093,2026-10-07T00:01:15.005453Z
   note: Bind final composition checks to exact HEAD and immutable source hashes, retain earlier benchmark ancestry, and avoid treating correctness-run durations as fresh performance evidence. Keep raw captured patch whitespace explicit and prior closed bundles unchanged. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:30:08.413631+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Record production-fold RED for paid warp expiry and partial recipient loss
+  p-efficiency: 0.9
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,9c5c889,2026-10-07T00:30:08.413631+00:00
+  note: Empty-emission tests do not verify removal in a merging ECS. Assert stored cells, archetypes and later integrated motion while retaining the legitimate delayed kick. Equivalent map and SoA fixtures need all production query components; preserve a failed fixture attempt before correcting it. Existing skills suffice; no new spore.

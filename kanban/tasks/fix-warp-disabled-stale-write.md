@@ -1,13 +1,14 @@
 ---
-uuid: "fix-warp-disabled-stale-write"
-title: "Fix stale-force bug when a fan-out force is disabled at runtime (:warp)"
-status: "todo"
-priority: "P2"
-labels: ["domain", "physics", "bug"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/fix-warp-disabled-stale-write.md"
 category: "specs"
-estimate: 1
+labels: "domain,physics,bug,hygiene"
+write-id: "1791331596664-0.qxsntza5d7wy4zpr8t"
+source: "kanban/tasks/fix-warp-disabled-stale-write.md"
+title: "Fix stale-force bug when a fan-out force is disabled at runtime (:warp)"
+priority: "P2"
+status: "in_progress"
+estimate: "1"
+uuid: "fix-warp-disabled-stale-write"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Fix stale-force bug when a fan-out force is disabled at runtime
@@ -35,3 +36,9 @@ deleted by `remove-passive-halo-invert-influence`.)
 
 ## Notes
 Small, isolated. Audit other `{ctype {}}` disabled branches while here.
+
+---
+
+2026-10-07 root admits the existing one-point task as a mechanical lifecycle bug repair under PROCESS mechanical/hygiene exemption, with independent scope review. This restores an already-written removal contract; it is not a no-behavior-change refactor or a new force policy. Grounding: docs/notes/specs/2026.06.26-ecs-double-buffer-single-writer-spec.md section3 owner removal contract; current domain.ecs.tick/apply-write-set and contribution-write-set; working domain.gravity.dark-matter emitter; warp emitter documented auto-clearing and existing card acceptance. Use the established prior-eid removal mechanism for c/accel-warp, including no-active-wells, expiry and partial recipient loss. Preserve force calculation, costs, TTL, input, uniform influence registry, single-writer ownership and ordinary one-tick Jacobi carry. RED must exercise emit then fold then expire/remove then fold and subsequent integrator motion, rather than inspect an empty emitter map on a fresh world. Out-of-range recipients must clear while still-affected recipients retain their legitimate contribution. Other stale-emitter findings are audit results only, not added implementation scope. Existing TODO estimate1 fits the scoped repair. Root must commit observed RED before GREEN; full suite and all six strict gates required. No native paid-action or Gate completion claim.
+
+---

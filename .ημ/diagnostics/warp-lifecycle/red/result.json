@@ -1,0 +1,16 @@
+{
+  "exit_code": 1,
+  "completed_at": "2026-10-07T00:14:39.275635+00:00",
+  "pid": 206714,
+  "reaped": true,
+  "sha256_after": {
+    "src/domain/intervention.clj": "e541dd5df5ff208818d216c9083b73693216409c73599b6ab63be0f641c83dc0",
+    "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+    "src/domain/integrator.clj": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+    "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+    "src/domain/physics/cache/soa.clj": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+    "src/domain/ecs/registry.clj": "26de0e95a056b7ef944ae717a15938df6ac66cf1c68fa2cc7dabd0e897aa1fb2",
+    "test/domain/warp_lifecycle_test.clj": "2904ab8158f595ab22bf0638df0100784c9acb94989b42a659d13efbf0153b0c"
+  },
+  "log_sha256": "855e489d1f273ce415dfd10ced48b265f563834bba338d388b4d5d85b17093cd"
+}

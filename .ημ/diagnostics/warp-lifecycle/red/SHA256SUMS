@@ -1,0 +1,15 @@
+fed3ae9bb14da88af23b53f464237e8d77f6e47e82737e5dcd52229cb24edc58  .ημ/diagnostics/warp-lifecycle/red/BENCHMARK-PLAN.md
+91106de90577b2dbbf682cd5b809372b8a35f559a7d0eb0474a7d3c3d38e1788  .ημ/diagnostics/warp-lifecycle/red/CLOSED-FILES.txt
+8dd0494a8db71da03c26d810040b5009d136c1cd2786eed041d0c34aa4ffc10a  .ημ/diagnostics/warp-lifecycle/red/VERDICT.md
+5886ffccf92a659e82fe97f50a3b0aeb5e3dd6a3f1aecb84e5506892247eaafc  .ημ/diagnostics/warp-lifecycle/red/attempt1/command.json
+cf522d9c89a5c7c0ecd0f22d7b829e2f3f4cf437f73d2ad9fd45d112b49dcb09  .ημ/diagnostics/warp-lifecycle/red/attempt1/focused.log
+d11937a250f634f3715b46916cb432f280ac82aa87d753d8c751b6f904df28b3  .ημ/diagnostics/warp-lifecycle/red/attempt1/result.json
+a2b5e7169fba371ecf6bab3ba51fc9db427842feaeb5dfe5125a9187977a00c8  .ημ/diagnostics/warp-lifecycle/red/attempt1/warp_lifecycle_test.clj
+98dd83a0f0602c5c8547e76dd4d5834faec45a0a47217a96c1a57c8844977e1a  .ημ/diagnostics/warp-lifecycle/red/board-readback.json
+4e376481d0b7bbec585379bc04db166560746ee49f81dd3566f891364cc28375  .ημ/diagnostics/warp-lifecycle/red/command.json
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  .ημ/diagnostics/warp-lifecycle/red/diff-check.log
+d4ef77bf65b9407d17fbaea3d9fab5ef12ddc358258cd8eccd2a4d43edfd8022  .ημ/diagnostics/warp-lifecycle/red/diff-check.log.json
+855e489d1f273ce415dfd10ced48b265f563834bba338d388b4d5d85b17093cd  .ημ/diagnostics/warp-lifecycle/red/focused.log
+526b3198e1994f655cdbe689dd19baeb5ed420b1ca5d2a4286f98aa1b064664e  .ημ/diagnostics/warp-lifecycle/red/kondo.log
+787cf5a2d8b9cdb5fa1ec6cfb5c6bbcf5e52016486f395e922765effeb547735  .ημ/diagnostics/warp-lifecycle/red/kondo.log.json
+bd78088610ff231ad6a238c24ee5da997eefb9819c51427d6372950fc1a7d3d7  .ημ/diagnostics/warp-lifecycle/red/result.json

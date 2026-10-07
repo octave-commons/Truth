@@ -1,0 +1,8 @@
+{
+  "command": [
+    "clj-kondo",
+    "--lint",
+    "test/domain/warp_lifecycle_test.clj"
+  ],
+  "exit_code": 0
+}
