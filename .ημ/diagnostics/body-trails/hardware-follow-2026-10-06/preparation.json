@@ -1,0 +1,22 @@
+{
+  "recorded_at": "2026-10-07T00:13:42.773384+00:00",
+  "status": "prepared-not-executed",
+  "source_revision": "c21c0f20855f3c312bdc7dfb8f92e21e2d23152b",
+  "reader_forms": {
+    "install.clj": 3,
+    "restore.clj": 1
+  },
+  "clj_kondo": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "sha256": {
+    ".\u03b7\u03bc/diagnostics/body-trails/hardware-follow-2026-10-06/install.clj": "03ed9569028652e5703a5cbc24be727c95833b0a552a8d142655340253519236",
+    ".\u03b7\u03bc/diagnostics/body-trails/hardware-follow-2026-10-06/restore.clj": "2d000da6dd7a1974ea1ea5a928cb3dfb20f07a0dabaae173ca691a8b270d17f5",
+    ".\u03b7\u03bc/diagnostics/body-trails/hardware-follow-2026-10-06/PLAN.md": "90f7540c68e7137f628d4c76855d3377bf51de22c04557d20132cdd934f734ec"
+  },
+  "plan_provenance_correction": {
+    "at": "2026-10-07T00:15:29.176073+00:00",
+    "reason": "Root verified actual launch commit be832d7 and original-renderer guard boundary; scripts unchanged"
+  }
+}

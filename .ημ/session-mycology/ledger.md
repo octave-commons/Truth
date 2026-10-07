@@ -413,3 +413,21 @@
   spore: none
   receipt-refs: body-trails-ringbuffer,4805fae,PID4070721
   note: Pair the actual body projection input with its unchanged full-scene call; later published world reads can be several ticks ahead. Production trail entity tags distinguish magnetic loops without filtering or color guesses. A whole simulation horizon and declining emitted alpha can still occupy only two pixels at fit-all, so preserve the failed readability claim. Restore exact callable/key presence and retain raw evidence; no spore warranted.
+- ts: 2026-10-07T00:30:35.627409740Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Bounded native follow-camera verification prepared; process disappeared before install
+  p-efficiency: 0.80
+  p-friction: 0.45
+  p-skill-candidate: 0.40
+  spore: none
+  receipt-refs: .ημ/receipts.edn body-trails-ringbuffer follow process-missing observation
+  note: Source-reviewed observers still require fresh process-start and world identity checks immediately before installation. A resumed turn must verify whether installation occurred instead of repeating it. Guard prevented any client or camera mutation after process loss; preserve earlier valid captures separately from unavailable future evidence. No spore promotion.
+- ts: 2026-10-07T00:33:09.981623233Z
+  session: /home/err/spaces/foresight/.worktrees/truth-focus-cadence
+  task: Preserve host reboot evidence separately from prior native observation loss
+  p-efficiency: 0.95
+  p-friction: 0.15
+  p-skill-candidate: 0.30
+  spore: none
+  receipt-refs: .ημ/receipts.edn native-service-loss/2026-10-07-host-reboot
+  note: Tie process identity to host boot evidence as well as PID/start ticks. A new boot proves old processes cannot remain live but does not identify their earlier exit time or the reboot cause. Preserve stopped full logs and prior closed observations without rewriting causal claims; future launch creates a new world unless recovery is independently established. No spore promotion.
