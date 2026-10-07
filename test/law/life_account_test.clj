@@ -144,6 +144,58 @@
                                     (assoc-in [:history (:op-id request) :outcome :revision] 0)
                                     (assoc-in [:history (:op-id request) :outcome :reason] :zero-origin))))))
 
+(deftest accepted-close-pins-the-terminal-revision-without-requiring-complete-history
+  (let [close-request (-> request
+                          (dissoc :material)
+                          (assoc :op-id [account-id :close 1] :kind :close
+                                 :expected-revision 1 :reason :parent-removed))
+        close-entry {:request close-request
+                     :outcome {:op-id (:op-id close-request) :accepted? true
+                               :reason :closed-account :revision 2}}
+        closed (assoc account :revision 2 :status :closed
+                      :exported (:opening account) :stocks {:U 0 :S 0 :B 0 :W 0}
+                      :terminal {:reason :parent-removed
+                                 :destination :unresolved-physical-boundary
+                                 :inventory (:stocks account)})
+        context {:account closed :requested-account account-id
+                 :history {(:op-id close-request) close-entry}}]
+    (is (law/history? (:history context)))
+    (doseq [[revision accepted?] [[1 false] [2 true] [3 false]]]
+      (let [supplied (assoc closed :revision revision)]
+        (is (law/account? supplied))
+        (is (= accepted? (law/operation-context? (assoc context :account supplied)))
+            (str "Accepted close at revision 2, supplied terminal revision " revision))))
+    (testing "equality applies only to supplied same-account accepted close entries"
+      (let [origin-entry {:request request
+                          :outcome {:op-id (:op-id request) :accepted? true
+                                    :reason :origin :revision 1}}
+            extent-request (-> close-request
+                               (dissoc :reason)
+                               (assoc :op-id [account-id :extent 2] :kind :extent
+                                      :amounts {:q 0 :g 0 :L 0}))
+            extent-entry {:request extent-request
+                          :outcome {:op-id (:op-id extent-request) :accepted? true
+                                    :reason :extent :revision 2}}
+            rejected-close (assoc close-entry :outcome
+                                  {:op-id (:op-id close-request) :accepted? false
+                                   :reason :stale-revision :revision 1})
+            other-id [:life-origin/v1 1011 cause]
+            other-close (-> close-entry
+                            (assoc-in [:request :account] other-id)
+                            (assoc-in [:request :op-id] [other-id :close 1])
+                            (assoc-in [:outcome :op-id] [other-id :close 1]))]
+        (doseq [[label revision entry]
+                [["older origin" 2 origin-entry]
+                 ["older extent" 3 extent-entry]
+                 ["absent history" 3 nil]
+                 ["rejected close" 2 rejected-close]
+                 ["other-account close" 3 other-close]]]
+          (let [history (if entry {(get-in entry [:request :op-id]) entry} {})]
+            (is (law/history? history) label)
+            (is (law/operation-context? (assoc context :account (assoc closed :revision revision)
+                                                :history history))
+                label)))))))
+
 (deftest comparison-tags-do-not-collide-with-user-data
   (is (not (law/same-payload? -0.0 [:binary64 Long/MIN_VALUE])))
   (is (not (law/same-payload? #{-0.0} #{0.0})))

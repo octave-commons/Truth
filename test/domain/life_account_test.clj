@@ -317,6 +317,33 @@
     (testing "missing history is not evidence of contradiction or completeness"
       (is (= :accepted (:disposition (account/apply-operation current {} action)))))))
 
+(deftest accepted-close-history-rejects-impossible-terminal-revisions-before-replay-or-rejection
+  (let [close-op (request :close 1 1 {:reason :parent-removed})
+        result (account/apply-operation opened {} close-op)
+        closed (:account result)
+        history (retain {} result)
+        late-op (request :extent 2 2 {:amounts {:q 0 :g 0 :L 0}})]
+    (is (= :accepted (:disposition result)))
+    (is (= 2 (:revision closed) (get-in result [:outcome :revision])))
+    (doseq [revision [1 3]
+            operation [close-op late-op]]
+      (testing (str "Supplied terminal revision " revision ", request " (:kind operation))
+        (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Invalid supplied account/history pair"
+                              (account/apply-operation (assoc closed :revision revision)
+                                                       history operation)))))
+    (testing "a valid late rejection can be retained without advancing the terminal revision"
+      (let [rejection (account/apply-operation closed history late-op)
+            retained (retain history rejection)
+            retry (account/apply-operation closed retained late-op)]
+        (is (= :closed (:reason rejection)))
+        (is (= closed (:account rejection) (:account retry)))
+        (is (= 2 (get-in rejection [:outcome :revision])))
+        (is (= :replayed (:disposition retry)))
+        (is (= (:outcome rejection) (:outcome retry)))
+        (is (nil? (:retain retry)))
+        (is (empty? (:effects rejection)))
+        (is (empty? (:effects retry)))))))
+
 (deftest new-invalid-key-cannot-claim-a-retained-operation
   (doseq [operation [(dissoc (origin 10 material) :op-id)
                      (assoc (origin 10 material) :op-id [account-id :origin -1])

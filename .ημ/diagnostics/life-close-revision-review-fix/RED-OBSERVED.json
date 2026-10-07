@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-07T18:23:09.347839+00:00",
+  "status": "RED reproduced",
+  "base": "ecf78775fbd8069fb86386b9d00401bf47476bab",
+  "native_review": 5446390998,
+  "comment": 4210309826,
+  "thread": "PRRT_kwDOTDahac6qCHgh",
+  "tests": {
+    "tests": 35,
+    "assertions": 457,
+    "failures": 3,
+    "errors": 0
+  },
+  "failure_scope": "Exactly upper terminal revision3 vs accepted close2: law admission and actual domain replay/new-operation paths. Lower/partial-history controls pass.",
+  "raw_stdout": "\nRunning tests in #{\"test\"}\n\nTesting domain.life-account-test\n\nFAIL in (accepted-close-history-rejects-impossible-terminal-revisions-before-replay-or-rejection) (life_account_test.clj:331)\nSupplied terminal revision 3, request :close\nexpected: (thrown-with-msg? clojure.lang.ExceptionInfo #\"Invalid supplied account/history pair\" (account/apply-operation (assoc closed :revision revision) history operation))\n  actual: nil\n\nFAIL in (accepted-close-history-rejects-impossible-terminal-revisions-before-replay-or-rejection) (life_account_test.clj:331)\nSupplied terminal revision 3, request :extent\nexpected: (thrown-with-msg? clojure.lang.ExceptionInfo #\"Invalid supplied account/history pair\" (account/apply-operation (assoc closed :revision revision) history operation))\n  actual: nil\n\nTesting law.life-account-test\n\nFAIL in (accepted-close-pins-the-terminal-revision-without-requiring-complete-history) (life_account_test.clj:166)\nAccepted close at revision 2, supplied terminal revision 3\nexpected: (= accepted? (law/operation-context? (assoc context :account supplied)))\n  actual: (not (= false true))\n\nRan 35 tests containing 457 assertions.\n3 failures, 0 errors.\n",
+  "elapsed_s": 6.625153123000928,
+  "primary_identity": {
+    "pid": 2090351,
+    "state": "S",
+    "pgid": 2090351,
+    "starttime_ticks": 6479554,
+    "metadata_errors": {},
+    "exe": "/usr/bin/bash",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-life-actor-plan"
+  },
+  "all_owned_observed_pids_absent": [
+    2090351,
+    2090358
+  ],
+  "pins_unchanged": 304,
+  "manifest_sha256": "9f950c7ff2600636e4d645b3fe55c0cd444fdd19becea68df34dc1da86f19002",
+  "execution_sha256": "20a2d92d17ef986ee88830866a6bb9d174e808dbeb4ed3ee40d9be429f91114c",
+  "frozen_tests": {
+    "test/law/life_account_test.clj": "7fc1271287e482530ba9d6d92ad25fbcc303823f6d3118713f45d05fbebb3d54",
+    "test/domain/life_account_test.clj": "2b5aef651c9ee14ea92a9144246f6ec959e1e1641d00a7009310856014a382e9"
+  },
+  "limits": "Expected RED success is not passing implementation; complete raw diagnostics retained for final lossless publication package. No biological/ECS/Gate/native claim."
+}
