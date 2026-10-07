@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-07T02:40:44.804097+00:00",
+  "head": "c0c76ee26ef5f7155d50d84adeb5761dad6f6c1c",
+  "hashes": {
+    "dev/demo.clj": "bc94c5881b8e4decb5e6ec7bb2a797b08b9b6e76160c388efbd75111d62118a2",
+    "dev/demo_test.clj": "2a69586decb6d128ed5eb2c3e76a0d9bdd11a8171bf4209d1a58a29d4a51b7e4",
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "deps.edn": "9f858cf2a20418276006fe0ccf16245ab3fb9e2b935649da7f52afa8e9af36ce"
+  },
+  "argv": [
+    "clojure",
+    "-J-Xms64m",
+    "-J-Xmx512m",
+    "-Sdeps",
+    "{:paths [\"src\" \"resources\" \"dev\"] :deps {nrepl/nrepl {:mvn/version \"1.0.0\"}}}",
+    "-M",
+    "/home/err/spaces/foresight/.worktrees/truth-current-composition/.\u03b7\u03bc/diagnostics/demo-selection-restore/red/focused.clj"
+  ]
+}

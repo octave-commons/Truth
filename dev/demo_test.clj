@@ -17,6 +17,13 @@
   {:config (atom config) :world world :world-intents (atom nil)
    :camera (atom (camera/make-camera 60.0))})
 
+(defn- queued-service [config initial-world]
+  (let [world (atom initial-world)
+        queue (java.util.concurrent.ConcurrentLinkedQueue.)]
+    (assoc (service config world)
+           :world-intents (loop/->IntentAtom queue world)
+           :intent-queue queue)))
+
 (deftest missing-form-does-not-connect
   (let [connections (atom 0)]
     (with-redefs [nrepl/connect (fn [& _] (swap! connections inc)
@@ -122,6 +129,51 @@
                (select-keys cfg [:mode :smoothing :volumetric?])))
         (is (not (contains? cfg :selection)))
         (is (pos? (:distance @(:camera s))))))))
+
+(deftest interrupted-selection-restores-settings-without-cancelling-handoff
+  (doseq [prior [{:tick-fn inc :on-step dec :mode :manual}
+                 {:tick-fn nil :mode :manual}
+                 {:mode :manual}]]
+    (testing (str "selection restores prior settings: " (keys prior))
+      (let [old-world {:demo/scenario :nebula}
+            requested-world {:demo/scenario :life :demo/fixture? true}
+            {:keys [config camera world world-intents intent-queue] :as s}
+            (queued-service prior old-world)
+            original-camera @camera]
+        (with-redefs [window/service-state (atom s)
+                      demo/scenario-world (constantly {:world requested-world})]
+          (.interrupt (Thread/currentThread))
+          (try
+            (is (thrown? InterruptedException (demo/select! :life)))
+            (is (= prior @config))
+            (is (= original-camera @camera))
+            (is (identical? old-world @world))
+            (is (= 1 (.size intent-queue)))
+            (swap! world-intents assoc :later-input :preserved)
+            (reset! world (@#'infra.dev.window.loop/drain-intents @world intent-queue))
+            (is (= (assoc requested-world :later-input :preserved) @world)
+                "restoration retains the replacement and subsequent FIFO input")
+            (is (.isEmpty intent-queue))
+            (finally (Thread/interrupted))))))))
+
+(deftest selection-wait-failure-restores-settings-and-preserves-original-error
+  (let [prior {:tick-fn inc :on-step dec :mode :manual}
+        old-world {:demo/scenario :nebula}
+        failure (ex-info "Selection world read failed" {:stage :wait})
+        {:keys [config camera world intent-queue] :as s} (queued-service prior old-world)
+        original-camera @camera
+        failing-read (reify clojure.lang.IDeref
+                       (deref [_]
+                         (swap! config assoc :independent-change :preserved)
+                         (throw failure)))]
+    (with-redefs [window/service-state (atom (assoc s :world failing-read))
+                  demo/scenario-world (constantly {:world {:demo/scenario :life}})]
+      (is (identical? failure (try (demo/select! :life) (catch Exception e e))))
+      (is (= (assoc prior :independent-change :preserved) @config))
+      (is (= original-camera @camera))
+      (is (identical? old-world @world))
+      (is (= 1 (.size intent-queue))
+          "the read failure follows enqueue and does not cancel the replacement"))))
 
 (defn -main
   "Run demo regression contracts and exit nonzero when any contract fails."

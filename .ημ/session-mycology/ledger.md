@@ -494,3 +494,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,review5436791462
   note: Separate a review timing inference from its genuine coverage advisory. A historical single-file overlay can establish test sensitivity if namespace load order, current dependencies and exact hashes remain explicit. No new spore; existing regression and review skills suffice.
+- ts: 2026-10-07T02:36:44.473167Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Keep a preexisting selection failure open until its actual recovery contract is tested
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,c0c76ee,review5436791462
+  note: Preexisting behavior is provenance, not a reason to dismiss a concrete review concern. Isolate temporary pause restoration from queued-world cancellation, and inject a known read failure only after the real enqueue boundary. Keep already-qualified tests unchanged and mark expected RED counts as predictions until execution. No new spore; existing review and regression skills suffice.
