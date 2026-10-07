@@ -1,0 +1,21 @@
+test_actual_adapter_preserves_stdout_and_rejects_mismatched_saved_result (__main__.Checks.test_actual_adapter_preserves_stdout_and_rejects_mismatched_saved_result) ... ok
+test_actual_adapter_timeout_reaps_only_own_fake_child_then_stop (__main__.Checks.test_actual_adapter_timeout_reaps_only_own_fake_child_then_stop) ... ok
+test_actual_pre_keydown_baseline_not_earlier_inspect (__main__.Checks.test_actual_pre_keydown_baseline_not_earlier_inspect) ... ok
+test_changed_D_camera_mode_world_and_readiness_stop (__main__.Checks.test_changed_D_camera_mode_world_and_readiness_stop) ... ok
+test_cleanup_failure_is_not_reported_as_clean_completion (__main__.Checks.test_cleanup_failure_is_not_reported_as_clean_completion) ... ok
+test_dt_and_observer_changes_stop_before_hold (__main__.Checks.test_dt_and_observer_changes_stop_before_hold) ... ok
+test_expired_phase_admits_no_command_except_stop (__main__.Checks.test_expired_phase_admits_no_command_except_stop) ... ok
+test_late_matching_reply_is_rejected_without_hold (__main__.Checks.test_late_matching_reply_is_rejected_without_hold) ... ok
+test_missing_hold_baseline_stops_before_coast_or_second_gesture (__main__.Checks.test_missing_hold_baseline_stops_before_coast_or_second_gesture) ... ok
+test_nonadvancing_post_hold_read_stops_without_more_input (__main__.Checks.test_nonadvancing_post_hold_read_stops_without_more_input) ... ok
+test_nonfinite_geometry_and_inherited_envelope_excess_stop (__main__.Checks.test_nonfinite_geometry_and_inherited_envelope_excess_stop) ... ok
+test_read_error_identity_preserved_and_no_gesture_replay (__main__.Checks.test_read_error_identity_preserved_and_no_gesture_replay) ... ok
+test_reservation_is_not_replenished_or_duplicated (__main__.Checks.test_reservation_is_not_replenished_or_duplicated) ... ok
+test_saved_result_binding_rejects_false_success (__main__.Checks.test_saved_result_binding_rejects_false_success) ... ok
+test_terminal_precedes_invalid_target_and_closes_without_hold (__main__.Checks.test_terminal_precedes_invalid_target_and_closes_without_hold) ... ok
+test_three_fixed_pulses_and_spaced_advancing_coasts (__main__.Checks.test_three_fixed_pulses_and_spaced_advancing_coasts) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.132s
+
+OK

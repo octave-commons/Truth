@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T11:38:59.635365+00:00",
+  "release": "Root independently releases exactly one fresh attempt03 with frozen bounded-flight-cadence manifest1f29faa0fcbd13030afcd53e1b7bab8a0f22146b854a77d4d450ead90b7e1edb, controller1d2d8de2c859db8243ebe1efacc07ecd183e4e7b021ddf104336c4d28c1cb028. Root+intent source review passed;16 blocked-native puretests pass including actualadapter fake-child timeout/reap and resultbinding.22prepfiles/20checksums,186production and6frozenpins verified. Prior4principalPIDs absent, freshattempt03path, port7898free. Commitprep beforelaunch. Ordinary setup thirdhalvingD3.75e13 and four separatelyacknowledged\u00b1200looks mustreturnbaseline, thenread-onlypoller terminalbefore ready, noselection. Rootalone explicitlychooses one naturalcurrent-ready finite target aftertwofreshcoastreads/rangescreen; unchangedboundedaim mustfinish/reap beforecadence. Cadence runs once atfixedtarget/D/camera, max3requested2sW, freshscreens, twoadvancingreleasedcoasts>=1sapart, actualpre-keydownbaseline, nonreplenishingconditionalreservation.60s governsnewcommandadmission/waiting, notremotecancellation; allpostadmissionoutcomesSTOPthroughunchangedrunner withseparate65s callerclosure clippedoriginaltotal. Pre-admissionfailure leaves rootresponsibleforownedclosure. Original180startup/960noadmission/1470work/1500total,3aims120s/360looks/20holds/3frames unchanged. Rootexclusivecommandlane; stopinvalid/terminal/unsafe/uncertain/twononcontractions, noautoaim/Dchange/retarget/retry. PrimaryDISPLAY0/7896untouched. No gameplaycompletion or physicalstoppingguarantee; no native resultyet.",
+  "manifest_sha256": "1f29faa0fcbd13030afcd53e1b7bab8a0f22146b854a77d4d450ead90b7e1edb",
+  "root_source_review": "fullcadence+3operators; independentintent sourcePASS",
+  "production_hashes_checked": 186,
+  "frozen_pins_checked": 6,
+  "principal_pids_absent": {
+    "3556748": true,
+    "3556786": true,
+    "3556795": true,
+    "3557657": true
+  },
+  "port7898_bind_preflight": true,
+  "fresh_run_path": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200/.\u03b7\u03bc/diagnostics/bounded-look-200/runs/attempt-03",
+  "canonical_frontmatter_body_comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 675665,
+  "prior_ledger_sha256": "d0af97a589eb36b45fceac5654a0006c45b1cb58f0a21c2cadf19768c9b35c5f",
+  "events_appended": 1,
+  "execution": "not started"
+}

@@ -1,0 +1,14 @@
+--- green-01-source
++++ cadence_client.py
+@@ -314,8 +314,9 @@
+             self.report.update(outcome="failed", error=repr(error))
+         finally:
+             self.report["command_phase_elapsed_seconds"] = self.clock.monotonic() - self.started
+-            # No input after the60s boundary. STOP/reaping is separate existing
+-            # cleanup, clipped to the original supervisor total deadline.
++            # No further work command is issued after the60s boundary. An
++            # already-published action is not synchronously cancelled. STOP and
++            # reaping use the separate original supervisor cleanup deadline.
+             try:
+                 self.report["closure"] = self.client.invoke("stop", min(self.client.total_end, self.clock.monotonic() + 65))["closed"]
+             except BaseException as error:

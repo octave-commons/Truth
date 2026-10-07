@@ -1,0 +1,12 @@
+{
+  "phase": "RED",
+  "purpose": "New cadence protocol is unimplemented, not a production regression",
+  "at": "2026-10-07T11:23:53.377534+00:00",
+  "script_sha256": "e4e656c9fa397016e6d602dddc32ae9afd6607e4a23d0b6aa5d6167ea818eadd",
+  "tests_sha256": "d812e84a942bcd4a1a30089dc4414c43e48928d0ec7b5b73eea7373549f2491d",
+  "argv": [
+    "python3",
+    ".\u03b7\u03bc/diagnostics/bounded-flight-cadence/test_cadence.py"
+  ],
+  "exit_code": 1
+}
