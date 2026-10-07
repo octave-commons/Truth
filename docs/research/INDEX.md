@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-07-23 (multi-timescale N-body integration notebook added)
+**Last updated:** 2026-10-07 (stellar mutual-advance feasibility note added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -100,6 +100,7 @@ New ECS component keywords added to `domain.ecs.components`:
 | phase0-handoff-projection.md | draft (dispatched) | 0 | Projection functions from rich FSM state to compact :planet-candidate record; domain.genesis/handoff-system design | Kopparapu HZ, Seager taxonomy, XUV escape regimes |
 | multi-timescale-integration-jacobi-ecs.md | validated | 0 | WH/Kepler sub-stepping inside kinematics :run fixes e→1 decoherence; freeze K at tick entry; rungs are optimization-only; GADGET block-step + Dehnen-Read reversibility rules mapped to single-barrier ECS | Wisdom & Holman 1991, Rein & Tamayo 2015, Springel 2005, Dehnen & Read 2023, Rein+2024, Makino & Aarseth 1992 |
 | cluster-dispersal-integration-heating.md | validated | 0 | Dispersal = physical (virial ≫ 1) + dt-dependent heating (+48% E at 2× dt); planets BORN unbound at kAU (clump-scale r-disk); Euler fallthrough = one-tick fling machine; fix ranking: universal sub-stepping > placement v2 > star sub-stepping > pacing | probe runs base+coarse, Dehnen & Read 2023, Springel 2005 |
+| [stellar-substep-mutual-advance-feasibility.md](physics/stellar-substep-mutual-advance-feasibility.md) | draft; source/math only | 0 | Reciprocal Euler-parent composition does not yield one mutual Kepler result; isolated reproduction proposed, historical raw probes unavailable, Todo5 unchanged | Chambers 1999; Rein et al. 2019; Hernandez & Bertschinger 2015; Hernandez & Dehnen 2023/2024 |
 
 **Actor:** truth-research-physics
 **Schedule:** Every 48h
