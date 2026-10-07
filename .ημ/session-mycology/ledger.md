@@ -531,3 +531,12 @@
   spore: none
   receipt-refs: a4744132-2328-4cb2-a550-e1328d346673,5ca573b0,dc587131
   note: A conserved elemental sum does not prove phase availability or valid water stoichiometry. Keep each compartment identity across extraction, carry the returned remainder, and distinguish an exact accounting boundary from missing physical stock and settlement producers. Existing skills cover the workflow; no spore.
+- ts: 2026-10-07T07:45:50.663825719Z
+  session: /home/err/spaces/foresight/.worktrees/truth-condensed-water-research
+  task: Restore keyword catalog receipt discoverability
+  p-efficiency: 0.88
+  p-friction: 0.2
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: review5439046452,original-line-sha4138c92858fcb13055bec61723fbc519558a7fed6ede541c9c09ee432617a93e
+  note: Use the canonical receipt writer to retain EDN keyword kinds. Correct an already published malformed-kind record by an explicitly linked append-only restatement; verify the actual kind-filtered reader. No new spore.
