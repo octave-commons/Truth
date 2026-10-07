@@ -1,0 +1,12 @@
+
+Running tests in #{"test"}
+
+Testing domain.orbital.kepler-reuse-test
+
+Testing domain.orbital.kepler-test
+
+Testing domain.orbital.multi-timescale-regression-test
+Observed K at 5 AU, dt=80 yr, live softening: 142
+
+Ran 21 tests containing 596 assertions.
+0 failures, 0 errors.

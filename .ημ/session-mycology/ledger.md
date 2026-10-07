@@ -386,6 +386,15 @@
   spore: none
   receipt-refs: perf-tick-residual-gap-to-60fps,2026-10-06T22:51:53.914533Z
   note: Preserve an existing numerical defect as an explicit outcome when the admitted slice promises identity. Verify real compact dominance so fallback cannot masquerade as solver coverage. Strict EDN readback correctly rejected a metrics record; encode only its named type plus every field, keep the failed attempt, and do not relax the physics oracle. Named isolated system costs and mature-orbit work do not establish initial-nebula critical path or native FPS. No spore created or promoted.
+- ts: 2026-10-06T23:45:30.239162Z
+  session: /home/err/spaces/foresight/.worktrees/truth-kepler-cost
+  task: Qualify same-iteration Kepler reuse without laundering mixed performance results
+  p-efficiency: 0.83
+  p-friction: 0.42
+  p-skill-candidate: 0.55
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,a96dfd7346ba9e052488da85d45df285319317a7,2026-10-06T23:45:30.239162Z
+  note: Fewer transcendental evaluations can still allocate more when primitive locals cross boxed function boundaries. Measure branches and actual compact folds, preserve the failed candidate, and use one reverse pair to resolve the claim. Repeated allocated-byte reductions justify an allocation-only conclusion when timing intervals overlap and compact/CPU directions vary. Keep source-pinned fixtures immutable; record formatting-only test hash changes separately. No new spore or promotion.
 - ts: 2026-10-06T23:32:01.867863432Z
   session: /home/err/spaces/foresight/.worktrees/truth-focus-contract-review
   task: Draft real boundary regressions for the reviewed host focus-offset contract
@@ -404,3 +413,12 @@
   spore: none
   receipt-refs: focus-follows-pilot,2b30e5055bc793e4c9152425356f535ba3e5d2f6
   note: Reuse the existing finite-vector predicate behind a named compiled Malli law, and invoke it before the domain call inside established containment. Real boundary tests catch silent NaN and extra-coordinate acceptance that exception tests miss. Record a post-test docstring correction separately, then bind full qualification to final source. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:01:15.005453Z
+  session: /home/err/spaces/foresight/.worktrees/truth-kepler-cost
+  task: Qualify the composed focus repair and allocation-only solver on the final merge
+  p-efficiency: 0.98
+  p-friction: 0.04
+  p-skill-candidate: 0.1
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,6b160b2dc63e923be5badad7d2de846d74c99093,2026-10-07T00:01:15.005453Z
+  note: Bind final composition checks to exact HEAD and immutable source hashes, retain earlier benchmark ancestry, and avoid treating correctness-run durations as fresh performance evidence. Keep raw captured patch whitespace explicit and prior closed bundles unchanged. Existing skills suffice; no new spore.

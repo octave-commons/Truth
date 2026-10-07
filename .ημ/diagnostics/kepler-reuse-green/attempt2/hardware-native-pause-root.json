@@ -1,0 +1,12 @@
+{
+  "pid": 4070721,
+  "executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "starttime": 3869117,
+  "state_before": "S",
+  "utc": "2026-10-06T23:28:13.186233+00:00",
+  "operation": "SIGSTOP verified fresh hardware native Java after frame observer closure for attempt2 paired costs",
+  "state_after": "T",
+  "old_xvfb2_service": "Java3083624/Xvfb3082301 unavailable; not part of this pause",
+  "older_retained_java_2372912": "intentionally paused, untouched"
+}

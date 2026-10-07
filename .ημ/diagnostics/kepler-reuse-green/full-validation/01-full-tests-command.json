@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "clojure",
+    "-M:test"
+  ],
+  "JAVA_OPTS": "-Xms256m -Xmx2g",
+  "pid": 6162,
+  "start_utc": "2026-10-06T23:40:57.971219+00:00",
+  "end_utc": "2026-10-06T23:42:01.223560+00:00",
+  "wall_seconds": 63.25234318299772,
+  "exit": 0,
+  "source_hashes_unchanged": true
+}

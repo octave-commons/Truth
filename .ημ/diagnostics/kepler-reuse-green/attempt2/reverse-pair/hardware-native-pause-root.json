@@ -1,0 +1,11 @@
+{
+  "pid": 4070721,
+  "executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "starttime": 3869117,
+  "state_before": "S",
+  "utc": "2026-10-06T23:35:14.713253+00:00",
+  "operation": "SIGSTOP verified hardware game for one reverse-order paired Kepler comparison",
+  "state_after": "T",
+  "older_retained_java_2372912": "intentionally paused, untouched"
+}

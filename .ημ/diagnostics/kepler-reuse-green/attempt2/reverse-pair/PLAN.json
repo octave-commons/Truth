@@ -1,0 +1,61 @@
+{
+  "status": "Prepared only; no measurement executed. Wait for root pause and explicit resource release.",
+  "sequence": [
+    {
+      "label": "01-attempt2",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-kepler-cost",
+      "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+      "command": [
+        "clojure",
+        "-Sdeps",
+        "{:aliases {:kepler-evidence {:extra-paths [\"test\" \".\u03b7\u03bc/diagnostics/kepler-cost\"] :main-opts [\"-m\" \"evidence.kepler\"]}}}",
+        "-M:bench:kepler-evidence",
+        "propagation-cost",
+        "/home/err/spaces/foresight/.worktrees/truth-kepler-cost/.\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/01-attempt2.edn"
+      ],
+      "JAVA_OPTS": "-Xms256m -Xmx2g",
+      "sha256": {
+        "src/domain/orbital/kepler.clj": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+        "test/fixtures/kepler-reuse-b402939.edn": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+        "test/domain/orbital/kepler_workload.clj": "6670f44ad9d9559b50fbc686953877f059c806eaae79e0548409daddb1cf67a3",
+        "test/domain/orbital/kepler_reuse_test.clj": "7a9bdb25e80d2435e1a463d526714d6aaa5dce1bfd656599f040c616bff8a845",
+        ".\u03b7\u03bc/diagnostics/kepler-cost/evidence/kepler.clj": "78b3bbd395b631b933a3896594ad2ab72b8161b3d1459da22cf24ec30a3d2fa8"
+      }
+    },
+    {
+      "label": "02-baseline",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-kepler-baseline",
+      "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+      "command": [
+        "clojure",
+        "-Sdeps",
+        "{:aliases {:kepler-evidence {:extra-paths [\"test\" \".\u03b7\u03bc/diagnostics/kepler-cost\"] :main-opts [\"-m\" \"evidence.kepler\"]}}}",
+        "-M:bench:kepler-evidence",
+        "propagation-cost",
+        "/home/err/spaces/foresight/.worktrees/truth-kepler-cost/.\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/reverse-pair/02-baseline.edn"
+      ],
+      "JAVA_OPTS": "-Xms256m -Xmx2g",
+      "sha256": {
+        "src/domain/orbital/kepler.clj": "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+        "test/fixtures/kepler-reuse-b402939.edn": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+        "test/domain/orbital/kepler_workload.clj": "9029fa5439faff5ad58a26d61f3df3c4ddb105faf40e435f2ebdf66c207675ee",
+        "test/domain/orbital/kepler_reuse_test.clj": "fc2d1edc5a9b7c3d3914cd425ff8c970a1114ccd7f8abbfbbe6052e7cd98c148",
+        ".\u03b7\u03bc/diagnostics/kepler-cost/evidence/kepler.clj": "78b3bbd395b631b933a3896594ad2ab72b8161b3d1459da22cf24ec30a3d2fa8"
+      }
+    }
+  ],
+  "coverage": "Unchanged propagation-cost includes all3 pure branches and2 real compact folds; no phase0 repeat and no oracle capture.",
+  "native_guard_at_execution": {
+    "pid": 4070721,
+    "starttime": 3869117,
+    "executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+    "required_state": "T",
+    "older_paused_pid": 2372912,
+    "lost_pid_must_be_absent": 3083624
+  },
+  "sampling": "Same safe endpoint /proc/stat,loadavg,comm/stat CPU census; deterministicgzip/mtime0 with rawbyte hashes; no env/args census.",
+  "workload_difference": "Only two recorded leading-indentation corrections in current test sources; forms and adapter/fixture identical.",
+  "exit_policy": "One JVM at a time; on failure preserve outputs and stop. Release resources immediately after reaping, before analysis. No automatic repeat.",
+  "qualification": "Compare source-pinned means/intervals, currentthreadCPU/allocation and both compact means. Preserve all anomalies. If wall timing remains inconclusive, admit only a qualified allocation reduction claim and advance toward source/fullgate checkpoint."
+}

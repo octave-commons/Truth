@@ -1,0 +1,264 @@
+{
+  "01-propagation-cost": {
+    "wall_seconds": 56.3289670630038,
+    "machine_busy_fraction": 0.25315413705418266,
+    "other_surviving_process_cpu": [
+      {
+        "pid": "16981",
+        "comm": "ChatGPT",
+        "cpu_seconds": 15.86,
+        "average_cores": 0.28156028464467725
+      },
+      {
+        "pid": "17341",
+        "comm": "ChatGPT",
+        "cpu_seconds": 15.72,
+        "average_cores": 0.27907488490632576
+      },
+      {
+        "pid": "17382",
+        "comm": "codex",
+        "cpu_seconds": 7.36,
+        "average_cores": 0.13066101481619324
+      },
+      {
+        "pid": "65971",
+        "comm": "Isolated Web Co",
+        "cpu_seconds": 4.98,
+        "average_cores": 0.0884092192642177
+      },
+      {
+        "pid": "16830",
+        "comm": "ChatGPT",
+        "cpu_seconds": 2.1,
+        "average_cores": 0.03728099607527253
+      },
+      {
+        "pid": "15757",
+        "comm": "plasmashell",
+        "cpu_seconds": 1.83,
+        "average_cores": 0.03248772515130891
+      },
+      {
+        "pid": "65187",
+        "comm": "firefox",
+        "cpu_seconds": 1.52,
+        "average_cores": 0.02698434001638773
+      },
+      {
+        "pid": "2710",
+        "comm": "Xorg",
+        "cpu_seconds": 1.38,
+        "average_cores": 0.02449894027803623
+      },
+      {
+        "pid": "8626",
+        "comm": "mongod",
+        "cpu_seconds": 0.92,
+        "average_cores": 0.016332626852024155
+      },
+      {
+        "pid": "2020048",
+        "comm": "mongod",
+        "cpu_seconds": 0.83,
+        "average_cores": 0.014734869877369616
+      },
+      {
+        "pid": "4066",
+        "comm": "dockerd",
+        "cpu_seconds": 0.78,
+        "average_cores": 0.013847227113672653
+      },
+      {
+        "pid": "7315",
+        "comm": "mongod",
+        "cpu_seconds": 0.53,
+        "average_cores": 0.009409013295187828
+      },
+      {
+        "pid": "29482",
+        "comm": "codex-code-mode",
+        "cpu_seconds": 0.48,
+        "average_cores": 0.008521370531490862
+      },
+      {
+        "pid": "2584",
+        "comm": "containerd",
+        "cpu_seconds": 0.46,
+        "average_cores": 0.008166313426012078
+      },
+      {
+        "pid": "2020277",
+        "comm": "java",
+        "cpu_seconds": 0.46,
+        "average_cores": 0.008166313426012078
+      },
+      {
+        "pid": "7392",
+        "comm": "bun",
+        "cpu_seconds": 0.43,
+        "average_cores": 0.007633727767793898
+      },
+      {
+        "pid": "9755",
+        "comm": "java",
+        "cpu_seconds": 0.39,
+        "average_cores": 0.0069236135568363265
+      },
+      {
+        "pid": "9718",
+        "comm": "node",
+        "cpu_seconds": 0.33,
+        "average_cores": 0.005858442240399968
+      },
+      {
+        "pid": "7468",
+        "comm": "redis-server",
+        "cpu_seconds": 0.29,
+        "average_cores": 0.005148328029442396
+      },
+      {
+        "pid": "15417",
+        "comm": "picom",
+        "cpu_seconds": 0.28,
+        "average_cores": 0.004970799476703004
+      }
+    ],
+    "paused_native_cpu_seconds": {
+      "4070721": 0.0,
+      "2372912": 0.0
+    },
+    "limitation": "Matched persistent processes only; short-lived processes that start/end inside the interval are absent; benchmark child is absent from endpoint census."
+  },
+  "02-phase0-cost": {
+    "wall_seconds": 53.444327498997154,
+    "machine_busy_fraction": 0.5041937766425626,
+    "other_surviving_process_cpu": [
+      {
+        "pid": "17341",
+        "comm": "ChatGPT",
+        "cpu_seconds": 21.11,
+        "average_cores": 0.3949904692952889
+      },
+      {
+        "pid": "16981",
+        "comm": "ChatGPT",
+        "cpu_seconds": 20.67,
+        "average_cores": 0.38675760304754253
+      },
+      {
+        "pid": "17382",
+        "comm": "codex",
+        "cpu_seconds": 8.41,
+        "average_cores": 0.15736001168988062
+      },
+      {
+        "pid": "65971",
+        "comm": "Isolated Web Co",
+        "cpu_seconds": 7.61,
+        "average_cores": 0.1423911639667053
+      },
+      {
+        "pid": "16830",
+        "comm": "ChatGPT",
+        "cpu_seconds": 4.11,
+        "average_cores": 0.07690245517781324
+      },
+      {
+        "pid": "15757",
+        "comm": "plasmashell",
+        "cpu_seconds": 2.72,
+        "average_cores": 0.05089408225879611
+      },
+      {
+        "pid": "65187",
+        "comm": "firefox",
+        "cpu_seconds": 2.19,
+        "average_cores": 0.040977220642192454
+      },
+      {
+        "pid": "2637093",
+        "comm": "node",
+        "cpu_seconds": 1.97,
+        "average_cores": 0.03686078751831924
+      },
+      {
+        "pid": "2710",
+        "comm": "Xorg",
+        "cpu_seconds": 1.91,
+        "average_cores": 0.03573812393908109
+      },
+      {
+        "pid": "4066",
+        "comm": "dockerd",
+        "cpu_seconds": 1.31,
+        "average_cores": 0.0245114881466996
+      },
+      {
+        "pid": "2020048",
+        "comm": "mongod",
+        "cpu_seconds": 1.23,
+        "average_cores": 0.02301460337438206
+      },
+      {
+        "pid": "8626",
+        "comm": "mongod",
+        "cpu_seconds": 1.12,
+        "average_cores": 0.02095638681244546
+      },
+      {
+        "pid": "7392",
+        "comm": "bun",
+        "cpu_seconds": 0.82,
+        "average_cores": 0.015343068916254707
+      },
+      {
+        "pid": "7315",
+        "comm": "mongod",
+        "cpu_seconds": 0.75,
+        "average_cores": 0.014033294740476867
+      },
+      {
+        "pid": "2584",
+        "comm": "containerd",
+        "cpu_seconds": 0.73,
+        "average_cores": 0.013659073547397484
+      },
+      {
+        "pid": "20161",
+        "comm": "ChatGPT",
+        "cpu_seconds": 0.65,
+        "average_cores": 0.012162188775079952
+      },
+      {
+        "pid": "2020277",
+        "comm": "java",
+        "cpu_seconds": 0.56,
+        "average_cores": 0.01047819340622273
+      },
+      {
+        "pid": "1118",
+        "comm": "irq/217-iwlwifi:queue_9",
+        "cpu_seconds": 0.51,
+        "average_cores": 0.009542640423524271
+      },
+      {
+        "pid": "29482",
+        "comm": "codex-code-mode",
+        "cpu_seconds": 0.49,
+        "average_cores": 0.009168419230444886
+      },
+      {
+        "pid": "7468",
+        "comm": "redis-server",
+        "cpu_seconds": 0.48,
+        "average_cores": 0.008981308633905194
+      }
+    ],
+    "paused_native_cpu_seconds": {
+      "4070721": 0.0,
+      "2372912": 0.0
+    },
+    "limitation": "Matched persistent processes only; short-lived processes that start/end inside the interval are absent; benchmark child is absent from endpoint census."
+  }
+}

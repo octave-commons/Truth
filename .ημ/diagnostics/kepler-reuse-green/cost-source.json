@@ -1,0 +1,23 @@
+{
+  "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+  "solver_sha256": "94ad5b0a4aa2f33a14afb15574a005af1d4ffff1da85bec5d9068a58f5255190",
+  "oracle_sha256": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+  "adapter_sha256": "78b3bbd395b631b933a3896594ad2ab72b8161b3d1459da22cf24ec30a3d2fa8",
+  "native_identity_before": {
+    "comm": "java",
+    "state": "T",
+    "utime": 11197326,
+    "stime": 41577,
+    "starttime": 2882197
+  },
+  "older_native_before": {
+    "comm": "java",
+    "state": "T",
+    "utime": 4039645,
+    "stime": 18457,
+    "starttime": 2240165
+  },
+  "JAVA_OPTS": "-Xms256m -Xmx2g",
+  "runtime": "OpenJDK21.0.12.1",
+  "coordination": "Root released exact same adapter workloads sequentially; owned natives verified SIGSTOP; other host load observed without manipulation."
+}

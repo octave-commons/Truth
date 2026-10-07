@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "bin/analyze",
+    "--strict"
+  ],
+  "JAVA_OPTS": "-Xms256m -Xmx2g",
+  "pid": 111141,
+  "start_utc": "2026-10-06T23:57:50.123280+00:00",
+  "end_utc": "2026-10-06T23:59:10.593892+00:00",
+  "wall_seconds": 80.47060600700206,
+  "exit": 0,
+  "exact_head_and_source_unchanged": true
+}

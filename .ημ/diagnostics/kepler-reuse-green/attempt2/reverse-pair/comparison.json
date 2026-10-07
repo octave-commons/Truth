@@ -1,0 +1,100 @@
+{
+  "run-order" : [ "attempt2", "baseline" ],
+  "propagation" : [ {
+    "after-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 104481.34,
+      "bytes-per-batch" : 335153.84,
+      "criterium-execute-wall-ns" : 10319239,
+      "last-result-hash" : 53790878,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "before-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 165702.61,
+      "bytes-per-batch" : 375121.84,
+      "criterium-execute-wall-ns" : 16433393,
+      "last-result-hash" : 53790878,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "after-mean-seconds" : [ 1.2036054386873921E-4, [ 1.014584585492228E-4, 1.5906149257340245E-4 ] ],
+    "bytes-change-percent" : -10.654671559512508,
+    "cpu-change-percent" : -36.94647296140959,
+    "label" : "elliptic",
+    "before-sample-count" : 6,
+    "before-mean-seconds" : [ 1.4859767156382632E-4, [ 1.1299111965393406E-4, 2.1591638720208948E-4 ] ],
+    "after-sample-count" : 6,
+    "mean-change-percent" : -19.002402526178596
+  }, {
+    "after-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 35999.78,
+      "bytes-per-batch" : 149457.12,
+      "criterium-execute-wall-ns" : 3571066,
+      "last-result-hash" : 1323375415,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "before-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 44346.29,
+      "bytes-per-batch" : 167153.12,
+      "criterium-execute-wall-ns" : 4411432,
+      "last-result-hash" : 1323375415,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "after-mean-seconds" : [ 5.649990913341647E-5, [ 4.438749781795512E-5, 7.599292638196177E-5 ] ],
+    "bytes-change-percent" : -10.586700385849813,
+    "cpu-change-percent" : -18.821213679881676,
+    "label" : "near-parabolic",
+    "before-sample-count" : 6,
+    "before-mean-seconds" : [ 4.321121281492249E-5, [ 3.724049152131783E-5, 5.1684061894379855E-5 ] ],
+    "after-sample-count" : 6,
+    "mean-change-percent" : 30.752889013809124
+  }, {
+    "after-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 25005.94,
+      "bytes-per-batch" : 110865.12,
+      "criterium-execute-wall-ns" : 2480806,
+      "last-result-hash" : -1207076229,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "before-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 30769.37,
+      "bytes-per-batch" : 129809.12,
+      "criterium-execute-wall-ns" : 3050062,
+      "last-result-hash" : -1207076229,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "after-mean-seconds" : [ 3.6212341937730035E-5, [ 2.9768422212274942E-5, 4.334604023674526E-5 ] ],
+    "bytes-change-percent" : -14.593735786822993,
+    "cpu-change-percent" : -18.731062741941095,
+    "label" : "hyperbolic",
+    "before-sample-count" : 6,
+    "before-mean-seconds" : [ 4.386737959946918E-5, [ 3.4690507660755225E-5, 5.79117262034021E-5 ] ],
+    "after-sample-count" : 6,
+    "mean-change-percent" : -17.450410149029683
+  } ],
+  "compact" : [ {
+    "label" : [ "compact-soa", "stationary" ],
+    "before-mean-seconds" : [ 5.046518213897937E-4, [ 3.547147975027145E-4, 8.865729261672096E-4 ] ],
+    "after-mean-seconds" : [ 3.72781048503612E-4, [ 3.201409674922601E-4, 4.464743611971104E-4 ] ],
+    "mean-change-percent" : -26.13104070902075,
+    "before-sample-count" : 6,
+    "after-sample-count" : 6
+  }, {
+    "label" : [ "compact-soa", "moving-recentered" ],
+    "before-mean-seconds" : [ 4.2447502768549285E-4, [ 3.560458106312293E-4, 5.788032818383168E-4 ] ],
+    "after-mean-seconds" : [ 5.02207395252838E-4, [ 3.759909174406605E-4, 6.528458209494324E-4 ] ],
+    "mean-change-percent" : 18.312589080019936,
+    "before-sample-count" : 6,
+    "after-sample-count" : 6
+  } ]
+}

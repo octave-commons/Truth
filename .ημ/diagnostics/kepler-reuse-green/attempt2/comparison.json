@@ -1,0 +1,114 @@
+{
+  "propagation" : [ {
+    "after-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 80913.72,
+      "bytes-per-batch" : 335153.84,
+      "criterium-execute-wall-ns" : 8003772,
+      "last-result-hash" : 53790878,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "before-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 87592.05,
+      "bytes-per-batch" : 375121.84,
+      "criterium-execute-wall-ns" : 8669401,
+      "last-result-hash" : 53790878,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "after-mean-seconds" : [ 9.877669901812689E-5, [ 8.412698439073515E-5, 1.295735648288016E-4 ] ],
+    "bytes-change-percent" : -10.654671559512508,
+    "cpu-change-percent" : -7.624356320008497,
+    "label" : "elliptic",
+    "before-sample-count" : 6,
+    "before-mean-seconds" : [ 1.164213715826436E-4, [ 9.662492212189616E-5, 1.5982515951843491E-4 ] ],
+    "after-sample-count" : 6,
+    "mean-change-percent" : -15.155870717423525
+  }, {
+    "after-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 32595.17,
+      "bytes-per-batch" : 149457.12,
+      "criterium-execute-wall-ns" : 3239575,
+      "last-result-hash" : 1323375415,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "before-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 33830.39,
+      "bytes-per-batch" : 171257.12,
+      "criterium-execute-wall-ns" : 3357735,
+      "last-result-hash" : 1323375415,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "after-mean-seconds" : [ 3.7651980376515635E-5, [ 3.2522343863007876E-5, 4.480588119549032E-5 ] ],
+    "bytes-change-percent" : -12.729397761681383,
+    "cpu-change-percent" : -3.6512141893723427,
+    "label" : "near-parabolic",
+    "before-sample-count" : 6,
+    "before-mean-seconds" : [ 4.196631738868833E-5, [ 3.498517885078219E-5, 6.182267283393502E-5 ] ],
+    "after-sample-count" : 6,
+    "mean-change-percent" : -10.280475582867288
+  }, {
+    "after-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 51749.55,
+      "bytes-per-batch" : 110865.12,
+      "criterium-execute-wall-ns" : 5120336,
+      "last-result-hash" : -1207076229,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "before-thread-cost" : {
+      "repetitions" : 100,
+      "thread-only?" : true,
+      "cpu-ns-per-batch" : 32536.88,
+      "bytes-per-batch" : 135761.12,
+      "criterium-execute-wall-ns" : 3234722,
+      "last-result-hash" : -1207076229,
+      "includes-criterium-consumption-overhead?" : true
+    },
+    "after-mean-seconds" : [ 3.535415447154472E-5, [ 2.9416566958984197E-5, 4.396733662190555E-5 ] ],
+    "bytes-change-percent" : -18.33809267336628,
+    "cpu-change-percent" : 59.04890081655032,
+    "label" : "hyperbolic",
+    "before-sample-count" : 6,
+    "before-mean-seconds" : [ 4.508812097338936E-5, [ 3.575859809757237E-5, 6.236236437908497E-5 ] ],
+    "after-sample-count" : 6,
+    "mean-change-percent" : -21.58876061299948
+  } ],
+  "compact" : [ {
+    "label" : [ "compact-soa", "stationary" ],
+    "before-mean-seconds" : [ 4.3581602664576806E-4, [ 3.683774890282132E-4, 6.168455768025079E-4 ] ],
+    "after-mean-seconds" : [ 5.456480677267373E-4, [ 3.8580395053003537E-4, 7.662260901060071E-4 ] ],
+    "mean-change-percent" : 25.2014690525002,
+    "before-sample-count" : 6,
+    "after-sample-count" : 6
+  }, {
+    "label" : [ "compact-soa", "moving-recentered" ],
+    "before-mean-seconds" : [ 4.278505515873016E-4, [ 3.624249191468254E-4, 5.290875694444445E-4 ] ],
+    "after-mean-seconds" : [ 4.363175688202248E-4, [ 3.8921831086142323E-4, 5.473164339887641E-4 ] ],
+    "mean-change-percent" : 1.9789660668920517,
+    "before-sample-count" : 6,
+    "after-sample-count" : 6
+  } ],
+  "phase0" : [ {
+    "label" : "tick-world (500 particles)",
+    "before-mean-seconds" : [ 0.026549865722222225, [ 0.02046866855555556, 0.03470781494444445 ] ],
+    "after-mean-seconds" : [ 0.0304416454, [ 0.023822589233333333, 0.03829890786666667 ] ],
+    "mean-change-percent" : 14.65837800648595,
+    "before-sample-count" : 6,
+    "after-sample-count" : 6
+  }, {
+    "label" : "tick-world (1000 particles)",
+    "before-mean-seconds" : [ 0.053465278222222225, [ 0.042373992222222226, 0.06972630694444445 ] ],
+    "after-mean-seconds" : [ 0.05516544533333334, [ 0.044766826333333336, 0.08048392216666668 ] ],
+    "mean-change-percent" : 3.179946252303356,
+    "before-sample-count" : 6,
+    "after-sample-count" : 6
+  } ]
+}

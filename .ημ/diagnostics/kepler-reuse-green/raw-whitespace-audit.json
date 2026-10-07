@@ -1,0 +1,24 @@
+{
+  "command_template": [
+    "git",
+    "diff",
+    "--no-index",
+    "--check",
+    "--",
+    "/dev/null",
+    "PATH"
+  ],
+  "findings": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/format-before.log",
+      "exit": 3,
+      "output": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/format-before.log:9: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/format-before.log:22: trailing whitespace.\n+ \n"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/full-validation/source.patch",
+      "exit": 3,
+      "output": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/full-validation/source.patch:57: trailing whitespace.\n+ \n.\u03b7\u03bc/diagnostics/kepler-reuse-green/full-validation/source.patch:68: trailing whitespace.\n+ \n"
+    }
+  ],
+  "policy": "Captured bytes are preserved. No source-style or gate suppression is introduced."
+}

@@ -1,0 +1,39 @@
+{
+  "encoding": "gzip",
+  "compression_level": 9,
+  "mtime": 0,
+  "files": [
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/01-propagation-cost-cpu-before.json.gz",
+      "stored_sha256": "a8cf8d6c8cd7b48452c1aec0ff45a308da22b6fef44d7ff04f5c987f94f0b953",
+      "raw_sha256": "59b43f7dd83da8bd3ab0dcd5d7f84c34431da94517f316c4968f9c90a12de01f",
+      "raw_bytes": 121177,
+      "stored_bytes": 11998,
+      "decompression_byte_equal": true
+    },
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/01-propagation-cost-cpu-after.json.gz",
+      "stored_sha256": "486fef807fb88d548fd117be87bd22050ac7622a2455950218a6d25f875e1031",
+      "raw_sha256": "cd76fd502dd414b1d13acca2157a79fb1cfbed2f37641b315db8948ef58676b6",
+      "raw_bytes": 122932,
+      "stored_bytes": 12171,
+      "decompression_byte_equal": true
+    },
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/02-phase0-cost-cpu-before.json.gz",
+      "stored_sha256": "08b8d98961bd338c3e166a44b930e2700e79bd667465f96f7d3ad7a0afa861e2",
+      "raw_sha256": "b66b2bd73c146bd9f1c3a35ee36b32166a14cef37172e83c2539c9af4bd520cc",
+      "raw_bytes": 122937,
+      "stored_bytes": 12166,
+      "decompression_byte_equal": true
+    },
+    {
+      "stored_path": ".\u03b7\u03bc/diagnostics/kepler-reuse-green/attempt2/02-phase0-cost-cpu-after.json.gz",
+      "stored_sha256": "8558d1067e002856f9706747a2cb0d59c92be1e14a02b7097e6abb77c300ef6d",
+      "raw_sha256": "bbd594a1c7b0325f5ea4bd5cb75788c870945261c769757a5d6eab2e8c4de18c",
+      "raw_bytes": 121457,
+      "stored_bytes": 12078,
+      "decompression_byte_equal": true
+    }
+  ]
+}

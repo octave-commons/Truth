@@ -1,0 +1,11 @@
+{
+  "pid": 4070721,
+  "executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "starttime": 3869117,
+  "state_before": "T",
+  "utc": "2026-10-06T23:31:16.369744+00:00",
+  "operation": "SIGCONT verified fresh hardware game after attempt2 cost resource release",
+  "state_after": "S",
+  "older_retained_java_2372912": "intentionally paused, untouched"
+}

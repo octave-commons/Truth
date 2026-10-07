@@ -1,0 +1,23 @@
+{
+  "head": "6b160b2dc63e923be5badad7d2de846d74c99093",
+  "parents": [
+    "5da9294065c58e13e639afb9acd7a7222272395f",
+    "a50e51243672a6d8842f8f2fc233beb6db645a2f"
+  ],
+  "sha256": {
+    "src/domain/orbital/kepler.clj": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+    "test/domain/orbital/kepler_workload.clj": "6670f44ad9d9559b50fbc686953877f059c806eaae79e0548409daddb1cf67a3",
+    "test/domain/orbital/kepler_reuse_test.clj": "7a9bdb25e80d2435e1a463d526714d6aaa5dce1bfd656599f040c616bff8a845",
+    "test/fixtures/kepler-reuse-b402939.edn": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "src/law/narrowing.clj": "e7e503e7197b37774babda62cf59c93f49e168221eb64f9491c434b26a47749b",
+    "test/infra/dev/focus_cadence_test.clj": "f8e187222867e61ea4679bfa08dbf65da70a1e9cf7031ef03aa8b9f7e374edc1"
+  },
+  "kepler_source_test_fixture_unchanged": true,
+  "incoming_source_test_paths": [
+    "src/infra/dev/window/loop.clj",
+    "src/law/narrowing.clj",
+    "test/infra/dev/focus_cadence_test.clj"
+  ],
+  "scope": "Final composition of validated focus guard with allocation-only Kepler reuse. ExactHEAD full correctness/static qualification, no benchmark or performance inference; native game/passive capture may overlap."
+}

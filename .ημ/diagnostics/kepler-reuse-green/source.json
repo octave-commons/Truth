@@ -1,0 +1,7 @@
+{
+  "head": "a96dfd7346ba9e052488da85d45df285319317a7",
+  "solver_sha256": "94ad5b0a4aa2f33a14afb15574a005af1d4ffff1da85bec5d9068a58f5255190",
+  "baseline_solver_sha256": "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+  "oracle_sha256": "16e02fe904a97572756d6613483a707da76cdc9b297c81973fe2ef1d2dd56aa4",
+  "scope": "Same-Newton-iteration terms reuse only. Frozen oracle and baseline bundle unchanged. Native load may be active; functional validation only, not a cost measurement."
+}
