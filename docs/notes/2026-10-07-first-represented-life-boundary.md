@@ -456,3 +456,57 @@ allocation or terminal material change must be shown as rejection/closure rather
 than adjusted until a cohort appears. No result in this note is an executed test,
 local review is not hosted approval, and Incoming remains Incoming until the
 canonical planning/admission process completes.
+
+### 8.1 First pure child and account revision clarification — proposed
+
+The manually authored Incoming child
+[`life-account-origin-kernel`](../../kanban/tasks/life-account-origin-kernel.md)
+instantiates only the first row above, at a proposed three points. The parent
+specification remains unfinished. This clarification selects transaction
+bookkeeping, not biological parameters or permission to implement. It depends
+on §§6–8, not a later timed resource-use proposal or a naturally eligible habitat.
+
+The pure boundary consumes supplied account/request/material data and returns a
+proposed transition plus immutable outcome/effect data. No ECS allocation,
+retained-life-event discovery, habitat adjudication, actual event append or
+physical write occurs here. Future producers and the serial owner must perform
+the final-parent/cause/removal checks and atomic world application already
+required by §7.2; a successful unit transition cannot substitute for those checks.
+
+**Revision is an accepted-operation counter, not an outcome count.** An unopened
+account has conceptual revision `0`, with no allocated account or reserved
+parent slot. An origin request expects `0`; accepted origin is the first
+operation and produces account revision `1`. Each newly accepted extent
+transfer or first terminal closure increments the account's nonnegative
+arbitrary-precision integer revision exactly once. This includes a valid
+`q=g=L=0` action: its stocks do not change, but its accepted operation does.
+No newly submitted action is accepted against an already closed account.
+
+For a well-formed operation identity, resolve its existing immutable outcome
+before current-revision or closed-account checks. An exact retry returns that
+historical outcome and the unchanged current state, with no newly emitted
+effect; it never returns an old account as a replacement for the current one.
+Conflicting reuse rejects without replacing the original outcome. A new stale
+or otherwise rejected request does not increment revision or change stocks.
+A new valid-key rejection must return its immutable outcome as a separate
+retention proposal, not an optional diagnostic. The later caller must retain it
+and supply that history on retry; the kernel performs no persistence. Malformed
+identity only produces a diagnostic rejection. Thus retained outcomes can grow
+while the account revision stays fixed. Operation ordering remains §7.2's
+running-account order; the pure kernel does not create a scheduler.
+
+Concrete traces for later RED tests:
+
+| Supplied sequence | Required result |
+| --- | --- |
+| Rejected origin `a`, expected `0`; retry identical `a` after external conditions improve | No account/slot, still conceptual `0`; original rejection returned, no reinterpretation |
+| Distinct valid origin `b`, expected `0` | One proposed opening partition, revision `1`; accepted origin permanently claims the supplied parent slot when later atomically applied |
+| Valid zero-extent action `c`, expected `1` | Same stocks, revision `2`, one accepted outcome |
+| Stale action `d`, expected `1` | Rejected against `2`; stocks/revision unchanged, immutable rejection outcome returned for required retention |
+| First valid closure `e`, expected `2` | Active stocks zero, terminal export/history retained, revision `3` |
+| Retry accepted origin `b` or closure `e` after closure | Original outcome only; current closed revision `3` preserved, no resurrection or repeated export |
+
+Three points covers this pure numerical/transition surface and its tests only.
+If implementation needs persistence machinery, lifecycle ownership changes or
+new biological admission choices, re-plan before code. Other rows above remain
+proposals rather than additional cards or completed prerequisites.

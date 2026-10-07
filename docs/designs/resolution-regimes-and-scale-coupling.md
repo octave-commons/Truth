@@ -115,6 +115,14 @@ Current lifecycle requests all create stellar clumps; generic component creation
 is a missing boundary, not an existing biological producer. No implementation,
 phase advancement or Gate prerequisite is declared satisfied by this proposal.
 
+The first bounded implementation proposal is
+[`life-account-origin-kernel`](../../kanban/tasks/life-account-origin-kernel.md),
+Incoming at a proposed three points. The note's
+[§8.1 revision clarification](../notes/2026-10-07-first-represented-life-boundary.md#81-first-pure-child-and-account-revision-clarification--proposed)
+defines the pure integer origin/extent/closure boundary and retry ordering.
+This child excludes ECS, producers, clocks and presentation; its admission and
+the broader parent's causal/native acceptance remain separate and unfinished.
+
 ## 7. Roadmap position
 
 - **Now / Phase 0:** seed-and-grow (A). Parcel grain stays ~669 M⊕ (compute-locked
