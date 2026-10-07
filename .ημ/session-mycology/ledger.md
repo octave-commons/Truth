@@ -458,6 +458,16 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,3d912230,2026-10-07T01:09:14.143016+00:00
   note: A large first-pair effect justifies one unchanged reverse pair with shared native pause and exact source/input guards. Keep the original adverse result, do not pool a favorable estimate, and distinguish failure to reproduce from disproving a regression. Repeat observed cleanup work does not provide a universal upper bound. Existing skills suffice; no new spore.
+
+- ts: 2026-10-07T01:29:36.215729+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-star-heating-research
+  task: Verify mutual stellar advancement before widening substep candidates
+  p-efficiency: 0.9
+  p-friction: 0.2
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: star-substep-heating,4f4eb63,1791336544699-0.8ww729o9y3efmfr7xuv
+  note: A known relative solver cannot be widened to its own moving parents without checking the shared world-frame reconstruction. Derive the two-body limit before touching states, verify the actual cited method, and preserve missing historical data as missing. Existing research and evidence skills suffice; no new spore.
 - ts: 2026-10-07T01:22:27.988182606Z
   session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
   task: Separate reachable disabled-emitter bugs from conditional stale-component cases

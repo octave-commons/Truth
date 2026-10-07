@@ -1,13 +1,14 @@
 ---
-uuid: "star-substep-heating"
-title: "Star sub-stepping: star–star encounters stop heating the cluster"
-status: "todo"
-priority: "P2"
-labels: ["domain", "physics", "integrator", "multi-timescale"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/star-substep-heating.md"
 category: "specs"
-estimate: 5
+labels: ["domain", "physics", "integrator", "multi-timescale"]
+write-id: "1791337340948-0.4gw6ygyw5dm0c8uzd4o"
+source: "kanban/tasks/star-substep-heating.md"
+title: "Star sub-stepping: star–star encounters stop heating the cluster"
+priority: "P2"
+status: "todo"
+estimate: "5"
+uuid: "star-substep-heating"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Star sub-stepping
@@ -52,3 +53,11 @@ stars multiplies their per-tick cost; K is small for cluster orbits
 `universal-compact-substepping` (same machinery). Slows the dispersal
 feedback that `compact-pair-softening` (landed) and the eventual
 halo/dispersal investigation care about.
+
+---
+
+(己, p=0.99) Bounded research at 4f4eb63: docs/research/physics/stellar-substep-mutual-advance-feasibility.md records the current Euler-parent composition, a derived reciprocal-pair counterexample (r_out = 2*r_Kepler - r_Euler), and the need for planets to reuse the actual mutually advanced parent. Primary methods verified: democratic heliocentric MERCURY uses one distinguished star plus COM/jump/interaction terms; it does not justify the independent nearest-neighbour heuristic. 2301.06253 and 2401.07113 are Hernandez & Dehnen, correcting historical attribution without rewriting it. The four cited scratchpad probe paths are absent in this checkpoint and available local path history; old 25%/48% claims remain historical, not freshly reproduced. Proposed next evidence is isolated equal/unequal binary then finite-mass 2-star+planet through the real spatial/SoA/gravity/integrator fold, matched physical-time refinement, explicit lag/path/frame and conserved-quantity diagnostics. Sole-writer architecture admits a joint calculation, but pair/group selection, actual-parent reuse, carried-force subtraction and moving-source fallback require design clarification/breakdown before population expansion. No production, tests, runner, JVM or native work; no new numerical results. Preserve Todo5, existing acceptance, scope and estimate; this comment is research, not implementation admission.
+
+Root reviewed the new mutual-advancement feasibility note, its reciprocal-pair and centre-of-mass derivation, and primary-method evidence. The current implementation recipe is not ready for a state-set extension: joint stellar advancement, actual-parent reuse by planets, carried-force subtraction and moving-source encounter behavior need design clarification. Root attempted the documented Todo-to-Breakdown transition through canonical Rheos83c6b397; CLI refused with exit3: No transition from todo to breakdown. No alternate route or manual state change was used. Actual canonical status remains Todo5; this comment records the readiness gap and transition/documentation drift, not implementation admission. See .ημ/diagnostics/star-substep-triage/2026-10-07/transition-refusal.json. Upstream FSM versus PROCESS audit is pending. No numerical runner, new test, source change or heating result exists.
+
+---

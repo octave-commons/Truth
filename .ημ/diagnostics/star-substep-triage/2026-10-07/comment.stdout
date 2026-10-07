@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "uuid": "star-substep-heating",
+  "comment": "Root reviewed the new mutual-advancement feasibility note, its reciprocal-pair and centre-of-mass derivation, and primary-method evidence. The current implementation recipe is not ready for a state-set extension: joint stellar advancement, actual-parent reuse by planets, carried-force subtraction and moving-source encounter behavior need design clarification. Root attempted the documented Todo-to-Breakdown transition through canonical Rheos83c6b397; CLI refused with exit3: No transition from todo to breakdown. No alternate route or manual state change was used. Actual canonical status remains Todo5; this comment records the readiness gap and transition/documentation drift, not implementation admission. See .ημ/diagnostics/star-substep-triage/2026-10-07/transition-refusal.json. Upstream FSM versus PROCESS audit is pending. No numerical runner, new test, source change or heating result exists."
+}

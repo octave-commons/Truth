@@ -1,0 +1,18 @@
+{
+  "recorded_at": "2026-10-07T01:42:20.276531+00:00",
+  "evidence": "Observed prior exec output chunk e03a40; this is a transcript record, not a rerun",
+  "command": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "move",
+    "star-substep-heating",
+    "--to",
+    "breakdown",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "exit_code": 3,
+  "output": "rheos: transition refused: No transition from 'todo' to 'breakdown'\n",
+  "runtime_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "disposition": "No alternate route, manual status edit, local validator or gate bypass. Canonical comment will record readiness gap while preserving actual state."
+}
