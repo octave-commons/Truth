@@ -568,6 +568,14 @@ L = 0
 (U',S',B',W') = (U, S-q, B+g, W+q-g)
 ```
 
+Either guard failure (`a > 1/100` or `x > S/100`) is an oversized interval
+under §9.2. For the identified producer's next unaccounted completed step,
+reject the whole interval and mark the producer **suspended with an unmodeled
+interval in that same settlement**, keeping stocks, residues and successful
+cursor unchanged; do not wait for the following tick's gap check. The §9.4
+final-parent/closure check still runs first: if closure applies, close the
+account and cancel uptake instead of newly suspending it.
+
 The two 1/100 bounds limit the unquantized step's relative living-stock increase
 and substrate depletion. They do not bound external habitat changes between
 samples; the existing final-parent validation still decides coverage. Validate
@@ -639,7 +647,7 @@ S=100000, B=2000, K=100000, mu_max=1/100 s^-1, Y=1/2 unless stated.
 | Quantization h=1/100 s, repeated five contiguous intervals | While stocks stay unchanged x=1/5 each time. After four: q=g=0,r_q=4/5. Fifth: q=1,g=0,r_q=0,r_g=1/2,S'=99999,B'=2000,W'=1. Finite uptake is not mislabeled biomass gain. |
 | Depleted S=0, h=1 s | Zero action and interval accepted, no stock creation/death; residues unchanged. |
 | Excessive h=3 s | a=3/200 >1/100: reject the whole interval, suspend producer, no stock/residue/cursor mutation; no three hidden one-second steps. |
-| Substrate-bound rejection: S=10,B=100000,K=10,h=1 s | a=1/200 passes, x=1000 exceeds S/100=1/10: reject before rounding, no clipping or borrowing. |
+| Substrate-bound rejection: S=10,B=100000,K=10,h=1 s | a=1/200 passes, x=1000 exceeds S/100=1/10: reject before rounding and suspend in the same settlement, with stocks/residues/successful cursor unchanged; no clipping or borrowing. Parent closure retains priority. |
 | Duplicate, stale revision or same-fold parent reap | Exact duplicate returns prior outcome; stale proposal rejects; parent reap closes/exports under §7.3 and cancels uptake. No second debit or event. |
 
 For error assessment, compare h with two h/2 steps on identical admitted inputs;

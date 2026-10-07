@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-07T08:23:21.189671+00:00",
+  "scope": "Narrow documentation-only disposition of c2-extent-guard-disposition; no implementation admission or new model equation.",
+  "review": {
+    "pr": 50,
+    "review_id": 5439520941,
+    "review_url": "https://github.com/octave-commons/Truth/pull/50#pullrequestreview-5439520941",
+    "reviewed_head": "7ed391350b7321f3a5aebb943d04885747c4efa6",
+    "item": "c2-extent-guard-disposition",
+    "state": "APPROVED with body-only advisory; approval does not waive verifying a genuine advisory"
+  },
+  "note": {
+    "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "original_bytes": 48829,
+    "original_sha256": "7527579890edf041925e15451712ca069d239cb8adfc1de5157de1c459f9745e",
+    "final_bytes": 49462,
+    "final_sha256": "acbe147868a22a8af9b2b2b3c0c6abe49e7ef9e0f4a362258bbd221f109ab003",
+    "historical_prefix_bytes": 34930,
+    "historical_prefix_sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417",
+    "historical_prefix_preserved": true,
+    "section_9_offset": 34931,
+    "additional_separator_byte_preserved": true
+  },
+  "policy_rationale": "PR flow first-five policy requires verifying every finding regardless of nonblocking/low labels. The reviewed text rejected either extent-guard failure but did not explicitly attach the substrate-only failure to same-settlement suspension. This clarification applies the already-selected unsupported-interval policy immediately for an identified next unaccounted completed step. It changes no thresholds, rate, integer transfer, replay behavior or account-closure precedence; does not defer to a following tick; and does not claim the proposed producer is implemented or scientifically calibrated.",
+  "exact_changes": [
+    "Insert one paragraph immediately after the section9.3 algorithm identifying both guards as oversized intervals, same-settlement rejection/suspension, unchanged stocks/residues/cursor, and earlier final-parent closure priority.",
+    "Update only the substrate-bound row in section9.5 to state the same outcome."
+  ],
+  "verification": {
+    "method": "Python standard-library text/bytes inspection only, no project imports, diagnostic execution, JVM or native calls.",
+    "exact_two_edit_roundtrip_to_original": true,
+    "historical_prefix_preserved": true,
+    "no_trailing_whitespace": true,
+    "single_terminal_newline": true,
+    "section_code_fences_balanced": true,
+    "local_links": [
+      {
+        "target": "../../.ημ/diagnostics/life-action-plan/root-scope.json",
+        "resolved": "/home/err/spaces/foresight/.worktrees/truth-life-action-plan/.ημ/diagnostics/life-action-plan/root-scope.json",
+        "exists": true
+      },
+      {
+        "target": "../../.ημ/diagnostics/life-action-plan/design-audit.json",
+        "resolved": "/home/err/spaces/foresight/.worktrees/truth-life-action-plan/.ημ/diagnostics/life-action-plan/design-audit.json",
+        "exists": true
+      },
+      {
+        "target": "../../src/domain/genesis/tick.clj",
+        "resolved": "/home/err/spaces/foresight/.worktrees/truth-life-action-plan/src/domain/genesis/tick.clj",
+        "exists": true
+      },
+      {
+        "target": "../../src/domain/genesis/bootstrap.clj",
+        "resolved": "/home/err/spaces/foresight/.worktrees/truth-life-action-plan/src/domain/genesis/bootstrap.clj",
+        "exists": true
+      }
+    ],
+    "unchanged_file_hashes": {
+      "AGENTS.md": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0",
+      "PROCESS.md": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2",
+      ".ημ/diagnostics/life-action-plan/root-scope.json": "90b5b8f8297570fd7700a7a8e8114d2e77f7a5700fd0dd31dd08cea0eab4c14d",
+      ".ημ/diagnostics/life-action-plan/closure.json": "97b42ed3bfcc2460b3cc46d0525b1182ed93d1730901895dd871ccef488d99dc",
+      ".ημ/diagnostics/life-action-plan/design-audit.json": "577c67f1f7ab9893bc017170fccb6ff6178c4676ce135e9b6c9f04480fc62121",
+      ".ημ/receipts.edn": "02d1d42537fd10e8cb684099c8e96b0a8faaa1d2467b494ff79159643e66c88c",
+      ".ημ/session-mycology/ledger.md": "1834d942cbb06bc7e53c14e83d4bb43607b3084d4659198f62486ad569e4d801"
+    },
+    "unified_diff": "--- reviewed/docs/notes/2026-10-07-first-represented-life-boundary.md\n+++ corrected/docs/notes/2026-10-07-first-represented-life-boundary.md\n@@ -568,6 +568,14 @@\n (U',S',B',W') = (U, S-q, B+g, W+q-g)\n ```\n \n+Either guard failure (`a > 1/100` or `x > S/100`) is an oversized interval\n+under §9.2. For the identified producer's next unaccounted completed step,\n+reject the whole interval and mark the producer **suspended with an unmodeled\n+interval in that same settlement**, keeping stocks, residues and successful\n+cursor unchanged; do not wait for the following tick's gap check. The §9.4\n+final-parent/closure check still runs first: if closure applies, close the\n+account and cancel uptake instead of newly suspending it.\n+\n The two 1/100 bounds limit the unquantized step's relative living-stock increase\n and substrate depletion. They do not bound external habitat changes between\n samples; the existing final-parent validation still decides coverage. Validate\n@@ -639,7 +647,7 @@\n | Quantization h=1/100 s, repeated five contiguous intervals | While stocks stay unchanged x=1/5 each time. After four: q=g=0,r_q=4/5. Fifth: q=1,g=0,r_q=0,r_g=1/2,S'=99999,B'=2000,W'=1. Finite uptake is not mislabeled biomass gain. |\n | Depleted S=0, h=1 s | Zero action and interval accepted, no stock creation/death; residues unchanged. |\n | Excessive h=3 s | a=3/200 >1/100: reject the whole interval, suspend producer, no stock/residue/cursor mutation; no three hidden one-second steps. |\n-| Substrate-bound rejection: S=10,B=100000,K=10,h=1 s | a=1/200 passes, x=1000 exceeds S/100=1/10: reject before rounding, no clipping or borrowing. |\n+| Substrate-bound rejection: S=10,B=100000,K=10,h=1 s | a=1/200 passes, x=1000 exceeds S/100=1/10: reject before rounding and suspend in the same settlement, with stocks/residues/successful cursor unchanged; no clipping or borrowing. Parent closure retains priority. |\n | Duplicate, stale revision or same-fold parent reap | Exact duplicate returns prior outcome; stale proposal rejects; parent reap closes/exports under §7.3 and cancels uptake. No second debit or event. |\n \n For error assessment, compare h with two h/2 steps on identical admitted inputs;\n"
+  },
+  "not_performed": [
+    "Project tests or arithmetic experiment",
+    "Source or configuration change",
+    "Canonical card, receipt or reflection mutation",
+    "Git mutation, commit, push, remote reply, settlement or review request",
+    "Native or JVM execution"
+  ],
+  "publication_owner": "Root reviews, records canonical evidence, commits/publishes and settles the native review."
+}

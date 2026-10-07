@@ -414,3 +414,12 @@
   spore: none
   receipt-refs: life-to-represented-actor-spec,life-action-plan/closure.json
   note: Separate empirical rate shape from its rate convention, calibration and admitted integration envelope. Two individually subunit rounding residues need not give a combined subunit error. A stale next-step transaction must disclose the missing interval rather than silently resuming from a later clock. Independent review corrected these boundaries; preserve the exact source and proposal tier. Existing contract/provenance skills suffice; no spore created or promoted.
+- ts: 2026-10-07T08:29:49.533664608Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-action-plan
+  task: PR50 same-settlement extent rejection
+  p-efficiency: 0.9
+  p-friction: 0.2
+  p-skill-candidate: 0.1
+  spore: none
+  receipt-refs: review5439520941; .ημ/diagnostics/life-action-plan/review-fix-5439520941-closure.json
+  note: Resolve advisory ambiguity against the existing selected failure policy, making both bound failures same-settlement suspension without changing equations or claiming implementation.
