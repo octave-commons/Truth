@@ -1,0 +1,159 @@
+{
+  "started_at": "2026-10-07T06:30:34.711121+00:00",
+  "run": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/runs/attempt-03",
+  "port": 7898,
+  "runner_sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "controller_sha256": "13f5feaad7bc117ca4a8541063f25212ecd71329ab8b1283859e8064c3adfd7b",
+  "total_seconds": 300,
+  "work_seconds": 270,
+  "minimum_work_seconds_before_input": 40,
+  "clock": "Controller monotonic start precedes supervisor; budget is conservative.",
+  "planned_sequence": [
+    [
+      "tap",
+      "r"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "look",
+      "100",
+      "0"
+    ],
+    [
+      "look",
+      "-100",
+      "0"
+    ],
+    [
+      "look",
+      "0",
+      "100"
+    ],
+    [
+      "look",
+      "0",
+      "-100"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "tap",
+      "Tab"
+    ]
+  ],
+  "completed": [
+    [
+      "tap",
+      "r"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "look",
+      "100",
+      "0"
+    ],
+    [
+      "look",
+      "-100",
+      "0"
+    ],
+    [
+      "look",
+      "0",
+      "100"
+    ],
+    [
+      "look",
+      "0",
+      "-100"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "tap",
+      "Tab"
+    ]
+  ],
+  "closed": {
+    "started_at": "2026-10-07T06:30:34.930345+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+    "port": 7898,
+    "budget_seconds": 300,
+    "work_budget_seconds": 270,
+    "supervisor": {
+      "pid": 2127518,
+      "start": "2213484",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "exe": "/usr/bin/python3.12"
+    },
+    "stage": "closed",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "display": ":1",
+    "xvfb": {
+      "pid": 2127526,
+      "start": "2213502",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 2127530,
+      "start": "2213513",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 932536646,
+    "window": 140589916830816,
+    "x-window": "2097159",
+    "outcome": "operator-stop",
+    "cleanup_errors": [],
+    "ended_at": "2026-10-07T06:33:02.643388+00:00",
+    "elapsed_seconds": 147.71310283500134,
+    "budget_exceeded": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "unreaped_children": []
+  },
+  "ended_at": "2026-10-07T06:33:03.092953+00:00",
+  "errors": [],
+  "outcome": "passed",
+  "elapsed_seconds": 148.381860305999,
+  "controller_budget_exceeded": false,
+  "unreaped_client_pids": []
+}
