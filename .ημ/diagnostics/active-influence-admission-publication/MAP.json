@@ -1,0 +1,369 @@
+{
+  "status": "ADMISSION_ONLY_DRAFT; ROOT_REVIEW_AND_PUBLICATION_PENDING",
+  "at": "2026-10-07T21:28:54.045562+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "reviewed_planning_head": "e77b3255212945602b96e1451347cbf9bc966676",
+  "format": "Lossless UTF-8 JSONL with original paths/bytes/SHA256/line offsets; no omission or normalization.",
+  "selection": "All12 original admission files:11 packed and root-result.json direct. All publication inputs packed. Source/card/ledgers remain direct; all original local files retained.",
+  "archive": {
+    "path": ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl",
+    "bytes": 806043,
+    "sha256": "95a261ada203c5b53658f63a434de6424098ce02404da03b6a18c27780c94b7c"
+  },
+  "packed": [
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/inputs/before-publication.json",
+      "bytes": 3107,
+      "sha256": "48f0a47fea08570506cf3a8f209b1212beeeb14be196b58dec64f668bf39c7d5",
+      "line": 1,
+      "offset": 0,
+      "line_bytes": 3521
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/inputs/design-before-e77b325.md",
+      "bytes": 13060,
+      "sha256": "3bda9338bcba1c052d68d0a9d18999f35492f05557699520adc3ce3751b8fb4f",
+      "line": 2,
+      "offset": 3521,
+      "line_bytes": 13457
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/inputs/ledger-appends.json",
+      "bytes": 5945,
+      "sha256": "b1e3f26cb00555d6fc6c46c69ba10f7452e243ba2cd1dae68e7d7ff67946923e",
+      "line": 3,
+      "offset": 16978,
+      "line_bytes": 6419
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/admission-comment.json",
+      "bytes": 3319,
+      "sha256": "0bd1eeeee0a0dbfd1895167fdbe35f3df499d02a645ad5577d5e598c242ad81a",
+      "line": 4,
+      "offset": 23397,
+      "line_bytes": 3570
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/admission-description.json",
+      "bytes": 1964,
+      "sha256": "3da1f2e656db157cdf10e2c92261096855db1684fe381c536607b5b4dbf1e14c",
+      "line": 5,
+      "offset": 26967,
+      "line_bytes": 2350
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/admission-move.json",
+      "bytes": 509,
+      "sha256": "71624a9d7ab832ff9feb39f460b316fa5eda2a45ae6832fa96db675bb45eb0a6",
+      "line": 6,
+      "offset": 29317,
+      "line_bytes": 732
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/admission-readback.json",
+      "bytes": 9306,
+      "sha256": "cc14db46e53f6ac7d6a48a5d40d855b6780b0eb81917db711cb7f93aa0f21276",
+      "line": 7,
+      "offset": 30049,
+      "line_bytes": 9832
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/card-before.md",
+      "bytes": 6701,
+      "sha256": "e701a37c9649063f73805ab44c969f1c122722e626bdb9514c0e3455893135a0",
+      "line": 8,
+      "offset": 39881,
+      "line_bytes": 6964
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/ledger-before.edn",
+      "bytes": 639972,
+      "sha256": "2a37dc19a79cb283116711ede128ddd2500b2fb031cfecab453b129fa1ec38e6",
+      "line": 9,
+      "offset": 46845,
+      "line_bytes": 671314
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/metadata-readback.json",
+      "bytes": 7854,
+      "sha256": "dfe6d1cd23b4143de570f431305accb5c1b01fdd71f16a9ed9006e3fe4770db0",
+      "line": 10,
+      "offset": 718159,
+      "line_bytes": 8375
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/metadata.json",
+      "bytes": 1636,
+      "sha256": "a43552f3ead3326cc0d859aea9753cd3ade640f8e50bcd7d1e350782421be7e9",
+      "line": 11,
+      "offset": 726534,
+      "line_bytes": 2021
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/move-readback.json",
+      "bytes": 8658,
+      "sha256": "6a42f0290fd8218c32f3fc5014602a030078e2c714da205ac1fb0516cce4d34c",
+      "line": 12,
+      "offset": 728555,
+      "line_bytes": 8999
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/root-release.json",
+      "bytes": 1407,
+      "sha256": "25286aa117facaff379b4bd987434ad945bb5351ce703d561730d8bbe51bffc8",
+      "line": 13,
+      "offset": 737554,
+      "line_bytes": 1647
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/runtime-consumption-audit.json",
+      "bytes": 62843,
+      "sha256": "12a7fda1a88e44f14f26bfe15203ad7b19e5fce8f1c7aae6add2b04ed9c55fe1",
+      "line": 14,
+      "offset": 739201,
+      "line_bytes": 66842
+    }
+  ],
+  "packed_paths": [
+    ".ημ/diagnostics/active-influence-admission-publication/inputs/before-publication.json",
+    ".ημ/diagnostics/active-influence-admission-publication/inputs/design-before-e77b325.md",
+    ".ημ/diagnostics/active-influence-admission-publication/inputs/ledger-appends.json",
+    ".ημ/diagnostics/active-influence-admission/admission-comment.json",
+    ".ημ/diagnostics/active-influence-admission/admission-description.json",
+    ".ημ/diagnostics/active-influence-admission/admission-move.json",
+    ".ημ/diagnostics/active-influence-admission/admission-readback.json",
+    ".ημ/diagnostics/active-influence-admission/card-before.md",
+    ".ημ/diagnostics/active-influence-admission/ledger-before.edn",
+    ".ημ/diagnostics/active-influence-admission/metadata-readback.json",
+    ".ημ/diagnostics/active-influence-admission/metadata.json",
+    ".ημ/diagnostics/active-influence-admission/move-readback.json",
+    ".ημ/diagnostics/active-influence-admission/root-release.json",
+    ".ημ/diagnostics/active-influence-admission/runtime-consumption-audit.json"
+  ],
+  "packed_count": 14,
+  "decoded_bytes": 766281,
+  "empty_files": 0,
+  "admission_direct_original": {
+    "path": ".ημ/diagnostics/active-influence-admission/root-result.json",
+    "bytes": 33150,
+    "sha256": "9eeedc936a0a9a377f2b32bbb81f32c00552d5923176bf612e65bdcc4696b320"
+  },
+  "direct_companions": [
+    {
+      "path": "docs/designs/player-active-influence.md",
+      "bytes": 14258,
+      "sha256": "1c262ea988b4c1b563c6c01f9ca50afc41078eb7970c9e35ed252cc9dd6bf6d6"
+    },
+    {
+      "path": "kanban/tasks/remove-passive-halo-invert-influence.md",
+      "bytes": 8211,
+      "sha256": "e33ca8a951eb5884516a17eda5e35e66f76160dc4c6781ca9cdff6450e7e7c95"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 644743,
+      "sha256": "f3c0d02ea7de7369be45fc20901bc9a1b4871ba4ce3da77898dd8bacff803252"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 67457,
+      "sha256": "6fb3c0748e9cb4acbbc153b74b34e2ccb77c7507a8c09c574f470a17ddd0ce82"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 36265,
+      "sha256": "c9c7982e893e71c2682ccbbcf4a5719ec7d75851482c434dbc2f0986c31f4722"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission/root-result.json",
+      "bytes": 33150,
+      "sha256": "9eeedc936a0a9a377f2b32bbb81f32c00552d5923176bf612e65bdcc4696b320"
+    }
+  ],
+  "verified_facts": {
+    "protected_source_test_config_pins": 301,
+    "body_preserved": true,
+    "comment_prefix_preserved": true,
+    "board_ledger_prefix_preserved": true,
+    "board_ledger_appended_lines": 6,
+    "final_frontmatter": {
+      "description": "Current implementation scope: docs/designs/player-active-influence.md, admitted at reviewed planning e77b325 on 2026-10-07, 5 points. Grounded integration, Done when, Dependencies and earlier proposal notices below are preserved superseded history. The current admission comment controls scope and pending verification; no completed gameplay qualification is claimed.",
+      "category": "specs",
+      "labels": [
+        "domain",
+        "physics",
+        "player",
+        "spark-redesign"
+      ],
+      "write-id": "1791408238198-0.t3r8k3689dr9u7ptal8",
+      "points": "5",
+      "source": "kanban/tasks/remove-passive-halo-invert-influence.md",
+      "title": "Invert influence: remove the passive spark halo, strengthen paid wells",
+      "priority": "P1",
+      "status": "in_progress",
+      "estimate": "5",
+      "design": "docs/designs/player-active-influence.md",
+      "uuid": "remove-passive-halo-invert-influence",
+      "created_at": "2026-07-23T00:00:00Z"
+    },
+    "move_exit": 0,
+    "move_stdout_format": "plain text; deliberately not JSON-decoded",
+    "outer_decoder_failure": "Move succeeded with plain-text stdout and exit0; JSON decoder in outer wrapper failed afterward. Saved native move/readback prove applied once; no retry. Continued only separate description update/readback.",
+    "core_design_scope_and_acceptance_bytes_preserved": true,
+    "runtime_test_build_execution_by_package": false
+  },
+  "previous_checkpoint_inventory": [
+    {
+      "path": ".ημ/diagnostics/active-influence-plan/closure.json",
+      "bytes": 5202,
+      "sha256": "8edb91386620c6a2ba965d0cbbde08a8bbc154cbfe330d4fe2c9ce14d2317484"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-plan/review-fix-5439081018.json",
+      "bytes": 1221,
+      "sha256": "6551707cf3495e8e77264bdcc6f952310e800707c4dd2b23e08843090ca174b0"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-plan/root-scope.json",
+      "bytes": 2360,
+      "sha256": "a53f1f0d751a62d9032caf142b0a6ba2faff670e344d3360c39fecb9a5507890"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-plan/source-history-audit.json",
+      "bytes": 12727,
+      "sha256": "b3fca49f27f91a683b1a27227465ed3919e0da392d99029a24fb86f9b379cece"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 66081,
+      "sha256": "c68381f63f5bbd03ebf3eb33ccae1ba64ecdb1e18f9cf86315377bb0ba1b67b4"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 35488,
+      "sha256": "2c41e89eca771edf83837d6b2e30216c9fbce93b08f629ad38f36f8a32575c7b"
+    },
+    {
+      "path": "docs/designs/player-active-influence.md",
+      "bytes": 13060,
+      "sha256": "3bda9338bcba1c052d68d0a9d18999f35492f05557699520adc3ce3751b8fb4f"
+    },
+    {
+      "path": "docs/designs/spark-flight-and-camera.md",
+      "bytes": 25582,
+      "sha256": "b2f931755d9f0deaf042b0d7589dc9af1f8ee2a74c397c501206a4aedaaa732a"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 639972,
+      "sha256": "2a37dc19a79cb283116711ede128ddd2500b2fb031cfecab453b129fa1ec38e6"
+    },
+    {
+      "path": "kanban/tasks/remove-passive-halo-invert-influence.md",
+      "bytes": 6701,
+      "sha256": "e701a37c9649063f73805ab44c969f1c122722e626bdb9514c0e3455893135a0"
+    }
+  ],
+  "previous_cumulative_paths": [
+    ".ημ/diagnostics/active-influence-plan/closure.json",
+    ".ημ/diagnostics/active-influence-plan/review-fix-5439081018.json",
+    ".ημ/diagnostics/active-influence-plan/root-scope.json",
+    ".ημ/diagnostics/active-influence-plan/source-history-audit.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    "docs/designs/player-active-influence.md",
+    "docs/designs/spark-flight-and-camera.md",
+    "kanban/tasks/.events/ledger.edn",
+    "kanban/tasks/remove-passive-halo-invert-influence.md"
+  ],
+  "staging_paths": [
+    ".ημ/diagnostics/active-influence-admission-publication/GENERATION.json",
+    ".ημ/diagnostics/active-influence-admission-publication/MAP.json",
+    ".ημ/diagnostics/active-influence-admission-publication/STAGING.txt",
+    ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl",
+    ".ημ/diagnostics/active-influence-admission-publication/package.py",
+    ".ημ/diagnostics/active-influence-admission/root-result.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    "docs/designs/player-active-influence.md",
+    "kanban/tasks/.events/ledger.edn",
+    "kanban/tasks/remove-passive-halo-invert-influence.md"
+  ],
+  "cumulative_paths": [
+    ".ημ/diagnostics/active-influence-admission-publication/GENERATION.json",
+    ".ημ/diagnostics/active-influence-admission-publication/MAP.json",
+    ".ημ/diagnostics/active-influence-admission-publication/STAGING.txt",
+    ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl",
+    ".ημ/diagnostics/active-influence-admission-publication/package.py",
+    ".ημ/diagnostics/active-influence-admission/root-result.json",
+    ".ημ/diagnostics/active-influence-plan/closure.json",
+    ".ημ/diagnostics/active-influence-plan/review-fix-5439081018.json",
+    ".ημ/diagnostics/active-influence-plan/root-scope.json",
+    ".ημ/diagnostics/active-influence-plan/source-history-audit.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    "docs/designs/player-active-influence.md",
+    "docs/designs/spark-flight-and-camera.md",
+    "kanban/tasks/.events/ledger.edn",
+    "kanban/tasks/remove-passive-halo-invert-influence.md"
+  ],
+  "capacity": {
+    "previous_no_rename_paths": 10,
+    "proposed_no_rename_paths": 16,
+    "hosted_successor_included_count": "unobserved; no publication or review request here"
+  },
+  "generation": {
+    "producer": {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      "bytes": 12983,
+      "sha256": "d2b4f4535ac8642fd872fe4bfa674c9eb82eff62438c2668f60e216d470ecb67"
+    },
+    "argv": [
+      ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      "--build"
+    ],
+    "initial_state": "Four outputs absent; exclusive creation. Producer saved before this initial build.",
+    "result": "GENERATION.json separately captures actual generation/verification commands after this immutable MAP; no circular self-hash or invented historical command."
+  },
+  "replay": {
+    "verify": [
+      "python3",
+      ".ημ/diagnostics/active-influence-admission-publication/package.py"
+    ],
+    "live_originals": [
+      "python3",
+      ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      "--verify-originals"
+    ],
+    "extract": [
+      "python3",
+      ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      "--extract",
+      "/ABSOLUTE/NEW/DIRECTORY"
+    ],
+    "limits": "Read-only verification does not invoke Rheos, project source or runtime. Extraction creates only packed original paths in a fresh directory; direct companions are already published. Never execute extracted evidence implicitly."
+  },
+  "package_files_before_MAP": [
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/package.py",
+      "bytes": 12983,
+      "sha256": "d2b4f4535ac8642fd872fe4bfa674c9eb82eff62438c2668f60e216d470ecb67"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/evidence.jsonl",
+      "bytes": 806043,
+      "sha256": "95a261ada203c5b53658f63a434de6424098ce02404da03b6a18c27780c94b7c"
+    },
+    {
+      "path": ".ημ/diagnostics/active-influence-admission-publication/STAGING.txt",
+      "bytes": 587,
+      "sha256": "16ac4ae3b52a5f0bc115f6aea780b238395da0afa7e1ce7028f68c885f4b2b0a"
+    }
+  ],
+  "limits": [
+    "Admission permits reviewed RED authoring, not runtime execution or completed acceptance.",
+    "Original move exit0/plain stdout is preserved. Outer decoder error is recorded by root; no missing traceback is fabricated and no move retry occurred.",
+    "No tests, benchmark, JVM, native, merge, index/commit/push, board mutation or hosted request is performed by this producer.",
+    "Later source or ledger edits invalidate exact live-original comparison; retain this immutable generation."
+  ]
+}

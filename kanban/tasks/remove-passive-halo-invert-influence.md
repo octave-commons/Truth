@@ -1,13 +1,15 @@
 ---
-description: "Superseded historical notes: Grounded integration, Done when, and Dependencies below are not the proposed implementation scope. See docs/designs/player-active-influence.md for the proposed scope and qualification. That design is not implementation approval; this card remains Todo pending normal planning and admission."
+description: "Current implementation scope: docs/designs/player-active-influence.md, admitted at reviewed planning e77b325 on 2026-10-07, 5 points. Grounded integration, Done when, Dependencies and earlier proposal notices below are preserved superseded history. The current admission comment controls scope and pending verification; no completed gameplay qualification is claimed."
 category: "specs"
 labels: ["domain", "physics", "player", "spark-redesign"]
-write-id: "1791359025506-0.py6db969r9cyyqjjy5f"
+write-id: "1791408238198-0.t3r8k3689dr9u7ptal8"
+points: "5"
 source: "kanban/tasks/remove-passive-halo-invert-influence.md"
 title: "Invert influence: remove the passive spark halo, strengthen paid wells"
 priority: "P1"
-status: "todo"
-estimate: "2"
+status: "in_progress"
+estimate: "5"
+design: "docs/designs/player-active-influence.md"
 uuid: "remove-passive-halo-invert-influence"
 created_at: "2026-07-23T00:00:00Z"
 ---
@@ -62,5 +64,7 @@ gated on card 4 (don't strand the spark). Well-strengthening is independent.
 2026-10-07 planning-only design closure: docs/designs/player-active-influence.md (SHA256 d7f4489cb0620b212dbb01e24dd1cbe33a2cf9c26e9ec6d54dbcd727adae67c1) links the recovered July5 field investigation, July23 owner decision and current production contracts. Proposal retains BOTH passive-force removal and stronger paid fields; selects shared well/repulsor default factor0.5 to1.0 with15 agency,4e15m scale and600 simulation ticks unchanged. Doubled uncapped matched-input force is distinct from saturation or observed trajectory/calibration. Full retirement includes current predictor/orbital consumers, facade/bootstrap/menu/readout; shared paid helpers, physical Spark gravity and dark matter stay. Natural earned G gathering, payment/lifecycle/cap controls and normal gates remain future acceptance. Full implementation is proposed5 points because the historical2 understates complete scope; no estimate/status/frontmatter admission is changed here. Root and independent intent_research source/design review found no planning blocker; command spelling was clarified to clojure -M:demo serve. Source/history audit verifies28 pinned baseline files and23 local links/fragments. No production/test edits, JVM/native run, empirical tuning, completed acceptance or implementation approval. The five-line flight-design link qualifies historical passive-halo wording. Prior body, comments and event history are preserved.
 
 2026-10-07 review5439081018/comment4204274023 fixed through canonical descriptive frontmatter: the top-of-card notice expressly marks Grounded integration, Done when, and Dependencies as superseded historical scope, points to docs/designs/player-active-influence.md for proposed scope/qualification, and preserves Todo pending normal admission. Existing body remains provenance and must not be used as current implementation instructions. PROCESS.md freezes bodies after breakdown and directs later updates through Rheos; no manual body rewrite or status/estimate change. Design status also makes this precedence explicit. This is clarification only, not acceptance or implementation approval.
+
+2026-10-07 root accepts current Ready criteria on reviewed planning e77b3255212945602b96e1451347cbf9bc966676: canonical gatePASS7checks,0unresolved,CodeRabbit+MiMo exact-head approvals,1planningcohort. Shared Rheos PR6 fb202a9 passes its own fullcode gate; exact qualified CLI4af36dce consumed from originalworktree with dependencies, not copied/merged/installed. Rootrelease25286aa1 and independentconsumptionaudit establish capability. Native canonical frontmatter now points5 and existingestimate5 plus design=docs/designs/player-active-influence.md; points introduced for planning/UI discoverability, synchronizedestimate avoids historical2, not an engine sizingrequirement. Admit COMPLETE five-point scope: retire all passive attention-halo consumers, raise paid well/repulsor default0.5->1, preserve15agency/4e15m/600ticks/sharedPlummer/physicalgravity/darkmatter/lifecycle. RED beforeGREEN; actualpipeline,matchednumerics,economics,menu,fullsuite/6strict,cost and ordinaryearnedG visiblegathering remain required. Historical body/proposalcomments preserve provenance and never override revieweddesign. LegacyTodo authored directly has no historicalReadyproof; explicit currentcriteria acceptance precedes legalWIPTodo->InProgress. No fabricatedReady event, force-status or localboardparser. No JVM/native release: currentnativeexec69944 owns lane; no empiricalbalance/Gate/Done claim.
 
 ---

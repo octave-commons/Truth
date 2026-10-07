@@ -1,15 +1,23 @@
 # Player influence becomes deliberate and paid
 
-**Status:** Proposed design refinement, 2026-10-07; no implementation admission.
-**Owner:** [`remove-passive-halo-invert-influence`](../../kanban/tasks/remove-passive-halo-invert-influence.md), currently Todo / 2 points.
+**Status:** Implementation scope admitted, 2026-10-07; RED/GREEN and gameplay
+qualification remain pending.
+**Owner:** [`remove-passive-halo-invert-influence`](../../kanban/tasks/remove-passive-halo-invert-influence.md), now In Progress / 5 points.
 **Source baseline:** `b395c4049718f7ce015ddf25fc0a192d97821373`.
+**Admission:** Reviewed planning revision
+[`e77b3255212945602b96e1451347cbf9bc966676`](https://github.com/octave-commons/Truth/blob/e77b3255212945602b96e1451347cbf9bc966676/docs/designs/player-active-influence.md),
+with [canonical metadata, admission and readback evidence](../../.ημ/diagnostics/active-influence-admission/root-result.json).
 
 The owner card's **Grounded integration**, **Done when**, and **Dependencies**
-sections are superseded historical instructions. Use this document for the
-**proposed scope and qualification**; it does not grant implementation approval.
-The card remains Todo pending normal planning, sizing and admission. Its
-canonical top-of-card description carries the same notice while its historical
-body is preserved.
+sections and earlier proposal notices remain superseded historical instructions.
+Use this document for the admitted scope and pending qualification. The canonical
+admission comment records current Ready-criteria acceptance on the existing Todo
+card followed by its legal, WIP-checked move to In Progress; it claims no earlier
+Ready transition. The next implementation step is meaningful RED before GREEN.
+The selected default below remains a proposed gameplay tuning value until
+implemented and measured; admission supplies no empirical balance or completed
+acceptance result. The reviewed design's exact bytes are preserved in the
+publication evidence as well as the immutable revision linked above.
 
 ## 1. Decision and grounding
 
@@ -24,7 +32,8 @@ The decision is preserved in [`receipts.edn`](../../receipts.edn), the
 `452503538a0558c17b6d8092176a99d50fdbe627`. That commit authored this card directly
 as Todo. The historical status and estimate do not prove present Ready admission.
 The existing [process](../../PROCESS.md#grounding-research--design--task) requires
-the missing research → design → task link and a reviewed, sized implementation.
+a research → design → task link and a reviewed, sized implementation. The current
+admission records those criteria without rewriting the historical authored state.
 
 Grounding and its limits:
 
@@ -181,17 +190,23 @@ claim of approach, capture, sculpt, embodiment, or Gate follows from this proof.
 
 ## 6. Size and admission
 
-Propose **5 points for the complete implementation and qualification**, replacing
-the old two-point assumption only through the normal planning process. Although
-the physics change is small, complete channel retirement touches multiple
-consumers, menu semantics, old expectations, and natural runtime evidence. A
-single cohesive slice should retain both outcomes rather than finish after
-removal alone. No child split is proposed before this bounded scope is reviewed;
-if qualification exposes unrelated formation or input defects, record their
-actual owners and re-estimate rather than broaden or claim completion.
+The admitted size is **5 points for the complete implementation and
+qualification**, replacing the historical two-point assumption through the
+recorded planning and canonical admission. Although the physics change is small,
+complete channel retirement touches multiple consumers, menu semantics, old
+expectations, and natural runtime evidence. A single cohesive slice retains both
+outcomes rather than finishing after removal alone. No child split was selected
+for this reviewed scope; if qualification exposes unrelated formation or input
+defects, record their actual owners and re-estimate rather than broaden or claim
+completion.
 
-This document selects the proposed default and verification boundary, not an
-implementation-ready state. Root's [scope receipt](../../.ημ/diagnostics/active-influence-plan/root-scope.json)
-authorizes design work only. The existing task remains Todo / 2 in the board
-until lawful planning/review decisions change it. No production/test change,
-new numerical result, native tuning, or approval is supplied by this document.
+The [original scope receipt](../../.ημ/diagnostics/active-influence-plan/root-scope.json)
+remains an immutable design-only authorization. The subsequent
+[admission result](../../.ημ/diagnostics/active-influence-admission/root-result.json)
+records planning convergence on `e77b3255212945602b96e1451347cbf9bc966676`,
+`points: 5`, synchronized legacy `estimate: 5`, the design link, and In Progress.
+That admission authorizes the reviewed scope and RED authoring, with GREEN only
+after a reproducible failing checkpoint. It grants no JVM, benchmark, native
+input or Review-transition resource lease. The proposed default and all
+verification requirements above are unchanged; no implementation, empirical
+calibration, natural gathering, Gate or Done result is claimed here.

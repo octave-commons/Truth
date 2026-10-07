@@ -530,3 +530,12 @@
   spore: none
   receipt-refs: 2026-10-07T07:43:46.071475+00:00
   note: A planning design needs explicit precedence over historical card instructions. Canonical descriptive frontmatter exposes that notice before the preserved body; normal admission remains explicit. No new spore.
+- ts: 2026-10-07T21:26:43.818673625Z
+  session: /home/err/spaces/foresight/.worktrees/truth-active-influence-plan
+  task: Publish canonical active-influence admission with preserved history
+  p-efficiency: 0.88
+  p-friction: 0.24
+  p-skill-candidate: 0.30
+  spore: none
+  receipt-refs: remove-passive-halo-invert-influence,root-result9eeedc93,e77b325
+  note: Record capability, admission and qualification separately. A successful canonical move with plain-text output remains successful even if an outer JSON decoder fails; inspect saved exit and readback before any retry. Preserve old design and ledger prefixes, keep producer saved before generation, and check new untracked publication files as well as tracked diffs for whitespace. Existing skills suffice; no new spore.
