@@ -1,0 +1,12 @@
+{
+  "pid": 2473196,
+  "at": "2026-10-07T07:32:25.340558+00:00",
+  "identity": {
+    "pid": 2473196,
+    "start": "2584539",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+    "exe": "/usr/bin/python3.12"
+  }
+}

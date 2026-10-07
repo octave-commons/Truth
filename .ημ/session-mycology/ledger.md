@@ -566,3 +566,12 @@
   spore: none
   receipt-refs: 36692669,PR45
   note: Repeated readbacks can capture unapplied input; preserve them and await state without replaying the gesture. One bounded client removes repeated startup while retaining exact raw evidence. No new spore.
+- ts: 2026-10-07T07:38:36.288324752Z
+  session: /home/err/spaces/foresight/.worktrees/truth-physical-approach
+  task: Truth native held-thrust qualification
+  p-efficiency: 0.81
+  p-friction: 0.35
+  p-skill-candidate: 0.32
+  spore: none
+  receipt-refs: 2026-10-07T07:38:36.272649+00:00
+  note: Ordinary two-second input matched source direction and cleared on a later tick; preserve early nonmatches, use byte-addressed journals, and distinguish fast-run success from worst-case startup availability. Existing diagnostic practice sufficient; no new spore.

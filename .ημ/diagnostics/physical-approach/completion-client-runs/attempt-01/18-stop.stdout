@@ -1,0 +1,61 @@
+{
+  "started_at": "2026-10-07T07:32:25.425634+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+  "port": 7898,
+  "budget_seconds": 300,
+  "work_budget_seconds": 270,
+  "supervisor": {
+    "pid": 2473196,
+    "start": "2584539",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+    "exe": "/usr/bin/python3.12"
+  },
+  "supervisor_monotonic_started": 25845.484358853,
+  "stage": "closed",
+  "removed_inherited_jvm_option_keys": [
+    "JAVA_OPTS"
+  ],
+  "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "display": ":1",
+  "xvfb": {
+    "pid": 2473216,
+    "start": "2584556",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+    "exe": "/usr/bin/Xvfb"
+  },
+  "app": {
+    "pid": 2473219,
+    "start": "2584567",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "snapshot_client": {
+    "pid": 2474443,
+    "start": "2585648",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "world": 305915124,
+  "window": 127983248096304,
+  "x-window": "2097159",
+  "outcome": "operator-stop",
+  "cleanup_errors": [],
+  "ended_at": "2026-10-07T07:33:08.529829+00:00",
+  "elapsed_seconds": 43.10425050000049,
+  "budget_exceeded": false,
+  "key_pending": null,
+  "key_release_uncertain": false,
+  "mouse_pending": false,
+  "mouse_release_uncertain": false,
+  "unreaped_children": []
+}
+

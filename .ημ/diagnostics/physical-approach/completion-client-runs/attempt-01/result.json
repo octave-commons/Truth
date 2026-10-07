@@ -1,0 +1,216 @@
+{
+  "started_at": "2026-10-07T07:32:25.269662+00:00",
+  "run": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/runs/attempt-01",
+  "port": 7898,
+  "runner_sha256": "8d66a47e15b900ede9c4f3ea0c0ac1adca503a0178ea92d0f3d4c805841995de",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "controller_sha256": "1a0eeb26e1db16c59186dd2138f99185cbdd4ed7167f7f016ab4442bf911d33b",
+  "total_seconds": 300,
+  "work_seconds": 270,
+  "minimum_work_seconds_before_input": 40,
+  "clock": "Controller monotonic start precedes supervisor; budget is conservative.",
+  "planned_sequence": [
+    [
+      "inspect"
+    ],
+    [
+      "inspect"
+    ],
+    [
+      "tap",
+      "r"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "click",
+      "fine"
+    ],
+    [
+      "click",
+      "thrust-up"
+    ],
+    [
+      "click",
+      "thrust-down"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "look",
+      "100",
+      "0"
+    ],
+    [
+      "look",
+      "-100",
+      "0"
+    ],
+    [
+      "look",
+      "0",
+      "100"
+    ],
+    [
+      "look",
+      "0",
+      "-100"
+    ],
+    [
+      "hold",
+      "w",
+      "2"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "tap",
+      "Tab"
+    ]
+  ],
+  "completed": [
+    [
+      "inspect"
+    ],
+    [
+      "inspect"
+    ],
+    [
+      "tap",
+      "r"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "click",
+      "fine"
+    ],
+    [
+      "click",
+      "thrust-up"
+    ],
+    [
+      "click",
+      "thrust-down"
+    ],
+    [
+      "click",
+      "spark"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "look",
+      "100",
+      "0"
+    ],
+    [
+      "look",
+      "-100",
+      "0"
+    ],
+    [
+      "look",
+      "0",
+      "100"
+    ],
+    [
+      "look",
+      "0",
+      "-100"
+    ],
+    [
+      "hold",
+      "w",
+      "2"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "tap",
+      "Tab"
+    ]
+  ],
+  "closed": {
+    "started_at": "2026-10-07T07:32:25.425634+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+    "port": 7898,
+    "budget_seconds": 300,
+    "work_budget_seconds": 270,
+    "supervisor": {
+      "pid": 2473196,
+      "start": "2584539",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+      "exe": "/usr/bin/python3.12"
+    },
+    "supervisor_monotonic_started": 25845.484358853,
+    "stage": "closed",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "display": ":1",
+    "xvfb": {
+      "pid": 2473216,
+      "start": "2584556",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 2473219,
+      "start": "2584567",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "snapshot_client": {
+      "pid": 2474443,
+      "start": "2585648",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-physical-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 305915124,
+    "window": 127983248096304,
+    "x-window": "2097159",
+    "outcome": "operator-stop",
+    "cleanup_errors": [],
+    "ended_at": "2026-10-07T07:33:08.529829+00:00",
+    "elapsed_seconds": 43.10425050000049,
+    "budget_exceeded": false,
+    "key_pending": null,
+    "key_release_uncertain": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "unreaped_children": []
+  },
+  "ended_at": "2026-10-07T07:33:08.867869+00:00",
+  "errors": [],
+  "outcome": "passed",
+  "elapsed_seconds": 43.59829649300082,
+  "controller_budget_exceeded": false,
+  "unreaped_client_pids": []
+}
