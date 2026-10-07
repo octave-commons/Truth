@@ -1,0 +1,132 @@
+{
+  "at": "2026-10-07T07:27:36.170240+00:00",
+  "python": [
+    {
+      "file": "runner.py",
+      "sha256": "8d66a47e15b900ede9c4f3ea0c0ac1adca503a0178ea92d0f3d4c805841995de",
+      "check": "ast.parse without import or execution",
+      "passed": true
+    },
+    {
+      "file": "short-smoke-client.py",
+      "sha256": "1a0eeb26e1db16c59186dd2138f99185cbdd4ed7167f7f016ab4442bf911d33b",
+      "check": "ast.parse without import or execution",
+      "passed": true
+    },
+    {
+      "file": "aim-client.py",
+      "sha256": "1b5ea1d3c276b5e724357a9804c7cc3d86d1405b69165ea516e02155a1a0f190",
+      "check": "ast.parse without import or execution",
+      "passed": true
+    }
+  ],
+  "clj_kondo": {
+    "argv": [
+      "clj-kondo",
+      "--lint",
+      "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/snapshot.clj",
+      "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/snapshot_client.clj"
+    ],
+    "returncode": 0,
+    "stdout": "linting took 72ms, errors: 0, warnings: 0\n",
+    "stderr": ""
+  },
+  "source_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--quiet",
+      "b395c4049718f7ce015ddf25fc0a192d97821373",
+      "--",
+      "src",
+      "dev",
+      "resources",
+      "deps.edn"
+    ],
+    "exit": 0,
+    "files": 186,
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373"
+  },
+  "preparation_attempt_note": "Initial manifest builder checked the PLAN self-link before creating STATIC-CHECKS.json and stopped with AssertionError: STATIC-CHECKS.json. Reordered local closure so the file exists before link verification; no executable was run or changed by that failure.",
+  "runtime_execution": false,
+  "limits": "Static syntax/source/link review only; no Python module import, JVM/project namespace/native execution or cap/error/hold runtime qualification.",
+  "link_checks": [
+    {
+      "target": "root-scope.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/root-scope.json",
+      "exists": true
+    },
+    {
+      "target": "../guarded-approach/attempt-01-audit.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/guarded-approach/attempt-01-audit.json",
+      "exists": true
+    },
+    {
+      "target": "../../../src/infra/menu/widgets.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/src/infra/menu/widgets.clj",
+      "exists": true
+    },
+    {
+      "target": "../../../src/infra/camera/navigation/input.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/src/infra/camera/navigation/input.clj",
+      "exists": true
+    },
+    {
+      "target": "../../../src/infra/render/input.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/src/infra/render/input.clj",
+      "exists": true
+    },
+    {
+      "target": "../../../src/infra/dev/window/loop.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/src/infra/dev/window/loop.clj",
+      "exists": true
+    },
+    {
+      "target": "../../../src/domain/player/flight.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/src/domain/player/flight.clj",
+      "exists": true
+    },
+    {
+      "target": "COPY-PROOF.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/COPY-PROOF.json",
+      "exists": true
+    },
+    {
+      "target": "STATIC-CHECKS.json",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/STATIC-CHECKS.json",
+      "exists": true
+    },
+    {
+      "target": "snapshot_client.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/snapshot_client.clj",
+      "exists": true
+    },
+    {
+      "target": "snapshot.clj",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/snapshot.clj",
+      "exists": true
+    },
+    {
+      "target": "runner.py",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/runner.py",
+      "exists": true
+    },
+    {
+      "target": "short-smoke-client.py",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/short-smoke-client.py",
+      "exists": true
+    },
+    {
+      "target": "aim-client.py",
+      "resolved": "/home/err/spaces/foresight/.worktrees/truth-physical-approach/.\u03b7\u03bc/diagnostics/physical-approach/aim-client.py",
+      "exists": true
+    }
+  ],
+  "embedded_hash_pins_match": true,
+  "review_corrections": [
+    "Full git/hash checks moved before keydown; held observations use absolute release deadline and cheap/remote identity guards.",
+    "Source-derived expected thrust and unchanged camera checked; actual release latency retained and >10s fails.",
+    "Partial raw write/flush failure now records actual channel/file end, pending encoding/flush state and original error; secondary reporting errors are suppressed, not promoted to success.",
+    "Target protocol now uses current production handoff write-set membership, not merely per-body predicate; one existing pure evaluation reused, including real-star/system-settled gates."
+  ]
+}

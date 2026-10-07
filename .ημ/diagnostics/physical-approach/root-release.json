@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T07:32:05.884590+00:00",
+  "source_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "parent_head": "a29447c994e65e5b78c4e01efa4c11aec8d32206",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "reviewers": [
+    "codex-root",
+    "board_scout",
+    "intent_research"
+  ],
+  "review": "Root reviewed worker, snapshot, runner/controller changes and final deltas; two independent agents closed static reviews at this exact manifest. All ten checksums verified and production unchanged. Runtime behavior remains unqualified.",
+  "preparation_manifest_sha256": "b7ac23e5ee0eceec95261357a0a69efde5008e9745bda1385255e6e4e15a97f4",
+  "released_command": [
+    "python3",
+    ".\u03b7\u03bc/diagnostics/physical-approach/short-smoke-client.py",
+    "attempt-01",
+    "--port",
+    "7898"
+  ],
+  "scope": "One fresh270s work/300s total physical-input qualification with16 acknowledged operations, actual Thrust up/down and2s W hold/source-direction/release. No maturity/approach/aim/Gate claim or primary-service input.",
+  "release_is_not_execution_evidence": true
+}
