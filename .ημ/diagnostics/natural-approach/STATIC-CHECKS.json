@@ -1,0 +1,41 @@
+{
+  "status": "PREPARATION ONLY; runtime not executed",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "checks": {
+    "python": "ast.parse; runner not imported",
+    "clojure": "clj-kondo 0 errors / 0 warnings",
+    "production_source": "git diff b395 -- src dev resources deps.edn empty",
+    "owned_files_whitespace": "no trailing whitespace"
+  },
+  "corrected_draft_findings": [
+    "Clojure unresolved aliases/shadowed identity renamed and required; final kondo0/0",
+    "inherited JVM option variables removed; tools.deps heap explicitly256MiB",
+    "570s work and one absolute600s cleanup deadline; overruns/unreaped children remain visible",
+    "fast helpers reaped even if /proc/exe disappears before first sample",
+    "initial asynchronous native window/shader readiness bounded and each read attempt printed"
+  ],
+  "preparation_sha256": {
+    "runner.py": "a097c402b074a59231c3163b0f68d57a3ac315dbb7ab6e8962c9fa29d7b48021",
+    "snapshot.clj": "c92131a56cae32269f272f6e3ba0abc796a4ed0c8148a8ab167ef14be2734bbe",
+    "PLAN.md": "b219d1fc17f1ac1cafa2e82740a26817feaa3af52680f6aff88a082828afbcae"
+  },
+  "not_run": [
+    "runner",
+    "JVM",
+    "nREPL",
+    "native/X display",
+    "input",
+    "GL context",
+    "tests",
+    "benchmark"
+  ],
+  "independent_review": {
+    "reviewer": "/root/runtime_scout",
+    "verdict": "No source blocker at exact preparation hashes; local source review only",
+    "runtime_execution": "none",
+    "limits": [
+      "Inspect closed.json outcome/cleanup_errors/unreaped_children; supervisor exit zero alone is not success",
+      "If video is recorded, preserve a full-duration GIF companion during root-owned evidence closure"
+    ]
+  }
+}

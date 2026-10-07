@@ -1,0 +1,6 @@
+runner.py
+snapshot.clj
+PLAN.md
+preparation-hashes.json
+STATIC-CHECKS.json
+PREPARATION-FILES.txt
