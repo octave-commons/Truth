@@ -512,3 +512,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T03:28:57.842139442Z
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Plan window disposal without converting retained simulation into a quit bug
+  p-efficiency: 0.92
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: native-window-close-disposal,b395c404
+  note: A verified leaked window does not make intentional simulation retention a defect or extend a measurement card into implementation authority. Size the whole resource lifetime including partial creation, error-mode event polling and stale-owner stop races; require native disappearance separately from fake-handle tests. Preserve primary errors, ordinary restart options and context-ID ownership. No new spore; existing planning and provenance skills suffice.

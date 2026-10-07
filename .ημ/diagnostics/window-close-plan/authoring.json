@@ -1,0 +1,303 @@
+{
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "branch": "codex/truth-window-close-plan",
+  "scope": "Planning only; preserve measurement-only parent; no runtime or source changes",
+  "rheos_cli": {
+    "path": "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7"
+  },
+  "before": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 634461,
+      "sha256": "1b3c25bdee52edc8026ab37403f47c81cf7f37fb0086dc2eaa0fd8dafe1fab8e"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 63792,
+      "sha256": "5b578d0c44e188bf2b1001c7c621a1fecd7e67738bf394a7ee6578fddf84f04a"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 34214,
+      "sha256": "e855ef15b8da2f3c5c1f2a202960b8f5714b3dd9b02ce8b24f91e6b993124071"
+    },
+    {
+      "path": "kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md",
+      "bytes": 16923,
+      "sha256": "b7bbc6751863fe7640bc659c18877f55566312d937c2e4eb8ae16d3b60b6bc52"
+    }
+  ],
+  "source": [
+    {
+      "path": "src/infra/dev/window/loop.clj",
+      "sha256": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067"
+    },
+    {
+      "path": "src/infra/dev/window/lifecycle.clj",
+      "sha256": "ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c"
+    },
+    {
+      "path": "src/infra/render/window.clj",
+      "sha256": "817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14"
+    },
+    {
+      "path": "src/infra/render/input.clj",
+      "sha256": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c"
+    },
+    {
+      "path": "src/infra/render/asset.clj",
+      "sha256": "585b32dadb8913da1963fb054833d664fae2d9a39337b6f416414fe389eae1c7"
+    },
+    {
+      "path": "src/infra/render/shader.clj",
+      "sha256": "6cb178a94a8a05566b963d64ab76b102023332d5446fdd2d3772b62019653172"
+    }
+  ],
+  "local_link_checks": [
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../.ημ/diagnostics/flight-precision/native-24cbffd/README.md",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../.ημ/diagnostics/flight-precision/native-24cbffd/after-escape.edn",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../.ημ/diagnostics/flight-precision/native-24cbffd/after-escape-later.edn",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../.ημ/diagnostics/flight-precision/native-24cbffd/after-escape-xwindow.txt",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../AGENTS.md#running-the-dev-service",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../demo/README.md#L322",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../designs/spark-flight-and-camera.md#L262",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../dev/demo.clj#L237",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/server.clj#L59",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/render/input.clj#L191",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/loop.clj#L435",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/loop.clj#L448",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/lifecycle.clj#L95",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../test/infra/dev/window_test.clj",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../AGENTS.md#running-the-dev-service",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/loop.clj#L455",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/render/window.clj#L59",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/loop.clj#L288",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/lifecycle.clj#L95",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/dev/window/loop.clj#L71",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/render/asset.clj#L146",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/render/volume.clj#L70",
+      "exists": true
+    },
+    {
+      "from": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "target": "../../src/infra/render/window.clj#L175",
+      "exists": true
+    },
+    {
+      "from": "kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md",
+      "target": "../../docs/notes/2026-10-06-native-window-close-lifecycle.md#proposed-disposal-contract--2026-10-07",
+      "exists": true
+    },
+    {
+      "from": "kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md",
+      "target": "../../AGENTS.md#running-the-dev-service",
+      "exists": true
+    }
+  ],
+  "check_limits": "Local Markdown path existence and L-number bounds only; named fragments manually checked. No board validation, source tests, JVM, native execution or new reproduction.",
+  "canonical_readback": {
+    "native-window-close-disposal": {
+      "uuid": "native-window-close-disposal",
+      "frontmatter": {
+        "category": "tasks",
+        "labels": "hygiene, render, lifecycle",
+        "parent": "f369c598-279c-498d-a64f-45d2ce16ad34",
+        "type": "task",
+        "write-id": "1791343737631-0.myrdrsbqi6n0a6j5kf6",
+        "points": "5",
+        "title": "Dispose native window on render exit while retaining simulation",
+        "priority": "P1",
+        "status": "incoming",
+        "uuid": "native-window-close-disposal",
+        "created_at": "2026-10-07T03:26:09.798Z"
+      },
+      "source_path": "/home/err/spaces/foresight/.worktrees/truth-window-close-plan/kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md"
+    },
+    "f369c598-279c-498d-a64f-45d2ce16ad34": {
+      "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+      "frontmatter": {
+        "labels": "research, verification, playable-loop",
+        "parent": "planet-orbit-circularization-blocker",
+        "write-id": "1791341630698-0.wnigealodaafnxf8cws",
+        "title": "Verify native fly-resolve-sculpt loop and graceful exit",
+        "priority": "P1",
+        "status": "in_progress",
+        "estimate": "3",
+        "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+        "created_at": "2026-10-06T17:56:08.534Z"
+      },
+      "source_path": "/home/err/spaces/foresight/.worktrees/truth-window-close-plan/kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md"
+    }
+  },
+  "append_only_and_parent_checks": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "original_prefix_preserved": true,
+      "appended_bytes": 7889,
+      "appended_lines": 2
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "original_prefix_preserved": true,
+      "appended_bytes": 2376,
+      "appended_lines": 2
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "original_prefix_preserved": true,
+      "appended_bytes": 793,
+      "appended_lines": 9
+    },
+    {
+      "path": "kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md",
+      "original_prefix_preserved": true,
+      "appended_bytes": 0,
+      "appended_lines": 0
+    }
+  ],
+  "verification": {
+    "exact_head_unchanged": true,
+    "source_hashes_unchanged": true,
+    "source_test_config_diff_empty": true,
+    "git_diff_check": "pass",
+    "local_links": 25,
+    "missing_local_links": 0,
+    "native_or_jvm_calls": false,
+    "new_reproduction_or_executed_red": false,
+    "implementation_admission": false
+  },
+  "independent_review": {
+    "reviewer": "board_scout",
+    "result": "No blocking planning finding; not hosted approval or implementation admission",
+    "note_sha256": "60ac1d8904e7addadd5eef388e3a12b278a7ee2eec0b119a8932bd31da363bc9",
+    "card_body_review_file_sha256_before_comment": "89b88ea64fd6ae4f97e5e19c4161be74a0519b1f97e938a6797139c0d9c15bee",
+    "review_constraints": [
+      "Final bounded cache teardown and test seams require review before RED",
+      "Incoming5 is proposed size, not Ready",
+      "No native/test execution by reviewers"
+    ]
+  },
+  "explicit_staging_paths": [
+    "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+    "kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    ".ημ/diagnostics/window-close-plan/authoring.json"
+  ],
+  "closed_artifacts_excluding_this_inventory": [
+    {
+      "path": "docs/notes/2026-10-06-native-window-close-lifecycle.md",
+      "bytes": 12258,
+      "sha256": "60ac1d8904e7addadd5eef388e3a12b278a7ee2eec0b119a8932bd31da363bc9"
+    },
+    {
+      "path": "kanban/tasks/dispose-native-window-on-render-exit-while-retaining-simulation-disposal.md",
+      "bytes": 7362,
+      "sha256": "b1972b270e1d1a592c1e887724ab6fbc04aaa3837d8a7bb501ac55ca61d87b0f"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 642350,
+      "sha256": "ba7d80df8ecc9a99807d90452845f3056fdc648d3c0b47d8fedc869c3e409ac5"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 66168,
+      "sha256": "89da88265e7fde95ff9d356e035e7afe041ac17f764e284011cb53ffbf341f95"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 35007,
+      "sha256": "fde439bf9c29ecde525525a9cd586a74d46b3b9dd4682472a6e6a45b320c024d"
+    }
+  ],
+  "inventory_self_hash": "Reported outside this JSON after closure; deliberately non-recursive."
+}
