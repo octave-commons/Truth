@@ -1,0 +1,122 @@
+{
+  "at": "2026-10-07T11:52:33.231266+00:00",
+  "explicit_root_choice": 1010,
+  "reason": "Observedstoredcurrentready in bothfreshcoasts; comparefixednativeapproach protocol withprior target1010, nofreshhandoffrequirement",
+  "rows": [
+    {
+      "client": "poll-13",
+      "tick": 3989,
+      "t": 41290.284561097
+    },
+    {
+      "client": "poll-14",
+      "tick": 4096,
+      "t": 41320.318239847
+    },
+    {
+      "client": "019-coast-a",
+      "tick": 4373,
+      "t": 41403.174977711,
+      "target": 1010,
+      "spark_position": [
+        -3017623330690005.5,
+        -3346105556647628.5,
+        1304134784625544.8
+      ],
+      "target_position": [
+        6161708362027644.0,
+        1.8582467275987476e+16,
+        -1.0563596949012274e+16
+      ],
+      "distance_m": 2.657001116489617e+16,
+      "angle_degrees": 51.4810019026919,
+      "yaw": -90.0,
+      "pitch": -20.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -112.71425474996606,
+      "desired_pitch": 26.529523103686497,
+      "requested_pixels": [
+        -200,
+        -200
+      ],
+      "target_frame": {
+        "target": 1010,
+        "matter_state": "planet",
+        "stored_candidate": true,
+        "ready_to_commit": true,
+        "fresh_handoff": false,
+        "position": [
+          6161708362027644.0,
+          1.8582467275987476e+16,
+          -1.0563596949012274e+16
+        ],
+        "velocity": [
+          -1368.7853669173871,
+          1928.1478727112005,
+          -636.8362354418673
+        ]
+      },
+      "D": 37500000000000.0,
+      "dt": 3065696697.424829
+    },
+    {
+      "client": "020-coast-b",
+      "tick": 4379,
+      "t": 41404.832529251,
+      "target": 1010,
+      "spark_position": [
+        -3017781797528609.5,
+        -3345685239602752.5,
+        1304323828522591.0
+      ],
+      "target_position": [
+        6136370589112751.0,
+        1.8618351464165836e+16,
+        -1.0575120959151744e+16
+      ],
+      "distance_m": 2.6595838447128308e+16,
+      "angle_degrees": 51.44455204096357,
+      "yaw": -90.0,
+      "pitch": -20.0,
+      "sensitivity": 0.01,
+      "desired_yaw": -112.62535581466773,
+      "desired_pitch": 26.529949459531398,
+      "requested_pixels": [
+        -200,
+        -200
+      ],
+      "target_frame": {
+        "target": 1010,
+        "matter_state": "planet",
+        "stored_candidate": true,
+        "ready_to_commit": true,
+        "fresh_handoff": false,
+        "position": [
+          6136370589112751.0,
+          1.8618351464165836e+16,
+          -1.0575120959151744e+16
+        ],
+        "velocity": [
+          -1368.6980442438871,
+          1928.0420795775874,
+          -636.8037411027426
+        ]
+      },
+      "D": 37500000000000.0,
+      "dt": 3065696697.424829
+    }
+  ],
+  "recent_rates": [
+    3.562667127482888,
+    3.3431197889381576,
+    3.619796944602531
+  ],
+  "N_star": 17,
+  "range_AU": 177782.1991896059,
+  "coast_fraction": 0.04558983926791449,
+  "combined_fraction": 0.06955975475929221,
+  "passes_preaim_screen": true,
+  "global_commitment": 0,
+  "closed": false,
+  "heading_is_preaim_not_W_permission": 51.44455204096357
+}

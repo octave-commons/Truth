@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-07T12:03:18.166407+00:00",
+  "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "note": "Attempt03 closed at 2026-10-07T11:55:25.058211Z, elapsed950.375s, before any W hold. Two finite aims,29 looks,one young PNG. Final second aim geometry tick5056 error0.09185856deg; aim-end client reaped11:55:10.039920, first cadence inspect command11:55:22.608426. Fresh tick5105 error0.603170828deg failed unchanged0.5 guard. Cadence returned1 and ownedSTOP completed without cleanup errors, uncertain inputs or unreaped children. Root verified all four owned PID paths absent; complete offline audit ongoing. This is operator handoff delay evidence, not a physical-flight impossibility. PR56@073054c338bc3c589d329fb0ad3866458862f245 publishes closed02 and cadence preparation, not03 execution. Next preparation-only measurement under this InProgress3 owner: separately copied diagnostic profile exposing existing ordinary damping decrement with exact live menu actions/current-value bounds and readback,17 acknowledged steps from0.97 to0.80; provisionalD1.5e14 via ordinary preset/halving, fresh rate/range screen required. One root-selected natural ready target. One controller gathers two released baseline reads before a single bounded aim, then immediately inspects fresh heading<=0.5 and issues at most3 requested2s W pulses with two advancing released coast reads after each. No automatic selection, retarget, re-aim, D adjustment or gesture retry; retain original run-wide deadlines/input budgets, identity/source/release guards and ownedSTOP on every admitted outcome. Actual retention replaces hardcoded0.97 only in explicitly conditional displacement accounting; non-replenishing consumed-tick reservation retained. Snapshot/queue latency and pending-force assumptions remain visible. Preparation needs focused RED/GREEN tests and independent review; no new native execution authorized by this comment. Frozen predecessors remain immutable. Primary DISPLAY0/7896 untouched; gameplay goal remains open.",
+  "before_status": "in_progress",
+  "after_status": "in_progress",
+  "estimate": "3",
+  "content_prefix_preserved": true,
+  "ledger_prefix_bytes": 679021,
+  "ledger_added_bytes": 2319,
+  "card_sha256": "e4487ef875c458203234ce58333955e86941081adb58533f3b209669b7895dc5",
+  "closure_catalog": "/home/err/spaces/foresight/.\u03b7\u03bc/diagnostics/truth-physical-flight/2026-10-07T1202Z.json"
+}

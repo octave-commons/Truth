@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-07T12:15:15.274209+00:00",
+  "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "note": "Preparation scope amendment before new damped-controller implementation is frozen: the fixed natural target moves even with unchanged camera. Authorize at most three explicit orientation-and-pulse stages on that one root-selected target, using the existing finite aim before each planned pulse, within the unchanged run-wide3aim limit. Initial two released rate reads precede the first aim. After its success, one original60s pulse phase includes at most two further same-target refinements, each caller-wait capped20s and clipped to phase/work/total limits; at least25 phase seconds must remain before each <=2s hold. No target/D/retention/dt/observer change; only yaw/pitch reference may change after a successfully completed, reaped, explicitly logged aim stage while thrust is released. Consumed-tick reservation and initial conditional residual budget never reset. Obtain both advancing released coast reads before evaluating post-pulse heading and deciding another stage; stop after two noncontracting intervals or any invalid/terminal/uncertain action. A timed-out refinement requests ownedSTOP; terminating a CLI does not prove cancellation of queued native work. No gesture retry, automatic retarget or run extension. This supersedes only the preceding preparation note single-aim/no-re-aim restriction; it is still preparation only, requiring focused tests, independent review, immutable pins and a separate root native execution release.",
+  "prior_scope": "root-attempt03-closure-and-next-scope.json",
+  "ledger_prefix_preserved": true,
+  "added_bytes": 1854,
+  "status": "in_progress",
+  "estimate": "3",
+  "native_execution_released": false
+}
