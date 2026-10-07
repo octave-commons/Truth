@@ -1,0 +1,72 @@
+{
+  "schema": "truth-bounded-damped-preparation-independent-review-v1",
+  "at": "2026-10-07T12:28:42.645323+00:00",
+  "reviewer": "board_scout",
+  "result": "PASS-source-and-closed-evidence-review; no native qualification",
+  "worktree": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+  "scope": {
+    "path": ".ημ/diagnostics/bounded-flight-cadence/root-damped-refinement-scope.json",
+    "sha256": "873d3a208152b84bdddf1ac9d339979e99c8fcdb78aba42c90126d2b30a895f4"
+  },
+  "manifest": {
+    "path": ".ημ/diagnostics/bounded-damped-flight/SHA256SUMS",
+    "sha256": "40abcd2d7c209c5545a25023371e3cfe8e36ce3df3034ddef7c11e2818adec81",
+    "paths": 69,
+    "verified_checksum_rows": 68
+  },
+  "hashes": {
+    "runner.py": "1f871920ea12c251e49200680495419052b66f3cf520030a451e2571386e1cc0",
+    "aim-client.py": "386a1ca5d8075492668bd0f31c3ec9c17723734ad4fbd89df287718e6df2239e",
+    "cadence_client.py": "3a86998b928b79ba50ee1a0d856d945a654564b72be2f69b576eb3fe4de102d1",
+    "snapshot_client.clj": "e34d43c77f427689a949684528eeb74214f270ccb29a0f6f5c3d7ee0921400ac",
+    "snapshot.clj": "5869caf3e2ec49ff62a376e0c5c07590c0708552a54518c6c98bba78dd455755",
+    "test_protocol.py": "e0a6f220ad246985e9af019c42584b2227a8979c61f266714fd9d361831fad01",
+    "test_cadence.py": "4879e47c244e82eb333b3db3648b63ce50755d833c3fc5613c132a4315afa7e4",
+    "PLAN.md": "9b0dcac66154d42764c50bdec50066e851a5567b7ea84cbd2d9c41126cbad979",
+    "preparation-hashes.json": "04970f596525a244f30c1661b7a81b1dd105c4eb204dee6d00da76c983334593"
+  },
+  "independent_verification": {
+    "all68_checksums": true,
+    "flat11_file_preparation_pins": true,
+    "current186_source_hashes_match_recorded_b395_pins": true,
+    "new_fixed_snapshot_matches_worker_pin": true,
+    "eight_local_PLAN_links_exist": true,
+    "top_level_Python_AST_only": true
+  },
+  "behavior_review": [
+    "Ordinary damping action is discovered from production widget action/bounds and current world value;17 one-gesture acknowledgments lower default0.97 to0.80 while D/yaw/pitch/sensitivity remain checked.",
+    "Two advancing released baseline observations precede a feasibility-only range/rate screen and the one initial finite aim.",
+    "One original60s pulse phase includes at most2 further same-target refinements with caller waits<=20s clipped to phase/total; original3aim/20hold/360look/1470work/1500total limits remain.",
+    "Fresh heading<=0.5 and immediate pre-dispatch>=25phase seconds guard W; the runner independently checks heading before actual keydown.",
+    "One initial conditional residual and cumulative actual consumed hold ticks are retained across refinements. Only successful logged/reaped aim permits camera-reference reset; target/world/window/observer/D/r/dt stay guarded.",
+    "Two advancing released coast reads are retained before another refinement; two noncontractions or invalid/terminal/uncertain outcomes stop further input.",
+    "Actual Client.invoke tests exercise bounded child wait/terminate/reap and saved-result mismatch, not only a fake replacement of the complete adapter. Native/process calls are stubbed and no runtime claim follows."
+  ],
+  "resolved_findings": [
+    {
+      "finding": "Hold reserve originally checked before adapter guard/hash/state I/O could be consumed before dispatch.",
+      "resolution": "Recheck>=25s immediately before Popen after guard/log I/O; controlled slow-guard test proves no child launched."
+    },
+    {
+      "finding": "Draft fixed snapshot worker still held predecessor snapshot hash after adding damping output.",
+      "resolution": "Only worker pin refreshed and independently compared to actual snapshot SHA."
+    }
+  ],
+  "recorded_author_checks": {
+    "protocol_tests": 33,
+    "cadence_operator_tests": 29,
+    "final_logs": "green-qualified/",
+    "all_pass": true,
+    "kondo_errors": 0,
+    "kondo_warnings": 0,
+    "reviewer_reran_tests": false
+  },
+  "limits": [
+    "Preparation only: root must separately authorize native execution.",
+    "The <=20s refinement is caller-wait admission; terminating CLI does not synchronously cancel queued native action. STOP and reaping remain required.",
+    "Conditional residual accounting is not a proven stopping bound: pending acceleration, gravity, changing dt/direction and target motion remain explicit limitations.",
+    "Requested2s hold differs from observed release latency; no hard real-time preemption guarantee.",
+    "Bad arguments/pins/lock conflicts before client admission perform no input and leave root/original supervisor responsible for the extant lease.",
+    "All RED/intermediate failures are retained in the author manifest."
+  ]
+}
