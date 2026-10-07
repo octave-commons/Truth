@@ -4,6 +4,13 @@
 **Owner:** [`remove-passive-halo-invert-influence`](../../kanban/tasks/remove-passive-halo-invert-influence.md), currently Todo / 2 points.
 **Source baseline:** `b395c4049718f7ce015ddf25fc0a192d97821373`.
 
+The owner card's **Grounded integration**, **Done when**, and **Dependencies**
+sections are superseded historical instructions. Use this document for the
+**proposed scope and qualification**; it does not grant implementation approval.
+The card remains Todo pending normal planning, sizing and admission. Its
+canonical top-of-card description carries the same notice while its historical
+body is preserved.
+
 ## 1. Decision and grounding
 
 Keep both outcomes of the July 23 owner decision: looking at matter no longer

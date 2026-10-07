@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-07T07:43:46.071475+00:00",
+  "head_before": "27af93b6c888a2c63828b8703b333be0c90d9455",
+  "review_id": 5439081018,
+  "comment_id": 4204274023,
+  "thread": "PRRT_kwDOTDahac6pzWSd",
+  "finding_verified": true,
+  "notice": "Superseded historical notes: Grounded integration, Done when, and Dependencies below are not the proposed implementation scope. See docs/designs/player-active-influence.md for the proposed scope and qualification. That design is not implementation approval; this card remains Todo pending normal planning and admission.",
+  "mechanism": "Canonical Rheos description before historical Markdown body, canonical append-only comment, explicit design precedence. No manual card rewrite.",
+  "state_estimate_unchanged": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "frontmatter_except_description_write_id_preserved": true,
+  "prior_ledger_bytes": 638099,
+  "prior_ledger_sha256": "579a96e4e665c3c1b9ed4c016703bf668eef621b9f620e242fc8e62f3ddd2180",
+  "ledger_prefix_preserved": true,
+  "events_appended": 2,
+  "design_sha256": "3bda9338bcba1c052d68d0a9d18999f35492f05557699520adc3ce3751b8fb4f",
+  "historical_scope_closure_and_audit_not_rewritten": true
+}

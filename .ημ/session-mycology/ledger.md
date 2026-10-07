@@ -521,3 +521,12 @@
   spore: none
   receipt-refs: remove-passive-halo-invert-influence,4525035,d7f4489c
   note: Recover owner direction and actual consumers separately from numeric defaults. Preserve both acceptance outcomes and distinguish unclipped force ratios from native trajectories. A failed post-write assertion is not permission to repeat a successful canonical write; verify the existing appended content and record the mistaken section assumption. No spore; existing workflow and evidence skills suffice.
+- ts: 2026-10-07T07:44:07.129403863Z
+  session: /home/err/spaces/foresight/.worktrees/truth-active-influence-plan
+  task: Clarify superseded active-influence card scope
+  p-efficiency: 0.89
+  p-friction: 0.23
+  p-skill-candidate: 0.24
+  spore: none
+  receipt-refs: 2026-10-07T07:43:46.071475+00:00
+  note: A planning design needs explicit precedence over historical card instructions. Canonical descriptive frontmatter exposes that notice before the preserved body; normal admission remains explicit. No new spore.
