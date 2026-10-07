@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, research, player, spark-flight"
 parent: "flight-assist-damping-and-toggle"
 type: "task"
-write-id: "1791333867163-0.neb1ceg4kue6s4p7qs"
+write-id: "1791334790469-0.w0spydxbv1oyr436239"
 points: "3"
 title: "Specify explicit local reference and bounded linear flight assist"
 priority: "P1"
@@ -133,5 +133,11 @@ trajectory evidence, not permission to alter clocks or inject capture here.
 Derived results preserve the one-tick channel: e[n+1]=e[n]+h[n]b[n-1]+d[n]. Actual reference displacement enters rho[n+1]=rho[n]+h[n]e[n+1]+c[n], where c is final reference velocity times h minus actual displacement. Worked constant, changing-dt, accelerating and circular cases keep finite saturation, velocity matching and position residence distinct. Under the proposed Fine displacement budget at h=4.1e9 seconds, 43 maximum assist kicks change velocity by at most .003146341 m/s; this is a hypothesis-specific bound, not a measured target or universal impossibility claim. Forty-three qualifying binding reads span 42 inter-read intervals; later commitment readiness remains separate.
 
 Independent source/math review found no blocker; source tests/native experiments were not run. Local links and whitespace checks pass. Remaining blocker: settle a reviewed pre-capture timestep/ratio and integration envelope, actual reference displacement interpretation and finite manual/assist budget. A post-commitment clock cannot alone establish pre-capture reachability. No source, runner, tests, clock/gain/controller choice, new consumer, Ready claim or status transition. Existing Incoming3 scope and historical evidence remain intact.
+
+(己, p=0.99) Appended section 10, Recovered pre-capture intent, to docs/research/physics/local-reference-flight-assist-feasibility.md without rewriting its prior analysis. The living UX View menu already specifies manual time override in Phases 0–5, with removal at Gate discovery. Archived user preference asks for smaller steps and strong dilation; these are recovered intent, not a newly selected rate or clock.
+
+Four evidence tiers remain explicit: living UX requirement; approved real-body/force/single-writer law with satellite-capture acceptance still unverified in the original Done-card implementation commit; proposed narrowing and the Todo parent's undefined local frame; and superseded separate-rate pacing plus deleted wall-time spring code. Canonical reads report spark-as-gravity-bound-body Done8, flight-assist-damping-and-toggle Todo5, and phase-0-player-focus-dual-representation-spec Breakdown despite its body saying canonical. None of those labels proves natural approach/capture.
+
+The question is reconciliation of pre-capture timing, delayed forces, actual reference displacement, finite player budget and useful surrounding evolution. Post-commitment time-lock begins too late to establish approach. No clock/controller/rate choice, source/tests/runner/native action, new card or transition. Existing Incoming3 remains unchanged. Verified 18 appended reference targets against local files/headings and exact Git objects; note/actor historical prefixes and whitespace checks pass. Interactive ACTORS follow-up records the recovery. Root owns review, commit and publication.
 
 ---

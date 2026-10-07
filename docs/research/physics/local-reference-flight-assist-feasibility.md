@@ -304,3 +304,70 @@ actual source controls the fold claims. This interactive supplement was prepared
 under the workspace `deep-research` skill with the explicitly authorized
 docs-only scope; no pseudocode, executable toy or controller implementation was
 substituted for missing admission.
+
+## 10. Recovered pre-capture intent
+
+(己, p=0.99) This 2026-10-07 supplement recovers prior intent; it does not
+replace §§1–9 or choose a clock, rate, reference controller or integration
+policy. The missing contract is a reconciliation of existing requirements,
+not an absence of earlier concern for approach and timing.
+
+**Living UX intent.** (世, p=1.0) The [UX architecture's View menu](../../designs/ux-architecture.md#view)
+specifies an automatic rate following observable complexity, a manual rate
+override throughout Phases 0–5, and permanent removal of that override at Gate
+discovery. It is a living product design, introduced in
+[`241efa61`](https://github.com/octave-commons/Truth/commit/241efa61035d87c378c277ab927b32094fb45581),
+not an executable timing contract. The archived [original user request](../../notes/designs/architecture-exploration-001-the-simulation-is-moving-too-fast-for-wh.md)
+asks for smaller steps and formation slow enough to explore; the [recorded
+strong-dilation selection](../../notes/designs/architecture-exploration-002-text-rendering-is-the-key-gap-the-hud-on.md)
+at lines 244–252 includes a planet-stage preview near five years per real
+second. That is historical preference, not a selected rate here. The current
+[View settings](../../../src/infra/menu/widgets.clj) at lines 99–107 expose
+camera sensitivities; this recovery found no implemented ordinary rate slider.
+The rate range, local/global scope and adaptive-pacing/slip precedence remain
+unresolved.
+
+**Approved physical law; unverified player acceptance.** (世, p=1.0) The
+[Spark body card](../../../kanban/tasks/spark-as-gravity-bound-body.md) requires
+gravity-driven motion and eventual satellite capture after releasing input
+near a planet. Canonical Rheos readback reports Done, estimate 8. Its
+[implementation commit](https://github.com/octave-commons/Truth/commit/b0b3b4aff11203c322c34ac86c342bb3e1fffdf6)
+nevertheless states that the player-visible orbit/capture acceptance needs
+live tuning. The [approved flight design](../../designs/spark-flight-and-camera.md#3-physics-model-all-as-ecs-accelerationtorque-channels)
+requires force/influence composition through one physical integrator and no
+second position/velocity writer. Later [approved multiscale integration](../../designs/multi-timescale-integration.md#30-coordinates-relative-jacobian-formulation--required-not-optional)
+requires parent-relative compact motion and rejects indiscriminately shrinking
+the global step to the shortest orbit. Its implementation,
+[`cbe80ddd`](https://github.com/octave-commons/Truth/commit/cbe80ddd9a0678cf41c255e917f9b0dbfb97a6cb),
+postdates the Spark-body change. Those obligations remain constraints;
+historical Done status does not prove current natural approach or capture.
+
+**Proposed narrowing and unresolved local frame.** (世, p=1.0) The
+[first-narrowing proposal](../../designs/the-first-narrowing-star-to-planet.md#23-the-system-contracts-around-you)
+concentrates full local simulation as binding deepens, while its capture
+boundary starts planetary time-lock later. The [dual-representation umbrella](../../../kanban/tasks/phase-0-player-focus-dual-representation-spec.md)
+calls its body canonical, but Rheos reports Breakdown and its triage records
+partial implementation with promotion/demotion still open. The [FA parent](../../../kanban/tasks/flight-assist-damping-and-toggle.md)
+is Todo, estimate 5: it promises stopping relative to a local frame, while its
+formula damps inertial velocity and supplies no celestial-reference lifecycle.
+Neither document defines the missing pre-capture same-time motion contract.
+The [post-commitment local lock](../../designs/commitment-and-resonance.md#51-the-hard-time-lock)
+starts after capture and cannot establish reachability beforehand.
+
+**Superseded code is evidence, not a restoration instruction.** (世, p=1.0)
+Historical [`phase0/pacing-for`](https://github.com/octave-commons/Truth/blob/4b9cf814a495ae3cae0061f0e5756cdcc16fe32f/src/domain/phase0.clj#L144-L158)
+separated wall-clock rate from integration step; the
+[`c89e3e0e` replacement](https://github.com/octave-commons/Truth/commit/c89e3e0ed622305c69c84c68d2b189440c079710)
+removed its accumulator and adopted nominal fixed cadence with bulk-driven dt.
+The later [wall-time Spark spring](https://github.com/octave-commons/Truth/commit/0b20c557e99abfb7fdceb06c103e9b40728e615a)
+was explicitly superseded by the [owner's physical-body pivot](https://github.com/octave-commons/Truth/commit/452503538a0558c17b6d8092176a99d50fdbe627)
+and deleted by `b0b3b4a`. Neither earlier path is admitted by this recovery.
+
+(己, p=0.99) The remaining question is how the already-specified pre-Gate timing
+control provides a physically resolved, controllable interval before binding,
+consistent with delayed forces, the reference's actual displacement, finite
+player budget and continued surrounding evolution. This sharpens §7 without
+selecting an answer. Canonical reads used the verified merged Rheos CLI
+SHA256 `83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7`;
+the existing specification remains Incoming, points 3. No source, tests,
+runner, runtime, new card or status transition accompanies this supplement.

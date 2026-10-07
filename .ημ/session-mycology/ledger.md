@@ -368,3 +368,12 @@
   spore: none
   receipt-refs: flight-local-reference-assist-spec, 2026-10-07T00:44:57.780344Z
   note: Distinguish emission dt from consumption dt, final velocity from integrated displacement, and qualifying attention reads from elapsed folds. A constant-step stability result or successful velocity match cannot establish moving-target residence. Keep saturation and pre-capture clock assumptions explicit; resolve source retrieval failures honestly. No spore created or promoted.
+- ts: 2026-10-07T01:00:36.658061Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Recover pre-capture timing intent without promoting historical implementations
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.40
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec, 2026-10-07T01:00:36.658061Z
+  note: Missing executable policy does not imply missing user intent. Recover product requirements and explicit supersession separately, read status through Rheos, and distinguish a Done label from unverified live acceptance. Verify preserved canonical comment content without assuming section boundaries. No spore created or promoted.

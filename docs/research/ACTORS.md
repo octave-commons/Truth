@@ -64,3 +64,7 @@ All research notebooks are written to `docs/research/<domain>/` and indexed in
 - A promotion path to `domain/` code
 
 See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
+
+### Interactive follow-up, 2026-10-07 UTC
+
+- Interactive Codex runtime scout appended [recovered pre-capture intent](physics/local-reference-flight-assist-feasibility.md#10-recovered-pre-capture-intent): living UX timing requirements, approved physical-body constraints with unverified capture acceptance, proposed local narrowing and superseded pacing/spring history remain distinct. Existing Incoming specification only; no controller, clock or implementation admission.
