@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-07T07:23:43.358444+00:00",
+  "source_baseline": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "kind": "planning-only-publication-closure",
+  "owned_paths": [
+    "docs/designs/player-active-influence.md",
+    "docs/designs/spark-flight-and-camera.md",
+    ".ημ/diagnostics/active-influence-plan/source-history-audit.json",
+    ".ημ/diagnostics/active-influence-plan/root-scope.json",
+    ".ημ/diagnostics/active-influence-plan/closure.json",
+    "kanban/tasks/remove-passive-halo-invert-influence.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md"
+  ],
+  "runtime_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "canonical_operation": "one ordinary closure comment already completed at 2026-10-07T07:19:35.524Z; no retry, transition or metadata mutation",
+  "canonical_result": {
+    "frontmatter_except_write_id_preserved": true,
+    "baseline_body_preserved": true,
+    "prior_root_comment_exact_prefix_preserved": true,
+    "separator": "two newlines",
+    "one_comment_appended": true,
+    "body_sha256": "474eba08591a2b1b8098b56fdb081b44b8e33d6bdb4e2b827aba3fb5b3768f2f",
+    "current_card_sha256": "51d6d19d614bae45824cf28e529ae4befcb867e8841aefa8b75993cab9435c44",
+    "status": "todo",
+    "estimate": "2",
+    "write_id": "1791357575521-0.dh1w0yrrz3n9ctnff8o",
+    "closure_event_id": "tasks-remove-passive-halo-invert-influence-1791357575524",
+    "root_scope_event_id": "tasks-remove-passive-halo-invert-influence-1791356952287",
+    "canonical_baseline_read_from": "/home/err/spaces/foresight/.worktrees/truth-current-composition"
+  },
+  "append_only_proofs": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "comparison": "derived byte prefix after root scope event, before closure event",
+      "before_bytes": 636276,
+      "before_sha256": "2a5dc421f7ac7de8f07348e1b3c6d8e09ab20ae140a96aba594992452ba6e052",
+      "after_bytes": 638099,
+      "after_sha256": "579a96e4e665c3c1b9ed4c016703bf668eef621b9f620e242fc8e62f3ddd2180",
+      "prior_prefix_preserved": true,
+      "base_prefix_preserved": true,
+      "added_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 63792,
+      "before_sha256": "5b578d0c44e188bf2b1001c7c621a1fecd7e67738bf394a7ee6578fddf84f04a",
+      "after_bytes": 65425,
+      "after_sha256": "c85bdb7cda9a660a37855b64c350ce633b98204ee5c727d31b1268b3dafb4e8b",
+      "prior_prefix_preserved": true,
+      "base_prefix_preserved": true,
+      "added_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 34214,
+      "before_sha256": "e855ef15b8da2f3c5c1f2a202960b8f5714b3dd9b02ce8b24f91e6b993124071",
+      "after_bytes": 34973,
+      "after_sha256": "6357034e8724777ee68114ba77c7806014ca1f88a9e848052aab3f1f1071f99e",
+      "prior_prefix_preserved": true,
+      "base_prefix_preserved": true,
+      "added_lines": 9
+    }
+  ],
+  "hashes": {
+    "docs/designs/player-active-influence.md": "d7f4489cb0620b212dbb01e24dd1cbe33a2cf9c26e9ec6d54dbcd727adae67c1",
+    "docs/designs/spark-flight-and-camera.md": "b2f931755d9f0deaf042b0d7589dc9af1f8ee2a74c397c501206a4aedaaa732a",
+    ".ημ/diagnostics/active-influence-plan/source-history-audit.json": "b3fca49f27f91a683b1a27227465ed3919e0da392d99029a24fb86f9b379cece",
+    ".ημ/diagnostics/active-influence-plan/root-scope.json": "a53f1f0d751a62d9032caf142b0a6ba2faff670e344d3360c39fecb9a5507890",
+    "kanban/tasks/remove-passive-halo-invert-influence.md": "51d6d19d614bae45824cf28e529ae4befcb867e8841aefa8b75993cab9435c44",
+    "kanban/tasks/.events/ledger.edn": "579a96e4e665c3c1b9ed4c016703bf668eef621b9f620e242fc8e62f3ddd2180",
+    ".ημ/receipts.edn": "c85bdb7cda9a660a37855b64c350ce633b98204ee5c727d31b1268b3dafb4e8b",
+    ".ημ/session-mycology/ledger.md": "6357034e8724777ee68114ba77c7806014ca1f88a9e848052aab3f1f1071f99e"
+  },
+  "validation": {
+    "diff_whitespace": "pass",
+    "source_test_resources_deps_dev_bin_ci_config_delta": "empty",
+    "tracked_delta_outside_owned_paths": "empty",
+    "actual_failed_qualification_checks": [
+      "Initial preflight incorrectly dereferenced a tracked broken .opencode skill symlink and raised FileNotFoundError before any mutation. Preservation check corrected to read symlink text; historical symlink untouched.",
+      "After exactly one successful canonical closure comment, verification expected a new section and failed. Canonical Rheos appends into the existing trailing comment section. No comment retry occurred; corrected read-only verification proves baseline body and non-write-id frontmatter unchanged, exact root-comment prefix plus separator plus exact closure comment, and exactly one new ledger event after the root scope event."
+    ],
+    "jvm_native_benchmark_tests": "not run",
+    "review": "root and intent_research independent local planning review; no hosted approval credit"
+  },
+  "limits": [
+    "proposed factor is not empirically calibrated",
+    "Todo 2 preserved; full 5 is proposal only",
+    "no implementation or native gameplay acceptance",
+    "publication result and hosted qualification follow this precommit closure"
+  ]
+}

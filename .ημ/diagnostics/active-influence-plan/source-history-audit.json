@@ -1,0 +1,366 @@
+{
+  "recorded_at": "2026-10-07T07:14:45.127971+00:00",
+  "kind": "source-and-history-design-audit",
+  "epistemic_tier": "source-observed and explicitly proposed; no runtime evidence",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "owner": "remove-passive-halo-invert-influence",
+  "authority": {
+    "root_scope_path": ".ημ/diagnostics/active-influence-plan/root-scope.json",
+    "root_scope_sha256": "a53f1f0d751a62d9032caf142b0a6ba2faff670e344d3360c39fecb9a5507890",
+    "permission": "design authoring only; no implementation admission or board transition",
+    "board_read": "canonical Rheos read-task; root comment preserves Todo/2 and original body",
+    "prior_events": "previous canonical events query returned no events before root scope comment; not proof of Ready",
+    "card_history": "created directly Todo in452503538a0558c17b6d8092176a99d50fdbe627; no later committed changes at baseline"
+  },
+  "recovered_history": [
+    {
+      "commit": "c6b15b461489f2d789267d322b6e7aebf2d5ab6a",
+      "observation": "July5 Plummer conversion introduces default factor0.5 and preserves15/4e15/600. This predates redesign."
+    },
+    {
+      "commit": "452503538a0558c17b6d8092176a99d50fdbe627",
+      "observation": "Owner decision requires passive removal and stronger paid fields; no selected replacement factor/cost/radius/ttl."
+    },
+    {
+      "commit": "e6b99cc6ff5a3a58243a22b7bd526493e6cd2088",
+      "observation": "Dark halo wired at3x mass/0.5x radius; commit explicitly describes first-pass guess and native tuning deferred."
+    },
+    {
+      "commit": "b0b3b4aff11203c322c34ac86c342bb3e1fffdf6",
+      "observation": "Physical Spark body landed and spring removed; distinct attention/camera tether remains."
+    },
+    {
+      "commit": "3d912230bc8743463d0c59b75ce312e5688a0dc0",
+      "observation": "Paid stale contributions repaired without changing force/cost/TTL/Jacobi policy."
+    }
+  ],
+  "selected_proposal": {
+    "factor_before": 0.5,
+    "factor_proposed": 1.0,
+    "both_warp_kinds": true,
+    "cost_agency": 15,
+    "scale_radius_metres": 4000000000000000.0,
+    "ttl_simulation_ticks": 600,
+    "calibration": "deliberate gameplay default, not empirically calibrated",
+    "other_laws": "retain existing field shape, reach, predicted position, total cap, linear decay, payment, lifecycle and clocks",
+    "implementation_size_proposal": 5,
+    "board_estimate_unchanged": 2
+  },
+  "source_files": [
+    {
+      "path": "src/domain/player/influence.clj",
+      "bytes": 4717,
+      "sha256": "07ada060628a97c488852b16a29c894b58c9f1ade32369f3fbbc94e9f4adedce",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/player.clj",
+      "bytes": 6038,
+      "sha256": "60928786e9b9efc70892eae6f8a7b2d3ecee5655a440b5af06aa9060dbb3275a",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "bytes": 17495,
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/genesis/systems.clj",
+      "bytes": 5679,
+      "sha256": "8ca3d361dbb3c558dfc16d1235fb5b4c788c9d1b66e0a118936f855b99195ae7",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/integrator/base.clj",
+      "bytes": 4271,
+      "sha256": "6b490386437788b5e6b7eae238900c25d93220082d7f9f11af3d7f01091691e6",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/ecs/components.clj",
+      "bytes": 26602,
+      "sha256": "e038946d401038b24068ac3becedb8ddf4de2fb79cee1c76281627d58735d6fc",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/ecs/registry.clj",
+      "bytes": 33814,
+      "sha256": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/physics/cache/soa.clj",
+      "bytes": 7858,
+      "sha256": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/orbital/system.clj",
+      "bytes": 7456,
+      "sha256": "00e6c0ac7f32833749dac1ed95ba4060db390380f4f41e9159dc7730e2855aa0",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/intervention.clj",
+      "bytes": 14019,
+      "sha256": "eed4697f04bf96ce8bdabc0e08b64c63bd296a0d9cc958b49574bbef643c74a8",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/gravity/dark_matter.clj",
+      "bytes": 4498,
+      "sha256": "186970d14096acc26191a92b68ea87db4db9282b7eb3e0a13cf3d9c194ede93c",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/narrowing.clj",
+      "bytes": 19894,
+      "sha256": "19ff9b4f0b9d73b327f6602756ef6b8c10d79fa53838572ef2c964bc5c064d22",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/domain/player/state.clj",
+      "bytes": 6155,
+      "sha256": "e5296cbce5dc2dc525577cba4bd1ae90978f9a9158f85e52f4d3a9c697806191",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/infra/menu/widgets.clj",
+      "bytes": 13941,
+      "sha256": "e05e57a1db1646c0ec26eeb19029ce78eec325afb904e9e24d18a0f0607a0089",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/infra/menu/panels.clj",
+      "bytes": 15504,
+      "sha256": "b92fefff01a81949f581de4c6081f8bad5372109e36f65d879d3a19592506a36",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "src/law/stellar/orbital/dynamics.clj",
+      "bytes": 9406,
+      "sha256": "3e733124ad9bef7b7618b341c0e9cf90f0d1436a4879ff68f34471aadb007cc6",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "test/domain/intervention_test.clj",
+      "bytes": 8510,
+      "sha256": "8428bb81bd929158e8665d066f3ccf1443b0f558b76b926913d60fc3712578a6",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "test/domain/warp_lifecycle_test.clj",
+      "bytes": 7016,
+      "sha256": "3c15b3fae0194f0d413a347224d6e7f835af90825c16781a699859bb472393ad",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "test/domain/observer_influence_test.clj",
+      "bytes": 6211,
+      "sha256": "6210e7621fd191a0ff7e8d6d2117bd7ac3e63b1619de73a6787f9ba1e76cd861",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "test/domain/spark_body_test.clj",
+      "bytes": 15833,
+      "sha256": "28de0fccf11b1f627b73085c00b53f7de3dce743d364ab0d9d1df83f03a188ce",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "test/infra/menu_test.clj",
+      "bytes": 8540,
+      "sha256": "9a49643b63e7e0a704c3d12785cc8fad1709b5e7a51b0ca21bc6e63d76799396",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "test/law/stellar_halo_test.clj",
+      "bytes": 2298,
+      "sha256": "ee9ca9047e02ef1e1cc295ec0dd5ae84e69e43a93b16f63c68c412b38b6b9608",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "docs/notes/2026.07.05-dark-halo-influence.md",
+      "bytes": 3620,
+      "sha256": "fd5517fcd4265f49d3f5545ef87ceab7b67c8b3105a7c6c20d976894d153c9d7",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "docs/notes/2026.07.05.16.41.22.md",
+      "bytes": 8082,
+      "sha256": "238a07903c19fe74b895cafb26c6273dc7dcf5e00236240d67f8d1c0a2a6c466",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "docs/notes/2026-10-06-playable-foundation-verification.md",
+      "bytes": 10525,
+      "sha256": "cf8bb2ce2471dd995af04a050bad6a69888e5d64075019c7b26dc1acace065d3",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "receipts.edn",
+      "bytes": 378403,
+      "sha256": "49d10aa2dc7fc04ddea70ff021cefc49e31fa3d2110a7362652b16a003a2c042",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 14248,
+      "sha256": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0",
+      "equals_source_baseline": true
+    },
+    {
+      "path": "PROCESS.md",
+      "bytes": 14027,
+      "sha256": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2",
+      "equals_source_baseline": true
+    }
+  ],
+  "local_design_links": [
+    {
+      "target": "../../kanban/tasks/remove-passive-halo-invert-influence.md",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../receipts.edn",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../PROCESS.md#grounding-research--design--task",
+      "exists": true,
+      "heading_verified": true
+    },
+    {
+      "target": "../notes/2026.07.05-dark-halo-influence.md",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../notes/2026.07.05.16.41.22.md",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/law/stellar/orbital/dynamics.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../test/law/stellar_halo_test.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../test/domain/intervention_test.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../test/domain/warp_lifecycle_test.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "spark-flight-and-camera.md#7-control-doctrine-corrected-2026-07-23",
+      "exists": true,
+      "heading_verified": true
+    },
+    {
+      "target": "../notes/2026-10-06-playable-foundation-verification.md#observed-live-interaction",
+      "exists": true,
+      "heading_verified": true
+    },
+    {
+      "target": "../../src/domain/player/influence.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/player.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/genesis/systems.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/ecs/registry.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/ecs/components.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/integrator/base.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/physics/cache/soa.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/orbital/system.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/domain/genesis/bootstrap.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/infra/menu/widgets.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../src/infra/menu/panels.clj",
+      "exists": true,
+      "heading_verified": false
+    },
+    {
+      "target": "../../.ημ/diagnostics/active-influence-plan/root-scope.json",
+      "exists": true,
+      "heading_verified": false
+    }
+  ],
+  "owned_design_files": [
+    {
+      "path": "docs/designs/player-active-influence.md",
+      "bytes": 12653,
+      "sha256": "d7f4489cb0620b212dbb01e24dd1cbe33a2cf9c26e9ec6d54dbcd727adae67c1"
+    },
+    {
+      "path": "docs/designs/spark-flight-and-camera.md",
+      "bytes": 25582,
+      "sha256": "b2f931755d9f0deaf042b0d7589dc9af1f8ee2a74c397c501206a4aedaaa732a"
+    }
+  ],
+  "static_verification": {
+    "local_links_and_fragments": 23,
+    "tracked_diff_whitespace": "pass",
+    "new_design_trailing_whitespace": "none",
+    "production_test_resource_dependency_config_diff": "empty",
+    "jvm_tests_native_benchmarks": "not run",
+    "independent_design_review": "intent_research reviewed8394f7c3 with no planning blocker; requested exact supported launch spelling, corrected to clojure -M:demo serve. Root reviewed same full draft and crosslink with no blocker. No implementation admission.",
+    "final_delta": "Only native command spelling changed after independent review; accounting, forces, acceptance and scope unchanged."
+  },
+  "claim_limits": [
+    "No factor beyond0.5 was recovered as previously accepted.",
+    "No new empirical result or implementation admission.",
+    "Stronger uncapped force does not imply doubled capped acceleration or faster observed collapse.",
+    "Ordinary physical Spark gravity and legitimate attention effects remain.",
+    "No save migration or runtime reload performed.",
+    "Existing dark-halo Review status is not closed native acceptance.",
+    "Root owns canonical scope/card/ledger changes; this author wrote only design, its five-line crosslink, and this audit."
+  ]
+}

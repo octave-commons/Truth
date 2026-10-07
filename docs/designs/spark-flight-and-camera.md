@@ -151,6 +151,11 @@ fly→resolve→sculpt acceptance remains open until genuine controls demonstrat
 
 ## 4. Coherence-gated thrust (the "let it rise" economy)
 
+The separate proposed [active-influence refinement](player-active-influence.md)
+retires the passive focus halo and strengthens paid fields. The halo coupling
+described below records the existing baseline, not a requirement to retain it
+if that refinement is admitted; coherence/thrust behavior is unchanged there.
+
 Coherence already exists as a `c/observer` field (0.8 init, drain/regen in
 `src/domain/player/economy.clj:1-27`) and already modulates the observer halo
 (`influence.clj:20`) and render opacity (`scene/bodies.clj:152`). We add a thrust
