@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, ecology, input, playable-gate"
 parent: "embodied-character-voxel-mode"
 type: "task"
-write-id: "1791318932367-0.v6y1lbhs8dqibq8migu"
+write-id: "1791341383104-0.wun97mu4u92z8dtwb6"
 points: "3"
 title: "Specify one causal native biosphere action on the committed world"
 priority: "P1"
@@ -42,5 +42,9 @@ Trace existing helper and writer code, inspect relevant laws/tests, and independ
 The inherited helper may assume a different phase/target or charge resources inconsistently. Native controls and planetary unlock semantics must agree before a key is bound.
 
 ---
+
 Planning refinement from independent review, included while this card is Incoming: coordinate time-unit and cadence decisions with committed-clock-executable-policy. Independent interface research may proceed while that policy is reviewed; any consumer that depends on unresolved clock semantics must identify the dependency explicitly. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+
+Design-only continuation on existing PR12 lineage96b19f086707388e43f272e5ec87a3a7378d4c4c: docs/designs/commitment-and-resonance.md §4.4.1 now proposes one Grow request on the already committed world; the older prototype entry links to it. Recovered authority distinguishes Agency activation from Resonance unlock, Genesis Grow1 from committed Biosphere2, and existing prokaryotic helper effects from represented organisms. The proposed existing-queue → sole ecology writer → serial post-fold payment/result boundary grants no implementation admission. Activation amount, cooldown clock, unlock/request/result representation, budget/dedup ownership, passive ordering and same-fold target removal remain explicit blocking review decisions; current reaping order means event precedent alone is not atomic payment proof. Existing committed-clock-executable-policy remains separate. Independent source/authority review found no blocker to publishing this proposal; all17 added local links/heading fragments resolve and diff whitespace is clean. Source/tests/runtime unchanged; no native action, test run, state transition, key binding, card body rewrite or review request. Preserve Incoming3 until the design and later consumer prerequisites are actually reviewed.
+
 ---

@@ -125,6 +125,116 @@ Commitment is irreversible for this world-line.
 
 Resonance awarded in the Genesis arc carries over and can be reallocated into this palette. Future thresholds in Phase 1+ continue to award Resonance.
 
+### 4.4.1 Committed-world Grow — bounded proposal, 2026-10-07
+
+**Status: proposed design continuation, not implementation admission.** Existing
+Incoming/3 owner:
+[`committed-biosphere-native-action-spec`](../../kanban/tasks/specify-one-causal-native-biosphere-action-on-the-committed-world-ion-spec.md),
+on [PR12](https://github.com/octave-commons/Truth/pull/12). This subsection
+proposes one Grow request on the already committed world. It does not grant a
+Biosphere unlock, add a key, or implement the other ecology verbs, an organism,
+a civilization, an embodied player or a Gate.
+
+Grounding is the [production route audit](../notes/2026-10-06-playable-gate-route-audit.md),
+the [two natural formation runs](../notes/2026-10-06-two-seed-natural-formation.md),
+and the source boundaries below. Those historical runs reached prokaryotic
+ecology; they did not prove ordinary native commitment or a Grow interaction.
+The scalar helper is a toy-ecology mechanic, not evidence that adding biomass
+creates represented organisms or that its magnitude is a biological law.
+
+#### Authority and unresolved decisions
+
+| Item | Recovered authority or source fact | Design consequence |
+|---|---|---|
+| Currency | Canonical §1 and [UX's currency rule](ux-architecture.md#spark--self) assign Agency to recurring actions and Resonance to unlocks. The July 24 [tech-tree draft §3.2](ability-tech-tree.md#32-which-resource-does-what-making-the-four-resource-table-concrete) agrees; its proposed new components are not implemented authority. | A Grow activation spends Agency once, not recurring Resonance. No new economy is proposed. |
+| Unlock | §3's one-Resonance Grow is a Genesis slot. §4.4's two-Resonance Biosphere is the committed planetary slot. [The current law table](../../src/law/narrowing.clj) records the latter but explicitly has no consumer. | Retain the two-Resonance Biosphere unlock policy. Palette presence alone is not proof of purchase; representation and acquisition remain prerequisites. |
+| Phase/effect | [Existing `apply-grow`](../../src/domain/ecology/abilities.clj) requires the target's prokaryotic-or-later ecology and adds clamped 0.12 biomass and 0.04 complexity; [helper tests](../../test/domain/ecology_test.clj) cover the phase gate and base effect. | Reuse that helper without intensification or a new biological model. Another world's phase does not establish this target's eligibility. |
+| Activation amount | The July 2 [prototype Grow entry](player-abilities-and-ecology.md#5--grow) says 0.09 Coherence; its July 3 Agency section defers to this canonical economy. No Grow-specific Agency amount or conversion is specified. | **Unresolved:** choose and review an Agency price. Neither 0.09 relabeled as Agency nor the physical-intervention default of 15 is established. |
+| Cooldown | The prototype says 4000 ms. No production cooldown consumer exists. [Ecology](../../src/domain/ecology/system.clj) advances every 24 physics ticks; its fixed-60-Hz wall-time explanation is stale. | **Unresolved:** retain 4000 ms as historical draft intent, not an accepted clock law or 240-tick conversion. Define time source, pause behavior, and when cooldown starts. |
+| Controls | The [July 23 control doctrine](ux-architecture.md#spark--self) supersedes the old Q/E/R recipe and keeps key roles stable. | Future key/menu choice and on-screen affordance are separate from domain eligibility. No old prototype binding is enabled by this proposal. |
+
+The chronology is inspectable in commits `69da447` (July 2 prototype),
+`ebf92f4` (July 3 canonical commitment/economy and Agency amendment), and
+`cbe80dd` (July 24 draft tech tree and control clarification). A newer draft's
+timestamp does not promote its entire implementation sketch to accepted law.
+
+#### Proposed request and settlement boundary
+
+The candidate route is **ordinary input → existing serial intent queue →
+pending request → existing ecology writer → existing serial post-fold boundary
+→ published effect, payment and feedback**. This is a proposal for review;
+there is no such request consumer in current source.
+
+1. On intent application, identify the committed world and retain that target
+   identity in the request. Do not select the nearest living body, camera
+   selection or a later replacement target. Enqueueing alone grants no unlock,
+   spends nothing, starts no cooldown and changes no ecology. Missing commitment
+   is rejected with a reason. Exact request identity/schema and bounded storage
+   remain to be designed with named Malli validation at the boundary.
+2. The existing [`ecology-system`](../../src/domain/ecology/system.clj), the
+   sole `c/ecology` writer, consumes pending requests on its scheduled ecology
+   update. Recheck target existence/commitment, purchased Biosphere authority,
+   target ecology phase, cooldown and current Agency at consumption. Requests
+   that became invalid while waiting are rejected without payment. Preserve
+   request order; a batch must account for earlier accepted spending and
+   cooldown decisions so two requests cannot both spend the same budget.
+3. **Proposed payment timing:** the ecology owner decides the effect and a
+   terminal outcome together; a serial settlement after the fold debits each
+   accepted outcome exactly once and records its result before
+   publication. There is no initial debit/refund route. The serial step must
+   not rerun ecological eligibility, overwrite `c/ecology`, or charge an
+   unconfirmed request. Rejected outcomes leave Agency unchanged. Observer
+   economy ownership stays serial; the fan-out must not become a second writer
+   of the observer. This uses the existing [post-fold event precedent](../../src/domain/genesis/tick.clj),
+   not an additional simulation or generic transaction framework. Current
+   lifecycle reaping runs after physics and before promotion/commitment events;
+   that precedent alone does not establish atomic effect/payment. The exact
+   settlement position must resolve the removed-target question below.
+4. The published accepted result exposes the target, causal request, actual
+   clamped scalar delta and Agency debit; a rejected result exposes its reason.
+   The existing shell must make these outcomes readable without a success
+   notification standing in for a state change. Exact result/event shape and
+   UI presentation remain review decisions. Passive ecology evolution and
+   its phase-event emission continue through their existing owner and path.
+
+#### Specific questions that block a consumer story
+
+- What Agency amount applies to base Grow, and is the inherited 4000 ms
+  cooldown retained? Which clock measures it, what does pause do, and does it
+  start on accepted consumption? Coordinate these decisions with existing
+  [`committed-clock-executable-policy`](../../kanban/tasks/specify-the-executable-committed-world-clock-and-later-history-contract-e-policy.md).
+  Independent target/ownership design can proceed; no implementation may assume
+  that the current `c/time-lock` data hook enforces wall time.
+- What proves that Biosphere was purchased for two Resonance? The draft
+  [unlock representation](ability-tech-tree.md#52-new-component) is only a
+  candidate. Current [commitment](../../src/domain/narrowing.clj) arms every
+  planetary slot without an unlock debit. Do not silently treat that as free
+  entitlement or add a complete tech tree to this three-point design task.
+- Which precise request/outcome components and owners let consumption,
+  deduplication, budget accounting and post-fold payment stay consistent? What
+  happens when a target is removed in the same parallel fold? A result must not
+  debit an effect that failed to survive that fold. Name all component reads
+  and writes and the serial ordering before any implementation is admitted.
+- Within the scheduled update, does passive ecology advance before or after
+  Grow, which phase is checked, and what happens at saturated biomass and
+  complexity? Preserve the helper's clamps; do not silently choose a charge
+  for a zero-delta result or a new phase-transition policy.
+
+Later RED must exercise the real queue, owner/fold and settlement boundaries:
+one accepted base effect and one debit; absent/inert/replaced target; absent or
+insufficient-phase ecology; missing unlock; insufficient Agency; duplicate or
+repeated input; multiple requests sharing one budget; queued eligibility
+changes; no second consumption on later ticks; and coexistence with passive
+evolution and phase events. Native acceptance then requires a naturally formed,
+normally committed eligible world, genuine input, visible causal change and
+cost/rejection readback. No fixture or direct world edit supplies that proof.
+
+This remains a three-point **specification** continuation. The exact price,
+clock and representations are unresolved, so no ready implementation story or
+completed card is claimed. Split the later unlock/request/consumer work if its
+reviewed scope cannot fit a cohesive story of at most five points. The existing
+actor and Gate prerequisites remain untouched.
+
 ---
 
 ## 5. Post-commitment LOD and tick rate

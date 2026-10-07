@@ -163,6 +163,12 @@ player, or physics mutations but do not own any simulation loop.
 
 ### 5 — Grow
 
+The values below retain the prototype draft. For the proposed native action on
+an already committed world, see [Commitment §4.4.1](commitment-and-resonance.md#441-committed-world-grow--bounded-proposal-2026-10-07):
+Agency is the recurring currency; the committed Biosphere unlock is distinct
+from Genesis Grow. Its activation amount, cooldown clock and unlock
+representation remain unresolved. This entry does not admit native wiring.
+
 - **Cost:** 0.09 coherence
 - **Cooldown:** 4000 ms
 - **Unlock:** 1 Resonance + ecology phase `:prokaryotic`
