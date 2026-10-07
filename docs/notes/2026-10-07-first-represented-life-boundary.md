@@ -370,6 +370,12 @@ component-bundle creation must support non-stellar entities as well as the curre
 stellar constructor. It must not pass a cohort through `spawn-clump` or attach
 fictional stellar components. Existing stellar behavior stays on the same path.
 
+The proposed construction prerequisite in [§8.2](#82-validated-fresh-construction-prerequisite--proposed)
+now makes that boundary concrete. It qualifies the existing stellar path and a
+closed **empty-book** constructor only; cohort construction and live-book updates
+remain with the later atomic settlement. Its explicitly limited stellar checks
+do not certify arbitrary legacy extra-component payloads.
+
 The serial owner is the sole writer of the biology book and biological cohort
 components, with a named registry/architecture ownership declaration and validated
 inputs/outputs. Extending those declarations to serial construction is part of
@@ -437,15 +443,21 @@ cards, current estimates accepted by review, or implementation admission:
 | Boundary | Target size | Completion evidence |
 | --- | --- | --- |
 | Pure integer account/origin laws | 3 | Actual exact input conversion, partitions, repeated success/rejection, conflicting key, stale revision, ordered competing transfers, zero/tiny/nonfinite inputs and exact conservation |
-| Uniform lifecycle settlement and retained book | 5 | Real fan-out/fold/materialization path; non-stellar bundles; atomic account/entity/outcome; unchanged stellar path; same-fold cancellation; retained terminal histories; explicit sole-writer checks |
-| Natural origin producer plus boundary closure | 5 | Actual life-event cause and final-parent checks; once-only origin; changed/reaped parent closes before later action; no refill/reset/LOD minting; scaling proportional to tracked parents/requests |
+| Validated fresh construction and serial ownership prerequisite (§8.2) | 3 | Existing seven stellar channels use one fresh-ID install path; precise known-field checks, preserved opaque extras, closed singleton empty-book constructor and initialization/consumption authority |
+| Atomic lifecycle settlement and retained book, after both prerequisites | 5, to re-size | Real fold/materialization path; cohort bundle; atomic account/entity/outcome; mandatory final-parent closure before actions; same-fold cancellation; retained histories; explicit ongoing sole-writer checks |
+| Natural origin request producer | 5, to re-size | Actual retained life-event cause to immutable request; once-only discovery; settlement still revalidates final parents; no refill/reset/LOD minting; work proportional to new events/tracked parents |
 | Existing inspector/Narrator projection | 3 | Read-only cohort/account/cause/terminal-state presentation, with a natural native origin observation; no new hotkey, creature mesh or avatar |
 
 If the lifecycle ownership generalization cannot fit five points, refine that
 slice before code; do not hide a new architecture inside an asserted estimate.
+This refinement separates construction from the former combined lifecycle row
+and moves mandatory boundary closure into settlement, where §7.2 already
+requires it. Closure cannot be deferred to an optional later request producer.
+Only the pure kernel and §8.2 construction prerequisite are initial child cards;
+the remaining rows are proposed future boundaries, not additional admitted work.
 The account and origin require no new biological rate or clock. A subsequent
 resource-use producer must select its extent/time/loss law and prove one real
-resource action; these four slices do not claim the whole represented-life card's
+resource action; these proposed slices do not claim the whole represented-life card's
 acceptance or the eventual organism/individual milestone.
 
 Native proof starts from ordinary genesis and a naturally produced life event,
@@ -510,3 +522,204 @@ Three points covers this pure numerical/transition surface and its tests only.
 If implementation needs persistence machinery, lifecycle ownership changes or
 new biological admission choices, re-plan before code. Other rows above remain
 proposals rather than additional cards or completed prerequisites.
+
+### 8.2 Validated fresh-construction prerequisite — proposed
+
+This is the second initial child,
+[`validated-fresh-entity-construction`](../../kanban/tasks/validated-fresh-entity-construction.md),
+**Incoming / proposed 3 points**, following the pure account kernel. It does not
+consume that kernel or require kinetics: the later settlement depends on both.
+The [source and sizing assessment](../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md)
+identified construction as a distinct prerequisite. This section selects its
+limited contract; it does not declare the parent specification complete or admit
+implementation. The original §§6–7 biological prescriptions remain unchanged.
+
+**Current source:** [bootstrap](../../src/domain/genesis/bootstrap.clj), lines
+261–352, walks seven stellar request columns, resolves each request against the
+running post-fold world, calls `spawn-clump`, applies arbitrary extras, then
+emits the escape event and reaps six consumed-marker families. The pure
+[`seed-clump`](../../src/domain/stellar/seeder.clj) (31–69) already returns its
+physical component map. [`ecs/spawn` and `put-components`](../../src/domain/ecs/core.clj)
+(24–29, 167–170) already allocate/install components; they do not validate a
+constructor's semantic values. No second allocator or ECS world is needed.
+
+#### Constructors and exact validation boundary
+
+Propose two named constructor variants in a small `law.entity-construction`
+Malli boundary, with pure preparation/application in `domain.ecs.construction`.
+The names are proposed interfaces, not existing namespaces. The closed outer
+plans are `{:constructor :stellar-seed :spec legacy-spec}` and
+`{:constructor :empty-life-book :initial-book initial-value}`; `initial-value`
+is the exact inner map below. A plan never selects an entity ID. Unknown
+constructor tags, an explicit target-ID field on the plan, malformed required
+fields and a mismatched prepared result fail with a named construction error.
+This is not a public arbitrary-component-map installer or a component-schema
+registration framework. The low-level ECS primitives remain the sole allocator
+and installer; unrelated boot/player construction sites are not migrated here.
+
+For **`:stellar-seed`**, retain the existing frame resolver, defaults, arithmetic
+and overlay order: resolve in the running world, call the existing pure
+`seed-clump`, overlay `:extra-components` with the current last-value-wins
+semantics, then validate the following final fields **before allocation**.
+Unknown seed-spec keys keep their existing ignored/pass-through behavior; a key
+inside that legacy spec cannot choose the allocated ECS ID. Named validators
+check the resolved seed inputs actually consumed and the prepared result. The
+legacy spec must be a map and extras must be absent, nil or a map; other extra
+containers newly reject. Absent optional fields retain the actual defaults,
+including the existing `or` fallback for nil magnetic field/angular momentum.
+Do not add a new nil fallback, coerce values or recompute derived fields after
+an extra-component override. Fields discarded by the existing frame resolver
+are not promoted into new physical requirements.
+
+| Final stellar field | Proposed check; current grounding |
+| --- | --- |
+| Position, velocity, magnetic field, angular momentum, spin, rotation axis | Exactly three finite numeric coordinates, reusing `law.field.schema/finite-vec3?`; no new field cap or unit-vector normalization. Existing stellar schemas use looser `vector?`. |
+| Mass, radius, temperature, density | Finite and strictly positive. Existing `law.stellar.schema/matter-state-schema` already specifies positivity; finiteness is a new boundary obligation. |
+| Pressure, luminosity | Finite numeric values. Existing stellar schema says `number?`; this child does not add a sign or energy policy. |
+| Matter state, body kind | Keywords, without closing the existing vocabulary to the currently observed tags. |
+| Composition | Map with keys in `law.composition/element-set` and values satisfying `mass-fraction?`. Empty/zero maps remain structurally allowed; no sum-to-one, positive H/He, habitat or carbon-budget certification is inferred. |
+| Oblateness | Finite number in `[0,1]`, or nil as allowed by the existing stellar schema. |
+| Accretion radius, if present | Nil or a finite positive number, matching the existing optional stellar contract with a finite check. Presence/absence remains the constructor/overlay result. |
+| Known optional extras: `planet-type`, `field-zone`, `promoted-from-cell` | Respectively `:terrestrial/:ice-giant/:gas-giant`, the existing `law.field.schema/field-zone-schema`, and `promoted-from-cell?`. These are the documented component contracts, not an inferred exhaustive extra-key allowlist. |
+
+All base fields emitted by `seed-clump` must remain present in the final result;
+an optional known extra is checked when present, including when its value is nil.
+The [stellar schemas](../../src/law/stellar/schema.clj) (10–62),
+[finite-vector and field schemas](../../src/law/field/schema.clj) (18–27,
+170–172, 228–235), [composition predicates](../../src/law/composition.clj)
+(14–20, 119–147), and [component vocabulary](../../src/domain/ecs/components.clj)
+(199–202, 298) supply these limited meanings. Enforcing these checks rejects
+some formerly unchecked inputs; that is an **intentional new validation boundary**,
+not a no-behavior-change refactor or proof that old callers were already validated.
+
+**Legacy extras remain open.** Apart from the known-field checks above and the
+reserved book key below, retain every supplied extra key/value exactly, even
+when it is not among the keys used by today's seven producers. Those payloads
+are explicitly **unvalidated**. Do not restrict them to an observed-callsite
+allowlist or claim universal component validity. Overrides of known base fields
+are checked after overlay but keep their value/order: for example overriding
+angular momentum does not recompute spin, pressure or any other derived field.
+Unknown extras have no new physical-consistency guarantee. The reserved new
+`:component/life-book` key is rejected in a stellar spec's extras, even with nil
+or an apparently empty value. This is an explicit new restriction preventing a
+physical stellar constructor from impersonating the book constructor.
+
+For **`:empty-life-book`**, §7.1 supplies the purpose and no-physical-columns
+rule. Select a closed payload and exactly one component:
+
+```clojure
+{:component/life-book
+ {:rule-version :life-origin/v1
+  :event-cursor 0
+  :first-causes {}
+  :accounts {}
+  :outcomes {}}}
+```
+
+The named empty-book schema accepts exactly these keys and values: cursor is
+integer zero, each collection is an empty map, and the version is the specified
+keyword. It cannot accept a populated account, history, cohort, alternate
+version, physical component or arbitrary extension. Empty maps here mean an
+explicit initial value, not an `any` schema for future contents. The later
+settlement owns the full live-book/account/cohort schemas and their updates.
+No event, account, carbon stock, habitat decision or life milestone is produced.
+
+#### Singleton, allocation and pure-result atomicity
+
+A generic fresh ID is insufficient to establish a singleton. For an explicit
+empty-book construction, require **no existing book occurrence anywhere in the
+supplied world's component column or archetype index**, and at most one such
+plan in this application. Any occurrence rejects; this includes malformed,
+orphaned and multiple entries. An absent or empty book column contains no
+occurrence; a present non-map column is malformed and rejects, including nil.
+The archetype membership check must be well-defined or reject rather than guess
+absence. The constructor neither chooses a preferred
+book nor repairs, replaces or reuses one. The check runs only when an empty-book
+plan is requested, not as a whole-world scan on every ordinary tick. Thus this
+slice guarantees it cannot add a second book to an admitted input; it does not
+certify a previously supplied world's global validity or deduplicate across
+rewinds/branches. Later settlement must preserve the selected book and satisfy
+§7.1's once-on-first-observed-event policy.
+
+Use one pure serial application path for prepared creations. Validate each
+variant and its prepared result, check the next allocator ID is a nonnegative
+integer unused in `:alive`, `:archetypes` and every component column, then call
+`ecs/spawn` and `put-components` once for that creation. Do not accept an
+existing-ID update disguised as initialization. Check subsequent IDs against the
+running result. A failure anywhere returns no accepted world result, including
+no partially consumed requests or advanced allocator; the caller retains its
+original immutable world. This is pure-result atomicity, not a persistence or
+transaction service. Preparation may be interleaved on private immutable running
+values so later requests still resolve against the same running-world state as
+today; do not resolve every parent against a newly frozen batch snapshot.
+
+Keep the seven channel order, existing within-column/spec traversal, parent
+reanchoring, one-time absolute frame subtraction, extra overlay order, escape
+event and six-marker reap semantics. Do not sort existing stellar requests,
+change ID order, change any mass debit or recompute stellar physics. The
+[existing frame design](../designs/multi-timescale-integration.md#34-composition-with-the-existing-write-channels)
+and its formation/disk tests remain the compatibility reference. No empty book
+is automatically requested by this child; existing production stellar requests
+provide the actual integration consumer. A direct empty-book construction test
+qualifies this capability only, not an installed biological producer.
+
+#### Explicit serial authority without an ongoing-writer exemption
+
+Extend declarations in the existing
+[`domain.ecs.registry`](../../src/domain/ecs/registry.clj) with one construction
+stage descriptor for the actual materializer, not a second runtime registry.
+Select separate `:initializes`, `:consumes` and `:reaps` authority in addition to
+ordinary `:reads`/`:writes`. `:initializes` enumerates the known stellar outputs
+and the book component, scoped strictly to IDs freshly allocated by this
+application. A separately named legacy-extra initialization rule binds the exact
+extra-key set of each validated stellar plan, without claiming value validation;
+it grants no access to existing IDs. Fresh-ID collision checks inspect structural
+world membership, not physical value reads. Existing physical reads (parent
+position/velocity, escape mass), the seven request columns, six consumed-marker
+columns and the singleton book column must be declared.
+
+`:consumes` enumerates only the seven source request-cell families; it may remove
+the processed request cells, not write another producer's payload. `:reaps`
+enumerates only the six existing consumed-marker families and delegates actual
+entity removal to the existing reaper. No biology update or removal authority
+is added. Ordinary `:writes` stays empty for this construction-only descriptor.
+The all-stage single-writer check still examines every ordinary `:writes` set;
+future book/cohort updates must participate in it. Initialization and consumption
+must be checked separately against their narrow contracts, not ignored because
+of a stage name. Explicitly exclude the construction descriptor from fan-out
+selection; `fan-out-systems` currently excludes only `:barrier`, while the actual
+[`physics-systems-parallel`](../../src/domain/genesis/systems.clj) uses an explicit
+list. Neither route may invoke construction in a parallel worker.
+
+#### Worked acceptance traces and size boundary
+
+| Trace | Required observable result |
+| --- | --- |
+| Real stellar requests in parent-relative and absolute frames | Same component values/IDs as the existing path, including valid extras; request cells consumed once, escape/reap unchanged, second materialization creates nothing. |
+| Known physical override is finite and valid; unrelated legacy extra contains an opaque value | Final known override and opaque extra preserved exactly. No claim of consistency between overridden angular momentum and the earlier computed spin. |
+| Known override contains NaN, or stellar extras contain `life-book` | Named rejection before an accepted world result; original requests, allocator and entities unchanged. These are intentional newly rejected cases. |
+| Two valid stellar plans and one empty-book plan in an otherwise valid world | Three fresh IDs; correct archetypes; book has exactly one component and no physical fields. This is a constructor fixture, not natural life. |
+| Second book request, two book plans, or malformed/orphaned existing book occurrence | Named rejection with no allocation/consumption; never reuse or silently repair the existing occurrence. |
+| Valid first creation followed by malformed second plan or fresh-ID collision | No partial returned world, including no consumed first request or advanced allocator. |
+| Construction descriptor given an ordinary physical `:writes`, or scheduled in fan-out | Architecture/authority rejection; initialization cannot exempt an ongoing writer conflict. |
+
+Three points is credible only for these two constructors, one reused installation
+path and narrow declaration/test changes. No global component schema framework,
+all-world validator, new request bus, lifecycle manager, general constructor
+plugin API or migration of every allocator call belongs here. Complete semantic
+validation of arbitrary legacy extras is a **known scope gap**, not secretly
+included. If implementing the stated descriptor checks needs a registry redesign,
+return to planning/re-estimation before RED. Pure portable shapes/functions
+should use `.cljc` where practical; existing JVM adapter dependencies do not
+justify claiming untested cross-host numeric support.
+
+After admission, meaningful RED exercises the actual public materializer and
+fresh construction boundary, with existing real stellar producer controls
+([formation tests](../../test/domain/formation_test.clj), 349–439;
+[disk tests](../../test/domain/disk_evolution_test.clj), 243–280) and
+[architecture checks](../../test/architecture_test.clj), 63–71. Do not settle
+for missing namespaces or a fabricated biological tick consumer. Run focused,
+full and all-six strict gates; measure the changed hot path before/after through
+existing `bin/bench` adapters under a separately released resource window.
+Constructor fixtures and those tests cannot satisfy ordinary native origin,
+resource action, persistence, useful account lifetime, embodiment or earned Gate.

@@ -432,3 +432,12 @@
   spore: none
   receipt-refs: life-account-kernel-green/canonical-gate-attempt-02,result PID1288803
   note: Canonical full-gate execution found owned style debt after focused correctness passed. Preserve the failed gate and reviewed source; repair only the named idioms, prove formatter-only indentation, then rerun the actual transition gate once. Keep Review separate from hosted code approval and pure accounting separate from natural life. Existing skills cover this; no spore.
+- ts: 2026-10-07T16:50:30.545173696Z
+  session: /home/err/spaces/foresight/.worktrees/truth-entity-construction-plan
+  task: Bound fresh entity construction without pretending to deliver biology
+  p-efficiency: 0.8
+  p-friction: 0.3
+  p-skill-candidate: 0.1
+  spore: none
+  receipt-refs: validated-fresh-entity-construction,ecf78775
+  note: Observed producer keys do not establish an exhaustive public input contract. Preserve open extras explicitly, name new known-field rejections, and qualify singleton/initialization authority separately from an allocator. Construction capability is not natural life; keep whole-book settlement and final-parent closure atomic in the later owner. No spore; existing source-grounded planning discipline applies.

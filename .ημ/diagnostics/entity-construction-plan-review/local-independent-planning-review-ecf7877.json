@@ -1,0 +1,579 @@
+{
+  "schema": "local-independent-planning-review/v1",
+  "at_utc": "2026-10-07 17:00:51 UTC",
+  "reviewer": "/root/sculpt_plan_review",
+  "author": "/root/intent_research",
+  "status": "PASS",
+  "findings": [],
+  "scope": "Complete current tracked planning diff, new card, author audit and linked constructor/lifecycle/registry source grounding at the frozen hashes. No implementation or native approval.",
+  "root": "/home/err/spaces/foresight/.worktrees/truth-entity-construction-plan",
+  "base": "ecf78775fbd8069fb86386b9d00401bf47476bab",
+  "head": "ecf78775fbd8069fb86386b9d00401bf47476bab",
+  "instructions": {
+    "/home/err/spaces/foresight/AGENTS.md": "f7326deaf01810ed73b6c6d777387599b7669feb596faa019a0c297f1fcf81d7",
+    "/home/err/spaces/foresight/.worktrees/truth-entity-construction-plan/AGENTS.md": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0",
+    "/home/err/spaces/foresight/.worktrees/truth-entity-construction-plan/PROCESS.md": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2",
+    "/home/err/.agents/skills/pr-flow/SKILL.md": "efe5e0818d673b8aab6f962a711ba80c10b7a1877b24b0e986217601b6042472",
+    "/home/err/.agents/skills/pr-sprint-planning/SKILL.md": "01045c4289fe4c4cfe2824fe951aeda84324ffbd4e0cf514648f3bf448396f0e"
+  },
+  "frozen_owned_inputs": [
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/initial-read.json",
+      "bytes": 3191,
+      "sha256": "ddc47b4e6e3bb41372feaa6b04919d69972156e36d642849cbc3d9353a2cfa29"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+      "bytes": 11166,
+      "sha256": "ab695f00a676f7be62985703ebec7618d84e50365fbe317947d113ba23c7cc71"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+      "bytes": 14105,
+      "sha256": "1ac6643b7335b3b188aa901eaf398dd6e375eb5704b6453c554043f94417b749"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/new-child-read.json",
+      "bytes": 9248,
+      "sha256": "229da924177031a86afd953fe97310d83845ca541ce20a1cf8dd9a2404724a26"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 44945,
+      "sha256": "a1c71005941d4a203a9bba1c77ec9b08bcc701bcbce7b0714c05ca378cceb480"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 28016,
+      "sha256": "d3d40b4a02ea37399c2a4ed7fb48a016b5fa023d6bedce23ed14d3be1e5f18b8"
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "bytes": 8873,
+      "sha256": "0fe3759d3017656657c459d26a8e017438757292dff2a1d40707071e73284def"
+    },
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 54619,
+      "sha256": "bdb17400c622bde4278dff751ae4d2a067f5eff21c8c252008422a4ac1e8b292"
+    },
+    {
+      "path": "kanban/tasks/validated-fresh-entity-construction.md",
+      "bytes": 8762,
+      "sha256": "d37fe9af55401580132f0b1f4ec67e63ae1f335cda786d5e38bdc52cdf3d99bc"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/design-audit.json",
+      "bytes": 77512,
+      "sha256": "ae60938c1287bc6732dcf8113dff0a3adfbec7acbe07392e68191431507ae8de"
+    }
+  ],
+  "complete_tracked_diff": {
+    "bytes": 27561,
+    "sha256": "343a38e67cad0a535c4403626e31f1f86203d05c5d0b2073c21571b91c57a8aa",
+    "paths": [
+      ".ημ/receipts.edn",
+      ".ημ/session-mycology/ledger.md",
+      "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "docs/notes/2026-10-07-first-represented-life-boundary.md"
+    ]
+  },
+  "substantive_assessment": [
+    {
+      "subject": "Limited validation and opaque legacy extras",
+      "verdict": "PASS",
+      "rationale": "The outer plan is closed but the legacy stellar spec remains open. Map-shaped extras overlay the seed map before final known-field checks; unknown key/value payloads remain exact and explicitly unvalidated. Non-map extra containers and the reserved life-book key are named new rejections, not silently claimed compatible behavior. Optional known extras are checked when present, including nil. Composition checks elemental key membership and each fraction without inventing H/He positivity or sum-to-one certification. An angular-momentum override does not recompute the already-derived spin.",
+      "plan_evidence": [
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:546",
+        "kanban/tasks/validated-fresh-entity-construction.md:39"
+      ],
+      "source_evidence": [
+        "src/domain/stellar/seeder.clj:31",
+        "src/domain/genesis/bootstrap.clj:299",
+        "src/domain/ecs/core.clj:52",
+        "src/law/stellar/schema.clj:7",
+        "src/law/field/schema.clj:18",
+        "src/law/composition.clj:119",
+        "src/domain/planet_formation/orbit.clj:106"
+      ]
+    },
+    {
+      "subject": "Defaults, frame preparation and real producer compatibility",
+      "verdict": "PASS",
+      "rationale": "The design preserves current-parent frame reanchoring, single absolute frame subtraction, seven channel order, current within-column/spec traversal, existing seed arithmetic/defaults and extras-after-seed order. It explicitly permits preparation on private running immutable results, avoiding a frozen-batch snapshot that would change parent resolution. Existing formation and disk tests exercise real producers and the actual materializer, including second-call no-op behavior; the proposed RED can extend those seams without a test-only biological consumer.",
+      "plan_evidence": [
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:559",
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:654",
+        "kanban/tasks/validated-fresh-entity-construction.md:91"
+      ],
+      "source_evidence": [
+        "src/domain/genesis/bootstrap.clj:267",
+        "src/domain/genesis/bootstrap.clj:274",
+        "src/domain/genesis/bootstrap.clj:310",
+        "src/domain/genesis/bootstrap.clj:341",
+        "src/domain/genesis/tick.clj:167",
+        "test/domain/formation_test.clj:359",
+        "test/domain/disk_evolution_test.clj:248",
+        "docs/designs/multi-timescale-integration.md:192"
+      ]
+    },
+    {
+      "subject": "Closed empty-book capability and singleton checks",
+      "verdict": "PASS",
+      "rationale": "The empty-book constructor accepts only the exact v1 map with integer cursor0 and empty maps, producing only component/life-book. Both current component-column and archetype occurrences, malformed/orphaned occurrences and a second book plan are rejected. Stellar extras cannot bypass this constructor via the reserved key, even with nil. The check is conditional on an explicit book request and does not claim universal world validity, history repair, cross-branch deduplication, automatic first-event allocation or a live biological producer.",
+      "plan_evidence": [
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:608",
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:629",
+        "kanban/tasks/validated-fresh-entity-construction.md:50"
+      ],
+      "source_evidence": [
+        "src/domain/ecs/core.clj:1",
+        "src/domain/ecs/core.clj:24",
+        "src/domain/ecs/core.clj:52"
+      ]
+    },
+    {
+      "subject": "Fresh IDs and pure-result atomicity",
+      "verdict": "PASS",
+      "rationale": "The plan disallows target IDs on creation plans, checks the actual next ID against alive, archetypes and every component column, and repeats freshness checks against running results before calling existing spawn/put-components. These checks address the current allocator's unchecked assoc/conj behavior. It promises no accepted partial result after any later failure, including no consumed request or advanced allocator; callers retain their original immutable world. It does not introduce a transaction service or claim persistence atomicity.",
+      "plan_evidence": [
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:547",
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:645",
+        "kanban/tasks/validated-fresh-entity-construction.md:107"
+      ],
+      "source_evidence": [
+        "src/domain/ecs/core.clj:24",
+        "src/domain/ecs/core.clj:52",
+        "src/domain/ecs/core.clj:167",
+        "src/domain/genesis/bootstrap.clj:310"
+      ]
+    },
+    {
+      "subject": "Initialization, request consumption, reaping and ongoing ownership",
+      "verdict": "PASS",
+      "rationale": "One descriptor is added to the existing registry with narrow initializes/consumes/reaps authorities. Known initialization and the separately named exact per-plan opaque-extra key rule are fresh-ID-only; request removal is restricted to seven processed request families and reaping to six existing marker families. Ordinary writes remain empty for this descriptor and all-stage conflicts remain checked, so future ongoing book/cohort ownership cannot hide behind the new stage. The plan correctly identifies that fan-out-systems currently filters only barrier and that runtime dispatch is a separate explicit system list; both routes must exclude construction and have regression controls.",
+      "plan_evidence": [
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:666",
+        "kanban/tasks/validated-fresh-entity-construction.md:112"
+      ],
+      "source_evidence": [
+        "src/domain/ecs/registry.clj:534",
+        "src/domain/ecs/registry.clj:540",
+        "src/domain/ecs/registry.clj:558",
+        "src/domain/ecs/registry.clj:570",
+        "src/domain/ecs/registry.clj:580",
+        "src/domain/genesis/systems.clj:114",
+        "src/domain/ecs/tick.clj:160",
+        "test/architecture_test.clj:63"
+      ]
+    },
+    {
+      "subject": "Three-point scope and dependencies",
+      "verdict": "PASS",
+      "rationale": "Three points is a credible proposed estimate for two finite variants, reuse of existing seed preparation/allocation, one materializer integration and narrow registry guards with direct tests. The plan explicitly stops for re-estimation if this needs a general schema, ownership framework, plugin registry or migration of unrelated allocators. It adds neither live-book processing nor cohort settlement. There is no artificial dependency on the pure numerical kernel: later atomic settlement requires both prerequisites and must own final-parent closure before actions. The refinement fixes the old proposed row placement without splitting debit from entity/outcome publication.",
+      "plan_evidence": [
+        "kanban/tasks/validated-fresh-entity-construction.md:67",
+        "kanban/tasks/validated-fresh-entity-construction.md:140",
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:438",
+        "docs/notes/2026-10-07-first-represented-life-boundary.md:706",
+        "docs/designs/resolution-regimes-and-scale-coupling.md:126",
+        ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md:10"
+      ],
+      "source_evidence": [
+        "src/domain/genesis/bootstrap.clj:261",
+        "src/domain/stellar/seeder.clj:31",
+        "src/domain/ecs/core.clj:24"
+      ]
+    }
+  ],
+  "verification": {
+    "source_test_config_pins": 294,
+    "source_test_config_all_equal_base": true,
+    "input_inventory_sha256": "3c89621c636f61159dbbd3271db30f7a804580180884c7df7e2e7c78d755a425",
+    "input_inventory_hash_definition": "SHA256 of compact sorted-key JSON list containing path, current sha256 and equal_base for all 294 audit source_pins in recorded order",
+    "source_test_config_changes": [],
+    "owned_inputs_hashes_match": true,
+    "diff_check_exit": 0,
+    "local_links": [
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/gates-of-truth-world-gen-phases.md#phase-2-emergence-of-life",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/simulation-methods-research.md#open-research-questions",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../research/physics/nebula-to-life-fsm.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecology/state.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/law/ecology/schema.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecology/system.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/genesis/bootstrap.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/stellar/seeder.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecs/core.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecs/event.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "2026-10-06-two-seed-natural-formation.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/commitment-and-resonance.md#441-committed-world-grow--bounded-proposal-2026-10-07",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecs/components.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/genesis/tick.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/simulation-methods-research.md#the-honest-resolution-limit",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/resolution-regimes-and-scale-coupling.md#6-coupling-contract-aggregate--detail",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/chemistry.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../research/physics/nebular-chemistry-metal-enrichment.md#31-composition-mass-conservation",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/planet_formation/composition.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/law/composition.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/planet_formation/physics.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/planet_formation/orbit.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/stellar/classifier/planet.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/chemistry.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../research/atmosphere/planetary-atmosphere-retention-classifier.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "#82-validated-fresh-construction-prerequisite--proposed",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../kanban/tasks/life-account-origin-kernel.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../kanban/tasks/validated-fresh-entity-construction.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/genesis/bootstrap.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/stellar/seeder.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecs/core.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/law/stellar/schema.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/law/field/schema.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/law/composition.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecs/components.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../designs/multi-timescale-integration.md#34-composition-with-the-existing-write-channels",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/ecs/registry.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../src/domain/genesis/systems.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../test/domain/formation_test.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../test/domain/disk_evolution_test.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "target": "../../test/architecture_test.clj",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../notes/2026-10-07-first-represented-life-boundary.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../../kanban/tasks/life-account-origin-kernel.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../notes/2026-10-07-first-represented-life-boundary.md#81-first-pure-child-and-account-revision-clarification--proposed",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../notes/2026-10-07-first-represented-life-boundary.md#82-validated-fresh-construction-prerequisite--proposed",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "target": "../../kanban/tasks/validated-fresh-entity-construction.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "kanban/tasks/validated-fresh-entity-construction.md",
+        "target": "../../docs/notes/2026-10-07-first-represented-life-boundary.md#82-validated-fresh-construction-prerequisite--proposed",
+        "exists": true,
+        "anchor_ok": true
+      },
+      {
+        "from": "kanban/tasks/validated-fresh-entity-construction.md",
+        "target": "../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+        "exists": true,
+        "anchor_ok": null
+      },
+      {
+        "from": "kanban/tasks/validated-fresh-entity-construction.md",
+        "target": "../../docs/designs/multi-timescale-integration.md#34-composition-with-the-existing-write-channels",
+        "exists": true,
+        "anchor_ok": true
+      }
+    ],
+    "append_only_prefixes": [
+      {
+        "path": ".ημ/receipts.edn",
+        "base_bytes": 43368,
+        "base_sha256": "ef6eb27e5e5aef68cc85b63a10ff14bea28d5763b8bcf1ae1d3712e38c72bb2d",
+        "current_bytes": 44945,
+        "prefix_preserved": true
+      },
+      {
+        "path": ".ημ/session-mycology/ledger.md",
+        "base_bytes": 27267,
+        "base_sha256": "d6f50712e13b263982af8f2b1fb2b633af1584b5186917bd0ef58e690f23f648",
+        "current_bytes": 28016,
+        "prefix_preserved": true
+      }
+    ],
+    "existing_parent_kernel_cards_and_event_ledger_equal_base": true,
+    "cited_grounding_pins": {
+      "src/domain/genesis/bootstrap.clj": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "src/domain/genesis/tick.clj": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+      "src/domain/genesis/systems.clj": "277c975226f3e12fc15134df8129b237797f396fefc053c72d8759500bdb6225",
+      "src/domain/genesis/promotion.clj": "2526b21abd4c8e2f49a4d199b1513ff0a5ed82ac9cc0a09c238b8fc1a0b53af4",
+      "src/domain/stellar/seeder.clj": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884",
+      "src/domain/stellar/disc_evolution.clj": "a26ed34f6ba8c58ac37c5954d6938408d3b8469abef57635e19f4393ae8c8ceb",
+      "src/domain/stellar/wind.clj": "576e7ff0bf2213692c28f7d1bb523f165033cbcfc39163087b4cdb82155d328e",
+      "src/domain/planet_formation/orbit.clj": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a",
+      "src/domain/ecs/core.clj": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970",
+      "src/domain/ecs/registry.clj": "de335cb32c29d14b2f2de90ceac4149331260d67379840089f2b5991652b9b5f",
+      "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+      "src/domain/ecs/components.clj": "3c72ee71d368b1296434e22ae2870a3c661fcfc96f288f07b8be9156e03f2051",
+      "src/law/stellar/schema.clj": "bd637a34f1a107d0cfeac445f66241cfcf5e08fcb0799faf2c474123d3be578e",
+      "src/law/field/schema.clj": "5a97f4826f774f455c8e15f8bc9c15cd2a5975ceb09fca3f89c982390478f659",
+      "src/law/composition.clj": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615",
+      "test/domain/formation_test.clj": "ee88a17e3c63bc5cc91fa7a2aab9c65808f5a77e228d56a8fd28ea56b55e6322",
+      "test/domain/disk_evolution_test.clj": "f848c33949da09197c3c1b2ee621964d90216d1c49df2738fdfda0d473b98d48",
+      "test/architecture_test.clj": "2c423f4714bc43c5ee6392459979ee3b8de2d7ff09dc2a352ce0183ee437ad44",
+      "docs/designs/multi-timescale-integration.md": "c768e6c40bf970a4239bd4f03eefe89d0505b368f4b032db4acad2a7c06ce1b2",
+      ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md": "13743b0bb8c4e74e7835d49f921eb7f37735767989c8c6e3b20b594ef4e46a05"
+    },
+    "failures": []
+  },
+  "boundaries": [
+    "The card remains a planning proposal. Archived canonical readback says Incoming3; parent and kernel states are historical canonical readbacks, not new state queries by this reviewer.",
+    "Local independent PASS is not a hosted approval, completed review cohort, board Ready/InProgress transition or implementation admission.",
+    "No Clojure/JVM, test, benchmark, native/X/window, process probe, Git staging/commit/push or remote/board mutation was performed.",
+    "Prepared-result, authority, singleton and collision guards are proposed contracts; they have not been implemented or tested by this review.",
+    "Known physical checks intentionally reject some previously unchecked values. Arbitrary opaque extra payloads remain unvalidated; universal semantic or physical consistency is not required or claimed.",
+    "The direct empty-book fixture is construction capability evidence only. Natural life discovery, populated accounts/cohorts, useful resource action, full settlement, persistence and gameplay acceptance remain outside this child.",
+    "Host-path before/after measurement and all required runtime/static gates remain future implementation qualification under the coordinated resource lane."
+  ],
+  "reflection": {
+    "receipt_owner": "Parent; only this new sibling review artifact is written.",
+    "learning": "Review the distinction between initialization and ongoing writes using actual registry selectors and runtime dispatch separately. Open compatibility extras require an explicit limited validity claim, not a universal-schema requirement.",
+    "diagnostic": "A first read-only link check treated an anchor-only link as a directory; corrected its file resolution and reran successfully. No reviewed file was changed."
+  },
+  "next_action": "Parent may use this exact-hash local assessment in its planning publication/review process; canonical convergence and admission remain required before RED."
+}

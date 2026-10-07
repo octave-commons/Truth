@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-07T16:42:23.035971+00:00",
+  "head": "ecf78775fbd8069fb86386b9d00401bf47476bab",
+  "branch": "codex/truth-entity-construction-plan",
+  "before_status": "clean",
+  "authority": "Root delegated planning only: second initial Incoming3 child; no existing card mutation, source/test/runtime/admission/publication. Root explicitly accepted preserving unvalidated legacy extras and reserving the closed book constructor.",
+  "initial_capture_limitation": "First bookkeeping script saved both successful canonical reads, then failed its presumed kanban/.events/ledger.edn path before writing this metadata. Repository discovery resolved kanban/tasks/.events/ledger.edn. No board or ledger write occurred.",
+  "cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "canonical_reads": [
+    {
+      "argv": [
+        "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+        "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+        "read-task",
+        "life-to-represented-actor-spec",
+        "--config",
+        "openhax.kanban.edn"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "path": ".\u03b7\u03bc/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+      "sha256": "ab695f00a676f7be62985703ebec7618d84e50365fbe317947d113ba23c7cc71",
+      "uuid": "life-to-represented-actor-spec",
+      "status": "incoming",
+      "points": "3"
+    },
+    {
+      "argv": [
+        "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+        "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+        "read-task",
+        "life-account-origin-kernel",
+        "--config",
+        "openhax.kanban.edn"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "path": ".\u03b7\u03bc/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+      "sha256": "1ac6643b7335b3b188aa901eaf398dd6e375eb5704b6453c554043f94417b749",
+      "uuid": "life-account-origin-kernel",
+      "status": "review",
+      "points": "3"
+    }
+  ],
+  "prefixes": [
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 38698,
+      "sha256": "8ee8fa3de5a797895d57a474240632cf1f9dd1f3b3f7fbf7aa5b857c46b931c2"
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "bytes": 7459,
+      "sha256": "2424f33cf0528e38fcce8c0f1b98e5136bc87414d0b348cee33cdf86bd524b31"
+    },
+    {
+      "path": ".\u03b7\u03bc/receipts.edn",
+      "bytes": 43368,
+      "sha256": "ef6eb27e5e5aef68cc85b63a10ff14bea28d5763b8bcf1ae1d3712e38c72bb2d"
+    },
+    {
+      "path": ".\u03b7\u03bc/session-mycology/ledger.md",
+      "bytes": 27267,
+      "sha256": "d6f50712e13b263982af8f2b1fb2b633af1584b5186917bd0ef58e690f23f648"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 614516,
+      "sha256": "26bb48bdac2e92fd864588873b4cf2673a638c3029abb1ca5d7db1a321425c03"
+    },
+    {
+      "path": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "bytes": 10697,
+      "sha256": "7ddf455578ace95c7d2bc513e99994444dbce9537516731e0840c836b6c20c89"
+    }
+  ]
+}

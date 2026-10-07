@@ -1,0 +1,2279 @@
+{
+  "at": "2026-10-07T16:49:02.511858+00:00",
+  "head": "ecf78775fbd8069fb86386b9d00401bf47476bab",
+  "scope": "Planning only; second initial child. No production/test/JVM/native/card transition/Git mutation. Manual new Markdown card read through canonical Rheos; no task-created event or prior body mutation claimed.",
+  "source_pins": [
+    {
+      "path": ".clj-kondo/config.edn",
+      "bytes": 5578,
+      "sha256": "f18dc8f5d7b291b734bf4b262bbf9e5bbea73993dab9a0d79bfd7b3dd1c2d1f3",
+      "equal_base": true
+    },
+    {
+      "path": ".clj-kondo/hooks/ecs_dsl.clj",
+      "bytes": 3517,
+      "sha256": "6fd5d5e6c85e3923ceb62fbdf6e9f91e9105e65c4223845c10a63349113c104c",
+      "equal_base": true
+    },
+    {
+      "path": ".clj-kondo/hooks/re_export.clj",
+      "bytes": 572,
+      "sha256": "e1fd093c5b2d56691534dffb6180a90bb9d23e124adf3bc700e37b3c4285c0bf",
+      "equal_base": true
+    },
+    {
+      "path": ".clj-kondo/imports/metosin/malli/config.edn",
+      "bytes": 114,
+      "sha256": "4adba0583d80d7ffcb98b28583dd4d68069205db26089ddfed49c016d1803bda",
+      "equal_base": true
+    },
+    {
+      "path": "bin/analyze",
+      "bytes": 7918,
+      "sha256": "9d7f892e56f0fd6d734ef8b49276e129179e6f6ae1afe7a9e7f1a610df1f53c6",
+      "equal_base": true
+    },
+    {
+      "path": "deps.edn",
+      "bytes": 5747,
+      "sha256": "98138ebd55765b2648c692a89f1b798180bcc6af01ecc0b8fd5e8db135036212",
+      "equal_base": true
+    },
+    {
+      "path": "openhax.kanban.edn",
+      "bytes": 180,
+      "sha256": "15aaca2bdd649d2c354e43d87ca944ab01452c616cbee2e85bdf42f7ffb8c262",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/arc.clj",
+      "bytes": 14110,
+      "sha256": "34af0838056b4206e81281f75a1aee81e404782abd5b998dc73c950cac7c1759",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/atmosphere.clj",
+      "bytes": 3697,
+      "sha256": "1821620e67f2685892b7071e25f3e47044106279333c5e29482b7518d0e5f5d5",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/chemistry.clj",
+      "bytes": 29400,
+      "sha256": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/debris.clj",
+      "bytes": 5126,
+      "sha256": "e550c3ab13239d079c69005aaa6c4a65af9e62b96ba97e372e97426793ba2286",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecology.clj",
+      "bytes": 3065,
+      "sha256": "88594c8581fb51ea15db5b23fbc67a4da1f176bb486b537ee94645307f78f0b2",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecology/abilities.clj",
+      "bytes": 2003,
+      "sha256": "3cb194d543bbb19651bed92157c8c32e812644b4997ce8345ed8c9c84df0f4fb",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecology/math.clj",
+      "bytes": 558,
+      "sha256": "87bdb8d8727bc3008511b2ff51e93c82255643f347727fccdc9b0201cf298a35",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecology/state.clj",
+      "bytes": 8151,
+      "sha256": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecology/system.clj",
+      "bytes": 4714,
+      "sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/components.clj",
+      "bytes": 26487,
+      "sha256": "3c72ee71d368b1296434e22ae2870a3c661fcfc96f288f07b8be9156e03f2051",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/core.clj",
+      "bytes": 6649,
+      "sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/dsl.clj",
+      "bytes": 6492,
+      "sha256": "30c05269b986c41bf35d728ee1cd37fd5578b990cebb9c3c3e6ad86771d63878",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/event.clj",
+      "bytes": 3505,
+      "sha256": "9f208199624dcd1bb94a40c9059dbd88b631f45380155bbdec39022803c1e1c7",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/ledger.clj",
+      "bytes": 3857,
+      "sha256": "0206999a4ae3e136cca8abb187028013317d574f5c187ad9e3d272e63041d87c",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/parallel.clj",
+      "bytes": 1726,
+      "sha256": "43ed42d02d38cb454426bf818b4733b4537d610c9e1800a5fbe50a5dcc4771ad",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/registry.clj",
+      "bytes": 33501,
+      "sha256": "de335cb32c29d14b2f2de90ceac4149331260d67379840089f2b5991652b9b5f",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/rewindable.clj",
+      "bytes": 1147,
+      "sha256": "d27b18ac9d485857e792ef1c573fba117bfcf64ab95231e12e0b9fb8aec8b174",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/tick.clj",
+      "bytes": 12734,
+      "sha256": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/ecs/timeline.clj",
+      "bytes": 5411,
+      "sha256": "67b7d841dc079c33e6835618547afa21662036b1faf91c53e9a1dc9f370d09b3",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/em.clj",
+      "bytes": 15323,
+      "sha256": "284df1349b13b7f653f91f110025f87d4a1714ec887476b99f44ee622f4cb22d",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/em/field.clj",
+      "bytes": 12248,
+      "sha256": "de6b234ecd6bf5deecb9b204003d7053b31f1a746391bfac70dd56497b074f71",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/em/lorentz.clj",
+      "bytes": 21992,
+      "sha256": "23005f829e25e353ec732066499a73745174cf39e4b174fdbd28b882dcbf7868",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/em/magnetosphere.clj",
+      "bytes": 3846,
+      "sha256": "c013ed8ce5f53582767dfab8b608ffa3cc5b3d9ba14a98ec796826c70ed2d2a1",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/field.clj",
+      "bytes": 2514,
+      "sha256": "7cc316397555757bb07790237ab6571c26413f555ce9e7102ca887ec634b13ec",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis.clj",
+      "bytes": 3034,
+      "sha256": "59fc65f322068d8538e587a40ea251b8ef0144f942910501ec83d9f6d6367463",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "bytes": 17495,
+      "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis/promotion.clj",
+      "bytes": 13327,
+      "sha256": "2526b21abd4c8e2f49a4d199b1513ff0a5ed82ac9cc0a09c238b8fc1a0b53af4",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis/summary.clj",
+      "bytes": 8662,
+      "sha256": "64afe4d1bdbcc690c3c9c74e41d8c3afc5a5845b03c14ed13e9fa45fc6094d34",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis/systems.clj",
+      "bytes": 5620,
+      "sha256": "277c975226f3e12fc15134df8129b237797f396fefc053c72d8759500bdb6225",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "bytes": 10517,
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/gravity/barnes_hut.clj",
+      "bytes": 1037,
+      "sha256": "9e6f9de50d2fd17ae2a0a4a15f286ca83afc9e73399510392ae9a74ce45caf91",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/gravity/barnes_hut/force.clj",
+      "bytes": 11676,
+      "sha256": "fd197d7e7e5da5c977991bd259b883911a10d2cf433f924c55ca7d352e35e455",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/gravity/barnes_hut/tree.clj",
+      "bytes": 21226,
+      "sha256": "aa7b332edbefa123ad660c43f3d3b1be466dd35ba55218a755ebaa1fcc910552",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/gravity/dark_matter.clj",
+      "bytes": 4498,
+      "sha256": "186970d14096acc26191a92b68ea87db4db9282b7eb3e0a13cf3d9c194ede93c",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/habitability.clj",
+      "bytes": 980,
+      "sha256": "7fdc9e60fa252e91c71e84b65edfcbc35d10d99a9de90c35daa3910a6cb547e6",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/hydro.clj",
+      "bytes": 5660,
+      "sha256": "e669365e6263c8a82808d19fd8114b37fa19d35f1c4611a5b8e0a75bf568398d",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/hydro/common.clj",
+      "bytes": 2890,
+      "sha256": "1490af6e56df7fad318538d407c8844aac079f833055d939e23607ab42ba8565",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/hydro/density.clj",
+      "bytes": 7237,
+      "sha256": "7a56e9e8e81e4d87040782cbd9f1c781f84afc4d6e6cbc48e7e1dadc16e4feb1",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/hydro/kernel.clj",
+      "bytes": 3620,
+      "sha256": "486c3aaad304809b2d31517846a1494c59b773a9ed9990c82e67bead58ad90f6",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/hydro/pressure.clj",
+      "bytes": 8887,
+      "sha256": "7ffd278aa8c4628d1db409d8a940ff0f56a1fd67470bfd1957f09a26fe9b8c48",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/integrator.clj",
+      "bytes": 4413,
+      "sha256": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/integrator/base.clj",
+      "bytes": 4271,
+      "sha256": "6b490386437788b5e6b7eae238900c25d93220082d7f9f11af3d7f01091691e6",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/integrator/core.clj",
+      "bytes": 14836,
+      "sha256": "08cbb9a5adbec225476404efaf098980386db16947d09e65c5884549e2dd1489",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/integrator/kinematics.clj",
+      "bytes": 31256,
+      "sha256": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/integrator/rotation.clj",
+      "bytes": 3094,
+      "sha256": "a5ade6bd57023f234a3fad1e2a3868ace43c587b32393fcbb8ead1ad898836c9",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/integrator/temperature.clj",
+      "bytes": 6202,
+      "sha256": "75ade47ca2ceff9b5deee9575d900ebf4b54c8004ce364784591e56d73b2f55e",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/interior.clj",
+      "bytes": 30940,
+      "sha256": "a075df171d4788e2fc3bc449504c93ad7a8dbf7167ca2292b60cb874a34ad735",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/intervention.clj",
+      "bytes": 13699,
+      "sha256": "e541dd5df5ff208818d216c9083b73693216409c73599b6ab63be0f641c83dc0",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/life_account.clj",
+      "bytes": 8299,
+      "sha256": "49848d2c0e8d3c43231a231c758bed99315e69924d728ed1f94a3ef0aff9bb4a",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/lod.clj",
+      "bytes": 3320,
+      "sha256": "73a7e501ba1a3e66aba640c4532d0cc972d59a13c1bed2ad76cf6c0bbb59b857",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/mass_transfer.clj",
+      "bytes": 18342,
+      "sha256": "b61cfeb8e62e6154bcf17039e01bd6e978a7c8032ed51c00387d5a7859f57b57",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/mhd/force.clj",
+      "bytes": 10820,
+      "sha256": "fa236a7cf4db0fe6f195744295ea0e8fbe9fffe6359f4c2cc7924ac91cc11890",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/naming.clj",
+      "bytes": 1930,
+      "sha256": "3ca999a9a1cc3d07fcf088731acfbf1c0bce5936fe06cca1fc683fe3a1273c31",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/narrative.clj",
+      "bytes": 5022,
+      "sha256": "eba0287b09b644fae6f1f683f74263edb7f3b46583021daa4d16e3bcb7557038",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/narrowing.clj",
+      "bytes": 19894,
+      "sha256": "19ff9b4f0b9d73b327f6602756ef6b8c10d79fa53838572ef2c964bc5c064d22",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/orbital/integrator.clj",
+      "bytes": 821,
+      "sha256": "2e017dea515bece71fb3666d9653f89decae18fe4133c5f39f0ddfdafab2d026",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/orbital/kepler.clj",
+      "bytes": 10683,
+      "sha256": "3707256ad8695a675c29fe3953f5441598cc2f434baa30ab6e33ab48ae1effc1",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/orbital/stability.clj",
+      "bytes": 5381,
+      "sha256": "ec984b0440487c7dc4307170572e4a9520528b1439b5a93ca1783bc9a3464d01",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/orbital/system.clj",
+      "bytes": 7456,
+      "sha256": "00e6c0ac7f32833749dac1ed95ba4060db390380f4f41e9159dc7730e2855aa0",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/pacing.clj",
+      "bytes": 9091,
+      "sha256": "bdda144e92b23d6b82c114e3dfd908b946cebfbe713a05699d839f5b7e020279",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/physics/cache.clj",
+      "bytes": 2129,
+      "sha256": "740485313b7132c8fbfacd387c010ff7e6052380a200e59731b712a463615131",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/physics/cache/neighbor.clj",
+      "bytes": 23823,
+      "sha256": "e28bf08ef4b7a13e19ecff91327807dedddfa9d6bb7078291eb4d343000afea9",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/physics/cache/soa.clj",
+      "bytes": 7858,
+      "sha256": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/physics/collision.clj",
+      "bytes": 8924,
+      "sha256": "23af18fd025812d4b7820f8e75d7013028f66cef820838abf162c15bd9365805",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/physics/collision_response.clj",
+      "bytes": 3483,
+      "sha256": "88b88759e6f8801fc668422d05aa856d128370968135bb52fc719fb4e643ef3c",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/planet_formation.clj",
+      "bytes": 1721,
+      "sha256": "468a7e4cfbaf412f3102c198e12e2b6d71cdd69df172ff38fac5e26cecc2ce0b",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/planet_formation/composition.clj",
+      "bytes": 2715,
+      "sha256": "471d40398b15baf781a603bd95694c778809bff18da98f2a905c756601aa6630",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/planet_formation/orbit.clj",
+      "bytes": 4755,
+      "sha256": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/planet_formation/physics.clj",
+      "bytes": 6805,
+      "sha256": "e1493f37c5a1bf87c8a7e9edd7a1bb59ac2938c1cad1dc70f451aed420e523c6",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/planet_formation/seed.clj",
+      "bytes": 7121,
+      "sha256": "47cbc999b09125fd576c56899ca68964e3d737e0aa552d1a7757340b6779e548",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/planet_formation/spec.clj",
+      "bytes": 1462,
+      "sha256": "25dee8f9599dcc69b8545c653e2105c3f143b8b44403bd237bfc363478df2bd7",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player.clj",
+      "bytes": 6038,
+      "sha256": "60928786e9b9efc70892eae6f8a7b2d3ecee5655a440b5af06aa9060dbb3275a",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player/economy.clj",
+      "bytes": 4624,
+      "sha256": "a9c4fe928d21346bc6c7107af2d01a66f27c4be750a973236d43a4d1cd3f7147",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player/flight.clj",
+      "bytes": 5547,
+      "sha256": "005b6f5bcb33093e93a76b26e4663af71358cd7535dc7022ff5c74bbe872a5b2",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player/focus.clj",
+      "bytes": 3151,
+      "sha256": "3474d23d27c07312eb216a1a7d939dc0cbae4c1f3f76032f19168177900eb1dd",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player/influence.clj",
+      "bytes": 4717,
+      "sha256": "07ada060628a97c488852b16a29c894b58c9f1ade32369f3fbbc94e9f4adedce",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player/state.clj",
+      "bytes": 6155,
+      "sha256": "e5296cbce5dc2dc525577cba4bd1ae90978f9a9158f85e52f4d3a9c697806191",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/player/system.clj",
+      "bytes": 2200,
+      "sha256": "b0882f59bf9543d41fbe5ca98bb344fced8c6085070371ce1c3e2e67332cd43b",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/profile.clj",
+      "bytes": 2402,
+      "sha256": "edd4712d25f4cc73a087eeac120dfdf7f3521043f3ee303a7c7c066e5eee5eb4",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/regime.clj",
+      "bytes": 9244,
+      "sha256": "d1560aa97609d2d6c0bee6ebf97dbb713b103769f2cfe033268edd3bfcb35ac7",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/spatial/index.clj",
+      "bytes": 15397,
+      "sha256": "280941b79defe025dbdd7c1478940b956c1e0dc9bd270fa4c66f5170f1a94701",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/classifier/candidate.clj",
+      "bytes": 13795,
+      "sha256": "074ab31e9ecd68883131eb0efbbc3e34e8c023c6a5849035b5bb66a20f3065fa",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/classifier/planet.clj",
+      "bytes": 22002,
+      "sha256": "9e0094be9e1876f1a1156f961f99c30cf6e3a7a7eb4e35e54acd953784eff55e",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/classifier/state.clj",
+      "bytes": 15692,
+      "sha256": "b79f901fcac5363fec522705062fdbf75713512551144d2828af812e3d3ffe2e",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/collapse.clj",
+      "bytes": 8112,
+      "sha256": "8f6e332e8f0d246040c440ee0b190dbc826d6924ab21b89bc9d69bf6601c1eb9",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/disc.clj",
+      "bytes": 14598,
+      "sha256": "5d6dca00e22c2ea83802f56e249540b5f9f341930fdda60f043b50857a39e1d8",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/disc_evolution.clj",
+      "bytes": 28919,
+      "sha256": "a26ed34f6ba8c58ac37c5954d6938408d3b8469abef57635e19f4393ae8c8ceb",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/fusion.clj",
+      "bytes": 14473,
+      "sha256": "a3ec37fbafc6f531b4b4dffa19f6b8a551646ccd8a80b52172eedc7aa20ea274",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/geometry.clj",
+      "bytes": 9914,
+      "sha256": "8c59fd5029e094cdc8d256c0bade75434bde2d295d0b54cc9dc02d4fc2c1005f",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/merge.clj",
+      "bytes": 5558,
+      "sha256": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/seeder.clj",
+      "bytes": 8046,
+      "sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/sink.clj",
+      "bytes": 20700,
+      "sha256": "28aa3fae49bbebdf158c379f84c63c30a2d147cfe33e55056650768974ae55a7",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/structure.clj",
+      "bytes": 2762,
+      "sha256": "a084a744ae8553943958c1165970656c6834dc4715707482007e10173c3e72e7",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/temperature.clj",
+      "bytes": 6573,
+      "sha256": "9095bd74434dc0004bb2db24200d0d6cb5e8fa452c5db91996014e246ab85cd4",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/thermodynamics.clj",
+      "bytes": 10584,
+      "sha256": "566e29cab75e4a95e0347dbf807bf9b153d4207ed742bcd6a491fad75719d07e",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/stellar/wind.clj",
+      "bytes": 15534,
+      "sha256": "576e7ff0bf2213692c28f7d1bb523f165033cbcfc39163087b4cdb82155d328e",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/voxel/band.clj",
+      "bytes": 17576,
+      "sha256": "e8f1a863106e24d81129988c7466b48d263299c67d88dea19ded161465a012ae",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/voxel/carve.clj",
+      "bytes": 39875,
+      "sha256": "4e84feb7a0720eadb8a152674821cc917c32d03bb6db4793025469f21a06cd88",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/voxel/focus.clj",
+      "bytes": 17275,
+      "sha256": "c5a606410212f2fd71c74ca8d7910dc8f2622695a0bfa8a937382f497677ce59",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/voxel/load.clj",
+      "bytes": 5622,
+      "sha256": "c4db01247ff876f6b123427e08f3bd8ed94b9b4e9c0318ce599839fd1fa8801d",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/voxel/queue.clj",
+      "bytes": 5787,
+      "sha256": "da7ac433211548575759569b58bbd23c57e4b6ddead9ecf6990041c30fa89387",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/voxel/sculpt.clj",
+      "bytes": 28393,
+      "sha256": "807f7eb41c406d71bdab1d31512de8fcdd7065d8eef2d1b804ad5a098ba5bf5f",
+      "equal_base": true
+    },
+    {
+      "path": "src/domain/world_bootstrap.clj",
+      "bytes": 1714,
+      "sha256": "b443717adbdb04e02fd302daf5854eb52fd2844e35b087272b601fd909453c75",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/camera.clj",
+      "bytes": 5889,
+      "sha256": "b70bd496870cada9aa6ef7739f11f093fed73c57af8e4004b088c0b4d8e1e624",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/camera/navigation.clj",
+      "bytes": 5038,
+      "sha256": "f0a4cd79353d74c952cc0cb0dd3fa8df6cf4199c4c5d52e325fac94fbd750a13",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/camera/navigation/input.clj",
+      "bytes": 7126,
+      "sha256": "7f3c257ec88c928552665033a7c1cf304427b646ab3a0a5c22ef57a36838f1cb",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/camera/navigation/tether.clj",
+      "bytes": 6061,
+      "sha256": "450e742e4414780a2a4194f44f24e5808a620352fcbe0c1174c27bb113e87d6e",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/camera/navigation/tracking.clj",
+      "bytes": 9567,
+      "sha256": "b6f5386f481fcb411aa48769abe635b84008e591682324deaed1d255c743149e",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/camera/projection.clj",
+      "bytes": 2115,
+      "sha256": "6c00bb539089042baf8d2f0b5196eca1a308d45687532e523160656ce5ffeaf1",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/dev/actor_dashboard.clj",
+      "bytes": 19278,
+      "sha256": "e8cc9cb2f024ce3a661096e71e47df77d0914d4fda006e3cb2e209fcd02b4798",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/dev/server.clj",
+      "bytes": 2887,
+      "sha256": "33e4b476d3f56b47b1d3294a1b029d4fd381c300ec39ad7f343b173293d5caf8",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/dev/window.clj",
+      "bytes": 1585,
+      "sha256": "7f8c8558172edc52945ed53a5d938d5d743ab948d8aa14daf95d6a4348b88b6b",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/dev/window/lifecycle.clj",
+      "bytes": 6332,
+      "sha256": "ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/dev/window/loop.clj",
+      "bytes": 25053,
+      "sha256": "79683f0ee0ddc0319765b51a7186e57a04316caf4e9d56953fa6ba63533a1bf9",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/input.clj",
+      "bytes": 997,
+      "sha256": "84d957edd1f9b1f2611d9a0dfc310a401bf22d2a718684760bc96fdef3526283",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/inspect.clj",
+      "bytes": 5791,
+      "sha256": "77ec170aa8469a8b2759b5092e27801a07a9b4f334591e95c31a32b5b4dba409",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/inspect/card.clj",
+      "bytes": 3652,
+      "sha256": "b298d363b9c0d88359a55e95729464be02e83cee5db3fff9cde339a47633dcf5",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/inspect/format.clj",
+      "bytes": 4423,
+      "sha256": "5dbc6570882948cb870c9a445bbe4bbf3f1183a008c96abb87689ffd3d7a603b",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/inspect/overlay.clj",
+      "bytes": 7902,
+      "sha256": "4f73ee044b5cc544efeda41052fc7ed3d3fe9eb0190bf26b689251af809bc66b",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/inspect/picking.clj",
+      "bytes": 3213,
+      "sha256": "cc909dc08d79b7c99c5da85943daa2a77b0e9dd6a203a56fa52dc65da91fab88",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/main.clj",
+      "bytes": 2610,
+      "sha256": "6d94ad269a15c03001e93f0f03f2db4d025a3743cc27cadb1d937613454d4626",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/menu.clj",
+      "bytes": 3000,
+      "sha256": "6f55762c984be8f4ac6ee125e0fd2f3951ccb1419c36548c5090200db6bd6a0f",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/menu/panels.clj",
+      "bytes": 15504,
+      "sha256": "b92fefff01a81949f581de4c6081f8bad5372109e36f65d879d3a19592506a36",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/menu/widgets.clj",
+      "bytes": 13941,
+      "sha256": "e05e57a1db1646c0ec26eeb19029ce78eec325afb904e9e24d18a0f0607a0089",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render.clj",
+      "bytes": 6693,
+      "sha256": "9c6182a5a79c886e574c09dd85b487ed43d97374307bf71b4b445a35440645b8",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/asset.clj",
+      "bytes": 5835,
+      "sha256": "585b32dadb8913da1963fb054833d664fae2d9a39337b6f416414fe389eae1c7",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/color.clj",
+      "bytes": 13587,
+      "sha256": "7e38a8ad483cb18765faddd60614eded6d5bed66acbec7e7f53b9a3e89fe43fb",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/field.clj",
+      "bytes": 7666,
+      "sha256": "901741279b24a63f1b7a66beb1ba16f0dd829cda593c84cb8ae0c5652d737b01",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/hud.clj",
+      "bytes": 21060,
+      "sha256": "8b63d1a1797ae0be97ccdacdb76fb25097303604a77f8fe50a1020e6fa176cb0",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/input.clj",
+      "bytes": 12161,
+      "sha256": "313c057d2fcb02d5018ed817b626fc34f5adf91b06e8cbc458a4d1abb249289e",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/material.clj",
+      "bytes": 3256,
+      "sha256": "7eb932386621168740bcabd19307a65eb66cb47a282a88377a0ff9c4e20ec965",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/math.clj",
+      "bytes": 2863,
+      "sha256": "dbf4bc4a8cac1b36053018d0c3f1ee42108a7dcdfeb9709216acf501cde3ef4b",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/mesh.clj",
+      "bytes": 9057,
+      "sha256": "5c44bdbc962845d3f45af84f4c81a7dd6de65fcc01ee321ff1737ccf47ab6d22",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/passes.clj",
+      "bytes": 4639,
+      "sha256": "a96e6e666183e0064a420d26aad845444d7705cfc0035241a9c4c5c26bffbff9",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/scene.clj",
+      "bytes": 1597,
+      "sha256": "bb375f5daf2bf33169fde15055481fc370ca63a75d45071326eeeb8edad0eeeb",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/scene/bodies.clj",
+      "bytes": 13389,
+      "sha256": "e546f1b33cbf9f2143e3eb28f85b728c7e658d8d35deea90c0556b238ddf7d14",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/scene/hud.clj",
+      "bytes": 3393,
+      "sha256": "7d89a7eef799e891e083851223143ab299d690a7f7ff055895cc662a97ad02ca",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/scene/particles.clj",
+      "bytes": 6239,
+      "sha256": "9647331325d491158d287b9b662f005c33f0634ad2719bb9bb3fa38eef56a2b2",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/scene/setup.clj",
+      "bytes": 11563,
+      "sha256": "801001d2938357381ff907219c761de6ec29b4a67a00640b2f095b9d847f1516",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/scene/voxel.clj",
+      "bytes": 4771,
+      "sha256": "a66a5373dc065e07f964b03aa27f57512ab661eabcdf4388f2d2b102be9cda9d",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/shader.clj",
+      "bytes": 22629,
+      "sha256": "8f671de3c45ed77aa0bc99b2b291ca9efbe1f30e4524d5d45d8e9cf5384427df",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/units.clj",
+      "bytes": 6198,
+      "sha256": "c31ae0e5c2d6b598fa4a7ae70c430890794001a637999dfffaccd12d83cc9573",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/volume.clj",
+      "bytes": 10747,
+      "sha256": "0811b4977f41e2b25db17a696f265c423d51edf7f441ccbaf71a3af33abc30ee",
+      "equal_base": true
+    },
+    {
+      "path": "src/infra/render/window.clj",
+      "bytes": 8480,
+      "sha256": "817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/atmosphere.clj",
+      "bytes": 5042,
+      "sha256": "ee9e9b692932bf358e6de62ad2e242d1bce1b65721338b1d3b5cc126c08377bd",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/chemistry.clj",
+      "bytes": 5886,
+      "sha256": "640d47257a4157676232a94a981a41a1d9ad528c9c36eacf65c437565c4a5066",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/composition.clj",
+      "bytes": 8500,
+      "sha256": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/contract.clj",
+      "bytes": 2794,
+      "sha256": "23c5aa68995e8389742cdc5dbbd5433765a4331410eec39e0cd7b50e70214b19",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/crater.clj",
+      "bytes": 18254,
+      "sha256": "457b503c4777fd8b31d0d4c0eaf6a4790b15cdfb9af59e84dd03575075a3c6b3",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/ecology.clj",
+      "bytes": 2323,
+      "sha256": "efe59df6084335a501bd7f0be29f8fba75b62e0156e86a707aef7acdde5d4691",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/ecology/schema.clj",
+      "bytes": 2996,
+      "sha256": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/ecs_dsl.clj",
+      "bytes": 2547,
+      "sha256": "03a885276719fbf96cadca6c42cf03ec57034278327fc572a490fc153ebb718c",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/field.clj",
+      "bytes": 6173,
+      "sha256": "efe4cbc6df8a0e5143d2d7c2a9892b41628ae8e4a3fdd2a7029c0a13eae60f5d",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/field/schema.clj",
+      "bytes": 11872,
+      "sha256": "5a97f4826f774f455c8e15f8bc9c15cd2a5975ceb09fca3f89c982390478f659",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/interior.clj",
+      "bytes": 9662,
+      "sha256": "3775a7a9f40a1c9cfe7500a5adf25bf3c34f8cdb73acd21c16ef411242804ecc",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/ledger.clj",
+      "bytes": 4612,
+      "sha256": "7b20d912b2e3622a02cdb517ed7cc294217519a953a90417712a3c753572cb89",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/life_account.clj",
+      "bytes": 12343,
+      "sha256": "22c12fb4e6cf3f1c46dee45fd770d73bc326efba662effe86123efaa9e8c72e6",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/mass_transfer.clj",
+      "bytes": 7976,
+      "sha256": "d0731c2c47622a93bc683d6cc3570e248e24200d223669fc985a9f80a65e5f89",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/mass_transfer/schema.clj",
+      "bytes": 2401,
+      "sha256": "ebf247f862da22711f5abdafd71aa9b5ddbfe208d0dcf37fee62f5167efa506b",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/mass_transfer/validate.clj",
+      "bytes": 917,
+      "sha256": "62bcb8e203ba3091080f38ef7f124645a15b926a2d14e6e0635b8988088d6b0a",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/narrative.clj",
+      "bytes": 1350,
+      "sha256": "56e9ce069465a538ee4ffb098ae00c5f897ef6b3887af9955260b9d80315fb63",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/narrowing.clj",
+      "bytes": 8477,
+      "sha256": "99637d7d05c58bb4c186f1bf153db7aa4bb59f9645dc0acf46c5d72dbc6a3bb2",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/plasma.clj",
+      "bytes": 11663,
+      "sha256": "b42aa5e8b721c7c46a4971cc22d394ca475d9ef8d15f95804381712592d6746f",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/registry.clj",
+      "bytes": 2651,
+      "sha256": "1426f36362a58c6417e1c50ed5174abde044139379b694118598dc4d1b70b5da",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/render.clj",
+      "bytes": 4444,
+      "sha256": "be4a740676275ba070bd1fc336dfa3edaa6c0735602450418fb7a2792f9dd4e9",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/rotation.clj",
+      "bytes": 1486,
+      "sha256": "04ebe429a8cc5263e27d9a9b1d4a9a1bc3319a37d9f66be276bc27255529cbd5",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/sed.clj",
+      "bytes": 11105,
+      "sha256": "353e3fe3f4aff7d9a6049134f118b19b971df5abb9288f1306c94a46e572eab2",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/spark.clj",
+      "bytes": 2664,
+      "sha256": "e4488c943825fd68bf2d07100962707d0d431d3d83c0709c7a327e282c8acf19",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/stellar.clj",
+      "bytes": 3947,
+      "sha256": "e8522d3499f6602e9a42b6dde2074561b41d0969b21f61b6fd7fa48d1dccf88f",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/stellar/orbital/constants.clj",
+      "bytes": 9817,
+      "sha256": "8fc73756e353e2595a72b90d7039ae6a7e923531651397bb72419c89793378a6",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/stellar/orbital/dynamics.clj",
+      "bytes": 9406,
+      "sha256": "3e733124ad9bef7b7618b341c0e9cf90f0d1436a4879ff68f34471aadb007cc6",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/stellar/schema.clj",
+      "bytes": 8657,
+      "sha256": "bd637a34f1a107d0cfeac445f66241cfcf5e08fcb0799faf2c474123d3be578e",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/system_specs.clj",
+      "bytes": 13311,
+      "sha256": "be6df0d86003679ba2189ed3c1539a5ca317867d14b5ef035c7ed28ba89855df",
+      "equal_base": true
+    },
+    {
+      "path": "src/law/voxel.clj",
+      "bytes": 22477,
+      "sha256": "f2ce5af5d384e522879212d3168b2b67162ce9e0de9bb515033fcd8a48a6a4d0",
+      "equal_base": true
+    },
+    {
+      "path": "src/shape/core.clj",
+      "bytes": 1677,
+      "sha256": "80dbae4333794019ae94ef9d459dcdc038b6fe01c44b0e1bfe751c53bf0819d2",
+      "equal_base": true
+    },
+    {
+      "path": "src/shape/quaternion.clj",
+      "bytes": 2026,
+      "sha256": "c56c9efc3c5cbafc960c344c161287ea40457b4c0f52e514f6f6eca73ab09f82",
+      "equal_base": true
+    },
+    {
+      "path": "src/shape/spatial.clj",
+      "bytes": 6948,
+      "sha256": "f6a30b104a11407db608f0e5f7ca14e5f8ecbac67b3d8c9a023bb628d242ab25",
+      "equal_base": true
+    },
+    {
+      "path": "test/architecture_test.clj",
+      "bytes": 5478,
+      "sha256": "2c423f4714bc43c5ee6392459979ee3b8de2d7ff09dc2a352ce0183ee437ad44",
+      "equal_base": true
+    },
+    {
+      "path": "test/benchmark_coverage_test.clj",
+      "bytes": 1920,
+      "sha256": "32b08c7a13f5b75c8bdb01a07b426e36386511f92539c5ac211717ff31850028",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/arc_test.clj",
+      "bytes": 11796,
+      "sha256": "0b9cd9147ab5942fa2919b797dae80c930353cd769925e128c1cd427ab5c7fe2",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/chemistry_system_test.clj",
+      "bytes": 5165,
+      "sha256": "467108102e9e16838651a76a96f32fd5ecc5ca087edb9f339c78765afb17f964",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/chemistry_test.clj",
+      "bytes": 6439,
+      "sha256": "e6c8e80e6c7fa4ccd85f6eb0a776279cdaa2bd136ab5a36ad5b2e9cfd535d85c",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/classifier_test.clj",
+      "bytes": 7271,
+      "sha256": "54af8e18456f8df4e9d777efbd324cdf8fc9ab7010b99a8baddf358fe111afd8",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/collision_malleability_test.clj",
+      "bytes": 4736,
+      "sha256": "7c50113b29aa0e2ad03504fac38c2360304c1cc51ede48d851893d42f0b199dc",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/commitment_test.clj",
+      "bytes": 9718,
+      "sha256": "8072d9544c3ad04b9d9ea7e9b26292c5e756905801c5cb3e89247c30e729b5dd",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/condensation_seeder_test.clj",
+      "bytes": 13011,
+      "sha256": "231ea2ebf7fb67b5f2aa5e0d06aae675d9b09327f6bcdb6659c9edca1655e16e",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/debris_reaper_test.clj",
+      "bytes": 4152,
+      "sha256": "e40d117efcd5a0328b91c5ffb29c3ae9ca1682d64c1f76aa60608a5d00c71695",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/differentiation_test.clj",
+      "bytes": 10821,
+      "sha256": "789308481420c5c5a84b95d015d1f5018915868e075c224fc5a9ba136b1d51b7",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/disk_evolution_test.clj",
+      "bytes": 19726,
+      "sha256": "f848c33949da09197c3c1b2ee621964d90216d1c49df2738fdfda0d473b98d48",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/dominant_star_test.clj",
+      "bytes": 7389,
+      "sha256": "94464558cfaab1c5042117f5fafc7b2672a57453599d5d738b539fe2c5cb79d1",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecology_test.clj",
+      "bytes": 8324,
+      "sha256": "5e41bdf0315b1b4cdfb6bea71dd7a3a49cf7863c52cd5958c1c9611e9774a420",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/core_test.clj",
+      "bytes": 4684,
+      "sha256": "711eec49f1b4118d6b28abb36d77409d4ac849bcef0fb1a720079af1aa397a21",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/dsl_test.clj",
+      "bytes": 2941,
+      "sha256": "6f36ce5a0941829916ea3aafc9170186565e3a82da96ccd475e76484b7985633",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/event_test.clj",
+      "bytes": 1654,
+      "sha256": "f176c8485aa08e6c1b76fa0228b85b7fb9302729f2aff7ae9fc08136eb196fb9",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/ledger_test.clj",
+      "bytes": 3304,
+      "sha256": "dab37f5f847d1814255d3ade470144055dddb8c0f6f99daa5ebf38bfb9126f9b",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/parallel_integration_test.clj",
+      "bytes": 3517,
+      "sha256": "306e73c37ef654517a231bda4d314cb665d2a51d18ec3f80b3b38d8c92e4f4d3",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/rewind_test.clj",
+      "bytes": 2602,
+      "sha256": "d95253b0ae5943fbe8bcd405c0e8ed08be42adf8c8b73336d5f213ea9d28d1ad",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/tick_test.clj",
+      "bytes": 5744,
+      "sha256": "35f1c13780f4350e0f012de1eff4ca326ca9c62996369fb02446855cfbd5acd1",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/ecs/timeline_test.clj",
+      "bytes": 5092,
+      "sha256": "e962001544bf4fba4744948fe14a372b0def27287d113dfdf41d8839d812e0fb",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/em_field_substrate_test.clj",
+      "bytes": 2862,
+      "sha256": "df5e4f151b913a26fcbf5f7e93f00bcce741f20df6f6ab3620f876cb70656df6",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/em_lorentz_test.clj",
+      "bytes": 14644,
+      "sha256": "75d6f91d37aeba5a60d5db658ca15a4cc824abc7d69c4acc8a409a89f4921654",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/em_test.clj",
+      "bytes": 3066,
+      "sha256": "f78af047c4fe4de5eab870946a394b2bd2a01bd6fe34ce9b310065acbb6f58fb",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/eos_test.clj",
+      "bytes": 1601,
+      "sha256": "8402549284d5e530814f7bab16c4de44ef9edafc471ef3e99426d561d05b9dbc",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/field_cell_test.clj",
+      "bytes": 5328,
+      "sha256": "bed85d40cb00da8f1abbeb7fd8753e9acea7d9aa2c970d3fef4940655f748e14",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/field_test.clj",
+      "bytes": 1847,
+      "sha256": "a73ae1cd66ca48299fb826b4fa08c1ffb08d385b413be99c7bcedde8419992f2",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/focus_conservation_test.clj",
+      "bytes": 11457,
+      "sha256": "e8bace4ff4d7940029e9142b5e39039ee79238109228b1373b3f6f38221b38b8",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/focus_zone_test.clj",
+      "bytes": 7147,
+      "sha256": "302197eac6d7ad75111c1bf1e08f5d080523bc0976e8718f596e1d7d891011ec",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/force_accumulator_test.clj",
+      "bytes": 3318,
+      "sha256": "e59e374ab14602eadcc00e1ac800c19b2d1547b8bb367ef0fa1e3f03080e8c9e",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/formation_integration_test.clj",
+      "bytes": 12607,
+      "sha256": "61b21fcf4f5a6caa0c08c8ff9a6303eb6cbfb2da827da24c71d785fd6278b155",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/formation_test.clj",
+      "bytes": 23197,
+      "sha256": "ee88a17e3c63bc5cc91fa7a2aab9c65808f5a77e228d56a8fd28ea56b55e6322",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/genesis/formation_progress_test.clj",
+      "bytes": 4391,
+      "sha256": "f01e635d4bef9906a0c4bb46536d85667378ce410290c1f8f4b6b89b514a383a",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/genesis/handoff_test.clj",
+      "bytes": 10515,
+      "sha256": "d983d874803cf6bc85462581f673c2c6c18a78da2cbb5c9b2ece41113754b3c2",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/genesis_seed_test.clj",
+      "bytes": 1724,
+      "sha256": "4a2d3b5c17c3263692e10f09c583b580d3a4bb84b26cbeb73e69fe6d90dab6f4",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/genesis_test.clj",
+      "bytes": 22650,
+      "sha256": "5bcdaa44071644967c1e128702698e2ee4021853cb663fb361441660163d8fed",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/gravity/barnes_hut_test.clj",
+      "bytes": 14552,
+      "sha256": "0b9dd66765df0d4d9720e218499fbb35a381845e0c2548805f7a803a247cc578",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/gravity/dark_matter_test.clj",
+      "bytes": 5839,
+      "sha256": "a0de6405f0f31c4ac7cfe11e63be99b98644bbd2f2fc1a9b3e9b780023f9e022",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/gravity/pair_softening_test.clj",
+      "bytes": 11732,
+      "sha256": "904b1497a06769b3354dae61379b6f8c873ea28492fa641124e5191c732fa64e",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/hydro_test.clj",
+      "bytes": 34823,
+      "sha256": "bd00c89cdf98a767d5c10dc29d1ca34db94fbd7d33e0e6978fe2383b1e11120c",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/integrator/universal_substep_test.clj",
+      "bytes": 34910,
+      "sha256": "b185953fd07329b4588160e76404922b129ff7e5eb29aceeb5bbd300331e6877",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/interior_test.clj",
+      "bytes": 12087,
+      "sha256": "5bcaceb17a28571692f9cafd75c9dd8731c309d7f022898b18e56242d12f232f",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/intervention_test.clj",
+      "bytes": 8510,
+      "sha256": "8428bb81bd929158e8665d066f3ccf1443b0f558b76b926913d60fc3712578a6",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/life_account_test.clj",
+      "bytes": 20297,
+      "sha256": "1390313ee327df7fcac345546ff05600ecc9b935e3f3ee8adb63d30500374665",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/life_arc_test.clj",
+      "bytes": 4479,
+      "sha256": "2a59303f35871bfd3267539179c249ac20cdb067a058883b6f2335dbd6d6991b",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/lod_test.clj",
+      "bytes": 5755,
+      "sha256": "10e5484fe4aa8d2f84eec228d9087f219a93b9858b75c1667653007c0b85b34b",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/mass_transfer_test.clj",
+      "bytes": 8937,
+      "sha256": "f1de5e9ef0d50706d0fb803fbe76015682852751ab4f908e77437729170ff5d6",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/mhd_force_test.clj",
+      "bytes": 7412,
+      "sha256": "4b57403a421b6084f514ed38c2b1f880256e54e62a826167a5238a19179ae2e0",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/naming_test.clj",
+      "bytes": 1179,
+      "sha256": "b5fb20591792dc28abdd979e1ee9e74fdd8a344071ec33632272ea590583f086",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/narrative_test.clj",
+      "bytes": 5997,
+      "sha256": "2297227c6c2cb001538c3751ef7d46388ece40471b2b15eaaafc9cdec43b04c1",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/narrowing_test.clj",
+      "bytes": 10306,
+      "sha256": "8cadfd1e490388ebc98463fa5d380679aa6bdaf20b36f68de133526f066a3eae",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/observer_influence_test.clj",
+      "bytes": 6211,
+      "sha256": "6210e7621fd191a0ff7e8d6d2117bd7ac3e63b1619de73a6787f9ba1e76cd861",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/orbital/kepler_test.clj",
+      "bytes": 3492,
+      "sha256": "1bafae39d365925120df1e2e9359fd02180e3d3c16154fccd0ca3e646867b76e",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/orbital/multi_timescale_regression_test.clj",
+      "bytes": 20647,
+      "sha256": "e1f4db0e17f245433c0dafc595e58d94d11a55b02e1c87c9f9134524f51c4c3c",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/orbital/split_test.clj",
+      "bytes": 3054,
+      "sha256": "d480ed97f1eb108d873380303ad3e6d7211ee9920d27ccd24d99a05e3f8147dd",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/orbital/system_test.clj",
+      "bytes": 5697,
+      "sha256": "b068e866909ec216967421f6df8517b05468e229f56e6a87669c034bac93a25c",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/orbital_stability_test.clj",
+      "bytes": 4601,
+      "sha256": "5ee0c0e1be2f8e31b2e0dcc270722ca453c37696de7ac8733e2d5b11208d7566",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/physics/cache_test.clj",
+      "bytes": 19981,
+      "sha256": "44b865c015f1c995bb1c30309e8437357f717153e7a0550523dc50886edef2a3",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/physics/collision_test.clj",
+      "bytes": 8693,
+      "sha256": "1cca24bcff9bce21f96dcafa3b1ed66d78a192074453a1444288b84907ed6759",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/physics/soa_cache_test.clj",
+      "bytes": 12431,
+      "sha256": "a471727f7aab0e647ab4efd7f158fd014fe1b53514525264bddc61c824a24b3a",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/pilot_resolve_seam_test.clj",
+      "bytes": 10931,
+      "sha256": "34d6cd24b91bb79b9fa5b5ac561ac9bee97c8e75396e2efe35d9e6d3fe18f48a",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/player_test.clj",
+      "bytes": 5772,
+      "sha256": "2b87cf4ff3d0e61288b36cf64aeb2127fc53152d1e47c24a0e90caed6ca814e6",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/profile_test.clj",
+      "bytes": 3151,
+      "sha256": "5d1b9bc011e75ac69e475af1ae5269c3e30f154d81d0ab4199ab7f0d48e7b54c",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/regime_test.clj",
+      "bytes": 7847,
+      "sha256": "f118d74cc6f72bac35abdcfba8a4a4797d29c4eae199a493c3c08f893594d5a4",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/rotation_test.clj",
+      "bytes": 9096,
+      "sha256": "661055f8a04cbc78bb8d8e8fb30ea0fe87d23c7e15ce719aa439cb4a05e90c43",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/spark_body_test.clj",
+      "bytes": 15833,
+      "sha256": "28de0fccf11b1f627b73085c00b53f7de3dce743d364ab0d9d1df83f03a188ce",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/spatial/index_test.clj",
+      "bytes": 4165,
+      "sha256": "2112e63806f3c449847f38051f9b079e70ca893855a40fe7d8a7785fe5b611d9",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/stellar_classification_test.clj",
+      "bytes": 9966,
+      "sha256": "37dca2e4ee28011e7101eee29dd341c9fa92b63a5d29ebc441b27a1cc579fc98",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/stellar_test.clj",
+      "bytes": 55450,
+      "sha256": "433462a895b07c9be2cabcffdab280b193ba8bd0609176e2506abea27c1bbfc9",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/stellar_wind_test.clj",
+      "bytes": 8128,
+      "sha256": "ed6a1c113122d917ed6f89badd5a7fb455abe86a2996b75e796316c3cae759ea",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/structure_test.clj",
+      "bytes": 3314,
+      "sha256": "389a033736d390049d2de2b88bc3c642435d48e97a1d6e6e897d53fa064c4b01",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/time_slip_test.clj",
+      "bytes": 2860,
+      "sha256": "1af1127b5424e78155c798c13b809bf1acd3b59b690501f696bc6e737e39c24a",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/voxel_carve_test.clj",
+      "bytes": 23048,
+      "sha256": "3f3151e411d95e697d09df5632cf386361b2851988f33ddf01e46d51fe9f2ed8",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/voxel_focus_test.clj",
+      "bytes": 25367,
+      "sha256": "b8bf4ecaf1017defd48debcbf5924d0d966ecbf07bbef5bea3d2063cec584e3f",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/voxel_load_test.clj",
+      "bytes": 15070,
+      "sha256": "de75f58e7d366aea7df1ea35b8b49f669c2db75c2d4abc6b5c00f394fd921d84",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/voxel_sculpt_test.clj",
+      "bytes": 19060,
+      "sha256": "3019899a9556163d9fdd4bffac01e3eb52cda582ec002d3bdb3d66fe6afd9727",
+      "equal_base": true
+    },
+    {
+      "path": "test/domain/world_bootstrap_test.clj",
+      "bytes": 3896,
+      "sha256": "e81dc68664bb8a60c1774854baff63cba4b55f4427a531d7a220cbf5557e25cc",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/appearance_test.clj",
+      "bytes": 3641,
+      "sha256": "fa13b35a71d20bf1a961e14cceb36a93b057ed8dc88c28313e478fda3ea94cff",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/camera_test.clj",
+      "bytes": 18585,
+      "sha256": "e369b540927fac1507a02f95c1a29e30439aa7e5a81b3584346d49a0d2836308",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/dev/window_test.clj",
+      "bytes": 6515,
+      "sha256": "46f83b175bde6417482bad92451dc530cf1dfa555c1c90bca2bf77c18bd7bef4",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/flight_precision_test.clj",
+      "bytes": 8793,
+      "sha256": "e83920f4ab0f6f2ace55df6d2d61beaf215ee6d5ed5ccb91eb50ebcba23228c1",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/input_test.clj",
+      "bytes": 734,
+      "sha256": "9aa9c6dde785ecff7b84b33d6c9f59438e029cf7f12f81984a3bb9354493fea4",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/inspect_test.clj",
+      "bytes": 6641,
+      "sha256": "957afa6c73252a3e7a1a42a5f129faf487bfb296c5fdc599c2fcac58d3cd1ffa",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/main_test.clj",
+      "bytes": 3237,
+      "sha256": "3d2459c46e51d2df9c2800c9386dc32fd2ce74d04b92acd29868a87c695ef2a6",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/menu_test.clj",
+      "bytes": 8540,
+      "sha256": "9a49643b63e7e0a704c3d12785cc8fad1709b5e7a51b0ca21bc6e63d76799396",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/asset_test.clj",
+      "bytes": 3066,
+      "sha256": "c2de7c87040af3281053c23fedeb2b8ef12f15db392b32d1280846c726a13543",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/field_test.clj",
+      "bytes": 7909,
+      "sha256": "f44350e6c2d350af03a3a05dd2052f52f6a4c8a2f5e648af1017b6087aa5db7f",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/input_test.clj",
+      "bytes": 6760,
+      "sha256": "605f462c11d596a24070173592dc98048006849197c988a779fb7ca8bdfee8f2",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/material_test.clj",
+      "bytes": 3967,
+      "sha256": "3c5572468acda18c8d48ad4648974e4b57b83a560cc732472b32e95ed391a5d5",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/passes_test.clj",
+      "bytes": 4095,
+      "sha256": "47533da5485f83f97cbe2f3e89ca5ec0f9d6dfa9696f64307e723c6e1f481e04",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/scene/voxel_test.clj",
+      "bytes": 4740,
+      "sha256": "c52d303bf782c7ab4f52ff5eb3dbd622f4a6627a59012f98efd0ebb46cf5db57",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/shader_test.clj",
+      "bytes": 2536,
+      "sha256": "a13f2011efe7632cbb26bdd46624fa608e975f6ca847bb6a8df03153e8df4566",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render/units_test.clj",
+      "bytes": 4233,
+      "sha256": "d97611a64a7fb3f2c9684dd79a7c4d434ae4aa053151351466628208ce999d7e",
+      "equal_base": true
+    },
+    {
+      "path": "test/infra/render_test.clj",
+      "bytes": 26483,
+      "sha256": "8608d4e53eafa46ba807f39d0cc8f559528760e23bff68a0b73cc40a5af37525",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/composition_test.clj",
+      "bytes": 2429,
+      "sha256": "8411f6c3a69bc47c012b3811892aad0a13ef8c07d37772fbb66fbf836972cd45",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/contract_test.clj",
+      "bytes": 3284,
+      "sha256": "38d7b241bc728fd1123eb7b1980aae2f42de4fefe9e28b1b60174d12db0d9aca",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/ledger_test.clj",
+      "bytes": 2001,
+      "sha256": "2552487d6f12879a9b93abc8695151cc8ecbdf313a65ff9ab4c3e5d2137fc866",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/life_account_test.clj",
+      "bytes": 8345,
+      "sha256": "96de33b0d20368b13846375201dc249035b0953fe2c0bef4c8a538e36c0a6eba",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/pair_softening_test.clj",
+      "bytes": 1819,
+      "sha256": "8215762d715f76708e60c99d7bec8ed9687233dfd27cabf91d3a4d8e77c8ffaf",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/plasma_test.clj",
+      "bytes": 3554,
+      "sha256": "b495d02c9f44307f825b483d7d7b3932991e18ac4ace414697209d5b733ff6ab",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/registry_test.clj",
+      "bytes": 1994,
+      "sha256": "3fb12f46e7c5b09c3f2ca545d853e3f797a36faa7b3a155ef7820510610329c4",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/render_test.clj",
+      "bytes": 3204,
+      "sha256": "41510407ccd0318c87f63830a8140347788621255c8bb3111eed9f1a48ddb1f7",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/seed_contract_test.clj",
+      "bytes": 3187,
+      "sha256": "2c8aa1e551827f7ec3bc4298d87c2e06707e70f4848c0618e3f6d58593b5cf93",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/stellar_halo_test.clj",
+      "bytes": 2298,
+      "sha256": "ee9ca9047e02ef1e1cc295ec0dd5ae84e69e43a93b16f63c68c412b38b6b9608",
+      "equal_base": true
+    },
+    {
+      "path": "test/law/voxel_test.clj",
+      "bytes": 5759,
+      "sha256": "ed5bc16d7c037f107419a5e11aaf8a0380cc00f597c937e6568d5ce45367ff69",
+      "equal_base": true
+    },
+    {
+      "path": "test/shape/core_test.clj",
+      "bytes": 1252,
+      "sha256": "b5d478735f328eb9571306ba23966461652c8ed71e1aa421871ab0679465bd43",
+      "equal_base": true
+    },
+    {
+      "path": "test/shape/spatial_test.clj",
+      "bytes": 2807,
+      "sha256": "bb3be7fb869bcf1ad1326c0b7df698899ec05b320994fe0eb663e2a1220e81bd",
+      "equal_base": true
+    },
+    {
+      "path": "test/support/worlds.clj",
+      "bytes": 2844,
+      "sha256": "54c7c41f58e87981b043e32f5211d90990330447231536247170bedb43e24182",
+      "equal_base": true
+    },
+    {
+      "path": "test/test_runner.clj",
+      "bytes": 4582,
+      "sha256": "673ed8dd72209013513372d5d9bc8dcf9bf6e144193f401184a0a9be3e1163c7",
+      "equal_base": true
+    }
+  ],
+  "sources_count": 294,
+  "links": [
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "resolved": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers",
+      "resolved": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/gates-of-truth-world-gen-phases.md#phase-2-emergence-of-life",
+      "resolved": "docs/designs/gates-of-truth-world-gen-phases.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/simulation-methods-research.md#open-research-questions",
+      "resolved": "docs/designs/simulation-methods-research.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../research/physics/nebula-to-life-fsm.md",
+      "resolved": "docs/research/physics/nebula-to-life-fsm.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecology/state.clj",
+      "resolved": "src/domain/ecology/state.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/law/ecology/schema.clj",
+      "resolved": "src/law/ecology/schema.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecology/system.clj",
+      "resolved": "src/domain/ecology/system.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/genesis/bootstrap.clj",
+      "resolved": "src/domain/genesis/bootstrap.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/stellar/seeder.clj",
+      "resolved": "src/domain/stellar/seeder.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/core.clj",
+      "resolved": "src/domain/ecs/core.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/event.clj",
+      "resolved": "src/domain/ecs/event.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "2026-10-06-two-seed-natural-formation.md",
+      "resolved": "docs/notes/2026-10-06-two-seed-natural-formation.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/commitment-and-resonance.md#441-committed-world-grow--bounded-proposal-2026-10-07",
+      "resolved": "docs/designs/commitment-and-resonance.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/components.clj",
+      "resolved": "src/domain/ecs/components.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/genesis/tick.clj",
+      "resolved": "src/domain/genesis/tick.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/simulation-methods-research.md#the-honest-resolution-limit",
+      "resolved": "docs/designs/simulation-methods-research.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/resolution-regimes-and-scale-coupling.md#6-coupling-contract-aggregate--detail",
+      "resolved": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/chemistry.clj",
+      "resolved": "src/domain/chemistry.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../research/physics/nebular-chemistry-metal-enrichment.md#31-composition-mass-conservation",
+      "resolved": "docs/research/physics/nebular-chemistry-metal-enrichment.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/planet_formation/composition.clj",
+      "resolved": "src/domain/planet_formation/composition.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/law/composition.clj",
+      "resolved": "src/law/composition.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/planet_formation/physics.clj",
+      "resolved": "src/domain/planet_formation/physics.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/planet_formation/orbit.clj",
+      "resolved": "src/domain/planet_formation/orbit.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/stellar/classifier/planet.clj",
+      "resolved": "src/domain/stellar/classifier/planet.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/chemistry.clj",
+      "resolved": "src/domain/chemistry.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../research/atmosphere/planetary-atmosphere-retention-classifier.md",
+      "resolved": "docs/research/atmosphere/planetary-atmosphere-retention-classifier.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "#82-validated-fresh-construction-prerequisite--proposed",
+      "resolved": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../kanban/tasks/life-account-origin-kernel.md",
+      "resolved": "kanban/tasks/life-account-origin-kernel.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../kanban/tasks/validated-fresh-entity-construction.md",
+      "resolved": "kanban/tasks/validated-fresh-entity-construction.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "resolved": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/genesis/bootstrap.clj",
+      "resolved": "src/domain/genesis/bootstrap.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/stellar/seeder.clj",
+      "resolved": "src/domain/stellar/seeder.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/core.clj",
+      "resolved": "src/domain/ecs/core.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/law/stellar/schema.clj",
+      "resolved": "src/law/stellar/schema.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/law/field/schema.clj",
+      "resolved": "src/law/field/schema.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/law/composition.clj",
+      "resolved": "src/law/composition.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/components.clj",
+      "resolved": "src/domain/ecs/components.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../designs/multi-timescale-integration.md#34-composition-with-the-existing-write-channels",
+      "resolved": "docs/designs/multi-timescale-integration.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/ecs/registry.clj",
+      "resolved": "src/domain/ecs/registry.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../src/domain/genesis/systems.clj",
+      "resolved": "src/domain/genesis/systems.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../test/domain/formation_test.clj",
+      "resolved": "test/domain/formation_test.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../test/domain/disk_evolution_test.clj",
+      "resolved": "test/domain/disk_evolution_test.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "target": "../../test/architecture_test.clj",
+      "resolved": "test/architecture_test.clj",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "resolved": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../notes/2026-10-07-first-represented-life-boundary.md",
+      "resolved": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../../kanban/tasks/life-account-origin-kernel.md",
+      "resolved": "kanban/tasks/life-account-origin-kernel.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../notes/2026-10-07-first-represented-life-boundary.md#81-first-pure-child-and-account-revision-clarification--proposed",
+      "resolved": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../notes/2026-10-07-first-represented-life-boundary.md#82-validated-fresh-construction-prerequisite--proposed",
+      "resolved": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "resolved": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "target": "../../kanban/tasks/validated-fresh-entity-construction.md",
+      "resolved": "kanban/tasks/validated-fresh-entity-construction.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "kanban/tasks/validated-fresh-entity-construction.md",
+      "target": "../../docs/notes/2026-10-07-first-represented-life-boundary.md#82-validated-fresh-construction-prerequisite--proposed",
+      "resolved": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "anchor_checked": true
+    },
+    {
+      "from": "kanban/tasks/validated-fresh-entity-construction.md",
+      "target": "../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "resolved": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+      "anchor_checked": false
+    },
+    {
+      "from": "kanban/tasks/validated-fresh-entity-construction.md",
+      "target": "../../docs/designs/multi-timescale-integration.md#34-composition-with-the-existing-write-channels",
+      "resolved": "docs/designs/multi-timescale-integration.md",
+      "anchor_checked": true
+    }
+  ],
+  "local_links_checked": 54,
+  "historical_preservation": [
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "base_preserved_in_git": true,
+      "current_change": "explicit planning amendment, not append-only ledger"
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "base_preserved_in_git": true,
+      "current_change": "explicit planning amendment, not append-only ledger"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "historical_bytes": 43368,
+      "historical_sha256": "ef6eb27e5e5aef68cc85b63a10ff14bea28d5763b8bcf1ae1d3712e38c72bb2d",
+      "prefix_equal": true,
+      "unchanged": false,
+      "appended_bytes": 1577
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "historical_bytes": 27267,
+      "historical_sha256": "d6f50712e13b263982af8f2b1fb2b633af1584b5186917bd0ef58e690f23f648",
+      "prefix_equal": true,
+      "unchanged": false,
+      "appended_bytes": 749
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "historical_bytes": 614516,
+      "historical_sha256": "26bb48bdac2e92fd864588873b4cf2673a638c3029abb1ca5d7db1a321425c03",
+      "prefix_equal": true,
+      "unchanged": true,
+      "appended_bytes": 0
+    },
+    {
+      "path": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "historical_bytes": 10697,
+      "historical_sha256": "7ddf455578ace95c7d2bc513e99994444dbce9537516731e0840c836b6c20c89",
+      "prefix_equal": true,
+      "unchanged": true,
+      "appended_bytes": 0
+    }
+  ],
+  "canonical_state": {
+    "parent": "Incoming3",
+    "existing_kernel": "Review3",
+    "new_child": "Incoming3",
+    "read_paths": [
+      ".ημ/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+      ".ημ/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+      ".ημ/diagnostics/entity-construction-plan/new-child-read.json"
+    ]
+  },
+  "owned_content": [
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 54619,
+      "sha256": "bdb17400c622bde4278dff751ae4d2a067f5eff21c8c252008422a4ac1e8b292"
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "bytes": 8873,
+      "sha256": "0fe3759d3017656657c459d26a8e017438757292dff2a1d40707071e73284def"
+    },
+    {
+      "path": "kanban/tasks/validated-fresh-entity-construction.md",
+      "bytes": 8762,
+      "sha256": "d37fe9af55401580132f0b1f4ec67e63ae1f335cda786d5e38bdc52cdf3d99bc"
+    }
+  ],
+  "compatibility_limits": [
+    "Open arbitrary stellar extras retain raw payload with no universal semantic validity claim.",
+    "Known final fields gain explicit finite/shape checks; invalid known inputs and reserved book injection newly reject.",
+    "Closed empty-book constructor is capability only; no automatic runtime activation/biology.",
+    "Initialization/consumption authority is fresh-ID scoped; ordinary all-stage single-writer remains.",
+    "Full live-book atomicity, populated cohort constructor and mandatory final-parent closure remain proposed later settlement."
+  ],
+  "sizing": "Proposed3: two finite constructors, one reused install path, narrow declaration/guards and tests. Broader registry/schema redesign requires re-sizing before RED.",
+  "checks": [
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "offline Python SHA256, git-show byte comparison, local Markdown path and heading checks",
+      "result": "pass"
+    }
+  ],
+  "executions_not_performed": [
+    "Clojure/JVM",
+    "tests",
+    "benchmark",
+    "native",
+    "board transition",
+    "commit/push",
+    "PR request"
+  ],
+  "review": "Root review requested; no independent/hosted approval inferred.",
+  "authoring_diagnostics": [
+    "First initial metadata capture presumed wrong ledger directory; canonical reads preserved, path corrected without board/ledger writes.",
+    "First apply_patch rejected an empty trailing hunk without changes; corrected patch then applied."
+  ],
+  "closed_at": "2026-10-07T16:51:03.682761+00:00",
+  "owned_paths": [
+    ".ημ/diagnostics/entity-construction-plan/initial-read.json",
+    ".ημ/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+    ".ημ/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+    ".ημ/diagnostics/entity-construction-plan/new-child-read.json",
+    ".ημ/diagnostics/entity-construction-plan/design-audit.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    "docs/designs/resolution-regimes-and-scale-coupling.md",
+    "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "kanban/tasks/validated-fresh-entity-construction.md"
+  ],
+  "owned_hashes_excluding_self": [
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/initial-read.json",
+      "bytes": 3191,
+      "sha256": "ddc47b4e6e3bb41372feaa6b04919d69972156e36d642849cbc3d9353a2cfa29"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+      "bytes": 11166,
+      "sha256": "ab695f00a676f7be62985703ebec7618d84e50365fbe317947d113ba23c7cc71"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+      "bytes": 14105,
+      "sha256": "1ac6643b7335b3b188aa901eaf398dd6e375eb5704b6453c554043f94417b749"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan/new-child-read.json",
+      "bytes": 9248,
+      "sha256": "229da924177031a86afd953fe97310d83845ca541ce20a1cf8dd9a2404724a26"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 44945,
+      "sha256": "a1c71005941d4a203a9bba1c77ec9b08bcc701bcbce7b0714c05ca378cceb480"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 28016,
+      "sha256": "d3d40b4a02ea37399c2a4ed7fb48a016b5fa023d6bedce23ed14d3be1e5f18b8"
+    },
+    {
+      "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "bytes": 8873,
+      "sha256": "0fe3759d3017656657c459d26a8e017438757292dff2a1d40707071e73284def"
+    },
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 54619,
+      "sha256": "bdb17400c622bde4278dff751ae4d2a067f5eff21c8c252008422a4ac1e8b292"
+    },
+    {
+      "path": "kanban/tasks/validated-fresh-entity-construction.md",
+      "bytes": 8762,
+      "sha256": "d37fe9af55401580132f0b1f4ec67e63ae1f335cda786d5e38bdc52cdf3d99bc"
+    }
+  ],
+  "provenance_commands": [
+    {
+      "command": "~/.agents/skills/receipt-river/scripts/rr-append.bb --kind :catalog --origin validated-fresh-entity-construction ...",
+      "exit": 0,
+      "note": "Canonical writer; new record uses EDN keyword :catalog."
+    },
+    {
+      "command": "~/.agents/skills/session-mycology/scripts/sm-log.bb --task ...",
+      "exit": 0,
+      "note": "One reflection, no spore."
+    }
+  ],
+  "diff_boundaries": {
+    "note": "Added §7.2 cross-reference, explicitly refined §8 rows/closure ownership, appended §8.2. Existing §8.1 numerical law and original §§6–7 prescriptions unchanged except cross-reference.",
+    "design": "Inserted proposed §6.2 before roadmap; existing design text retained verbatim.",
+    "card": "New supported manually authored Markdown; canonical read confirms Incoming3. Existing cards/events unchanged."
+  }
+}
