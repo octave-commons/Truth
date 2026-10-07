@@ -1,0 +1,209 @@
+{
+  "schema": "append-only-review-provenance-reconciliation/v1",
+  "at_utc": "2026-10-07T23:12:40.541582+00:00",
+  "author": "/root/sculpt_plan_review",
+  "context": "(己, p=1.0)",
+  "state": "DRAFT_FOR_ROOT_REVIEW_NOT_PUBLISHED_OR_SETTLED",
+  "result": "WRITTEN_LOCAL_REVIEW_COMPLETED_PASS_FINAL_CHAT_INTERRUPTED",
+  "native_finding": {
+    "repository": "octave-commons/Truth",
+    "pr": 61,
+    "head": "658f9f5d5a31a12c3a60576cb1cfa5ca3e1c98e7",
+    "review_id": 5449439028,
+    "comment_id": 4212891342,
+    "thread_id": "PRRT_kwDOTDahac6qITF_",
+    "body_item_id": "cr-comment:v1:99c811544342621dd2092a96",
+    "severity": "P2",
+    "review_body_read_in_full": true,
+    "assessment": "VALID provenance inconsistency in the published historical records. The completed written local verdict is directly supported; reconcile the later root availability statement without rewriting either historical record.",
+    "review_user": "coderabbitai[bot]",
+    "review_submitted_at": "2026-10-07T23:00:05Z",
+    "comment_updated_at": "2026-10-07T23:00:05Z",
+    "raw_records_file": "native-readback.jsonl",
+    "current_thread_resolved": false
+  },
+  "authoritative_correction": {
+    "written_verdict": "The independent local planning review completed and wrote PASS at17:00:51.223Z. Successful verification at17:01:17.126Z confirmed the artifact hash and no frozen input or cited-grounding drift.",
+    "root_statement_corrected": "The17:02:21 root-review-01.json secondary_review statement that the final artifact was unavailable because model capacity failed is incorrect as a statement about the file: it had already been written and verified. Preserve that historical record as the root's then-observed handoff state; this later evidence corrects its file-availability claim.",
+    "delivery_distinction": "The same turn ended at17:01:18.333Z with server_overloaded and last_agent_message:null. No final chat verdict from that turn is claimed or manufactured. File completion and successful final message delivery are separate facts.",
+    "status_treatment": "The historical independent artifact's PASS status is supported as a completed local written review. Do not relabel the completed file as incomplete merely because the final chat was interrupted.",
+    "credit_limit": "This is local review evidence only. It supplies no hosted approval, provider cohort, canonical board admission, implementation qualification, test result or gameplay claim."
+  },
+  "chronology": [
+    {
+      "at": "2026-10-07T17:00:51.053Z",
+      "source_line": 1696,
+      "fact": "Tool call constructs and writes the completed local PASS review."
+    },
+    {
+      "at": "2026-10-07T17:00:51.223Z",
+      "source_line": 1699,
+      "fact": "Completed FileChange ADD embeds exact complete artifact bytes."
+    },
+    {
+      "at": "2026-10-07T17:00:51.227Z",
+      "source_line": 1700,
+      "fact": "Tool completion returns PASS and artifact path."
+    },
+    {
+      "at": "2026-10-07T17:01:17.126Z",
+      "source_line": 1706,
+      "fact": "Read-only verification command exits0 with exact artifact length/hash and empty drift list."
+    },
+    {
+      "at": "2026-10-07T17:01:18.333Z",
+      "source_line": 1710,
+      "fact": "Turn completes with capacity error and null last_agent_message."
+    },
+    {
+      "at": "2026-10-07T17:02:21.174207+00:00",
+      "source": ".ημ/diagnostics/entity-construction-plan-review/root-review-01.json",
+      "fact": "Root records artifact unavailable; this is the historical availability statement corrected here."
+    },
+    {
+      "at": "2026-10-07T17:41:44Z",
+      "source_commit": "658f9f5d5a31a12c3a60576cb1cfa5ca3e1c98e7",
+      "fact": "Git first introduces exact review file; both author and committer times are recorded in the Git transcript. Git timestamps are metadata, distinct from retrieved earlier tool timestamps."
+    }
+  ],
+  "protected_historical_records": [
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan-review/local-independent-planning-review-ecf7877.json",
+      "bytes": 28353,
+      "sha256": "858c20b6eeceea149b45cb6a00a19b74580f6e55d7aa8dc885c69c5989880566"
+    },
+    {
+      "path": ".ημ/diagnostics/entity-construction-plan-review/root-review-01.json",
+      "bytes": 2734,
+      "sha256": "93a66d15760d4d8928039de88c67ccbeb5bcf5f3b38a544a9178bc01d1a1d3cc"
+    }
+  ],
+  "rollout_proof": {
+    "index": "rollout-index.json",
+    "verbatim_records": "rollout-evidence.jsonl",
+    "selected_records": 7,
+    "source_thread": {
+      "id": "01a116c6-37b0-7182-97c7-c1454a896b61",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a11256-ee16-7131-ba20-8a2367cefc11",
+            "depth": 1,
+            "agent_path": "/root/sculpt_plan_review",
+            "agent_nickname": "Hooke",
+            "agent_role": null
+          }
+        }
+      },
+      "timestamp": "2026-10-07T14:30:51.589Z",
+      "cwd": "/home/err/spaces/foresight"
+    },
+    "embedded_file_sha256": "858c20b6eeceea149b45cb6a00a19b74580f6e55d7aa8dc885c69c5989880566",
+    "embedded_file_bytes": 28353,
+    "embedded_equals_current": true,
+    "embedded_equals_first_git_publication": true,
+    "live_log_provenance": "Index pins the exact bounded source prefix through capacity event and each selected line/byte range. The growing whole session log is not treated as an immutable file. Session identity projection is explicitly partial; unrelated conversation, encrypted reasoning and account/user metadata are excluded."
+  },
+  "current_input_verification": {
+    "original_owned_inputs": 10,
+    "all_original_owned_pins_match": true,
+    "cited_grounding_pins": 20,
+    "all_cited_grounding_pins_match": true,
+    "audit_source_test_config_pins": 294,
+    "all_audit_source_test_config_pins_match": true,
+    "scope": "Exact-byte verification of current recorded inputs; no new full semantic review or runtime execution is claimed."
+  },
+  "git_read_provenance": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "658f9f5d5a31a12c3a60576cb1cfa5ca3e1c98e7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "log",
+        "--all",
+        "--format=%H %aI %cI %s",
+        "--",
+        ".ημ/diagnostics/entity-construction-plan-review/local-independent-planning-review-ecf7877.json"
+      ],
+      "exit": 0,
+      "stdout": "658f9f5d5a31a12c3a60576cb1cfa5ca3e1c98e7 2026-10-07T12:41:44-05:00 2026-10-07T12:41:44-05:00 docs(construction): preserve independent planning source review\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "658f9f5d5a31a12c3a60576cb1cfa5ca3e1c98e7:.ημ/diagnostics/entity-construction-plan-review/local-independent-planning-review-ecf7877.json"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_bytes": 28353,
+      "stdout_sha256": "858c20b6eeceea149b45cb6a00a19b74580f6e55d7aa8dc885c69c5989880566",
+      "stdout_preservation": "Identical to current direct historical file and embedded FileChange content in rollout-evidence.jsonl."
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.quotePath=false",
+        "diff",
+        "--name-only",
+        "-z",
+        "ecf78775fbd8069fb86386b9d00401bf47476bab",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_nul_bytes": 747,
+      "stdout_sha256": "bc7c3c446572352c0039d9231dcea9d5db8db6425c361f4c5efcbdd302a7e7cf"
+    }
+  ],
+  "canonical_status": {
+    "raw_file": "native-readback.jsonl",
+    "head": "658f9f5d5a31a12c3a60576cb1cfa5ca3e1c98e7",
+    "observed_at": "2026-10-07T23:10:34.962462+00:00",
+    "summary": "CodeRabbit completed;7 checks pass;1 P2 thread unresolved/unsettled; MiMo exact-head approval;1 available CR/MiMo planning cohort; gate BLOCKED. Codex authenticated account quota UNKNOWN reset; no retry or waiver.",
+    "no_request_or_settlement_made": true
+  },
+  "publication_draft": {
+    "new_owned_paths_only": [
+      ".ημ/diagnostics/entity-construction-review-provenance-5449439028/RECONCILIATION.json",
+      ".ημ/diagnostics/entity-construction-review-provenance-5449439028/native-readback.jsonl",
+      ".ημ/diagnostics/entity-construction-review-provenance-5449439028/rollout-evidence.jsonl",
+      ".ημ/diagnostics/entity-construction-review-provenance-5449439028/rollout-index.json",
+      ".ημ/diagnostics/entity-construction-review-provenance-5449439028/SHA256SUMS"
+    ],
+    "prior_cumulative_path_count": 12,
+    "prior_cumulative_paths": [
+      ".ημ/diagnostics/entity-construction-plan-review/local-independent-planning-review-ecf7877.json",
+      ".ημ/diagnostics/entity-construction-plan-review/root-review-01.json",
+      ".ημ/diagnostics/entity-construction-plan/design-audit.json",
+      ".ημ/diagnostics/entity-construction-plan/initial-read.json",
+      ".ημ/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+      ".ημ/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+      ".ημ/diagnostics/entity-construction-plan/new-child-read.json",
+      ".ημ/receipts.edn",
+      ".ημ/session-mycology/ledger.md",
+      "docs/designs/resolution-regimes-and-scale-coupling.md",
+      "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "kanban/tasks/validated-fresh-entity-construction.md"
+    ],
+    "prospective_cumulative_path_count": 17,
+    "excluded": "All unrelated uncommitted diagnostics, both original review records, all source/tests/card/Rheos ledger/receipt/mycology files remain untouched. No staging, commit or push performed."
+  },
+  "replay_verification_recipe": [
+    "Read rollout-index.json; slice each indicated byte span from the saved rollout-evidence.jsonl and verify its row length/SHA256. Where the original local rollout remains available, compare the recorded source line byte ranges and bounded prefix hash as well.",
+    "JSON-decode the FileChange record corresponding to source line1699; encode its content string as UTF-8. Its28353 bytes and SHA858c20b6 must equal the direct historical local review and Git658f9f5:path.",
+    "Read source line1706 CommandExecution exit_code/stdout and line1710 task_complete.error/last_agent_message. They establish successful verification before the interrupted final-message boundary.",
+    "Verify unchanged original review records and recorded owned/source pins; read full native review/comment/thread records and current status separately. No scripts from old artifacts are imported or executed."
+  ],
+  "next_action": "Root reviews this append-only draft and raw provenance; only after approval may root publish and settle the native finding against the actual new commit."
+}

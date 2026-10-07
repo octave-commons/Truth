@@ -1,0 +1,115 @@
+{
+  "schema": "bounded-local-rollout-evidence/v1",
+  "source_path": "/home/err/.codex/sessions/2026/10/07/rollout-2026-10-07T09-30-51-01a116c6-37b0-7182-97c7-c1454a896b61.jsonl",
+  "source_append_only_prefix_through_line": 1710,
+  "source_prefix_bytes": 16984403,
+  "source_prefix_sha256": "eb4d1215a04bb00f50ae715e3683474a50faf7c10833535185332325c5a8627f",
+  "selected_rows": [
+    {
+      "line_1_based": 1696,
+      "source_byte_start": 16912588,
+      "source_byte_end_exclusive": 16924351,
+      "bundle_byte_start": 0,
+      "bundle_byte_end_exclusive": 11763,
+      "bytes": 11763,
+      "sha256": "73f2f9341dae73252d675ff791ab30f2e632b89aa73926f7ed021ab272c645e3",
+      "at": "2026-10-07T17:00:51.053Z",
+      "record_type": "response_item",
+      "payload_type": "custom_tool_call"
+    },
+    {
+      "line_1_based": 1699,
+      "source_byte_start": 16928699,
+      "source_byte_end_exclusive": 16959645,
+      "bundle_byte_start": 11763,
+      "bundle_byte_end_exclusive": 42709,
+      "bytes": 30946,
+      "sha256": "7cb33ef6e453b24e1b74217ea1fb4c9c557ffa8e572f3bffb3967611fc2052f9",
+      "at": "2026-10-07T17:00:51.223Z",
+      "record_type": "event_msg",
+      "payload_type": "item_completed"
+    },
+    {
+      "line_1_based": 1700,
+      "source_byte_start": 16959645,
+      "source_byte_end_exclusive": 16960424,
+      "bundle_byte_start": 42709,
+      "bundle_byte_end_exclusive": 43488,
+      "bytes": 779,
+      "sha256": "6d345a9c46963c8692414d3d1b8044b2747c471f23b87b820dcb4343c4fc8ecb",
+      "at": "2026-10-07T17:00:51.227Z",
+      "record_type": "response_item",
+      "payload_type": "custom_tool_call_output"
+    },
+    {
+      "line_1_based": 1704,
+      "source_byte_start": 16964683,
+      "source_byte_end_exclusive": 16966382,
+      "bundle_byte_start": 43488,
+      "bundle_byte_end_exclusive": 45187,
+      "bytes": 1699,
+      "sha256": "a4daa355d7118209fe89731d8e582e73115ca70ea6be30c8d2ea0b7c068f384d",
+      "at": "2026-10-07T17:01:16.884Z",
+      "record_type": "response_item",
+      "payload_type": "custom_tool_call"
+    },
+    {
+      "line_1_based": 1706,
+      "source_byte_start": 16967283,
+      "source_byte_end_exclusive": 16978662,
+      "bundle_byte_start": 45187,
+      "bundle_byte_end_exclusive": 56566,
+      "bytes": 11379,
+      "sha256": "484a06508c32d5b4c446473a078a0eeebfacb1de601caede310b95d892c0b3a9",
+      "at": "2026-10-07T17:01:17.126Z",
+      "record_type": "event_msg",
+      "payload_type": "item_completed"
+    },
+    {
+      "line_1_based": 1707,
+      "source_byte_start": 16978662,
+      "source_byte_end_exclusive": 16982326,
+      "bundle_byte_start": 56566,
+      "bundle_byte_end_exclusive": 60230,
+      "bytes": 3664,
+      "sha256": "a13c1bcc50fe45fb297f893f490206a6a466159f0c133f7e48720e83bd39dd5d",
+      "at": "2026-10-07T17:01:17.132Z",
+      "record_type": "response_item",
+      "payload_type": "custom_tool_call_output"
+    },
+    {
+      "line_1_based": 1710,
+      "source_byte_start": 16983994,
+      "source_byte_end_exclusive": 16984403,
+      "bundle_byte_start": 60230,
+      "bundle_byte_end_exclusive": 60639,
+      "bytes": 409,
+      "sha256": "278265fdd577a3d7d0ba06488bf10cb98063e605ae6779f70881235fa592ab89",
+      "at": "2026-10-07T17:01:18.333Z",
+      "record_type": "event_msg",
+      "payload_type": "task_complete"
+    }
+  ],
+  "bundle_bytes": 60639,
+  "bundle_sha256": "5dc90f0a1a26ccf3e085b4faf2ca6bafd2c04342733e8e2d003a244f753f7a5b",
+  "session_identity_projection": {
+    "id": "01a116c6-37b0-7182-97c7-c1454a896b61",
+    "source": {
+      "subagent": {
+        "thread_spawn": {
+          "parent_thread_id": "01a11256-ee16-7131-ba20-8a2367cefc11",
+          "depth": 1,
+          "agent_path": "/root/sculpt_plan_review",
+          "agent_nickname": "Hooke",
+          "agent_role": null
+        }
+      }
+    },
+    "timestamp": "2026-10-07T14:30:51.589Z",
+    "cwd": "/home/err/spaces/foresight"
+  },
+  "session_identity_projection_is_not_verbatim_full_record": true,
+  "session_meta_original_line1_bytes": 22863,
+  "session_meta_original_line1_sha256": "1eda657477e2f582a6a08bcaa0ae30a7909e738fb8028d621472c5322ff2749e",
+  "omissions": "Only exact relevant write/verification/capacity records are included. Entire session, reasoning, account/user metadata, token/usage records and unrelated conversation are excluded."
+}
