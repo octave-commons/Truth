@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-07T10:44:15.917224+00:00",
+  "canonical_comment": "2026-10-07 root planning refinement: the unmodified native tick398 PNG (SHA25619f1bf1d40b46bbd0b51ec40add2c4c7584bbcc0df08dc29e543bb25247979d0,1280x720, production b395c404) confirms the existing notification/Actions text collision. Existing design now explicitly retains full event, observation note, quest, action labels/keys/costs, observer resources/bars and binding/commitment; only ambient/passive help may yield. Early960x540 actual detailed-inspector feasibility must reserve returned geometry and measured text. If mandatory content cannot fit at scale>=1.3 with8px separation, report design capacity failure; no clipping/hiding/inspector move or implementation-success claim. This keeps the same3point spacing scope and quiet-telemetry dependency. Local root review checked docs against actual PNG and source; current plan still requires hosted planning convergence before Ready. Card remains Incoming; no code or resized visual acceptance.",
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "prior_ledger_bytes": 564523,
+  "prior_ledger_sha256": "9f2ccf4d71a31d35900d794b9be6d0730bd87569618cf59ddae152adf5c2eb36",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "after_write_id": "1791369854673-0.rtx3azd5qfm5bmi8qks"
+}

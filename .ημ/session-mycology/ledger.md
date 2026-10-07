@@ -314,6 +314,24 @@
   spore: none
   receipt-refs: none
   note: Two patterns worth spores: (1) a gate config in a conventionally-cached dir (.lsp/) is silently gitignored, so the gate passes locally and fails forever in CI -- check git check-ignore on every new config file before promoting a tool to blocking; (2) scoped symbol renames need a whole-scope re-audit, because a missed site does not error, it silently resolves to clojure.core (comp/count/name/field) and the test passes vacuously.
+- ts: 2026-10-06T18:33:38Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Split flight controls into reviewable Incoming scopes
+  p-efficiency: 0.9
+  p-friction: 0.25
+  p-skill-candidate: 0.4
+  spore: none
+  receipt-refs: "2026-10-06T18:33:38Z truth-flight-controls-plan"
+  note: Reused the existing dt-dilated-player-constants lesson, but distinguished fixed-dt control invariance from delayed-channel adaptive-dt transients. No new spore needed; document the causal limitation in the design and keep missing camera research visible.
+- ts: 2026-10-06T19:11:10.177441383Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Ground quiet manual HUD planning in native screenshots and existing layout ownership
+  p-efficiency: 0.87
+  p-friction: 0.22
+  p-skill-candidate: 0.36
+  spore: none
+  receipt-refs: truth-manual-hud-plan
+  note: Native pixels plus the independent HUD concat path explain overlap without speculative graphics work. Split placement from information density; preserve detail access and existing heading/debug/binding ownership. Target current Markdown/design paths in searches because archived transcripts may embed large image payloads. No spore needed.
 - ts: 2026-10-06T18:28:35.220300795Z
   session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
   task: Truth playable foundations, frame repair, and canonical Clojure board gates
@@ -323,6 +341,15 @@
   spore: none
   receipt-refs: none
   note: Recovered missing research before code; separate immutable validation checkout kept agents moving during full gates. Rheos feature was present in newer canonical artifact despite same package version: verify executable hash and actual pass/fail transition before proposing upstream implementation. No spore promoted; long playable-game goal remains active.
+- ts: 2026-10-06T22:40:06.549190626Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Consume reviewed hosted runtime on Truth PR9
+  p-efficiency: 0.95
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: Truth PR9 review runtime consumption; run37517844652; PR10 review5433523578
+  note: A same-head rerun retains an obsolete immutable reusable-workflow pin. Reuse the already reviewed caller patch and keep missing stderr separate from the suspected model cause; new branch heads still require fresh hosted qualification. No spore warranted.
 - ts: 2026-10-06T19:29:00Z
   session: /home/err/spaces/foresight/.worktrees/truth-playable-gate
   task: Native manual flight, precision evidence and hosted review recovery
@@ -332,3 +359,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
   note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-06T23:01:37.830258724Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-controls-plan
+  task: Restore hosted review after flight-planning parent drift
+  p-efficiency: 0.86
+  p-friction: 0.31
+  p-skill-candidate: 0.18
+  spore: none
+  receipt-refs: Truth PR9 parent synchronization
+  note: When newhead has no Actions, check mergeability before retrying workflow. Local merge of existing parent and union of append-only tails restores reach; verify every parent line relativeorder, not only commonprefix. No new spore.
