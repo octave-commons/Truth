@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, research, player, spark-flight"
 parent: "flight-assist-damping-and-toggle"
 type: "task"
-write-id: "1791376099815-0.4crmsnrzkq2i7y200wb"
+write-id: "1791377988028-0.xjbthxo7vgz0a3j170"
 points: "3"
 title: "Specify explicit local reference and bounded linear flight assist"
 priority: "P1"
@@ -52,9 +52,15 @@ Grounding:
   body-frame thrust, angular assist and coherence without implementing them.
 - Define target range, signed radial closing speed and total relative speed as
   distinct readouts, with a manual-preserving reference action under the existing
-  HUD owner. Produce at most two proposed ≤5-point implementation slices, with
-  explicit boundaries and dependencies, in the specification; this task does not
-  create or admit those consumer cards.
+  HUD owner. Retain at most two proposed reference-assist consumer boundaries;
+  they remain separate from the three clock consumers authorized below.
+- **2026-10-07 visible scope refinement:** the root's canonical comment supersedes
+  the former no-consumer limit for the clock prerequisite only. Review
+  [pre-capture clock design](../../docs/designs/pre-capture-clock.md) and three
+  Incoming implementation children: `flight-clock-upward-admission-law` (3),
+  `flight-clock-effective-fold` (5), and `flight-clock-view-controls` (3).
+  This creates planning artifacts, not implementation admission or a claim that
+  the parent reference-assist acceptance is complete.
 
 ## Non-goals
 
@@ -84,10 +90,12 @@ No claim of Ready status for the parent, consumer slices, or inspector card.
   and thrust toward a naturally formed planet, with trajectory/relative-speed,
   overlap, fresh eligibility, binding and commitment evidence. The later sculpt
   route is identified without claiming this planning task performs it.
-- [ ] At most two bounded consumer proposals distinguish the linear primitive
-  from manual reference/readout integration. Each states dependencies on admitted
-  body-frame/FA/HUD work and any measured pre-capture clock boundary; none is
-  declared Ready merely because the specification exists.
+- [ ] At most two reference-assist consumer proposals distinguish the linear
+  primitive from manual reference/readout integration, with their existing
+  body-frame/FA/HUD prerequisites. Separately review the 3→5→3 clock implementation
+  chain against its grounded design, including finite admission, effective-fold
+  ordering, guarded Auto and ordinary controls. No child is declared Ready merely
+  because this specification or its Markdown card exists.
 - [ ] Existing FA `R` versus corrected `F` wording, stale embedded-damping
   assumptions and missing linear-cap claim have explicit proposed dispositions;
   no historical card body or ledger event is silently rewritten.
@@ -141,5 +149,7 @@ Four evidence tiers remain explicit: living UX requirement; approved real-body/f
 The question is reconciliation of pre-capture timing, delayed forces, actual reference displacement, finite player budget and useful surrounding evolution. Post-commitment time-lock begins too late to establish approach. No clock/controller/rate choice, source/tests/runner/native action, new card or transition. Existing Incoming3 remains unchanged. Verified 18 appended reference targets against local files/headings and exact Git objects; note/actor historical prefixes and whitespace checks pass. Interactive ACTORS follow-up records the recovery. Root owns review, commit and publication.
 
 (己, p=0.99) Root-authorized docs/research/planning refinement under this existing Incoming 3 specification, prior to any documentation edits. Integrate closed ordinary native attempt 02 and 03 evidence into a dated pre-capture clock-envelope research note and the existing local-reference proposal. Proposed range is a 1 second–1day maximum simulation step after automatic pacing/time slip, preserving auto-derived softening and the existing single-writer/frozen-channel path. The finite up-transition admission decision remains explicitly unaccepted and unresolved; fixed-D speed/acceleration, actual pending force, 43 binding reads versus later commitment, and compact actual displacement versus endpoint-velocity proxy receive worked bounds and a later acceptance matrix. No chord average becomes a maximum-speed or finite-capture guarantee. Source is pinned b395c404; evidence references ae5444b63e30207838f5c31f28138cb98d0027f0 and93dc5b2bc0c734e5d8c311ac004035581db885b4, with immutable map resolution for packed inputs. Retain current status/points/body/history and preserve pre-existing pr7-recovery dirt. No source/tests/JVM/native/control/clock implementation, new card, status transition, review request or Ready claim. Root independently reviews before commit/push.
+
+Root scopes the next finite planning refinement: independently reviewed proposal00a35964a4637ebf7d36fddb7b85a2018504b740415293eb4d1473b3153c1c69 supplies proposed B=D one-fold upward admission and persistent guarded Auto after manual timing. Prepare a research-backed design and three explicitly dependent clock consumer cards sized3/5/3 (canonical shared Euler law; effective-fold cap/guardedAuto; ordinary UI/readback), all Incoming and no source/test/runtime actuation. Amend prior no-consumer planning scope visibly; reference-assist remains distinct and no existing implementation dependency is declared complete. Root and independent review precede publication; configured planning convergence precedes Ready/InProgress. This is scoped planning toward actual gameplay, not production admission or a physical safety/capture claim.
 
 ---

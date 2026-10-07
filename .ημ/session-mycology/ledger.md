@@ -386,3 +386,13 @@
   spore: none
   receipt-refs: flight-local-reference-assist-spec,0fce01b,ae5444b,93dc5b
   note: Sparse endpoint chords cannot stand in for maximum composed displacement. Record the effective consumed step separately from next published dt, and include pending command state when reviewing clock transitions. Existing three-point planning scope remains unfinished; no spore, implementation or native result.
+
+- ts: 2026-10-07T13:11:34.023663+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Bound pre-capture clock implementation by exact consumed-step semantics
+  p-efficiency: 0.90
+  p-friction: 0.15
+  p-skill-candidate: 0.31
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec, PR13, clock-upward-proposal-00a35964
+  note: A finite upward-step guard must consume the actual pending channels and cannot be switched off by a later Auto increase. Separate source characterization, clock-state integration and ordinary UI so a specification does not imply native capture or implementation admission. No spore created or promoted.

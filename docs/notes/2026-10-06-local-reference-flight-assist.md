@@ -319,3 +319,22 @@ reference-displacement envelope and manual/assist budget are settled. Clock/UI
 implementation may require its own reviewed ≤5-point consumer breakdown; the
 present three-point scope is the specification refinement only. No additional
 consumer or Ready transition is created by this section.
+
+## Finite clock design and separate implementation chain — 2026-10-07 UTC
+
+The root's later canonical scope comment authorizes the
+[pre-capture clock design](../designs/pre-capture-clock.md) and three Incoming
+consumers, sized 3/5/3. This explicitly supersedes the preceding clock section's
+"unresolved" upward-rule and "no consumer" planning boundary, without editing
+that historical proposal. The selected **proposal for review** is B=D finite
+pending-kick/full-Euler-drift admission, reject-and-retain on increase, and sticky
+guarded Auto after manual use. It is grounded in the byte-preserved
+[upward-step analysis](../research/physics/2026-10-07-clock-up-transition-admission.md).
+
+The three UUIDs are `flight-clock-upward-admission-law`,
+`flight-clock-effective-fold` and `flight-clock-view-controls`; their dependency
+chain is clock-only. The earlier at-most-two reference-assist consumers remain
+separate and uncreated here. No finite force budget/controller for relative
+flight, complete parent acceptance, source implementation, runtime result or
+Ready transition is implied. Root and independent review of this exact design
+and breakdown precede publication and configured planning convergence.

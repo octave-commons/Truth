@@ -162,3 +162,11 @@ New ECS component keywords added to `domain.ecs.components`:
   Incoming 3 reference/assist specification; paired native endpoints, conditional
   residence and delayed-force transition bounds, and a proposed 1-second–1-day
   cap. No kinetic calibration, new experiment, accepted clock or source promotion.
+
+### Finite pre-capture clock admission — 2026-10-07
+
+[Upward-step source/math proposal](physics/2026-10-07-clock-up-transition-admission.md)
+→ [finite proposed design](../designs/pre-capture-clock.md). B=D bounds the pending
+control kick and own ordinary Euler drift on an increase; persistent guarded Auto
+prevents a later increase from bypassing the check. This is an unaccepted
+engineering choice, not target-relative safety or a natural capture result.

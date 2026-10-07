@@ -79,3 +79,12 @@ See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
   precedence. Pending-force transition admission remains explicitly unfinished;
   Incoming 3 is unchanged. Offline arithmetic/source/reference checks only;
   no new native observation, production test, clock or controller implementation.
+
+### 2026-10-07 — Finite pre-capture clock planning
+
+- Owner: `flight-local-reference-assist-spec`; actor: `intent_research`.
+- Grounding: [archived upward-step proposal](physics/2026-10-07-clock-up-transition-admission.md)
+  and [closed clock-envelope analysis](physics/2026-10-07-pre-capture-clock-envelope.md).
+- Output: [proposed clock design](../designs/pre-capture-clock.md), with three
+  Incoming 3/5/3 clock consumers; reference assist remains a separate unfinished
+  boundary. No source/test/native work, status transition or new calibration.

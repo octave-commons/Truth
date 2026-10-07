@@ -123,3 +123,13 @@ The [existing proposal](../../notes/2026-10-06-local-reference-flight-assist.md#
 records the selected candidate wording and unresolved decisions. The
 [prior feasibility analysis](local-reference-flight-assist-feasibility.md) retains
 its primary control/integration references and all earlier findings.
+
+## Later finite design disposition — 2026-10-07 UTC
+
+The subsequent [finite upward-step analysis](2026-10-07-clock-up-transition-admission.md)
+and [proposed clock design](../../designs/pre-capture-clock.md) select B=D,
+reject-and-retain upward admission and persistent guarded Auto for planning review.
+They supersede this note's earlier unresolved-rule status, not its measured
+endpoint, recurrence or residence limitations. Three Incoming consumers provide
+separate 3/5/3 implementation boundaries. No empirical calibration, capture
+claim, accepted implementation or new native observation follows from that choice.
