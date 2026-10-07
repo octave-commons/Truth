@@ -6,6 +6,7 @@
             [domain.ecs.components :as c]
             [infra.camera :as camera]
             [infra.dev.window :as window]
+            [infra.dev.window.loop :as loop]
             [nrepl.core :as nrepl]))
 
 (defn- seed-world [_]
@@ -72,6 +73,41 @@
         (is (thrown? InterruptedException (demo/prepare-formation!)))
         (is (= {:mode :manual} @(:config s)))
         (finally (Thread/interrupted))))))
+
+(deftest interrupted-handoff-restores-settings-without-cancelling-queued-world
+  (doseq [prior [{:tick-fn inc :on-step dec :mode :manual}
+                 {:tick-fn nil :mode :manual}
+                 {:mode :manual}]]
+    (testing (str "production intent handoff with prior settings: " (keys prior))
+      (let [old-world {:published :original}
+            world (atom old-world)
+            queue (java.util.concurrent.ConcurrentLinkedQueue.)
+            intents (loop/->IntentAtom queue world)
+            s (assoc (service prior world) :world-intents intents)
+            original-camera @(:camera s)]
+        (with-redefs [window/service-state (atom s) demo/scenario-world seed-world]
+          (.interrupt (Thread/currentThread))
+          (try
+            (is (thrown? InterruptedException (demo/prepare-formation!)))
+            (is (= prior @(:config s)))
+            (is (= original-camera @(:camera s)))
+            (is (identical? old-world @world))
+            (is (= 1 (.size queue))
+                "restoring settings does not cancel the pending world replacement")
+            (swap! intents assoc :after-failure :preserved)
+            (is (identical? old-world @world)
+                "a later intent also waits for the serial consumer")
+            (let [drained (@#'infra.dev.window.loop/drain-intents @world queue)]
+              (is (identical? old-world @world)
+                  "draining prepares the replacement before publication")
+              (reset! world drained)
+              (is (= (:world (seed-world :nebula))
+                     (dissoc @world :demo/capture :after-failure)))
+              (is (string? (:demo/capture @world)))
+              (is (= :preserved (:after-failure @world)))
+              (is (.isEmpty queue))
+              (is (= prior @(:config s))))
+            (finally (Thread/interrupted))))))))
 
 (deftest successful-formation-stays-paused-and-wide
   (let [world (atom {})

@@ -1,0 +1,32 @@
+{:variant "historical-file-overlay", :scope "One new regression; current queue/runtime/dependencies with optional historical demo.clj overlay, not a historical whole-tree run."}
+
+FAIL in (interrupted-handoff-restores-settings-without-cancelling-queued-world) (demo_test.clj:92)
+production intent handoff with prior settings: (:tick-fn :on-step :mode)
+expected: (= prior (clojure.core/deref (:config s)))
+  actual: (not (= {:tick-fn #object[clojure.core$inc 0x22f00670 "clojure.core$inc@22f00670"], :on-step #object[clojure.core$dec 0xc529ddd "clojure.core$dec@c529ddd"], :mode :manual} {:tick-fn #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :on-step #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :mode :manual}))
+
+FAIL in (interrupted-handoff-restores-settings-without-cancelling-queued-world) (demo_test.clj:109)
+production intent handoff with prior settings: (:tick-fn :on-step :mode)
+expected: (= prior (clojure.core/deref (:config s)))
+  actual: (not (= {:tick-fn #object[clojure.core$inc 0x22f00670 "clojure.core$inc@22f00670"], :on-step #object[clojure.core$dec 0xc529ddd "clojure.core$dec@c529ddd"], :mode :manual} {:tick-fn #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :on-step #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :mode :manual}))
+
+FAIL in (interrupted-handoff-restores-settings-without-cancelling-queued-world) (demo_test.clj:92)
+production intent handoff with prior settings: (:tick-fn :mode)
+expected: (= prior (clojure.core/deref (:config s)))
+  actual: (not (= {:tick-fn nil, :mode :manual} {:tick-fn #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :mode :manual, :on-step #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"]}))
+
+FAIL in (interrupted-handoff-restores-settings-without-cancelling-queued-world) (demo_test.clj:109)
+production intent handoff with prior settings: (:tick-fn :mode)
+expected: (= prior (clojure.core/deref (:config s)))
+  actual: (not (= {:tick-fn nil, :mode :manual} {:tick-fn #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :mode :manual, :on-step #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"]}))
+
+FAIL in (interrupted-handoff-restores-settings-without-cancelling-queued-world) (demo_test.clj:92)
+production intent handoff with prior settings: (:mode)
+expected: (= prior (clojure.core/deref (:config s)))
+  actual: (not (= {:mode :manual} {:mode :manual, :tick-fn #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :on-step #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"]}))
+
+FAIL in (interrupted-handoff-restores-settings-without-cancelling-queued-world) (demo_test.clj:109)
+production intent handoff with prior settings: (:mode)
+expected: (= prior (clojure.core/deref (:config s)))
+  actual: (not (= {:mode :manual} {:mode :manual, :tick-fn #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"], :on-step #object[clojure.core$identity 0x222667ff "clojure.core$identity@222667ff"]}))
+{:test 1, :pass 30, :fail 6, :error 0}
