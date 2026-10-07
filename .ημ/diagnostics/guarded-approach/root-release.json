@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-07T06:51:18.568217+00:00",
+  "source_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "head": "1ef39b1a2a2763076dbda0f1e9cf65daa8e6227c",
+  "reviewers": [
+    "codex-root",
+    "board_scout"
+  ],
+  "review": "Root inspected complete worker and runner/controller diffs; independent source-only review found no blocker. Frozen manifest verified; production paths unchanged.",
+  "preparation_manifest_sha256": "ed4818295e6b2e4ec6cb032ac5c5e118b87af138d32f868e6f71ff68c314f502",
+  "released_command": [
+    "python3",
+    ".\u03b7\u03bc/diagnostics/guarded-approach/short-smoke-client.py",
+    "attempt-01",
+    "--port",
+    "7898"
+  ],
+  "scope": "One fresh input-only short smoke, 270s work/300s total. No thrust, approach, fixture, direct world setter or retained-primary input.",
+  "release_is_not_execution_evidence": true
+}

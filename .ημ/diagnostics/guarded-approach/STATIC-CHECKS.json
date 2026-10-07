@@ -1,0 +1,127 @@
+{
+  "at": "2026-10-07T06:43:20.963536+00:00",
+  "checks": [
+    {
+      "kind": "Python ast.parse only",
+      "path": "runner.py",
+      "sha256": "509344fe1bf0dc6c9cc070bc6793af7f433462850e56669f0e2b30ec9a649f40",
+      "passed": true,
+      "imported_or_executed": false
+    },
+    {
+      "kind": "Python ast.parse only",
+      "path": "short-smoke-client.py",
+      "sha256": "bab884556ca7b7d6560e0ae7d0197d4c16bffda2a4c04a476a133909b55143da",
+      "passed": true,
+      "imported_or_executed": false
+    },
+    {
+      "argv": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/guarded-approach/snapshot_client.clj"
+      ],
+      "exit": 0,
+      "stdout": "linting took 34ms, errors: 0, warnings: 0\n",
+      "stderr": "",
+      "sha256": "0ae64beb1cec2a883a5e9dfe5c8218ea13cc62fa15de792c58f4d949d2c44478"
+    },
+    {
+      "argv": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/guarded-approach/snapshot.clj"
+      ],
+      "exit": 0,
+      "stdout": "linting took 25ms, errors: 0, warnings: 0\n",
+      "stderr": "",
+      "sha256": "45d752a5122e498da1f4bbc39dd5233e07d3662a5c55a0e58311d72339bae03a"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--quiet",
+        "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "--",
+        "src",
+        "dev",
+        "resources",
+        "deps.edn"
+      ],
+      "exit": 0,
+      "production_unchanged": true
+    }
+  ],
+  "preparation_execution": "No Python script import/execution, JVM evaluation, native service call, native input, or runtime test. Kondo is native static analysis.",
+  "initial_static_findings": {
+    "command": "clj-kondo --lint .\u03b7\u03bc/diagnostics/guarded-approach/snapshot-client.clj",
+    "exit": null,
+    "reported_exit_note": "Exact command exit not retained by that display-only tool call; the printed one error/two warnings are retained as a failed static check.",
+    "errors": 1,
+    "warnings": 2,
+    "stdout": "snapshot-client.clj:2:5: error: Namespace name does not match file name: guarded-snapshot-client\nsnapshot-client.clj:55:14: warning: Shadowed var: clojure.core/bytes\nsnapshot-client.clj:109:41: warning: Shadowed var: clojure.core/bytes\nlinting took 35ms, errors: 1, warnings: 2\n",
+    "correction": "Matched ns/file as snapshot-client and snapshot_client.clj; renamed local byte-count bindings, no suppression."
+  },
+  "instructions": {
+    "AGENTS.md": "469f34c0eb48710fe631ffd21fbd18029f692cbecc707f7e776dcd28f4f49eb0",
+    "PROCESS.md": "11069c68a36e7cf7c3aac4c00fc384b3e653d0179bead9948d82b1d994d6fae2"
+  },
+  "nrepl_dependency": {
+    "version": "1.0.0",
+    "jar": "/home/err/.m2/repository/nrepl/nrepl/1.0.0/nrepl-1.0.0.jar",
+    "jar_sha256": "a30b9734ff2e639f365f0d7553b4877306f2a543cf021e299d15bf1eabd6a5bb",
+    "core_clj_sha256": "aba37195753a2d1cfb74a8e6a5639f8ef6cff30cff41ac266f1acc8e8c1b311a",
+    "inspected_lines": {
+      "client": "21-55",
+      "message": "86-94",
+      "new_session_unused": "96-114",
+      "general_reader_not_used": "153-173",
+      "connect": "175-193"
+    },
+    "scope": "Read installed primary source only; no JVM namespace loaded."
+  },
+  "root_scope_sha256": "291705a65aa4bf8a276e85ac7ceebf26e35963a543d3929650c0f0fd6f316947",
+  "plan_local_link_checks": [
+    {
+      "target": "root-scope.json",
+      "exists": true
+    },
+    {
+      "target": "../../../dev/demo_client.clj",
+      "exists": true
+    },
+    {
+      "target": "../../../deps.edn",
+      "exists": true
+    },
+    {
+      "target": "STATIC-CHECKS.json",
+      "exists": true
+    },
+    {
+      "target": "runner.py",
+      "exists": true
+    },
+    {
+      "target": "../native-input-hygiene/runner.py",
+      "exists": true
+    },
+    {
+      "target": "snapshot.clj",
+      "exists": true
+    },
+    {
+      "target": "snapshot_client.clj",
+      "exists": true
+    },
+    {
+      "target": "COPY-PROOF.json",
+      "exists": true
+    },
+    {
+      "target": "STATIC-CHECKS.json",
+      "exists": true
+    }
+  ]
+}

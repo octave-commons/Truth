@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-07T06:32:09.933590+00:00",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "before_head": "2863728ad6ec1c0a8d218aa5abf38ee413a61005",
+  "body_frontmatter_unchanged": true,
+  "comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 640000,
+  "prior_ledger_sha256": "acf2c479e74c8ec55aa0b9f02c9851792ce33968b0d2bf418465ed03e2ed6553",
+  "comment": "2026-10-07 guarded approach preparation only on unchanged production b395c404. Prior natural12planet observation is closed in PR41; input diagnostic has verified balanced menu gestures and characterized first-cursor baseline, with initialized shortlook qualification still separate. Prepare a minimal persistent diagnostic snapshot client using the existing nREPL dependency and one bounded local JVM/connection to remove repeated per-snapshot startup. Its request surface accepts only fixed read-only snapshot requests and local close; no arbitrary code, remote setter, serverVar/session, world/camera mutation or production change. Preserve PID/start/boot/cwd/display/port/world/window, source/prep, absolute/request deadlines, response caps and childownership guards. Reuse the normal native input route with balanced click cleanup and acknowledged <=100px look steps; a future ordinary approach remains separately budgeted and must not begin until shortinput qualification and independent source review pass. No newrun, physics change, target injection, feature admission or gameplay success is claimed by this preparation. Existing owner staysInProgress3."
+}

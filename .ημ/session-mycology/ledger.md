@@ -548,3 +548,12 @@
   spore: none
   receipt-refs: 2863728,d703715
   note: Firstcursor callback seeds baseline, so initialize through ordinary UI before relative-angle assertions. Serializedverifiedclients complete the same bounded smoke without perturn latency; never relax assertions to relabel a failed run. Keep rawfailedpredecessors and cleanupownership. No new spore.
+- ts: 2026-10-07T06:51:18.568217+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-guarded-approach
+  task: Guarded persistent snapshot preparation
+  p-efficiency: 0.6
+  p-friction: 0.4
+  p-skill-candidate: 0.0
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,1ef39b1
+  note: Reuse one bounded diagnostic connection while preserving fixed request scope and raw evidence. Qualify short input before another long formation wait. No new spore.
