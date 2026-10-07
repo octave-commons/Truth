@@ -557,3 +557,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,1ef39b1
   note: Reuse one bounded diagnostic connection while preserving fixed request scope and raw evidence. Qualify short input before another long formation wait. No new spore.
+- ts: 2026-10-07T06:58:34.633502+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-guarded-approach
+  task: Persistent snapshot smoke closure
+  p-efficiency: 0.8
+  p-friction: 0.2
+  p-skill-candidate: 0.0
+  spore: none
+  receipt-refs: 36692669,PR45
+  note: Repeated readbacks can capture unapplied input; preserve them and await state without replaying the gesture. One bounded client removes repeated startup while retaining exact raw evidence. No new spore.

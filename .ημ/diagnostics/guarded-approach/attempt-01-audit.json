@@ -1,0 +1,1226 @@
+{
+  "at": "2026-10-07T06:56:04.185582+00:00",
+  "scope": "Independent offline audit only; preserved EDN read with Babashka built-in EDN/data libraries, no project namespace or JVM/native evaluation, game connection, input, or process inspection.",
+  "outcome": "PASS: one bounded snapshot worker reused the fixed guarded read route, all smoke operations acknowledged, and owned cleanup confirmed in stored records.",
+  "source": {
+    "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "source_hash_count": 186,
+    "all_source_hashes_match": true,
+    "preparation_pins": {
+      "runner.py": "509344fe1bf0dc6c9cc070bc6793af7f433462850e56669f0e2b30ec9a649f40",
+      "snapshot_client.clj": "0ae64beb1cec2a883a5e9dfe5c8218ea13cc62fa15de792c58f4d949d2c44478",
+      "snapshot.clj": "45d752a5122e498da1f4bbc39dd5233e07d3662a5c55a0e58311d72339bae03a",
+      "short-smoke-client.py": "bab884556ca7b7d6560e0ae7d0197d4c16bffda2a4c04a476a133909b55143da",
+      "PLAN.md": "abc403a33d3223a66c47b2676888bbe02b1b30842b69495bcc9b553dbae8a082"
+    },
+    "all_preparation_pins_match": true,
+    "manifest": [
+      {
+        "path": "snapshot.clj",
+        "sha256": "45d752a5122e498da1f4bbc39dd5233e07d3662a5c55a0e58311d72339bae03a"
+      },
+      {
+        "path": "snapshot_client.clj",
+        "sha256": "0ae64beb1cec2a883a5e9dfe5c8218ea13cc62fa15de792c58f4d949d2c44478"
+      },
+      {
+        "path": "runner.py",
+        "sha256": "509344fe1bf0dc6c9cc070bc6793af7f433462850e56669f0e2b30ec9a649f40"
+      },
+      {
+        "path": "short-smoke-client.py",
+        "sha256": "bab884556ca7b7d6560e0ae7d0197d4c16bffda2a4c04a476a133909b55143da"
+      },
+      {
+        "path": "PLAN.md",
+        "sha256": "abc403a33d3223a66c47b2676888bbe02b1b30842b69495bcc9b553dbae8a082"
+      },
+      {
+        "path": "COPY-PROOF.json",
+        "sha256": "9cc098c5606034936c2fec2fb1c8153e6aaf55e5fd639646f32ae9e64af6cc88"
+      },
+      {
+        "path": "STATIC-CHECKS.json",
+        "sha256": "98680d1603496508ad1afccf166341c0a558a434082dbd1b09b7b39a1f4ce547"
+      },
+      {
+        "path": "preparation-hashes.json",
+        "sha256": "910992457ac7a38892b8acb6b2ff2e11599662d0901d675aa1fbeae07718d260"
+      },
+      {
+        "path": "PREPARATION-FILES.txt",
+        "sha256": "e58e29804f6c3bab4a34b213245de93836680a3cfcf2854238b503b47c1fac1a"
+      }
+    ]
+  },
+  "run": {
+    "started_at": "2026-10-07T06:51:24.904197+00:00",
+    "ended_at": "2026-10-07T06:52:00.102357+00:00",
+    "supervisor_elapsed_seconds": 35.198185564000596,
+    "controller_elapsed_seconds": 35.87120757100274,
+    "display": ":1",
+    "port": 7898,
+    "world": 1380350231,
+    "window": 125476463786560,
+    "supervisor": {
+      "pid": 2248619,
+      "start": "2338489",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/bin/python3.12"
+    },
+    "app": {
+      "pid": 2248633,
+      "start": "2338508",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "xvfb": {
+      "pid": 2248627,
+      "start": "2338497",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "snapshot_client": {
+      "pid": 2250969,
+      "start": "2339790",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    }
+  },
+  "reuse_evidence": {
+    "snapshot_worker_launches": 1,
+    "worker_argv": [
+      "/usr/local/bin/clojure",
+      "-J-Xms64m",
+      "-J-Xmx256m",
+      "-Sdeps",
+      "{:deps {nrepl/nrepl {:mvn/version \"1.0.0\"}}}",
+      "-M",
+      "/home/err/spaces/foresight/.worktrees/truth-guarded-approach/.\u03b7\u03bc/diagnostics/guarded-approach/snapshot_client.clj",
+      "/home/err/spaces/foresight/.worktrees/truth-guarded-approach/.\u03b7\u03bc/diagnostics/guarded-approach/runs/attempt-01"
+    ],
+    "worker_ready_events": 1,
+    "snapshot_requests": 29,
+    "sequential_ids": true,
+    "identical_guard_identity": true,
+    "initial_plus_two_additional_reads_preceded_first_input": true,
+    "unique_response_session_ids": 29,
+    "interpretation": "One worker launch at the pinned source has one with-open nrepl/connect around its entire request loop; 29 completed exchanges occurred in that process. Per-eval nREPL session IDs vary because no retained client-session/clone is requested. They are not TCP connection identities. No independent socket capture was performed.",
+    "fixed_guard_identity": {
+      "pid": 2248633,
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "start": "2338508",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+      "display": ":1",
+      "port": "7898",
+      "world": 1380350231,
+      "window": 125476463786560
+    },
+    "all_values_agree_with_game_identity": true
+  },
+  "sequence": {
+    "planned": [
+      [
+        "inspect"
+      ],
+      [
+        "inspect"
+      ],
+      [
+        "tap",
+        "r"
+      ],
+      [
+        "click",
+        "spark"
+      ],
+      [
+        "click",
+        "spark"
+      ],
+      [
+        "tap",
+        "Tab"
+      ],
+      [
+        "look",
+        "100",
+        "0"
+      ],
+      [
+        "look",
+        "-100",
+        "0"
+      ],
+      [
+        "look",
+        "0",
+        "100"
+      ],
+      [
+        "look",
+        "0",
+        "-100"
+      ],
+      [
+        "tap",
+        "Tab"
+      ],
+      [
+        "tap",
+        "Tab"
+      ]
+    ],
+    "completed": [
+      [
+        "inspect"
+      ],
+      [
+        "inspect"
+      ],
+      [
+        "tap",
+        "r"
+      ],
+      [
+        "click",
+        "spark"
+      ],
+      [
+        "click",
+        "spark"
+      ],
+      [
+        "tap",
+        "Tab"
+      ],
+      [
+        "look",
+        "100",
+        "0"
+      ],
+      [
+        "look",
+        "-100",
+        "0"
+      ],
+      [
+        "look",
+        "0",
+        "100"
+      ],
+      [
+        "look",
+        "0",
+        "-100"
+      ],
+      [
+        "tap",
+        "Tab"
+      ],
+      [
+        "tap",
+        "Tab"
+      ]
+    ],
+    "requests": 12,
+    "successful_results": 12,
+    "input_observations": 16,
+    "matched_observations": 12,
+    "not_yet_matched_observations": 4,
+    "look_gestures": 4,
+    "gesture_retry": false,
+    "observations": [
+      {
+        "at": "2026-10-07T06:51:48.956457+00:00",
+        "elapsed_seconds": 24.05228232599984,
+        "kind": "input-observation",
+        "label": "tap-r",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": null
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:49.649057+00:00",
+        "elapsed_seconds": 24.744939215997874,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:49.941521+00:00",
+        "elapsed_seconds": 25.037347114001022,
+        "kind": "input-observation",
+        "label": "spark-toggle",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:50.847171+00:00",
+        "elapsed_seconds": 25.942997392001416,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:51.195974+00:00",
+        "elapsed_seconds": 26.291797679998126,
+        "kind": "input-observation",
+        "label": "spark-toggle",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T06:51:51.718732+00:00",
+        "elapsed_seconds": 26.814556814999378,
+        "kind": "input-observation",
+        "label": "spark-toggle",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:52.647794+00:00",
+        "elapsed_seconds": 27.743628129999706,
+        "kind": "input-observation",
+        "label": "tap-Tab",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:53.476908+00:00",
+        "elapsed_seconds": 28.572730571999273,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T06:51:53.895266+00:00",
+        "elapsed_seconds": 28.99108533099934,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -89.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            374.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:54.527018+00:00",
+        "elapsed_seconds": 29.62286045699875,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:55.307034+00:00",
+        "elapsed_seconds": 30.402852428000188,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T06:51:55.622581+00:00",
+        "elapsed_seconds": 30.718404606999684,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -21.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            113.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:56.519029+00:00",
+        "elapsed_seconds": 31.61485345699839,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -21.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            113.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T06:51:56.921773+00:00",
+        "elapsed_seconds": 32.01759796599799,
+        "kind": "input-observation",
+        "label": "look",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:58.072478+00:00",
+        "elapsed_seconds": 33.1683006639978,
+        "kind": "input-observation",
+        "label": "tap-Tab",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T06:51:59.041384+00:00",
+        "elapsed_seconds": 34.13720355999976,
+        "kind": "input-observation",
+        "label": "tap-Tab",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      }
+    ],
+    "readback_note": "Four early observations had not yet reflected their single input gesture; the next read confirmed it. These were observation retries, never gesture retries. Yaw returned -90\u2192-89\u2192-90 and pitch -20\u2192-21\u2192-20."
+  },
+  "response_caps": {
+    "total_encoded_bytes": 152369,
+    "largest_request_bytes": 11124,
+    "request_cap_bytes": 4194304,
+    "run_cap_bytes": 16777216,
+    "request_count_cap": 128,
+    "all_within_bounds": true,
+    "raw_message_count": 270,
+    "remote_error_messages": 0,
+    "remote_stderr_bytes": 0,
+    "all_returned_exactly_one_value_and_done": true,
+    "all_stdout_reconstructed_from_raw_messages": true
+  },
+  "descriptive_snapshot_latency_ms": {
+    "worker_min": 36.215583,
+    "worker_median": 76.578957,
+    "worker_max": 259.050684,
+    "supervisor_request_min": 61.35865399846807,
+    "supervisor_request_median": 111.6697870020289,
+    "supervisor_request_max": 316.2103520007804,
+    "limit": "Short young-world functional run; no isolated performance, mature-world latency guarantee or native FPS claim."
+  },
+  "cleanup": {
+    "event_counts": {
+      "command": 24,
+      "spawn": 24,
+      "snapshot-client-ready": 1,
+      "snapshot-request": 29,
+      "snapshot-result": 29,
+      "exit": 21,
+      "ready": 1,
+      "request": 12,
+      "input-observation": 16,
+      "look-expectation": 4,
+      "reaped": 24
+    },
+    "spawn_events": 24,
+    "unique_spawn_pids": 24,
+    "raw_reap_events": 24,
+    "unique_reaped_pids": 24,
+    "all_spawned_children_reaped": true,
+    "reap_codes": {
+      "0": 23,
+      "143": 1
+    },
+    "worker_exit": 0,
+    "worker_stdout_bytes": 0,
+    "worker_stderr_bytes": 0,
+    "close_marker_exists": true,
+    "client_commands": 14,
+    "client_exits": 14,
+    "all_controller_clients_reaped": true,
+    "closed": {
+      "outcome": "operator-stop",
+      "cleanup_errors": [],
+      "unreaped_children": [],
+      "budget_exceeded": false,
+      "mouse_pending": false,
+      "mouse_release_uncertain": false
+    },
+    "controller_errors": [],
+    "controller_unreaped_clients": [],
+    "controller_budget_exceeded": false,
+    "fresh_process_absence_check": "Not performed by this auditor; root owns live process verification."
+  },
+  "raw_requests": [
+    {
+      "id": "0001",
+      "message_count": 10,
+      "raw_bytes": 4399,
+      "elapsed_ms": 259.050684,
+      "session_ids": [
+        "d0d35a6f-3703-45f7-9281-5663b5053cc5"
+      ],
+      "tick": 48,
+      "evidence_hashes": {
+        ".messages.edn": "2b4e9b2a7def8677f2deedf911577d7727e66069d4f511ad422a8ddc09fb7463",
+        ".meta.edn": "69e88bbd006053e9a951a583c53698e77d873e2e98261a5a403ced9eae24ae79",
+        ".stdout": "528d6252e4110c99c94088073dc51332202e90bc1d8adee04da04f29d58c7dca",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0002",
+      "message_count": 9,
+      "raw_bytes": 4294,
+      "elapsed_ms": 205.411704,
+      "session_ids": [
+        "7726d54a-6800-4be9-8243-b6fdbd418f77"
+      ],
+      "tick": 55,
+      "evidence_hashes": {
+        ".messages.edn": "18f089bbe0ce526001c4d99466927f7b8cfb944c2980d1ba9555a157ec167b34",
+        ".meta.edn": "7480003a3988f7c68959678d64b48426ae7229b7b2c6d2bb092d8f6bcaac4c56",
+        ".stdout": "dbabfb539667c90cec28233756972d62ccf8c39502db3a8fc6168dc84f189026",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0003",
+      "message_count": 9,
+      "raw_bytes": 4293,
+      "elapsed_ms": 60.1493,
+      "session_ids": [
+        "befd9015-40c7-49f0-b528-396286fb29e6"
+      ],
+      "tick": 60,
+      "evidence_hashes": {
+        ".messages.edn": "bf0b24013e0064f1ce485a3b84df5cbc454dfadc50e87d95ae37e5ddfcb76cc8",
+        ".meta.edn": "88291724bed2ff3b8f3d605d095f8db44a0b3ec6f75ec369408256b6dee828a2",
+        ".stdout": "def16a4a623164279eb64aa2fcc1d835d95f3fe60748c7b0ecb475cf002b7911",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0004",
+      "message_count": 9,
+      "raw_bytes": 4289,
+      "elapsed_ms": 171.811615,
+      "session_ids": [
+        "b6f3ff57-852e-4d13-8380-7b61b95ecdcf"
+      ],
+      "tick": 64,
+      "evidence_hashes": {
+        ".messages.edn": "35fda5edbccda2e211b0ff6bf950426909c46020ce1208408176a6ed6e725d30",
+        ".meta.edn": "24fb0ae946d9b0aac10135374804d71a1ec2fdeae77610427a6995c4674bb725",
+        ".stdout": "fda5f18d744d295dd8fac647d5c6d50ee86c7ebea35274843ebad42623fec569",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0005",
+      "message_count": 9,
+      "raw_bytes": 4273,
+      "elapsed_ms": 134.707596,
+      "session_ids": [
+        "21f1361f-13e7-4a80-aff0-53278df078b8"
+      ],
+      "tick": 68,
+      "evidence_hashes": {
+        ".messages.edn": "56acf6bd52ed24212a4a55326431cdd41029565b666a7e070668c4d56e49c82e",
+        ".meta.edn": "5c0c92faceb90c06bc66608c7be6a2d04fc5ed7f74c13684a47bdc11acffd0cb",
+        ".stdout": "e9d5c21720b6199db1c9817d7360283649fad48a400963229db78a39bb61f34d",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0006",
+      "message_count": 9,
+      "raw_bytes": 4269,
+      "elapsed_ms": 44.295343,
+      "session_ids": [
+        "2a4c4c29-13f1-4b46-9229-d8896e12fe71"
+      ],
+      "tick": 72,
+      "evidence_hashes": {
+        ".messages.edn": "7b053ece8fa2563592eb4ece58afffaf9728319b0e35b0ba68878b4792e87296",
+        ".meta.edn": "e9dc3e74aefaf40d0a6d263476b73178fb28d3be6f77056e4a68d3c39dbd4872",
+        ".stdout": "caf426b16f96d1f0a46eea6d1f872c538a56276c25aa8d58d7d944242d17489e",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0007",
+      "message_count": 9,
+      "raw_bytes": 4296,
+      "elapsed_ms": 65.217915,
+      "session_ids": [
+        "42bb82ab-1f8d-48f0-b75b-b29d1553ecbf"
+      ],
+      "tick": 73,
+      "evidence_hashes": {
+        ".messages.edn": "2f27f268cfb937875846863c3d99f432a5993d8f1ba13127370e9e53518c4e86",
+        ".meta.edn": "53fe48fe729fe2945e8b1af8800bbe3ed8b8508f39f8f44e7b63de9ae37c5107",
+        ".stdout": "310ecfd8807444e73059d37fffdfc3ec3d59a1fcc497dfccb3817f0b93cc63a8",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0008",
+      "message_count": 11,
+      "raw_bytes": 11124,
+      "elapsed_ms": 54.53415,
+      "session_ids": [
+        "4903a597-7ddb-411a-b481-7334ccd70822"
+      ],
+      "tick": 76,
+      "evidence_hashes": {
+        ".messages.edn": "d6cb5ae663c9465a90c9e5c9666a182b02e711f216345d68a332af79e5ba8572",
+        ".meta.edn": "81a63465e213a6d2ddbfb8fae709863d4bd0787ebefab83b35e20bf91f297d68",
+        ".stdout": "095163556a57a03f9c08f6d0a6c75d5ed2325126d9bb273df51fb73f918e76ab",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0009",
+      "message_count": 11,
+      "raw_bytes": 11121,
+      "elapsed_ms": 76.578957,
+      "session_ids": [
+        "2b2ea917-a888-42c1-8403-6dc3062f9ad7"
+      ],
+      "tick": 81,
+      "evidence_hashes": {
+        ".messages.edn": "48fe5070ab910258aaf893abda9230fc41176a45e65d43f22166adf306eab016",
+        ".meta.edn": "1648137197bae7c84b55e6c115c2125d08d0f8217b1e43e4e840f8aecb441ee5",
+        ".stdout": "3325f54f17fb3b64697c76ae6aef659f2c8a5d85f1c5988e103dff3f45746d22",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0010",
+      "message_count": 11,
+      "raw_bytes": 11116,
+      "elapsed_ms": 58.285297,
+      "session_ids": [
+        "ca48e843-48f9-4b0f-96a4-9946323a7e93"
+      ],
+      "tick": 83,
+      "evidence_hashes": {
+        ".messages.edn": "2305dd89bf2ad4a7eccd60cb801d3cb352bb1cd6fed49d29db64e1c9fadaeb5b",
+        ".meta.edn": "a35a742d5715582af05f13bec00c1a16be8d55dabd2b8c4c3d227f43ac4e214d",
+        ".stdout": "2fe5765bbfc7752dcf9e659ce248d78c951850ed579a4619bc624cc8e4540126",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0011",
+      "message_count": 11,
+      "raw_bytes": 11116,
+      "elapsed_ms": 178.947103,
+      "session_ids": [
+        "e735bb15-3245-46ff-97ca-b32944fa1511"
+      ],
+      "tick": 85,
+      "evidence_hashes": {
+        ".messages.edn": "5c40f29ca9bf653e3c11c0ac3bb3618ab28f66a95bdbdbc62e6c62ba26dc688c",
+        ".meta.edn": "55866c3d7ed59330a220a2e1015093bc5ae6ae4a2b3865b593eb943cd5d60509",
+        ".stdout": "d92c15ca690e39986bddf802b663bbb47377a37a4933c27ac02f80589f439870",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0012",
+      "message_count": 9,
+      "raw_bytes": 4320,
+      "elapsed_ms": 168.584442,
+      "session_ids": [
+        "0875b02e-d351-4095-812c-a35317a62edd"
+      ],
+      "tick": 90,
+      "evidence_hashes": {
+        ".messages.edn": "e711f56220a2a59220a7d028dc87babe4f0357eba9aedb673b9c9a6c8ed32a96",
+        ".meta.edn": "aa8f3f1e1ec816a49cc20313690be701f682ab42b919e2392ecfc27c7e88b6b1",
+        ".stdout": "c9cf76932b8102ab04cdc4652529c572eb3ac6893f2eff9ed2a7be8d5385b5e9",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0013",
+      "message_count": 9,
+      "raw_bytes": 4315,
+      "elapsed_ms": 60.111711,
+      "session_ids": [
+        "1061998d-811e-462f-a445-3ed5acd3bc7b"
+      ],
+      "tick": 95,
+      "evidence_hashes": {
+        ".messages.edn": "981661fe67fd2c169eee31ce32c1daab0437793188f146951b853de89a543c90",
+        ".meta.edn": "25ab2ac23a985a15ddf4c30bb7439e4ea68931bc1190970fb3454e66f85b62b5",
+        ".stdout": "720bb623c842e993faa7d07513ae73854fee700d5417a41f289479e64b90a0fc",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0014",
+      "message_count": 9,
+      "raw_bytes": 4317,
+      "elapsed_ms": 58.145644,
+      "session_ids": [
+        "0be6dee5-8440-4a67-a798-ed91655d3727"
+      ],
+      "tick": 98,
+      "evidence_hashes": {
+        ".messages.edn": "a7b9c94448a6ef74e0253d24124e496314be37936abdbebd62c3325ef76b142d",
+        ".meta.edn": "7007a9265dbcba82527f628e3f9f5c4acaefdae76852a8063223082e1c2f8f91",
+        ".stdout": "3526b302bac1dd5f1a27579a9397aed382a9b2929ab4fdfa0cd98f839ccc68ae",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0015",
+      "message_count": 9,
+      "raw_bytes": 4318,
+      "elapsed_ms": 53.199615,
+      "session_ids": [
+        "9bd1183a-81d6-4ae4-b420-eaba78124ac4"
+      ],
+      "tick": 103,
+      "evidence_hashes": {
+        ".messages.edn": "0f91d70457951199d6613b90347862641b156a722f49e74644618032a7c17d20",
+        ".meta.edn": "cdd726d52228aefc01d53e49b29310b9c0ca116327a05b84602ca43a3c137076",
+        ".stdout": "273b7adec3d5d44b48fe6465800648c07a89775bd433eff188155d6079e512fe",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0016",
+      "message_count": 9,
+      "raw_bytes": 4322,
+      "elapsed_ms": 198.505925,
+      "session_ids": [
+        "6a207473-942d-4659-b9da-4e559a0e498e"
+      ],
+      "tick": 104,
+      "evidence_hashes": {
+        ".messages.edn": "b59276ce8c9055ca06ed935ef21534ceec02635935dc021c68b799838b895ec6",
+        ".meta.edn": "89c7d07d55518fec9d770e2681fb4b03954d8aa87ef8f939b6b4669e5173a402",
+        ".stdout": "a78617991ee8dfb7ceaaa25517e115505c15856c6749d670a9b7edd3d39fb369",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0017",
+      "message_count": 9,
+      "raw_bytes": 4318,
+      "elapsed_ms": 157.349737,
+      "session_ids": [
+        "58de64a6-416c-4bfb-ac34-4d528ee9a2b9"
+      ],
+      "tick": 107,
+      "evidence_hashes": {
+        ".messages.edn": "ac45a5945ba2eedf3b2459f80d04ebc6fa925b422c52e0cd8e40bd357b1ec2f0",
+        ".meta.edn": "c5d613995f09e30f530543e59ccf8e228bbecad9e83892bc900bb60c0a804e2c",
+        ".stdout": "dc8a4b8822509a5499fa3eff4090a1e0b57e39434c2e9ad82569018f6ee97965",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0018",
+      "message_count": 9,
+      "raw_bytes": 4317,
+      "elapsed_ms": 72.357039,
+      "session_ids": [
+        "b795f9db-ce64-48d6-828d-aed000f6c1bc"
+      ],
+      "tick": 111,
+      "evidence_hashes": {
+        ".messages.edn": "39f39702fee40180ab7899281ecff350f6f578a1d67f77641790d28d513f005f",
+        ".meta.edn": "8b3adfae7ce5a390b7043da3c288e03380b40cba22470e9612140796725cfde5",
+        ".stdout": "b3a52b97ea28a27edff90df4679c4bba26fdc5c398ef8e597efd0a712ad647d9",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0019",
+      "message_count": 9,
+      "raw_bytes": 4321,
+      "elapsed_ms": 45.32946,
+      "session_ids": [
+        "c56b8bdf-35c8-4d1f-95a8-ef56e81d1095"
+      ],
+      "tick": 113,
+      "evidence_hashes": {
+        ".messages.edn": "134f8e4965840a62a67e711f3ab805a5a907642c041ef030e4c0ed500bb6aa53",
+        ".meta.edn": "3f086a33bdb2811cb112de6dc46cd6b50af2a28005d967550bd80932c3ff586f",
+        ".stdout": "f888baf8bc6b45f7804c0d634c3a9d4571bdb7456c68c1696370e8d68b125ef3",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0020",
+      "message_count": 9,
+      "raw_bytes": 4323,
+      "elapsed_ms": 37.184407,
+      "session_ids": [
+        "6770af05-1073-40a6-801f-e8f9b03a57cb"
+      ],
+      "tick": 116,
+      "evidence_hashes": {
+        ".messages.edn": "d6536f3bbca1d2057d178366f92989a6b2470b386be0acf9e54c53e25775e5e3",
+        ".meta.edn": "d5a862a715b6af30a4c9dc5d5ed52948076ffbd0001d2823354c5a0a1fb90e4c",
+        ".stdout": "e7b2700a2283763a951375a2034d131b89062336bdc8679e97c264d018ea2609",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0021",
+      "message_count": 9,
+      "raw_bytes": 4323,
+      "elapsed_ms": 106.976058,
+      "session_ids": [
+        "e4a477e2-7df3-4912-9e7b-62fca512bb57"
+      ],
+      "tick": 118,
+      "evidence_hashes": {
+        ".messages.edn": "50d2662f994f68526d27da04b5325bf1f6dfe39f8a8f106ebf254739ee12122f",
+        ".meta.edn": "e98bdbb8787db7544d2b6ea8533eb4eebb70fa46208ca523b573aa21b14ea567",
+        ".stdout": "edec55e980b21d4321b8b59d04d188be8edc4b6a9b46a60718f3c6e63c76b300",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0022",
+      "message_count": 9,
+      "raw_bytes": 4326,
+      "elapsed_ms": 38.822959,
+      "session_ids": [
+        "a4eab762-4086-4e7d-b1f1-ec1b0f30aab3"
+      ],
+      "tick": 121,
+      "evidence_hashes": {
+        ".messages.edn": "2df12c71ae665fec100489e3b401bf6d7979e09d84ee309cb17598cd251c7be6",
+        ".meta.edn": "eaae59adaeddd35abf022611b7a0aeff39d168c3314f77718fa375c95e3044f4",
+        ".stdout": "c2f68372e499ccc6655694e503c23d5b27e259e1391a881ab60ebcaf64addc1c",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0023",
+      "message_count": 9,
+      "raw_bytes": 4323,
+      "elapsed_ms": 174.097279,
+      "session_ids": [
+        "06d5c7a7-34e2-4ee1-b62b-d1f6a15a2fb3"
+      ],
+      "tick": 125,
+      "evidence_hashes": {
+        ".messages.edn": "302a296cf4604242386160754fe7962d40739e91eb6ed1cdecec7d2bdf6db506",
+        ".meta.edn": "4485f9e381ab515654e211aeefbaec46ce08b9587542d9412168183994054c59",
+        ".stdout": "ed4f95ed8e316a54ebd81ec12e1b04fd150ff763d8d9cf24ccce49150ccfbc81",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0024",
+      "message_count": 9,
+      "raw_bytes": 4323,
+      "elapsed_ms": 135.010262,
+      "session_ids": [
+        "b2261ea8-9c99-4324-82a6-1c09eeb19d41"
+      ],
+      "tick": 126,
+      "evidence_hashes": {
+        ".messages.edn": "0cf879d2c83e115e0574efb3014bb2e198bed8071c26201a46168723f14ef9c6",
+        ".meta.edn": "cbbce74eeb3f7358f11a25360a890b2e87db84aae03b728f9e1b68f0eeb6c3b3",
+        ".stdout": "a9b1eb07e7372b8dd25d2cf3c3e34e0a40632bdce20f0aeb3caee117e2aeb6ca",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0025",
+      "message_count": 9,
+      "raw_bytes": 4324,
+      "elapsed_ms": 115.123953,
+      "session_ids": [
+        "f576d8bd-0cbb-4e13-bed3-f1cd2474aac5"
+      ],
+      "tick": 127,
+      "evidence_hashes": {
+        ".messages.edn": "2a20e1b63bfdc534a77ed9a32dde18fa36bc671bc14c5b88df93269c6956ffb8",
+        ".meta.edn": "22c562b4739c36aa8460c22a3f659fa3d788e5c42c4e99dcc137c2ac81d1d42b",
+        ".stdout": "13fbd84b5af5ad1412341188a8f0fe0a17bc354c94fa8aedf8c1de049d98c1e2",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0026",
+      "message_count": 9,
+      "raw_bytes": 4325,
+      "elapsed_ms": 36.215583,
+      "session_ids": [
+        "f4767e92-1710-4fd0-a9aa-13316df7e9ea"
+      ],
+      "tick": 131,
+      "evidence_hashes": {
+        ".messages.edn": "c7a221b5b6c0226597cf00d80449e8debb553c8766ee846b06ed607c0038dec5",
+        ".meta.edn": "130b374413ab85385d7e3948f3841b09dc91d2e7d31cf8e2b63d98df5596bebd",
+        ".stdout": "e7657aaa2170ceec12b65c2a0d4bd5001d91d84897bae1b9d398a8bde39bf0b2",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0027",
+      "message_count": 9,
+      "raw_bytes": 4321,
+      "elapsed_ms": 63.73967,
+      "session_ids": [
+        "979aed1b-a4a1-4b4c-a222-7b32c7352419"
+      ],
+      "tick": 134,
+      "evidence_hashes": {
+        ".messages.edn": "e6ec4e3b6d289347bf7cdcc73a668ea92208a5d56c1c8c1889e972d7e801dfee",
+        ".meta.edn": "f4c3d2f0a19b68bffb2a21b9be7f268d18d8393734b7e20750c9731d416b101b",
+        ".stdout": "9fa29be60048eea9b010a8a491a668fc341f382db0d657e9855886110d0940af",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0028",
+      "message_count": 9,
+      "raw_bytes": 4320,
+      "elapsed_ms": 113.087017,
+      "session_ids": [
+        "6071b733-56f6-48ff-9e85-bfd2e74a1b6b"
+      ],
+      "tick": 139,
+      "evidence_hashes": {
+        ".messages.edn": "869fbd709a40a7c0d92ba946b8a3ad6af588b0ddbe92a0f21ca57e26369c2e0e",
+        ".meta.edn": "eb32be12219c82a04b2c61f5318fe2f359578c97303655dfcad251205e21b668",
+        ".stdout": "e800292a436b5a12f1dbbf3a2d5a1feda663392d42b0ee1246ba85060241b5b5",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    },
+    {
+      "id": "0029",
+      "message_count": 9,
+      "raw_bytes": 4323,
+      "elapsed_ms": 129.32523,
+      "session_ids": [
+        "284e0180-ab93-44d5-881f-df565674c39b"
+      ],
+      "tick": 142,
+      "evidence_hashes": {
+        ".messages.edn": "ffb2dde1431eee48da72bdcc1b8ed1842c0fc3f77600cba1cd3765d2e7de32e5",
+        ".meta.edn": "db0a1a6a805c6fcbe5f9e57c318ca6eeff0d3ab284f660dfbb50984d138d5891",
+        ".stdout": "eee56d820a66fb0ccedeee8a9c7a95b9c8c471dd31675229c50e0d6e85739336",
+        ".stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        ".result": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+      }
+    }
+  ],
+  "closure_evidence": [
+    {
+      "path": "runs/attempt-01/operations.jsonl",
+      "bytes": 44731,
+      "sha256": "851e3c8688068c6bc17df19819dbfac4f1d348be8b0cbf7268dee4962bfbe950"
+    },
+    {
+      "path": "runs/attempt-01/closed.json",
+      "bytes": 1776,
+      "sha256": "98bc8c1ddcc8ef34b2bbe3542c7c4c8e2bc1909ac84343c1a0da60a27ba16673"
+    },
+    {
+      "path": "runs/attempt-01/state.json",
+      "bytes": 1776,
+      "sha256": "98bc8c1ddcc8ef34b2bbe3542c7c4c8e2bc1909ac84343c1a0da60a27ba16673"
+    },
+    {
+      "path": "runs/attempt-01/source-hashes.json",
+      "bytes": 18753,
+      "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61"
+    },
+    {
+      "path": "runs/attempt-01/preparation-hashes.json",
+      "bytes": 441,
+      "sha256": "910992457ac7a38892b8acb6b2ff2e11599662d0901d675aa1fbeae07718d260"
+    },
+    {
+      "path": "completion-client-runs/attempt-01/controller.jsonl",
+      "bytes": 19161,
+      "sha256": "2f6cb03a39da4efd0ccf19a924f640678479beb93d3ed8efa935d20508428d35"
+    },
+    {
+      "path": "completion-client-runs/attempt-01/result.json",
+      "bytes": 3747,
+      "sha256": "1cd2e801428e44f305d8da6ba433c4e86ee8e0955bb4ba586b649c8cb55f1168"
+    }
+  ],
+  "limits": [
+    "No induced timeout/remote-error/size-cap failure path was executed; this is successful-path qualification plus source review.",
+    "All snapshots are ordinary young-nebula state; no mature-world latency or 25-minute lease/cap qualification.",
+    "No thrust, natural target approach, focus overlap, binding, commitment, embodiment or Gate outcome tested.",
+    "No screenshot or render visual-quality claim in this smoke.",
+    "No original artifact or ledger edited; this audit is the sole new file."
+  ],
+  "all_raw_request_checks": {
+    "matching_ids": true,
+    "one_value": true,
+    "one_terminal_done": true,
+    "no_unexpected_status": true,
+    "no_remote_error_or_stderr": true,
+    "exact_raw_bytes_and_message_counts_match_metadata": true,
+    "stdout_reconstruction_matches": true,
+    "result_ok": true,
+    "ordinary_nebula_fixture_false": true,
+    "no_thrust_binding_commitment": true
+  }
+}

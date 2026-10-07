@@ -1,0 +1,12 @@
+{
+  "pid": 2248619,
+  "at": "2026-10-07T06:51:24.839753+00:00",
+  "identity": {
+    "pid": 2248619,
+    "start": "2338489",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-guarded-approach",
+    "exe": "/usr/bin/python3.12"
+  }
+}
