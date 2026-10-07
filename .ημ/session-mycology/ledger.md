@@ -575,3 +575,12 @@
   spore: none
   receipt-refs: 2026-10-07T07:38:36.272649+00:00
   note: Ordinary two-second input matched source direction and cleared on a later tick; preserve early nonmatches, use byte-addressed journals, and distinguish fast-run success from worst-case startup availability. Existing diagnostic practice sufficient; no new spore.
+- ts: 2026-10-07T08:43:21.976315931Z
+  session: /home/err/spaces/foresight/.worktrees/truth-natural-flight-profile
+  task: Natural approach admission and cutoff audit
+  p-efficiency: 0.5
+  p-friction: 0.65
+  p-skill-candidate: 0.65
+  spore: none
+  receipt-refs: .ημ/diagnostics/natural-flight-profile/attempt-01-audit.json; root-successor-scope.json
+  note: A stricter diagnostic freshness predicate prevented testing intentionally retained production readiness. Match the actual consumer predicate and report stronger checks separately. Automate phase cutoff in the supervisor; root manual polling missed cadence and late STOP must remain a protocol deviation. No spore promoted.

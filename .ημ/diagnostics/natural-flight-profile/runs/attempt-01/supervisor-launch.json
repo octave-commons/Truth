@@ -1,0 +1,16 @@
+{
+  "pid": 2687712,
+  "at": "2026-10-07T08:09:54.435359+00:00",
+  "identity": {
+    "pid": 2687712,
+    "start": "2809449",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+    "exe": "/usr/bin/python3.12"
+  },
+  "lease_started_at": "2026-10-07T08:09:54.396320+00:00",
+  "lease_started_monotonic": 28094.455081703,
+  "startup_deadline": 28274.455081703,
+  "total_deadline": 29594.455081703
+}

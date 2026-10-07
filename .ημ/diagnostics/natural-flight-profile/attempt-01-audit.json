@@ -1,0 +1,2982 @@
+{
+  "at": "2026-10-07T08:38:27.478907+00:00",
+  "auditor": "runtime_scout",
+  "outcome": "closed-with-protocol-deviations-no-flight-attempt",
+  "scope": "Offline data audit only; no project namespaces, JVM/native execution, script imports, process inspection/control or state mutation. Only the two new audit/report files are authorized.",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "execution_preparation_commit": "cf9dcf2603244a70c43ad03315b2552bd660df4f",
+  "execution_commit_verification": "Root supplied short SHA; independently resolved HEAD with read-only git rev-parse after explicit root request.",
+  "identity": {
+    "supervisor": {
+      "pid": 2687712,
+      "start": "2809449",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+      "exe": "/usr/bin/python3.12"
+    },
+    "app": {
+      "pid": 2687764,
+      "start": "2809479",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "xvfb": {
+      "pid": 2687739,
+      "start": "2809458",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "snapshot_client": {
+      "pid": 2689310,
+      "start": "2810673",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "display": ":1",
+    "port": 7898,
+    "world": 305915124,
+    "window": 126880850854736,
+    "x-window": "2097159"
+  },
+  "closure": {
+    "outcome": "operator-stop",
+    "elapsed_seconds": 995.3648383790023,
+    "ended_at": "2026-10-07T08:26:29.761136+00:00",
+    "errors": [],
+    "unreaped": [],
+    "release_flags_clear": true,
+    "work_total_budgets_exceeded": false
+  },
+  "coverage": {
+    "source_files": 186,
+    "run_prep_pins": 5,
+    "manifest_checksums": 9,
+    "snapshots": 32,
+    "raw_decoded_messages": 449,
+    "raw_utf8_bytes": 287189,
+    "max_request_bytes": 18063,
+    "summary_entries": 66,
+    "request_ack_consume_events": 96,
+    "all_spans_ids_acks_consumes_verified": true,
+    "spans": [
+      {
+        "id": "0001",
+        "byte_start": 0,
+        "byte_end": 4783,
+        "bytes": 4783,
+        "messages": 12,
+        "elapsed_ms": 289.204164,
+        "sha256": "2ede4e79c6f22ff4129c2d3b2644c7e3d36c6609aec4ad5fd181eca4e2daaf37"
+      },
+      {
+        "id": "0002",
+        "byte_start": 4783,
+        "byte_end": 9459,
+        "bytes": 4676,
+        "messages": 11,
+        "elapsed_ms": 77.061919,
+        "sha256": "4b62928abed0772259df271feab355700e4b37225bbf29bd66024a8009b3e381"
+      },
+      {
+        "id": "0003",
+        "byte_start": 9459,
+        "byte_end": 14329,
+        "bytes": 4870,
+        "messages": 11,
+        "elapsed_ms": 124.539298,
+        "sha256": "4c7126b188d7df4061a702603beb155aa93709f9a3f876e5c8177a39c4ed40a1"
+      },
+      {
+        "id": "0004",
+        "byte_start": 14329,
+        "byte_end": 19209,
+        "bytes": 4880,
+        "messages": 11,
+        "elapsed_ms": 127.535154,
+        "sha256": "cea1857d3d765d18b78924b365616a0bb24b7e9a2e99c947a8470233ac211861"
+      },
+      {
+        "id": "0005",
+        "byte_start": 19209,
+        "byte_end": 24062,
+        "bytes": 4853,
+        "messages": 11,
+        "elapsed_ms": 225.473236,
+        "sha256": "a409678fa9ad9d7aab8f21d941d3d235993615db8e6f65de5fb3fe832340da74"
+      },
+      {
+        "id": "0006",
+        "byte_start": 24062,
+        "byte_end": 28946,
+        "bytes": 4884,
+        "messages": 11,
+        "elapsed_ms": 60.758934,
+        "sha256": "4069ede7bb1d16f412ec18e6aa32c83dba5bc06bb27e88e5a3409721c4af2a1e"
+      },
+      {
+        "id": "0007",
+        "byte_start": 28946,
+        "byte_end": 33830,
+        "bytes": 4884,
+        "messages": 11,
+        "elapsed_ms": 137.538317,
+        "sha256": "2083bffddea565dcf55a35926ded7d5606479067e655301a655fc736c7fc550c"
+      },
+      {
+        "id": "0008",
+        "byte_start": 33830,
+        "byte_end": 38726,
+        "bytes": 4896,
+        "messages": 11,
+        "elapsed_ms": 89.008636,
+        "sha256": "318abf0a802e93b8b551c67c9bd416eabb5956a8e2a4e96ba4e5dfd51a40910f"
+      },
+      {
+        "id": "0009",
+        "byte_start": 38726,
+        "byte_end": 43631,
+        "bytes": 4905,
+        "messages": 11,
+        "elapsed_ms": 100.928965,
+        "sha256": "fcd51414946305fff8c109249eab55dc3aa4131d2da938edc4cff0aa4885b4b3"
+      },
+      {
+        "id": "0010",
+        "byte_start": 43631,
+        "byte_end": 55581,
+        "bytes": 11950,
+        "messages": 15,
+        "elapsed_ms": 36.946339,
+        "sha256": "b1c99b7cdcfb643f9bff2855d075f7c94fada0450265be5abb7ad751995b5f78"
+      },
+      {
+        "id": "0011",
+        "byte_start": 55581,
+        "byte_end": 67602,
+        "bytes": 12021,
+        "messages": 15,
+        "elapsed_ms": 122.426591,
+        "sha256": "fa3171019e43d18624660ab8fe4439ba48b163afac0edbe26c7bc0367d03138c"
+      },
+      {
+        "id": "0012",
+        "byte_start": 67602,
+        "byte_end": 79630,
+        "bytes": 12028,
+        "messages": 15,
+        "elapsed_ms": 126.382082,
+        "sha256": "9b65ad0274aec66e8acf2c126dee6e4f507cac0bc8b04922405683d81062316a"
+      },
+      {
+        "id": "0013",
+        "byte_start": 79630,
+        "byte_end": 91657,
+        "bytes": 12027,
+        "messages": 15,
+        "elapsed_ms": 86.414587,
+        "sha256": "01716f13ce7ee9ca1b8d1ddbd93d740849769707d86c8d63fa86a7511c09b50b"
+      },
+      {
+        "id": "0014",
+        "byte_start": 91657,
+        "byte_end": 103682,
+        "bytes": 12025,
+        "messages": 15,
+        "elapsed_ms": 131.391843,
+        "sha256": "bf6ec6958da4f046e3b44e2056561279b63c2461e814d6c1adfa8673b1a27d19"
+      },
+      {
+        "id": "0015",
+        "byte_start": 103682,
+        "byte_end": 115706,
+        "bytes": 12024,
+        "messages": 15,
+        "elapsed_ms": 39.545587,
+        "sha256": "4f7b18250b6325cf9405a1f175b0717db129a06420bff5d117a6ca4cd0e86c8e"
+      },
+      {
+        "id": "0016",
+        "byte_start": 115706,
+        "byte_end": 127720,
+        "bytes": 12014,
+        "messages": 15,
+        "elapsed_ms": 149.70029,
+        "sha256": "005a545bd8ff5dd9d14a813b62de36fc26639e65f97ae6df7cc34ae183f277b3"
+      },
+      {
+        "id": "0017",
+        "byte_start": 127720,
+        "byte_end": 139744,
+        "bytes": 12024,
+        "messages": 15,
+        "elapsed_ms": 266.829466,
+        "sha256": "1ebfc9fad170f3eee154c192026fa5e69231feed2d45da80382fd254d574ae7b"
+      },
+      {
+        "id": "0018",
+        "byte_start": 139744,
+        "byte_end": 151769,
+        "bytes": 12025,
+        "messages": 15,
+        "elapsed_ms": 57.087819,
+        "sha256": "03ba3ebe3194f4648f9e008d5c6036cb64c4e5351a661e6f03254b96d5998db2"
+      },
+      {
+        "id": "0019",
+        "byte_start": 151769,
+        "byte_end": 156767,
+        "bytes": 4998,
+        "messages": 11,
+        "elapsed_ms": 71.598004,
+        "sha256": "6fde145e097bf4395f6497b83af8f05025451aa4423be0802076fc592a8bb166"
+      },
+      {
+        "id": "0020",
+        "byte_start": 156767,
+        "byte_end": 161767,
+        "bytes": 5000,
+        "messages": 11,
+        "elapsed_ms": 52.929499,
+        "sha256": "7287a46dc1ffc79323236ace4823de357f0412c4d45f915662c2b930b83564e3"
+      },
+      {
+        "id": "0021",
+        "byte_start": 161767,
+        "byte_end": 166764,
+        "bytes": 4997,
+        "messages": 11,
+        "elapsed_ms": 36.116696,
+        "sha256": "568d15a0012206baaac77001ea879f504e5e955ec9ea428fa718ba1697531e16"
+      },
+      {
+        "id": "0022",
+        "byte_start": 166764,
+        "byte_end": 171787,
+        "bytes": 5023,
+        "messages": 11,
+        "elapsed_ms": 109.353547,
+        "sha256": "138370067e5be48ef0d84fc69731451277a7511f0675d463ca40c0dfdd08ce3b"
+      },
+      {
+        "id": "0023",
+        "byte_start": 171787,
+        "byte_end": 176813,
+        "bytes": 5026,
+        "messages": 11,
+        "elapsed_ms": 122.953812,
+        "sha256": "4a3dee518cebb0205c421d62efa718fe8e5ed6d5f8671a7a7d0cf30a99f76b4f"
+      },
+      {
+        "id": "0024",
+        "byte_start": 176813,
+        "byte_end": 181834,
+        "bytes": 5021,
+        "messages": 11,
+        "elapsed_ms": 97.709105,
+        "sha256": "f697c0fff3a1f08001dea2dddc216efd7799d39148a0024882591581b1dc9dad"
+      },
+      {
+        "id": "0025",
+        "byte_start": 181834,
+        "byte_end": 186862,
+        "bytes": 5028,
+        "messages": 11,
+        "elapsed_ms": 270.334814,
+        "sha256": "2515410b1585a68a517b65ee2aa802e8a8d21214feab5f2ccff5c4dfda9d9749"
+      },
+      {
+        "id": "0026",
+        "byte_start": 186862,
+        "byte_end": 191873,
+        "bytes": 5011,
+        "messages": 11,
+        "elapsed_ms": 146.970686,
+        "sha256": "03e46540232dec2fcd2d27c299819bcec762116bdc208cc80cfe52a260f5acd8"
+      },
+      {
+        "id": "0027",
+        "byte_start": 191873,
+        "byte_end": 196937,
+        "bytes": 5064,
+        "messages": 11,
+        "elapsed_ms": 54.951846,
+        "sha256": "3597f79117cbb6d1048b3a59bec6e0163ee3df8d3b9271829886e0c84a4f8881"
+      },
+      {
+        "id": "0028",
+        "byte_start": 196937,
+        "byte_end": 214996,
+        "bytes": 18059,
+        "messages": 23,
+        "elapsed_ms": 210.425766,
+        "sha256": "27b2595b87bc2acfb2610b4244a3764ab8e2c3022ad0655181c7de5876ba9e1f"
+      },
+      {
+        "id": "0029",
+        "byte_start": 214996,
+        "byte_end": 233057,
+        "bytes": 18061,
+        "messages": 23,
+        "elapsed_ms": 141.841992,
+        "sha256": "edafc58ca5f7ba7ddae2b490b558ddb25f6bf10a71691fe54798d18d9a53ef5b"
+      },
+      {
+        "id": "0030",
+        "byte_start": 233057,
+        "byte_end": 251120,
+        "bytes": 18063,
+        "messages": 23,
+        "elapsed_ms": 254.534486,
+        "sha256": "bc92336f1dd9e1de4c46b614b2ec4f1460d5b2c464d37c15d32a15086cc1c584"
+      },
+      {
+        "id": "0031",
+        "byte_start": 251120,
+        "byte_end": 269180,
+        "bytes": 18060,
+        "messages": 23,
+        "elapsed_ms": 89.651689,
+        "sha256": "d56ced3deea8e0fbf4e835da6f5e690a9fefd3d8163b6af8e411c7db83d6040b"
+      },
+      {
+        "id": "0032",
+        "byte_start": 269180,
+        "byte_end": 287189,
+        "bytes": 18009,
+        "messages": 23,
+        "elapsed_ms": 64.294256,
+        "sha256": "ca0f0775a4e545d96a54936141db4e5a2a3f323211ef8d8bcfe34fe234fe663a"
+      }
+    ],
+    "connection_open": {
+      "event": "connection-open",
+      "pid": 2689310,
+      "expected": {
+        "pid": 2687764,
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "start": "2809479",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+        "display": ":1",
+        "port": "7898"
+      },
+      "wall-ms": 1791360614409
+    },
+    "connection_close": {
+      "event": "connection-close",
+      "completed": 32,
+      "byte-end": 287189,
+      "wall-ms": 1791361588367
+    },
+    "one_worker_launch": true,
+    "distinct_response_session_ids": 32,
+    "connection_limit": "Per-eval nREPL session IDs are not TCP connection IDs; fixed source plus one worker open/close journal supports reuse, without packet capture.",
+    "snapshot_ms_descriptive_only": {
+      "min": 36.116696,
+      "median": 115.89006900000001,
+      "max": 289.204164
+    }
+  },
+  "requests": {
+    "count": 21,
+    "operation_counts": {
+      "inspect": 13,
+      "tap": 2,
+      "click": 3,
+      "frame": 3
+    },
+    "all_saved_results_ok": true,
+    "finished_before_next_submission": true,
+    "completed": [
+      {
+        "id": "1791360627763523764-e76dbb4b",
+        "at": "2026-10-07T08:10:27.763565+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:10:28.128832+00:00"
+      },
+      {
+        "id": "1791360660559861338-88a4bfe8",
+        "at": "2026-10-07T08:11:00.559898+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:11:00.793450+00:00"
+      },
+      {
+        "id": "1791360669404424640-d19a9be1",
+        "at": "2026-10-07T08:11:09.404467+00:00",
+        "operation": "tap",
+        "args": [
+          "r"
+        ],
+        "ok": true,
+        "finished_at": "2026-10-07T08:11:10.190792+00:00"
+      },
+      {
+        "id": "1791360682110375654-0de89cd0",
+        "at": "2026-10-07T08:11:22.110411+00:00",
+        "operation": "click",
+        "args": [
+          "spark"
+        ],
+        "ok": true,
+        "finished_at": "2026-10-07T08:11:23.780731+00:00"
+      },
+      {
+        "id": "1791360702707529812-f7732732",
+        "at": "2026-10-07T08:11:42.707559+00:00",
+        "operation": "click",
+        "args": [
+          "fine"
+        ],
+        "ok": true,
+        "finished_at": "2026-10-07T08:11:44.628078+00:00"
+      },
+      {
+        "id": "1791360717213778873-cb5bc776",
+        "at": "2026-10-07T08:11:57.213820+00:00",
+        "operation": "click",
+        "args": [
+          "spark"
+        ],
+        "ok": true,
+        "finished_at": "2026-10-07T08:11:58.244194+00:00"
+      },
+      {
+        "id": "1791360740812074296-d174d773",
+        "at": "2026-10-07T08:12:20.812125+00:00",
+        "operation": "tap",
+        "args": [
+          "Tab"
+        ],
+        "ok": true,
+        "finished_at": "2026-10-07T08:12:21.501813+00:00"
+      },
+      {
+        "id": "1791360751819999506-b1501124",
+        "at": "2026-10-07T08:12:31.820166+00:00",
+        "operation": "frame",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:12:32.792518+00:00"
+      },
+      {
+        "id": "1791360815270098894-b620223c",
+        "at": "2026-10-07T08:13:35.270130+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:13:35.645294+00:00"
+      },
+      {
+        "id": "1791360954596415534-ba30088f",
+        "at": "2026-10-07T08:15:54.596449+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:15:54.997899+00:00"
+      },
+      {
+        "id": "1791360998268494931-cf1de94c",
+        "at": "2026-10-07T08:16:38.268548+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:16:38.925790+00:00"
+      },
+      {
+        "id": "1791361069327410705-c56400d2",
+        "at": "2026-10-07T08:17:49.327467+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:17:49.877058+00:00"
+      },
+      {
+        "id": "1791361133417372485-4d1ffcc1",
+        "at": "2026-10-07T08:18:53.417444+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:18:53.819613+00:00"
+      },
+      {
+        "id": "1791361197518524730-d846ce69",
+        "at": "2026-10-07T08:19:57.518601+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:19:57.934963+00:00"
+      },
+      {
+        "id": "1791361310714803825-c0e5a05c",
+        "at": "2026-10-07T08:21:50.714827+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:21:51.061305+00:00"
+      },
+      {
+        "id": "1791361362966618070-22df6797",
+        "at": "2026-10-07T08:22:42.966660+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:22:43.382796+00:00"
+      },
+      {
+        "id": "1791361403371768330-1d1b403f",
+        "at": "2026-10-07T08:23:23.371806+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:23:23.996433+00:00"
+      },
+      {
+        "id": "1791361422635587731-a1f0f83b",
+        "at": "2026-10-07T08:23:42.635638+00:00",
+        "operation": "frame",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:23:43.619148+00:00"
+      },
+      {
+        "id": "1791361461982839920-5f278d8d",
+        "at": "2026-10-07T08:24:21.982906+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:24:22.452042+00:00"
+      },
+      {
+        "id": "1791361517513878548-f3bd0093",
+        "at": "2026-10-07T08:25:17.513955+00:00",
+        "operation": "inspect",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:25:17.840950+00:00"
+      },
+      {
+        "id": "1791361531588261573-afd26be0",
+        "at": "2026-10-07T08:25:31.588307+00:00",
+        "operation": "frame",
+        "args": [],
+        "ok": true,
+        "finished_at": "2026-10-07T08:25:32.484081+00:00"
+      }
+    ],
+    "input_observations": [
+      {
+        "at": "2026-10-07T08:11:10.190721+00:00",
+        "elapsed_seconds": 75.79442590100007,
+        "kind": "input-observation",
+        "label": "tap-r",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": null
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:11:22.602659+00:00",
+        "elapsed_seconds": 88.20637565400102,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": null
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T08:11:22.998747+00:00",
+        "elapsed_seconds": 88.60245426899928,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:11:23.404607+00:00",
+        "elapsed_seconds": 89.00835910499882,
+        "kind": "input-observation",
+        "label": "spark-toggle",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T08:11:23.779989+00:00",
+        "elapsed_seconds": 89.38369547100228,
+        "kind": "input-observation",
+        "label": "spark-toggle",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:11:43.289572+00:00",
+        "elapsed_seconds": 108.8932782970005,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T08:11:43.648964+00:00",
+        "elapsed_seconds": 109.25268023900207,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            1201.0,
+            389.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:11:43.950414+00:00",
+        "elapsed_seconds": 109.55411393800023,
+        "kind": "input-observation",
+        "label": "range-fine",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            1201.0,
+            389.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T08:11:44.218219+00:00",
+        "elapsed_seconds": 109.82194284300203,
+        "kind": "input-observation",
+        "label": "range-fine",
+        "attempt": 1,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 300000000000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            1201.0,
+            389.0
+          ]
+        },
+        "matched": false
+      },
+      {
+        "at": "2026-10-07T08:11:44.627959+00:00",
+        "elapsed_seconds": 110.23167877800006,
+        "kind": "input-observation",
+        "label": "range-fine",
+        "attempt": 2,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            1201.0,
+            389.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:11:57.840381+00:00",
+        "elapsed_seconds": 123.44413593400168,
+        "kind": "input-observation",
+        "label": "menu-position",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "spark",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:11:58.244117+00:00",
+        "elapsed_seconds": 123.84782233900114,
+        "kind": "input-observation",
+        "label": "spark-toggle",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": true,
+          "domain": "none",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": false,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      },
+      {
+        "at": "2026-10-07T08:12:21.501701+00:00",
+        "elapsed_seconds": 147.10541203699904,
+        "kind": "input-observation",
+        "label": "tap-Tab",
+        "attempt": 0,
+        "state": {
+          "mode": "manual",
+          "free": false,
+          "domain": "none",
+          "displacement": 10000000.0,
+          "yaw": -90.0,
+          "pitch": -20.0,
+          "sensitivity": 0.01,
+          "looking": true,
+          "pick_pending": false,
+          "cursor": [
+            274.0,
+            13.0
+          ]
+        },
+        "matched": true
+      }
+    ],
+    "balanced_mouse_press_release": [
+      3,
+      3
+    ],
+    "movement_holds": 0,
+    "looks": 0,
+    "aims": 0
+  },
+  "process_evidence": {
+    "spawn_records": 22,
+    "unique_spawned_children": 22,
+    "raw_reaped_events": 22,
+    "unique_reaped_children": 22,
+    "exit_records": 19,
+    "returncode_counts": {
+      "0": 21,
+      "143": 1
+    },
+    "game_143_is_owned_termination_cleanup": true,
+    "reaps": [
+      {
+        "at": "2026-10-07T08:26:28.570577+00:00",
+        "elapsed_seconds": 994.174294032,
+        "kind": "reaped",
+        "label": "003-snapshot-client",
+        "pid": 2689310,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.570743+00:00",
+        "elapsed_seconds": 994.174442765001,
+        "kind": "reaped",
+        "label": "004-window-id",
+        "pid": 2690239,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.570814+00:00",
+        "elapsed_seconds": 994.174512485999,
+        "kind": "reaped",
+        "label": "005-focus-owned-window",
+        "pid": 2690242,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.570877+00:00",
+        "elapsed_seconds": 994.1745767380016,
+        "kind": "reaped",
+        "label": "006-tap",
+        "pid": 2694958,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.570934+00:00",
+        "elapsed_seconds": 994.1746313040021,
+        "kind": "reaped",
+        "label": "007-release-keys",
+        "pid": 2694959,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.570985+00:00",
+        "elapsed_seconds": 994.1746824469992,
+        "kind": "reaped",
+        "label": "008-menu-position",
+        "pid": 2696123,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571035+00:00",
+        "elapsed_seconds": 994.1747319950009,
+        "kind": "reaped",
+        "label": "009-menu-press",
+        "pid": 2696173,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571103+00:00",
+        "elapsed_seconds": 994.174799886001,
+        "kind": "reaped",
+        "label": "010-release-mouse",
+        "pid": 2696180,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571150+00:00",
+        "elapsed_seconds": 994.1748472889994,
+        "kind": "reaped",
+        "label": "011-menu-position",
+        "pid": 2698015,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571195+00:00",
+        "elapsed_seconds": 994.1748917420009,
+        "kind": "reaped",
+        "label": "012-menu-press",
+        "pid": 2698069,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571253+00:00",
+        "elapsed_seconds": 994.1749505529988,
+        "kind": "reaped",
+        "label": "013-release-mouse",
+        "pid": 2698071,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571301+00:00",
+        "elapsed_seconds": 994.1749976680003,
+        "kind": "reaped",
+        "label": "014-menu-position",
+        "pid": 2699014,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571345+00:00",
+        "elapsed_seconds": 994.175041499002,
+        "kind": "reaped",
+        "label": "015-menu-press",
+        "pid": 2699024,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571388+00:00",
+        "elapsed_seconds": 994.1750847959993,
+        "kind": "reaped",
+        "label": "016-release-mouse",
+        "pid": 2699025,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571431+00:00",
+        "elapsed_seconds": 994.1751279019991,
+        "kind": "reaped",
+        "label": "017-tap",
+        "pid": 2700644,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571475+00:00",
+        "elapsed_seconds": 994.1751713189988,
+        "kind": "reaped",
+        "label": "018-release-keys",
+        "pid": 2700647,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571517+00:00",
+        "elapsed_seconds": 994.175213773,
+        "kind": "reaped",
+        "label": "019-frame",
+        "pid": 2701493,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571561+00:00",
+        "elapsed_seconds": 994.1752571860015,
+        "kind": "reaped",
+        "label": "020-frame",
+        "pid": 2771674,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571603+00:00",
+        "elapsed_seconds": 994.1752998779994,
+        "kind": "reaped",
+        "label": "021-frame",
+        "pid": 2782424,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:28.571645+00:00",
+        "elapsed_seconds": 994.1753416259999,
+        "kind": "reaped",
+        "label": "022-release-keys",
+        "pid": 2786712,
+        "returncode": 0
+      },
+      {
+        "at": "2026-10-07T08:26:29.644789+00:00",
+        "elapsed_seconds": 995.2485188089995,
+        "kind": "reaped",
+        "label": "002-runtime",
+        "pid": 2687764,
+        "returncode": 143
+      },
+      {
+        "at": "2026-10-07T08:26:29.760993+00:00",
+        "elapsed_seconds": 995.3647126360011,
+        "kind": "reaped",
+        "label": "001-xvfb",
+        "pid": 2687739,
+        "returncode": 0
+      }
+    ],
+    "outer_clients": "Root reports all functions exec/write_stdin client sessions returned0/reaped. No separate local outer-client stdout/journal was captured, so this audit cannot independently enumerate their identities/reaps.",
+    "os_absence": "Root reports all four principal PIDs absent. This audit verifies saved child reaps, not fresh /proc absence. Supervisor is not its own child.",
+    "initial_exe_note": "App/worker initial /usr/bin/env records precede exec; PID/start/boot/cwd match later guarded Java identities.",
+    "stderr_bytes": {
+      "020-frame.stderr": 0,
+      "016-release-mouse.stderr": 0,
+      "013-release-mouse.stderr": 0,
+      "015-menu-press.stderr": 0,
+      "021-frame.stderr": 0,
+      "019-frame.stderr": 0,
+      "001-xvfb.stderr": 2480,
+      "011-menu-position.stderr": 0,
+      "022-release-keys.stderr": 0,
+      "012-menu-press.stderr": 0,
+      "018-release-keys.stderr": 0,
+      "supervisor.stderr": 0,
+      "009-menu-press.stderr": 0,
+      "004-window-id.stderr": 0,
+      "008-menu-position.stderr": 0,
+      "017-tap.stderr": 0,
+      "014-menu-position.stderr": 0,
+      "007-release-keys.stderr": 0,
+      "010-release-mouse.stderr": 0,
+      "003-snapshot-client.stderr": 0,
+      "006-tap.stderr": 0,
+      "005-focus-owned-window.stderr": 0,
+      "002-runtime.stderr": 0
+    },
+    "xvfb_note": "Preserved listener collision messages during displayfd selection, followed by nonfatal xkbcomp keysym warnings. Private :1 subsequently readied; three frame helpers exited0.",
+    "runtime_note": "Repeated K-clamp-to4096 warnings preserved, not attributed as a cause of sampled empty handoff.",
+    "k_clamp_phrase_occurrences": 4893
+  },
+  "frames": [
+    {
+      "path": "runs/attempt-01/frame-1791360751819999506-b1501124.png",
+      "at": "2026-10-07T08:12:31.975506+00:00",
+      "elapsed_seconds": 157.57922048199907,
+      "bytes": 208834,
+      "sha256": "2d8576ffb68d3d21f66cdd569277d363d64616a4453fe0071e2ae7dc8fff4c7d",
+      "width": 1280,
+      "height": 720,
+      "root_visual_tick": 1252,
+      "visual_limit": "Tick and manual third-person appearance reported by root; this audit checks original frame bytes/header/capture commands without independent pixel interpretation."
+    },
+    {
+      "path": "runs/attempt-01/frame-1791361422635587731-a1f0f83b.png",
+      "at": "2026-10-07T08:23:42.822444+00:00",
+      "elapsed_seconds": 828.426162325999,
+      "bytes": 253035,
+      "sha256": "eeb32b9a1d1c39fcc73d2a3170fd7a6b626401fb3f16907a93c073dd26c2d8a8",
+      "width": 1280,
+      "height": 720,
+      "root_visual_tick": 4912,
+      "visual_limit": "Tick and manual third-person appearance reported by root; this audit checks original frame bytes/header/capture commands without independent pixel interpretation."
+    },
+    {
+      "path": "runs/attempt-01/frame-1791361531588261573-afd26be0.png",
+      "at": "2026-10-07T08:25:32.058049+00:00",
+      "elapsed_seconds": 937.6617666950006,
+      "bytes": 246701,
+      "sha256": "4a65aeb028dcdcb2d81e7bad1d8e70d35a17fda4a39b779a2ec3283c88db6671",
+      "width": 1280,
+      "height": 720,
+      "root_visual_tick": 5415,
+      "visual_limit": "Tick and manual third-person appearance reported by root; this audit checks original frame bytes/header/capture commands without independent pixel interpretation."
+    }
+  ],
+  "world": {
+    "timeline": [
+      {
+        "id": "0001",
+        "at": "2026-10-07T08:10:14.779+00:00",
+        "elapsed_seconds": 20.382679931640624,
+        "world": {
+          "tick": 46,
+          "sim/dt": 27477286975.6078,
+          "genesis/sim-time": 1268505776572.5132,
+          "arc/current": "arc/genesis-nebula-collapse",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 1000
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0002",
+        "at": "2026-10-07T08:10:28.096+00:00",
+        "elapsed_seconds": 33.699679931640624,
+        "world": {
+          "tick": 175,
+          "sim/dt": 27442773158.855637,
+          "genesis/sim-time": 4811037913523.546,
+          "arc/current": "arc/genesis-nebula-collapse",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 1000
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0003",
+        "at": "2026-10-07T08:11:00.775+00:00",
+        "elapsed_seconds": 66.37867993164062,
+        "world": {
+          "tick": 511,
+          "sim/dt": 27479392407.3237,
+          "genesis/sim-time": 14043641882286.355,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0004",
+        "at": "2026-10-07T08:11:09.656+00:00",
+        "elapsed_seconds": 75.25967993164062,
+        "world": {
+          "tick": 595,
+          "sim/dt": 27427073271.593338,
+          "genesis/sim-time": 16351770120609.156,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0005",
+        "at": "2026-10-07T08:11:10.161+00:00",
+        "elapsed_seconds": 75.76467993164063,
+        "world": {
+          "tick": 598,
+          "sim/dt": 27435787906.6981,
+          "genesis/sim-time": 16434060588659.445,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 998,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0006",
+        "at": "2026-10-07T08:11:22.311+00:00",
+        "elapsed_seconds": 87.91467993164062,
+        "world": {
+          "tick": 688,
+          "sim/dt": 27323055111.125088,
+          "genesis/sim-time": 18898791487673.203,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 995,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0007",
+        "at": "2026-10-07T08:11:22.573+00:00",
+        "elapsed_seconds": 88.17667993164062,
+        "world": {
+          "tick": 690,
+          "sim/dt": 27327522822.908134,
+          "genesis/sim-time": 18953440210483.402,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 994,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0008",
+        "at": "2026-10-07T08:11:22.971+00:00",
+        "elapsed_seconds": 88.57467993164063,
+        "world": {
+          "tick": 693,
+          "sim/dt": 27328745943.105373,
+          "genesis/sim-time": 19035425123988.92,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 994,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0009",
+        "at": "2026-10-07T08:11:23.307+00:00",
+        "elapsed_seconds": 88.91067993164063,
+        "world": {
+          "tick": 697,
+          "sim/dt": 27326329089.072647,
+          "genesis/sim-time": 19144737039564.25,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 994,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0010",
+        "at": "2026-10-07T08:11:23.759+00:00",
+        "elapsed_seconds": 89.36267993164063,
+        "world": {
+          "tick": 700,
+          "sim/dt": 27323947948.62743,
+          "genesis/sim-time": 19226713675538.414,
+          "arc/current": "arc/genesis-protostar",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 994,
+          "protostar": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0011",
+        "at": "2026-10-07T08:11:42.994+00:00",
+        "elapsed_seconds": 108.59767993164063,
+        "world": {
+          "tick": 859,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 22942645450636.406,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 973,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0012",
+        "at": "2026-10-07T08:11:43.235+00:00",
+        "elapsed_seconds": 108.83867993164063,
+        "world": {
+          "tick": 860,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 22952451257393.316,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 973,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0013",
+        "at": "2026-10-07T08:11:43.606+00:00",
+        "elapsed_seconds": 109.20967993164062,
+        "world": {
+          "tick": 864,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 22991674484420.957,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 973,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0014",
+        "at": "2026-10-07T08:11:43.913+00:00",
+        "elapsed_seconds": 109.51667993164062,
+        "world": {
+          "tick": 866,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 23011286097934.777,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 973,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0015",
+        "at": "2026-10-07T08:11:44.209+00:00",
+        "elapsed_seconds": 109.81267993164063,
+        "world": {
+          "tick": 869,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 23040703518205.508,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 972,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0016",
+        "at": "2026-10-07T08:11:44.617+00:00",
+        "elapsed_seconds": 110.22067993164063,
+        "world": {
+          "tick": 873,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 23079926745233.15,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 972,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0017",
+        "at": "2026-10-07T08:11:57.586+00:00",
+        "elapsed_seconds": 123.18967993164063,
+        "world": {
+          "tick": 985,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 24178177102007.086,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 971,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0018",
+        "at": "2026-10-07T08:11:57.728+00:00",
+        "elapsed_seconds": 123.33167993164062,
+        "world": {
+          "tick": 986,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 24187982908763.996,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 971,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0019",
+        "at": "2026-10-07T08:11:58.219+00:00",
+        "elapsed_seconds": 123.82267993164062,
+        "world": {
+          "tick": 990,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 24227206135791.637,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 971,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0020",
+        "at": "2026-10-07T08:12:21.069+00:00",
+        "elapsed_seconds": 146.67267993164063,
+        "world": {
+          "tick": 1165,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 25943222318250.914,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 967,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0021",
+        "at": "2026-10-07T08:12:21.488+00:00",
+        "elapsed_seconds": 147.0916799316406,
+        "world": {
+          "tick": 1169,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 25982445545278.555,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 966,
+          "star": 1,
+          "brown-dwarf": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0022",
+        "at": "2026-10-07T08:13:35.638+00:00",
+        "elapsed_seconds": 221.24167993164062,
+        "world": {
+          "tick": 1673,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 30924572150761.273,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 958,
+          "star": 1,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0023",
+        "at": "2026-10-07T08:15:54.976+00:00",
+        "elapsed_seconds": 360.5796799316406,
+        "world": {
+          "tick": 2553,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 39553682096840.47,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 943,
+          "star": 1,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0024",
+        "at": "2026-10-07T08:16:38.894+00:00",
+        "elapsed_seconds": 404.4976799316406,
+        "world": {
+          "tick": 2801,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 41985522172553.22,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 923,
+          "star": 1,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0025",
+        "at": "2026-10-07T08:17:49.839+00:00",
+        "elapsed_seconds": 475.4426799316406,
+        "world": {
+          "tick": 3222,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 46113766817210.75,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 916,
+          "star": 1,
+          "protostar": 1,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0026",
+        "at": "2026-10-07T08:18:53.769+00:00",
+        "elapsed_seconds": 539.3726799316406,
+        "world": {
+          "tick": 3591,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 49732109510509.16,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 916,
+          "star": 1,
+          "protostar": 2
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0027",
+        "at": "2026-10-07T08:19:57.916+00:00",
+        "elapsed_seconds": 603.5196799316407,
+        "world": {
+          "tick": 3935,
+          "sim/dt": 9805806756.909203,
+          "genesis/sim-time": 53105307034884.91,
+          "arc/current": "arc/genesis-accretion",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 915,
+          "star": 1,
+          "protostar": 2,
+          "brown-dwarf": 1
+        },
+        "body_coverage": {
+          "total": 0,
+          "recorded": 0,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": []
+      },
+      {
+        "id": "0028",
+        "at": "2026-10-07T08:21:51.044+00:00",
+        "elapsed_seconds": 716.6476799316406,
+        "world": {
+          "tick": 4429,
+          "sim/dt": 4138029443.01184,
+          "genesis/sim-time": 55744610197693.14,
+          "arc/current": "arc/genesis-planets-formed",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 863,
+          "planet": 12,
+          "star": 1,
+          "brown-dwarf": 1,
+          "protostar": 3
+        },
+        "body_coverage": {
+          "total": 12,
+          "recorded": 12,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": [
+          {
+            "eid": 1010,
+            "ready_to_commit": true,
+            "per_body_eligible": null,
+            "current_parent_id": null,
+            "distance_au": 176535.11816271488
+          }
+        ]
+      },
+      {
+        "id": "0029",
+        "at": "2026-10-07T08:22:43.318+00:00",
+        "elapsed_seconds": 768.9216799316406,
+        "world": {
+          "tick": 4656,
+          "sim/dt": 4138029443.01184,
+          "genesis/sim-time": 56683942881257.69,
+          "arc/current": "arc/genesis-planets-formed",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 855,
+          "planet": 12,
+          "star": 1,
+          "protostar": 3
+        },
+        "body_coverage": {
+          "total": 12,
+          "recorded": 12,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": [
+          {
+            "eid": 1010,
+            "ready_to_commit": true,
+            "per_body_eligible": null,
+            "current_parent_id": null,
+            "distance_au": 181746.87284780826
+          }
+        ]
+      },
+      {
+        "id": "0030",
+        "at": "2026-10-07T08:23:23.864+00:00",
+        "elapsed_seconds": 809.4676799316406,
+        "world": {
+          "tick": 4834,
+          "sim/dt": 4138029443.01184,
+          "genesis/sim-time": 57420512122114.47,
+          "arc/current": "arc/genesis-planets-formed",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 855,
+          "planet": 12,
+          "star": 1,
+          "protostar": 3
+        },
+        "body_coverage": {
+          "total": 12,
+          "recorded": 12,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": [
+          {
+            "eid": 1010,
+            "ready_to_commit": true,
+            "per_body_eligible": null,
+            "current_parent_id": null,
+            "distance_au": 186040.8716583761
+          }
+        ]
+      },
+      {
+        "id": "0031",
+        "at": "2026-10-07T08:24:22.413+00:00",
+        "elapsed_seconds": 868.0166799316406,
+        "world": {
+          "tick": 5089,
+          "sim/dt": 4138029443.01184,
+          "genesis/sim-time": 58475709630083.45,
+          "arc/current": "arc/genesis-planets-formed",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 855,
+          "planet": 12,
+          "star": 1,
+          "protostar": 3
+        },
+        "body_coverage": {
+          "total": 12,
+          "recorded": 12,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": [
+          {
+            "eid": 1010,
+            "ready_to_commit": true,
+            "per_body_eligible": null,
+            "current_parent_id": null,
+            "distance_au": 192483.2117436541
+          }
+        ]
+      },
+      {
+        "id": "0032",
+        "at": "2026-10-07T08:25:17.820+00:00",
+        "elapsed_seconds": 923.4236799316407,
+        "world": {
+          "tick": 5346,
+          "sim/dt": 4138029443.01184,
+          "genesis/sim-time": 59539183196938.47,
+          "arc/current": "arc/genesis-planets-formed",
+          "demo/scenario": "nebula",
+          "demo/fixture?": false
+        },
+        "counts": {
+          "nebula": 855,
+          "planet": 12,
+          "star": 1,
+          "protostar": 3
+        },
+        "body_coverage": {
+          "total": 12,
+          "recorded": 12,
+          "omitted": 0
+        },
+        "fresh_handoff": {},
+        "stored_candidates": [
+          {
+            "eid": 1010,
+            "ready_to_commit": true,
+            "per_body_eligible": null,
+            "current_parent_id": null,
+            "distance_au": 199291.80559639656
+          }
+        ]
+      }
+    ],
+    "all_fresh_handoff_empty": true,
+    "no_omitted_bodies": true,
+    "first_planets_sample": {
+      "id": "0028",
+      "at": "2026-10-07T08:21:51.044+00:00",
+      "elapsed_seconds": 716.6476799316406,
+      "world": {
+        "tick": 4429,
+        "sim/dt": 4138029443.01184,
+        "genesis/sim-time": 55744610197693.14,
+        "arc/current": "arc/genesis-planets-formed",
+        "demo/scenario": "nebula",
+        "demo/fixture?": false
+      },
+      "counts": {
+        "nebula": 863,
+        "planet": 12,
+        "star": 1,
+        "brown-dwarf": 1,
+        "protostar": 3
+      },
+      "body_coverage": {
+        "total": 12,
+        "recorded": 12,
+        "omitted": 0
+      },
+      "fresh_handoff": {},
+      "stored_candidates": [
+        {
+          "eid": 1010,
+          "ready_to_commit": true,
+          "per_body_eligible": null,
+          "current_parent_id": null,
+          "distance_au": 176535.11816271488
+        }
+      ]
+    },
+    "preceding_no_planets_sample": {
+      "id": "0027",
+      "at": "2026-10-07T08:19:57.916+00:00",
+      "elapsed_seconds": 603.5196799316407,
+      "world": {
+        "tick": 3935,
+        "sim/dt": 9805806756.909203,
+        "genesis/sim-time": 53105307034884.91,
+        "arc/current": "arc/genesis-accretion",
+        "demo/scenario": "nebula",
+        "demo/fixture?": false
+      },
+      "counts": {
+        "nebula": 915,
+        "star": 1,
+        "protostar": 2,
+        "brown-dwarf": 1
+      },
+      "body_coverage": {
+        "total": 0,
+        "recorded": 0,
+        "omitted": 0
+      },
+      "fresh_handoff": {},
+      "stored_candidates": []
+    },
+    "last_planets_sample": {
+      "id": "0032",
+      "at": "2026-10-07T08:25:17.820+00:00",
+      "elapsed_seconds": 923.4236799316407,
+      "world": {
+        "tick": 5346,
+        "sim/dt": 4138029443.01184,
+        "genesis/sim-time": 59539183196938.47,
+        "arc/current": "arc/genesis-planets-formed",
+        "demo/scenario": "nebula",
+        "demo/fixture?": false
+      },
+      "counts": {
+        "nebula": 855,
+        "planet": 12,
+        "star": 1,
+        "protostar": 3
+      },
+      "body_coverage": {
+        "total": 12,
+        "recorded": 12,
+        "omitted": 0
+      },
+      "fresh_handoff": {},
+      "stored_candidates": [
+        {
+          "eid": 1010,
+          "ready_to_commit": true,
+          "per_body_eligible": null,
+          "current_parent_id": null,
+          "distance_au": 199291.80559639656
+        }
+      ]
+    },
+    "all_thrust_nil": true,
+    "all_binding_empty": true,
+    "yaw_pitch_unchanged": [
+      -90,
+      -20
+    ],
+    "candidate_interpretation": "1010 is ready=true from retained historical candidate; current-parent=nil and per-body eligibility=nil in all five planet samples. Nil was not recoded false. Diagnostic full-handoff guard is stricter than actual stored-candidate readiness.",
+    "limits": "No member sampled is not no member ever. Birth and between-sample eligibility times are unobserved; no flight, binding, commitment or Gate test occurred.",
+    "all_observer_commitment_nil": true,
+    "all_recorded_body_commitment_nil": true,
+    "commitment_scope": "32 sampled observer fields and60 recorded body rows across five12-planet snapshots were nil. Production commitment is written to the planet; observer nil alone cannot show its absence. These finite samples, including the unobserved final71.941s, do not prove no commitment anywhere or ever."
+  },
+  "cadence_and_cutoff": {
+    "origin": "2026-10-07T08:09:54.396320+00:00",
+    "phase": "Consecutive snapshots0021, last post-input observation, through0032.",
+    "intended_poll_seconds": [
+      30,
+      60
+    ],
+    "gaps": [
+      {
+        "from_id": "0021",
+        "to_id": "0022",
+        "from_at": "2026-10-07T08:12:21.488+00:00",
+        "to_at": "2026-10-07T08:13:35.638+00:00",
+        "seconds": 74.15
+      },
+      {
+        "from_id": "0022",
+        "to_id": "0023",
+        "from_at": "2026-10-07T08:13:35.638+00:00",
+        "to_at": "2026-10-07T08:15:54.976+00:00",
+        "seconds": 139.338
+      },
+      {
+        "from_id": "0023",
+        "to_id": "0024",
+        "from_at": "2026-10-07T08:15:54.976+00:00",
+        "to_at": "2026-10-07T08:16:38.894+00:00",
+        "seconds": 43.918
+      },
+      {
+        "from_id": "0024",
+        "to_id": "0025",
+        "from_at": "2026-10-07T08:16:38.894+00:00",
+        "to_at": "2026-10-07T08:17:49.839+00:00",
+        "seconds": 70.945
+      },
+      {
+        "from_id": "0025",
+        "to_id": "0026",
+        "from_at": "2026-10-07T08:17:49.839+00:00",
+        "to_at": "2026-10-07T08:18:53.769+00:00",
+        "seconds": 63.93
+      },
+      {
+        "from_id": "0026",
+        "to_id": "0027",
+        "from_at": "2026-10-07T08:18:53.769+00:00",
+        "to_at": "2026-10-07T08:19:57.916+00:00",
+        "seconds": 64.147
+      },
+      {
+        "from_id": "0027",
+        "to_id": "0028",
+        "from_at": "2026-10-07T08:19:57.916+00:00",
+        "to_at": "2026-10-07T08:21:51.044+00:00",
+        "seconds": 113.128
+      },
+      {
+        "from_id": "0028",
+        "to_id": "0029",
+        "from_at": "2026-10-07T08:21:51.044+00:00",
+        "to_at": "2026-10-07T08:22:43.318+00:00",
+        "seconds": 52.274
+      },
+      {
+        "from_id": "0029",
+        "to_id": "0030",
+        "from_at": "2026-10-07T08:22:43.318+00:00",
+        "to_at": "2026-10-07T08:23:23.864+00:00",
+        "seconds": 40.546
+      },
+      {
+        "from_id": "0030",
+        "to_id": "0031",
+        "from_at": "2026-10-07T08:23:23.864+00:00",
+        "to_at": "2026-10-07T08:24:22.413+00:00",
+        "seconds": 58.549
+      },
+      {
+        "from_id": "0031",
+        "to_id": "0032",
+        "from_at": "2026-10-07T08:24:22.413+00:00",
+        "to_at": "2026-10-07T08:25:17.820+00:00",
+        "seconds": 55.407
+      }
+    ],
+    "gaps_over_60_seconds": [
+      {
+        "from_id": "0021",
+        "to_id": "0022",
+        "from_at": "2026-10-07T08:12:21.488+00:00",
+        "to_at": "2026-10-07T08:13:35.638+00:00",
+        "seconds": 74.15
+      },
+      {
+        "from_id": "0022",
+        "to_id": "0023",
+        "from_at": "2026-10-07T08:13:35.638+00:00",
+        "to_at": "2026-10-07T08:15:54.976+00:00",
+        "seconds": 139.338
+      },
+      {
+        "from_id": "0024",
+        "to_id": "0025",
+        "from_at": "2026-10-07T08:16:38.894+00:00",
+        "to_at": "2026-10-07T08:17:49.839+00:00",
+        "seconds": 70.945
+      },
+      {
+        "from_id": "0025",
+        "to_id": "0026",
+        "from_at": "2026-10-07T08:17:49.839+00:00",
+        "to_at": "2026-10-07T08:18:53.769+00:00",
+        "seconds": 63.93
+      },
+      {
+        "from_id": "0026",
+        "to_id": "0027",
+        "from_at": "2026-10-07T08:18:53.769+00:00",
+        "to_at": "2026-10-07T08:19:57.916+00:00",
+        "seconds": 64.147
+      },
+      {
+        "from_id": "0027",
+        "to_id": "0028",
+        "from_at": "2026-10-07T08:19:57.916+00:00",
+        "to_at": "2026-10-07T08:21:51.044+00:00",
+        "seconds": 113.128
+      }
+    ],
+    "largest_gap_seconds": 139.338,
+    "formation_cutoff_seconds": 960,
+    "cutoff_at": "2026-10-07T08:25:54.396320+00:00",
+    "stop_mtime_ns": 1791361588135411967,
+    "stop_mtime_at": "2026-10-07T08:26:28.135412+00:00",
+    "stop_elapsed_seconds": 993.739092,
+    "late_stop_seconds": 33.73909200000003,
+    "mtime_limit": "Observed filesystem mtime of STOP, not outer-client invocation timestamp. Root confirms no reliable exact outer start timestamp.",
+    "first_teardown_event": {
+      "at": "2026-10-07T08:26:28.221767+00:00",
+      "elapsed_seconds": 993.8254782299991,
+      "kind": "command",
+      "command": [
+        "xdotool",
+        "keyup",
+        "r",
+        "Tab"
+      ],
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+      "display": ":1",
+      "port": 7898,
+      "stdout": "022-release-keys.stdout",
+      "stderr": "022-release-keys.stderr",
+      "file_limit_bytes": 33554432
+    },
+    "teardown_elapsed_seconds": 993.8254782299991,
+    "late_teardown_seconds": 33.825478229999135,
+    "last_snapshot_to_close_seconds": 71.94115844736166,
+    "no_target_admission": true,
+    "no_request_after_cutoff": true,
+    "no_lease_extension": true,
+    "status": "Operator polling and no-target stop policy deviated; unchanged1470/1500 lease not exceeded. Overall protocol is not a clean pass."
+  },
+  "limits": [
+    "Ordinary nebula, manual/Fine UI, fixed snapshots and three owned-display captures observed; no physical-flight attempt.",
+    "No fresh member was sampled; sparse observations do not exclude between-sample membership.",
+    "World positions are paired, camera/config separately sampled; published focus is not binding consumer input.",
+    "No sustained survival, clock, local-frame controller, embodiment, Gate or native FPS proof.",
+    "No cap/partial-write/timeout/abandoned-aim/failure-path runtime qualification.",
+    "Raw journal preserves exact encoded decoded EDN maps, not original bencode wire packets.",
+    "Successful path and static review do not prove hard preemption of blocked OS/JVM operations."
+  ],
+  "provenance": {
+    "existing_files_before_audit": {
+      "COPY-PROOF.json": {
+        "bytes": 64640,
+        "sha256": "6f46bec5880b55275c09c74c70b95ff4de1abc682e44de42ba80e81d1f9a9158"
+      },
+      "PLAN.md": {
+        "bytes": 13557,
+        "sha256": "1c8e802b92d071e5d13ca55f1fc8e5551089516a925cbc05a413cecf62b75987"
+      },
+      "PREPARATION-FILES.txt": {
+        "bytes": 157,
+        "sha256": "2a2ba47ac6505b8cc188540958ff276eb1c34cf931430959f0b3342cfc767d79"
+      },
+      "SHA256SUMS": {
+        "bytes": 740,
+        "sha256": "7d9769a055da65ecc4365b80f72ee0aaa81f62d541190af2b8b94908127a0eaa"
+      },
+      "STATIC-CHECKS.json": {
+        "bytes": 3824,
+        "sha256": "f9cee758e9bc3446e91b6ba14d55904f3127b3d74995e20b21b22e52953273ed"
+      },
+      "aim-client.py": {
+        "bytes": 13590,
+        "sha256": "16b06e287cbadf3997c710a33a4357d700327e3addf5ae25e2f8dd4d7018c914"
+      },
+      "preparation-hashes.json": {
+        "bytes": 433,
+        "sha256": "e5120fdf679890a6e2144b15694949f58909a853a41c5ddda984c0b0b2ba82a6"
+      },
+      "root-release.json": {
+        "bytes": 1228,
+        "sha256": "27a90e16bda1fb490af8e541784b9d830d6ba40cb87a48d5e0657e62e2bc1a12"
+      },
+      "root-scope.json": {
+        "bytes": 1696,
+        "sha256": "2116c4437734b0f37b10a1b619efb1f1f4fa1a704684c0d04c3e5e2de4851c7a"
+      },
+      "runner.py": {
+        "bytes": 49486,
+        "sha256": "54cff29903228e3a028b73cc23424f41e2d963a0989182c4c0ca023ca57866a3"
+      },
+      "runs/attempt-01/001-xvfb.stderr": {
+        "bytes": 2480,
+        "sha256": "2469f66a930ba9ffe3f3e4c63757e39c18423ae06d18c698253227f32217b205"
+      },
+      "runs/attempt-01/001-xvfb.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/002-runtime.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/002-runtime.stdout": {
+        "bytes": 331439,
+        "sha256": "56fc139b292d6585b5fe1ef7c01711c7f8a7369b63aee044671c2c2f9cb2d74c"
+      },
+      "runs/attempt-01/003-snapshot-client.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/003-snapshot-client.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/004-window-id.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/004-window-id.stdout": {
+        "bytes": 8,
+        "sha256": "c2b401c52534ca4003a9ff1ed1aef38ffcea2021dae51b222c16208cc00a7fd4"
+      },
+      "runs/attempt-01/005-focus-owned-window.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/005-focus-owned-window.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/006-tap.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/006-tap.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/007-release-keys.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/007-release-keys.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/008-menu-position.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/008-menu-position.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/009-menu-press.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/009-menu-press.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/010-release-mouse.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/010-release-mouse.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/011-menu-position.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/011-menu-position.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/012-menu-press.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/012-menu-press.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/013-release-mouse.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/013-release-mouse.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/014-menu-position.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/014-menu-position.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/015-menu-press.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/015-menu-press.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/016-release-mouse.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/016-release-mouse.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/017-tap.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/017-tap.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/018-release-keys.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/018-release-keys.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/019-frame.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/019-frame.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/020-frame.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/020-frame.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/021-frame.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/021-frame.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/022-release-keys.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/022-release-keys.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/STOP": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/closed.json": {
+        "bytes": 2284,
+        "sha256": "ebfdbd34929ec29712036989f1fe13dd24a8fc92e20cb01a4eba2ec555e3510c"
+      },
+      "runs/attempt-01/display.txt": {
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "runs/attempt-01/frame-1791360751819999506-b1501124.png": {
+        "bytes": 208834,
+        "sha256": "2d8576ffb68d3d21f66cdd569277d363d64616a4453fe0071e2ae7dc8fff4c7d"
+      },
+      "runs/attempt-01/frame-1791361422635587731-a1f0f83b.png": {
+        "bytes": 253035,
+        "sha256": "eeb32b9a1d1c39fcc73d2a3170fd7a6b626401fb3f16907a93c073dd26c2d8a8"
+      },
+      "runs/attempt-01/frame-1791361531588261573-afd26be0.png": {
+        "bytes": 246701,
+        "sha256": "4a65aeb028dcdcb2d81e7bad1d8e70d35a17fda4a39b779a2ec3283c88db6671"
+      },
+      "runs/attempt-01/operations.jsonl": {
+        "bytes": 51567,
+        "sha256": "ffcc8ce3fc86d37ac5bdf3303f22b581b842831dc77e56cdd524c09864ecf81f"
+      },
+      "runs/attempt-01/operator.lock": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/preparation-hashes.json": {
+        "bytes": 433,
+        "sha256": "e5120fdf679890a6e2144b15694949f58909a853a41c5ddda984c0b0b2ba82a6"
+      },
+      "runs/attempt-01/requests/1791360627763523764-e76dbb4b.json": {
+        "bytes": 127,
+        "sha256": "573fa939097d8144db8fa6d5d899c6174f9dec89a68f6ca8c9dd2564018093c8"
+      },
+      "runs/attempt-01/requests/1791360660559861338-88a4bfe8.json": {
+        "bytes": 127,
+        "sha256": "ec38a80b96bd57735cf1911ed1c5bf61aec3dd03d0a832271395e80b9f842e11"
+      },
+      "runs/attempt-01/requests/1791360669404424640-d19a9be1.json": {
+        "bytes": 134,
+        "sha256": "10505c1ec823bf777c9349570f35b70f2bede240b34d1e5ebecc50c547c48215"
+      },
+      "runs/attempt-01/requests/1791360682110375654-0de89cd0.json": {
+        "bytes": 140,
+        "sha256": "ca6de7b812e1009932804a54e2d345744f0d1ddd42301a9ea0844e265fe8d399"
+      },
+      "runs/attempt-01/requests/1791360702707529812-f7732732.json": {
+        "bytes": 139,
+        "sha256": "5b9cd3d48addcd4f7deb22eedd7f924ded7e104e77efd107ccc43f3f44473272"
+      },
+      "runs/attempt-01/requests/1791360717213778873-cb5bc776.json": {
+        "bytes": 140,
+        "sha256": "da891b8861016c1b543b08c7543e477257e0c9b8259a9d675bd8edf21355e5dc"
+      },
+      "runs/attempt-01/requests/1791360740812074296-d174d773.json": {
+        "bytes": 136,
+        "sha256": "9264f9c4cbb0c176dcfbdbc21b9198797f53f0cb6aac95d3fac0ce4927875a28"
+      },
+      "runs/attempt-01/requests/1791360751819999506-b1501124.json": {
+        "bytes": 125,
+        "sha256": "ceeeb0b9002f4ed77acc5d43820ad759cda168660efb482e49872b4347e55cc9"
+      },
+      "runs/attempt-01/requests/1791360815270098894-b620223c.json": {
+        "bytes": 127,
+        "sha256": "ed90b82f57d489720290f69d4413abdad51d0c11b8161ddf8aa6e11d595e8eae"
+      },
+      "runs/attempt-01/requests/1791360954596415534-ba30088f.json": {
+        "bytes": 127,
+        "sha256": "d600383698b35c5d590618f9aeedc1e2421049d4f19ac526fc81766fc1eb3092"
+      },
+      "runs/attempt-01/requests/1791360998268494931-cf1de94c.json": {
+        "bytes": 127,
+        "sha256": "80518cd836720fdea2c85be62d5fc1c023b8430d0ddec6787d107af01d76129f"
+      },
+      "runs/attempt-01/requests/1791361069327410705-c56400d2.json": {
+        "bytes": 127,
+        "sha256": "bb9c7b15cb90c278f440a9fe617e71ea49a44fbca5c8d5d1f3bc95d78f7fcb4d"
+      },
+      "runs/attempt-01/requests/1791361133417372485-4d1ffcc1.json": {
+        "bytes": 127,
+        "sha256": "617929eb9c81be3b7456d7deab7130a525a3e63629211424f726a42190880d11"
+      },
+      "runs/attempt-01/requests/1791361197518524730-d846ce69.json": {
+        "bytes": 127,
+        "sha256": "f81810f1c365add3e4b6f09e5f17b64273392a47e7d965e2aa5e7b6ddce03e0a"
+      },
+      "runs/attempt-01/requests/1791361310714803825-c0e5a05c.json": {
+        "bytes": 127,
+        "sha256": "37254fbf06372df50e01938e218923235c6374e4a609b6a2ccadfd6473a708c3"
+      },
+      "runs/attempt-01/requests/1791361362966618070-22df6797.json": {
+        "bytes": 127,
+        "sha256": "5986fc669fbaf0c879b8730467b31a8c9e51afcdfc07017bf429700b3939ce5c"
+      },
+      "runs/attempt-01/requests/1791361403371768330-1d1b403f.json": {
+        "bytes": 127,
+        "sha256": "a6842f34b06657659f5e6cc1d70fdac41b07db7215161705eef255edb94cdfc0"
+      },
+      "runs/attempt-01/requests/1791361422635587731-a1f0f83b.json": {
+        "bytes": 125,
+        "sha256": "1992463d3b99c100c73538b5ee0bdd98de5d77ec0a19180d8eb193062c69e483"
+      },
+      "runs/attempt-01/requests/1791361461982839920-5f278d8d.json": {
+        "bytes": 127,
+        "sha256": "e68ec3267dcd0f43b92c4a702f923a260b461b40a5d20a184631f699e2522e12"
+      },
+      "runs/attempt-01/requests/1791361517513878548-f3bd0093.json": {
+        "bytes": 127,
+        "sha256": "0aabbdcb7bb0dd93a52337146853d026142559ca0be610eb5a592f7c3466ef76"
+      },
+      "runs/attempt-01/requests/1791361531588261573-afd26be0.json": {
+        "bytes": 125,
+        "sha256": "ce0c7226f9fb68ff469d4f97d016f881efe644a90adfbdf829042ed1bfb38f1e"
+      },
+      "runs/attempt-01/results/1791360627763523764-e76dbb4b.json": {
+        "bytes": 70,
+        "sha256": "22e35ecdb8fa56afc5b5efc3fe143a25be201ec4cb453b3642df7dd61d1ac029"
+      },
+      "runs/attempt-01/results/1791360660559861338-88a4bfe8.json": {
+        "bytes": 70,
+        "sha256": "16e2b97d264ccc9fc9a773ce264803e4170d99821f6f467e831ff3022fe59b1d"
+      },
+      "runs/attempt-01/results/1791360669404424640-d19a9be1.json": {
+        "bytes": 70,
+        "sha256": "b30763f59900219fc35c4f9ff9f342cd1a9715e57ce4942d3f85b1de110ea041"
+      },
+      "runs/attempt-01/results/1791360682110375654-0de89cd0.json": {
+        "bytes": 70,
+        "sha256": "ad77fda5264544bb6d5e12fca57ea8ae9060da78d44cfd4f582e6cf47866d598"
+      },
+      "runs/attempt-01/results/1791360702707529812-f7732732.json": {
+        "bytes": 70,
+        "sha256": "e5d40103250c7f205f17759e8cd095af41c9abcee53b027934db6715ba217d98"
+      },
+      "runs/attempt-01/results/1791360717213778873-cb5bc776.json": {
+        "bytes": 70,
+        "sha256": "2dd18b8fca79feb7df56cb5bbaff375e5ca169bf0c7abdbf6937d74311f08814"
+      },
+      "runs/attempt-01/results/1791360740812074296-d174d773.json": {
+        "bytes": 70,
+        "sha256": "c1cd32639250ad0f05926ca4e6e3627d8c4a12aad97205cd1c5391c1ba0f456f"
+      },
+      "runs/attempt-01/results/1791360751819999506-b1501124.json": {
+        "bytes": 70,
+        "sha256": "f54ecda7a9ed02437ea3fa634901a6ec0c1a97ac04198dec552db9508dac3a83"
+      },
+      "runs/attempt-01/results/1791360815270098894-b620223c.json": {
+        "bytes": 70,
+        "sha256": "1b07cab783715cb1e0196f9180739a3a39cd77770e66a1b63fdd722c89189f3e"
+      },
+      "runs/attempt-01/results/1791360954596415534-ba30088f.json": {
+        "bytes": 70,
+        "sha256": "65de542d8015a7661f4bfc17383978be18cf1a1c63427c8d639f8af3b7738e9a"
+      },
+      "runs/attempt-01/results/1791360998268494931-cf1de94c.json": {
+        "bytes": 70,
+        "sha256": "1deea10868680cb7a72d276f98ee9c4fd1968320318669a309e3fbb8e6b4aaaa"
+      },
+      "runs/attempt-01/results/1791361069327410705-c56400d2.json": {
+        "bytes": 70,
+        "sha256": "8ebc0ebdf576a5e1c2c2ff464fe9fdf63435befff6714f1366a6cbb81b78ce42"
+      },
+      "runs/attempt-01/results/1791361133417372485-4d1ffcc1.json": {
+        "bytes": 70,
+        "sha256": "96b4a5c9a1ce3d17d398b46dc66117ce57fba19ccc2c03bda8020e1ba227b5ff"
+      },
+      "runs/attempt-01/results/1791361197518524730-d846ce69.json": {
+        "bytes": 70,
+        "sha256": "17dbcdf28aac51bce09efbccbb8bfe1f8d89566dee3d5343d35c81dacb4ef67c"
+      },
+      "runs/attempt-01/results/1791361310714803825-c0e5a05c.json": {
+        "bytes": 70,
+        "sha256": "bab9ced68842946f7fc554f4e6766f11d58a6091b36efba6b1c4c6430d706f6e"
+      },
+      "runs/attempt-01/results/1791361362966618070-22df6797.json": {
+        "bytes": 70,
+        "sha256": "5f89cc87da086375ec9a7b3d31251dc5a67f1b7f4b571b1971a4897568c01e7a"
+      },
+      "runs/attempt-01/results/1791361403371768330-1d1b403f.json": {
+        "bytes": 70,
+        "sha256": "b87d7ed50790186e602aaa8c5baf66752b4b91e598e00b77982c4b0c6ca6eeae"
+      },
+      "runs/attempt-01/results/1791361422635587731-a1f0f83b.json": {
+        "bytes": 70,
+        "sha256": "39777d83213e8757f98edee26f517383eef2e94d103d501f19ded48816aa871b"
+      },
+      "runs/attempt-01/results/1791361461982839920-5f278d8d.json": {
+        "bytes": 70,
+        "sha256": "e95f25f4410e941f477ac0544e9974c97cd314d4a41e3d7978a98041f1f7dffd"
+      },
+      "runs/attempt-01/results/1791361517513878548-f3bd0093.json": {
+        "bytes": 70,
+        "sha256": "cbe2b9e38d9e33f8a24d2241c3268cf83cb69e6403f8ffd57384f3b6bf26a0f1"
+      },
+      "runs/attempt-01/results/1791361531588261573-afd26be0.json": {
+        "bytes": 70,
+        "sha256": "e9a8fe08539211ca632b4158961337954dc3462156ebfe8e1edb15180a6e027e"
+      },
+      "runs/attempt-01/snapshot-client-close": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/snapshot-client-config.edn": {
+        "bytes": 212,
+        "sha256": "8714629e37ce74b955fea4f8a5de8eb4dc40ff22fb4c79b71934fae7913471e0"
+      },
+      "runs/attempt-01/snapshot-client-ready": {
+        "bytes": 6,
+        "sha256": "ed1a545bb85e55816bbf9566b028b2a0bc456b88f49f6f266c0401048824194b"
+      },
+      "runs/attempt-01/snapshot-current-request.edn": {
+        "bytes": 31,
+        "sha256": "8235d4306182a3580f85e633ab360a7201f3446824d6a42959fa466c66219604"
+      },
+      "runs/attempt-01/snapshot-current.result": {
+        "bytes": 8,
+        "sha256": "1031e5437ab676f7584b6ddee1fdbebe21ffb38118fe54b82558676067843f03"
+      },
+      "runs/attempt-01/snapshot-current.stdout": {
+        "bytes": 16309,
+        "sha256": "a5b11b2ebc296f00bc7c3d837f16639848a128ee3475c10dda1f91529f02afb7"
+      },
+      "runs/attempt-01/snapshot-messages.edn": {
+        "bytes": 287189,
+        "sha256": "24498228b5e9c8b2a743473773b826d2816d247e30bc5232bf95a4dc4ba2672c"
+      },
+      "runs/attempt-01/snapshot-requests.edn": {
+        "bytes": 23923,
+        "sha256": "389fe746adc9c907b620d37145fbc66c8392997b936fc4cfe8d2fda7cbe6d8a5"
+      },
+      "runs/attempt-01/source-hashes.json": {
+        "bytes": 18753,
+        "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61"
+      },
+      "runs/attempt-01/state.json": {
+        "bytes": 2284,
+        "sha256": "ebfdbd34929ec29712036989f1fe13dd24a8fc92e20cb01a4eba2ec555e3510c"
+      },
+      "runs/attempt-01/supervisor-launch.json": {
+        "bytes": 494,
+        "sha256": "6ee8aade1792f5a2b165e76213f5d4c7daeca90987bdd07ccf003741778eb009"
+      },
+      "runs/attempt-01/supervisor.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "runs/attempt-01/supervisor.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "snapshot.clj": {
+        "bytes": 9757,
+        "sha256": "dc0764b98da98e63a8a9c182885e3db8d4c87228a2a4d222a0d77b4b5af5e99b"
+      },
+      "snapshot_client.clj": {
+        "bytes": 10905,
+        "sha256": "26be613a8ca694276755a0031d959b827d5c6e04f980c4de892cc8aee769e28a"
+      }
+    },
+    "source_hashes": {
+      "deps.edn": "9f858cf2a20418276006fe0ccf16245ab3fb9e2b935649da7f52afa8e9af36ce",
+      "dev/demo.clj": "d76a6420a7dfaf4e1d5c9fd96b424229d922d736af21bb4d2355ace0d3444220",
+      "dev/demo_client.clj": "411d440f0d472e10e6f43b3d3402a66e113c4355d6137421e7321156390c7e91",
+      "dev/demo_test.clj": "2a69586decb6d128ed5eb2c3e76a0d9bdd11a8171bf4209d1a58a29d4a51b7e4",
+      "dev/ecosystem.config.js": "3b7dfa483dfca14fbb7728ac35d840d193b19f2f8765b368eb8249ef4455ab27",
+      "dev/smell_report.clj": "096b72ff707d8491721c0fc9b38100f5661aff29b42bcb819f1f164fdb231b33",
+      "src/domain/arc.clj": "34af0838056b4206e81281f75a1aee81e404782abd5b998dc73c950cac7c1759",
+      "src/domain/atmosphere.clj": "1821620e67f2685892b7071e25f3e47044106279333c5e29482b7518d0e5f5d5",
+      "src/domain/chemistry.clj": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f",
+      "src/domain/debris.clj": "e550c3ab13239d079c69005aaa6c4a65af9e62b96ba97e372e97426793ba2286",
+      "src/domain/ecology.clj": "88594c8581fb51ea15db5b23fbc67a4da1f176bb486b537ee94645307f78f0b2",
+      "src/domain/ecology/abilities.clj": "3cb194d543bbb19651bed92157c8c32e812644b4997ce8345ed8c9c84df0f4fb",
+      "src/domain/ecology/math.clj": "87bdb8d8727bc3008511b2ff51e93c82255643f347727fccdc9b0201cf298a35",
+      "src/domain/ecology/state.clj": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569",
+      "src/domain/ecology/system.clj": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04",
+      "src/domain/ecs/components.clj": "e038946d401038b24068ac3becedb8ddf4de2fb79cee1c76281627d58735d6fc",
+      "src/domain/ecs/core.clj": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970",
+      "src/domain/ecs/dsl.clj": "30c05269b986c41bf35d728ee1cd37fd5578b990cebb9c3c3e6ad86771d63878",
+      "src/domain/ecs/event.clj": "9f208199624dcd1bb94a40c9059dbd88b631f45380155bbdec39022803c1e1c7",
+      "src/domain/ecs/ledger.clj": "0206999a4ae3e136cca8abb187028013317d574f5c187ad9e3d272e63041d87c",
+      "src/domain/ecs/parallel.clj": "43ed42d02d38cb454426bf818b4733b4537d610c9e1800a5fbe50a5dcc4771ad",
+      "src/domain/ecs/registry.clj": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+      "src/domain/ecs/rewindable.clj": "d27b18ac9d485857e792ef1c573fba117bfcf64ab95231e12e0b9fb8aec8b174",
+      "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+      "src/domain/ecs/timeline.clj": "67b7d841dc079c33e6835618547afa21662036b1faf91c53e9a1dc9f370d09b3",
+      "src/domain/em.clj": "284df1349b13b7f653f91f110025f87d4a1714ec887476b99f44ee622f4cb22d",
+      "src/domain/em/field.clj": "de6b234ecd6bf5deecb9b204003d7053b31f1a746391bfac70dd56497b074f71",
+      "src/domain/em/lorentz.clj": "23005f829e25e353ec732066499a73745174cf39e4b174fdbd28b882dcbf7868",
+      "src/domain/em/magnetosphere.clj": "c013ed8ce5f53582767dfab8b608ffa3cc5b3d9ba14a98ec796826c70ed2d2a1",
+      "src/domain/field.clj": "7cc316397555757bb07790237ab6571c26413f555ce9e7102ca887ec634b13ec",
+      "src/domain/genesis.clj": "59fc65f322068d8538e587a40ea251b8ef0144f942910501ec83d9f6d6367463",
+      "src/domain/genesis/bootstrap.clj": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9",
+      "src/domain/genesis/promotion.clj": "2526b21abd4c8e2f49a4d199b1513ff0a5ed82ac9cc0a09c238b8fc1a0b53af4",
+      "src/domain/genesis/summary.clj": "64afe4d1bdbcc690c3c9c74e41d8c3afc5a5845b03c14ed13e9fa45fc6094d34",
+      "src/domain/genesis/systems.clj": "8ca3d361dbb3c558dfc16d1235fb5b4c788c9d1b66e0a118936f855b99195ae7",
+      "src/domain/genesis/tick.clj": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee",
+      "src/domain/gravity/barnes_hut.clj": "9e6f9de50d2fd17ae2a0a4a15f286ca83afc9e73399510392ae9a74ce45caf91",
+      "src/domain/gravity/barnes_hut/force.clj": "fd197d7e7e5da5c977991bd259b883911a10d2cf433f924c55ca7d352e35e455",
+      "src/domain/gravity/barnes_hut/tree.clj": "aa7b332edbefa123ad660c43f3d3b1be466dd35ba55218a755ebaa1fcc910552",
+      "src/domain/gravity/dark_matter.clj": "186970d14096acc26191a92b68ea87db4db9282b7eb3e0a13cf3d9c194ede93c",
+      "src/domain/habitability.clj": "7fdc9e60fa252e91c71e84b65edfcbc35d10d99a9de90c35daa3910a6cb547e6",
+      "src/domain/hydro.clj": "e669365e6263c8a82808d19fd8114b37fa19d35f1c4611a5b8e0a75bf568398d",
+      "src/domain/hydro/common.clj": "1490af6e56df7fad318538d407c8844aac079f833055d939e23607ab42ba8565",
+      "src/domain/hydro/density.clj": "7a56e9e8e81e4d87040782cbd9f1c781f84afc4d6e6cbc48e7e1dadc16e4feb1",
+      "src/domain/hydro/kernel.clj": "486c3aaad304809b2d31517846a1494c59b773a9ed9990c82e67bead58ad90f6",
+      "src/domain/hydro/pressure.clj": "7ffd278aa8c4628d1db409d8a940ff0f56a1fd67470bfd1957f09a26fe9b8c48",
+      "src/domain/integrator.clj": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+      "src/domain/integrator/base.clj": "6b490386437788b5e6b7eae238900c25d93220082d7f9f11af3d7f01091691e6",
+      "src/domain/integrator/core.clj": "08cbb9a5adbec225476404efaf098980386db16947d09e65c5884549e2dd1489",
+      "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+      "src/domain/integrator/rotation.clj": "a5ade6bd57023f234a3fad1e2a3868ace43c587b32393fcbb8ead1ad898836c9",
+      "src/domain/integrator/temperature.clj": "75ade47ca2ceff9b5deee9575d900ebf4b54c8004ce364784591e56d73b2f55e",
+      "src/domain/interior.clj": "a075df171d4788e2fc3bc449504c93ad7a8dbf7167ca2292b60cb874a34ad735",
+      "src/domain/intervention.clj": "eed4697f04bf96ce8bdabc0e08b64c63bd296a0d9cc958b49574bbef643c74a8",
+      "src/domain/lod.clj": "73a7e501ba1a3e66aba640c4532d0cc972d59a13c1bed2ad76cf6c0bbb59b857",
+      "src/domain/mass_transfer.clj": "b61cfeb8e62e6154bcf17039e01bd6e978a7c8032ed51c00387d5a7859f57b57",
+      "src/domain/mhd/force.clj": "fa236a7cf4db0fe6f195744295ea0e8fbe9fffe6359f4c2cc7924ac91cc11890",
+      "src/domain/naming.clj": "3ca999a9a1cc3d07fcf088731acfbf1c0bce5936fe06cca1fc683fe3a1273c31",
+      "src/domain/narrative.clj": "eba0287b09b644fae6f1f683f74263edb7f3b46583021daa4d16e3bcb7557038",
+      "src/domain/narrowing.clj": "19ff9b4f0b9d73b327f6602756ef6b8c10d79fa53838572ef2c964bc5c064d22",
+      "src/domain/orbital/integrator.clj": "2e017dea515bece71fb3666d9653f89decae18fe4133c5f39f0ddfdafab2d026",
+      "src/domain/orbital/kepler.clj": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+      "src/domain/orbital/stability.clj": "ec984b0440487c7dc4307170572e4a9520528b1439b5a93ca1783bc9a3464d01",
+      "src/domain/orbital/system.clj": "00e6c0ac7f32833749dac1ed95ba4060db390380f4f41e9159dc7730e2855aa0",
+      "src/domain/pacing.clj": "bdda144e92b23d6b82c114e3dfd908b946cebfbe713a05699d839f5b7e020279",
+      "src/domain/physics/cache.clj": "740485313b7132c8fbfacd387c010ff7e6052380a200e59731b712a463615131",
+      "src/domain/physics/cache/neighbor.clj": "e28bf08ef4b7a13e19ecff91327807dedddfa9d6bb7078291eb4d343000afea9",
+      "src/domain/physics/cache/soa.clj": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+      "src/domain/physics/collision.clj": "23af18fd025812d4b7820f8e75d7013028f66cef820838abf162c15bd9365805",
+      "src/domain/physics/collision_response.clj": "88b88759e6f8801fc668422d05aa856d128370968135bb52fc719fb4e643ef3c",
+      "src/domain/planet_formation.clj": "468a7e4cfbaf412f3102c198e12e2b6d71cdd69df172ff38fac5e26cecc2ce0b",
+      "src/domain/planet_formation/composition.clj": "471d40398b15baf781a603bd95694c778809bff18da98f2a905c756601aa6630",
+      "src/domain/planet_formation/orbit.clj": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a",
+      "src/domain/planet_formation/physics.clj": "e1493f37c5a1bf87c8a7e9edd7a1bb59ac2938c1cad1dc70f451aed420e523c6",
+      "src/domain/planet_formation/seed.clj": "47cbc999b09125fd576c56899ca68964e3d737e0aa552d1a7757340b6779e548",
+      "src/domain/planet_formation/spec.clj": "25dee8f9599dcc69b8545c653e2105c3f143b8b44403bd237bfc363478df2bd7",
+      "src/domain/player.clj": "60928786e9b9efc70892eae6f8a7b2d3ecee5655a440b5af06aa9060dbb3275a",
+      "src/domain/player/economy.clj": "a9c4fe928d21346bc6c7107af2d01a66f27c4be750a973236d43a4d1cd3f7147",
+      "src/domain/player/flight.clj": "005b6f5bcb33093e93a76b26e4663af71358cd7535dc7022ff5c74bbe872a5b2",
+      "src/domain/player/focus.clj": "7ffeafd0a3826d400318458d3128e9181ecfed82c93c8d303cae102b8d5f1b2a",
+      "src/domain/player/influence.clj": "07ada060628a97c488852b16a29c894b58c9f1ade32369f3fbbc94e9f4adedce",
+      "src/domain/player/state.clj": "e5296cbce5dc2dc525577cba4bd1ae90978f9a9158f85e52f4d3a9c697806191",
+      "src/domain/player/system.clj": "b0882f59bf9543d41fbe5ca98bb344fced8c6085070371ce1c3e2e67332cd43b",
+      "src/domain/profile.clj": "edd4712d25f4cc73a087eeac120dfdf7f3521043f3ee303a7c7c066e5eee5eb4",
+      "src/domain/regime.clj": "d1560aa97609d2d6c0bee6ebf97dbb713b103769f2cfe033268edd3bfcb35ac7",
+      "src/domain/spatial/index.clj": "280941b79defe025dbdd7c1478940b956c1e0dc9bd270fa4c66f5170f1a94701",
+      "src/domain/stellar/classifier/candidate.clj": "074ab31e9ecd68883131eb0efbbc3e34e8c023c6a5849035b5bb66a20f3065fa",
+      "src/domain/stellar/classifier/planet.clj": "9e0094be9e1876f1a1156f961f99c30cf6e3a7a7eb4e35e54acd953784eff55e",
+      "src/domain/stellar/classifier/state.clj": "b79f901fcac5363fec522705062fdbf75713512551144d2828af812e3d3ffe2e",
+      "src/domain/stellar/collapse.clj": "8f6e332e8f0d246040c440ee0b190dbc826d6924ab21b89bc9d69bf6601c1eb9",
+      "src/domain/stellar/disc.clj": "5d6dca00e22c2ea83802f56e249540b5f9f341930fdda60f043b50857a39e1d8",
+      "src/domain/stellar/disc_evolution.clj": "a26ed34f6ba8c58ac37c5954d6938408d3b8469abef57635e19f4393ae8c8ceb",
+      "src/domain/stellar/fusion.clj": "a3ec37fbafc6f531b4b4dffa19f6b8a551646ccd8a80b52172eedc7aa20ea274",
+      "src/domain/stellar/geometry.clj": "8c59fd5029e094cdc8d256c0bade75434bde2d295d0b54cc9dc02d4fc2c1005f",
+      "src/domain/stellar/merge.clj": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+      "src/domain/stellar/seeder.clj": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884",
+      "src/domain/stellar/sink.clj": "28aa3fae49bbebdf158c379f84c63c30a2d147cfe33e55056650768974ae55a7",
+      "src/domain/stellar/structure.clj": "a084a744ae8553943958c1165970656c6834dc4715707482007e10173c3e72e7",
+      "src/domain/stellar/temperature.clj": "9095bd74434dc0004bb2db24200d0d6cb5e8fa452c5db91996014e246ab85cd4",
+      "src/domain/stellar/thermodynamics.clj": "566e29cab75e4a95e0347dbf807bf9b153d4207ed742bcd6a491fad75719d07e",
+      "src/domain/stellar/wind.clj": "576e7ff0bf2213692c28f7d1bb523f165033cbcfc39163087b4cdb82155d328e",
+      "src/domain/trail.cljc": "2de4d2ddaa4d51135fe03aa62539efdf955ac78db64116dde0dc4851ff2f5170",
+      "src/domain/trail/system.clj": "5ac044a5111cdb0f4fe1eda702eb98f716b3aa1cc60dc5574a71c3e1aaeb2485",
+      "src/domain/voxel/band.clj": "e8f1a863106e24d81129988c7466b48d263299c67d88dea19ded161465a012ae",
+      "src/domain/voxel/carve.clj": "4e84feb7a0720eadb8a152674821cc917c32d03bb6db4793025469f21a06cd88",
+      "src/domain/voxel/focus.clj": "c5a606410212f2fd71c74ca8d7910dc8f2622695a0bfa8a937382f497677ce59",
+      "src/domain/voxel/load.clj": "c4db01247ff876f6b123427e08f3bd8ed94b9b4e9c0318ce599839fd1fa8801d",
+      "src/domain/voxel/queue.clj": "da7ac433211548575759569b58bbd23c57e4b6ddead9ecf6990041c30fa89387",
+      "src/domain/voxel/sculpt.clj": "807f7eb41c406d71bdab1d31512de8fcdd7065d8eef2d1b804ad5a098ba5bf5f",
+      "src/domain/world_bootstrap.clj": "b443717adbdb04e02fd302daf5854eb52fd2844e35b087272b601fd909453c75",
+      "src/infra/camera.clj": "b70bd496870cada9aa6ef7739f11f093fed73c57af8e4004b088c0b4d8e1e624",
+      "src/infra/camera/navigation.clj": "f0a4cd79353d74c952cc0cb0dd3fa8df6cf4199c4c5d52e325fac94fbd750a13",
+      "src/infra/camera/navigation/input.clj": "7f3c257ec88c928552665033a7c1cf304427b646ab3a0a5c22ef57a36838f1cb",
+      "src/infra/camera/navigation/tether.clj": "450e742e4414780a2a4194f44f24e5808a620352fcbe0c1174c27bb113e87d6e",
+      "src/infra/camera/navigation/tracking.clj": "b6f5386f481fcb411aa48769abe635b84008e591682324deaed1d255c743149e",
+      "src/infra/camera/projection.clj": "6c00bb539089042baf8d2f0b5196eca1a308d45687532e523160656ce5ffeaf1",
+      "src/infra/dev/actor_dashboard.clj": "e8cc9cb2f024ce3a661096e71e47df77d0914d4fda006e3cb2e209fcd02b4798",
+      "src/infra/dev/server.clj": "33e4b476d3f56b47b1d3294a1b029d4fd381c300ec39ad7f343b173293d5caf8",
+      "src/infra/dev/window.clj": "7f8c8558172edc52945ed53a5d938d5d743ab948d8aa14daf95d6a4348b88b6b",
+      "src/infra/dev/window/lifecycle.clj": "ef6cfba6eb04a942fd5b62ac27fc460485304d336016caf770e6a3f8be579e0c",
+      "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+      "src/infra/input.clj": "84d957edd1f9b1f2611d9a0dfc310a401bf22d2a718684760bc96fdef3526283",
+      "src/infra/inspect.clj": "77ec170aa8469a8b2759b5092e27801a07a9b4f334591e95c31a32b5b4dba409",
+      "src/infra/inspect/card.clj": "b298d363b9c0d88359a55e95729464be02e83cee5db3fff9cde339a47633dcf5",
+      "src/infra/inspect/format.clj": "5dbc6570882948cb870c9a445bbe4bbf3f1183a008c96abb87689ffd3d7a603b",
+      "src/infra/inspect/overlay.clj": "4f73ee044b5cc544efeda41052fc7ed3d3fe9eb0190bf26b689251af809bc66b",
+      "src/infra/inspect/picking.clj": "cc909dc08d79b7c99c5da85943daa2a77b0e9dd6a203a56fa52dc65da91fab88",
+      "src/infra/main.clj": "6d94ad269a15c03001e93f0f03f2db4d025a3743cc27cadb1d937613454d4626",
+      "src/infra/menu.clj": "6f55762c984be8f4ac6ee125e0fd2f3951ccb1419c36548c5090200db6bd6a0f",
+      "src/infra/menu/panels.clj": "b92fefff01a81949f581de4c6081f8bad5372109e36f65d879d3a19592506a36",
+      "src/infra/menu/widgets.clj": "e05e57a1db1646c0ec26eeb19029ce78eec325afb904e9e24d18a0f0607a0089",
+      "src/infra/render.clj": "9c6182a5a79c886e574c09dd85b487ed43d97374307bf71b4b445a35440645b8",
+      "src/infra/render/asset.clj": "585b32dadb8913da1963fb054833d664fae2d9a39337b6f416414fe389eae1c7",
+      "src/infra/render/color.clj": "7e38a8ad483cb18765faddd60614eded6d5bed66acbec7e7f53b9a3e89fe43fb",
+      "src/infra/render/field.clj": "901741279b24a63f1b7a66beb1ba16f0dd829cda593c84cb8ae0c5652d737b01",
+      "src/infra/render/hud.clj": "8b63d1a1797ae0be97ccdacdb76fb25097303604a77f8fe50a1020e6fa176cb0",
+      "src/infra/render/input.clj": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c",
+      "src/infra/render/material.clj": "7eb932386621168740bcabd19307a65eb66cb47a282a88377a0ff9c4e20ec965",
+      "src/infra/render/math.clj": "dbf4bc4a8cac1b36053018d0c3f1ee42108a7dcdfeb9709216acf501cde3ef4b",
+      "src/infra/render/mesh.clj": "6fce67c9bf2a0c4061cb74d8493bc6fef5ee56fb6921b8252181045235551384",
+      "src/infra/render/passes.clj": "a96e6e666183e0064a420d26aad845444d7705cfc0035241a9c4c5c26bffbff9",
+      "src/infra/render/scene.clj": "bb375f5daf2bf33169fde15055481fc370ca63a75d45071326eeeb8edad0eeeb",
+      "src/infra/render/scene/bodies.clj": "62211a201db153e3732d60f7b5b03a7fdc10984e0bd4549ecdaf6f922cbb89fc",
+      "src/infra/render/scene/hud.clj": "7d89a7eef799e891e083851223143ab299d690a7f7ff055895cc662a97ad02ca",
+      "src/infra/render/scene/particles.clj": "9647331325d491158d287b9b662f005c33f0634ad2719bb9bb3fa38eef56a2b2",
+      "src/infra/render/scene/setup.clj": "a87cf23a26c38424e6d66f9f315ade5ef0112df563c2df320c8d4bf35bf716f7",
+      "src/infra/render/scene/trails.clj": "1c02e28e045d3101ebcfc1a217df261eec4e07745e33a3a0d436a1141835081d",
+      "src/infra/render/scene/voxel.clj": "a66a5373dc065e07f964b03aa27f57512ab661eabcdf4388f2d2b102be9cda9d",
+      "src/infra/render/shader.clj": "6cb178a94a8a05566b963d64ab76b102023332d5446fdd2d3772b62019653172",
+      "src/infra/render/units.clj": "c31ae0e5c2d6b598fa4a7ae70c430890794001a637999dfffaccd12d83cc9573",
+      "src/infra/render/volume.clj": "0811b4977f41e2b25db17a696f265c423d51edf7f441ccbaf71a3af33abc30ee",
+      "src/infra/render/window.clj": "817fef4fc2f39f54b5184c14541d3f43c9afaf7a250ece349e926c3cb3d75b14",
+      "src/law/atmosphere.clj": "ee9e9b692932bf358e6de62ad2e242d1bce1b65721338b1d3b5cc126c08377bd",
+      "src/law/chemistry.clj": "640d47257a4157676232a94a981a41a1d9ad528c9c36eacf65c437565c4a5066",
+      "src/law/composition.clj": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615",
+      "src/law/contract.clj": "23c5aa68995e8389742cdc5dbbd5433765a4331410eec39e0cd7b50e70214b19",
+      "src/law/crater.clj": "457b503c4777fd8b31d0d4c0eaf6a4790b15cdfb9af59e84dd03575075a3c6b3",
+      "src/law/ecology.clj": "efe59df6084335a501bd7f0be29f8fba75b62e0156e86a707aef7acdde5d4691",
+      "src/law/ecology/schema.clj": "ae2ce2ebb267c5ac724f2119e9abe03806714066d66044835bfdcc6c8c01cb75",
+      "src/law/ecs_dsl.clj": "03a885276719fbf96cadca6c42cf03ec57034278327fc572a490fc153ebb718c",
+      "src/law/field.clj": "efe4cbc6df8a0e5143d2d7c2a9892b41628ae8e4a3fdd2a7029c0a13eae60f5d",
+      "src/law/field/schema.clj": "5a97f4826f774f455c8e15f8bc9c15cd2a5975ceb09fca3f89c982390478f659",
+      "src/law/interior.clj": "3775a7a9f40a1c9cfe7500a5adf25bf3c34f8cdb73acd21c16ef411242804ecc",
+      "src/law/ledger.clj": "7b20d912b2e3622a02cdb517ed7cc294217519a953a90417712a3c753572cb89",
+      "src/law/mass_transfer.clj": "d0731c2c47622a93bc683d6cc3570e248e24200d223669fc985a9f80a65e5f89",
+      "src/law/mass_transfer/schema.clj": "ebf247f862da22711f5abdafd71aa9b5ddbfe208d0dcf37fee62f5167efa506b",
+      "src/law/mass_transfer/validate.clj": "62bcb8e203ba3091080f38ef7f124645a15b926a2d14e6e0635b8988088d6b0a",
+      "src/law/narrative.clj": "56e9ce069465a538ee4ffb098ae00c5f897ef6b3887af9955260b9d80315fb63",
+      "src/law/narrowing.clj": "e7e503e7197b37774babda62cf59c93f49e168221eb64f9491c434b26a47749b",
+      "src/law/plasma.clj": "b42aa5e8b721c7c46a4971cc22d394ca475d9ef8d15f95804381712592d6746f",
+      "src/law/registry.clj": "1426f36362a58c6417e1c50ed5174abde044139379b694118598dc4d1b70b5da",
+      "src/law/render.clj": "bd1497f3ef25a1416f2c667661b5f1c0665f3aed21d67aef599135f7b89225d5",
+      "src/law/rotation.clj": "04ebe429a8cc5263e27d9a9b1d4a9a1bc3319a37d9f66be276bc27255529cbd5",
+      "src/law/sed.clj": "353e3fe3f4aff7d9a6049134f118b19b971df5abb9288f1306c94a46e572eab2",
+      "src/law/spark.clj": "e4488c943825fd68bf2d07100962707d0d431d3d83c0709c7a327e282c8acf19",
+      "src/law/stellar.clj": "e8522d3499f6602e9a42b6dde2074561b41d0969b21f61b6fd7fa48d1dccf88f",
+      "src/law/stellar/orbital/constants.clj": "8fc73756e353e2595a72b90d7039ae6a7e923531651397bb72419c89793378a6",
+      "src/law/stellar/orbital/dynamics.clj": "3e733124ad9bef7b7618b341c0e9cf90f0d1436a4879ff68f34471aadb007cc6",
+      "src/law/stellar/schema.clj": "bd637a34f1a107d0cfeac445f66241cfcf5e08fcb0799faf2c474123d3be578e",
+      "src/law/system_specs.clj": "be6df0d86003679ba2189ed3c1539a5ca317867d14b5ef035c7ed28ba89855df",
+      "src/law/trail.cljc": "dafe3a6d1dd692b19163d23f9185698add2f1369cdc9e93e9a7856d59a1d6892",
+      "src/law/voxel.clj": "f2ce5af5d384e522879212d3168b2b67162ce9e0de9bb515033fcd8a48a6a4d0",
+      "src/shape/core.clj": "80dbae4333794019ae94ef9d459dcdc038b6fe01c44b0e1bfe751c53bf0819d2",
+      "src/shape/quaternion.clj": "c56c9efc3c5cbafc960c344c161287ea40457b4c0f52e514f6f6eca73ab09f82",
+      "src/shape/spatial.clj": "f6a30b104a11407db608f0e5f7ca14e5f8ecbac67b3d8c9a023bb628d242ab25",
+      "src/shape/trail.cljc": "8431dd8d4da2524d9b25e473c7e0bfdc6cf1513c5b261d0ff4f32671e413b1c3"
+    },
+    "preparation_hashes": {
+      "runner.py": "54cff29903228e3a028b73cc23424f41e2d963a0989182c4c0ca023ca57866a3",
+      "aim-client.py": "16b06e287cbadf3997c710a33a4357d700327e3addf5ae25e2f8dd4d7018c914",
+      "snapshot_client.clj": "26be613a8ca694276755a0031d959b827d5c6e04f980c4de892cc8aee769e28a",
+      "snapshot.clj": "dc0764b98da98e63a8a9c182885e3db8d4c87228a2a4d222a0d77b4b5af5e99b",
+      "PLAN.md": "1c8e802b92d071e5d13ca55f1fc8e5551089516a925cbc05a413cecf62b75987"
+    },
+    "manifest_sha256": "7d9769a055da65ecc4365b80f72ee0aaa81f62d541190af2b8b94908127a0eaa",
+    "root_release_sha256": "27a90e16bda1fb490af8e541784b9d830d6ba40cb87a48d5e0657e62e2bc1a12",
+    "edn_data_only_command": [
+      "bb",
+      "-e",
+      "(require '[clojure.edn :as e] '[clojure.string :as s] '[cheshire.core :as j]) (let [d (first *command-line-args*) f (fn [n] (mapv e/read-string (s/split-lines (slurp (str d n))))) ms (f \"/snapshot-messages.edn\")] (println (j/generate-string {:journal (f \"/snapshot-requests.edn\") :messages ms :values (mapv (fn [m] {:id (:id m) :snapshot (e/read-string (:value m))}) (filter #(contains? % :value) ms))})))",
+      "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile/.\u03b7\u03bc/diagnostics/natural-flight-profile/runs/attempt-01"
+    ],
+    "edn_parse_exit": 0,
+    "edn_parse_stderr": "",
+    "edn_parse_stdout_sha256": "43a3bb06977c7dc33c2367cc59a5801034741a5bc0bce2f089baa24e87442784",
+    "audit_python_source": "import collections, datetime, hashlib, json, statistics, struct, subprocess\nfrom pathlib import Path\nroot=Path.cwd(); bundle=root/'.\u03b7\u03bc/diagnostics/natural-flight-profile'; run=bundle/'runs/attempt-01'\nsha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()\nread=lambda p:json.loads(p.read_text())\ndt=datetime.datetime.fromisoformat\nexisting={str(p.relative_to(bundle)):{'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(bundle.rglob('*')) if p.is_file()}\nassert not (bundle/'attempt-01-audit.json').exists()\nclosed=read(run/'closed.json');launch=read(run/'supervisor-launch.json');release=read(bundle/'root-release.json')\nassert closed==read(run/'state.json')\nassert closed['stage']=='closed' and closed['outcome']=='operator-stop'\nassert not any(closed[k] for k in ['cleanup_errors','unreaped_children','budget_exceeded','total_budget_exceeded','key_pending','key_release_uncertain','mouse_pending','mouse_release_uncertain'])\nassert [closed[k] for k in ['work_budget_seconds','budget_seconds','startup_budget_seconds']]==[1470,1500,180]\nassert [closed[k] for k in ['frames','looks','holds','aim_invocations']]==[3,0,0,0]\nassert closed['aim_target'] is None and closed['active_aim'] is None\norigin=dt(launch['lease_started_at']);origin_ms=origin.timestamp()*1000\nassert launch['lease_started_monotonic']==closed['supervisor_monotonic_started']\nassert launch['startup_deadline']==closed['startup_deadline']==launch['lease_started_monotonic']+180\nassert launch['total_deadline']==launch['lease_started_monotonic']+1500\nops=[json.loads(x) for x in (run/'operations.jsonl').read_text().splitlines()]\nevents=lambda k:[x for x in ops if x['kind']==k]\nassert all(a['elapsed_seconds']<=b['elapsed_seconds'] for a,b in zip(ops,ops[1:]))\nedn_code=\"\"\"(require '[clojure.edn :as e] '[clojure.string :as s] '[cheshire.core :as j]) (let [d (first *command-line-args*) f (fn [n] (mapv e/read-string (s/split-lines (slurp (str d n))))) ms (f \"/snapshot-messages.edn\")] (println (j/generate-string {:journal (f \"/snapshot-requests.edn\") :messages ms :values (mapv (fn [m] {:id (:id m) :snapshot (e/read-string (:value m))}) (filter #(contains? % :value) ms))})))\"\"\"\nargv=['bb','-e',edn_code,str(run)]\nparsed=subprocess.run(argv,capture_output=True,text=True,timeout=20)\nassert parsed.returncode==0 and not parsed.stderr,(parsed.returncode,parsed.stderr)\ndata=json.loads(parsed.stdout);journal=data['journal'];messages=data['messages'];values={x['id']:x['snapshot'] for x in data['values']}\nraw=(run/'snapshot-messages.edn').read_bytes();lines=raw.splitlines(keepends=True)\nassert len(lines)==len(messages)==449 and len(raw)==287189 and all(x.endswith(b'\\n') for x in lines)\nstarts=[x for x in journal if x['event']=='request-start'];ends=[x for x in journal if x['event']=='request-finish']\nassert len(starts)==len(ends)==len(values)==32 and len(journal)==66\nassert journal[0]['event']=='connection-open' and journal[-1]['event']=='connection-close'\nassert journal[0]['pid']==closed['snapshot_client']['pid'] and journal[-1]['completed']==32 and journal[-1]['byte-end']==len(raw)\nassert [x['event'] for x in journal[1:-1]]==['request-start','request-finish']*32\nids=[f'{i:04d}' for i in range(1,33)]\nassert [x['id'] for x in starts]==[x['id'] for x in ends]==ids\nexpected={k:closed['app'][k] for k in ['pid','boot','start','cwd']};expected.update(display=closed['display'],port=str(closed['port']),world=closed['world'],window=closed['window'])\npos=0;row=0;spans=[];texts={};sessions=set();timeline=[]\nfor start,end in zip(starts,ends):\n ident=start['id'];count=end['messages'];chunk=messages[row:row+count];encoded=b''.join(lines[row:row+count]);row+=count\n assert start['byte-start']==end['byte-start']==pos\n assert end['byte-end']==pos+len(encoded) and end['raw-bytes']==len(encoded)\n assert raw[pos:end['byte-end']]==encoded and len(encoded)<=4*1024*1024\n assert all(m['id']==ident for m in chunk)\n assert not any(m.get('err') or m.get('ex') or m.get('root-ex') for m in chunk)\n assert all(set(m.get('status',[]))<= {'done'} for m in chunk)\n assert sum('done' in m.get('status',[]) for m in chunk)==1 and chunk[-1].get('status')==['done']\n assert sum('value' in m for m in chunk)==1 and end['outcome']=='ok' and end['expected']==expected\n assert start['expected']==(expected if ident!='0001' else {k:v for k,v in expected.items() if k not in ['world','window']})\n text=''.join(m.get('out','')+(m['value']+'\\n' if 'value' in m else '') for m in chunk);texts[ident]=text\n assert text.count('TRUTH_APPROACH_ID '+str(closed['world'])+' '+str(closed['window'])+'\\n')==1\n if ident=='0001': assert text.count('TRUTH_APPROACH_READY 0 true true true\\n')==1\n snap=values[ident];si=snap['identity']\n for k in ['pid','boot','start']:assert si[k]==closed['app'][k]\n assert si['world-atom']==closed['world'] and si['window']==closed['window'] and si['display']==closed['display'] and si['max-heap-bytes']==2147483648\n assert snap['world']['demo/scenario']=='nebula' and snap['world']['demo/fixture?'] is False\n assert snap['production-handoff-write-set']=={}\n assert snap['spark']['thrust'] is None and snap['spark']['binding']=={} and snap['spark']['commitment'] is None\n coverage=snap['body-coverage'];assert coverage['omitted']==0 and coverage['recorded']==coverage['total']==len(snap['bodies'])\n cam=snap['host-sampled-separately']['camera'];assert cam['yaw']==-90.0 and cam['pitch']==-20.0\n sessions.update(m['session'] for m in chunk if 'session' in m)\n spans.append({'id':ident,'byte_start':pos,'byte_end':end['byte-end'],'bytes':len(encoded),'messages':count,'elapsed_ms':end['elapsed-ms'],'sha256':hashlib.sha256(encoded).hexdigest()})\n timeline.append({'id':ident,'at':datetime.datetime.fromtimestamp(snap['wall-ms']/1000,datetime.timezone.utc).isoformat(timespec='milliseconds'),'elapsed_seconds':(snap['wall-ms']-origin_ms)/1000,'world':snap['world'],'counts':snap['state-counts'],'body_coverage':coverage,'fresh_handoff':snap['production-handoff-write-set'],'stored_candidates':[{'eid':b['eid'],'ready_to_commit':b['ready-to-commit?'],'per_body_eligible':b['per-body-eligible?'],'current_parent_id':None if b['current-parent'] is None else b['current-parent']['id'],'distance_au':b['physical-distance-au']} for b in snap['bodies'] if b['stored-candidate']]})\n pos=end['byte-end']\nassert pos==len(raw) and row==len(messages) and len(raw)<=128*1024*1024\nassert (run/'snapshot-current.result').read_text()=='0032 ok\\n'\nassert (run/'snapshot-current.stdout').read_text()==texts['0032']\nassert ':id \"0032\"' in (run/'snapshot-current-request.edn').read_text()\ntr=[x for x in ops if x['kind'] in ['snapshot-request','snapshot-result','snapshot-consumed']]\nassert len(tr)==96\nfor i,ident in enumerate(ids):\n req,ack,consume=tr[i*3:i*3+3]\n assert [x['kind'] for x in [req,ack,consume]]==['snapshot-request','snapshot-result','snapshot-consumed']\n assert req['id']==ack['id']==consume['id']==ident and ack['verdict']==ident+' ok'\n assert consume['stdout_utf8_bytes']==len(texts[ident].encode('utf-8'))\nassert not any('failure' in x['kind'] or 'timeout' in x['kind'] for x in ops)\nrequests=[x['request'] for x in events('request')]\nassert len(requests)==21 and collections.Counter(x['operation'] for x in requests)=={'inspect':13,'click':3,'tap':2,'frame':3}\nassert [x['args'] for x in requests if x['operation']=='click']==[['spark'],['fine'],['spark']]\nassert [x['args'] for x in requests if x['operation']=='tap']==[['r'],['Tab']]\ncompleted=[]\nfor i,req in enumerate(requests):\n ident=req['id'];assert read(run/'requests'/f'{ident}.json')==req\n result=read(run/'results'/f'{ident}.json');assert result['ok'] is True\n assert dt(req['at'])<=dt(result['finished_at'])\n if i+1<len(requests):assert dt(result['finished_at'])<=dt(requests[i+1]['at'])\n completed.append({**req,**result})\nassert len(list((run/'requests').glob('*.json')))==len(list((run/'results').glob('*.json')))==21\ncommands=events('command');spawns=events('spawn');reaps=events('reaped');exits=events('exit')\nassert len(commands)==len(spawns)==len(reaps)==22 and len({x['identity']['pid'] for x in spawns})==22\nassert {(x['identity']['pid'],x['label']) for x in spawns}=={(x['pid'],x['label']) for x in reaps}\nassert collections.Counter(x['returncode'] for x in reaps)=={0:21,143:1}\nassert next(x for x in reaps if x['returncode']==143)['pid']==closed['app']['pid']\nassert len(exits)==19 and all(x['returncode']==0 for x in exits)\nfor role in ['app','xvfb','snapshot_client']:\n live=closed[role];spawn=next(x for x in spawns if x['identity']['pid']==live['pid'])\n for k in ['pid','boot','start','cwd']:assert spawn['identity'][k]==live[k]\nassert len([x for x in commands if 'snapshot_client.clj' in ' '.join(x['command'])])==1\nxd=[x['command'][1:] for x in commands if x['command'][0]=='xdotool']\nassert xd.count(['mousedown','1'])==xd.count(['mouseup','1'])==3\nassert not any('keydown' in x or 'click' in x or 'mousemove_relative' in x for x in xd)\nassert [x for x in xd if x[0]=='key']==[['key','--delay','80','r'],['key','--delay','80','Tab']]\nobservations=events('input-observation');matched=[x for x in observations if x['matched']]\nassert len(observations)==13\nassert any(x['label']=='tap-r' and x['state']['mode']=='manual' for x in matched)\nassert any(x['label']=='range-fine' and x['state']['displacement']==1e7 for x in matched)\nassert matched[-1]['label']=='tap-Tab' and matched[-1]['state']['free'] is False and matched[-1]['state']['domain']=='none'\nsources=read(run/'source-hashes.json');pins=read(run/'preparation-hashes.json');proof=read(bundle/'COPY-PROOF.json')\nassert len(sources)==186 and all(sha(root/name)==digest for name,digest in sources.items())\nassert sources==proof['production_source_hashes'] and proof['production_equal'] is True\nassert closed['base']==proof['production_base']==release['production']=='b395c4049718f7ce015ddf25fc0a192d97821373'\nassert pins==read(bundle/'preparation-hashes.json') and all(sha(bundle/name)==digest for name,digest in pins.items())\nmanifest=[]\nfor line in (bundle/'SHA256SUMS').read_text().splitlines():\n digest,name=line.split('  ',1);assert sha(bundle/name)==digest;manifest.append(name)\nassert len(manifest)==9 and len((bundle/'PREPARATION-FILES.txt').read_text().splitlines())==10\nassert release['manifest_sha256']==sha(bundle/'SHA256SUMS') and release['scope_sha256']==sha(bundle/'root-scope.json')\nframes=[];fc=[x for x in commands if x['command'][0]=='ffmpeg']\nassert len(fc)==len(list(run.glob('*.png')))==3\nfor command in fc:\n c=command['command'];p=Path(c[-1]);img=p.read_bytes()\n assert img[:8]==b'\\x89PNG\\r\\n\\x1a\\n' and img[12:16]==b'IHDR' and struct.unpack('>II',img[16:24])==(1280,720)\n assert c[c.index('-i')+1]==':1.0' and c[c.index('-frames:v')+1]=='1' and not any(x in c for x in ['-vf','-filter_complex','-ss'])\n frames.append({'path':str(p.relative_to(bundle)),'at':command['at'],'elapsed_seconds':command['elapsed_seconds'],'bytes':len(img),'sha256':sha(p),'width':1280,'height':720,'root_visual_tick':[1252,4912,5415][len(frames)],'visual_limit':'Tick and manual third-person appearance reported by root; this audit checks original frame bytes/header/capture commands without independent pixel interpretation.'})\nassert all(a['world']['tick']<b['world']['tick'] for a,b in zip(timeline,timeline[1:]))\nmature=[x for x in timeline if x['counts'].get('planet',0)>0]\nassert len(mature)==5 and mature[0]['world']['tick']==4429 and all(x['counts']['planet']==12 for x in mature)\nassert all(len(x['stored_candidates'])==1 and x['stored_candidates'][0]['eid']==1010 and x['stored_candidates'][0]['ready_to_commit'] is True and x['stored_candidates'][0]['current_parent_id'] is None and x['stored_candidates'][0]['per_body_eligible'] is None for x in mature)\nphase=timeline[20:]\ngaps=[{'from_id':a['id'],'to_id':b['id'],'from_at':a['at'],'to_at':b['at'],'seconds':round((dt(b['at'])-dt(a['at'])).total_seconds(),3)} for a,b in zip(phase,phase[1:])]\nlate=[g for g in gaps if g['seconds']>60];assert len(late)==6 and max(g['seconds'] for g in gaps)==139.338\nstop_ns=(run/'STOP').stat().st_mtime_ns;stop_at=datetime.datetime.fromtimestamp(stop_ns/1e9,datetime.timezone.utc)\nstop_elapsed=(stop_at-origin).total_seconds();teardown=commands[-1]\nassert teardown['command']==['xdotool','keyup','r','Tab'] and stop_elapsed>960\nassert all(x['elapsed_seconds']<960 for x in events('request'))\nassert closed['elapsed_seconds']<1470<1500\nstderr={p.name:p.stat().st_size for p in run.glob('*.stderr')}\nassert all(size==0 for name,size in stderr.items() if name!='001-xvfb.stderr')\nruntime=(run/'002-runtime.stdout').read_text();xvfb=(run/'001-xvfb.stderr').read_text()\nassert 'Dev window stopped.' in runtime and 'Errors from xkbcomp are not fatal to the X server' in xvfb\nlatencies=[x['elapsed-ms'] for x in ends]\naudit={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'auditor':'runtime_scout','outcome':'closed-with-protocol-deviations-no-flight-attempt','scope':'Offline data audit only; no project namespaces, JVM/native execution, script imports, process inspection/control or state mutation. Only the two new audit/report files are authorized.','production_base':closed['base'],'execution_preparation_commit':'cf9dcf2603244a70c43ad03315b2552bd660df4f','execution_commit_verification':'Root supplied short SHA; independently resolved HEAD with read-only git rev-parse after explicit root request.','identity':{k:closed[k] for k in ['supervisor','app','xvfb','snapshot_client','display','port','world','window','x-window']},'closure':{'outcome':closed['outcome'],'elapsed_seconds':closed['elapsed_seconds'],'ended_at':closed['ended_at'],'errors':closed['cleanup_errors'],'unreaped':closed['unreaped_children'],'release_flags_clear':True,'work_total_budgets_exceeded':False},'coverage':{'source_files':186,'run_prep_pins':len(pins),'manifest_checksums':9,'snapshots':32,'raw_decoded_messages':449,'raw_utf8_bytes':len(raw),'max_request_bytes':max(x['raw-bytes'] for x in ends),'summary_entries':66,'request_ack_consume_events':96,'all_spans_ids_acks_consumes_verified':True,'spans':spans,'connection_open':journal[0],'connection_close':journal[-1],'one_worker_launch':True,'distinct_response_session_ids':len(sessions),'connection_limit':'Per-eval nREPL session IDs are not TCP connection IDs; fixed source plus one worker open/close journal supports reuse, without packet capture.','snapshot_ms_descriptive_only':{'min':min(latencies),'median':statistics.median(latencies),'max':max(latencies)}},'requests':{'count':21,'operation_counts':dict(collections.Counter(x['operation'] for x in requests)),'all_saved_results_ok':True,'finished_before_next_submission':True,'completed':completed,'input_observations':observations,'balanced_mouse_press_release':[3,3],'movement_holds':0,'looks':0,'aims':0},'process_evidence':{'spawn_records':22,'unique_spawned_children':22,'raw_reaped_events':22,'unique_reaped_children':22,'exit_records':19,'returncode_counts':dict(collections.Counter(x['returncode'] for x in reaps)),'game_143_is_owned_termination_cleanup':True,'reaps':reaps,'outer_clients':'Root reports all functions exec/write_stdin client sessions returned0/reaped. No separate local outer-client stdout/journal was captured, so this audit cannot independently enumerate their identities/reaps.','os_absence':'Root reports all four principal PIDs absent. This audit verifies saved child reaps, not fresh /proc absence. Supervisor is not its own child.','initial_exe_note':'App/worker initial /usr/bin/env records precede exec; PID/start/boot/cwd match later guarded Java identities.','stderr_bytes':stderr,'xvfb_note':'Preserved listener collision messages during displayfd selection, followed by nonfatal xkbcomp keysym warnings. Private :1 subsequently readied; three frame helpers exited0.','runtime_note':'Repeated K-clamp-to4096 warnings preserved, not attributed as a cause of sampled empty handoff.','k_clamp_phrase_occurrences':runtime.count('K clamp binds:')},'frames':frames,'world':{'timeline':timeline,'all_fresh_handoff_empty':True,'no_omitted_bodies':True,'first_planets_sample':mature[0],'preceding_no_planets_sample':timeline[26],'last_planets_sample':mature[-1],'all_thrust_nil':True,'all_binding_empty':True,'all_observer_commitment_nil':True,'yaw_pitch_unchanged':[-90,-20],'candidate_interpretation':'1010 is ready=true from retained historical candidate; current-parent=nil and per-body eligibility=nil in all five planet samples. Nil was not recoded false. Diagnostic full-handoff guard is stricter than actual stored-candidate readiness.','limits':'No member sampled is not no member ever. Birth and between-sample eligibility times are unobserved; no flight, binding, commitment or Gate test occurred.'},'cadence_and_cutoff':{'origin':launch['lease_started_at'],'phase':'Consecutive snapshots0021, last post-input observation, through0032.','intended_poll_seconds':[30,60],'gaps':gaps,'gaps_over_60_seconds':late,'largest_gap_seconds':139.338,'formation_cutoff_seconds':960,'cutoff_at':(origin+datetime.timedelta(seconds=960)).isoformat(),'stop_mtime_ns':stop_ns,'stop_mtime_at':stop_at.isoformat(),'stop_elapsed_seconds':stop_elapsed,'late_stop_seconds':stop_elapsed-960,'mtime_limit':'Observed filesystem mtime of STOP, not outer-client invocation timestamp. Root confirms no reliable exact outer start timestamp.','first_teardown_event':teardown,'teardown_elapsed_seconds':teardown['elapsed_seconds'],'late_teardown_seconds':teardown['elapsed_seconds']-960,'last_snapshot_to_close_seconds':closed['elapsed_seconds']-timeline[-1]['elapsed_seconds'],'no_target_admission':True,'no_request_after_cutoff':True,'no_lease_extension':True,'status':'Operator polling and no-target stop policy deviated; unchanged1470/1500 lease not exceeded. Overall protocol is not a clean pass.'},'limits':['Ordinary nebula, manual/Fine UI, fixed snapshots and three owned-display captures observed; no physical-flight attempt.','No fresh member was sampled; sparse observations do not exclude between-sample membership.','World positions are paired, camera/config separately sampled; published focus is not binding consumer input.','No sustained survival, clock, local-frame controller, embodiment, Gate or native FPS proof.','No cap/partial-write/timeout/abandoned-aim/failure-path runtime qualification.','Raw journal preserves exact encoded decoded EDN maps, not original bencode wire packets.','Successful path and static review do not prove hard preemption of blocked OS/JVM operations.'],'provenance':{'existing_files_before_audit':existing,'source_hashes':sources,'preparation_hashes':pins,'manifest_sha256':sha(bundle/'SHA256SUMS'),'root_release_sha256':sha(bundle/'root-release.json'),'edn_data_only_command':argv,'edn_parse_exit':parsed.returncode,'edn_parse_stderr':parsed.stderr,'edn_parse_stdout_sha256':hashlib.sha256(parsed.stdout.encode()).hexdigest(),'audit_python_source':audit_code,'audit_python_source_sha256':hashlib.sha256(audit_code.encode()).hexdigest(),'audit_preparation_errors':['Earlier read-only counts used event instead of kind and raised KeyError before writes.','First verifier wrongly required startup-only TRUTH_APPROACH_READY marker on every read; it stopped before output writes. Corrected to first read only; per-read identity and fixed-source guards remain checked.']}}\nassert all(sha(bundle/n)==v['sha256'] and (bundle/n).stat().st_size==v['bytes'] for n,v in existing.items())\np=bundle/'attempt-01-audit.json'\nwith p.open('x') as f:json.dump(audit,f,indent=2,allow_nan=False);f.write('\\n')\nprint(json.dumps({'path':str(p),'sha256':sha(p),'bytes':p.stat().st_size,'existing_verified':len(existing),'outcome':audit['outcome'],'latency_ms':audit['coverage']['snapshot_ms_descriptive_only'],'pngs':frames,'k_clamp_occurrences':audit['process_evidence']['k_clamp_phrase_occurrences']},indent=2))\n",
+    "audit_python_source_sha256": "f39fe02d45401bc52e6a99f3bb8663b62f9d24c76819c59797ae73dcf74d93e7",
+    "audit_preparation_errors": [
+      "Earlier read-only counts used event instead of kind and raised KeyError before writes.",
+      "First verifier wrongly required startup-only TRUTH_APPROACH_READY marker on every read; it stopped before output writes. Corrected to first read only; per-read identity and fixed-source guards remain checked."
+    ],
+    "commitment_scope_clarification": {
+      "before_audit_sha256": "21940e4724129da28420ca6e3ff9380ab1ae93fd97bfd6101c1c6f0fa9ef8ec8",
+      "reason": "Root requested precise observer-versus-planet and sampled-versus-global scope before publication.",
+      "data_only_command": [
+        "bb",
+        "-e",
+        "(require '[clojure.edn :as e] '[clojure.string :as s] '[cheshire.core :as j]) (let [vs (map (comp e/read-string :value) (filter :value (map e/read-string (s/split-lines (slurp (first *command-line-args*))))))] (println (j/generate-string {:snapshots (count vs) :observer-count (count (filter #(nil? (get-in % [:spark :commitment])) vs)) :recorded-body-count (count (mapcat :bodies vs)) :nil-recorded-body-commitments (count (filter #(nil? (:commitment %)) (mapcat :bodies vs)))})))",
+        ".\u03b7\u03bc/diagnostics/natural-flight-profile/runs/attempt-01/snapshot-messages.edn"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "{\"snapshots\":32,\"observer-count\":32,\"recorded-body-count\":60,\"nil-recorded-body-commitments\":60}\n",
+      "stdout_sha256": "740c8dbbfc50136db891b353fa791430db9eb09ee643ef4793aae31d12d503b9",
+      "result": {
+        "snapshots": 32,
+        "observer-count": 32,
+        "recorded-body-count": 60,
+        "nil-recorded-body-commitments": 60
+      }
+    }
+  }
+}
