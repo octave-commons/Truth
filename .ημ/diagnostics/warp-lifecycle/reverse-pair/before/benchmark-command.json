@@ -1,0 +1,55 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-Sdeps",
+    "{:paths [\"src\" \"resources\" \"test\" \"bench\" \".\u03b7\u03bc/diagnostics/warp-lifecycle\"] :deps {criterium/criterium {:mvn/version \"0.4.6\"}}}",
+    "-M",
+    "-m",
+    "evidence.warp",
+    "before",
+    "/home/err/spaces/foresight/.worktrees/truth-warp-cost-baseline/.\u03b7\u03bc/diagnostics/warp-lifecycle/fixtures.edn",
+    "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle/.\u03b7\u03bc/diagnostics/warp-lifecycle/reverse-pair/before"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-warp-cost-baseline",
+  "started_at": "2026-10-07T01:04:41.494713+00:00",
+  "source_before": {
+    "head": "14bd31890acdab3b9983c6780295b42f4a065c55",
+    "sha256": {
+      "src/domain/intervention.clj": "e541dd5df5ff208818d216c9083b73693216409c73599b6ab63be0f641c83dc0",
+      "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+      "src/domain/integrator.clj": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+      "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+      "src/domain/physics/cache/soa.clj": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+      "src/domain/stellar/merge.clj": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+      "src/domain/ecs/registry.clj": "26de0e95a056b7ef944ae717a15938df6ac66cf1c68fa2cc7dabd0e897aa1fb2",
+      "test/domain/warp_lifecycle_test.clj": "2904ab8158f595ab22bf0638df0100784c9acb94989b42a659d13efbf0153b0c",
+      "bench/gates_of_truth/bench.clj": "df2abd5cc5270f6843e2e7d3d078402e46ecbe774af5eb74529bab219743b3a1",
+      "bench/gates_of_truth/bench/phase0.clj": "9d7d731106cb3161658c87546cf20125e48acb1610d2a472a8cbd93d94bef543",
+      ".\u03b7\u03bc/diagnostics/warp-lifecycle/evidence/warp.clj": "deba81148f3b94a19de736beb54dab9c36eb43a10a9c2f14c3d460e8eea40ed2",
+      ".\u03b7\u03bc/diagnostics/warp-lifecycle/fixtures.edn": "2c275009a46b8bc813bd1541e7b3bdb73d51e1e7d2112b8aa0a1962f3b6fa096"
+    }
+  },
+  "native_before": {
+    "time": "2026-10-07T01:04:41.494543+00:00",
+    "pause_record_sha256": "10e44ff2d3f4629d31683295731ad333659dc0a05dbbcd29a13eead9d71879d9",
+    "observed": {
+      "pid": 131581,
+      "state": "T",
+      "start_ticks": "125503",
+      "minor_faults": 658528,
+      "major_faults": 9,
+      "user_cpu_ticks": 856877,
+      "system_cpu_ticks": 13900,
+      "rss_pages": 535437,
+      "rss_bytes": 2193149952
+    }
+  },
+  "cpu_clock_ticks_per_second": 100,
+  "page_size": 4096,
+  "benchmark_adapter_unchanged": true,
+  "order": "candidate AFTER then baseline BEFORE; one pair only",
+  "environment_note": "Existing host environment; explicit same 256MiB/2GiB JVM arguments; no profiler or alternative benchmark configuration.",
+  "pid": 288358
+}

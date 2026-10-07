@@ -1,0 +1,9 @@
+{
+  "completed_at": "2026-10-07T01:05:52.300069+00:00",
+  "exit_code": 0,
+  "both_processes_reaped": true,
+  "source_heads": {
+    "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle": "3d912230bc8743463d0c59b75ce312e5688a0dc0",
+    "/home/err/spaces/foresight/.worktrees/truth-warp-cost-baseline": "14bd31890acdab3b9983c6780295b42f4a065c55"
+  }
+}

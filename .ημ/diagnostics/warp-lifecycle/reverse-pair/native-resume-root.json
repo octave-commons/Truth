@@ -1,0 +1,12 @@
+{
+  "utc_before": "2026-10-07T01:09:56.819481+00:00",
+  "pid": 131581,
+  "start_ticks": "125503",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+  "before_state": "T",
+  "signal": "SIGCONT",
+  "reason": "Reverse pair completed; candidate PID277752 and baseline PID288358 exited0 and were reaped; source and native stopped postguards passed.",
+  "after_state": "S",
+  "utc_after": "2026-10-07T01:09:56.920178+00:00"
+}

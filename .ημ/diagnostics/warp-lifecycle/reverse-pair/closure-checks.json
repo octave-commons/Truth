@@ -1,0 +1,32 @@
+{
+  ".\u03b7\u03bc/receipts.edn": {
+    "historical_bytes": 52930,
+    "historical_sha256": "5c6023074ecbbef15ffd47349f2cc8620c2fa23675730a3598ed147de9efceca",
+    "prefix_unchanged": true
+  },
+  ".\u03b7\u03bc/session-mycology/ledger.md": {
+    "historical_bytes": 29327,
+    "historical_sha256": "a52bb463d38cec964bf6e480bf9044b1d10f6a8ddf9c31f617375c85e5762824",
+    "prefix_unchanged": true
+  },
+  "kanban/tasks/.events/ledger.edn": {
+    "historical_bytes": 621980,
+    "historical_sha256": "65206a8f27676db7cf933823b5368bdf366db7914a067b491fa2b731fd7af7f2",
+    "prefix_unchanged": true
+  },
+  "red": {
+    "prior_hashes_verified": 15
+  },
+  "before": {
+    "prior_hashes_verified": 38
+  },
+  "green": {
+    "prior_hashes_verified": 50
+  },
+  "committed_source_unchanged": true,
+  "candidate_head": "3d912230bc8743463d0c59b75ce312e5688a0dc0",
+  "baseline_head": "14bd31890acdab3b9983c6780295b42f4a065c55",
+  "native_resume_record_sha256": "b52a6d39e86f987a0c03f4dc23068b1274d5f7a7307b203ca10841d871b53eac",
+  "ordinary_diff_check": true,
+  "new_evidence_whitespace_diagnostics": []
+}

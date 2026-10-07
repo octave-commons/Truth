@@ -449,3 +449,12 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,14bd318,2026-10-07T00:57:39.358245+00:00
   note: Preserve an existing explicit-empty write-set shape while adding canonical removals. Freeze real failed qualification attempts; record formatting corrections as exact reversible bytes rather than claiming original hashes passed. Required cleanup costs work, but a large broad-control slowdown remains unresolved even when background load differs. No new spore; existing evidence discipline covers the pattern.
+- ts: 2026-10-07T01:09:14.143016+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Preserve both timing orders while resolving an apparent broad regression
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,3d912230,2026-10-07T01:09:14.143016+00:00
+  note: A large first-pair effect justifies one unchanged reverse pair with shared native pause and exact source/input guards. Keep the original adverse result, do not pool a favorable estimate, and distinguish failure to reproduce from disproving a regression. Repeat observed cleanup work does not provide a universal upper bound. Existing skills suffice; no new spore.

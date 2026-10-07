@@ -1,0 +1,228 @@
+
+  Realistic tick-world phase profile (500 particles, 10 samples avg):
+{:observer-system 0.3380023999999999,
+ :samples 10,
+ :system-summary 2.1131403,
+ :events+clock 1.9172534000000003,
+ :detect+complexity 0.23038610000000004,
+ :pacing 2.6894825,
+ :advance-com-spatial 13.214525600000002,
+ :total 80.3006573,
+ :stats-of 2.0557079,
+ :expire+materialize 0.0805272,
+ :step-physics 57.66163189999999}
+
+  Per-system step-physics profile (initial w500, one sample each):
+
+  Per-system step-physics profile (initial w500):
+  :gravity                                 6.710 ms
+  :hydro-em                                7.707 ms
+  :warp                                    0.016 ms
+  :observer-accel                          3.553 ms
+  :player-thrust                           0.110 ms
+  :dark-matter                             5.278 ms
+  :thermal-intervention                    0.017 ms
+  :integrator                              21.194 ms
+    :integrator/leapfrog                   8.130 ms
+    :integrator/comp-condensed             3.884 ms
+    :integrator/rotation                   2.620 ms
+    :integrator/temperature                2.226 ms
+    :integrator/force-accum                1.698 ms
+    :integrator/mass                       0.896 ms
+    :integrator/composition                0.022 ms
+  :rotation-integrator                     0.165 ms
+  :structure                               5.634 ms
+    :structure/gas-query                   4.896 ms
+    :structure/gas-reduce                  0.150 ms
+    :structure/resolved                    0.117 ms
+  :eos                                     0.400 ms
+  :motion-trail                            0.601 ms
+  :classifier                              1.997 ms
+    :classifier/transitions                0.998 ms
+    :classifier/scan                       0.150 ms
+    :classifier/select                     0.031 ms
+    :classifier/write-set                  0.005 ms
+  :classification                          0.224 ms
+  :handoff                                 0.095 ms
+  :condensation-seeder                     0.014 ms
+  :field                                   3.181 ms
+    :field/compute                         1.892 ms
+    :field/scan                            1.227 ms
+  :fusion                                  0.862 ms
+    :fusion/burn                           0.639 ms
+    :fusion/scan                           0.190 ms
+  :stellar-sed                             0.256 ms
+  :atmosphere-shells                       0.176 ms
+  :nucleosynthesis                         0.247 ms
+  :differentiation                         0.727 ms
+  :deuterium-depletion                     0.208 ms
+  :stellar-wind                            0.428 ms
+    :stellar-wind/scan                     0.187 ms
+    :stellar-wind/compute                  0.177 ms
+    :stellar-wind/write-set                0.012 ms
+  :wind-ablation                           0.056 ms
+    :wind-ablation/scan                    0.020 ms
+    :wind-ablation/write-set               0.013 ms
+    :wind-ablation/compute                 0.007 ms
+  :stellar-flare                           0.007 ms
+  :xuv-atmospheric-escape                  0.294 ms
+  :disc-identification                     0.278 ms
+  :regime                                  2.925 ms
+    :regime/classify                       2.735 ms
+    :regime/write-set                      0.125 ms
+  :collision-detection                     0.905 ms
+  :fusion-promotion                        1.613 ms
+    :fusion-promotion/evaluate             1.186 ms
+    :fusion-promotion/scan                 0.345 ms
+    :fusion-promotion/write-set            0.013 ms
+  :sink-formation                          0.499 ms
+  :disk-evolution                          0.664 ms
+  :mass-transfer                           0.743 ms
+  :neighbor-cache                          2.525 ms
+    :neighbor-cache/rebuild                4.471 ms
+    :neighbor-cache/build-entries          1.243 ms
+    :neighbor-cache/scan-prior             0.581 ms
+    :neighbor-cache/evict                  0.255 ms
+    :neighbor-cache/full-check             0.031 ms
+    :neighbor-cache/build-map              0.029 ms
+    :neighbor-cache/item-map               0.023 ms
+  :lod-scheduler                           0.589 ms
+  :magnetosphere-coupling                  1.169 ms
+    :magnetosphere/filter-winds            0.663 ms
+    :magnetosphere/compute                 0.339 ms
+    :magnetosphere/build-wind-data         0.015 ms
+  :ecology                                 0.851 ms
+  :debris-reaper                           1.443 ms
+  :focus-zone                              0.208 ms
+  :binding                                 0.094 ms
+  :commitment                              0.045 ms
+  :voxel-sculpt                            0.014 ms
+  :voxel-carve                             0.013 ms
+  :voxel-focus                             0.011 ms
+
+  Per-system step-physics profile (world1 with spatial tree):
+  :gravity                                 298.572 ms
+  :hydro-em                                42.145 ms
+  :warp                                    0.051 ms
+  :observer-accel                          3.714 ms
+  :player-thrust                           0.280 ms
+  :dark-matter                             1.855 ms
+  :thermal-intervention                    0.046 ms
+  :integrator                              39.756 ms
+    :integrator/leapfrog                   22.907 ms
+    :integrator/force-accum                4.911 ms
+    :integrator/temperature                3.206 ms
+    :integrator/comp-condensed             2.431 ms
+    :integrator/rotation                   2.307 ms
+    :integrator/mass                       1.683 ms
+    :integrator/composition                0.067 ms
+  :rotation-integrator                     0.275 ms
+  :structure                               7.269 ms
+    :structure/gas-query                   6.362 ms
+    :structure/gas-reduce                  0.475 ms
+    :structure/resolved                    0.074 ms
+  :eos                                     0.379 ms
+  :motion-trail                            0.773 ms
+  :classifier                              1.917 ms
+    :classifier/transitions                1.644 ms
+    :classifier/scan                       0.118 ms
+    :classifier/select                     0.040 ms
+    :classifier/write-set                  0.006 ms
+  :classification                          0.346 ms
+  :handoff                                 0.148 ms
+  :condensation-seeder                     0.023 ms
+  :field                                   1.576 ms
+    :field/scan                            0.756 ms
+    :field/compute                         0.740 ms
+  :fusion                                  0.756 ms
+    :fusion/burn                           0.562 ms
+    :fusion/scan                           0.164 ms
+  :stellar-sed                             0.206 ms
+  :atmosphere-shells                       0.133 ms
+  :nucleosynthesis                         0.561 ms
+  :differentiation                         1.456 ms
+  :deuterium-depletion                     0.300 ms
+  :stellar-wind                            0.646 ms
+    :stellar-wind/scan                     0.382 ms
+    :stellar-wind/compute                  0.146 ms
+    :stellar-wind/write-set                0.015 ms
+  :wind-ablation                           0.110 ms
+    :wind-ablation/scan                    0.045 ms
+    :wind-ablation/write-set               0.019 ms
+    :wind-ablation/compute                 0.009 ms
+  :stellar-flare                           0.008 ms
+  :xuv-atmospheric-escape                  0.279 ms
+  :disc-identification                     0.265 ms
+  :regime                                  2.219 ms
+    :regime/classify                       2.114 ms
+    :regime/write-set                      0.062 ms
+  :collision-detection                     0.719 ms
+  :fusion-promotion                        0.964 ms
+    :fusion-promotion/evaluate             0.575 ms
+    :fusion-promotion/scan                 0.329 ms
+    :fusion-promotion/write-set            0.008 ms
+  :sink-formation                          0.220 ms
+  :disk-evolution                          0.235 ms
+  :mass-transfer                           0.228 ms
+  :neighbor-cache                          7.462 ms
+    :neighbor-cache/rebuild                14.791 ms
+    :neighbor-cache/build-entries          6.940 ms
+    :neighbor-cache/build-map              0.191 ms
+    :neighbor-cache/item-map               0.151 ms
+    :neighbor-cache/scan-prior             0.072 ms
+    :neighbor-cache/evict                  0.021 ms
+    :neighbor-cache/full-check             0.013 ms
+  :lod-scheduler                           0.169 ms
+  :magnetosphere-coupling                  0.397 ms
+    :magnetosphere/filter-winds            0.224 ms
+    :magnetosphere/compute                 0.122 ms
+    :magnetosphere/build-wind-data         0.013 ms
+  :ecology                                 0.020 ms
+  :debris-reaper                           0.623 ms
+  :focus-zone                              0.104 ms
+  :binding                                 0.046 ms
+  :commitment                              0.024 ms
+  :voxel-sculpt                            0.008 ms
+  :voxel-carve                             0.009 ms
+  :voxel-focus                             0.006 ms
+
+--- phase0-500 ---
+  Mean:   27.6 ms
+  Range:  21.4 ms — 36.0 ms
+
+  Overhead functions measured on post-physics world (500 particles):
+
+  Tick overhead breakdown (500 particles):
+
+  System Breakdown (500 particles, one tick):
+  Measuring individual system costs to identify the bottleneck.
+
+  Step-physics parallel vs sequential (500 particles):
+
+  Parallel vs Sequential (500 particles):
+
+  Multi-tick Scaling (500 particles):
+
+  Phase 0 Tick Analysis:
+    Target: 16.6ms per tick for 60 Hz rendering.
+    If tick > 16.6ms, identify the dominant system above.
+    Gravity is usually the bottleneck at high N.
+    SPH/EM neighbor queries scale with particle count.
+    Collision cost depends on body density (overlaps).
+    If parallel ≈ sequential: check write-set sizes.
+
+--- clean ---
+  Mean:   459.7 ns
+  Range:  306.8 ns — 771.4 ns
+
+--- active ---
+  Mean:   352.4 μs
+  Range:  286.7 μs — 547.0 μs
+
+--- expired ---
+  Mean:   525.0 ns
+  Range:  304.6 ns — 898.0 ns
+
+--- partial ---
+  Mean:   374.7 μs
+  Range:  267.8 μs — 632.6 μs
