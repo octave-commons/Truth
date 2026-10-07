@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "TimeoutExpired(['/usr/local/bin/clojure', '-J-Xms64m', '-J-Xmx256m', '-M:demo-client', '((load-file \"/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\\\\u03b7\\\\u03bc/diagnostics/native-input-hygiene/snapshot.clj\") {:pid 2042305 :boot \"b04f7fb6-ea65-4b47-8866-73e24a6887f6\" :start \"2120112\" :cwd \"/home/err/spaces/foresight/.worktrees/truth-native-input-probe\" :display \":1\" :port \"7898\" :world 2143518718 :window 136866649785600})'], 0.8166751989992918)",
+  "finished_at": "2026-10-07T06:19:31.024069+00:00"
+}
