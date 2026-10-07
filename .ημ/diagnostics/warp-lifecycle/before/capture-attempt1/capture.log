@@ -1,0 +1,5 @@
+Execution error at evidence.warp/write-new!$fn (warp.clj:31).
+No reader function for tag object
+
+Full report at:
+/tmp/clojure-8181043389637002387.edn

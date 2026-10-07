@@ -1,0 +1,17 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.intervention-test
+
+FAIL in (warp-acceleration-system-clears-when-empty) (intervention_test.clj:115)
+expected: (= {} (get ws c/accel-warp))
+  actual: (not (= {} nil))
+
+Testing domain.warp-lifecycle-test
+
+Testing law.registry-test
+
+Ran 36 tests containing 225 assertions.
+1 failures, 0 errors.

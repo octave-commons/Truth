@@ -1,0 +1,41 @@
+{
+  "after": {
+    "sample_count": 13,
+    "interval": [
+      "2026-10-07T01:03:35.926841+00:00",
+      "2026-10-07T01:04:36.438875+00:00"
+    ],
+    "load1_range": [
+      16.6,
+      27.07
+    ],
+    "runnable_max": 62,
+    "aggregate_busy_fraction": 0.38118989057514674,
+    "aggregate_iowait_fraction": 0.023423162736154367,
+    "minimum_mem_available_kB": 13654548,
+    "maximum_swap_used_kB": 8510272,
+    "benchmark_sampled_cpu_seconds": 199.65,
+    "benchmark_sampled_major_faults": 0,
+    "benchmark_max_sampled_rss_bytes": 1054076928
+  },
+  "before": {
+    "sample_count": 14,
+    "interval": [
+      "2026-10-07T01:04:41.495429+00:00",
+      "2026-10-07T01:05:47.248448+00:00"
+    ],
+    "load1_range": [
+      15.59,
+      21.68
+    ],
+    "runnable_max": 47,
+    "aggregate_busy_fraction": 0.5742587496745044,
+    "aggregate_iowait_fraction": 0.018255906426163516,
+    "minimum_mem_available_kB": 11818056,
+    "maximum_swap_used_kB": 8961784,
+    "benchmark_sampled_cpu_seconds": 224.58,
+    "benchmark_sampled_major_faults": 0,
+    "benchmark_max_sampled_rss_bytes": 1063165952
+  },
+  "limits": "These counters cover the sampled intervals, include setup/warmup/all five cases, and do not attribute a case latency or GC cause. Aggregate activity includes the benchmark. No per-case profiler or GC event record."
+}

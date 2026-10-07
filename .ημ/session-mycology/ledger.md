@@ -422,3 +422,48 @@
   spore: none
   receipt-refs: perf-tick-residual-gap-to-60fps,6b160b2dc63e923be5badad7d2de846d74c99093,2026-10-07T00:01:15.005453Z
   note: Bind final composition checks to exact HEAD and immutable source hashes, retain earlier benchmark ancestry, and avoid treating correctness-run durations as fresh performance evidence. Keep raw captured patch whitespace explicit and prior closed bundles unchanged. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:30:08.413631+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Record production-fold RED for paid warp expiry and partial recipient loss
+  p-efficiency: 0.9
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,9c5c889,2026-10-07T00:30:08.413631+00:00
+  note: Empty-emission tests do not verify removal in a merging ECS. Assert stored cells, archetypes and later integrated motion while retaining the legitimate delayed kick. Equivalent map and SoA fixtures need all production query components; preserve a failed fixture attempt before correcting it. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:42:16.192666+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Freeze paid warp lifecycle cost inputs before production repair
+  p-efficiency: 0.9
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,e434a838,2026-10-07T00:42:16.192666+00:00
+  note: Ordinary world snapshots can contain registered callables. Preserve the rejected serialization and encode only an exact known handler with key, identity and source guards; keep ordinary EDN strict. Time finite clearing from the same frozen input, and never treat fast missing work as a correctness target. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:57:39.358245+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Restore warp clearing without disguising its measured cost
+  p-efficiency: 0.9
+  p-friction: 0.2
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,14bd318,2026-10-07T00:57:39.358245+00:00
+  note: Preserve an existing explicit-empty write-set shape while adding canonical removals. Freeze real failed qualification attempts; record formatting corrections as exact reversible bytes rather than claiming original hashes passed. Required cleanup costs work, but a large broad-control slowdown remains unresolved even when background load differs. No new spore; existing evidence discipline covers the pattern.
+- ts: 2026-10-07T01:09:14.143016+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Preserve both timing orders while resolving an apparent broad regression
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,3d912230,2026-10-07T01:09:14.143016+00:00
+  note: A large first-pair effect justifies one unchanged reverse pair with shared native pause and exact source/input guards. Keep the original adverse result, do not pool a favorable estimate, and distinguish failure to reproduce from disproving a regression. Repeat observed cleanup work does not provide a universal upper bound. Existing skills suffice; no new spore.
+- ts: 2026-10-07T01:22:27.988182606Z
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Separate reachable disabled-emitter bugs from conditional stale-component cases
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,4f4eb63
+  note: Empty-column merge semantics identify stale ownership, but lifecycle order determines whether the retained payload is nonzero: ordinary thermal expiry first writes zero ease, which still invokes a clamp. Trace actual control paths and consumers before claiming repeated force or heat. Preserve existing card owners and serialize comments after gated transitions. No new spore; existing audit discipline suffices.

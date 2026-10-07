@@ -1,13 +1,14 @@
 ---
-uuid: "fix-warp-disabled-stale-write"
-title: "Fix stale-force bug when a fan-out force is disabled at runtime (:warp)"
-status: "todo"
-priority: "P2"
-labels: ["domain", "physics", "bug"]
-created_at: "2026-07-23T00:00:00Z"
-source: "kanban/tasks/fix-warp-disabled-stale-write.md"
 category: "specs"
-estimate: 1
+labels: "domain,physics,bug,hygiene"
+write-id: "1791336130459-0.45gpvcqj5t7gevardgy"
+source: "kanban/tasks/fix-warp-disabled-stale-write.md"
+title: "Fix stale-force bug when a fan-out force is disabled at runtime (:warp)"
+priority: "P2"
+status: "review"
+estimate: "1"
+uuid: "fix-warp-disabled-stale-write"
+created_at: "2026-07-23T00:00:00Z"
 ---
 
 # Fix stale-force bug when a fan-out force is disabled at runtime
@@ -35,3 +36,19 @@ deleted by `remove-passive-halo-invert-influence`.)
 
 ## Notes
 Small, isolated. Audit other `{ctype {}}` disabled branches while here.
+
+---
+
+2026-10-07 root admits the existing one-point task as a mechanical lifecycle bug repair under PROCESS mechanical/hygiene exemption, with independent scope review. This restores an already-written removal contract; it is not a no-behavior-change refactor or a new force policy. Grounding: docs/notes/specs/2026.06.26-ecs-double-buffer-single-writer-spec.md section3 owner removal contract; current domain.ecs.tick/apply-write-set and contribution-write-set; working domain.gravity.dark-matter emitter; warp emitter documented auto-clearing and existing card acceptance. Use the established prior-eid removal mechanism for c/accel-warp, including no-active-wells, expiry and partial recipient loss. Preserve force calculation, costs, TTL, input, uniform influence registry, single-writer ownership and ordinary one-tick Jacobi carry. RED must exercise emit then fold then expire/remove then fold and subsequent integrator motion, rather than inspect an empty emitter map on a fresh world. Out-of-range recipients must clear while still-affected recipients retain their legitimate contribution. Other stale-emitter findings are audit results only, not added implementation scope. Existing TODO estimate1 fits the scoped repair. Root must commit observed RED before GREEN; full suite and all six strict gates required. No native paid-action or Gate completion claim.
+
+BEFORE hot-path baseline completed on unchanged RED e434a8384e9e87342b0a1012b6b87b33acbb3a46: existing quick-bench / registered Phase0 closure plus four actual emitter+fold snapshots. Means: phase0-500 19.1907ms; clean324.551ns; active252.746us; expired290.280ns; partial204.208us. Expired/partial retain stale cells BEFORE; cheap broken clearing is not a performance target. Frozen fixture2c275009a46b8bc813bd1541e7b3bdb73d51e1e7d2112b8aa0a1962f3b6fa096; exact source/load/intervals and preserved failed callback serialization attempt are in .ημ/diagnostics/warp-lifecycle/before/RESULT.md. Retry capture and benchmark exited0/reaped; original RED15hashes unchanged. Narrow known-handler encoding independently reviewed; no generic coercion or reader eval. No source changes, GREEN/native/FPS claim or state transition. Root owns checkpoint and GREEN authorization.
+
+GREEN restores the existing lifecycle with contribution-write-set and the old explicit empty-column result shape; registry adds only accel-warp self-read. Final production eed4697f/eb5df312. Focused36/225 pass; full948/16775 pass on identical production; all6 strict pass after exactly3 indentation fixes in the live regression test (reverse-byte proof and equal reader forms; frozen RED/fixtures/adapter unchanged). Initial focused empty-shape failure and initial formatting-only strict failure preserved. Matched five-case AFTER completed/reaped, exact fixture2c275009: expired500->0, partial500->250, active500 retained; independent physical columns and paid agency unchanged. Performance is NOT qualified neutral: broad Phase0-500 mean19.1907->34.8343ms (+81.5%) with separated reported intervals; active252.746->287.367us, required expired clearing297.214us, partial385.291us. Background load differs; causation unresolved and not explained away. See green/RESULT.md and after/RESULT.md under .ημ/diagnostics/warp-lifecycle. Parent exact native pause/resume preserved; no native input or extra cost run. Local independent source review found no blocker but is not hosted approval. Card remains InProgress1; root owns checkpoint, committed-source gate, performance disposition and publication.
+
+One authorized reverse pair is complete: exact candidate3d912230 AFTER then clean baseline14bd318 BEFORE, same frozen five-case adapter/input/heap, same native stopped across BOTH; processes277752 and288358 exited0/reaped. Reverse broad candidate27.196ms[23.090,34.620] vs baseline27.629ms[22.859,32.349] overlaps, so the original +81.5% separated broad signal did not reproduce in this pair. Both full pairs remain frozen/visible, no pooled favorable estimate. Active and partial directions reverse with overlapping intervals; candidate500-cell expired removal means273.75/297.21us are repeat finite-workload observations, not a universal bound. Variable host load and absent per-case/GC attribution remain limitations; no neutrality, speedup, FPS or regression-disproven claim. Source/native identity postguards passed. Independent offline claim review agreed with these limits; no further timing automatically recommended. Evidence: .ημ/diagnostics/warp-lifecycle/reverse-pair/RESULT.md and comparison.json. Existing card stays InProgress1; root owns final committed-source gate and hosted-review disposition.
+
+Canonical committed-source gate completed at 4f4eb63ec07ffd4678c3bb635f7c11e4b6c30223: full 948 tests / 16775 assertions, 0 failures/errors, then all six strict stages with no blocking findings. Rheos moved InProgress to Review; process366674 exit0/reaped 2026-10-07T01:19:29.538077Z; HEAD and six recorded source/config hashes unchanged. This fresh full run includes final test formatting. See .ημ/diagnostics/warp-lifecycle/gate-4f4eb63/RESULT.md and unchanged raw logs. Native overlap is disclosed; no isolated timing or hosted-approval claim.
+
+Completed the card's audit-only acceptance: .ημ/diagnostics/warp-lifecycle/other-disabled-emitter-audit.md. Observer halo remains registered and consumed; ordinary Halo mass=0 reaches the stale branch after a prior emission, contrary to the historical assumption it was already being removed. Existing TODO2 remove-passive-halo-invert-influence owns removal/tuning; no duplicate scope added. Thermal no-source branch retains its prior component, but ordinary expiry first writes zero ease; do not claim proved repeated nonzero heating from expiry. The retained payload still invokes the temperature clamp. Earlier nonzero removal would repeat easing, with no ordinary remove-source control found. No dedicated thermal-lifecycle owner recovered by targeted canonical searches, not an exhaustive absence or readiness claim. Thrust noobserver branch can retain force only if observer component disappears while its physical body survives; ordinary despawn clears all columns, normal release follows the active damping path. Existing InProgress3 flight-no-jump-accel owns thrust. Thermal and observer active prior-channel reads are undeclared in their registry entries; findings only. No added repair, tests, native action or board task. Both timing pairs and their unresolved attribution limits remain unchanged; Review is not Done or hosted approval.
+
+---

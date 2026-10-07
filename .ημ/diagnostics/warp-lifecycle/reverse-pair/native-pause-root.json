@@ -1,0 +1,12 @@
+{
+  "utc_before": "2026-10-07T01:03:24.096582+00:00",
+  "pid": 131581,
+  "start_ticks": "125503",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+  "before_state": "S",
+  "signal": "SIGSTOP",
+  "reason": "One independently reviewed reverse pair, candidate AFTER then baseline BEFORE; same native retained stopped across both; no other owned benchmark or observation.",
+  "after_state": "T",
+  "utc_after": "2026-10-07T01:03:24.147278+00:00"
+}

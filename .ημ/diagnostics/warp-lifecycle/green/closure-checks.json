@@ -1,0 +1,27 @@
+{
+  ".\u03b7\u03bc/receipts.edn": {
+    "historical_bytes": 51547,
+    "historical_sha256": "eb6183d11f89d01b4f265ba74352f8451185ef7ba1c10809719d24f1e8a176bb",
+    "prefix_unchanged": true
+  },
+  ".\u03b7\u03bc/session-mycology/ledger.md": {
+    "historical_bytes": 28569,
+    "historical_sha256": "f0331d83dbb9027d0145f73fe6dbdc8e0113c8dc3a6f9d86a4a670e48928fddc",
+    "prefix_unchanged": true
+  },
+  "kanban/tasks/.events/ledger.edn": {
+    "historical_bytes": 620288,
+    "historical_sha256": "37706415b48f591ad919fa98443dba5783ee5d5cdffe7b39575a09d4a1aeeeae",
+    "prefix_unchanged": true
+  },
+  "red_hashes_verified": true,
+  "before_hashes_verified": true,
+  "ordinary_diff_check": true,
+  "raw_evidence_whitespace": [],
+  "no_index_check_note": "git diff --no-index exits1 for different files; only emitted whitespace diagnostics count as findings.",
+  "final_source_sha256": {
+    "src/domain/intervention.clj": "eed4697f04bf96ce8bdabc0e08b64c63bd296a0d9cc958b49574bbef643c74a8",
+    "src/domain/ecs/registry.clj": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+    "test/domain/warp_lifecycle_test.clj": "3c15b3fae0194f0d413a347224d6e7f835af90825c16781a699859bb472393ad"
+  }
+}

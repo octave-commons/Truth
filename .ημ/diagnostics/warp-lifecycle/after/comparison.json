@@ -1,0 +1,44 @@
+{
+  "cases" : [ {
+    "label" : "phase0-500",
+    "before-mean-seconds" : 0.019190731555555555,
+    "before-mean-interval" : [ 0.018203475194444447, 0.020313112472222224 ],
+    "after-mean-seconds" : 0.03483432341666667,
+    "after-mean-interval" : [ 0.028835237000000003, 0.04225492270833334 ],
+    "mean-change-percent" : 81.5163914717072,
+    "intervals-overlap" : false
+  }, {
+    "label" : "clean",
+    "before-mean-seconds" : 3.245513229411687E-7,
+    "before-mean-interval" : [ 2.697942448847604E-7, 4.745177477441561E-7 ],
+    "after-mean-seconds" : 5.673569261550033E-7,
+    "after-mean-interval" : [ 4.480456442020552E-7, 7.120319310231038E-7 ],
+    "mean-change-percent" : 74.81269865532111,
+    "intervals-overlap" : true
+  }, {
+    "label" : "active",
+    "before-mean-seconds" : 2.5274633139534886E-4,
+    "before-mean-interval" : [ 2.476298472868217E-4, 2.620149023255814E-4 ],
+    "after-mean-seconds" : 2.873669261006289E-4,
+    "after-mean-interval" : [ 2.622860466457023E-4, 3.0342664360587E-4 ],
+    "mean-change-percent" : 13.697763490432656,
+    "intervals-overlap" : false
+  }, {
+    "label" : "expired",
+    "before-mean-seconds" : 2.902795324370057E-7,
+    "before-mean-interval" : [ 2.5999319966299217E-7, 3.91661915988757E-7 ],
+    "after-mean-seconds" : 2.9721417647058827E-4,
+    "after-mean-interval" : [ 2.4875776724763983E-4, 3.777486085693537E-4 ],
+    "mean-change-percent" : 102288.95383886133,
+    "intervals-overlap" : false
+  }, {
+    "label" : "partial",
+    "before-mean-seconds" : 2.0420756687456688E-4,
+    "before-mean-interval" : [ 2.0291267636867637E-4, 2.053051735966736E-4 ],
+    "after-mean-seconds" : 3.8529066297662986E-4,
+    "after-mean-interval" : [ 3.794021660516606E-4, 3.9266877859778606E-4 ],
+    "mean-change-percent" : 88.67599711096507,
+    "intervals-overlap" : false
+  } ],
+  "claims" : "One matched pair; mean intervals as returned by Criterium. Missing clearing in BEFORE is not a correctness target. No FPS claim."
+}

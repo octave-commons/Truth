@@ -1,0 +1,197 @@
+
+Running tests in #{"test"}
+
+Testing domain.intervention-test
+
+Testing domain.warp-lifecycle-test
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? false, :kind :warp/well, :removal :expiry}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [-0.0011938814145466875 0.0 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? false, :kind :warp/well, :removal :expiry}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? false, :kind :warp/well, :removal :expiry}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [-0.0011938814145466875 0.375 0.0] [-0.002387762829093375 0.375 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? false, :kind :warp/well, :removal :remove}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [-0.0011938814145466875 0.0 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? false, :kind :warp/well, :removal :remove}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? false, :kind :warp/well, :removal :remove}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [-0.0011938814145466875 0.375 0.0] [-0.002387762829093375 0.375 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? false, :kind :warp/repulsor, :removal :expiry}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [0.0011938814145466875 0.0 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? false, :kind :warp/repulsor, :removal :expiry}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? false, :kind :warp/repulsor, :removal :expiry}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [0.0011938814145466875 0.375 0.0] [0.002387762829093375 0.375 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? false, :kind :warp/repulsor, :removal :remove}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [0.0011938814145466875 0.0 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? false, :kind :warp/repulsor, :removal :remove}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? false, :kind :warp/repulsor, :removal :remove}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [0.0011938814145466875 0.375 0.0] [0.002387762829093375 0.375 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? true, :kind :warp/well, :removal :expiry}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [-0.001193657596753355 -2.9841439918833872E-5 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? true, :kind :warp/well, :removal :expiry}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? true, :kind :warp/well, :removal :expiry}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [-0.001193657596753355 0.37497015856008115 0.0] [-0.00238731519350671 0.3749403171201623 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? true, :kind :warp/well, :removal :remove}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [-0.001193657596753355 -2.9841439918833872E-5 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? true, :kind :warp/well, :removal :remove}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? true, :kind :warp/well, :removal :remove}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [-0.001193657596753355 0.37497015856008115 0.0] [-0.00238731519350671 0.3749403171201623 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? true, :kind :warp/repulsor, :removal :expiry}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [0.001193657596753355 2.9841439918833872E-5 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? true, :kind :warp/repulsor, :removal :expiry}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? true, :kind :warp/repulsor, :removal :expiry}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [0.001193657596753355 0.3750298414399188 0.0] [0.00238731519350671 0.3750596828798376 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:74)
+{:soa? true, :kind :warp/repulsor, :removal :remove}
+the first disabled fold removes the stored contribution
+expected: (nil? (value cleared eid c/accel-warp))
+  actual: (not (nil? [0.001193657596753355 2.9841439918833872E-5 0.0]))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:76)
+{:soa? true, :kind :warp/repulsor, :removal :remove}
+removal also updates the real ECS archetype
+expected: (not (contains? (get-in cleared [:archetypes eid]) c/accel-warp))
+  actual: (not (not true))
+
+FAIL in (paid-warp-expiry-and-removal-clear-the-folded-channel) (warp_lifecycle_test.clj:81)
+{:soa? true, :kind :warp/repulsor, :removal :remove}
+subsequent motion receives no repeated ghost kick
+expected: (close-vector? (sp/v+ (value cleared eid c/velocity) background) (value coast eid c/velocity))
+  actual: (not (close-vector? [0.001193657596753355 0.3750298414399188 0.0] [0.00238731519350671 0.3750596828798376 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:104)
+{:soa? false, :kind :warp/well}
+only the departing recipient clears
+expected: (nil? (value outside departing c/accel-warp))
+  actual: (not (nil? [-3.31889984723903E-4 -1.4305602789823406E-6 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:107)
+{:soa? false, :kind :warp/well}
+expected: (close-vector? (sp/v+ (value outside departing c/velocity) background) (value coast departing c/velocity))
+  actual: (not (close-vector? [1.9989587450468929 0.624997138879442 0.0] [1.9986268550621689 0.624995708319163 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:104)
+{:soa? false, :kind :warp/repulsor}
+only the departing recipient clears
+expected: (nil? (value outside departing c/accel-warp))
+  actual: (not (nil? [3.31889984723903E-4 1.4305602789823406E-6 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:107)
+{:soa? false, :kind :warp/repulsor}
+expected: (close-vector? (sp/v+ (value outside departing c/velocity) background) (value coast departing c/velocity))
+  actual: (not (close-vector? [2.001041254953107 0.625002861120558 0.0] [2.0013731449378307 0.625004291680837 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:104)
+{:soa? true, :kind :warp/well}
+only the departing recipient clears
+expected: (nil? (value outside departing c/accel-warp))
+  actual: (not (nil? [-3.352424088120233E-4 -1.4450103828104453E-6 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:107)
+{:soa? true, :kind :warp/well}
+expected: (close-vector? (sp/v+ (value outside departing c/velocity) background) (value coast departing c/velocity))
+  actual: (not (close-vector? [1.9989942727735637 0.6249956649688516 0.0] [1.9986590303647516 0.6249942199584688 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:104)
+{:soa? true, :kind :warp/repulsor}
+only the departing recipient clears
+expected: (nil? (value outside departing c/accel-warp))
+  actual: (not (nil? [3.352424088120233E-4 1.4450103828104453E-6 0.0]))
+
+FAIL in (a-moving-recipient-leaves-a-live-warp-without-stranding-force) (warp_lifecycle_test.clj:107)
+{:soa? true, :kind :warp/repulsor}
+expected: (close-vector? (sp/v+ (value outside departing c/velocity) background) (value coast departing c/velocity))
+  actual: (not (close-vector? [2.0010057272264357 0.6250043350311484 0.0] [2.0013409696352475 0.6250057800415312 0.0]))
+
+Ran 27 tests containing 195 assertions.
+32 failures, 0 errors.

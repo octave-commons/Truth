@@ -110,20 +110,23 @@
           (sp/v* d (* sign (/ g dist))))))))
 
 (defn warp-acceleration-system
-  "Write-set system (sole writer of accel.warp): sum every active warp's halo
-   field onto each body, then cap the summed per-tick Δv at the influence
+  "Emit active warp forces and remove prior contributions that no longer apply.
+
+   Sole writer of accel.warp: sum every active warp's halo field onto each body,
+   then cap the summed per-tick Δv at the influence
    ceiling (`player/influence-reference` — the dt backstop; a sane field never
-   hits it). Returns a full replacement map each tick, so a body that has
-   drifted out of every warp simply has no entry → zero force (auto-clearing,
-   no stale push). No-op map when there are no interventions."
+   hits it). Explicit removals clear expired, removed or out-of-range forces at
+   the fold; the integrator still consumes the prior channel's final Jacobi kick."
   []
   {:id     :warp
    :writes #{c/accel-warp}
    :run    (fn [world]
-             (let [ivs  (filterv #(warp-kinds (:kind %)) (:genesis/interventions world))
-                   tick (:tick world)]
+             (let [ivs   (filterv #(warp-kinds (:kind %)) (:genesis/interventions world))
+                   tick  (:tick world)
+                   prior (keys (get-in world [:components c/accel-warp]))]
                (if (empty? ivs)
-                 {c/accel-warp {}}
+                 (merge {c/accel-warp {}}
+                        (tick/contribution-write-set c/accel-warp {} prior))
                  ;; Evaluate at drift-predicted positions: the kick lands next
                  ;; tick, and a point-attractor evaluated one drift stale is a
                  ;; negatively-damped spring (see pcache/predicted-position-fn).
@@ -135,17 +138,21 @@
                                            default-well-mass-factor))}
                        a-max  (/ (double dv-cap) (max 1.0 dt))
                        pos-of (pcache/predicted-position-fn world)]
-                   {c/accel-warp
-                    (into {}
-                          (keep (fn [eid]
-                                  (let [pos (pos-of eid)
-                                        a   (reduce (fn [acc iv]
-                                                      (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))
-                                                    zero3 ivs)
-                                        l   (sp/len a)]
-                                    (when (pos? l)
-                                      [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))
-                          (ecs/entities-with world c/position c/mass))}))))})
+                   (merge
+                    {c/accel-warp {}}
+                    (tick/contribution-write-set
+                     c/accel-warp
+                     (into {}
+                           (keep (fn [eid]
+                                   (let [pos (pos-of eid)
+                                         a   (reduce (fn [acc iv]
+                                                       (sp/v+ acc (or (warp-accel-on iv pos tick ctx) zero3)))
+                                                     zero3 ivs)
+                                         l   (sp/len a)]
+                                     (when (pos? l)
+                                       [eid (if (> l a-max) (sp/v* a (/ a-max l)) a)]))))
+                           (ecs/entities-with world c/position c/mass))
+                     prior))))))})
 
 ;; --- Lifecycle --------------------------------------------------------------
 
