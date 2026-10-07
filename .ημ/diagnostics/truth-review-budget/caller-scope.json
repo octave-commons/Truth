@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-07T11:40:54.187786+00:00",
+  "scope": "Native verification evidence-review hygiene scope: adopt canonical eta-mu review workflow at immutable remotelypublisheda91a73e0e5efa165baf6d7247338f3ef17751752 (open-hax/eta-mu PR346), explicitly choosing its bounded120minute review-job option for complete large diagnostic input. Defaultupstream45 remainsunchanged; unsupportedvaluesreject; model/provider,MAX_ATTEMPTS2,fullcoverage/submission andrequiredgates preserved. PR54run37605835577 confirmed45min cancellation after401/807chunks withnosubmission, so unchangedretry hasnotbeenrequested. Root+independentintent reviewed23workflow/42test/16doclines,77localtestspass and standardrulesShellCheckpasswithdocumentedexistingtransport-onlylintrepair. Truthcaller delta ispin+oneinput only; parse/whitespace/actionlint checks beforepublish. This is a prospective hostedbudgetcanary, not completedreviewqualification. Keepcurrentnativeattempt03frozenproduction/operators unchanged; CIconfigurationisouterhygiene, no gameinput/physicschange.",
+  "frontmatter_body_comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 677625,
+  "prior_ledger_sha256": "43864e6fbb301a0e654bf5a24584f2df9c8ce72df58075a8907d5c21014e35ff",
+  "events_appended": 1
+}

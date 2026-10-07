@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-07T11:42:45.678635+00:00",
+  "workflow_sha256": "565218a0a1be03fa7df1cd5664138605a417bf888813a82fafd684c4978cc904",
+  "source_delta": "Only canonical upstream immutable pin and review_timeout_minutes:120",
+  "parsed_yaml": {
+    "parsedCallerEqualExceptPinAndBudget": true,
+    "reviewTimeoutMinutes": 120,
+    "upstreamRevision": "open-hax/eta-mu/.github/workflows/opencode-code-review.yml@a91a73e0e5efa165baf6d7247338f3ef17751752"
+  },
+  "actionlint": {
+    "exit_code": 0,
+    "executable": "/home/err/spaces/review-repair/.\u03b7\u03bc/eta340-utf8-parent-verification/actionlint-transport",
+    "sha256": "9c76166dec2f915a08e1e982fbbbe1f0b9746a6f12e2092c0eb6e28e4b05be62",
+    "qualification": "Existing documented subprocess-stdin transport repair; all standard rules and actual ShellCheck enabled; no global modification",
+    "upstream_proof": "https://github.com/open-hax/eta-mu/pull/346"
+  },
+  "whitespace": "pass",
+  "game_and_frozen_operators": "unchanged",
+  "hosted120qualification": "pending; no review timeout/coverage exemption"
+}
