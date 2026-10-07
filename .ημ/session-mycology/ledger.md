@@ -541,3 +541,13 @@
   spore: none
   receipt-refs: Truth#37,ef2728c,review5437458020,native-window-close-disposal
   note: A teardown inventory cannot infer context ownership from numeric GL IDs. Scope whole-context retirement separately from host cache exclusion and service-generation ownership; exposing the remaining concurrency restriction is more truthful than claiming ID comparison solves it. No spore.
+
+- ts: 2026-10-07T05:03:43.240650+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-window-close-plan
+  task: Correct GLFW thread-ownership planning before implementation admission
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: PR37,review5437795376,comment4203201069,76e7f97d06aa0c72802b7c11336b6602f20b0933
+  note: An observed Linux run does not waive GLFW main-thread ownership. Separate context ownership from API thread legality; trace the actual launch owner before designing cleanup and expose missing dispatcher/scope rather than promising a worker-only finalizer. No new spore.
