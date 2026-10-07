@@ -1,0 +1,82 @@
+{
+  "at": "2026-10-07T01:36:28.601357+00:00",
+  "operations": [
+    {
+      "argv": [
+        "/home/err/.agents/skills/receipt-river/scripts/rr-append.bb",
+        "--kind",
+        ":catalog",
+        "--origin",
+        ".ημ/diagnostics/native-current/2026-10-07-review-access",
+        "--owner",
+        "board_scout",
+        "--dod",
+        "Make admitted unread native evidence accessible without new observations or approval credit",
+        "--manifest",
+        ".ημ/diagnostics/native-current/2026-10-07-review-access/CLOSED-FILES.txt,kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md,kanban/tasks/.events/ledger.edn,.ημ/session-mycology/ledger.md",
+        "--refs",
+        "PR30,review5436467588,90d6c2eb22442d7bb925c80136aabc1ddd7964b4,f369c598-279c-498d-a64f-45d2ce16ad34",
+        "--note",
+        "Added ten byte-exact nonempty historical client streams (6206 decoded bytes), verified all22 archive compressed/decoded sizes and hashes plus ten empty non-runtime streams against committed90d6c2e. Original76-file closed bundle and manifests preserved. Runtime prefix and PNG remain available without new review claims. Canonical Rheos83c6 comment retains InProgress3; historical ledger prefix preserved with one new event. Native reviewer must inspect omitted material; local extraction is not approval or completed-round evidence.",
+        "--tests",
+        "Offline byte/hash verification only; no source change, JVM, runtime call, fresh observation, suite, static gate or performance run.",
+        "--decisions",
+        "Keep original artifacts immutable; expose readable copies in a sibling supplement and require fresh native review coverage.",
+        "--drift",
+        "Native APPROVED review5436467588 admitted unread compressed inputs; canonical status counted it, but policy coverage obligation remains."
+      ],
+      "exit_code": 0,
+      "stdout": "Appended to /home/err/spaces/foresight/.worktrees/truth-native-evidence/.ημ/receipts.edn\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/err/.agents/skills/session-mycology/scripts/sm-log.bb",
+        "--task",
+        "Expose admitted unread PR30 native evidence without changing closed observations",
+        "--efficiency",
+        "0.94",
+        "--friction",
+        "0.20",
+        "--candidate",
+        "0.12",
+        "--receipt-refs",
+        "PR30,review5436467588,90d6c2eb22442d7bb925c80136aabc1ddd7964b4,f369c598-279c-498d-a64f-45d2ce16ad34",
+        "--note",
+        "Exact-head binding and a passing verdict do not establish access to compressed material. Preserve original archives and publish byte-exact small textual copies with hashes; count neither local extraction nor derived summaries as native review. Existing skills suffice; no spore or policy change."
+      ],
+      "exit_code": 0,
+      "stdout": "Appended to /home/err/spaces/foresight/.worktrees/truth-native-evidence/.ημ/session-mycology/ledger.md\n",
+      "stderr": ""
+    }
+  ],
+  "append_only_checks": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 618325,
+      "before_sha256": "1dd0c663e8153c95679a3bb23ad5cb4673679f01d100f269d74ab9228d229350",
+      "after_bytes": 619837,
+      "after_sha256": "a6e9c830f311aa0c1eaccaae7a3b78eb5004511608812e7fd146b10102e0ecf2",
+      "prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 52165,
+      "before_sha256": "d01cc0644aa5e2345764086eabc4c94b3bb04c68432b65d9a72d70db274423a5",
+      "after_bytes": 53729,
+      "after_sha256": "ff3df35e98bd7ae2b84dd76ccf9633ebb7934d3a9cc64185f29f80d97463fd88",
+      "prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 27924,
+      "before_sha256": "45e48f5fac80e3c0682569f54c09e53853ec367f7803d8345bee112b2edb2d4d",
+      "after_bytes": 28621,
+      "after_sha256": "7c677bcd8a84527b0301de8a94c45b9798ede843b513d0533e6c7995ff08ad77",
+      "prefix_preserved": true,
+      "appended_lines": 9
+    }
+  ]
+}

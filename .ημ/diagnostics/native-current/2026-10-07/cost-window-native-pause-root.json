@@ -1,0 +1,13 @@
+{
+  "utc_before": "2026-10-07T00:53:07.471140+00:00",
+  "pid": 131581,
+  "start_ticks": "125503",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+  "pm2_name": "truth-native-7896",
+  "before_state": "S",
+  "signal": "SIGSTOP",
+  "reason": "Matched AFTER warp lifecycle cost window; no observer active, exact scene root restored. Preserve same natural world; no service restart.",
+  "after_state": "T",
+  "utc_after": "2026-10-07T00:53:07.523653+00:00"
+}

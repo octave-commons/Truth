@@ -1,0 +1,1 @@
+{:installed true, :pid 131581, :window 137768861339584, :directory "/home/err/spaces/foresight/.worktrees/truth-validation/.ημ/diagnostics/native-current/2026-10-07/frame-capture", :capture-budget 1, :deadline-ms 30000}

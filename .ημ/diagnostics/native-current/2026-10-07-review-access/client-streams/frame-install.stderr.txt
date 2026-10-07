@@ -1,0 +1,7 @@
+Execution error (IOException) at java.io.FileInputStream/available0 (FileInputStream.java:-2).
+Invalid argument
+Execution error (ExceptionInfo) at demo-client/-main (demo_client.clj:18).
+Demo evaluation failed
+
+Full report at:
+/tmp/clojure-11200669799637795193.edn

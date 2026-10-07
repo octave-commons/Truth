@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-07T00:58:35.574286+00:00",
+  "head": "9c5c889d8923c76bf9a9530a8bd18cd72f37a93f",
+  "source_hashes": {
+    "dev/demo.clj": "83a6be14f20aef051bc5483d3e17650db9996309e87521a5c8fa00264a43c45e",
+    "src/infra/dev/window/loop.clj": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+    "src/law/narrowing.clj": "e7e503e7197b37774babda62cf59c93f49e168221eb64f9491c434b26a47749b",
+    "src/domain/orbital/kepler.clj": "61009ec34e7e2317059a1f5a824bd58c94db4793206a4ad096a5b3a860ea3c8d",
+    "src/infra/render/hud.clj": "8b63d1a1797ae0be97ccdacdb76fb25097303604a77f8fe50a1020e6fa176cb0",
+    "src/infra/render/scene/hud.clj": "7d89a7eef799e891e083851223143ab299d690a7f7ff055895cc662a97ad02ca",
+    "src/domain/intervention.clj": "e541dd5df5ff208818d216c9083b73693216409c73599b6ab63be0f641c83dc0"
+  },
+  "claim": "Source unchanged since launch. Supplemental solver path is src/domain/orbital/kepler.clj; earlier launch hash list was partial, not an all-source manifest."
+}

@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T01:37:16.467036+00:00",
+  "reviewer": "/root/intent_research",
+  "channel": "local collaboration; independent offline review, not native GitHub review",
+  "result": "No blockers",
+  "exact_files_reviewed_sha256": {
+    "README.md": "2b343fd2090ffb08a0bf4488e8fc69435108563b4cfff687b9e360e8a662af11",
+    "archive-verification.json": "3cc8b823c3f81732209f48193a6dd183ba3d1ca6b3e27f4f077f636b8d61752c"
+  },
+  "verified": {
+    "committed_archives": 22,
+    "byte_exact_copies": 10,
+    "copy_bytes": 6206,
+    "original_closed_files_unchanged": 76,
+    "changed_paths_at_original_head": 80,
+    "text_patch_paths": 56,
+    "binary_paths": 23,
+    "empty_paths": 1
+  },
+  "claims_reviewed": "Failed install, observer-absence audit, later restoration and post-resume tick10267 remain separate historical observations. No reconstruction or evaluation, current health claim, native approval/round credit, or runtime/PNG coverage claim.",
+  "limitations": "Source-only/offline review; no edits, live calls, JVM, hosted review, settlement or approval."
+}

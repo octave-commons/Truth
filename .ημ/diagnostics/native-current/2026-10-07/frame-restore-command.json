@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-10-07T00:50:42.266663+00:00",
+  "command": [
+    "/usr/local/bin/clojure",
+    "-J-Xms64m",
+    "-J-Xmx256m",
+    "-M:demo-client",
+    "(let [restored (load-file \"/home/err/spaces/foresight/.worktrees/truth-validation/.\u03b7\u03bc/diagnostics/native-current/2026-10-07/frame-observer-restore.clj\") s @infra.dev.window.lifecycle/service-state w @(:world s)] (assert (= 131581 (.pid (java.lang.ProcessHandle/current)))) (assert (= 919497450 (System/identityHashCode (:world s)))) (assert (= 137768861339584 (:window s))) (assert (and (.isAlive ^Thread (:thread s)) (.isAlive ^Thread (:sim-thread s)))) (assert (nil? (:error s))) (assert (nil? (:ui/error-state @(:config s)))) {:restored restored :health {:pid (.pid (java.lang.ProcessHandle/current)) :world-identity (System/identityHashCode (:world s)) :window (:window s) :tick (:tick w) :sim-time (:genesis/sim-time w) :workers [(.isAlive ^Thread (:thread s)) (.isAlive ^Thread (:sim-thread s))] :errors [(:error s) (:ui/error-state @(:config s))] :max-heap-bytes (.maxMemory (Runtime/getRuntime))}})"
+  ],
+  "environment": {
+    "TRUTH_DEMO_PORT": "7896"
+  }
+}

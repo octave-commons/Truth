@@ -1,0 +1,17 @@
+{
+  "started_at": "2026-10-07T00:55:24.942122+00:00",
+  "command": [
+    "/usr/local/bin/clojure",
+    "-J-Xms64m",
+    "-J-Xmx512m",
+    "-M:demo-client",
+    "(let [s @infra.dev.window.lifecycle/service-state _ (assert s \"Service absent\") w @(:world s) cfg @(:config s)] {:pid (.pid (java.lang.ProcessHandle/current)) :wall-ms (System/currentTimeMillis) :display (System/getenv \"DISPLAY\") :port (System/getenv \"TRUTH_DEMO_PORT\") :max-heap-bytes (.maxMemory (Runtime/getRuntime)) :total-heap-bytes (.totalMemory (Runtime/getRuntime)) :world-atom-identity (System/identityHashCode (:world s)) :window (:window s) :render-alive? (.isAlive ^Thread (:thread s)) :sim-alive? (.isAlive ^Thread (:sim-thread s)) :stop? @(:stop s) :errors {:service (some-> (:error s) str) :ui (some-> (:ui/error-state cfg) pr-str)} :world (select-keys w [:tick :genesis/sim-time :sim/dt :arc/current :demo/scenario :demo/fixture?]) :states (frequencies (vals (get-in w [:components domain.ecs.components/matter-state]))) :tick-fn-is-production? (identical? (:tick-fn cfg) domain.arc/tick-genesis) :bodies-fn-is-production? (identical? (:bodies-fn cfg) infra.render/phase0-bodies+fields) :view (select-keys cfg [:mode :volumetric? :ui/cursor-free? :width :height]) :camera (select-keys @(:camera s) [:target :distance :position])})\n"
+  ],
+  "target_pid": 131581,
+  "target_start_ticks": "125503",
+  "reason": "Read-only health after matched benchmark SIGCONT; same owned process.",
+  "client_pid": 224743,
+  "exit_code": 0,
+  "completed_at": "2026-10-07T00:55:27.478252+00:00",
+  "client_reaped": true
+}

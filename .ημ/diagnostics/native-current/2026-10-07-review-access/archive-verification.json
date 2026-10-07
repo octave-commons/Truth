@@ -1,0 +1,664 @@
+{
+  "created_at": "2026-10-07T01:34:59.950432+00:00",
+  "source_head": "90d6c2eb22442d7bb925c80136aabc1ddd7964b4",
+  "source": "git show of committed blobs only; no runtime/client/log read",
+  "review_url": "https://github.com/octave-commons/Truth/pull/30#pullrequestreview-5436467588",
+  "scope": {
+    "gzip_archives_verified": 22,
+    "nonempty_nonruntime_copies": 10,
+    "nonempty_nonruntime_decoded_bytes": 6206,
+    "zero_nonruntime_streams": 10,
+    "zero_nonruntime_archive_paths": [
+      "frame-bounded-proc-read.stderr.gz",
+      "frame-failure-audit.stderr.gz",
+      "frame-install-attempt1/frame-install.stdout.gz",
+      "frame-install.stdout.gz",
+      "frame-proc-read-probe.stderr.gz",
+      "frame-restore.stderr.gz",
+      "frame-retry.stderr.gz",
+      "post-resume-health.stderr.prefix.gz",
+      "service-health-01.stderr.gz",
+      "service-health-02.stderr.gz"
+    ],
+    "runtime_stdout_prefix_decoded_bytes": 3425050,
+    "native_review_credit": false
+  },
+  "archives": [
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-bounded-proc-read.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-bounded-proc-read.stdout.gz",
+      "compressed_bytes": 130,
+      "compressed_sha256": "67e1488af18234c8054f21a8cc84f2f180d68994dc2d26c07951178d8836de81",
+      "decoded_bytes": 136,
+      "decoded_sha256": "289753ad3c328e137a98bdfbb4bd30d30ccfa2c5b089255fcaf2a860eca3f183",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-bounded-proc-read.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-failure-audit.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-failure-audit.stdout.gz",
+      "compressed_bytes": 281,
+      "compressed_sha256": "fb04c51ab3929798f108893df0553ab67c67aa310e26e355e782cab4df8479ed",
+      "decoded_bytes": 415,
+      "decoded_sha256": "e8cd3224b1398868d65123e71941420216c2292da170658a3a91ac3f9907aa5a",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-failure-audit.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-install.stderr.gz",
+      "compressed_bytes": 203,
+      "compressed_sha256": "12363cd92cc06bb58d6bef54072f98a2f67a43ff6d16323b3d9a8d844a1636aa",
+      "decoded_bytes": 265,
+      "decoded_sha256": "1529c9125860d80eadfc44ffc9281f18ed14088c3117d362ba1d5dc2f2254c49",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-install-attempt1/frame-install.stderr.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-install.stdout.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-install.stderr.gz",
+      "compressed_bytes": 203,
+      "compressed_sha256": "12363cd92cc06bb58d6bef54072f98a2f67a43ff6d16323b3d9a8d844a1636aa",
+      "decoded_bytes": 265,
+      "decoded_sha256": "1529c9125860d80eadfc44ffc9281f18ed14088c3117d362ba1d5dc2f2254c49",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-install.stderr.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-install.stdout.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-proc-read-probe.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-proc-read-probe.stdout.gz",
+      "compressed_bytes": 284,
+      "compressed_sha256": "80a24ff260047106eff102c8a90a08f1902430add356400b8452a5207ca29e17",
+      "decoded_bytes": 498,
+      "decoded_sha256": "0884c50544e559abbab0a60dc9e590d34d8c7ddfc2c61fefbc99377b4e8b5743",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-proc-read-probe.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-restore.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-restore.stdout.gz",
+      "compressed_bytes": 922,
+      "compressed_sha256": "390762f5a39f9019a4f677905144b4f970b846d8af275805748c051414e2e10c",
+      "decoded_bytes": 1854,
+      "decoded_sha256": "a8fd9eef6b7bcc3c848161bc254e9a0bbdce149caf0c2eaba42206c127210557",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-restore.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-retry.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/frame-retry.stdout.gz",
+      "compressed_bytes": 198,
+      "compressed_sha256": "354b1506f033b240bd2a4fc414159e695c8f2024bd462b25a1e14d81d3fc8064",
+      "decoded_bytes": 222,
+      "decoded_sha256": "133300faef6cb8d3c0dbbb2d54c014bf49ace8283fbf465b6388cb0d2074d95c",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/frame-retry.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/post-resume-health.stderr.prefix.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/post-resume-health.stdout.prefix.gz",
+      "compressed_bytes": 538,
+      "compressed_sha256": "fc94a4106162152bfbdcb88ca7a9ff585150dfc8c8f112dd6b7500022365feb1",
+      "decoded_bytes": 863,
+      "decoded_sha256": "4ca51285e0e77031b7c7af18b7a3adfe5cd8d2fc6fa78919fcd3ca65b3f203f0",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/post-resume-health.stdout.prefix.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/runtime.stderr.log.prefix.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/runtime.stdout.log.prefix.gz",
+      "compressed_bytes": 149395,
+      "compressed_sha256": "e07b70651b00f761ab13a8a1a92876000c3008b1268525110d4b4571a71b9d2e",
+      "decoded_bytes": 3425050,
+      "decoded_sha256": "9c7b2c714707712f77324020ba77b434ab8ccf70c50342cdbe2ff7b1682287ef",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Original immutable runtime prefix retained; no text copy or review claim"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/service-health-01.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/service-health-01.stdout.gz",
+      "compressed_bytes": 523,
+      "compressed_sha256": "1fa0ceb5a921c241a783fe533aefd8a3dcebba38b033ce139b60955f4ad48fb7",
+      "decoded_bytes": 844,
+      "decoded_sha256": "a0bceb6a044a8a8e2272f1eef0d9d853265736c375f96caf90a0184e8b4d714d",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/service-health-01.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/service-health-02.stderr.gz",
+      "compressed_bytes": 20,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": null,
+      "copy_semantics": "Verified zero-byte stream; no text copy"
+    },
+    {
+      "source_archive": ".ημ/diagnostics/native-current/2026-10-07/service-health-02.stdout.gz",
+      "compressed_bytes": 524,
+      "compressed_sha256": "e5d18b0bf6b7298799d24ca2bd2155409ce832d61eb331075b18cbb72990d60f",
+      "decoded_bytes": 844,
+      "decoded_sha256": "5feb96596973d087e5e9d4067238ef8b58a8a0485f30b6ae7e1607237ed72ec0",
+      "matches_original_checksum": true,
+      "matches_original_decoded_provenance": true,
+      "plaintext_copy": "client-streams/service-health-02.stdout.txt",
+      "copy_semantics": "Complete historical client stream, byte-exact"
+    }
+  ],
+  "original_closed_bundle": {
+    "path": ".ημ/diagnostics/native-current/2026-10-07",
+    "files": 76,
+    "nonself_checksum_entries_verified": 75,
+    "all_worktree_bytes_match_source": true,
+    "files_by_hash": [
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/CLOSED-FILES.txt",
+        "bytes": 2377,
+        "sha256": "3b8a151bb7c2a3f9783429e5d628d77f2783ed43af7c2761b2ab0f323fd52d97"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/OBSERVER-CLOSED-FILES.txt",
+        "bytes": 1934,
+        "sha256": "20c7478e0a3b7e9bc8716ffeff157931501dd3ad068ac38e30cb39724143bbbb"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/OBSERVER-CLOSURE.json",
+        "bytes": 1562,
+        "sha256": "76ca8d4c3d25b3a45fccb973d08b2482f4dd6072dcbd4d847b213342c591374e"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/OBSERVER-RAW-PROVENANCE.json",
+        "bytes": 6590,
+        "sha256": "e253cd3436002938e71f92f92805ab3e8b0c0dc34094603350e9e2808e2ec5a0"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/OBSERVER-SHA256SUMS",
+        "bytes": 5742,
+        "sha256": "e901b8fbf91c3adeec55ffb538c86983a5fe33b812be08bc2fc408c0cc019637"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/ROOT-RESULT.md",
+        "bytes": 2858,
+        "sha256": "f6fa9207ca183d3bbec31d89a0f6cb2903edb6e06fc9c4bfc2c78ad0227a1453"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/SHA256SUMS",
+        "bytes": 7316,
+        "sha256": "16b8e93ee35b2023249b72cbe1d8c200e10c63cea9b9bb13bafd8110c8d63925"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/cost-window-native-pause-root.json",
+        "bytes": 526,
+        "sha256": "f59145ef98bfe7b44be4ac8de60f6df1bee0155efb69ee80397703e95feb1830"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/cost-window-native-resume-root.json",
+        "bytes": 447,
+        "sha256": "37afd9009b213201a9763ebb33936e1f0a479a210b62203707f03b8893654ce5"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-bounded-proc-read-form.clj",
+        "bytes": 736,
+        "sha256": "0876671462b662b4d0bffde804fd942b91e79a03b256c450717d5cddcb93cdeb"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-bounded-proc-read-result.json",
+        "bytes": 100,
+        "sha256": "0a06e819511d46f61ef9f01f1ae5f360d11c8d04570390c7dfe37b76faa30020"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-bounded-proc-read.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-bounded-proc-read.stdout.gz",
+        "bytes": 130,
+        "sha256": "67e1488af18234c8054f21a8cc84f2f180d68994dc2d26c07951178d8836de81"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-capture/observer-state.edn",
+        "bytes": 1627,
+        "sha256": "8d8ea6e796ff079b08443981848c5ae65871d7e069ba5ac516fae39a8f35436d"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-capture/pid-131581-window-137768861339584-frame-01.edn",
+        "bytes": 994,
+        "sha256": "f626f55615e082f40821b3372e52871da0c17980a5aed33b71d1c6b8fdeef89c"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-capture/pid-131581-window-137768861339584-frame-01.png",
+        "bytes": 799810,
+        "sha256": "2194f32e5658e40d048cf00c9435dbbf29628eb48cadf56fc7a30eefb5665a98"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-failure-audit-form.clj",
+        "bytes": 731,
+        "sha256": "0ee77245adba4e20833fb4ea081f37df752f8f8af0fc9e4c00b4450799742c76"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-failure-audit-result.json",
+        "bytes": 137,
+        "sha256": "15d8ac6d2e4293b7d7f7962855b49dfbf77c4f6f39d37a9013bb03a201cc464b"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-failure-audit.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-failure-audit.stdout.gz",
+        "bytes": 281,
+        "sha256": "fb04c51ab3929798f108893df0553ab67c67aa310e26e355e782cab4df8479ed"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-install-command.json",
+        "bytes": 881,
+        "sha256": "08c14637c078a280e48460ef47df6fc50c52d18a1bac7471a33701494e5c5a37"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-install-result.json",
+        "bytes": 111,
+        "sha256": "c093f4829bb22af5a83ec693a981e97a5be35c2e332c80f0caf509c9f5254994"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-install.stderr.gz",
+        "bytes": 203,
+        "sha256": "12363cd92cc06bb58d6bef54072f98a2f67a43ff6d16323b3d9a8d844a1636aa"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-install.stdout.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-observer-PLAN.md",
+        "bytes": 3535,
+        "sha256": "30b9af19d4ddfbc5e88e88f3a74ad999f41ebac78b45ca1053caea22f43aa3f3"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-observer-independent-review.json",
+        "bytes": 631,
+        "sha256": "04a2d0ebe72422e2136caab1397de68177d33f6e6703739bba4a70a80ce892f2"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-observer-install.clj",
+        "bytes": 12540,
+        "sha256": "f06bb4c26934fabfa35740b923e5c73f4c34933e5c8daad539d9be9b5f527d31"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-observer-preparation.json",
+        "bytes": 688,
+        "sha256": "2f2b1aa1b8fc8effdcb60cc3ee212e841ce649155ba27f9d03bddcc9bc2b09a9"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-attempt1/frame-observer-restore.clj",
+        "bytes": 649,
+        "sha256": "773791ff9d50cd782a9b4a3b5c07a508f7c4c58d05e9182485321073c86b94ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-command.json",
+        "bytes": 881,
+        "sha256": "08c14637c078a280e48460ef47df6fc50c52d18a1bac7471a33701494e5c5a37"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install-result.json",
+        "bytes": 111,
+        "sha256": "c093f4829bb22af5a83ec693a981e97a5be35c2e332c80f0caf509c9f5254994"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install.stderr.gz",
+        "bytes": 203,
+        "sha256": "12363cd92cc06bb58d6bef54072f98a2f67a43ff6d16323b3d9a8d844a1636aa"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-install.stdout.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-PLAN.md",
+        "bytes": 4566,
+        "sha256": "338b3bf25a487290825bd2de7e99183018592d59d67a6ffc2515a12717747834"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-derived.edn",
+        "bytes": 1248,
+        "sha256": "85aaa0aff0eb5002371fb326c0b451270752b1405410159ff9e6cabf41c89648"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-independent-review.json",
+        "bytes": 631,
+        "sha256": "04a2d0ebe72422e2136caab1397de68177d33f6e6703739bba4a70a80ce892f2"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-install.clj",
+        "bytes": 13031,
+        "sha256": "c2f8ae400628588c603a4580ef904ede03ba73aa45ac806da6bafb38b88943ce"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-preparation.json",
+        "bytes": 688,
+        "sha256": "2f2b1aa1b8fc8effdcb60cc3ee212e841ce649155ba27f9d03bddcc9bc2b09a9"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-repair.json",
+        "bytes": 548,
+        "sha256": "7ba49af8e53ec9623799516d22da03c7c7fbe7e3249c79d9ba348eb07edb433f"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-restore.clj",
+        "bytes": 649,
+        "sha256": "773791ff9d50cd782a9b4a3b5c07a508f7c4c58d05e9182485321073c86b94ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-observer-result.md",
+        "bytes": 3120,
+        "sha256": "3464016757413e0525bfd62c07950c6809565cd8cf2720b82ef49649e3f7a098"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-png-verification.json",
+        "bytes": 480,
+        "sha256": "0a7655e77dae7f668c27db72dd91f83f189e65db485fbb607dc9a0d985758ff0"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-proc-read-probe-form.clj",
+        "bytes": 216,
+        "sha256": "0bb243d61d83ce9f92956f0a3d3e2e4f0ea8b64c1225ba8e69952f0a47d422bf"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-proc-read-probe-result.json",
+        "bytes": 100,
+        "sha256": "b1c27695335c94fb0e919bba7d16d463bd158ab7895ce7e1ba4cadf50de80983"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-proc-read-probe.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-proc-read-probe.stdout.gz",
+        "bytes": 284,
+        "sha256": "80a24ff260047106eff102c8a90a08f1902430add356400b8452a5207ca29e17"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-repair-independent-review.json",
+        "bytes": 570,
+        "sha256": "79846afe00a3b2803d10eadcaffac0b3f553b2d18d19f07c86242e5180158861"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-restore-audit-form.clj",
+        "bytes": 909,
+        "sha256": "ecd7a2c3f9ffdc7a3feefb10b9f1580ac6432f78cba9692d5887173fe8405d08"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-restore-command.json",
+        "bytes": 1141,
+        "sha256": "40b3b10ab33bf61091c4aef26c19e23d24a91381b531bdadae8e5085810512c4"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-restore-result.json",
+        "bytes": 110,
+        "sha256": "b5047343e52d8b257e0a4f64e3e9dd07a10fae2a4323f8077b33266808562081"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-restore.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-restore.stdout.gz",
+        "bytes": 922,
+        "sha256": "390762f5a39f9019a4f677905144b4f970b846d8af275805748c051414e2e10c"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-retry-command.json",
+        "bytes": 881,
+        "sha256": "ed8ba96d67f622906fa07cd479ee23f4d67ff68bbf6de9a1403cf32b2aa91e88"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-retry-result.json",
+        "bytes": 111,
+        "sha256": "d4c5cea700305cdbfea7e04aac13a43237d250ee6e90280254e0f209262887db"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-retry.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/frame-retry.stdout.gz",
+        "bytes": 198,
+        "sha256": "354b1506f033b240bd2a4fc414159e695c8f2024bd462b25a1e14d81d3fc8064"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/launch-audit.json",
+        "bytes": 2853,
+        "sha256": "4c3382d2827ba16832decafb32955ec7721e639f4a8130429078aaac641126a1"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/launch-public.json",
+        "bytes": 2031,
+        "sha256": "128206190273513df0c7ef60601c662a643b73ea00087d7ad528be1bcd24d8c5"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/pm2-start-result.json",
+        "bytes": 55,
+        "sha256": "d22b0afc8284057ec117a61adf91718db30e0eff2a51c6ae829c99b9616b2b74"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/post-resume-health-result.json",
+        "bytes": 1587,
+        "sha256": "43cbc990d08f5335396322ed4463bb3a910cfea0666c785bbf0344bac8e245ff"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/post-resume-health.stderr.prefix.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/post-resume-health.stdout.prefix.gz",
+        "bytes": 538,
+        "sha256": "fc94a4106162152bfbdcb88ca7a9ff585150dfc8c8f112dd6b7500022365feb1"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/root-board-comment.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/root-board-comment.stdout",
+        "bytes": 1637,
+        "sha256": "67d7df68e2f68df95df885ce04990eb41ca071bdcf6b8950da3cbb7a3a03818f"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/root-raw-prefix-provenance.json",
+        "bytes": 1265,
+        "sha256": "e110b7c3cd92c80f38890b80045eb31802b164550271d07b7159419ead46a104"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/root-source-closure.json",
+        "bytes": 1001,
+        "sha256": "73bc513832def0936652d246579040dc91e0462d632aac0735a72870d5389967"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/runtime.stderr.log.prefix.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/runtime.stdout.log.prefix.gz",
+        "bytes": 149395,
+        "sha256": "e07b70651b00f761ab13a8a1a92876000c3008b1268525110d4b4571a71b9d2e"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-01-result.json",
+        "bytes": 223,
+        "sha256": "e14cbdcd1668c70d9d6ae25d0262b98775149f3f12cea35a802ff1a7410f8dae"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-01.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-01.stdout.gz",
+        "bytes": 523,
+        "sha256": "1fa0ceb5a921c241a783fe533aefd8a3dcebba38b033ce139b60955f4ad48fb7"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-02-result.json",
+        "bytes": 223,
+        "sha256": "2cd4609886890108f8c1c9a9c2dc50c99306215deb71c4cff79adca3f8b803de"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-02.stderr.gz",
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-02.stdout.gz",
+        "bytes": 524,
+        "sha256": "e5d18b0bf6b7298799d24ca2bd2155409ce832d61eb331075b18cbb72990d60f"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-form.clj",
+        "bytes": 1147,
+        "sha256": "9798f55e0e6589044555a674b26da17029ac97474083d5e6144aab0927eedf32"
+      },
+      {
+        "path": ".ημ/diagnostics/native-current/2026-10-07/service-health-summary.edn",
+        "bytes": 497,
+        "sha256": "763a376b64e8c049c8b1794f627eca0f5592bedd49c0ea021cb853c68fdddc35"
+      }
+    ]
+  },
+  "png": {
+    "path": ".ημ/diagnostics/native-current/2026-10-07/frame-capture/pid-131581-window-137768861339584-frame-01.png",
+    "bytes": 799810,
+    "sha256": "2194f32e5658e40d048cf00c9435dbbf29628eb48cadf56fc7a30eefb5665a98",
+    "review_claim": "Still available at original path; no new visual inspection or hosted review asserted"
+  }
+}

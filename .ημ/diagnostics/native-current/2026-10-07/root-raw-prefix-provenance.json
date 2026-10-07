@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-07T00:58:35.961872+00:00",
+  "files": [
+    {
+      "source": "runtime.stdout.log",
+      "compressed": "runtime.stdout.log.prefix.gz",
+      "bytes": 3425050,
+      "decoded_sha256": "9c7b2c714707712f77324020ba77b434ab8ccf70c50342cdbe2ff7b1682287ef",
+      "semantics": "Immutable observed byte prefix; source runtime log may continue growing."
+    },
+    {
+      "source": "runtime.stderr.log",
+      "compressed": "runtime.stderr.log.prefix.gz",
+      "bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "semantics": "Immutable observed byte prefix; source runtime log may continue growing."
+    },
+    {
+      "source": "post-resume-health.stdout",
+      "compressed": "post-resume-health.stdout.prefix.gz",
+      "bytes": 863,
+      "decoded_sha256": "4ca51285e0e77031b7c7af18b7a3adfe5cd8d2fc6fa78919fcd3ca65b3f203f0",
+      "semantics": "Complete reaped read-only client output."
+    },
+    {
+      "source": "post-resume-health.stderr",
+      "compressed": "post-resume-health.stderr.prefix.gz",
+      "bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "semantics": "Complete reaped read-only client output."
+    }
+  ]
+}
