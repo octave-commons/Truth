@@ -23,7 +23,7 @@ manual sculpt requests**; it does not reinterpret it as an earlier approval.
 | [`loop.clj`](../../src/infra/dev/window/loop.clj), lines 35–69, 135–143 | `IntentAtom` queues world functions. The host reads config once, drains them in arrival order through the existing failure guard, then prepares manual focus. |
 | [`focus.clj`](../../src/domain/player/focus.clj), lines 17–49 | `focus-follow` uses Spark position plus offset, retaining radius/intensity and physical columns. It returns unchanged world if the observer or its position is absent. |
 | [`sculpt.clj`](../../src/domain/voxel/sculpt.clj), lines 479–525 | `request-op` chooses the existing committed world, checks palette/Resonance, derives the relative anchor from observer focus and target position, then spends and appends a paid record. |
-| [`loop.clj`](../../src/infra/dev/window/loop.clj), lines 357–360 | Intervention placement captures published focus in the renderer before queuing `place`; this separate seam remains outside the first slice. |
+| [`loop.clj`](../../src/infra/dev/window/loop.clj), lines 361–364 | Intervention placement captures published focus in the renderer before queuing `place`; this separate seam remains outside the first slice. |
 
 (己, p=0.99) A sculpt request can therefore combine published pre-fold focus
 with post-fold physical positions. The existing

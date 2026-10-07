@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: ["domain", "infra", "player", "spark", "spark-flight", "narrowing"]
-write-id: "1791339061464-0.s2hqbn59dxn9eeam3fy"
+write-id: "1791341647472-0.vk1yfogmjofl0kcgguj"
 source: "kanban/tasks/focus-follows-pilot.md"
 title: "Focus follows the pilot: bind/resolve/aim a planet while manually flying"
 priority: "P1"
@@ -162,5 +162,7 @@ Chosen semantics: missing observer returns W_j unchanged before aim validation. 
 The note now compares pre/post refresh, blanket per-intent refresh, and the selected explicit contextual entry. It retains action-local aim as a considered alternative only. Same-C_n timing for mid-drain arrivals and host changes is explicit, with no cross-store atomic or keypress-exact claim. RED must exercise opted-in actual callback + queue + host loop, legacy compatibility/interleaving, real movement/recentering, validation precedence, prepared-versus-original world outcomes, payment once, and recovery. A bounded 3-point repair is credible only with this limited adapter and existing domain composition; broader queue/API work requires another breakdown before admission. No source/tests/runtime/native work, status transition or readiness claim. Root owns publication and hosted review.
 
 2026-10-07 bounded prose clarification to the preceding planning comment: select C_n mode first. The early missing-observer no-op before aim validation applies ONLY in manual mode. Nonmanual/tracking dispatch delegates directly to unchanged request-op, with no new observer shortcut; its existing verb/magnitude validation still precedes its observer gate. The note mechanism, RED matrix and design paragraph now state this consistently. Persistent manual preparation, all other proposed semantics, InProgress3 status and implementation non-admission are unchanged. No source/test/runtime work or history rewrite.
+
+2026-10-07 documentation-only PR36 review correction at 47571e474e24838b94e0902900ce9cc882f71d76. Verified full MiMo review5436893734 and native thread PRRT_kwDOTDahac6pu08y/comment4202416214: the pinned-source table in docs/notes/2026-10-07-manual-sculpt-aim-timing.md cited loop.clj lines 357-360, which are menu/tracking code. Corrected only that range to 361-364, the actual action-request/observer-focus/intervention-place block at pinned source760ea79d. Current loop bytes equal the pinned source (SHA2563994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067). The row substance, proposed design, implementation non-admission and historical card body/comments remain unchanged. Local relative-link existence and design-fragment checks pass; no source, tests, config, runtime, native actions or JVM execution. Card stays InProgress3. Root owns parent composition, commit/push, new-head hosted qualification and native review settlement; this comment is not a hosted pass or thread resolution.
 
 ---

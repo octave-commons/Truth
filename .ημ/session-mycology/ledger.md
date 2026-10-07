@@ -485,3 +485,12 @@
   spore: none
   receipt-refs: focus-follows-pilot,760ea79d,2026-10-07-manual-sculpt-aim-timing
   note: A current focus law does not alone fix action timing: anonymous world updates need explicit iteration context, and persistent versus action-local preparation changes later-reader observations. State the chosen ordering, malformed-context precedence and plain-Atom/IFn compatibility before RED; preserve earlier proposals through canonical superseding comments. Existing planning and receipt skills suffice; no new spore.
+- ts: 2026-10-07T02:54:44.013982Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Correct a pinned citation without conflating infrastructure failure with source style
+  p-efficiency: 0.9
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,47571e4,review5436893734,comment4202416214
+  note: Verify the exact pinned blob before changing adjacent line references; preserve the behavioral statement and proposed status. Inspect the underlying hosted error before repeating a wrapper label as a code defect. Broad historical-note search was unnecessary once the review named the target; prefer exact paths. No new spore; existing review and evidence skills suffice.
