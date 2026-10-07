@@ -602,3 +602,12 @@
   spore: none
   receipt-refs: 51a35312290fb722740a21fd225c3227d9c8b12c
   note: Bounded30s readonlypolling removedmanualcadence drift; mature native100pixelgestures allacknowledged but couldnotfinish54.6deg within120s. Qualify slightlylargerordinarygesture before repeatedformationwait. Independent review caught envelope-vs-flat runtimehashmanifest contract beforelaunch. Preserve callerfailure vs supervisorclosure, sparseobservations, and rawbytes; no spore promoted.
+- ts: 2026-10-07T13:39:24.776242282Z
+  session: /home/err/spaces/foresight/.worktrees/truth-bounded-look-200
+  task: Closed damped native flight evidence
+  p-efficiency: 0.6
+  p-friction: 0.68
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: .ημ/diagnostics/bounded-damped-flight/root-closed-attempts-package-proof.json
+  note: Combined aim/pulse orchestration yielded one measured contraction. Respect fixed reservation rejection rather than interpreting it as physical impossibility. Publication inventories include inherited unchanged files and are not identical to Git changed-path sets; verify inherited blobs explicitly. Keep large evidence plaintext and split reviews without omitting raw bytes. No new spore.

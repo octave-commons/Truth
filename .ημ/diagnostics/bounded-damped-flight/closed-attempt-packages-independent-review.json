@@ -1,0 +1,79 @@
+{
+  "schema": "truth-closed-attempt-packaging-independent-review-v1",
+  "at": "2026-10-07T13:35:48.364050+00:00",
+  "reviewer": "board_scout",
+  "verdict": "PASS",
+  "method": "Independent Python standard-library file/data reader; author packaging script was read but not imported or executed. Both complete named run/client trees plus explicit companions were independently enumerated. JSON keys, path containment, symlink ancestors, exact storage schemas, unique complete partition, byte spans, UTF-8 reconstruction, all original hashes, earlier audit inputs, source pins, publication/checksum sets and before/after original stability were checked.",
+  "groups": [
+    {
+      "attempt": "01",
+      "verdict": "PASS",
+      "original_files": 479,
+      "original_bytes": 2379322,
+      "direct_files": 19,
+      "packed_files": 460,
+      "empty_files_preserved": 217,
+      "audit_inputs_byte_equal": 475,
+      "publication_paths": 26,
+      "checksum_rows": 25,
+      "publication_utf8_bytes": 2434179,
+      "publication_utf8_lines": 10482,
+      "publication_binary_bytes": 228589,
+      "pngs_direct": [
+        {
+          "path": ".ημ/diagnostics/bounded-damped-flight/runs/attempt-01/frame-1791376672959159265-ed8400ce.png",
+          "bytes": 228589,
+          "sha256": "d740cc0c842b63bf6be88d4f57c211395aa694f19fa578b99c464e09263311a3"
+        }
+      ],
+      "non_utf8_direct_paths": [
+        ".ημ/diagnostics/bounded-damped-flight/runs/attempt-01/frame-1791376672959159265-ed8400ce.png"
+      ],
+      "source_pins_verified": 186,
+      "map_sha256": "257bd1cd612cfb4e6f91d379a1fc8f1bd48e0465d1c13c545df48bccf28e31a0",
+      "manifest_sha256": "c99b57519dfd3085af6a4531d29992a19a80d1d9c008b17fb61bf09582353f8c",
+      "archive_sha256": "2b9daffe802e643e258e583f97da9b90184197a10ed975c5e44a91cf82f1cb2c",
+      "original_inventory_sha256": "b0ced6ffd38e77178c2736e3a53724fbe946fcda68d38f3cc7ab538cd20db6b3"
+    },
+    {
+      "attempt": "02",
+      "verdict": "PASS",
+      "original_files": 855,
+      "original_bytes": 6205125,
+      "direct_files": 40,
+      "packed_files": 815,
+      "empty_files_preserved": 351,
+      "audit_inputs_byte_equal": 851,
+      "publication_paths": 47,
+      "checksum_rows": 46,
+      "publication_utf8_bytes": 6472951,
+      "publication_utf8_lines": 24979,
+      "publication_binary_bytes": 229396,
+      "pngs_direct": [
+        {
+          "path": ".ημ/diagnostics/bounded-damped-flight/runs/attempt-02/frame-1791377912390942740-ef6784c1.png",
+          "bytes": 229396,
+          "sha256": "5b399d4205f6563cb7949161e2a21eda1d1b3889a22c8bd761cf517ac4a72766"
+        }
+      ],
+      "non_utf8_direct_paths": [
+        ".ημ/diagnostics/bounded-damped-flight/runs/attempt-02/frame-1791377912390942740-ef6784c1.png"
+      ],
+      "source_pins_verified": 186,
+      "map_sha256": "b4bd33e5b04ffb19017140503ce4d27396b62316fcd31c20613fed6533e00a67",
+      "manifest_sha256": "d8ac7ae50e9d3f5fd9f8c74ce9d7cc9efc6567741e558e0250e3a1af0547b0d2",
+      "archive_sha256": "527569a8446dce4604711e53034ca740310d7264d966e708986864f53dc4d85c",
+      "original_inventory_sha256": "a7eed279085c80f8cd683bfa18147b26e2b91efb3e3a88b3ee49c7d4bc392edb"
+    }
+  ],
+  "mutable_canonical_companions_excluded": [
+    "kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".ημ/receipts.edn"
+  ],
+  "limits": [
+    "This verifies packaging and equality to preserved local originals/audit inventories; it adds no native execution, gameplay, performance, provider coverage or approval.",
+    "Inherited frozen preparation and its historical packaging remain separate required provenance; these two groups do not replace or omit their inherited parent artifacts.",
+    "Only this new independent review artifact is written; all package files, raw inputs, board state and canonical ledgers remain unchanged."
+  ]
+}

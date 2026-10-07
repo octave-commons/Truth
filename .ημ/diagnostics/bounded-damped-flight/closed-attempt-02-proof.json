@@ -1,0 +1,44 @@
+{
+  "schema": "truth-closed-attempt-publication-proof-v1",
+  "at": "2026-10-07T13:30:07.914309+00:00",
+  "attempt": "02",
+  "audit_sha256": "271c13de2c7a8ef81ab13b0574d7a6c053c92cb750fbbfd5bfb6ebbc5e617989",
+  "packaging_script": {
+    "path": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/package-closed-attempts.py",
+    "bytes": 11240,
+    "sha256": "97dc6797eb7b3736db48e6ba56a30cc267a1cca18d375e2712e3ab576fc956a1"
+  },
+  "originals": 855,
+  "original_bytes": 6205125,
+  "original_inventory_sha256": "a7eed279085c80f8cd683bfa18147b26e2b91efb3e3a88b3ee49c7d4bc392edb",
+  "map": {
+    "path": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/closed-attempt-02-MAP.json",
+    "bytes": 299243,
+    "sha256": "b4bd33e5b04ffb19017140503ce4d27396b62316fcd31c20613fed6533e00a67"
+  },
+  "archive": {
+    "path": ".\u03b7\u03bc/diagnostics/bounded-damped-flight/closed-attempt-02-auxiliary.jsonl",
+    "bytes": 357757,
+    "sha256": "527569a8446dce4604711e53034ca740310d7264d966e708986864f53dc4d85c"
+  },
+  "direct_files": 40,
+  "packed_files": 815,
+  "empty_files_preserved": 351,
+  "complete_disjoint_union": true,
+  "independent_decoding_byte_equal": true,
+  "original_hashes_unchanged": true,
+  "all_audit_inputs_covered": true,
+  "production_pins_verified": 186,
+  "publication_paths": 47,
+  "outside_inventory_mutable_companions": [
+    "kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".\u03b7\u03bc/receipts.edn"
+  ],
+  "limits": [
+    "Packaging changes representation only; it adds no native qualification and never deletes or changes originals.",
+    "Large journals and runtime stdout remain direct plaintext; there is no gzip or semantic filtering.",
+    "Path and byte census is not provider coverage, approval or a runtime/performance claim.",
+    "Source/preparation references inherited from the preceding preparation PR remain required; complete historical prep is separately represented by HISTORY-MAP.json."
+  ]
+}
