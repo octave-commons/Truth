@@ -1,0 +1,145 @@
+{
+  "at": "2026-10-07T09:00:11.078940+00:00",
+  "parent": "7f1fbcae786a7aa4c6b1cb2eed5d79dd71bb6e58",
+  "production_base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "python_ast": {
+    "runner.py": "1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab",
+    "aim-client.py": "ff435b59f495b09e9341eb3d140a2a8949ea9d1438281364b7b4515af7879331",
+    "test_protocol.py": "069f01b8336be89bcd9270e74a96be9d7b485382fd821081371a82f3ee92aa47"
+  },
+  "clojure_lint": [
+    {
+      "command": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/commit-ready-approach/snapshot.clj",
+        "--cache",
+        "false"
+      ],
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a",
+      "stdout": "kondo-snapshot.stdout",
+      "stderr": "kondo-snapshot.stderr"
+    },
+    {
+      "command": [
+        "clj-kondo",
+        "--lint",
+        ".\u03b7\u03bc/diagnostics/commit-ready-approach/snapshot_client.clj",
+        "--cache",
+        "false"
+      ],
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03",
+      "stdout": "kondo-worker.stdout",
+      "stderr": "kondo-worker.stderr"
+    }
+  ],
+  "pure_checks": {
+    "command": [
+      "python3",
+      "-B",
+      ".\u03b7\u03bc/diagnostics/commit-ready-approach/test_protocol.py"
+    ],
+    "exit": 0,
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "runner_sha256": "1e074dac5f4d1776a7bcb05630a4d199d7658f19557fe162387f4aa10b2c99ab",
+    "test_sha256": "069f01b8336be89bcd9270e74a96be9d7b485382fd821081371a82f3ee92aa47",
+    "stdout": "pure-tests-reviewed.stdout",
+    "stderr": "pure-tests-reviewed.stderr",
+    "scope": "No process/native/JVM/socket execution. Synthetic framing only; fake monotonic clock; native command calls replaced by recorders; actual protocol/phase/release control methods exercised."
+  },
+  "prior_pure_check_logs": [
+    {
+      "stdout": "pure-tests-attempt1.stdout",
+      "stderr": "pure-tests-attempt1.stderr",
+      "tests": 14,
+      "exit": 0,
+      "runner_sha256": "23b1ef2cf663a33d7c67934d57d7e0ffeb1a941c7add890e01cdde55533ae96e",
+      "test_sha256": "a4f934e4ce7ad1495bcbe554b3981d358200c3f3137b2867847ba8e8621bd1af",
+      "superseded_by": "pure-tests-reviewed.stderr"
+    },
+    {
+      "stdout": "pure-tests-final.stdout",
+      "stderr": "pure-tests-final.stderr",
+      "tests": 16,
+      "exit": 0,
+      "runner_sha256": "ee8b9a0e694a7afe21ccc409001b68f808489fe26b15dc2697424d0a88330afe",
+      "test_sha256": "5568344a9f1ce89b19b5b1274075be92caad112846157588bfdfbd6618733565",
+      "superseded_by": "pure-tests-reviewed.stderr"
+    }
+  ],
+  "links": [
+    {
+      "target": "root-scope.json",
+      "resolved": ".\u03b7\u03bc/diagnostics/commit-ready-approach/root-scope.json",
+      "anchor_verified": false
+    },
+    {
+      "target": "../natural-flight-profile/root-successor-scope.json",
+      "resolved": ".\u03b7\u03bc/diagnostics/natural-flight-profile/root-successor-scope.json",
+      "anchor_verified": false
+    },
+    {
+      "target": "../natural-flight-profile/RESULT.md",
+      "resolved": ".\u03b7\u03bc/diagnostics/natural-flight-profile/RESULT.md",
+      "anchor_verified": false
+    },
+    {
+      "target": "snapshot.clj",
+      "resolved": ".\u03b7\u03bc/diagnostics/commit-ready-approach/snapshot.clj",
+      "anchor_verified": false
+    },
+    {
+      "target": "../../../src/domain/narrowing.clj",
+      "resolved": "src/domain/narrowing.clj",
+      "anchor_verified": false
+    },
+    {
+      "target": "../../../test/domain/commitment_test.clj",
+      "resolved": "test/domain/commitment_test.clj",
+      "anchor_verified": false
+    },
+    {
+      "target": "../../../src/domain/stellar/classifier/candidate.clj",
+      "resolved": "src/domain/stellar/classifier/candidate.clj",
+      "anchor_verified": false
+    },
+    {
+      "target": "runner.py",
+      "resolved": ".\u03b7\u03bc/diagnostics/commit-ready-approach/runner.py",
+      "anchor_verified": false
+    },
+    {
+      "target": "snapshot_client.clj",
+      "resolved": ".\u03b7\u03bc/diagnostics/commit-ready-approach/snapshot_client.clj",
+      "anchor_verified": false
+    },
+    {
+      "target": "aim-client.py",
+      "resolved": ".\u03b7\u03bc/diagnostics/commit-ready-approach/aim-client.py",
+      "anchor_verified": false
+    },
+    {
+      "target": "../natural-flight-profile/PLAN.md#optional-diagnostic-distance-screen-and-honest-limits",
+      "resolved": ".\u03b7\u03bc/diagnostics/natural-flight-profile/PLAN.md",
+      "anchor_verified": true
+    },
+    {
+      "target": "test_protocol.py",
+      "resolved": ".\u03b7\u03bc/diagnostics/commit-ready-approach/test_protocol.py",
+      "anchor_verified": false
+    }
+  ],
+  "production_files_equal": 186,
+  "source_inventory": "SOURCE-EQUALITY.json",
+  "pin_checks": true,
+  "all_owned_text_whitespace_clean": true,
+  "no_game_or_native_run": true
+}

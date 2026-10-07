@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-07T08:45:55.874962+00:00",
+  "head": "7f1fbcae786a7aa4c6b1cb2eed5d79dd71bb6e58",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "canonical_scope_source": ".\u03b7\u03bc/diagnostics/natural-flight-profile/root-successor-scope.json",
+  "canonical_scope_sha256": "980b0e6699550c46c6c8fbb72bdcf1bab7c01fc52a9b93ef5fe53c2b79fbcc6e",
+  "scope": "Prepare one separate commit-ready-approach diagnostic from this closed lineage, with production unchanged at b395c4049718f7ce015ddf25fc0a192d97821373. Target admission must follow the actual current game: existing ordinary natural planet or gas giant, stored candidate, direct current narrowing/ready-to-commit? and finite same-world geometry; fresh handoff/current parent/per-body eligibility remain separate observations, not an invented production prerequisite. Report global committed-world count/IDs from the same world and require no prior commitment before first approach. Preserve actual commitment as terminal observation and stop further gameplay input after it, releasing any held key first. Fixed root-chosen ID only, no retarget or physical writer. Snapshot must retain actual focus/offset/intensity and all bindings, distinguishing heading, physical range, published overlap and commitment. Supervisor automatically begins cleanup at original T+960 if no successful target admission, clips idle/read/command/guard waits, and assigns successful-admission marker only after validation and post-read cutoff check. The120+40 aim reserve uses original1470 work lease, not960 phase deadline; no accidentalT800 admission cap. Shared180 startup,1470 work,1500 total;20 requested <=2s W holds,360 looks,3 finite120s aims and3 PNGs unchanged. Actual release latency, uninterruptible OS limits and sparse sampling remain explicit. New preparation only, bounded pure Python parser/deadline checks allowed without JVM/native; root plus independent final review before one future runtime. No production gate/habitability policy change, creature/Gate claim, T/Y sculpt, existing-run continuation or retained-primary input.",
+  "author_scope": "Only new files in this directory except this root-scope. Root owns canonical state/receipts/Git/publication/runtime. Frozen predecessor and production remain unchanged.",
+  "pure_checks_allowed": "Bounded Python target-parser and phase-deadline tests with subprocess/native/JVM operations unavailable; AST parsing, clj-kondo and byte/link checks. No project namespace execution or JVM.",
+  "required_new_test_cases": [
+    "Historical candidate and current readiness can admit with fresh handoff false; fresh handoff alone cannot replace stored record/readiness.",
+    "Global prior commitment prevents first admission; terminal commitment evidence survives without further gameplay input and held-key release remains finally-owned.",
+    "Before successful admission, phase deadline uses originalT960; invalid tentative target cannot lift it.",
+    "Admission afterT800 but beforeT960 retains original1470 reserve; snapshot completion at/afterT960 cannot admit.",
+    "Missing/duplicated/nonfinite target observations fail without retarget."
+  ],
+  "no_runtime_authorized_by_this_record": true
+}

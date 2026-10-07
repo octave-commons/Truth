@@ -1,0 +1,22 @@
+test_child_wait_uses_remaining_no_target_budget (__main__.ProtocolChecks.test_child_wait_uses_remaining_no_target_budget) ... ok
+test_deadlines_use_shared_origin_and_only_success_lifts_phase_limit (__main__.ProtocolChecks.test_deadlines_use_shared_origin_and_only_success_lifts_phase_limit) ... ok
+test_fresh_handoff_cannot_replace_either_admission_flag (__main__.ProtocolChecks.test_fresh_handoff_cannot_replace_either_admission_flag) ... ok
+test_global_commitment_frame_rejects_incomplete_or_unpaired_evidence (__main__.ProtocolChecks.test_global_commitment_frame_rejects_incomplete_or_unpaired_evidence) ... ok
+test_global_prior_commitment_precedes_invalid_target (__main__.ProtocolChecks.test_global_prior_commitment_precedes_invalid_target) ... ok
+test_held_key_released_once_when_commitment_appears (__main__.ProtocolChecks.test_held_key_released_once_when_commitment_appears) ... ok
+test_historical_ready_admits_without_fresh_handoff (__main__.ProtocolChecks.test_historical_ready_admits_without_fresh_handoff) ... ok
+test_idle_supervisor_begins_cleanup_at_cutoff (__main__.ProtocolChecks.test_idle_supervisor_begins_cleanup_at_cutoff) ... ok
+test_late_admission_result_can_be_observed_after_phase_cutoff (__main__.ProtocolChecks.test_late_admission_result_can_be_observed_after_phase_cutoff) ... ok
+test_late_valid_admission_has_original_work_reserve (__main__.ProtocolChecks.test_late_valid_admission_has_original_work_reserve) ... ok
+test_missing_duplicate_nonfinite_and_other_target_fail (__main__.ProtocolChecks.test_missing_duplicate_nonfinite_and_other_target_fail) ... ok
+test_pending_snapshot_wait_is_clipped_at_cutoff (__main__.ProtocolChecks.test_pending_snapshot_wait_is_clipped_at_cutoff) ... ok
+test_postrelease_commitment_precedes_invalid_target_geometry (__main__.ProtocolChecks.test_postrelease_commitment_precedes_invalid_target_geometry) ... ok
+test_snapshot_completion_at_or_after_cutoff_never_admits (__main__.ProtocolChecks.test_snapshot_completion_at_or_after_cutoff_never_admits) ... ok
+test_successful_target_cannot_be_replaced (__main__.ProtocolChecks.test_successful_target_cannot_be_replaced) ... ok
+test_terminal_prevents_later_input_before_guard_or_command (__main__.ProtocolChecks.test_terminal_prevents_later_input_before_guard_or_command) ... ok
+test_terminal_result_closes_run_and_retains_observation (__main__.ProtocolChecks.test_terminal_result_closes_run_and_retains_observation) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.041s
+
+OK
