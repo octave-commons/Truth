@@ -11,9 +11,12 @@ The [living UX](ux-architecture.md#view) calls for ordinary manual time control
 before Gate discovery. The [closed-flight clock research](../research/physics/2026-10-07-pre-capture-clock-envelope.md)
 derives the pending-force hazard and distinguishes sparse endpoint motion from
 capture residence. The [upward-step proposal](../research/physics/2026-10-07-clock-up-transition-admission.md)
-supplies the finite allowance and source audit adopted below. That last file is
-a byte-identical archival copy of the independently reviewed root proposal;
-its statements about the earlier publication boundary remain historical.
+supplies the finite allowance and source audit adopted below. At
+[revision `a1cfb18`](https://github.com/octave-commons/Truth/blob/a1cfb18fb2b128429c3c833e9164ff501293c241/docs/research/physics/2026-10-07-clock-up-transition-admission.md),
+that last file was a byte-identical archival copy of the independently reviewed
+root proposal. Its current copy includes the planning-review clarification of
+guarded Auto's upward-step minimum; the original source hash and publication
+boundary remain historical evidence, not a current byte-equality claim.
 
 Let the player select a **maximum global simulation step** from 1 second to
 1 day or return to Auto. Apply the cap after the existing automatic pacing and
