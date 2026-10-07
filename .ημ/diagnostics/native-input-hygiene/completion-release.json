@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-07T06:25:56.205914+00:00",
+  "reviewers": [
+    "root",
+    "board_scout"
+  ],
+  "controller_sha256": "e9453242c7244c87d27b4f6cd23a143b066d7e3f44bd5bb1bb4b3a13e33e441c",
+  "frozen_runner_sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+  "prior_attempt_closed": "failed atworkdeadline withYreadbackunverified;not UIregression",
+  "scope": "Separate fresh shortinput-only completion; no oldruninput; fixedverifiedsequence,programmaticstrictJSON/exit/stateinspectionbeforeeachnextgesture;40sremainingworkreserve;no inputretries;unchanged270/300supervisorlimit",
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "result": "PASS source review; notyetexecuted",
+  "canonical_owner": "f369c598-279c-498d-a64f-45d2ce16ad34"
+}
