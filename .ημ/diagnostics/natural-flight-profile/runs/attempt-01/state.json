@@ -1,0 +1,72 @@
+{
+  "started_at": "2026-10-07T08:09:54.506194+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+  "port": 7898,
+  "budget_seconds": 1500,
+  "work_budget_seconds": 1470,
+  "startup_budget_seconds": 180,
+  "startup_deadline": 28274.455081703,
+  "startup_origin": "Caller monotonic instant before preflight; shared by all processes",
+  "supervisor": {
+    "pid": 2687712,
+    "start": "2809449",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+    "exe": "/usr/bin/python3.12"
+  },
+  "supervisor_monotonic_started": 28094.455081703,
+  "stage": "closed",
+  "removed_inherited_jvm_option_keys": [
+    "JAVA_OPTS"
+  ],
+  "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "frames": 3,
+  "looks": 0,
+  "holds": 0,
+  "aim_invocations": 0,
+  "aim_target": null,
+  "active_aim": null,
+  "aim_deadline": null,
+  "display": ":1",
+  "xvfb": {
+    "pid": 2687739,
+    "start": "2809458",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+    "exe": "/usr/bin/Xvfb"
+  },
+  "app": {
+    "pid": 2687764,
+    "start": "2809479",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "snapshot_client": {
+    "pid": 2689310,
+    "start": "2810673",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-flight-profile",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "world": 305915124,
+  "window": 126880850854736,
+  "x-window": "2097159",
+  "outcome": "operator-stop",
+  "cleanup_errors": [],
+  "ended_at": "2026-10-07T08:26:29.761136+00:00",
+  "elapsed_seconds": 995.3648383790023,
+  "budget_exceeded": false,
+  "cleanup_deadline": 29118.280171031,
+  "total_budget_exceeded": false,
+  "key_pending": null,
+  "key_release_uncertain": false,
+  "mouse_pending": false,
+  "mouse_release_uncertain": false,
+  "unreaped_children": []
+}
