@@ -1,0 +1,56 @@
+[
+  {
+    "path": "captures/pid-131581-frame-01.png",
+    "bytes": 4092916,
+    "sha256": "38ba3485019e127be0bf41fa1e9b852a8e5efc3dccc62a292457d97eb3e38023",
+    "width": 1264,
+    "height": 1490,
+    "chunks": 3,
+    "all_chunk_crc_valid": true
+  },
+  {
+    "path": "captures/pid-131581-frame-02.png",
+    "bytes": 3930954,
+    "sha256": "d6f7a9ba99c8b6228da5cce7504664065aebf755c892891e5b06b431703357ee",
+    "width": 1264,
+    "height": 1490,
+    "chunks": 3,
+    "all_chunk_crc_valid": true
+  },
+  {
+    "path": "captures/pid-131581-frame-03.png",
+    "bytes": 3769490,
+    "sha256": "1591160c177056b919d46f24262d525d2f82d9b6446177d67dd4cdc75128fd3c",
+    "width": 1264,
+    "height": 1490,
+    "chunks": 3,
+    "all_chunk_crc_valid": true
+  },
+  {
+    "path": "captures/pid-131581-frame-04.png",
+    "bytes": 118840,
+    "sha256": "71c6b784aec4a1a5cdc4d5b2a51e4a72f272849d19350616d9d3ecf260b3b1c2",
+    "width": 1264,
+    "height": 1490,
+    "chunks": 3,
+    "all_chunk_crc_valid": true
+  },
+  {
+    "path": "captures/pid-131581-frame-05.png",
+    "bytes": 125008,
+    "sha256": "d2500c5d8d6e2812ed207241c4dee5df9e69752ba37850fb65ec84090d50f5a5",
+    "width": 1264,
+    "height": 1490,
+    "chunks": 3,
+    "all_chunk_crc_valid": true
+  },
+  {
+    "path": "captures/pid-131581-frame-06.png",
+    "bytes": 124169,
+    "sha256": "770d146b4365aec67c1d81afdfb3855e763f623f7557ff385b8b51c785a1cf46",
+    "width": 1264,
+    "height": 1490,
+    "chunks": 3,
+    "all_chunk_crc_valid": true
+  }
+]

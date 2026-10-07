@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-10-07T01:10:55.874537+00:00",
+  "command": [
+    "/usr/local/bin/clojure",
+    "-J-Xms64m",
+    "-J-Xmx256m",
+    "-M:demo-client",
+    "(load-file \"/home/err/spaces/foresight/.worktrees/truth-validation/.\\u03b7\\u03bc/diagnostics/body-trails/hardware-follow-2026-10-07/target-selection.clj\")"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+  "runtime": {
+    "pid": 131581,
+    "start_ticks": "125503",
+    "state": "S",
+    "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "script_sha256": "ec6c8c46e1676322ab7d1cd247e4877eefd271063a52ddbf6ac2c9e311948956",
+  "head": "90d6c2eb22442d7bb925c80136aabc1ddd7964b4",
+  "source_equal_loaded_9c5c889": true,
+  "environment_override": {
+    "TRUTH_DEMO_PORT": "7896"
+  }
+}

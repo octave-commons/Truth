@@ -1,0 +1,14 @@
+{
+  "completed_at": "2026-10-07T01:24:02.244221+00:00",
+  "receipt_before_bytes": 52165,
+  "receipt_before_sha256": "d01cc0644aa5e2345764086eabc4c94b3bb04c68432b65d9a72d70db274423a5",
+  "receipt_after_sha256": "b1fa41d4ae50c4fdce309591e23b68f4ba4d47dc9b81710e6d319fc8ef6f8dd9",
+  "receipt_prefix_preserved": true,
+  "receipt_new_lines": 1,
+  "reflection_before_bytes": 27924,
+  "reflection_before_sha256": "45e48f5fac80e3c0682569f54c09e53853ec367f7803d8345bee112b2edb2d4d",
+  "reflection_after_sha256": "0d82a1e1426e2b9fb48c59b4ccab94782c7191ddfac1439592a636f92be88ddf",
+  "reflection_prefix_preserved": true,
+  "new_spore": false,
+  "capture_manifest_unchanged": "ab4a1b180729f792a23bfd80e55d0c5d3e149741e0f34f1e2950b7c3573f66ed"
+}

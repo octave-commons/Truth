@@ -431,3 +431,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,9c5c889,2026-10-07T01:01:25.553906+00:00
   note: Rebind process, boot, world and GL context after reboot. A Java proc-file available failure is diagnostic I/O, not a game failure; preserve the failed no-install attempt and use a bounded verified read. Inspect actual frames, distinguish HUD time from later world reads, and preserve growing-log prefixes without calling them complete stopped logs. Existing skills suffice; no spore.
+- ts: 2026-10-07T01:24:02.240883752Z
+  session: /home/err/spaces/foresight/.worktrees/truth-validation
+  task: Close native trail follow evidence without inflating gameplay acceptance
+  p-efficiency: 0.94
+  p-friction: 0.10
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: body-trails-ringbuffer,f369c598-279c-498d-a64f-45d2ce16ad34,ab4a1b18
+  note: Select target IDs anew after world loss, pair each scene with its immutable projection input, and separate recorded aging from pixel readability. Ordinary follow is an attention intervention; restore host fields exactly without claiming reversed simulation evolution. Preserve completed bundles and append publication evidence outside them. Existing skills suffice; no new spore or promotion.
