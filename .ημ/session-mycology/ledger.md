@@ -521,3 +521,13 @@
   spore: none
   receipt-refs: a4744132-2328-4cb2-a550-e1328d346673,5ac7505b
   note: Preserve common-basis elemental amounts before normalization, then bound extraction by each phase as well as total elements. Exact stoichiometry validates accounting only; primary-source temperature regimes and missing donor or hydration laws must remain explicit. Existing research and review skills suffice; no spore.
+
+- ts: 2026-10-07T07:19:30.691609+00:00
+  session: codex-intent-research
+  task: Bounded water inventory design continuation
+  p-efficiency: 0.90
+  p-friction: 0.20
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: a4744132-2328-4cb2-a550-e1328d346673,5ca573b0,dc587131
+  note: A conserved elemental sum does not prove phase availability or valid water stoichiometry. Keep each compartment identity across extraction, carry the returned remainder, and distinguish an exact accounting boundary from missing physical stock and settlement producers. Existing skills cover the workflow; no spore.

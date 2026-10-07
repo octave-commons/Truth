@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-07T07:04:30.846398+00:00",
+  "head": "8f9ee36b8848e046e40eb5fb36ab4cbab5ab6946",
+  "owner": "a4744132-2328-4cb2-a550-e1328d346673",
+  "comment": "2026-10-07 bounded design continuation on PR44 research head8f9ee36, same Incoming3 owner. Specify a versioned pure condensed-water allocation and finite phase-extraction contract grounded in the published material-budget research. Choose common elemental kg/exact rational reference arithmetic, explicit model-versioned reservations, bounded reaction extent and phase fraction, rejection rules and donor/child conservation. Require explicit finite donor stock; missing stock remains unsupported, never reconstructed silently from host-star composition. Work four traces: oxygen-limited, zero H, phase overdraw despite identical normalized compositions, sequential donor exhaustion. Map all disk inflow/outflow ownership seams, distinguish capacity from actual reacted material and retention capability from inventory. Record the absent disk elemental-supply integration and binary64 residual policy as separate prerequisites; no formation code, material stock, natural-water/life claim or implementation admission follows from this document. New design docs/designs/condensed-water-inventory-boundary.md may reference the earlier parcel-disk proposal without adopting it. Existing card state, estimate and body remain unchanged; canonical append-only comment records scope.",
+  "body_frontmatter_preserved": true,
+  "comment_prefix_preserved": true,
+  "ledger_prefix_preserved": true,
+  "prior_ledger_bytes": 640033,
+  "prior_ledger_sha256": "f392bca63f100d74a6cd46969ec582686c263ca289f8f3beb73c96eac20cb3ad",
+  "events_appended": 1
+}
