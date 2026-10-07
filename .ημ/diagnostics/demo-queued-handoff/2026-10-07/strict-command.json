@@ -1,0 +1,12 @@
+{
+  "started_at": "2026-10-07T02:24:19.505357+00:00",
+  "command": [
+    "bin/analyze",
+    "--strict"
+  ],
+  "environment_override": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g",
+    "_JAVA_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "head": "760ea79d017f4e012943789f896dfdfdb0a173b1"
+}

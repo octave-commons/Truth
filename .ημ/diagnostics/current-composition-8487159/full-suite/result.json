@@ -1,0 +1,9 @@
+{
+  "name": "full-suite",
+  "pid": 475144,
+  "exit_code": 0,
+  "reaped": true,
+  "finished_at": "2026-10-07T01:36:15.546311+00:00",
+  "stdout_sha256": "630c71eb0fc6f55bd7a1d0110268e9bd108df80c77353de47627aef48f433fc3",
+  "stderr_sha256": "2817735274f4814045057e8eb372de1409cff7f3400ae8bd4bf7892aa4bf23d1"
+}

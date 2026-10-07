@@ -467,3 +467,48 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,4f4eb63
   note: Empty-column merge semantics identify stale ownership, but lifecycle order determines whether the retained payload is nonzero: ordinary thermal expiry first writes zero ease, which still invokes a clamp. Trace actual control paths and consumers before claiming repeated force or heat. Preserve existing card owners and serialize comments after gated transitions. No new spore; existing audit discipline suffices.
+- ts: 2026-10-07T01:39:35.122446091Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Qualify an ancestry-preserving composition without rebinding historical native evidence
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,8487159
+  note: Merged developer aliases can require a separate suite even when src/test bytes are unchanged. Guard the exact composition before and after each sequential command, retain actual timeout behavior and raw nonblocking diagnostics, and keep old loaded-native evidence bound to its original source. No new spore; existing qualification discipline suffices.
+- ts: 2026-10-07T02:19:01.548058Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Characterize a failed asynchronous handoff without inventing cancellation
+  p-efficiency: 0.9
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,760ea79,review5436791462
+  note: A published-token timeout does not establish that an intent was never consumed. Recover the original restoration promise, use the real queue adapter in the regression, and separate configuration restoration from world cancellation. Keep source-derived timing corrections distinct from executed test evidence. No new spore; existing recovery and review-settlement skills suffice.
+- ts: 2026-10-07T02:32:45.679541494Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Qualify real queue semantics against historical restoration failure
+  p-efficiency: 0.93
+  p-friction: 0.12
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,review5436791462
+  note: Separate a review timing inference from its genuine coverage advisory. A historical single-file overlay can establish test sensitivity if namespace load order, current dependencies and exact hashes remain explicit. No new spore; existing regression and review skills suffice.
+- ts: 2026-10-07T02:36:44.473167Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Keep a preexisting selection failure open until its actual recovery contract is tested
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,c0c76ee,review5436791462
+  note: Preexisting behavior is provenance, not a reason to dismiss a concrete review concern. Isolate temporary pause restoration from queued-world cancellation, and inject a known read failure only after the real enqueue boundary. Keep already-qualified tests unchanged and mark expected RED counts as predictions until execution. No new spore; existing review and regression skills suffice.
+- ts: 2026-10-07T02:53:51.542812927Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Repair documented interactive scene-switch failure without widening rollback semantics
+  p-efficiency: 0.92
+  p-friction: 0.14
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
+  note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.

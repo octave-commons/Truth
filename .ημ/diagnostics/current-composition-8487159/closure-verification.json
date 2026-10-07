@@ -1,0 +1,33 @@
+{
+  "closed_at": "2026-10-07T01:39:54.450699+00:00",
+  "head": "8487159bfcf6f7d805018e270174c9f3cd35e8ea",
+  "source_count": 342,
+  "all_source_hashes_verified": true,
+  "all_stage_log_hashes_verified": true,
+  "all_six_command_processes_exit0_reaped": true,
+  "prefixes": {
+    "kanban/tasks/.events/ledger.edn": {
+      "old_bytes": 626210,
+      "new_bytes": 628173,
+      "prefix_preserved": true,
+      "old_sha256": "459ccfd829fd8c5821a49cfb6336762e4e82d8b188786b18ae221c641f77ff16"
+    },
+    ".\u03b7\u03bc/receipts.edn": {
+      "old_bytes": 55735,
+      "new_bytes": 57050,
+      "prefix_preserved": true,
+      "old_sha256": "4ef7253ffbaf298f8105618d05957f4c73c06f6cb407a6041320748057e093b5"
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "old_bytes": 30803,
+      "new_bytes": 31510,
+      "prefix_preserved": true,
+      "old_sha256": "f194c29c6dd5c25180d2e68c67a531edc862856f6b191bd0e423351df1abc78b"
+    }
+  },
+  "board_comment_exit": 0,
+  "canonical_readback_status": "in_progress",
+  "canonical_readback_estimate": "3",
+  "closure_reran_tests": false,
+  "native_contact_by_this_lane": false
+}

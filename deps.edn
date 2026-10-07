@@ -16,6 +16,9 @@
    :demo-client {:extra-paths ["dev"]
                  :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
                  :main-opts ["-m" "demo-client"]}
+   :demo-test {:extra-paths ["dev"]
+               :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}
+               :main-opts ["-m" "demo-test"]}
    :bench {:extra-paths ["bench"]
           :extra-deps {criterium/criterium {:mvn/version "0.4.6"}}
           :main-opts ["-m" "gates-of-truth.bench"]}

@@ -1,0 +1,9 @@
+{
+  "name": "strict",
+  "pid": 481116,
+  "exit_code": 0,
+  "reaped": true,
+  "finished_at": "2026-10-07T01:37:35.815003+00:00",
+  "stdout_sha256": "d45ac25f614cff300d13b35b8608e654871063f7d8a2d2dd2c96c4d7c4f3001d",
+  "stderr_sha256": "817a0d7dab058178a8a132ac7b828fd0fc612286baaed90880718a56d3981e3d"
+}

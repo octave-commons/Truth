@@ -93,23 +93,40 @@
               (not= id :nebula) (update :arc/quest #(str "STAGED ECS FIXTURE: " %)))
      :subject subject}))
 
+(defn- restore-pipeline-settings [current previous]
+  (reduce (fn [cfg setting]
+            (if (contains? previous setting)
+              (assoc cfg setting (get previous setting))
+              (dissoc cfg setting)))
+          current
+          [:tick-fn :on-step]))
+
 (defn select!
-  "Replace only the demo service's world and frame the requested scenario."
+  "Replace only the demo service's world and frame the requested scenario.
+
+   A failed enqueue or wait restores the prior tick and step settings.
+   This does not cancel a replacement already queued for the simulation."
   [id]
   (let [{:keys [world subject]} (scenario-world id)
         {:keys [config camera] :as service} @window/service-state
-        r (when subject (ecs/get-component world subject c/radius))]
-    (when-not service (throw (ex-info "Demo window is not running" {})))
+        r (when subject (ecs/get-component world subject c/radius))
+        _ (when-not service (throw (ex-info "Demo window is not running" {})))
+        previous-config @config]
     (swap! config assoc :tick-fn identity :on-step identity)
-    ;; Replacement rides the same intent queue as input: the sim thread owns
-    ;; publication, so an in-flight tick cannot overwrite the replacement.
-    (reset! (:world-intents service) world)
-    (loop [attempt 0]
-      (when-not (= id (:demo/scenario @(:world service)))
-        (when (>= attempt 300)
-          (throw (ex-info "Simulation did not accept demo world" {:scenario id})))
-        (Thread/sleep 100)
-        (recur (inc attempt))))
+    (try
+      ;; Replacement rides the same intent queue as input: the sim thread owns
+      ;; publication, so an in-flight tick cannot overwrite the replacement.
+      (reset! (:world-intents service) world)
+      (loop [attempt 0]
+        (when-not (= id (:demo/scenario @(:world service)))
+          (when (>= attempt 300)
+            (throw (ex-info "Simulation did not accept demo world" {:scenario id})))
+          (Thread/sleep 100)
+          (recur (inc attempt))))
+      ;; Intentional: match formation setup's restoration on any failed handoff.
+      (catch Throwable t
+        (swap! config restore-pipeline-settings previous-config)
+        (throw t)))
     (swap! config #(-> %
                        (dissoc :selection :follow-eid :ui/active-domain :ui/error-state :zoom-min)
                        (assoc :ui/cursor-free? true :volumetric? (= id :nebula)
@@ -164,22 +181,31 @@
   "Install a fresh, paused default nebula and a fixed wide camera.
 
    Zero camera smoothing freezes the fit-all frame at its initial bounds;
-   contraction remains visible instead of being cancelled by automatic zoom."
+   contraction remains visible instead of being cancelled by automatic zoom.
+   A failed world replacement restores the prior tick and step settings."
   []
   (let [{:keys [config camera world-intents] :as service} @window/service-state
+        _ (when-not service (throw (ex-info "Demo window is not running" {})))
+        previous-config @config
         token (str (java.util.UUID/randomUUID))
         world (assoc (:world (scenario-world :nebula)) :demo/capture token)
         bounds (tracking/fit-all-bounds
                 (tracking/bodies->render world camera/phase0-view-scale) 0.95)
         distance (tracking/distance-for-radius (:radius bounds) 60.0 1.25)]
     (swap! config assoc :tick-fn identity :on-step identity)
-    (reset! world-intents world)
-    (loop [attempt 0]
-      (when-not (= token (:demo/capture @(:world service)))
-        (when (>= attempt 300)
-          (throw (ex-info "Simulation did not accept formation world" {})))
-        (Thread/sleep 100)
-        (recur (inc attempt))))
+    (try
+      (reset! world-intents world)
+      (loop [attempt 0]
+        (when-not (= token (:demo/capture @(:world service)))
+          (when (>= attempt 300)
+            (throw (ex-info "Simulation did not accept formation world" {})))
+          (Thread/sleep 100)
+          (recur (inc attempt))))
+      ;; Intentional: restore the paused pipeline on any failed handoff,
+      ;; including interrupted waits, then propagate the original failure.
+      (catch Throwable t
+        (swap! config restore-pipeline-settings previous-config)
+        (throw t)))
     (swap! config #(-> %
                        (dissoc :selection :follow-eid :ui/active-domain :zoom-min)
                        (assoc :mode :fit-all :smoothing 0.0 :volumetric? true

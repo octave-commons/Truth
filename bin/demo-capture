@@ -21,8 +21,8 @@ if ss -ltn "sport = :$TRUTH_DEMO_PORT" | tail -n +2 | rg -q .; then
 fi
 mkdir -p "$out"
 scratch=$(mktemp -d /tmp/truth-demo.XXXXXX)
-diagnostics=".ημ/diagnostics/demo-$(date -u +%Y%m%dT%H%M%SZ)"
-mkdir -p "$diagnostics"
+mkdir -p .ημ/diagnostics
+diagnostics=$(mktemp -d ".ημ/diagnostics/demo-$(date -u +%Y%m%dT%H%M%SZ)-$$-XXXXXX")
 app_pid=''
 x_pid=''
 video_pid=''

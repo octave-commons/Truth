@@ -1,0 +1,66 @@
+{
+  "complete": true,
+  "outcomes": [
+    {
+      "name": "demo-test",
+      "pid": 470862,
+      "exit_code": 0,
+      "reaped": true,
+      "finished_at": "2026-10-07T01:35:22.971787+00:00",
+      "stdout_sha256": "2171a9f5c3504c3fdc2a5a279f19434847959ad306b652e99f34daad2c203fc4",
+      "stderr_sha256": "1a0fce36442f6ad7e364559099e77fa7f5ba79561ba86a03f052c4a83e6a8c51"
+    },
+    {
+      "name": "full-suite",
+      "pid": 475144,
+      "exit_code": 0,
+      "reaped": true,
+      "finished_at": "2026-10-07T01:36:15.546311+00:00",
+      "stdout_sha256": "630c71eb0fc6f55bd7a1d0110268e9bd108df80c77353de47627aef48f433fc3",
+      "stderr_sha256": "2817735274f4814045057e8eb372de1409cff7f3400ae8bd4bf7892aa4bf23d1"
+    },
+    {
+      "name": "strict",
+      "pid": 481116,
+      "exit_code": 0,
+      "reaped": true,
+      "finished_at": "2026-10-07T01:37:35.815003+00:00",
+      "stdout_sha256": "d45ac25f614cff300d13b35b8608e654871063f7d8a2d2dd2c96c4d7c4f3001d",
+      "stderr_sha256": "817a0d7dab058178a8a132ac7b828fd0fc612286baaed90880718a56d3981e3d"
+    },
+    {
+      "name": "dev-kondo",
+      "pid": 492170,
+      "exit_code": 0,
+      "reaped": true,
+      "finished_at": "2026-10-07T01:37:35.942453+00:00",
+      "stdout_sha256": "44442ef44574a9105334ed987a265ffd531ea405846a947dac63ea8a819957a7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "demo-capture-syntax",
+      "pid": 492183,
+      "exit_code": 0,
+      "reaped": true,
+      "finished_at": "2026-10-07T01:37:35.988105+00:00",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "formation-capture-syntax",
+      "pid": 492194,
+      "exit_code": 0,
+      "reaped": true,
+      "finished_at": "2026-10-07T01:37:36.017486+00:00",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "final_guard": {
+    "head": "8487159bfcf6f7d805018e270174c9f3cd35e8ea",
+    "source_hashes_match": true,
+    "tracked_source_count": 342,
+    "source_diff_empty": true
+  },
+  "runner_sha256": "17457651306e18e4fb1e9a3b63f0df3095f0a620e7daf4bc92726cb8e2d9417f"
+}

@@ -1,0 +1,8 @@
+CLOSED-FILES.txt
+RESULT.md
+SHA256SUMS
+command.json
+focused.clj
+result.json
+stderr
+stdout

@@ -1,0 +1,9 @@
+{
+  "name": "dev-kondo",
+  "pid": 492170,
+  "exit_code": 0,
+  "reaped": true,
+  "finished_at": "2026-10-07T01:37:35.942453+00:00",
+  "stdout_sha256": "44442ef44574a9105334ed987a265ffd531ea405846a947dac63ea8a819957a7",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

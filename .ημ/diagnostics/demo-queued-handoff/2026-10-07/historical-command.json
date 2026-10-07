@@ -1,0 +1,15 @@
+{
+  "started_at": "2026-10-07T02:21:34.728297+00:00",
+  "command": [
+    "/usr/local/bin/clojure",
+    "-J-Xms64m",
+    "-J-Xmx512m",
+    "-Sdeps",
+    "{:paths [\"src\" \"resources\" \"dev\"] :deps {nrepl/nrepl {:mvn/version \"1.0.0\"}}}",
+    "-M",
+    "/home/err/spaces/foresight/.worktrees/truth-current-composition/.\u03b7\u03bc/diagnostics/demo-queued-handoff/2026-10-07/focused-runner.clj",
+    "historical-file-overlay",
+    "/home/err/spaces/foresight/.worktrees/truth-current-composition/.\u03b7\u03bc/diagnostics/demo-queued-handoff/2026-10-07/historical-demo.clj"
+  ],
+  "head": "760ea79d017f4e012943789f896dfdfdb0a173b1"
+}
