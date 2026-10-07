@@ -1,0 +1,29 @@
+{
+  "operation": "git merge-file --union",
+  "records": [
+    {
+      "path": ".\u03b7\u03bc/receipts.edn",
+      "base_bytes": 54260,
+      "ours_append_bytes": 3697,
+      "theirs_append_bytes": 1475,
+      "merged_sha256": "97b06a58366171eb925bfd725e4548975119a70c230106a75e515da7634efe8f",
+      "verification": "Exact unchanged base + complete ours append + complete theirs append; no line reordered within either parent."
+    },
+    {
+      "path": ".\u03b7\u03bc/session-mycology/ledger.md",
+      "base_bytes": 30055,
+      "ours_append_bytes": 676,
+      "theirs_append_bytes": 748,
+      "merged_sha256": "1e8ddb35441942e1d349703a7a6cc9ab132c088858a9434ae42a7ba2de99fa62",
+      "verification": "Exact unchanged base + complete ours append + complete theirs append; no line reordered within either parent."
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "base_bytes": 623486,
+      "ours_append_bytes": 3053,
+      "theirs_append_bytes": 2724,
+      "merged_sha256": "0e1d2450b9e49532431a9b18ce2a5f600d5ff57cba48e87ccbc4fdfc20327ba9",
+      "verification": "Exact unchanged base + complete ours append + complete theirs append; no line reordered within either parent."
+    }
+  ]
+}

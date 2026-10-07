@@ -468,3 +468,12 @@
   spore: none
   receipt-refs: star-substep-heating,4f4eb63,1791336544699-0.8ww729o9y3efmfr7xuv
   note: A known relative solver cannot be widened to its own moving parents without checking the shared world-frame reconstruction. Derive the two-body limit before touching states, verify the actual cited method, and preserve missing historical data as missing. Existing research and evidence skills suffice; no new spore.
+- ts: 2026-10-07T01:22:27.988182606Z
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Separate reachable disabled-emitter bugs from conditional stale-component cases
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,4f4eb63
+  note: Empty-column merge semantics identify stale ownership, but lifecycle order determines whether the retained payload is nonzero: ordinary thermal expiry first writes zero ease, which still invokes a clamp. Trace actual control paths and consumers before claiming repeated force or heat. Preserve existing card owners and serialize comments after gated transitions. No new spore; existing audit discipline suffices.

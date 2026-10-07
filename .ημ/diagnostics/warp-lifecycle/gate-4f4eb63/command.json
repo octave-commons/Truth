@@ -1,0 +1,31 @@
+{
+  "head": "4f4eb63ec07ffd4678c3bb635f7c11e4b6c30223",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle",
+  "command": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "move",
+    "fix-warp-disabled-stale-write",
+    "--to",
+    "review",
+    "--config",
+    "openhax.kanban.edn"
+  ],
+  "runtime_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "source_sha256": {
+    "src/domain/intervention.clj": "eed4697f04bf96ce8bdabc0e08b64c63bd296a0d9cc958b49574bbef643c74a8",
+    "src/domain/ecs/registry.clj": "eb5df3121fac4eb1c2e4bb1cb94b5e13984409938e3dffa3b4a6ad59a292a3dc",
+    "test/domain/warp_lifecycle_test.clj": "3c15b3fae0194f0d413a347224d6e7f835af90825c16781a699859bb472393ad",
+    "deps.edn": "ca96620b1410a3184b135d2439dfea1b5ae7c4468646382294fdee1b403b4e8e",
+    "openhax.kanban.edn": "15aaca2bdd649d2c354e43d87ca944ab01452c616cbee2e85bdf42f7ffb8c262",
+    "bin/analyze": "8577cc50b238ab35865eba64fe72a39b96c91139540993273d3c8b2da5c95565"
+  },
+  "environment_overrides": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g",
+    "_JAVA_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "scope": "Canonical Rheos transition executes configured full tests and all six strict stages. No gate override, benchmark or native gameplay claim.",
+  "started_at": "2026-10-07T01:17:20.301353+00:00",
+  "native_overlap": "Same retained native process running; observer restored before start. Correctness/static gate only, no timing claim.",
+  "pid": 366674
+}
