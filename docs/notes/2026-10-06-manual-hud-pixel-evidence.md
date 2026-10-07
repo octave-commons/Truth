@@ -42,3 +42,37 @@ Code explains these pixels:
 Interpretation: reduce permanent diagnostic density in manual mode and give
 existing overlays coordinated bounds. This does not show that world rendering,
 wire markers, heading cues, camera restoration, or flight feel are solved.
+
+## 2026-10-07 confirmation in young manual flight
+
+A separately operated `bounded-look-200/runs/attempt-01` diagnostic, pinned to
+production source `b395c4049718f7ce015ddf25fc0a192d97821373`, supplied a new
+1280×720 PNG displaying tick **398**, **3RD PERSON**, 1,000 bodies, one resolved
+body, zero stars and zero planets. This planning update did not start or interact
+with that runtime. The [portable PNG copy](../../.ημ/diagnostics/manual-hud-plan/tick-398-bounded-look-200.png)
+preserves all 173,050 bytes of the supplied
+`frame-1791368564756266015-0f08a53d.png`; SHA256:
+`19f1bf1d40b46bbd0b51ec40add2c4c7584bbcc0df08dc29e543bb25247979d0`.
+The earlier images, manifest and observations above remain unchanged.
+
+Direct pixel observation: “A dense core condenses. +3 quanta” again reaches
+the right-side Actions rows. The bottom observer readouts, bars and passive
+legend are crowded; the eleven-line diagnostics remain prominent in the upper
+left. This is new evidence for the same existing cards, not a new HUD scope.
+
+The production and planning copies of `src/infra/render/hud.clj` have identical
+SHA256 `8b63d1a1797ae0be97ccdacdb76fb25097303604a77f8fe50a1020e6fa176cb0`.
+Its `notif-entry` and `controls-hud` retain the coordinates described above:
+notification origin `(500,520)`, scale 2.8, versus action panel
+`(1012,486)`–`(1264,686)`. Observer lines independently use y=624/648/672/694,
+and the passive legend uses y=700 at this framebuffer size.
+
+The frame loop concatenates observer text before action text, while the existing
+[`render-hud-pass`](../../src/infra/render/scene/setup.clj) draws all HUD
+rectangles before all text. Thus the evidence supports colliding text regions
+and action glyphs drawing over notification glyphs; it does **not** establish
+that a later panel-background pass occluded the message. Shared measured layout
+remains the proposed repair boundary.
+
+This single image does not qualify resizing, selected-card capacity, readability
+after a change, callback latency, FPS, physical flight, binding or later gameplay.

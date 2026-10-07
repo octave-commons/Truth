@@ -1,15 +1,16 @@
 ---
-uuid: "manual-hud-overlay-spacing"
-title: "Keep existing flight overlays inside shared framebuffer regions"
-status: incoming
-priority: P1
+category: "specs"
 labels: "infra, render, ux, spark-flight"
-created_at: "2026-10-06T19:07:22Z"
-source: "kanban/tasks/manual-hud-overlay-spacing.md"
-category: specs
-estimate: 3
 parent: "flight-hud-and-cues"
+write-id: "1791369854673-0.rtx3azd5qfm5bmi8qks"
+source: "kanban/tasks/manual-hud-overlay-spacing.md"
+title: "Keep existing flight overlays inside shared framebuffer regions"
+priority: "P1"
+status: "incoming"
+estimate: "3"
 design: "docs/designs/manual-flight-hud.md"
+uuid: "manual-hud-overlay-spacing"
+created_at: "2026-10-06T19:07:22Z"
 ---
 
 # Existing HUD overlays without collisions
@@ -51,3 +52,9 @@ Incoming for design review. Red pure layout invariants for containment,
 separation and retained information; focused render/menu tests, full tests and
 strict analysis; native screenshots at all three sizes with the event/palette
 case present. No implementation or visual acceptance is claimed by this card.
+
+---
+
+2026-10-07 root planning refinement: the unmodified native tick398 PNG (SHA25619f1bf1d40b46bbd0b51ec40add2c4c7584bbcc0df08dc29e543bb25247979d0,1280x720, production b395c404) confirms the existing notification/Actions text collision. Existing design now explicitly retains full event, observation note, quest, action labels/keys/costs, observer resources/bars and binding/commitment; only ambient/passive help may yield. Early960x540 actual detailed-inspector feasibility must reserve returned geometry and measured text. If mandatory content cannot fit at scale>=1.3 with8px separation, report design capacity failure; no clipping/hiding/inspector move or implementation-success claim. This keeps the same3point spacing scope and quiet-telemetry dependency. Local root review checked docs against actual PNG and source; current plan still requires hosted planning convergence before Ready. Card remains Incoming; no code or resized visual acceptance.
+
+---

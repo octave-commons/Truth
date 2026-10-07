@@ -81,3 +81,40 @@ binding/commitment semantics. This amendment only preserves their visible data.
 No shader, font replacement, new UI dependency, camera spring, wire-marker
 redesign, new key binding, world mutation, or later Gate gameplay is included.
 Review the proposed information budget before either child is marked Ready.
+
+## 2026-10-07 refinement: retained content and layout capacity
+
+The [new tick-398 observation](../notes/2026-10-06-manual-hud-pixel-evidence.md#2026-10-07-confirmation-in-young-manual-flight)
+confirms the existing spacing defect in another ordinary manual-view frame.
+This clarification stays within `manual-hud-overlay-spacing` (3 points); it
+does not admit implementation or move either Incoming child.
+
+- **Mandatory when present:** the full current event, observation note and
+  quest; all action keys, labels, costs and affordability indications; observer
+  resources, state, coherence/focus readouts and bars; and the applicable
+  binding or commitment readout. Wrap/reflow complete text in measured bounds;
+  do not remove information to make a region fit.
+- **Yieldable:** only the ambient line and passive-controls help may temporarily
+  yield to an open drawer or selected-card reservation. Restore them when their
+  region is available again. Yielding does not alter the underlying narrative
+  or input state.
+- **Reserved:** existing shell/menu regions, diagnostics, view badge and
+  inspector remain outside this child's placement authority. Reserve their
+  actual returned geometry and measured text extent, not merely text origins.
+  Existing menu hit regions remain authoritative.
+
+Make the **960×540 selected-card case an early feasibility test**, including a
+detailed card produced by the current inspector, the full captured event,
+observation/quest text, action palette and binding/commitment readout. Record
+the actual content and measured reserved bounds; do not choose smaller invented
+card bounds or omit facts to obtain a passing case. This complements, rather
+than replaces, the other sizes and drawer/absent-observer cases above.
+
+If complete mandatory content cannot fit after permitted reflow and yielding,
+with the existing reserved inspector, scale ≥1.3 and ≥8px separation, stop and
+report a **design capacity failure** with those measured bounds. Do not silently
+shrink below the floor, clip, hide mandatory content, draw through a reservation,
+move the inspector or treat the unwrapped Narrator panel as overflow access.
+Resolve that evidence through design/scope review before claiming the spacing
+acceptance. This specifies an implementation stopping condition, not a new
+runtime error interface or an assertion that all selected-card cases already fit.
