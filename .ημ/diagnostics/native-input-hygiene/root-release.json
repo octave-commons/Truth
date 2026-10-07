@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-07T06:13:58.088988+00:00",
+  "reviewer": "root",
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "inherited_closed_evidence": "954a7498494fad76c0391c4178fce71131b080b4",
+  "preparation_hashes": {
+    "runner.py": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+    "snapshot.clj": "45d752a5122e498da1f4bbc39dd5233e07d3662a5c55a0e58311d72339bae03a",
+    "callback-probe.clj": "dcad4e35765727108db06ea4c502f9577e9f7a780bdadd9cd140c9b94d70260e",
+    "PLAN.md": "a49de3fe4e1c114be068c436aef0c8e85fcb9226956fd0212a2015dff76b382c"
+  },
+  "result": "PASS for bounded callback characterization and separate270swork300stotal input smoke",
+  "scope": "Canonical nativeverification InProgress3 comment inherited from954a749; no physical movement/world mutation/source change; root only executes",
+  "review": "Actual callback/menu/loop inspected; balanced tracked mouse pair; read-only postconditions without gesture retry; smalllook bounds and readbacks; owned identities/hash/heap/cleanup guards retained",
+  "execution": "not started"
+}

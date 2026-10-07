@@ -1,0 +1,685 @@
+{
+  "audit_created_at": "2026-10-07T06:24:43.750366+00:00",
+  "scope": "Offline audit of closed native attempt-01. No native calls, process signals, JVMs, or input were performed by the auditor.",
+  "run": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/runs/attempt-01",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "outcome": "Failed because the final +100Y postcondition read exhausted the work deadline; final +100Y UI behavior remains unverified.",
+  "started_at": "2026-10-07T06:15:00.845299+00:00",
+  "ended_at": "2026-10-07T06:19:32.218222+00:00",
+  "elapsed_seconds": 271.37296727500143,
+  "limits": {
+    "work_seconds": 270,
+    "total_seconds": 300,
+    "closed_within_total": true,
+    "configured_child_output_limit_bytes": 33554432,
+    "configured_game_heap": "-Xms256m -Xmx2g",
+    "configured_client_heap": "-Xms64m -Xmx256m"
+  },
+  "event_counts": {
+    "command": 45,
+    "spawn": 45,
+    "exit": 42,
+    "ready": 1,
+    "request": 9,
+    "input-observation": 11,
+    "look-expectation": 2,
+    "reaped": 46,
+    "timeout": 1,
+    "failure": 1
+  },
+  "requests": [
+    {
+      "request_id": "1791353733807405224-186bb57f",
+      "operation": "tap",
+      "args": [
+        "r"
+      ],
+      "elapsed_seconds": 32.99896308199823,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:15:42.630640+00:00"
+      }
+    },
+    {
+      "request_id": "1791353772560353155-c4274304",
+      "operation": "click",
+      "args": [
+        "spark"
+      ],
+      "elapsed_seconds": 71.79661754799963,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:16:30.545128+00:00"
+      }
+    },
+    {
+      "request_id": "1791353796620384180-d2d938e9",
+      "operation": "click",
+      "args": [
+        "fine"
+      ],
+      "elapsed_seconds": 95.85414632700122,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:16:55.331496+00:00"
+      }
+    },
+    {
+      "request_id": "1791353832018791162-9b29ef6f",
+      "operation": "frame",
+      "args": [],
+      "elapsed_seconds": 131.18244798999876,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:17:12.660498+00:00"
+      }
+    },
+    {
+      "request_id": "1791353852037164095-f9d82400",
+      "operation": "click",
+      "args": [
+        "cruise"
+      ],
+      "elapsed_seconds": 151.19308548499976,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:17:51.451894+00:00"
+      }
+    },
+    {
+      "request_id": "1791353882469647574-44f386f5",
+      "operation": "click",
+      "args": [
+        "spark"
+      ],
+      "elapsed_seconds": 181.63670957299837,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:18:23.053348+00:00"
+      }
+    },
+    {
+      "request_id": "1791353910391154158-2b35040c",
+      "operation": "tap",
+      "args": [
+        "Tab"
+      ],
+      "elapsed_seconds": 209.56966898899918,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:18:45.003265+00:00"
+      }
+    },
+    {
+      "request_id": "1791353935165761402-bfd864a4",
+      "operation": "look",
+      "args": [
+        "100",
+        "0"
+      ],
+      "elapsed_seconds": 234.42548649200035,
+      "response": {
+        "ok": true,
+        "finished_at": "2026-10-07T06:19:09.651530+00:00"
+      }
+    },
+    {
+      "request_id": "1791353963150300342-0f03ac88",
+      "operation": "look",
+      "args": [
+        "0",
+        "100"
+      ],
+      "elapsed_seconds": 262.42282095300106,
+      "response": {
+        "ok": false,
+        "error": "TimeoutExpired(['/usr/local/bin/clojure', '-J-Xms64m', '-J-Xmx256m', '-M:demo-client', '((load-file \"/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\\\\u03b7\\\\u03bc/diagnostics/native-input-hygiene/snapshot.clj\") {:pid 2042305 :boot \"b04f7fb6-ea65-4b47-8866-73e24a6887f6\" :start \"2120112\" :cwd \"/home/err/spaces/foresight/.worktrees/truth-native-input-probe\" :display \":1\" :port \"7898\" :world 2143518718 :window 136866649785600})'], 0.8166751989992918)",
+        "finished_at": "2026-10-07T06:19:31.024069+00:00"
+      }
+    }
+  ],
+  "request_totals": {
+    "submitted": 9,
+    "results": 9,
+    "ok_true": 8,
+    "ok_false": 1
+  },
+  "owned_child_coverage": {
+    "spawn_events": 45,
+    "unique_spawn_pids": 45,
+    "raw_reaped_events": 46,
+    "unique_reaped_pids": 45,
+    "all_spawned_pids_have_reap_record": true,
+    "fully_recorded_start_boot_cwd_exe_identities": 44,
+    "fast_child_identity_limits": [
+      {
+        "at": "2026-10-07T06:16:42.896312+00:00",
+        "elapsed_seconds": 102.05105441499836,
+        "kind": "spawn",
+        "label": "017-menu-position",
+        "identity": {
+          "pid": 2052049,
+          "returncode_at_sample": 0,
+          "proc_sample_unavailable": "FileNotFoundError(2, 'No such file or directory')"
+        }
+      }
+    ],
+    "duplicate_reap_records": [
+      {
+        "pid": 2068835,
+        "count": 2,
+        "records": [
+          {
+            "at": "2026-10-07T06:19:31.023820+00:00",
+            "elapsed_seconds": 270.1785598310016,
+            "kind": "reaped",
+            "label": "inspect",
+            "pid": 2068835,
+            "returncode": 143
+          },
+          {
+            "at": "2026-10-07T06:19:31.070982+00:00",
+            "elapsed_seconds": 270.225701637999,
+            "kind": "reaped",
+            "label": "044-inspect",
+            "pid": 2068835,
+            "returncode": 143
+          }
+        ]
+      }
+    ],
+    "ordinary_exit_event_codes": {
+      "0": 42
+    },
+    "nonzero_unique_final_reaps": [
+      {
+        "pid": 2068835,
+        "label": "044-inspect",
+        "returncode": 143
+      },
+      {
+        "pid": 2042305,
+        "label": "002-runtime",
+        "returncode": 143
+      }
+    ],
+    "interpretation": "The same timed-out client PID is reaped at timeout and logged again in final cleanup under a numbered label. Forty-six raw records cover forty-five child PIDs, not forty-six children. One fast xdotool child had exited 0 before full /proc identity sampling; its Popen-owned PID and reap are recorded. Supervisor is not one of its own child spawns."
+  },
+  "successful_input_observations": [
+    {
+      "at": "2026-10-07T06:15:42.630150+00:00",
+      "elapsed_seconds": 41.78497960800087,
+      "kind": "input-observation",
+      "label": "tap-r",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "none",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": null
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:16:24.916675+00:00",
+      "elapsed_seconds": 84.07145356399997,
+      "kind": "input-observation",
+      "label": "menu-position",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "none",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          274.0,
+          13.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:16:30.545028+00:00",
+      "elapsed_seconds": 89.69975994700144,
+      "kind": "input-observation",
+      "label": "spark-toggle",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "spark",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          274.0,
+          13.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:16:49.098949+00:00",
+      "elapsed_seconds": 108.25368671099932,
+      "kind": "input-observation",
+      "label": "menu-position",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "spark",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          1201.0,
+          389.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:16:55.331432+00:00",
+      "elapsed_seconds": 114.48615856700053,
+      "kind": "input-observation",
+      "label": "range-fine",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "spark",
+        "displacement": 10000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          1201.0,
+          389.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:17:44.831543+00:00",
+      "elapsed_seconds": 163.98633954199977,
+      "kind": "input-observation",
+      "label": "menu-position",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "spark",
+        "displacement": 10000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          1117.0,
+          389.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:17:51.451523+00:00",
+      "elapsed_seconds": 170.60625507200166,
+      "kind": "input-observation",
+      "label": "range-cruise",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "spark",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          1117.0,
+          389.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:18:15.855646+00:00",
+      "elapsed_seconds": 195.01037500999882,
+      "kind": "input-observation",
+      "label": "menu-position",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "spark",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          274.0,
+          13.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:18:23.053277+00:00",
+      "elapsed_seconds": 202.2080052679994,
+      "kind": "input-observation",
+      "label": "spark-toggle",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": true,
+        "domain": "none",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": false,
+        "pick_pending": false,
+        "cursor": [
+          274.0,
+          13.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:18:45.003194+00:00",
+      "elapsed_seconds": 224.15792284200143,
+      "kind": "input-observation",
+      "label": "tap-Tab",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": false,
+        "domain": "none",
+        "displacement": 300000000000000.0,
+        "yaw": -90.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": true,
+        "pick_pending": false,
+        "cursor": [
+          274.0,
+          13.0
+        ]
+      },
+      "matched": true
+    },
+    {
+      "at": "2026-10-07T06:19:09.651456+00:00",
+      "elapsed_seconds": 248.80618682500062,
+      "kind": "input-observation",
+      "label": "look",
+      "attempt": 0,
+      "state": {
+        "mode": "manual",
+        "free": false,
+        "domain": "none",
+        "displacement": 300000000000000.0,
+        "yaw": -89.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": true,
+        "pick_pending": false,
+        "cursor": [
+          374.0,
+          13.0
+        ]
+      },
+      "matched": true
+    }
+  ],
+  "last_look": {
+    "request_elapsed_seconds": 262.42282095300106,
+    "expectation": {
+      "at": "2026-10-07T06:19:29.960379+00:00",
+      "elapsed_seconds": 269.1151577870005,
+      "kind": "look-expectation",
+      "requested_pixels": [
+        0,
+        100
+      ],
+      "before": {
+        "mode": "manual",
+        "free": false,
+        "domain": "none",
+        "displacement": 300000000000000.0,
+        "yaw": -89.0,
+        "pitch": -20.0,
+        "sensitivity": 0.01,
+        "looking": true,
+        "pick_pending": false,
+        "cursor": [
+          374.0,
+          13.0
+        ]
+      },
+      "expected_yaw": -89.0,
+      "expected_pitch": -21.0,
+      "tolerance_degrees": 0.02
+    },
+    "actual_command": {
+      "at": "2026-10-07T06:19:29.961560+00:00",
+      "elapsed_seconds": 269.116326121999,
+      "kind": "command",
+      "command": [
+        "xdotool",
+        "mousemove_relative",
+        "--",
+        "0",
+        "100"
+      ],
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "display": ":1",
+      "port": 7898,
+      "stdout": "043-look.stdout",
+      "stderr": "043-look.stderr"
+    },
+    "postcondition_stdout_bytes": 0,
+    "failure": {
+      "at": "2026-10-07T06:19:31.024401+00:00",
+      "elapsed_seconds": 270.1791294149989,
+      "kind": "failure",
+      "error": "TimeoutExpired(['/usr/local/bin/clojure', '-J-Xms64m', '-J-Xmx256m', '-M:demo-client', '((load-file \"/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\\\\u03b7\\\\u03bc/diagnostics/native-input-hygiene/snapshot.clj\") {:pid 2042305 :boot \"b04f7fb6-ea65-4b47-8866-73e24a6887f6\" :start \"2120112\" :cwd \"/home/err/spaces/foresight/.worktrees/truth-native-input-probe\" :display \":1\" :port \"7898\" :world 2143518718 :window 136866649785600})'], 0.8166751989992918)"
+    },
+    "command_exit": {
+      "at": "2026-10-07T06:19:29.998724+00:00",
+      "elapsed_seconds": 269.15346427799886,
+      "kind": "exit",
+      "label": "look",
+      "returncode": 0
+    },
+    "claim": "The +100Y xdotool command exited 0; it was not repeated. No completed subsequent readback exists, so neither success nor a UI defect is established."
+  },
+  "verified_controls": [
+    "R manual readback",
+    "Spark open",
+    "Fine displacement 10000000",
+    "Cruise displacement 300000000000000",
+    "Spark close",
+    "Tab locks manual look with no drawer or pending pick",
+    "+100X yaw -90 to -89 at sensitivity 0.01"
+  ],
+  "unverified_or_omitted": [
+    "+100Y sent but postcondition read timed out",
+    "-100X not attempted",
+    "-100Y not attempted",
+    "extra unlock/relock Tab taps not attempted",
+    "No movement, natural target approach, binding, commitment, or Gate acceptance established"
+  ],
+  "cleanup": {
+    "outcome": "failed",
+    "cleanup_errors": [],
+    "unreaped_children": [],
+    "budget_exceeded": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false
+  },
+  "process_absence_limit": "Root separately reported all owned PIDs absent. This audit checks preserved spawn/reap/closure records only and makes no fresh process inspection.",
+  "unchanged_inputs": {
+    "source_files": 186,
+    "source_mismatches": [],
+    "preparation_files": 4,
+    "preparation_mismatches": [],
+    "original_manifest_checks": [
+      {
+        "path": "runner.py",
+        "expected_sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+        "matches": true
+      },
+      {
+        "path": "snapshot.clj",
+        "expected_sha256": "45d752a5122e498da1f4bbc39dd5233e07d3662a5c55a0e58311d72339bae03a",
+        "matches": true
+      },
+      {
+        "path": "callback-probe.clj",
+        "expected_sha256": "dcad4e35765727108db06ea4c502f9577e9f7a780bdadd9cd140c9b94d70260e",
+        "matches": true
+      },
+      {
+        "path": "PLAN.md",
+        "expected_sha256": "a49de3fe4e1c114be068c436aef0c8e85fcb9226956fd0212a2015dff76b382c",
+        "matches": true
+      },
+      {
+        "path": "preparation-hashes.json",
+        "expected_sha256": "79382b6e5d900fce3fca57d7b3fb278a4e36619ff772c431c96982df822640a7",
+        "matches": true
+      },
+      {
+        "path": "COPY-PROOF.json",
+        "expected_sha256": "563bd3f679a5f4d260f4a0303032cec11fab4b8b3c4ce28a913dccf87c05e5bf",
+        "matches": true
+      },
+      {
+        "path": "STATIC-CHECKS.json",
+        "expected_sha256": "b0eb41e8215318a84814f96e40f8c50c5297894a8c89a294f867b41e1a74421f",
+        "matches": true
+      },
+      {
+        "path": "PREPARATION-FILES.txt",
+        "expected_sha256": "53186002550c5883eb9b681253baf6d801e30f43ab44ebaa4df5a8e78ff4931d",
+        "matches": true
+      }
+    ]
+  },
+  "raw_evidence": [
+    {
+      "path": "operations.jsonl",
+      "bytes": 60321,
+      "sha256": "eddba2fa7a576a357d11bc9fa796c00ade670e82bd369684badc4550283f2a03"
+    },
+    {
+      "path": "closed.json",
+      "bytes": 1503,
+      "sha256": "3f09a185203e03167f919c663db7ed921fb9b56aa8adc3ab14c3f1f6c9261966"
+    },
+    {
+      "path": "state.json",
+      "bytes": 1503,
+      "sha256": "3f09a185203e03167f919c663db7ed921fb9b56aa8adc3ab14c3f1f6c9261966"
+    },
+    {
+      "path": "source-hashes.json",
+      "bytes": 18753,
+      "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61"
+    },
+    {
+      "path": "preparation-hashes.json",
+      "bytes": 345,
+      "sha256": "79382b6e5d900fce3fca57d7b3fb278a4e36619ff772c431c96982df822640a7"
+    },
+    {
+      "path": "044-inspect.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "044-inspect.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/1791353733807405224-186bb57f.json",
+      "bytes": 70,
+      "sha256": "c49791fb766febea2ac382aa9a4cd821bae99bc3726918ded55817e6551abad1"
+    },
+    {
+      "path": "results/1791353772560353155-c4274304.json",
+      "bytes": 70,
+      "sha256": "c60a165bc1986636688528333bef41f9278db3901468a9d992701d00943f370d"
+    },
+    {
+      "path": "results/1791353796620384180-d2d938e9.json",
+      "bytes": 70,
+      "sha256": "58ab302c00e42ffa0d23d9d884365c69e58d72dec4f67bfa5848607a9cc065ce"
+    },
+    {
+      "path": "results/1791353832018791162-9b29ef6f.json",
+      "bytes": 70,
+      "sha256": "9ca9bab19a8f8ef871047461e225485e5506ad4b1fbfdd28ce9a7fe28e86c230"
+    },
+    {
+      "path": "results/1791353852037164095-f9d82400.json",
+      "bytes": 70,
+      "sha256": "222262ada2fe68fc6ec68d0e2e070d6b7e91f3e0d4c2570223a325aaae6af75c"
+    },
+    {
+      "path": "results/1791353882469647574-44f386f5.json",
+      "bytes": 70,
+      "sha256": "60f3077d10f316366822d078caff02a1fea7cd55c237cbd455286032339da3c1"
+    },
+    {
+      "path": "results/1791353910391154158-2b35040c.json",
+      "bytes": 70,
+      "sha256": "9454707ff873b4e57de2b2636c0eb38b85e29b8d63ae40d52676de93dd244f95"
+    },
+    {
+      "path": "results/1791353935165761402-bfd864a4.json",
+      "bytes": 70,
+      "sha256": "cc1dfcc150d26a161787a46831706f3a4b9fcd945e12a3af1cb18ffefb32d147"
+    },
+    {
+      "path": "results/1791353963150300342-0f03ac88.json",
+      "bytes": 569,
+      "sha256": "06f9a2c4a2e28638d3c216fe0abee0681925acef473c6b80b74de416f72686a7"
+    }
+  ],
+  "png_artifact": [
+    {
+      "path": "frame-1791353832018791162-9b29ef6f.png",
+      "bytes": 217618,
+      "sha256": "42042b6ff458247099b91f628925c73ef3dbc1dbfb6f063b347bd5355670a7e1"
+    }
+  ],
+  "historical_causality_limit": "These successful hygiene gestures do not retrospectively prove the earlier 25-minute run was caused by duplicate native releases. The separate callback probe establishes the callback/explicit-consume seam only."
+}

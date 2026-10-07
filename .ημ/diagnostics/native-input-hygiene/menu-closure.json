@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-07T06:36:08.109614+00:00",
+  "execution_worktree": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+  "publication_worktree": "/home/err/spaces/foresight/.worktrees/truth-input-menu-evidence",
+  "copied_artifacts_identical": true,
+  "root_review": "callbacksource/output and nativeimage inspected; runtime_scout independently verified hashes/requests/reaps",
+  "independent_callback_audit": "fivecasespassed,186source4prepstable,noGLFWinit/world,notX11causality",
+  "owned_processes_absent": {
+    "2042265": true,
+    "2042295": true,
+    "2042305": true
+  },
+  "receipt_reflection_prefixes_preserved": true,
+  "board_changes": "none;nativeownerremainsInProgress3"
+}

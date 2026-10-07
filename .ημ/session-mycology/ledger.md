@@ -530,3 +530,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,f2e8b24
   note: A successful X input command does not prove delivered application state. A balanced click followed by unconditional release may toggle twice; isolate callback and native delivery before another costly formation wait. Sequence dependent operator calls only after inspecting success. No new spore.
+- ts: 2026-10-07T06:36:08.106715316Z
+  session: /home/err/spaces/foresight/.worktrees/truth-input-menu-evidence
+  task: Native balanced menu and late readback evidence
+  p-efficiency: 0.5
+  p-friction: 0.5
+  p-skill-candidate: 0.0
+  spore: none
+  receipt-refs: 9f055ce,PR41
+  note: Budget the observation as part of a gesture. Root turn latency can consume a short native run; use a reviewed serialized controller that checks every response and reserves input time, never extend the live budget or reinterpret unobserved input as success. No new spore.
