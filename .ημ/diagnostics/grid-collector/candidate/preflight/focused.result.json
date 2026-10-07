@@ -1,0 +1,20 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:test",
+    "-n",
+    "domain.spatial.grid-query-contract-test",
+    "-n",
+    "domain.spatial.index-test",
+    "-n",
+    "domain.physics.cache-test"
+  ],
+  "started_at": "2026-10-07T04:49:50.131970+00:00",
+  "finished_at": "2026-10-07T04:49:57.464307+00:00",
+  "pid": 1558535,
+  "exit_code": 0,
+  "reaped": true,
+  "inputs_unchanged": true
+}

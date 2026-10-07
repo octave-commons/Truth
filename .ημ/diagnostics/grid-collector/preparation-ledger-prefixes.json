@@ -1,0 +1,26 @@
+{
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "ledgers": {
+    ".\u03b7\u03bc/receipts.edn": {
+      "base_bytes": 63792,
+      "base_sha256": "5b578d0c44e188bf2b1001c7c621a1fecd7e67738bf394a7ee6578fddf84f04a",
+      "pre_agent_append_bytes": 63792,
+      "pre_agent_append_sha256": "5b578d0c44e188bf2b1001c7c621a1fecd7e67738bf394a7ee6578fddf84f04a",
+      "base_prefix_preserved": true
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "base_bytes": 34214,
+      "base_sha256": "e855ef15b8da2f3c5c1f2a202960b8f5714b3dd9b02ce8b24f91e6b993124071",
+      "pre_agent_append_bytes": 34214,
+      "pre_agent_append_sha256": "e855ef15b8da2f3c5c1f2a202960b8f5714b3dd9b02ce8b24f91e6b993124071",
+      "base_prefix_preserved": true
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "base_bytes": 634461,
+      "base_sha256": "1b3c25bdee52edc8026ab37403f47c81cf7f37fb0086dc2eaa0fd8dafe1fab8e",
+      "pre_agent_append_bytes": 636601,
+      "pre_agent_append_sha256": "4cb53418c8696a89f5e3f5b10504b91948f17b0fade3fca93f360c750f8f4d65",
+      "base_prefix_preserved": true
+    }
+  }
+}

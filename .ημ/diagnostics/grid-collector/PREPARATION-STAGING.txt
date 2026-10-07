@@ -1,0 +1,11 @@
+test/domain/spatial/grid_query_contract_test.clj
+.ημ/diagnostics/grid-collector/PLAN.md
+.ημ/diagnostics/grid-collector/evidence/grid.clj
+.ημ/diagnostics/grid-collector/preparation-append-verification.json
+.ημ/diagnostics/grid-collector/preparation-ledger-prefixes.json
+.ημ/diagnostics/grid-collector/source-hashes.json
+.ημ/diagnostics/grid-collector/static-checks.json
+.ημ/diagnostics/grid-collector/PREPARATION-INVENTORY.json
+.ημ/diagnostics/grid-collector/PREPARATION-STAGING.txt
+.ημ/receipts.edn
+.ημ/session-mycology/ledger.md

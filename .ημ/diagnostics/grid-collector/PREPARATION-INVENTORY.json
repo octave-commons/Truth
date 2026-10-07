@@ -1,0 +1,44 @@
+{
+  "base_head": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "status": "Preparation snapshot; runtime qualification and baseline checkpoint remain root-owned.",
+  "excluded_root_owned_paths": [
+    ".\u03b7\u03bc/diagnostics/grid-collector/baseline/",
+    "kanban/tasks/.events/ledger.edn",
+    "kanban/tasks/perf-tick-residual-gap-to-60fps.md"
+  ],
+  "files": {
+    "test/domain/spatial/grid_query_contract_test.clj": {
+      "sha256": "ec50c5b77126e4f2f9d7e4658cc9fce833338f2c7c5837ee58a1c3764c0420d9",
+      "bytes": 3867
+    },
+    ".\u03b7\u03bc/diagnostics/grid-collector/PLAN.md": {
+      "sha256": "acfc04ed3dc8a1ae746f98e1fa7252f5ef4dc1252b296c80206e0a11cb801f88",
+      "bytes": 7144
+    },
+    ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj": {
+      "sha256": "0baaa761a1d343802b8a320870d9860ec53a24fda99956b0c43bbb1a8554be74",
+      "bytes": 12496
+    },
+    ".\u03b7\u03bc/diagnostics/grid-collector/preparation-append-verification.json": {
+      "sha256": "09ce415da6d110b42c79e3111adfea0109535911271491c2f3ddded2eb3337a0",
+      "bytes": 702
+    },
+    ".\u03b7\u03bc/diagnostics/grid-collector/preparation-ledger-prefixes.json": {
+      "sha256": "1ed00f6460ae8604c5da43127bb76bbd229ab80ddb3d804c6539a30749a6ec2b",
+      "bytes": 1102
+    },
+    ".\u03b7\u03bc/diagnostics/grid-collector/source-hashes.json": {
+      "sha256": "602159c50d6e2a6612070d5dabe9b43f5213d6557968d1e062e72ea6f96428ba",
+      "bytes": 34713
+    },
+    ".\u03b7\u03bc/diagnostics/grid-collector/static-checks.json": {
+      "sha256": "0ba1f627781035091c5d28686cc8f2bc7096cfc77c1a26c39607b2fb6111810e",
+      "bytes": 2318
+    }
+  },
+  "append_only_owned_ledgers": [
+    ".\u03b7\u03bc/receipts.edn",
+    ".\u03b7\u03bc/session-mycology/ledger.md"
+  ],
+  "qualification_boundary": "No production edit, numerical capture or cost result supplied by authoring agent. Root formatting/source evidence recorded separately. Do not rewrite this snapshot after later changes; record successor hashes."
+}

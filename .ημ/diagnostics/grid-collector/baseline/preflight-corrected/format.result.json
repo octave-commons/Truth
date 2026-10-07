@@ -1,0 +1,17 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:cljfmt",
+    "check",
+    "test/domain/spatial/grid_query_contract_test.clj",
+    ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj"
+  ],
+  "started_at": "2026-10-07T04:32:17.623039+00:00",
+  "finished_at": "2026-10-07T04:32:23.263262+00:00",
+  "pid": 1467922,
+  "exit_code": 0,
+  "reaped": true,
+  "inputs_unchanged": true
+}

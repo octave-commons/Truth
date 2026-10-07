@@ -1,0 +1,26 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-Sdeps",
+    "{:aliases {:grid-evidence {:extra-paths [\".\u03b7\u03bc/diagnostics/grid-collector\"] :main-opts [\"-m\" \"evidence.grid\"]}}}",
+    "-M:bench:grid-evidence",
+    "capture",
+    ".\u03b7\u03bc/diagnostics/grid-collector/fixtures.edn"
+  ],
+  "started_at": "2026-10-07T04:36:26.845860+00:00",
+  "head": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "inputs": {
+    "src/domain/spatial/index.clj": "280941b79defe025dbdd7c1478940b956c1e0dc9bd270fa4c66f5170f1a94701",
+    "src/domain/physics/cache/neighbor.clj": "e28bf08ef4b7a13e19ecff91327807dedddfa9d6bb7078291eb4d343000afea9",
+    "test/domain/spatial/grid_query_contract_test.clj": "ec50c5b77126e4f2f9d7e4658cc9fce833338f2c7c5837ee58a1c3764c0420d9",
+    ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj": "0baaa761a1d343802b8a320870d9860ec53a24fda99956b0c43bbb1a8554be74",
+    "deps.edn": "9f858cf2a20418276006fe0ccf16245ab3fb9e2b935649da7f52afa8e9af36ce"
+  },
+  "environment_override": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g",
+    "_JAVA_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "native_state": "Untouched; no timing measurement in this capture"
+}

@@ -512,3 +512,32 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T04:30:59.950183+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-grid-collector
+  task: Prepare small performance evidence without manufacturing a numerical failure
+  p-efficiency: 0.94
+  p-friction: 0.12
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,b395c4049718f7ce015ddf25fc0a192d97821373
+  note: Preserve original public query order and identity, use existing workload factories and benchmark closures, and separate compact raw-bit characterization from measurement. A random observer UUID is a comparison exclusion only; preserve absent/nil column shape. Do not infer a win from profile samples or call caller-thread allocation parallel-system allocation. No new spore; existing benchmark and baseline contracts suffice.
+
+- ts: 2026-10-07T04:44:01.591072+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-grid-collector
+  task: Freeze measured grid-query baseline before no-behavior-change optimization
+  p-efficiency: 0.92
+  p-friction: 0.16
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,b395c404,nativePID131581
+  note: Preserve semantic characterization separately from performance RED. Control only owned native load with identity-guarded suspend/resume, retain broad intervals and exact fixture recipe, and never regenerate expected output after a candidate. Existing skills suffice.
+
+- ts: 2026-10-07T05:00:58.354493+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-grid-collector
+  task: Qualify a smaller allocation contract without overstating downstream speed
+  p-efficiency: 0.94
+  p-friction: 0.12
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: perf-tick-residual-gap-to-60fps,8f953d2,collector3685ddef
+  note: One bounded A→B→A check supports large direct-query allocation savings while adverse parallel timings stay unresolved. Preserve raw outcomes, frozen oracle, guarded native retention and exact source qualification; interval overlap is not non-regression proof. Existing skills suffice.

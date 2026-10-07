@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-07T04:52:07.646539+00:00",
+  "before": {
+    "at": "2026-10-07T04:52:07.645991+00:00",
+    "pid": 131581,
+    "startticks": "125503",
+    "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+    "state": "T",
+    "cpu_ticks": 10983708
+  },
+  "after": {
+    "at": "2026-10-07T04:52:07.646712+00:00",
+    "pid": 131581,
+    "startticks": "125503",
+    "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+    "state": "R",
+    "cpu_ticks": 10983709
+  },
+  "operation": "SIGCONT same verified owned process; no world/context replacement"
+}

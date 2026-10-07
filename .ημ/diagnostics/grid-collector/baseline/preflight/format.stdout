@@ -1,0 +1,61 @@
+--- a/test/domain/spatial/grid_query_contract_test.clj
++++ b/test/domain/spatial/grid_query_contract_test.clj
+@@ -62,8 +62,8 @@
+ 
+ (deftest grid-query-empty-and-disjoint-ranges-do-not-call-predicate
+   (doseq [[grid pos radius] [[(spatial/build-grid [] 1.0) [0.0 0.0 0.0] 1.0]
+-                            [(spatial/build-grid scattered-items 1.0) [100.0 0.0 0.0] 0.5]
+-                            [(spatial/build-grid scattered-items 1.0) [-100.0 0.0 0.0] 0.5]]]
++                             [(spatial/build-grid scattered-items 1.0) [100.0 0.0 0.0] 0.5]
++                             [(spatial/build-grid scattered-items 1.0) [-100.0 0.0 0.0] 0.5]]]
+     (let [visited (atom [])
+           found (spatial/grid-within-radius grid pos radius
+                                             (fn [item]
+--- a/.ημ/diagnostics/grid-collector/evidence/grid.clj
++++ b/.ημ/diagnostics/grid-collector/evidence/grid.clj
+@@ -56,8 +56,8 @@
+     (double? value) [:float64 (Double/doubleToRawLongBits value)]
+     (float? value) [:float32 (Float/floatToRawIntBits value)]
+     (map? value) [:map (->> value
+-                           (map (fn [[k v]] [(stable-data k) (stable-data v)]))
+-                           (sort-by (comp pr-str first)) vec)]
++                            (map (fn [[k v]] [(stable-data k) (stable-data v)]))
++                            (sort-by (comp pr-str first)) vec)]
+     (set? value) [:set (->> value (map stable-data) (sort-by pr-str) vec)]
+     (vector? value) [:vector (mapv stable-data value)]
+     (list? value) [:list (mapv stable-data value)]
+@@ -149,8 +149,8 @@
+   (when-not (= baseline-index-sha (source-sha "src/domain/spatial/index.clj"))
+     (throw (ex-info "Capture must use unchanged baseline collector" {})))
+   (write-new! path {:baseline-head "b395c4049718f7ce015ddf25fc0a192d97821373"
+-                   :settings settings :sources (source-hashes)
+-                   :observations (workload-evidence (make-workloads))}))
++                    :settings settings :sources (source-hashes)
++                    :observations (workload-evidence (make-workloads))}))
+ 
+ (defn- serial-cost [f]
+   (let [^com.sun.management.ThreadMXBean metrics (ManagementFactory/getThreadMXBean)
+@@ -177,10 +177,10 @@
+     (write-new! (str output "/" label ".edn")
+                 (cond-> {:label label
+                          :criterium (-> (select-keys result [:mean :variance :lower-q :upper-q
+-                                                            :sample-mean :sample-variance :samples
+-                                                            :sample-count :execution-count :total-time
+-                                                            :warmup-executions :warmup-time :options
+-                                                            :outliers :outlier-variance])
++                                                             :sample-mean :sample-variance :samples
++                                                             :sample-count :execution-count :total-time
++                                                             :warmup-executions :warmup-time :options
++                                                             :outliers :outlier-variance])
+                                         (assoc :outliers {:record-type "criterium.core.OutlierCount"
+                                                           :fields (into {} counts)}))}
+                   serial? (assoc :post-warmup-serial-cost (serial-cost f)))))
+@@ -217,7 +217,7 @@
+     ;; Reuse the existing group's actual tick closures. Replace only its two
+     ;; factories with their already verified outputs; no measured tick is forked.
+     (with-redefs-fn {#'phase0/make-medium-world (constantly (get-in workloads [:worlds 500]))
+-                    #'phase0/make-large-world (constantly (get-in workloads [:worlds 1000]))}
++                     #'phase0/make-large-world (constantly (get-in workloads [:worlds 1000]))}
+       #(phase0/run callback callback))
+     (when-not (= ["phase0-500" "phase0-1000"] @selected)
+       (throw (ex-info "Existing Phase0 selection changed" {:actual @selected})))

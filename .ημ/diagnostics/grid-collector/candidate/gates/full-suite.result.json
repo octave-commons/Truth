@@ -1,0 +1,14 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:test"
+  ],
+  "started_at": "2026-10-07T04:57:18.068002+00:00",
+  "finished_at": "2026-10-07T04:58:00.793063+00:00",
+  "pid": 1610035,
+  "exit_code": 0,
+  "reaped": true,
+  "inputs_unchanged": true
+}
