@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-07T05:38:13.542667+00:00",
+  "prior_attempt": "Preparation commit failed before staging because inventory names were directory-relative, not worktree-relative. Root source review/release was already complete and independent launch succeeded afterward.",
+  "correction": "Resolve each exact inventory name against preparation directory; stage only eight frozen/release files plus this record.",
+  "launch_started_at": "2026-10-07T05:37:37.871431Z",
+  "runtime_files_staged": false
+}

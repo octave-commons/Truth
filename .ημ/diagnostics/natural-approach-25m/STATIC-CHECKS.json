@@ -1,0 +1,52 @@
+{
+  "status": "PREPARATION ONLY; runner/JVM/native/input not executed",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "checks": {
+    "python": "ast.parse; no import",
+    "clojure": "clj-kondo 0 errors / 0 warnings",
+    "new_HERE_root": "resolves same worktree root",
+    "production_delta": "none versus b395",
+    "snapshot": "byte identical to reviewed prior snapshot",
+    "old_budget_in_runner": "none",
+    "runner_diff": "exactly three budget lines, recorded in COPY-PROOF.json",
+    "local_markdown_links": [
+      {
+        "target": "../natural-approach/runs/attempt-01/",
+        "resolved_path": "/home/err/spaces/foresight/.worktrees/truth-natural-approach/.\u03b7\u03bc/diagnostics/natural-approach/runs/attempt-01",
+        "exists": true
+      },
+      {
+        "target": "../formation-20261006T182457Z/progress.edn",
+        "resolved_path": "/home/err/spaces/foresight/.worktrees/truth-natural-approach/.\u03b7\u03bc/diagnostics/formation-20261006T182457Z/progress.edn",
+        "exists": true
+      },
+      {
+        "target": "../playable-foundation/natural-formation-observation/birth-snapshot.edn",
+        "resolved_path": "/home/err/spaces/foresight/.worktrees/truth-natural-approach/.\u03b7\u03bc/diagnostics/playable-foundation/natural-formation-observation/birth-snapshot.edn",
+        "exists": true
+      },
+      {
+        "target": "../playable-foundation/live-long-run/README.md",
+        "resolved_path": "/home/err/spaces/foresight/.worktrees/truth-natural-approach/.\u03b7\u03bc/diagnostics/playable-foundation/live-long-run/README.md",
+        "exists": true
+      },
+      {
+        "target": "../playable-foundation/natural-seed42/observations.edn",
+        "resolved_path": "/home/err/spaces/foresight/.worktrees/truth-natural-approach/.\u03b7\u03bc/diagnostics/playable-foundation/natural-seed42/observations.edn",
+        "exists": true
+      },
+      {
+        "target": "../playable-foundation/natural-seed43/observations.edn",
+        "resolved_path": "/home/err/spaces/foresight/.worktrees/truth-natural-approach/.\u03b7\u03bc/diagnostics/playable-foundation/natural-seed43/observations.edn",
+        "exists": true
+      }
+    ]
+  },
+  "preparation_sha256": {
+    "runner.py": "a855e03ed44a37f83373325a48901526d98c13e7155e99e8c45dbc144b9cb744",
+    "snapshot.clj": "c92131a56cae32269f272f6e3ba0abc796a4ed0c8148a8ab167ef14be2734bbe",
+    "PLAN.md": "ae671f822fb5483b462432b3952c302712b9af3093f27a03f360810713c07b9c"
+  },
+  "independent_review": "requested against refreshed PLAN hash; no runtime execution",
+  "corrected_draft_finding": "Root caught two spaced natural-seed directory targets; exact filenames corrected and every local Markdown link now resolves in worktree."
+}
