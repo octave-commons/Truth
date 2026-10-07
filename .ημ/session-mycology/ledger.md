@@ -396,3 +396,12 @@
   spore: none
   receipt-refs: flight-local-reference-assist-spec, PR13, clock-upward-proposal-00a35964
   note: A finite upward-step guard must consume the actual pending channels and cannot be switched off by a later Auto increase. Separate source characterization, clock-state integration and ordinary UI so a specification does not imply native capture or implementation admission. No spore created or promoted.
+- ts: 2026-10-07T13:42:37.241523537Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Clarify first-fold clock comparison without inventing consumed history
+  p-efficiency: 0.92
+  p-friction: 0.12
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: PR13,review5443091979,comment4207539513
+  note: A configured comparison baseline and a completed consumption record are different facts. Make first-player slowdown immediate when chosen while keeping upward admission and failed-fold publication explicit. Validate proposed contracts without claiming an existing validator. No spore created or promoted.

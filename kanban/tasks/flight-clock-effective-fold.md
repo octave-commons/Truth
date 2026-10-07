@@ -62,6 +62,13 @@ producer. Returning Auto does not reset the sticky guard.
 - [ ] Initialization/import, missing observer, invalid requests, rapid FIFO mode
   changes, disabled adaptive pacing, whole-fold failure and Gate control removal
   follow design §3 without stale approval or fabricated consumed provenance.
+- [ ] Without consumed provenance, initialized/current legacy `:sim/dt=300`
+  and Manual cap 60 consumes 60 on the first fold, using 300 only as an explicit
+  unverified comparison baseline. An equal request leaves the baseline unchanged;
+  an upward request without provenance is unsupported and retains that baseline.
+  Pending request/sticky state survives; only successful whole-fold completion
+  records actual consumed h/fold and an applied outcome. A failed first fold
+  publishes neither and retains the valid request; no baseline fold is fabricated.
 - [ ] Imported/adaptive-disabled fractional steps preserve never-manual Auto;
   guarded `0.25→0.5` rejects as unsupported and retains `0.25`. Equal/downward
   fractional steps keep the uncertified legacy path and emitter `q=max(1,h)`.

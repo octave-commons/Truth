@@ -89,8 +89,12 @@ remain FIFO; the last valid request before the fold determines the desired mode.
 An invalid request leaves the prior request intact and exposes a reason.
 
 Track consumed-step provenance from actual completed folds. Initial or imported
-state without that provenance must not invent a prior consumed `h`: a requested
-increase is unsupported until an ordinary fold establishes it. The integration
+state without that provenance uses the finite positive initialized/current legacy
+`:sim/dt` only as an **unverified comparison baseline**, never as a previously
+consumed step. A valid Manual decrease or equal request applies on that first
+fold; an increase remains unsupported and retains the legacy baseline until a
+completed fold supplies actual consumption provenance. This explicitly resolves
+the earlier ambiguous all-transitions baseline-retention wording. The integration
 story must characterize initialization and exact host→domain validation. Adding
 clock provenance does not change never-manual Auto's physical values or ordering.
 
@@ -120,10 +124,17 @@ behavior. After manual use, an upward request `0 < h < 1` is unsupported under
 §2 and retains the actual prior step; equal/downward fractional requests remain
 the stated uncertified legacy path. The flight emitter still uses `q=max(1,h)`;
 neither the manual cap band nor this admission rule changes that physics.
-If no valid previous consumed step exists, preserve the initialized/current
-legacy step and report the unsupported transition; label that baseline as
-unverified, not an accepted result. A failed whole fold must not advance consumed
-provenance or claim a decision was applied.
+When consumed provenance is absent, compare the requested step with that
+explicit legacy baseline: apply a valid equal/decrease immediately, including a
+Manual cap below initialized `:sim/dt`; retain the baseline only for an unsupported
+increase. Neither path certifies motion or turns the baseline into consumed
+history. Preserve the pending request and sticky manual-use flag. Only successful
+whole-fold completion publishes the actual consumed step/fold and applied
+outcome. A failed whole fold publishes neither consumed provenance nor an
+applied decision; it must not discard the already valid queued request. A missing
+or invalid legacy baseline cannot supply this comparison or fabricate history;
+reject it through the proposed named clock/host→domain validation and existing
+failed-fold handling rather than invent a step or claim an applied outcome.
 
 Use **one effective `h`** for every fan-out consumer, SoA prediction, integration
 and `sim-time += h`. Post-fold pacing writes a distinct next automatic proposal
@@ -163,6 +174,8 @@ future binary64 tests also establish the chosen finite evaluation order.
 | Same request, `a_c=30`, another channel `-30`, hence `A=0` | Drift is zero, but kick `60 > 50`; reject increase and consume 1. Full-force cancellation cannot hide the control kick. |
 | `D=100`, request `h=2`, `a_c=A=0`, `v=49`, `J=2` | Drift `102 > 100`; reject. Raw impulses participate even when pending control is zero. |
 | `D=100`, request `h=2`, `a_c=A=0`, `v=50`, `J=0` | Drift exactly 100 passes; a large common frame shift is validated but not charged as travel. Nonfinite absolute/recentered position still rejects. |
+| First fold, no consumed provenance, valid initialized/current legacy `:sim/dt=300`, Manual cap 60 | Consume 60 immediately as an uncertified decrease against the unverified 300 baseline. Retain Manual/sticky state; only successful completion records consumed 60 and the actual fold. A cap/request equal to 300 leaves that step unchanged. |
+| Same first-fold decrease, but the whole fold fails | Publish neither consumed provenance nor an applied outcome; retain the valid Manual request and sticky flag. A retry again has no consumed history. No 300-second baseline fold or fictitious 60-second completion is recorded. |
 | Manual cap 60, automatic proposal after slip 300, prior consumed 30; admission fails | Consume 30, show requested 60 and reason. Preserve `D`, all pending channels and physical input; time advances by 30, not 60/300. |
 | Return to Auto: proposed 60 passes from prior 30; later slip proposes 300 and fails | First consume 60; later retain 60. Sticky guarded Auto prevents a later increase bypassing admission. |
 
