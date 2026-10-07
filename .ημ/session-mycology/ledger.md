@@ -530,3 +530,21 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
   note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
+- ts: 2026-10-07T16:31:24.396086+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Qualify contextual Sculpt consumption without weakening historical evidence
+  p-efficiency: 0.76
+  p-friction: 0.31
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: focus-follows-pilot,f0c4710a,green-qualification
+  note: An absent-API RED guard can hide a new matrix oracle error. Keep the observed RED unchanged, preserve each failed GREEN version, derive exact per-verb costs from existing law, and let canonical gates expose owned style debt. Check all new test formatting before the expensive gate. No new spore; existing RED/GREEN and receipt skills suffice.
+- ts: 2026-10-07T17:50:22.857784810Z
+  session: /home/err/spaces/foresight/.worktrees/truth-action-aim-plan
+  task: Sculpt matched host-cost and publication closure
+  p-efficiency: 0.81
+  p-friction: 0.27
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: .ημ/diagnostics/action-aim-host-cost-publication/RESULT.md
+  note: A workload completion marker cannot qualify a failed supervisor. Keep process membership independent of optional metadata, persist ownership immediately, and preserve failedraws. Compare identical outputs and expose action-cost increases; do not infer FPS. Lossless publication keeps every byte while reducing path count. No new spore.

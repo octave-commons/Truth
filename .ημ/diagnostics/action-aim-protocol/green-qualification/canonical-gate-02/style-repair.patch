@@ -1,0 +1,157 @@
+--- gate01/sculpt_intent_test.clj
++++ gate02/sculpt_intent_test.clj
+@@ -1,6 +1,7 @@
+ (ns infra.dev.sculpt-intent-test
+   "Ordinary sculpt consumption must use one host context and the current serial world."
+   (:require
++   [clojure.math :as math]
+    [clojure.string :as str]
+    [clojure.test :refer [deftest is testing]]
+    [domain.ecs.components :as c]
+@@ -54,7 +55,7 @@
+ 
+ (defn- anchor-at [w planet focus]
+   (let [relative (sp/v- focus (ecs/get-component w planet c/position))
+-        length (Math/sqrt (reduce + (map #(* % %) relative)))]
++        length (math/sqrt (reduce + (map #(* % %) relative)))]
+     (if (zero? length) [0.0 0.0 1.0] (mapv #(/ % length) relative))))
+ 
+ (defn- expected-anchor [w planet offset]
+@@ -79,8 +80,8 @@
+         service (atom {})
+         errors (StringWriter.)
+         cfg (atom (assoc config :tick-fn (fn [w]
+-                                          (swap! inputs conj w)
+-                                          (physical-tick w))))
++                                           (swap! inputs conj w)
++                                           (physical-tick w))))
+         host {:published published :queue queue :intents intents :config cfg}]
+     (prepare host)
+     (add-watch published ::bounded-publications
+@@ -137,8 +138,8 @@
+             source (first published)
+             paid (first (:voxel/sculpt-ops (second inputs)))
+             stale-relative (sp/v- (:focus-position (player/get-observer source))
+-                                   (ecs/get-component source planet c/position))
+-            stale-length (Math/sqrt (reduce + (map #(* % %) stale-relative)))
++                                  (ecs/get-component source planet c/position))
++            stale-length (math/sqrt (reduce + (map #(* % %) stale-relative)))
+             stale-anchor (mapv #(/ % stale-length) stale-relative)]
+         (is (= "" errors))
+         (is (not= (player/observer-position w) (player/observer-position source)))
+@@ -206,10 +207,10 @@
+         intents (loop/->IntentAtom queue world)]
+     (is (= {:reset true} (reset! intents {:reset true})))
+     (doseq [result [(swap! intents #(assoc % :unary true))
+-                   (swap! intents dissoc :absent)
+-                   (swap! intents update :one (fnil inc 0))
+-                   (swap! intents assoc :two 2)
+-                   (swap! intents assoc :three 3 :four 4)]]
++                    (swap! intents dissoc :absent)
++                    (swap! intents update :one (fnil inc 0))
++                    (swap! intents assoc :two 2)
++                    (swap! intents assoc :three 3 :four 4)]]
+       (is (= {:original true} result)))
+     (is (= {:original true} @world))
+     (is (= {:reset true :unary true :one 1 :two 2 :three 3 :four 4}
+@@ -219,8 +220,8 @@
+ (deftest explicit-callback-submission-retains-press-and-release-semantics
+   (when-let [{:keys [enqueue]} (contextual-api)]
+     (doseq [[glfw-key mods verb remaining] [[GLFW/GLFW_KEY_T 0 :uplift 18.0]
+-                                          [GLFW/GLFW_KEY_T GLFW/GLFW_MOD_SHIFT :volcanism 17.0]
+-                                          [GLFW/GLFW_KEY_Y 0 :erosion 18.5]]]
++                                            [GLFW/GLFW_KEY_T GLFW/GLFW_MOD_SHIFT :volcanism 17.0]
++                                            [GLFW/GLFW_KEY_Y 0 :erosion 18.5]]]
+       (let [[w _ _] (armed-world)
+             published (atom w)
+             queue (ConcurrentLinkedQueue.)
+@@ -235,7 +236,7 @@
+         (is (identical? w @published))
+         (is (= {:mode :manual} @config))
+         (let [drained (@#'loop/drain-intents w queue
+-                       {:manual? true :focus-offset zero-offset})]
++                                             {:manual? true :focus-offset zero-offset})]
+           (is (= [verb] (mapv :verb (:voxel/sculpt-ops drained))))
+           (is (= remaining (:resonance (player/get-observer drained)))))))))
+ 
+@@ -292,7 +293,7 @@
+         (is (identical? empty-world (:world result)))
+         (is (= "" (:errors result))))
+       (let [result (drain w [invalid-verb (entry :uplift)
+-                            #(assoc % :later-input true)] manual)]
++                             #(assoc % :later-input true)] manual)]
+         (is (= [:uplift] (mapv :verb (:voxel/sculpt-ops (:world result)))))
+         (is (= 18.0 (:resonance (player/get-observer (:world result)))))
+         (is (:later-input (:world result)))
+@@ -313,7 +314,7 @@
+   (when-let [{:keys [record request]} (contextual-api)]
+     (let [[w _ _] (armed-world)
+           {:keys [world errors]} (drain w [(record #(request %1 %2 :uplift 0.5))]
+-                                       {:manual? true :focus-offset [-10.0 0.0 0.0]})]
++                                        {:manual? true :focus-offset [-10.0 0.0 0.0]})]
+       (is (= "" errors))
+       (is (= [0.0 0.0 1.0] (:anchor (first (:voxel/sculpt-ops world)))))
+       (is (= (physical-columns w) (physical-columns world))))))
+@@ -327,7 +328,7 @@
+                       (ecs/remove-component w observer c/palette)
+                       (player/update-observer w assoc :resonance 0.0)]]
+         (let [{:keys [world errors]} (drain source [entry]
+-                                           {:manual? true :focus-offset offset})]
++                                            {:manual? true :focus-offset offset})]
+           (is (= "" errors))
+           (is (= (sp/v+ (player/observer-position source) offset)
+                  (:focus-position (player/get-observer world))))
+@@ -354,7 +355,7 @@
+       (press! host options)
+       (swap! intents (fn [world] (swap! seen conj world) world))
+       (let [drained (@#'loop/drain-intents w queue
+-                     {:manual? true :focus-offset zero-offset})
++                                           {:manual? true :focus-offset zero-offset})
+             observer (player/get-observer drained)]
+         (is (= 1 (count (:voxel/sculpt-ops drained))))
+         (is (= (:voxel/sculpt-ops (first @seen)) (:voxel/sculpt-ops drained)))
+@@ -368,23 +369,23 @@
+ (deftest one-config-snapshot-governs-mid-drain-arrivals
+   (when-let [{:keys [enqueue]} (contextual-api)]
+     (doseq [[first-mode next-mode] [[:manual :follow-selection]
+-                                  [:follow-selection :manual]]]
++                                    [:follow-selection :manual]]]
+       (let [[w _ planet] (armed-world)
+             first-offset [1.0 2.0 3.0]
+             next-offset [-2.0 0.0 1.0]
+             {:keys [inputs published errors]}
+             (run-loop
+-              w {:mode first-mode :focus-offset first-offset} 2
+-              (fn [{:keys [intents config] :as host}]
+-                (let [options {:submit-contextual! (partial enqueue intents)}]
+-                  (swap! intents (fn [world]
+-                                   (swap! config assoc :mode next-mode :focus-offset next-offset)
+-                                   (press! host options)
+-                                   world))
+-                  (press! host options)))
+-              (fn [{:keys [intents] :as host} n]
+-                (when (= n 1)
+-                  (press! host {:submit-contextual! (partial enqueue intents)}))))
++             w {:mode first-mode :focus-offset first-offset} 2
++             (fn [{:keys [intents config] :as host}]
++               (let [options {:submit-contextual! (partial enqueue intents)}]
++                 (swap! intents (fn [world]
++                                  (swap! config assoc :mode next-mode :focus-offset next-offset)
++                                  (press! host options)
++                                  world))
++                 (press! host options)))
++             (fn [{:keys [intents] :as host} n]
++               (when (= n 1)
++                 (press! host {:submit-contextual! (partial enqueue intents)}))))
+             first-ops (:voxel/sculpt-ops (first inputs))
+             later-ops (:voxel/sculpt-ops (second inputs))
+             first-focus (if (= :manual first-mode)
+@@ -432,7 +433,7 @@
+       (press! host options)
+       (swap! intents player/update-observer assoc :focus-position camera-focus)
+       (let [drained (@#'loop/drain-intents w queue
+-                     {:manual? true :focus-offset zero-offset})]
++                                           {:manual? true :focus-offset zero-offset})]
+         (is (= 18.0 (:resonance (player/get-observer @before-reset))))
+         (is (= 0.0 (:resonance (player/get-observer drained))))
+         (is (= 1 (count (:voxel/sculpt-ops drained))) "reset drops the old world's record")

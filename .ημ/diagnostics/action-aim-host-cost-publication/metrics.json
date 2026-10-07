@@ -1,0 +1,294 @@
+{
+  "baseline-02": {
+    "empty": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 25.182499999999997,
+          "minimum": 17.689,
+          "maximum": 410.891,
+          "lower-quartile": 23.846,
+          "upper-quartile": 223.98399999999998,
+          "median-absolute-deviation": 4.462999999999997
+        },
+        "bytes-per-invocation": {
+          "median": 72.112,
+          "minimum": 72.112,
+          "maximum": 72.112,
+          "lower-quartile": 72.112,
+          "upper-quartile": 72.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 23.5225,
+          "minimum": 16.328,
+          "maximum": 236.215,
+          "lower-quartile": 22.5125,
+          "upper-quartile": 198.2115,
+          "median-absolute-deviation": 4.141000000000002
+        }
+      },
+      "criterium-mean": [
+        4.002509877391814e-08,
+        [
+          2.924117012758025e-08,
+          6.252525404786767e-08
+        ]
+      ],
+      "outlier-variance": 0.8268307255609334
+    },
+    "legacy-16": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 5628.138499999999,
+          "minimum": 4651.878,
+          "maximum": 7140.532,
+          "lower-quartile": 5026.7275,
+          "upper-quartile": 6295.7285,
+          "median-absolute-deviation": 601.4109999999991
+        },
+        "bytes-per-invocation": {
+          "median": 6792.112,
+          "minimum": 6792.112,
+          "maximum": 6792.112,
+          "lower-quartile": 6792.112,
+          "upper-quartile": 6792.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 5581.602,
+          "minimum": 4626.164,
+          "maximum": 7091.229,
+          "lower-quartile": 5061.945,
+          "upper-quartile": 6258.2775,
+          "median-absolute-deviation": 519.6569999999997
+        }
+      },
+      "criterium-mean": [
+        5.633849575598922e-06,
+        [
+          3.643049447353113e-06,
+          8.539303539319902e-06
+        ]
+      ],
+      "outlier-variance": 0.828114749379146
+    },
+    "sculpt-1": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 4480.511,
+          "minimum": 3308.555,
+          "maximum": 48325.041,
+          "lower-quartile": 3734.0204999999996,
+          "upper-quartile": 5807.809499999999,
+          "median-absolute-deviation": 746.4905000000006
+        },
+        "bytes-per-invocation": {
+          "median": 10344.112,
+          "minimum": 10344.112,
+          "maximum": 10344.112,
+          "lower-quartile": 10344.112,
+          "upper-quartile": 10344.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 4546.186,
+          "minimum": 3293.804,
+          "maximum": 48267.437,
+          "lower-quartile": 3714.0249999999996,
+          "upper-quartile": 6643.4169999999995,
+          "median-absolute-deviation": 965.3704999999998
+        }
+      },
+      "criterium-mean": [
+        7.938474553241768e-06,
+        [
+          5.550861549254173e-06,
+          1.1732486826170434e-05
+        ]
+      ],
+      "outlier-variance": 0.8266630372398972
+    },
+    "sculpt-8": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 39380.839,
+          "minimum": 24006.92,
+          "maximum": 163436.681,
+          "lower-quartile": 30836.464,
+          "upper-quartile": 56195.773,
+          "median-absolute-deviation": 11418.367999999999
+        },
+        "bytes-per-invocation": {
+          "median": 82400.112,
+          "minimum": 82400.112,
+          "maximum": 82400.112,
+          "lower-quartile": 82400.112,
+          "upper-quartile": 82400.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 40948.187999999995,
+          "minimum": 23967.184,
+          "maximum": 163415.727,
+          "lower-quartile": 30801.674,
+          "upper-quartile": 58042.7,
+          "median-absolute-deviation": 13836.193999999996
+        }
+      },
+      "criterium-mean": [
+        3.3649006975867274e-05,
+        [
+          3.227663037330317e-05,
+          3.569654449472097e-05
+        ]
+      ],
+      "outlier-variance": 0.153752253487811
+    }
+  },
+  "candidate-01": {
+    "empty": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 46.6415,
+          "minimum": 42.44,
+          "maximum": 99.133,
+          "lower-quartile": 44.241,
+          "upper-quartile": 47.7605,
+          "median-absolute-deviation": 2.107000000000003
+        },
+        "bytes-per-invocation": {
+          "median": 136.112,
+          "minimum": 136.112,
+          "maximum": 136.112,
+          "lower-quartile": 136.112,
+          "upper-quartile": 136.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 43.078,
+          "minimum": 39.611,
+          "maximum": 53.297,
+          "lower-quartile": 40.980999999999995,
+          "upper-quartile": 44.387,
+          "median-absolute-deviation": 1.7420000000000009
+        }
+      },
+      "criterium-mean": [
+        6.062664218766043e-08,
+        [
+          3.81604635465775e-08,
+          1.0425115340047698e-07
+        ]
+      ],
+      "outlier-variance": 0.8294469573825404
+    },
+    "legacy-16": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 4465.7685,
+          "minimum": 3299.631,
+          "maximum": 5676.424,
+          "lower-quartile": 3486.9444999999996,
+          "upper-quartile": 5029.12,
+          "median-absolute-deviation": 848.8870000000002
+        },
+        "bytes-per-invocation": {
+          "median": 6856.112,
+          "minimum": 6856.112,
+          "maximum": 6856.112,
+          "lower-quartile": 6856.112,
+          "upper-quartile": 6856.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 4443.294,
+          "minimum": 3270.31,
+          "maximum": 7869.376,
+          "lower-quartile": 3469.514,
+          "upper-quartile": 5132.5455,
+          "median-absolute-deviation": 924.5805
+        }
+      },
+      "criterium-mean": [
+        4.816054667459757e-06,
+        [
+          3.909825451999455e-06,
+          7.059137216996916e-06
+        ]
+      ],
+      "outlier-variance": 0.8214722062136746
+    },
+    "sculpt-1": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 10048.1605,
+          "minimum": 6173.892,
+          "maximum": 41497.933,
+          "lower-quartile": 7664.9405,
+          "upper-quartile": 15271.3865,
+          "median-absolute-deviation": 2656.7019999999998
+        },
+        "bytes-per-invocation": {
+          "median": 23784.112,
+          "minimum": 23784.112,
+          "maximum": 23784.112,
+          "lower-quartile": 23784.112,
+          "upper-quartile": 23784.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 11019.753499999999,
+          "minimum": 6150.187,
+          "maximum": 41570.998,
+          "lower-quartile": 7663.0625,
+          "upper-quartile": 15335.4225,
+          "median-absolute-deviation": 3512.5295000000006
+        }
+      },
+      "criterium-mean": [
+        1.549153215694562e-05,
+        [
+          1.0989891606790648e-05,
+          2.1288046086925895e-05
+        ]
+      ],
+      "outlier-variance": 0.8251224826428472
+    },
+    "sculpt-8": {
+      "summary": {
+        "cpu-ns-per-invocation": {
+          "median": 91241.815,
+          "minimum": 74688.045,
+          "maximum": 252808.736,
+          "lower-quartile": 84843.77,
+          "upper-quartile": 185489.8095,
+          "median-absolute-deviation": 8492.683000000005
+        },
+        "bytes-per-invocation": {
+          "median": 189528.112,
+          "minimum": 189528.112,
+          "maximum": 189528.112,
+          "lower-quartile": 189528.112,
+          "upper-quartile": 189528.112,
+          "median-absolute-deviation": 0.0
+        },
+        "wall-ns-per-invocation": {
+          "median": 95956.764,
+          "minimum": 76543.808,
+          "maximum": 253442.94,
+          "lower-quartile": 87704.5595,
+          "upper-quartile": 195446.4975,
+          "median-absolute-deviation": 10904.317999999992
+        }
+      },
+      "criterium-mean": [
+        0.00011910315781600599,
+        [
+          7.748949887808528e-05,
+          0.00015405087820992273
+        ]
+      ],
+      "outlier-variance": 0.8236893696816143
+    }
+  }
+}

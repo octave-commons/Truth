@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-07T16:05:05.128696+00:00",
+  "status": "OFFLINE_SOURCE_READY_NOT_RUNTIME_GREEN",
+  "red_commit": "f0c4710a8306aa634af9f49859c11451515ed912",
+  "production_parent": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "proposal_sha256": "7779796849a5c17de2ecccfbaf5d1d9824506d65f6b4069dfc7889e05c82fd0c",
+  "source_hashes": {
+    "src/law/input_intent.cljc": "55df510b0e8c20cc48ac1a623eafeecb80379cf3f914af58914af3d1447551fb",
+    "src/infra/dev/window/loop.clj": "ef70bad85801842314c31afb5fd4875ca0e6ce3f50e694f864a9fe4ab55fb789",
+    "src/infra/render/input.clj": "67b098214f84c75e2436e14880b953ed70bc33ace4034ad460edf918be1ab59f",
+    "test/law/input_intent_test.clj": "37fd4baf59c7508189b21cb0307d04ebbd93b977e53d26ac2e4ad24a9362d3b6",
+    "test/infra/dev/sculpt_intent_test.clj": "819f896586465cc4f2935eb7b234a233d21d5396939a3f1dc576f1e28256eae3"
+  },
+  "only_uncommitted_tracked_paths": [
+    "src/infra/dev/window/loop.clj",
+    "src/infra/render/input.clj"
+  ],
+  "red_manifest_sha256": "46ae4efcf18c45278951d78045697460444938f8a63be530d647e5543743b431",
+  "all_18_red_hashes_unchanged": true,
+  "source_test_pins_checked": 304,
+  "source_test_pin_changes": {
+    "src/infra/dev/window/loop.clj": {
+      "before": "3994a14ddb3fd052e7e9e4f20c4995422905d01f89a1d43877f634a8482c4067",
+      "after": "ef70bad85801842314c31afb5fd4875ca0e6ce3f50e694f864a9fe4ab55fb789"
+    },
+    "src/infra/render/input.clj": {
+      "before": "d8af828b8628f98b0c90c1d1477e11820f23c6f73a9e2189db8ceff6a2e7869c",
+      "after": "67b098214f84c75e2436e14880b953ed70bc33ace4034ad460edf918be1ab59f"
+    }
+  },
+  "IntentAtom_definition_byte_unchanged": true,
+  "after_drain_manual_preparation_byte_unchanged": true,
+  "tests_and_law_byte_unchanged_from_RED": true,
+  "source_patch_sha256": "b5f30583ed873a7af73177eab9fbbf759e3bed93287516a4d2c05fd7a652b96b",
+  "static_pass_records": [
+    "kondo-final.json",
+    "reader-final.json",
+    "format-check-final-02.json"
+  ],
+  "preserved_nonpassing_records": {
+    "kondo.json": "one record field update shadow warning; removed unused core update namespace refer, no lint suppression",
+    "format-check-01.json": "touched source indentation before formatter",
+    "format-check-final.json": "diagnostic command omitted a closing delimiter; source was unchanged, corrected final-02 passed"
+  },
+  "scope": "No JVM, project namespace evaluation, functional test, native service/input, push or hosted action. Three admitted production paths in total: new law at RED plus two existing host adapters.",
+  "pending": [
+    "independent source review",
+    "focused GREEN JVM slot",
+    "full ordinary suite",
+    "six strict gates",
+    "actual host-loop before/after cost check",
+    "native gameplay acceptance remains open"
+  ]
+}

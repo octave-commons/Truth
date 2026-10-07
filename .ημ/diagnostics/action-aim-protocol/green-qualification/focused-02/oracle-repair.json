@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-07T16:15:57.304219+00:00",
+  "path": "test/infra/dev/sculpt_intent_test.clj",
+  "before_sha256": "819f896586465cc4f2935eb7b234a233d21d5396939a3f1dc576f1e28256eae3",
+  "after_sha256": "088bb8986e8733d5d8909eaa62719c86c89d0b51b0550bbfd086afb1be3b988c",
+  "reason": "Existing law.voxel costs at0.5 are uplift2.0,volcanism3.0,erosion1.5; new matrix incorrectly expected uplift balance for all. Original RED remains13missing-API failures, whose guard prevented body evaluation.",
+  "original_utf8_preserved_in": "../focused-inputs.json",
+  "production_changed": false,
+  "assertions_unchanged_except_expected_per_case": true
+}

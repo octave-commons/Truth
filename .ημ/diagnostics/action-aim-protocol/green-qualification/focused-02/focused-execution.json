@@ -1,0 +1,75 @@
+{
+  "argv": [
+    "clojure",
+    "-M:test",
+    "-n",
+    "law.input-intent-test",
+    "-n",
+    "infra.dev.sculpt-intent-test",
+    "-n",
+    "infra.dev.focus-cadence-test",
+    "-n",
+    "infra.dev.window-test",
+    "-n",
+    "infra.render.input-test",
+    "-n",
+    "domain.pilot-resolve-seam-test",
+    "-n",
+    "architecture-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+  "started_utc": "2026-10-07T16:15:57.384210+00:00",
+  "ended_utc": "2026-10-07T16:16:08.798476+00:00",
+  "elapsed_s": 11.41423908899742,
+  "pid": 1346481,
+  "process_group": 1346481,
+  "owned_pids_observed": [
+    1346481
+  ],
+  "process_identity_history": [
+    {
+      "pid": 1346481,
+      "starttime_ticks": 5725744,
+      "pgid": 1346481,
+      "state": "R",
+      "exe": "/usr/bin/bash",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.002138022995495703
+    },
+    {
+      "pid": 1346481,
+      "starttime_ticks": 5725744,
+      "pgid": 1346481,
+      "state": "S",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-action-aim-plan",
+      "elapsed_s": 0.10248124099598499
+    },
+    {
+      "pid": 1346481,
+      "starttime_ticks": 5725744,
+      "pgid": 1346481,
+      "state": "Z",
+      "exe": null,
+      "cwd": null,
+      "elapsed_s": 11.301824615999067
+    }
+  ],
+  "java_opts": "-Xms256m -Xmx2g",
+  "removed_inherited_option_names": [
+    "JAVA_TOOL_OPTIONS",
+    "JDK_JAVA_OPTIONS",
+    "_JAVA_OPTIONS"
+  ],
+  "work_timeout_s": 175,
+  "cleanup_reserve_s": 5,
+  "timed_out": false,
+  "exit_code": 0,
+  "main_process_reaped": true,
+  "owned_pids_still_present": [],
+  "source_test_pin_count": 304,
+  "source_test_changed": [],
+  "stdout_sha256": "95d16938cfa754483db1278589a733f03e701a0413d121268fd1642e505eb475",
+  "stderr_sha256": "7fa2d8a6b11c80b13b7753030fca1f8c0219cb2c8203095f62fd8aefeb1913c9",
+  "runner_sha256": "843de02452e498120afd28bbb823fa94cd6f872b00e6534897d41ece05e7861f"
+}

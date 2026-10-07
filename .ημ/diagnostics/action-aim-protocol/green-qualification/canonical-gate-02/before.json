@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-07T16:24:05.283368+00:00",
+  "head": "f0c4710a8306aa634af9f49859c11451515ed912",
+  "runtime_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "source_test_pin_count": 304,
+  "files": {
+    "openhax.kanban.edn": {
+      "bytes": 180,
+      "sha256": "15aaca2bdd649d2c354e43d87ca944ab01452c616cbee2e85bdf42f7ffb8c262"
+    },
+    "kanban/tasks/focus-follows-pilot.md": {
+      "bytes": 32178,
+      "sha256": "7a36715c632dd3179f25c857ec0aa1a0c60859ec287fb880fe34c408f8e3ec0a"
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 649589,
+      "sha256": "968b27d91ca056083e42c69ae0916ca3f912155688b237f8c979c8eaa1f5b98b"
+    }
+  },
+  "authorization": "Root permitted one canonical retry <=1500s/2GiB after owned style-only corrections; no standalone full suite"
+}

@@ -1,0 +1,711 @@
+{
+  "format": "lossless-utf8-jsonl-v1",
+  "originals_retained_locally": true,
+  "archive": ".\u03b7\u03bc/diagnostics/action-aim-protocol/publication/historical-evidence.jsonl",
+  "archive_sha256": "482499697aaeb20a8084ccb1dee7f479cbc6b6233f87f710fe22a0fca549f062",
+  "entries": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/CLOSED-FILES.txt",
+      "bytes": 2171,
+      "sha256": "990caa8cc5cca4b963c9323b8239c9cef14e7a94ff56ccc5e91654522a1d3a15",
+      "line": 1,
+      "byte_start": 0,
+      "byte_end": 2383
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/SHA256SUMS",
+      "bytes": 4287,
+      "sha256": "d29f73db78681b3a1937b8441eb537b00ab57026b4b7f26dca0f04655d4c0628",
+      "line": 2,
+      "byte_start": 2383,
+      "byte_end": 6875
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-01.json",
+      "bytes": 1399,
+      "sha256": "bc07fc6f79bccd1e6d5d6000e4fa8576e330d2a0f7423ab1263cb770e3c04cd8",
+      "line": 3,
+      "byte_start": 6875,
+      "byte_end": 8554
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-01.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 4,
+      "byte_start": 8554,
+      "byte_end": 8735
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-01.stdout",
+      "bytes": 43,
+      "sha256": "1b084f0d50f92ad2bc775215e5958b17c4ae9005cddbbe84b92560555606631a",
+      "line": 5,
+      "byte_start": 8735,
+      "byte_end": 8961
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-final-02.json",
+      "bytes": 1315,
+      "sha256": "da93cf8e9d6a498768cfac48c0aa26c3accb3f28e432b1ab4a98fac7115f3d7a",
+      "line": 6,
+      "byte_start": 8961,
+      "byte_end": 10558
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-final-02.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 7,
+      "byte_start": 10558,
+      "byte_end": 10745
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-final-02.stdout",
+      "bytes": 77,
+      "sha256": "9bd2fdbc44dd99102957799439184f475dda1621d60e551c32964fee792eeafa",
+      "line": 8,
+      "byte_start": 10745,
+      "byte_end": 11012
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-final.json",
+      "bytes": 1320,
+      "sha256": "36e92e0b8276aafc87aceee72607210af36a4bb03eb629bbf64d218238a488a7",
+      "line": 9,
+      "byte_start": 11012,
+      "byte_end": 12611
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-final.stderr",
+      "bytes": 1306,
+      "sha256": "984f290a925ddee4691c8422dd8bdcfb44dfb8d77aef239b177b9ce8ebe68dc4",
+      "line": 10,
+      "byte_start": 12611,
+      "byte_end": 14133
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-check-final.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 11,
+      "byte_start": 14133,
+      "byte_end": 14317
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-fix.json",
+      "bytes": 1261,
+      "sha256": "4eca03c6682c7ac77befe37c38bc75ac45f7b1692ea7c6ba5459f439509c6fb2",
+      "line": 12,
+      "byte_start": 14317,
+      "byte_end": 15845
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-fix.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 13,
+      "byte_start": 15845,
+      "byte_end": 16021
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/format-fix.stdout",
+      "bytes": 77,
+      "sha256": "9bd2fdbc44dd99102957799439184f475dda1621d60e551c32964fee792eeafa",
+      "line": 14,
+      "byte_start": 16021,
+      "byte_end": 16277
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/kondo-final.json",
+      "bytes": 1144,
+      "sha256": "2628177ac692a37538379a9b5f8d73e77fd4a31b28c4b19846211bb7b358156c",
+      "line": 15,
+      "byte_start": 16277,
+      "byte_end": 17687
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/kondo-final.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 16,
+      "byte_start": 17687,
+      "byte_end": 17864
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/kondo-final.stdout",
+      "bytes": 43,
+      "sha256": "18b5e21bd865e20c33a0432371796c81cb806b9b89a1d99b28e9a8d77564e477",
+      "line": 17,
+      "byte_start": 17864,
+      "byte_end": 18086
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/kondo.json",
+      "bytes": 1144,
+      "sha256": "4d7140470fee195cea2364c4595beaa0439f0f5cc9651c6556e97dd27e1539af",
+      "line": 18,
+      "byte_start": 18086,
+      "byte_end": 19490
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/kondo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 19,
+      "byte_start": 19490,
+      "byte_end": 19661
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/kondo.stdout",
+      "bytes": 123,
+      "sha256": "4b796335b701cc11df21a0378a17e7b90743d8364c6bb32f52a806cb8a90646a",
+      "line": 20,
+      "byte_start": 19661,
+      "byte_end": 19959
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/reader-final.json",
+      "bytes": 1436,
+      "sha256": "5007f7fd8d6e48d7c75886132fff868d1abb78d0d4e6a85be73e504f4106a709",
+      "line": 21,
+      "byte_start": 19959,
+      "byte_end": 21674
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/reader-final.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 22,
+      "byte_start": 21674,
+      "byte_end": 21852
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/reader-final.stdout",
+      "bytes": 195,
+      "sha256": "e45e70bfc4f19b832d3e266a626b23a121f289b13bac8e35d47e46e9ced2bb43",
+      "line": 23,
+      "byte_start": 21852,
+      "byte_end": 22232
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/reader.json",
+      "bytes": 1437,
+      "sha256": "f20d5ee62b0f3bb3ec20e2443c77c4e348a89f48b14559fb699960ab1c1f70af",
+      "line": 24,
+      "byte_start": 22232,
+      "byte_end": 23942
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/reader.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 25,
+      "byte_start": 23942,
+      "byte_end": 24114
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/reader.stdout",
+      "bytes": 195,
+      "sha256": "e45e70bfc4f19b832d3e266a626b23a121f289b13bac8e35d47e46e9ced2bb43",
+      "line": 26,
+      "byte_start": 24114,
+      "byte_end": 24488
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-01/before.json",
+      "bytes": 935,
+      "sha256": "4bd57c2f02e98da1ca75f09ba0bcf03f03c18757a8ba3a8c0cbfd425c0a10b42",
+      "line": 27,
+      "byte_start": 24488,
+      "byte_end": 25703
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-01/gate-execution.json",
+      "bytes": 9080,
+      "sha256": "eb4fa049cdd5508402a0e23c153a96e6706641c7760e33c498cc16f1205ba94d",
+      "line": 28,
+      "byte_start": 25703,
+      "byte_end": 35973
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-01/gate.stderr",
+      "bytes": 2905,
+      "sha256": "98a5c3c6cdfb3f1e866c5bc06a122eddd6c16543f05d95d7d8a43a2a42bd07f9",
+      "line": 29,
+      "byte_start": 35973,
+      "byte_end": 39182
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-01/gate.stdout",
+      "bytes": 19337,
+      "sha256": "25c2d0ece120e745250f6227963fdc1dda5d7c5374eccd93ddbd6d258fa32d20",
+      "line": 30,
+      "byte_start": 39182,
+      "byte_end": 59311
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-01/run-gate.py",
+      "bytes": 3104,
+      "sha256": "1469d4856dd1f71c7b70b3aeeab54661bc8ebc1ed7fb496ca844a0d2c3ab4e2c",
+      "line": 31,
+      "byte_start": 59311,
+      "byte_end": 62662
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-01/source-test-pins.json",
+      "bytes": 31277,
+      "sha256": "9e9ce58b50f719120fee94bbfe26742a2ce15827251d5a9e159f4c2ad472a0e2",
+      "line": 32,
+      "byte_start": 62662,
+      "byte_end": 95670
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-after.json",
+      "bytes": 423,
+      "sha256": "033c6e81047776b51def4381495252e17c6e3bf68c8d9dfa4d4d2a9fcf72c7ff",
+      "line": 33,
+      "byte_start": 95670,
+      "byte_end": 96331
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 34,
+      "byte_start": 96331,
+      "byte_end": 96534
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-after.stdout",
+      "bytes": 23,
+      "sha256": "1aec2a409a2f64652753110c082699964d1550611d85943bb5a42e09e8aabe69",
+      "line": 35,
+      "byte_start": 96534,
+      "byte_end": 96762
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-before.json",
+      "bytes": 644,
+      "sha256": "88fe49b22265391c1d1ec02df250d133cadca29b462a12aa2007d3e5840df58b",
+      "line": 36,
+      "byte_start": 96762,
+      "byte_end": 97662
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 37,
+      "byte_start": 97662,
+      "byte_end": 97866
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-before.stdout",
+      "bytes": 38,
+      "sha256": "4f4fd26ef2bc74888644a6b609e4ccd6bb08c8b5ee013632c26adc4a6230141e",
+      "line": 38,
+      "byte_start": 97866,
+      "byte_end": 98110
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-fix-02.json",
+      "bytes": 412,
+      "sha256": "19699f84aff4c16ac10f5dc19c4b40c9f73f5febd8e3978a2c8d42ce6cbf5da7",
+      "line": 39,
+      "byte_start": 98110,
+      "byte_end": 98761
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-fix-02.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 40,
+      "byte_start": 98761,
+      "byte_end": 98965
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-fix-02.stdout",
+      "bytes": 26,
+      "sha256": "2c9290a35fcf9f607f6f6c23d90dacd9d6425f9d510af5b1b6daac8744f1cc17",
+      "line": 41,
+      "byte_start": 98965,
+      "byte_end": 99197
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-fix.json",
+      "bytes": 404,
+      "sha256": "afaaea02698664217d44388391e855fdf9f5d6617ac3ebecdf2f334c9d98c9c0",
+      "line": 42,
+      "byte_start": 99197,
+      "byte_end": 99834
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-fix.stderr",
+      "bytes": 1256,
+      "sha256": "98c1f1e7e58cc7a642cc611bcfa0a712861930e4d104dfb3ebef074dbe1b0164",
+      "line": 43,
+      "byte_start": 99834,
+      "byte_end": 101321
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/format-fix.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 44,
+      "byte_start": 101321,
+      "byte_end": 101522
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/kondo-after.json",
+      "bytes": 113,
+      "sha256": "046954794ae11e62e0b7b21d4be35dd2f9d57f01a09cd38055d9afd12b05c6e8",
+      "line": 45,
+      "byte_start": 101522,
+      "byte_end": 101855
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/kondo-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 46,
+      "byte_start": 101855,
+      "byte_end": 102057
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/kondo-after.stdout",
+      "bytes": 42,
+      "sha256": "06dbbf93668aa8ff0e650c967fd4f681910dcee2ac3e417c2bb7be49378f27a1",
+      "line": 47,
+      "byte_start": 102057,
+      "byte_end": 102303
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/pre-retry-comment.json",
+      "bytes": 1401,
+      "sha256": "c2597859c13d915832b00c287a05b7d8575d0da7a9ac20e97017e9d182eca96b",
+      "line": 48,
+      "byte_start": 102303,
+      "byte_end": 103965
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/pre-retry-comment.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 49,
+      "byte_start": 103965,
+      "byte_end": 104173
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/pre-retry-comment.stdout",
+      "bytes": 975,
+      "sha256": "b87c9d2e76f7a11ac56b13d71fe545660ac962fcc7c7fd2a51feb0c7173a925a",
+      "line": 50,
+      "byte_start": 104173,
+      "byte_end": 105373
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/pre-retry-comment.txt",
+      "bytes": 909,
+      "sha256": "e657e608dd27d6deb5b63aa0948ed1930f0ebe761736673c0424b982e8db8c79",
+      "line": 51,
+      "byte_start": 105373,
+      "byte_end": 106490
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/pre-retry-readback.json",
+      "bytes": 32739,
+      "sha256": "7622a4223a9638775fac8029865f1aba8601249cc2579a69c192e18b04173120",
+      "line": 52,
+      "byte_start": 106490,
+      "byte_end": 139715
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/pre-retry-readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 53,
+      "byte_start": 139715,
+      "byte_end": 139924
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/sculpt_intent_test.before-style.clj.txt",
+      "bytes": 22036,
+      "sha256": "088bb8986e8733d5d8909eaa62719c86c89d0b51b0550bbfd086afb1be3b988c",
+      "line": 54,
+      "byte_start": 139924,
+      "byte_end": 162692
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/run-focused.py",
+      "bytes": 3006,
+      "sha256": "843de02452e498120afd28bbb823fa94cd6f872b00e6534897d41ece05e7861f",
+      "line": 55,
+      "byte_start": 162692,
+      "byte_end": 165941
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/source-test-pins.json",
+      "bytes": 31277,
+      "sha256": "9e9ce58b50f719120fee94bbfe26742a2ce15827251d5a9e159f4c2ad472a0e2",
+      "line": 56,
+      "byte_start": 165941,
+      "byte_end": 198942
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-comment-command.json",
+      "bytes": 1373,
+      "sha256": "623bab48500aa91ab5cb8d14ce971a50549b9789e326c0f4ac2b0ebdbc9249a8",
+      "line": 57,
+      "byte_start": 198942,
+      "byte_end": 200557
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-comment-readback.json",
+      "bytes": 31827,
+      "sha256": "6ab0fa6f22d20e22eee727165381c9c8f79827c789f1949d1feaf60db6a03168",
+      "line": 58,
+      "byte_start": 200557,
+      "byte_end": 232856
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-comment-result.json",
+      "bytes": 171,
+      "sha256": "1fd13152ec3ac5db071e43b1dfafc220d7743c568f44129657817c16e7a654ed",
+      "line": 59,
+      "byte_start": 232856,
+      "byte_end": 233248
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-comment.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 60,
+      "byte_start": 233248,
+      "byte_end": 233436
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-comment.stdout",
+      "bytes": 977,
+      "sha256": "bbdd744349a124523c6363095154800eb924fc41bcd41fde6f5a0bc8aa44b3a0",
+      "line": 61,
+      "byte_start": 233436,
+      "byte_end": 234618
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-comment.txt",
+      "bytes": 911,
+      "sha256": "e10bda01412a8f10cc81494180dedf3aa8f994732aaecfe1c185d0392cca301f",
+      "line": 62,
+      "byte_start": 234618,
+      "byte_end": 235717
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-execution.json",
+      "bytes": 2036,
+      "sha256": "1124744947d568f0a25c5468a242a16d6066842aea8d94f668da62d15136d82c",
+      "line": 63,
+      "byte_start": 235717,
+      "byte_end": 238171
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-inputs.json",
+      "bytes": 68627,
+      "sha256": "b5a3918a453974b6b22d9699fcc511b9f4a3e089c157cf75f940f9569e703bae",
+      "line": 64,
+      "byte_start": 238171,
+      "byte_end": 308947
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-verdict.json",
+      "bytes": 1088,
+      "sha256": "152f5d394c2299cbf6968a9ac9945aea3c805c4036489a5a87a586b96b0349aa",
+      "line": 65,
+      "byte_start": 308947,
+      "byte_end": 310304
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused.stderr",
+      "bytes": 2651,
+      "sha256": "7fa2d8a6b11c80b13b7753030fca1f8c0219cb2c8203095f62fd8aefeb1913c9",
+      "line": 66,
+      "byte_start": 310304,
+      "byte_end": 313237
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused.stdout",
+      "bytes": 723,
+      "sha256": "0abcea65237ad0a81ba49c977271e311286073cacb9f08a58b9fdebf2937607d",
+      "line": 67,
+      "byte_start": 313237,
+      "byte_end": 314171
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/qualification-comment.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 68,
+      "byte_start": 314171,
+      "byte_end": 314365
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/qualification-comment.stdout",
+      "bytes": 1356,
+      "sha256": "cbd7a112962d57cdb5c57c38aecf0079038ca44ffebbbcd92503084077bab176",
+      "line": 69,
+      "byte_start": 314365,
+      "byte_end": 315933
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/qualification-readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "line": 70,
+      "byte_start": 315933,
+      "byte_end": 316128
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/run-focused.py",
+      "bytes": 2995,
+      "sha256": "e2e3698950b1fc6350c067a6f07bc30ffbf694089bfdd81c6514c4dd6d569797",
+      "line": 71,
+      "byte_start": 316128,
+      "byte_end": 319355
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/source-test-pins.json",
+      "bytes": 31277,
+      "sha256": "7720656565e05fbc239407c9ba28a640d62da8eb9b6babf414283de2b3632b01",
+      "line": 72,
+      "byte_start": 319355,
+      "byte_end": 352345
+    }
+  ],
+  "direct": [
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/CLOSED-FILES.txt",
+      "bytes": 6188,
+      "sha256": "c53d1999b51e2970f2171b5bc377d8f771f7daa049c937620ec61df7db4a4999"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/HOST-COST-PROTOCOL.md",
+      "bytes": 3858,
+      "sha256": "59bb831763b7ae4e0f6c1226fb6f1f2e77754fbba2188cd2b82d14ad1365d69c"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/RESULT.md",
+      "bytes": 2649,
+      "sha256": "4aeeb37f5c4623927c6b327c92e2b236df0a83d066db9692d05f711cc16b8eef"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/SHA256SUMS",
+      "bytes": 10871,
+      "sha256": "3cbf604c2c8df196ea925581b81ea2db6ad5eae7fd19d076923d3a8e18fc5867"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/VERDICT.json",
+      "bytes": 2567,
+      "sha256": "e0d692e51067584a0b60d53fd39a347e211f544fffbb95a5d27c64435f7890be"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/append-only-proof.json",
+      "bytes": 411,
+      "sha256": "266dae83a087521fb62614961688b29c8012430de78647ab88c7b93f0a117d72"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/before.json",
+      "bytes": 818,
+      "sha256": "a0f6352f70abaa39f2d19dd679a654bc8d6bbd3a734a6a111f4ea733a7232f75"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/gate-execution.json",
+      "bytes": 7304,
+      "sha256": "289d837a8f87ed3657e80b8efdb2a011bab1e143dbac13b45af88de09c1ff1be"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/gate.stderr",
+      "bytes": 2817,
+      "sha256": "f37e114085da81eba1f84e60675ca975244188a03451fec62ba035a94dd73ef1"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/gate.stdout",
+      "bytes": 18929,
+      "sha256": "9afeb2ce13fe744577c6296072a79742444e19c8da4f5fa252cd0ecd07f23e5e"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/run-gate.py",
+      "bytes": 3104,
+      "sha256": "aa74a631dc3ab1a7b5427b076e2a936a56a340c06a655c19d2d940371239a2c5"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/source-test-pins.json",
+      "bytes": 31277,
+      "sha256": "b7f78b7a2ffa50aaf5bf4879a9280f5e49b72ec9c237f2235f98604bdd799e25"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.json",
+      "bytes": 987,
+      "sha256": "1cf37d175e7ce8693148ee23ce77b8394981f35d57c9d0196e2e6bc9037fa1b0"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/canonical-gate-02/style-repair.patch",
+      "bytes": 8556,
+      "sha256": "e9b409726d7d114e1eaa6c72518d93aa44a78f4ea7d2422a34486a9ec67130f9"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/focused-execution.json",
+      "bytes": 2036,
+      "sha256": "a5146aa1d2fcdb2cdad700448195e44b7f82f3e6b82bfcdeae4d581543033a95"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/focused.stderr",
+      "bytes": 2651,
+      "sha256": "7fa2d8a6b11c80b13b7753030fca1f8c0219cb2c8203095f62fd8aefeb1913c9"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/focused.stdout",
+      "bytes": 329,
+      "sha256": "95d16938cfa754483db1278589a733f03e701a0413d121268fd1642e505eb475"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.json",
+      "bytes": 641,
+      "sha256": "bdead6283f0ec6d9bdc67bbfdb862b8e1ec68dec2387dfefd2546d9ce874e5b1"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/focused-02/oracle-repair.patch",
+      "bytes": 1379,
+      "sha256": "827eda53593a568467e51e813768c5ac6978e74c4c05b3d541e4c31f088d8a5d"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/qualification-comment.json",
+      "bytes": 1815,
+      "sha256": "c0126105f629397c64156fc04f6267b810436a535b5513a5fd4871a513187832"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/qualification-comment.txt",
+      "bytes": 1290,
+      "sha256": "0bb9acc4211c3494e141f9f1e695b742bc442eed2ce34a2e09b3fcc45905203f"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-qualification/qualification-readback.json",
+      "bytes": 34027,
+      "sha256": "d1b4e4c37fe93133ceb4100a39fd2f154d9cea06ea0afad7233dc811bf3460b3"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/README.md",
+      "bytes": 2697,
+      "sha256": "af54323f416b5e2882aee5d8aa1180cf9400a6bfbd479bffe1cf4a87aaf71407"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/SOURCE-FREEZE.json",
+      "bytes": 2768,
+      "sha256": "37fd59b0393b5763744976ee39051db0864feed3e19fa0f5fdd4443bea64e24d"
+    },
+    {
+      "path": ".\u03b7\u03bc/diagnostics/action-aim-protocol/green-source/source.patch",
+      "bytes": 12183,
+      "sha256": "b5f30583ed873a7af73177eab9fbbf759e3bed93287516a4d2c05fd7a652b96b"
+    }
+  ]
+}

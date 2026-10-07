@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-07T16:23:17.723462+00:00",
+  "authorization": "Root authorized two owned Math/sqrt sites, explicit clojure.math require and routine formatting; no production edits",
+  "before_sha256": "088bb8986e8733d5d8909eaa62719c86c89d0b51b0550bbfd086afb1be3b988c",
+  "after_sha256": "2bb8dd3c4a5204444576161463060c44702af211cf315f338882dafdb7828ab8",
+  "preserved_before": "sculpt_intent_test.before-style.clj.txt",
+  "format_before_only_changed_path": "test/infra/dev/sculpt_intent_test.clj",
+  "format_fix_01": "Diagnostic BB command missing closing delimiter; parse failed before formatting, preserved; corrected format-fix-02 passed",
+  "production_unchanged": {
+    "src/law/input_intent.cljc": "55df510b0e8c20cc48ac1a623eafeecb80379cf3f914af58914af3d1447551fb",
+    "src/infra/dev/window/loop.clj": "ef70bad85801842314c31afb5fd4875ca0e6ce3f50e694f864a9fe4ab55fb789",
+    "src/infra/render/input.clj": "67b098214f84c75e2436e14880b953ed70bc33ace4034ad460edf918be1ab59f"
+  }
+}

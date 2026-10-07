@@ -1,0 +1,9 @@
+{
+  "files": 118,
+  "original_bytes": 826803,
+  "encoded_bytes": 883569,
+  "empty_files": 9,
+  "roundtrip_all": true,
+  "no_inputs_modified": true,
+  "source": "Both original failed baseline and repaired preparation/runs plus root release/closure companions, complete no-omission partition"
+}

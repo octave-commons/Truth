@@ -1,0 +1,19 @@
+
+Running tests in #{"test"}
+
+Testing architecture-test
+
+Testing domain.pilot-resolve-seam-test
+
+Testing infra.dev.focus-cadence-test
+
+Testing infra.dev.sculpt-intent-test
+
+Testing infra.dev.window-test
+
+Testing infra.render.input-test
+
+Testing law.input-intent-test
+
+Ran 56 tests containing 544 assertions.
+0 failures, 0 errors.

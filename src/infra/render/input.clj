@@ -7,9 +7,11 @@
    [domain.ecology :as ecology]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.player :as player]
    [domain.voxel.sculpt :as sculpt]
    [infra.camera :as cam]
    [infra.input :as input]
+   [law.input-intent :as intent-law]
    [law.narrowing :as law-narrowing])
   (:import
    (org.lwjgl.glfw GLFW GLFWKeyCallback GLFWCursorPosCallback GLFWScrollCallback GLFWMouseButtonCallback)))
@@ -155,18 +157,47 @@
   (swap! config-atom merge (cam/default-camera-settings))
   (println "Camera reset"))
 
+(defn- request-sculpt
+  "Prepare manual attention from the current serial world before domain dispatch."
+  [world context verb magnitude]
+  (if-not (:manual? context)
+    (sculpt/request-op world verb magnitude)
+    (if (player/get-observer world)
+      (let [offset (:focus-offset context)]
+        (when-not (law-narrowing/focus-offset? offset)
+          (throw (ex-info "Invalid focus-offset: expected three finite coordinates"
+                          {:focus-offset offset})))
+        (when-not (some? (player/observer-position world))
+          (throw (ex-info "Missing observer position for manual sculpt" {})))
+        (sculpt/request-op (player/focus-follow world offset) verb magnitude))
+      world)))
+
+(defn- validate-submission-options
+  "Reject a malformed explicit capability before callbacks or dispatch."
+  [options]
+  (when-not (intent-law/submission-options? options)
+    (throw (ex-info "Invalid contextual submission options" {:options options})))
+  options)
+
 (defn- dispatch-palette-action!
   "Trigger the action a key/shift press maps to, if any. `:kind` entries
    become an `:action-request` the window loop places as an intervention at
    the focus point; `:sculpt` entries enqueue a
-   `domain.voxel.sculpt/request-op` intent directly (pure world→world', the
-   same serial pre-tick path) — the op gates itself on the world's
+   `domain.voxel.sculpt/request-op` intent through the supplied capability or
+   the legacy world atom — the op gates itself on the world's
    `c/palette` phase and Resonance, so a pre-commitment press is a no-op."
-  [config-atom world-atom glfw-key shift?]
-  (when-let [a (action-for-key glfw-key shift?)]
-    (if-let [verb (:sculpt a)]
-      (swap! world-atom sculpt/request-op verb (:magnitude a))
-      (swap! config-atom assoc :action-request {:kind (:kind a)}))))
+  ([config-atom world-atom glfw-key shift?]
+   (dispatch-palette-action! config-atom world-atom glfw-key shift? {}))
+  ([config-atom world-atom glfw-key shift? options]
+   (validate-submission-options options)
+   (when-let [a (action-for-key glfw-key shift?)]
+     (if-let [verb (:sculpt a)]
+       (let [magnitude (:magnitude a)]
+         (if (contains? options :submit-contextual!)
+           ((:submit-contextual! options)
+            (fn [world context] (request-sculpt world context verb magnitude)))
+           (swap! world-atom sculpt/request-op verb magnitude)))
+       (swap! config-atom assoc :action-request {:kind (:kind a)})))))
 
 (def ^:private config-key-handlers
   "Data table for camera/UI key presses. Each entry is {:handler :label :fmt}."
@@ -181,28 +212,32 @@
 
 (defn- key-callback
   "GLFW key callback for the dev renderer."
-  [window camera-atom keys-atom config-atom world-atom]
-  (proxy [GLFWKeyCallback] []
-    (invoke [window key scancode action mods]
-      (when (= action GLFW/GLFW_PRESS)
-        (swap! keys-atom assoc key true))
-      (when (= action GLFW/GLFW_RELEASE)
-        (swap! keys-atom dissoc key))
-      (when (and (= key GLFW/GLFW_KEY_ESCAPE) (= action GLFW/GLFW_PRESS))
-        (GLFW/glfwSetWindowShouldClose window true))
-      (when (= action GLFW/GLFW_PRESS)
-        (when-let [{:keys [handler label fmt]} (config-key-handlers key)]
-          (swap! config-atom handler)
-          (println label ":" (fmt @config-atom)))
-        (when (= key GLFW/GLFW_KEY_R)
-          (reset-camera! camera-atom config-atom))
-        (when (= key GLFW/GLFW_KEY_L)
-          (jump-to-living-world config-atom world-atom @camera-atom))
-        (dispatch-palette-action! config-atom world-atom key (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT))))
-      ;; Focus nudges are discrete presses; repeats and release only maintain
-      ;; held-key state for the existing continuous movement dispatcher.
-      (when (and world-atom (= action GLFW/GLFW_PRESS))
-        (player-key config-atom world-atom key)))))
+  ([window camera-atom keys-atom config-atom world-atom]
+   (key-callback window camera-atom keys-atom config-atom world-atom {}))
+  ([window camera-atom keys-atom config-atom world-atom options]
+   (validate-submission-options options)
+   (proxy [GLFWKeyCallback] []
+     (invoke [window key scancode action mods]
+       (when (= action GLFW/GLFW_PRESS)
+         (swap! keys-atom assoc key true))
+       (when (= action GLFW/GLFW_RELEASE)
+         (swap! keys-atom dissoc key))
+       (when (and (= key GLFW/GLFW_KEY_ESCAPE) (= action GLFW/GLFW_PRESS))
+         (GLFW/glfwSetWindowShouldClose window true))
+       (when (= action GLFW/GLFW_PRESS)
+         (when-let [{:keys [handler label fmt]} (config-key-handlers key)]
+           (swap! config-atom handler)
+           (println label ":" (fmt @config-atom)))
+         (when (= key GLFW/GLFW_KEY_R)
+           (reset-camera! camera-atom config-atom))
+         (when (= key GLFW/GLFW_KEY_L)
+           (jump-to-living-world config-atom world-atom @camera-atom))
+         (dispatch-palette-action! config-atom world-atom key
+                                   (pos? (bit-and (int mods) GLFW/GLFW_MOD_SHIFT)) options))
+       ;; Focus nudges are discrete presses; repeats and release only maintain
+       ;; held-key state for the existing continuous movement dispatcher.
+       (when (and world-atom (= action GLFW/GLFW_PRESS))
+         (player-key config-atom world-atom key))))))
 
 (defn- cursor-callback
   "GLFW cursor position callback for look/orbit dragging."
@@ -251,12 +286,17 @@
       (swap! camera-atom update-camera-zoom yoffset @config-atom))))
 
 (defn setup-input
-  "Install GLFW input callbacks. With a `:world-atom` key, also wires the player's
-   focus controls (arrows / , . / Space) onto the world's observer."
-  [{:keys [window camera-atom keys-atom config-atom world-atom]}]
-  (GLFW/glfwSetKeyCallback window (key-callback window camera-atom keys-atom config-atom world-atom))
-  (let [cursor (atom [0.0 0.0])
+  "Install GLFW input callbacks and optional contextual sculpt submission.
+
+   Absent capability preserves legacy world-atom dispatch; explicit nil is invalid.
+   With a world atom, focus controls also update the player's observer."
+  [{:keys [window camera-atom keys-atom config-atom world-atom] :as options}]
+  (let [submission-options (validate-submission-options
+                            (select-keys options [:submit-contextual!]))
+        cursor (atom [0.0 0.0])
         dragged? (atom false)]
+    (GLFW/glfwSetKeyCallback window (key-callback window camera-atom keys-atom config-atom world-atom
+                                                  submission-options))
     (GLFW/glfwSetCursorPosCallback window (cursor-callback window camera-atom config-atom cursor dragged?))
-    (GLFW/glfwSetMouseButtonCallback window (mouse-button-callback window config-atom cursor dragged?)))
-  (GLFW/glfwSetScrollCallback window (scroll-callback camera-atom config-atom)))
+    (GLFW/glfwSetMouseButtonCallback window (mouse-button-callback window config-atom cursor dragged?))
+    (GLFW/glfwSetScrollCallback window (scroll-callback camera-atom config-atom))))
