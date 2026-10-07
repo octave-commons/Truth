@@ -1,0 +1,14 @@
+{
+  "started_at": "2026-10-07T02:52:33.390248+00:00",
+  "argv": [
+    "clj-kondo",
+    "--lint",
+    "dev/demo.clj",
+    "dev/demo_test.clj"
+  ],
+  "environment_override": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g",
+    "_JAVA_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "head": "d550a516a27f101464e5e9b7894495cba3233f0e"
+}

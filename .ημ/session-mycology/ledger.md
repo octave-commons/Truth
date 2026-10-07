@@ -503,3 +503,12 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,c0c76ee,review5436791462
   note: Preexisting behavior is provenance, not a reason to dismiss a concrete review concern. Isolate temporary pause restoration from queued-world cancellation, and inject a known read failure only after the real enqueue boundary. Keep already-qualified tests unchanged and mark expected RED counts as predictions until execution. No new spore; existing review and regression skills suffice.
+- ts: 2026-10-07T02:53:51.542812927Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Repair documented interactive scene-switch failure without widening rollback semantics
+  p-efficiency: 0.92
+  p-friction: 0.14
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
+  note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.
