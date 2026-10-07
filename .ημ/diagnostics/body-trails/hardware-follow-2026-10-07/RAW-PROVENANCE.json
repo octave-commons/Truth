@@ -1,0 +1,56 @@
+[
+  {
+    "raw_excluded": "target-selection.stdout",
+    "committed": "target-selection.stdout.gz",
+    "decoded_bytes": 190721,
+    "decoded_sha256": "67e7434756f596433e8860fbe0effd0bcf3d2e9d7f7ccd8c9dede44ac3b8beda",
+    "raw_sha256": "67e7434756f596433e8860fbe0effd0bcf3d2e9d7f7ccd8c9dede44ac3b8beda",
+    "gzip_sha256": "0c902f04a486790a204747599976eed577859595099f3cfe6b8f148a87ae90dc",
+    "mtime": 0
+  },
+  {
+    "raw_excluded": "target-selection.stderr",
+    "committed": "target-selection.stderr.gz",
+    "decoded_bytes": 0,
+    "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+    "mtime": 0
+  },
+  {
+    "raw_excluded": "install.stdout",
+    "committed": "install.stdout.gz",
+    "decoded_bytes": 106,
+    "decoded_sha256": "2a7c42e079a9daeb67d7ec10f3862d0f63befd5a29551e8cef35c50a81e97e62",
+    "raw_sha256": "2a7c42e079a9daeb67d7ec10f3862d0f63befd5a29551e8cef35c50a81e97e62",
+    "gzip_sha256": "464ce51106acf1a82cb8c7a7121efe7d0b4d89a1b69a1510eb67c81bc6af1588",
+    "mtime": 0
+  },
+  {
+    "raw_excluded": "install.stderr",
+    "committed": "install.stderr.gz",
+    "decoded_bytes": 0,
+    "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+    "mtime": 0
+  },
+  {
+    "raw_excluded": "restore-audit.stdout",
+    "committed": "restore-audit.stdout.gz",
+    "decoded_bytes": 228479,
+    "decoded_sha256": "1a22f8f2d8c44d6e1513a94b43bca7defab2e3a4d007764d7d5e98a35c1b068f",
+    "raw_sha256": "1a22f8f2d8c44d6e1513a94b43bca7defab2e3a4d007764d7d5e98a35c1b068f",
+    "gzip_sha256": "93e0272864c96dcff2663338359229bea60f9bd1848424e72bf4e136d705b587",
+    "mtime": 0
+  },
+  {
+    "raw_excluded": "restore-audit.stderr",
+    "committed": "restore-audit.stderr.gz",
+    "decoded_bytes": 0,
+    "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+    "mtime": 0
+  }
+]

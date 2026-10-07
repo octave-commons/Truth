@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "client_pid": 360095,
+  "reaped": true,
+  "completed_at": "2026-10-07T01:16:20.711655+00:00",
+  "duration_seconds": 2.3822049099999276,
+  "stdout_sha256": "1a22f8f2d8c44d6e1513a94b43bca7defab2e3a4d007764d7d5e98a35c1b068f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

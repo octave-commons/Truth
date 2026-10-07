@@ -1,0 +1,30 @@
+{
+  "completed_at": "2026-10-07T01:23:16.409477+00:00",
+  "engine_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "cards": [
+    {
+      "uuid": "body-trails-ringbuffer",
+      "status_before": "in_progress",
+      "status_after": "in_progress",
+      "frontmatter_except_write_id_preserved": true,
+      "body_preserved": true,
+      "prior_canonical_comments_prefix_preserved": true,
+      "source_path": "/home/err/spaces/foresight/.worktrees/truth-validation/kanban/tasks/body-trails-ringbuffer.md"
+    },
+    {
+      "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+      "status_before": "in_progress",
+      "status_after": "in_progress",
+      "frontmatter_except_write_id_preserved": true,
+      "body_preserved": true,
+      "prior_canonical_comments_prefix_preserved": true,
+      "source_path": "/home/err/spaces/foresight/.worktrees/truth-validation/kanban/tasks/verify-native-fly-resolve-sculpt-loop-and-graceful-exit.md"
+    }
+  ],
+  "ledger_before_bytes": 618325,
+  "ledger_before_sha256": "1dd0c663e8153c95679a3bb23ad5cb4673679f01d100f269d74ab9228d229350",
+  "ledger_after_sha256": "60a129f8b31e69f86cb8d9cf6531194523158f5d19801a47dae6f845f1e5f855",
+  "ledger_prior_byte_prefix_preserved": true,
+  "new_events": 2,
+  "closed_manifest_unchanged": "ab4a1b180729f792a23bfd80e55d0c5d3e149741e0f34f1e2950b7c3573f66ed"
+}

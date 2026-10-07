@@ -1,0 +1,18 @@
+{
+  "reviewers": [
+    "root",
+    "intent_research"
+  ],
+  "verdict": "no source blockers",
+  "authorized": "one run; six captures maximum / 90 second deadline; no repeated install on failure",
+  "hashes": {
+    "install.clj": "c8fa784d46f6ac313bde5dd45677c41be12e85fa70ea7a374657a64be9179689",
+    "restore.clj": "2d000da6dd7a1974ea1ea5a928cb3dfb20f07a0dabaae173ca691a8b270d17f5",
+    "PLAN.md": "7a6b6c31677789322e15460ee2904c0a3ae57db68d88465551e21f9542b4a57e"
+  },
+  "limits": [
+    "No manual gameplay claim",
+    "Follow changes attention and world evolution cannot be undone",
+    "Watchdog cannot preempt hung GL/JVM"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "status": "offline preparation only; no runtime calls",
+  "loaded_production_revision": "9c5c889d8923c76bf9a9530a8bd18cd72f37a93f",
+  "evidence_head_at_assignment": "90d6c2e",
+  "expected_identity": {
+    "pid": 131581,
+    "start_ticks": 125503,
+    "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "world_atom_identity": 919497450,
+    "window": 137768861339584,
+    "display": ":0",
+    "port": 7896
+  },
+  "prior_source": {
+    "/home/err/spaces/foresight/.worktrees/truth-focus-cadence/.\u03b7\u03bc/diagnostics/body-trails/hardware-follow-2026-10-06/install.clj": "03ed9569028652e5703a5cbc24be727c95833b0a552a8d142655340253519236",
+    "/home/err/spaces/foresight/.worktrees/truth-focus-cadence/.\u03b7\u03bc/diagnostics/body-trails/hardware-follow-2026-10-06/restore.clj": "2d000da6dd7a1974ea1ea5a928cb3dfb20f07a0dabaae173ca691a8b270d17f5",
+    "/home/err/spaces/foresight/.worktrees/truth-focus-cadence/.\u03b7\u03bc/diagnostics/body-trails/hardware-follow-2026-10-06/PLAN.md": "90f7540c68e7137f628d4c76855d3377bf51de22c04557d20132cdd934f734ec"
+  },
+  "proc_reader_source": "/home/err/spaces/foresight/.worktrees/truth-validation/.\u03b7\u03bc/diagnostics/native-current/2026-10-07/frame-observer-install.clj",
+  "pending": [
+    "root runtime release",
+    "fresh read-only target/history snapshot",
+    "target IDs and framing review",
+    "freeze installer and independent review",
+    "root execution authorization"
+  ]
+}
