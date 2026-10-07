@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-07T05:00:58.354493+00:00",
+  "baseline_commit": "8f953d2bcfab2fa2b3fef8a390157a4629eab9e0",
+  "source_sha256": "3685ddefe8ccedd3af3716678684a041ec50e1a08b1cbc89d8025ebfa3b8437a",
+  "fixture_sha256": "c9eb7f817e658f956a0418fb7ee325dd04bbdf1ccd9806e84ab795c154ed9a74",
+  "canonical_body_and_non_write_id_frontmatter_unchanged": true,
+  "canonical_frontmatter": {
+    "category": "specs",
+    "labels": [
+      "perf",
+      "phase0",
+      "spec"
+    ],
+    "write-id": "1791349259593-0.c2oypvtgtn9qjkwk3ww",
+    "source": "kanban/tasks/perf-tick-residual-gap-to-60fps.md",
+    "title": "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000",
+    "priority": "P1",
+    "status": "in_progress",
+    "estimate": "3",
+    "uuid": "perf-tick-residual-gap-to-60fps",
+    "created_at": "2026-07-10T00:00:00Z"
+  },
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 638456,
+      "before_sha256": "0872f21a1eba869bec232598526b82545345ab6f61eb5ed13b66d2086f347627",
+      "prefix_preserved": true,
+      "after_sha256": "364491ae85041c008d7d306f4f2b749c487651fad377c0054447d6ff1db27d07",
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 66228,
+      "before_sha256": "19cf72b80a9deda50e0b09baa9c2d06eb37e1a3be195f392ed8fca07c23e1453",
+      "prefix_preserved": true,
+      "after_sha256": "49db2dc20fb204c1ddcb636821743cab264b986ff3b4cb3633ea44faa5a8a1ee",
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 35630,
+      "before_sha256": "24ee7fcf8d6dfe939673341aa3369580b26fbb3a8ede49faa2221f1a4bd8107d",
+      "prefix_preserved": true,
+      "after_sha256": "7a6f1ae91769cbdccb81446316553c8ad99843800bcfc34cf5b111bfe75f9196",
+      "appended_lines": 10
+    }
+  ],
+  "full_suite": {
+    "tests": 953,
+    "assertions": 16800,
+    "failures": 0,
+    "errors": 0
+  },
+  "all_six_strict_passed": true,
+  "pinned_gate_files": 334,
+  "native_deployment": false,
+  "acceptance": "Query allocation reduction only; downstream timing and performance umbrella remain unresolved."
+}

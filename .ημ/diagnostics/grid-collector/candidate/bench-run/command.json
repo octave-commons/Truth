@@ -1,0 +1,28 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-Sdeps",
+    "{:aliases {:grid-evidence {:extra-paths [\".\u03b7\u03bc/diagnostics/grid-collector\"] :main-opts [\"-m\" \"evidence.grid\"]}}}",
+    "-M:bench:grid-evidence",
+    "candidate",
+    ".\u03b7\u03bc/diagnostics/grid-collector/fixtures.edn",
+    ".\u03b7\u03bc/diagnostics/grid-collector/after"
+  ],
+  "head": "8f953d2bcfab2fa2b3fef8a390157a4629eab9e0",
+  "inputs": {
+    "src/domain/spatial/index.clj": "3685ddefe8ccedd3af3716678684a041ec50e1a08b1cbc89d8025ebfa3b8437a",
+    "src/domain/physics/cache/neighbor.clj": "e28bf08ef4b7a13e19ecff91327807dedddfa9d6bb7078291eb4d343000afea9",
+    "test/domain/spatial/grid_query_contract_test.clj": "ec50c5b77126e4f2f9d7e4658cc9fce833338f2c7c5837ee58a1c3764c0420d9",
+    ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj": "51a4fc1ac47a53d4b488df72ca7713b1cec010752f1070b971ce508a1db299de",
+    ".\u03b7\u03bc/diagnostics/grid-collector/fixtures.edn": "c9eb7f817e658f956a0418fb7ee325dd04bbdf1ccd9806e84ab795c154ed9a74",
+    "deps.edn": "9f858cf2a20418276006fe0ccf16245ab3fb9e2b935649da7f52afa8e9af36ce"
+  },
+  "environment_override": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g",
+    "_JAVA_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "deadline_seconds": 600,
+  "scope": "Six isolated cost cases, same native world/context temporarily suspended; other services unmodified."
+}

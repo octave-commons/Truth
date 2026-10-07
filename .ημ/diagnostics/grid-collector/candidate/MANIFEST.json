@@ -1,0 +1,388 @@
+{
+  "baseline_commit": "8f953d2bcfab2fa2b3fef8a390157a4629eab9e0",
+  "claim": "Query allocation reduction; downstream timing unresolved",
+  "historical_baseline_hashes_verified": 57,
+  "candidate_input_hashes_verified": 334,
+  "files": [
+    {
+      "path": "src/domain/spatial/index.clj",
+      "bytes": 15494,
+      "sha256": "3685ddefe8ccedd3af3716678684a041ec50e1a08b1cbc89d8025ebfa3b8437a"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/evidence/grid.clj",
+      "bytes": 12945,
+      "sha256": "51a4fc1ac47a53d4b488df72ca7713b1cec010752f1070b971ce508a1db299de"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/BASELINE-ERRATUM.md",
+      "bytes": 821,
+      "sha256": "7a7d520d4cac266cc7f2c1a96c3b2a4171444d08821f2901417fd6004d3abace"
+    },
+    {
+      "path": "kanban/tasks/perf-tick-residual-gap-to-60fps.md",
+      "bytes": 19427,
+      "sha256": "ba0eba007a77b6d845f2a9bb6c842ab3c8cd505ed5a2e5ab273a94c44edac3a3"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 640766,
+      "sha256": "364491ae85041c008d7d306f4f2b749c487651fad377c0054447d6ff1db27d07"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 67312,
+      "sha256": "49db2dc20fb204c1ddcb636821743cab264b986ff3b4cb3633ea44faa5a8a1ee"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 36273,
+      "sha256": "7a6f1ae91769cbdccb81446316553c8ad99843800bcfc34cf5b111bfe75f9196"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/RESULT.md",
+      "bytes": 12143,
+      "sha256": "31523c0cef819110e25b1ca05e390d4106cb682ecc5fe361f3729d735f189608"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/REVERSE-DECISION.md",
+      "bytes": 716,
+      "sha256": "93ffb722c69731755b1ed9ed4fe2648d3fec67b822d8de24f5a7e1f3b6d4a140"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/command.json",
+      "bytes": 1400,
+      "sha256": "5349f227398f7dbebde65b7c4652285c4e62fa801f1873cd2c33eb0b313be514"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/load-samples.json",
+      "bytes": 7552,
+      "sha256": "42d0aa454f57eed6b9aa715381960e11e7dd211748c1769a3787e5862326970c"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-after.json",
+      "bytes": 2309,
+      "sha256": "c1d654ab76e0f28c0971e32d5f258d47147ac342a633269ea76796d2e28a3675"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-after.stderr",
+      "bytes": 88,
+      "sha256": "a26c6855af3d69fe576ead69a490e6863e45e437a24152c98a90871b66a1b1f8"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-after.stdout",
+      "bytes": 872,
+      "sha256": "cd09b2d14ab3a8f77d0c11bbb0d37c3a7012030f964a0ec9ac3fef9919754ca1"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-before.json",
+      "bytes": 2309,
+      "sha256": "f2788e48c3a8e66bebf5209c96039a7fc2e15f0477833b6d27111605fc4ac0f2"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-before.stderr",
+      "bytes": 88,
+      "sha256": "a26c6855af3d69fe576ead69a490e6863e45e437a24152c98a90871b66a1b1f8"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-before.stdout",
+      "bytes": 872,
+      "sha256": "315cd1433364897e32d63fe115a3d648f5d3dd28b3b72d4a1533237b5d3de6f8"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-paused.json",
+      "bytes": 251,
+      "sha256": "bc1a25249d9abb876370a6ce47f5f9a95c07fb09665bb57c320c4d8c05da4d1d"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/native-resumed.json",
+      "bytes": 690,
+      "sha256": "fd682077b9cd02ad8ae72fa02ad6ff51e07b81ecfde6afe624ee7d7dc5e6a92e"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/pm2-guard.json",
+      "bytes": 134,
+      "sha256": "7ad420a073ccc1b34d593c325edb9124e37a55df0432d083a273027a9762092c"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/result.json",
+      "bytes": 232,
+      "sha256": "6a3028a770cfbf50181c20f64d2fe71132ffee45c216ae5fad44c740f500fe47"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/runner.py",
+      "bytes": 6011,
+      "sha256": "bdca32f17d2ad4d8000976d6898e7d59110c7901a97a28839d589bebe1c1a2bd"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/stderr.log",
+      "bytes": 86,
+      "sha256": "4bd19d4a45946f8800722a796cc0cdc4878648456816aef0875d9014d9ba3836"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/bench-run/stdout.log",
+      "bytes": 10462,
+      "sha256": "0826a767063b9d73c280ea88ed55138d070f9d16eae48bb4d0cd432198081a10"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/canonical-comment.json",
+      "bytes": 1993,
+      "sha256": "fd106a73d1af3e4371fd968192544b7e9ebcaa6fb02dc78401b6d3259a1e2060"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/closure.json",
+      "bytes": 2146,
+      "sha256": "643abda52a1aaaae8dac6d40d95689068810b598b4e03179c81d28f303870169"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/full-suite.result.json",
+      "bytes": 273,
+      "sha256": "0ae0a800acb78fc59af645e5598550cb2702677ed6446fa6eed2c0313c8c0a93"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/full-suite.stderr",
+      "bytes": 2834,
+      "sha256": "0b4d5076e4a7b187290823b8d8fa77d02de2993eb737fbbb1765e998c19fe350"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/full-suite.stdout",
+      "bytes": 4925,
+      "sha256": "5b80bc392ef10153ee7fcb809034151f21e52e89a052cfdf4752ae6232e1f017"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/inputs.json",
+      "bytes": 35342,
+      "sha256": "883ce444fe924fcf75678a4758ab48f0933236498455ad912c7c707bd889f4bd"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/runner.py",
+      "bytes": 2379,
+      "sha256": "6ef665aeeb920349b4a1805698e4b96853fe252c49df30eaac9afcfeb538319a"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/strict.result.json",
+      "bytes": 244,
+      "sha256": "1c10c792ce1682469ebc312487630de354142f1e14ceb3c4a406810398a55f24"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/strict.stderr",
+      "bytes": 344,
+      "sha256": "817a0d7dab058178a8a132ac7b828fd0fc612286baaed90880718a56d3981e3d"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/gates/strict.stdout",
+      "bytes": 13936,
+      "sha256": "11133badab328d6e1c7f4e0a74ea10a061a7a0f9b89cd84ff6837139833c9eb1"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/focused.result.json",
+      "bytes": 416,
+      "sha256": "8bf99b9b8a7b7aba373589e04a7f391fa893295488a58e4715db8cd210e2631f"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/focused.stderr",
+      "bytes": 86,
+      "sha256": "4bd19d4a45946f8800722a796cc0cdc4878648456816aef0875d9014d9ba3836"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/focused.stdout",
+      "bytes": 210,
+      "sha256": "7e700b4b8d74e72fa2c3bfe469df88e6e9ea59840fe1976e44da588ca6cc4ca2"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/format.result.json",
+      "bytes": 446,
+      "sha256": "9309824684bcf070c8e16ba0b9bec692e6796db192177039dee1afee54ccfc94"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/format.stderr",
+      "bytes": 123,
+      "sha256": "29684a732dd1900b7e7017c4a5f1e0f0f305e68e035da93ba7b43771312b7c76"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/format.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/inputs.json",
+      "bytes": 871,
+      "sha256": "ead5ec2e206dabb9042458f9b10edb1f6d7e67a4fc7a2e786142a3e01c4a8d5c"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/preflight/runner.py",
+      "bytes": 2309,
+      "sha256": "a835273ce351a4c55ef2a038c7c1e79a5e2d07e4077cb05dc6eef4bec5ba4407"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/candidate/source-index.clj",
+      "bytes": 15494,
+      "sha256": "3685ddefe8ccedd3af3716678684a041ec50e1a08b1cbc89d8025ebfa3b8437a"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/coverage.edn",
+      "bytes": 1396,
+      "sha256": "7a37c26aa308cb6e9c1853c4c3cff77d7f8bd840386b848f97a75bb24a626b3d"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/grid-clustered-1000.edn",
+      "bytes": 1252,
+      "sha256": "fef3b392e229ab6299b025bd9eb2f7deab72ba2841a554b0ba83a0f377b618e5"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/grid-uniform-1000.edn",
+      "bytes": 1241,
+      "sha256": "2c1501b2d8a6a7071d06697d07b39be355043acf56d9d0763a35945d3d24440a"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/inputs.edn",
+      "bytes": 1692,
+      "sha256": "61c3910c7088867b950f53ea6a24d8ca06c0660ced0c54fcbc47de9c37834312"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/neighbor-rebuild-1000.edn",
+      "bytes": 1011,
+      "sha256": "ac9c4b28f616930c52807e00952de6d42b58b6e23a98305aee0994817da5b334"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/neighbor-rebuild-500.edn",
+      "bytes": 1004,
+      "sha256": "086d9f9c020ee3b3b2da7aedb103f0bafd35001dc92d766117418859adf232f1"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/phase0-1000.edn",
+      "bytes": 968,
+      "sha256": "817b96bbdbd25a4d149f65906239f3cc68d88da8699c3776a3a36da308debb87"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/after/phase0-500.edn",
+      "bytes": 959,
+      "sha256": "30040dd3e37dc87f200e511e9a7e09bccc297bd7914145486a1cca10083a500a"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/coverage.edn",
+      "bytes": 1396,
+      "sha256": "7a37c26aa308cb6e9c1853c4c3cff77d7f8bd840386b848f97a75bb24a626b3d"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/grid-clustered-1000.edn",
+      "bytes": 1251,
+      "sha256": "46e4202dd7e495383acaccfba9c7023428c7270da98be42708a1f3695f292988"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/grid-uniform-1000.edn",
+      "bytes": 1249,
+      "sha256": "50a209e0088997cb84cae2e4becb44465210c210dc9a911b6a8d11d03a42b677"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/inputs.edn",
+      "bytes": 1692,
+      "sha256": "9b8a4e8dee712a62e986c7178e1eeed9690e90bef10ac980a296bd8815efec83"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/neighbor-rebuild-1000.edn",
+      "bytes": 984,
+      "sha256": "d2cab99e7c3b67e02b6e91d168ee391611e8ae0fed08932315440db2d60131bb"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/neighbor-rebuild-500.edn",
+      "bytes": 991,
+      "sha256": "676f12c24178ea28e57ea7a187730c9f98bcc25096146c70e9d6f32cc874e5f6"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/phase0-1000.edn",
+      "bytes": 957,
+      "sha256": "35df3296e2e2bf11b35883395f5e5b833e73119506f79e234726a7b8f6edf83b"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/return-before/phase0-500.edn",
+      "bytes": 994,
+      "sha256": "295a1c64e1a34ce30d3193c2619e71b4cfc91cf92ed1681839d1b423ffa9633f"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/command.json",
+      "bytes": 1407,
+      "sha256": "17e605cec0f8abe66e84a9ab5e57d07651de9d08571041fb3fa5134183c93883"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/load-samples.json",
+      "bytes": 9403,
+      "sha256": "efbec67923be44dd928f44e597796411a430f9e5f1083cc09f5e5eb3733bc418"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-after.json",
+      "bytes": 2309,
+      "sha256": "ce91985a73bad5dfeca2d6b55677244ce28bb53311379e55f9f7ac5bed77af20"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-after.stderr",
+      "bytes": 88,
+      "sha256": "a26c6855af3d69fe576ead69a490e6863e45e437a24152c98a90871b66a1b1f8"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-after.stdout",
+      "bytes": 873,
+      "sha256": "b535dacbc597b5eb7215135f36775eaa86d7c25a5354242bcaa7405865c0f6a9"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-before.json",
+      "bytes": 2309,
+      "sha256": "4fe306caf441567660af69d6a797ca1db5ea0f4f7993fcfdd8e5d198a4865f35"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-before.stderr",
+      "bytes": 88,
+      "sha256": "a26c6855af3d69fe576ead69a490e6863e45e437a24152c98a90871b66a1b1f8"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-before.stdout",
+      "bytes": 870,
+      "sha256": "039fb18472de0f17f9793b275699bc6403a8ae38c1e4090e2d076700dc27cecd"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-paused.json",
+      "bytes": 251,
+      "sha256": "8d4f6ea1c7d87ac30caa26382851f1e11e0e2294f2c86b535faf80198b95c464"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/native-resumed.json",
+      "bytes": 690,
+      "sha256": "06bc0e01ecdfd23fa5ec902b424dfe19ba563435982860a1ac2873df9e317790"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/pm2-guard.json",
+      "bytes": 134,
+      "sha256": "7ad420a073ccc1b34d593c325edb9124e37a55df0432d083a273027a9762092c"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/result.json",
+      "bytes": 232,
+      "sha256": "3c762f0f6c68a9eb9f612ab2825eba6549c353cf7a3da41597b2c02f06029138"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/runner.py",
+      "bytes": 6025,
+      "sha256": "0da8734d7e025c15e461f719c1f9bccfc07d34af3f2301f4dd5fdcf408805cbe"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/stderr.log",
+      "bytes": 86,
+      "sha256": "4bd19d4a45946f8800722a796cc0cdc4878648456816aef0875d9014d9ba3836"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/bench-run/stdout.log",
+      "bytes": 10475,
+      "sha256": "a02a0fdaa010841589a3d37054d5569326287db0d73c7188e21068a8ed93a540"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/owner-runner.py",
+      "bytes": 1133,
+      "sha256": "a4870e8ffdff309782eaa29d490dd08dbd7a9c62f5336a66511084a316aef08f"
+    },
+    {
+      "path": ".ημ/diagnostics/grid-collector/reverse-baseline/source-restored.json",
+      "bytes": 216,
+      "sha256": "e461858a8d4cc83e842480a4806377dd1a2dc80702b3b8a90a1f93547cbd8ebb"
+    }
+  ]
+}

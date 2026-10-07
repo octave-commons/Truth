@@ -22,6 +22,9 @@
 (def ^:private baseline-index-sha
   "280941b79defe025dbdd7c1478940b956c1e0dc9bd270fa4c66f5170f1a94701")
 
+(def ^:private candidate-index-sha
+  "3685ddefe8ccedd3af3716678684a041ec50e1a08b1cbc89d8025ebfa3b8437a")
+
 (def ^:private source-paths
   ["src/domain/spatial/index.clj" "src/domain/physics/cache/neighbor.clj"
    "src/domain/genesis/bootstrap.clj" "src/domain/genesis/tick.clj"
@@ -186,7 +189,7 @@
                   serial? (assoc :post-warmup-serial-cost (serial-cost f)))))
   label)
 
-(defn- benchmark! [fixtures output]
+(defn- benchmark! [fixtures output index-sha]
   (let [frozen (edn/read-string (slurp fixtures))
         sources (source-hashes)
         workloads (make-workloads)
@@ -201,8 +204,11 @@
                      (swap! skipped conj label)))]
     (when-not (= settings (:settings frozen))
       (throw (ex-info "Workload settings changed" {})))
-    (when-not (= sources (:sources frozen))
-      (throw (ex-info "Baseline source changed" {:actual sources :expected (:sources frozen)})))
+    (when-not (= baseline-index-sha (get-in frozen [:sources "src/domain/spatial/index.clj"]))
+      (throw (ex-info "Frozen oracle is not the original collector" {})))
+    (let [expected (assoc (:sources frozen) "src/domain/spatial/index.clj" index-sha)]
+      (when-not (= sources expected)
+        (throw (ex-info "Unapproved source change" {:actual sources :expected expected}))))
     (when-not (= observed (:observations frozen))
       (write-new! (str output "/mismatched-observations.edn") observed)
       (throw (ex-info "Recreated baseline inputs or numerical outcomes differ" {})))
@@ -228,11 +234,12 @@
                  :claims "Six Criterium cases. Four-tick component fingerprints are characterization, not timing. Existing group setup profiles are not additional Criterium cases or native FPS."})))
 
 (defn -main
-  "Capture compact baseline evidence or measure its six unchanged-source cases."
+  "Capture baseline evidence or measure six cases against its frozen observations."
   [action fixtures & [output]]
   (try
     (case action
       "capture" (capture! fixtures)
-      "baseline" (benchmark! fixtures output)
+      "baseline" (benchmark! fixtures output baseline-index-sha)
+      "candidate" (benchmark! fixtures output candidate-index-sha)
       (throw (ex-info "Unknown baseline action" {:action action})))
     (finally (shutdown-agents))))

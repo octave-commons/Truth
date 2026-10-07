@@ -1,0 +1,11 @@
+
+Running tests in #{"test"}
+
+Testing domain.physics.cache-test
+
+Testing domain.spatial.grid-query-contract-test
+
+Testing domain.spatial.index-test
+
+Ran 44 tests containing 775 assertions.
+0 failures, 0 errors.
