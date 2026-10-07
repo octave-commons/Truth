@@ -1,0 +1,123 @@
+{
+  "at": "2026-10-07T10:41:02.769259+00:00",
+  "scope": "Offline operator copies only; no native/JVM/project code, Git, board or remote operation. Root retains release/execution authority.",
+  "python_version": "3.12.3",
+  "python_ast": {
+    "root-setup.py": "217b5cbb13b53f2aae4ba15b14901e2e0b812f356492bd1320e767d0eb1cafaa",
+    "root-formation-poller.py": "c7317b65c05d4f0fa54207c638d4b27da9c1c025d40e413cbdd6b0ba65a4bb8c",
+    "test_operators.py": "2bdc9d1a06d7d9ad9e6ceeac82e44a54c7a43ef90f4ca8036d83dd0d743bde31"
+  },
+  "pure_tests": {
+    "at": "2026-10-07T10:40:01.688586+00:00",
+    "entrypoint": "python3/runpy test_operators.py",
+    "exit_code": 0,
+    "source_sha256": "2bdc9d1a06d7d9ad9e6ceeac82e44a54c7a43ef90f4ca8036d83dd0d743bde31",
+    "execution": "Only AST-extracted pure classifier executed; operator module top levels never imported; process/native/network entry points patched to raise."
+  },
+  "pure_tests_observed": "10 tests, 0 failures/errors; actual transcript in pure-tests.stderr; no rerun after passing.",
+  "protected_original_files_verified": {
+    "runner.py": {
+      "bytes": 54870,
+      "sha256": "f16f555a45da3a1dd45a53d69cbdb35ec0343eda1b6fa7d6d5d7fb58cf9a5e7a"
+    },
+    "aim-client.py": {
+      "bytes": 14169,
+      "sha256": "54f45febf3fd5290d207ca79dd245221a45060e73bfdf84387bc113f38d66b10"
+    },
+    "snapshot.clj": {
+      "bytes": 10301,
+      "sha256": "a20d3cd01d75f32ee879dba8ecaf637e1b24da97bc0b23df7106a8da523bac8a"
+    },
+    "snapshot_client.clj": {
+      "bytes": 10905,
+      "sha256": "0fd035646a6851bc21b348dc9a6ef35f7372fb44857e9c44a392cc01ea8c2b03"
+    },
+    "test_protocol.py": {
+      "bytes": 25726,
+      "sha256": "3b5037c8739775cc8e7c0619f2149f205678ff335be182439e58d982558409ec"
+    },
+    "PLAN.md": {
+      "bytes": 7278,
+      "sha256": "713d5c60bf41127e099c837c619b0995e9b73c026c805209c71e12c4acf39a6f"
+    },
+    "pure-tests-red.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pure-tests-red.stderr": {
+      "bytes": 15123,
+      "sha256": "2728f028ce71be9ad34f539ccb56fca4ac811ee37d9df913b6211a522f176c79"
+    },
+    "pure-tests-green.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pure-tests-green.stderr": {
+      "bytes": 4661,
+      "sha256": "028dff5eeffa29ebbc67e57eefc1be62a3fbb7bfdfa078a964ff17bcbaafdf57"
+    },
+    "COPY-PROOF.json": {
+      "bytes": 7635,
+      "sha256": "90c4e8f0162734725cf38957a85dadc8c1f3cc0cf415756a9b6849a63a264d11"
+    },
+    "SOURCE-EQUALITY.json": {
+      "bytes": 27968,
+      "sha256": "ee6f89869a35d370b1478664709eb67cf39ac382d96b9c755b625b0297989070"
+    },
+    "STATIC-CHECKS.json": {
+      "bytes": 8031,
+      "sha256": "8408689bbcce8c4f0eafd54790c20d7e4e1f249059f35cc974bc8cddff4e102a"
+    },
+    "manifest-shape-repair.json": {
+      "bytes": 16382,
+      "sha256": "d0ebdd29bf86c4c3ac1394b1a8f7341240a863857727b8887b798e7e4c869038"
+    },
+    "preparation-hashes.json": {
+      "bytes": 523,
+      "sha256": "4c06446b1034e73ad7d831dc2627a3eb9aec9c53684d75968e3a9dba72dbb62f"
+    },
+    "PREPARATION-FILES.txt": {
+      "bytes": 314,
+      "sha256": "dbca33eb6b719b6df82c77809c1c9a811c084e50afa1eb553bec0575df61888b"
+    },
+    "SHA256SUMS": {
+      "bytes": 1359,
+      "sha256": "fae23f36582a3b67caf1e0fd0ba33625b9519e7b6f507a1c42a040662b4ed59e"
+    },
+    "root-setup.py": {
+      "bytes": 3613,
+      "sha256": "e9b0ec5cbaffba8b9ceb2317137a33c449fc5f94a085134d967848e2f14e489a"
+    },
+    "root-formation-poller.py": {
+      "bytes": 2768,
+      "sha256": "0e744bd8e6a4c688f82cbb83243e39304bcef04b44f9353d2d128d7eedad2dfa"
+    },
+    "root-scope.json": {
+      "bytes": 2366,
+      "sha256": "37dca1cc0528c38db7aa93e1e9d8c1fc83f547f2b1e303b8903b845f1c9d9072"
+    }
+  },
+  "original_closure_hashes_verified": 16,
+  "production_equality": {
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "matched": 186,
+    "inventory": "../SOURCE-EQUALITY.json",
+    "inventory_sha256": "ee6f89869a35d370b1478664709eb67cf39ac382d96b9c755b625b0297989070",
+    "method": "Read-only byte-size/SHA256 comparison to all recorded source entries, without Git or project execution."
+  },
+  "local_plan_links": [
+    "root-setup.py",
+    "root-formation-poller.py",
+    "../runner.py",
+    "../preparation-hashes.json",
+    "test_operators.py",
+    "COPY-PROOF.json"
+  ],
+  "trailing_whitespace": "none in new owned text files",
+  "read_probe_note": "Earlier read requested nonexistent STATIC.json; actual predecessor file is STATIC-CHECKS.json. This was not a validation pass or a failed runtime/test. Both operator and preservation checks subsequently used existing authoritative paths.",
+  "not_qualified": [
+    "No input delivery, native calibration, target admission, approach, commitment or Gate has been demonstrated by preparation.",
+    "No new hard preemption/reaping guarantee is claimed for outer operator processes.",
+    "No current PR or board approval is inferred."
+  ]
+}

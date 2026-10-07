@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-07T10:40:01.688586+00:00",
+  "entrypoint": "python3/runpy test_operators.py",
+  "exit_code": 0,
+  "source_sha256": "2bdc9d1a06d7d9ad9e6ceeac82e44a54c7a43ef90f4ca8036d83dd0d743bde31",
+  "execution": "Only AST-extracted pure classifier executed; operator module top levels never imported; process/native/network entry points patched to raise."
+}
