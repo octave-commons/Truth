@@ -123,6 +123,26 @@ defines the pure integer origin/extent/closure boundary and retry ordering.
 This child excludes ECS, producers, clocks and presentation; its admission and
 the broader parent's causal/native acceptance remain separate and unfinished.
 
+### 6.2 Proposed fresh-construction prerequisite (2026-10-07)
+
+The [source-grounded §8.2 contract](../notes/2026-10-07-first-represented-life-boundary.md#82-validated-fresh-construction-prerequisite--proposed)
+and [next-boundary assessment](../../.ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md)
+refine §7.2/§8 of that proposal into the second initial child,
+[`validated-fresh-entity-construction`](../../kanban/tasks/validated-fresh-entity-construction.md),
+Incoming / proposed 3 points. One fresh-ID installation path serves the existing
+seven stellar lifecycle channels and a closed singleton empty-book constructor.
+Known final stellar fields gain named checks; arbitrary legacy extras remain
+explicitly unvalidated, except the newly reserved book component. These new
+rejections are declared behavior changes, not universal component validation.
+
+The book constructor supplies no natural producer or biological effect. The
+later proposed five-point settlement must consume both this prerequisite and
+the pure account kernel, and must atomically combine account/cohort/outcome
+publication with final-parent closure before actions. It cannot defer that
+closure to the subsequent natural request producer. Those later rows are not
+new cards or implementation admissions. Parent acceptance remains unfinished;
+no kinetics, new scientific calibration or playable milestone follows here.
+
 ## 7. Roadmap position
 
 - **Now / Phase 0:** seed-and-grow (A). Parcel grain stays ~669 M⊕ (compute-locked
