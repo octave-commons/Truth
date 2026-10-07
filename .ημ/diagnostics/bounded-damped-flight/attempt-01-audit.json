@@ -1,0 +1,2135 @@
+{
+  "at": "2026-10-07T12:57:03.937322+00:00",
+  "calibration": {
+    "final_D": 150000000000000.0,
+    "final_retention": 0.8,
+    "looks": 4,
+    "outcome": "passed"
+  },
+  "closed": {
+    "active_aim": null,
+    "aim_deadline": null,
+    "aim_invocations": 0,
+    "aim_target": null,
+    "app": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "pid": 6798,
+      "start": "4406743",
+      "state": "S"
+    },
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "budget_exceeded": false,
+    "budget_seconds": 1500,
+    "cleanup_deadline": 45056.993007856,
+    "cleanup_errors": [],
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "display": ":1",
+    "elapsed_seconds": 961.8076364490043,
+    "ended_at": "2026-10-07T12:52:08.732676+00:00",
+    "frames": 1,
+    "holds": 0,
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "key_pending": null,
+    "key_release_uncertain": false,
+    "looks": 4,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "no_target_deadline": 45026.983821707,
+    "outcome": "no-target-deadline",
+    "port": 7898,
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "snapshot_client": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "pid": 8114,
+      "start": "4407850",
+      "state": "S"
+    },
+    "stage": "closed",
+    "started_at": "2026-10-07T12:36:07.046321+00:00",
+    "startup_budget_seconds": 180,
+    "startup_deadline": 44246.983821707,
+    "startup_origin": "Caller monotonic instant before preflight; shared by all processes",
+    "successful_admission": null,
+    "supervisor": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12",
+      "pid": 6756,
+      "start": "4406702",
+      "state": "R"
+    },
+    "supervisor_monotonic_started": 44066.983821707,
+    "terminal_commitment": null,
+    "total_budget_exceeded": false,
+    "unreaped_children": [],
+    "window": 140418252160160,
+    "work_budget_seconds": 1470,
+    "world": 1929158757,
+    "x-window": "2097159",
+    "xvfb": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb",
+      "pid": 6766,
+      "start": "4406712",
+      "state": "S"
+    }
+  },
+  "cutoff": {
+    "at": "2026-10-07T12:52:06.933834+00:00",
+    "deadline": 45026.983821707,
+    "elapsed_seconds": 960.0088093619997,
+    "error": "No successfully admitted target before original T+960",
+    "kind": "no-target-cutoff"
+  },
+  "inputs": {
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-calibration.json": {
+      "bytes": 10299,
+      "sha256": "b4553df89dd160615850dbfc0874a09a359ef76c3ff56a35cc54fc624753b3e5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/001-start.command.jsonl": {
+      "bytes": 2338,
+      "sha256": "65799a2baad05f26883f67a8106976c30e5fe1197f32022b0d590ac0da8d2da0"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/001-start.json": {
+      "bytes": 920,
+      "sha256": "75c05020b26a5f4e0c3ad237600b14ff6fb4084a1ad9be09a3a0babbd90b3a7a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/001-start.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/001-start.stdout": {
+      "bytes": 1955,
+      "sha256": "1d18233a15b616f90a3d72698adae90023bfb88fb690282144a9281646a7d93d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/002-inspect.json": {
+      "bytes": 494,
+      "sha256": "aad779d3cdf4d4ea77d0e6920c63f558674ead9951dbab2608b381906ebeafb1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/002-inspect.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/002-inspect.stdout": {
+      "bytes": 115,
+      "sha256": "e4d7a74045ee531779fb647908e7483ef9fa75cf2aa1b6d76054f2c345228283"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/003-manual.json": {
+      "bytes": 501,
+      "sha256": "e1585ff1db5a1e4a55e8ca1dacb0a32870e763c9cbe6452b7c7f3595ab94a559"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/003-manual.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/003-manual.stdout": {
+      "bytes": 115,
+      "sha256": "1c94d38816c61c0187c1579ef9e20491f7b8bc05b7d0ccdd74214c597bd15c32"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/004-open-spark.json": {
+      "bytes": 507,
+      "sha256": "ba2d9bdd7e8e4b22d02eaaeb34b1d70bb572c3daa2756b2b1f27c67c0d03accb"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/004-open-spark.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/004-open-spark.stdout": {
+      "bytes": 115,
+      "sha256": "3ae241ccfdd3f0a0bb5b608f8e7b7c5c7cc852f01260bfb8ff420f90895080b0"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/005-fine.json": {
+      "bytes": 506,
+      "sha256": "ad3f64107ffc3f948e9e0dc755d1e5b839f6366cf0536db604e11279c6b7b972"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/005-fine.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/005-fine.stdout": {
+      "bytes": 115,
+      "sha256": "39d184e3f3b8e25214dcf57e212bd6fb267989724bdac7d7cfc7e646434cfc32"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/006-cruise.json": {
+      "bytes": 508,
+      "sha256": "1c924110da4886852997eb072554817cdc75040065b4e0bfe3d338867009870b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/006-cruise.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/006-cruise.stdout": {
+      "bytes": 115,
+      "sha256": "7f435f31481a19a2febdb20e5399b377a1d7985cae78516fa88b5bf44cb0011a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/007-half.json": {
+      "bytes": 513,
+      "sha256": "4d6dbb5416767a74c50bb4d4cfb1290d69e5c210fe4833d6f11b36835ca409a1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/007-half.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/007-half.stdout": {
+      "bytes": 115,
+      "sha256": "8dbd42293e0cbb510d8721835c8b10f9e174774f71b12660729d962276e9272a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/008-damping-01.json": {
+      "bytes": 514,
+      "sha256": "dd953712362bb831b814217e3a9e74c01582ef449d6e1da5c760e805cddec8b4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/008-damping-01.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/008-damping-01.stdout": {
+      "bytes": 115,
+      "sha256": "ad49e73cf33e6d80190de9f78ca668ffbc9470dfdf1368b399ae79e6e608f067"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/009-damping-02.json": {
+      "bytes": 514,
+      "sha256": "f31d8cfda968b9b2ecc7750980c81fa61ada07c799343571d7363852b45bc35d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/009-damping-02.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/009-damping-02.stdout": {
+      "bytes": 115,
+      "sha256": "cb7250f9b10205c0935e488a65413278293e286b51ee30b0fe45c6d60b45e604"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/010-damping-03.json": {
+      "bytes": 514,
+      "sha256": "5bcf8ea17d0667cfc2b6ba6a8fb488fc87b61f73e13fa52ff7e130d559f03146"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/010-damping-03.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/010-damping-03.stdout": {
+      "bytes": 115,
+      "sha256": "255b5cad2a9026b731fd47bb16ee87ee9d407119fdd7f95ec7c2bf1a1c02f4e3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/011-damping-04.json": {
+      "bytes": 513,
+      "sha256": "4ee52115531eccf1f48db827f4109fc87ca85abfcf58c2e96b8696a91911e21d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/011-damping-04.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/011-damping-04.stdout": {
+      "bytes": 115,
+      "sha256": "dab581f9a81063ab5a65e4505366954f71a1f74b2c277160cca1dba0ca4bd59b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/012-damping-05.json": {
+      "bytes": 514,
+      "sha256": "da273e76e6077a66238b67f7aa23530e68fabc6e6c01db7dcb01df3ef41277c4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/012-damping-05.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/012-damping-05.stdout": {
+      "bytes": 115,
+      "sha256": "6e35226c7e487a9cfeffd696991d7179b7e96dd5d7db935cda8742e14059e8da"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/013-damping-06.json": {
+      "bytes": 512,
+      "sha256": "b74e21df7b3c22253e5c8ce51f9e1bb1a48b277c7508d614aaa424e11e2983b4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/013-damping-06.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/013-damping-06.stdout": {
+      "bytes": 115,
+      "sha256": "b93449fb93fd789172830c3c023704faddf8d020ded59355d9b620867f7cd626"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/014-damping-07.json": {
+      "bytes": 514,
+      "sha256": "168bf8fe61c2b3540e3e52a18d78165a4e2de103d49d16b9b1387ed80fb7e2d3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/014-damping-07.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/014-damping-07.stdout": {
+      "bytes": 115,
+      "sha256": "30e0d9762f8ec64f04e18f6519e509cbaf67a7d975484b44dc667d5d82f01a83"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/015-damping-08.json": {
+      "bytes": 514,
+      "sha256": "7588547d66619f9f7f08ca55ca63933fc3c3b8ac9ce966a84e984612bebcd5ec"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/015-damping-08.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/015-damping-08.stdout": {
+      "bytes": 115,
+      "sha256": "9bad880b0740312e38538438e6543fad0d456054398edfe870e86c1001942044"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/016-damping-09.json": {
+      "bytes": 513,
+      "sha256": "3b923185271fd57b7f84ad7593b7be04b07bd9d652607ae86b12290e7ab45f16"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/016-damping-09.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/016-damping-09.stdout": {
+      "bytes": 115,
+      "sha256": "ad60aabb6c25ebae591050d328c57d66ee8fe21db27bea0eea2d0ce48e829323"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/017-damping-10.json": {
+      "bytes": 514,
+      "sha256": "f8861cc6030ec8c92ce15e3f68c02cac8831fa3d784a21bf9937940dfb3a8ccb"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/017-damping-10.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/017-damping-10.stdout": {
+      "bytes": 115,
+      "sha256": "71d3a89066776d8ea56f824c76da0f1178a87a7b49c6855789a69a8c3c7bff02"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/018-damping-11.json": {
+      "bytes": 514,
+      "sha256": "90fdb848987f751098877e1156aea4dafec843120000644e00cce5a513529339"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/018-damping-11.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/018-damping-11.stdout": {
+      "bytes": 115,
+      "sha256": "b99848bdab53529c58cfbe537795aeef493f026847d6bc40f2bf67ef40d8bfdf"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/019-damping-12.json": {
+      "bytes": 513,
+      "sha256": "2680d7ce176accaefe8411b5514420da3ef3912d1547313121325d13614e65c5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/019-damping-12.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/019-damping-12.stdout": {
+      "bytes": 115,
+      "sha256": "4166d96f61caa05392bc9b1d521c1c39ead7d8dcc2b0989df9bc662e8bcf28b1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/020-damping-13.json": {
+      "bytes": 514,
+      "sha256": "258a48b24e25a604fd45f29a9d9b18282867fde6442dd52b3a5d84ad54f2b141"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/020-damping-13.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/020-damping-13.stdout": {
+      "bytes": 115,
+      "sha256": "cf6ed31acc9b84502ce91391dd24b85e487ba6f86341f4e20276a28a4059aa12"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/021-damping-14.json": {
+      "bytes": 514,
+      "sha256": "3f27861ca608c8edeac6e890f7788f72f1946e9df20393d9df03524d499e7d68"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/021-damping-14.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/021-damping-14.stdout": {
+      "bytes": 115,
+      "sha256": "0252f09efd50e198ea9e1d5f957196bded799fa267af402993eadd9a1e9947aa"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/022-damping-15.json": {
+      "bytes": 513,
+      "sha256": "0ea8260d4357ebb1aa73bcf1cd23fdf9b9b2f2e502c348fe1ce798ec1ada935d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/022-damping-15.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/022-damping-15.stdout": {
+      "bytes": 115,
+      "sha256": "9b232e0e9f1375b8bd9cd27eadf6bf45aa6c3bcd19411c00e6bb866d276880f5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/023-damping-16.json": {
+      "bytes": 514,
+      "sha256": "f4e0e40631fdb8871e6e5c42f31ef568882a7958db39e46d6f45f66004965b67"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/023-damping-16.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/023-damping-16.stdout": {
+      "bytes": 115,
+      "sha256": "eeb164796dcd5c4b2d5780331105c3f3c7ce67489ed8a5a0f1971910086c4389"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/024-damping-17.json": {
+      "bytes": 513,
+      "sha256": "32627f9e776e3822070b11f1f2c0d7312bd2813bc25304267a6e39e0f02a096f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/024-damping-17.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/024-damping-17.stdout": {
+      "bytes": 115,
+      "sha256": "b69ce82fcb452716f8994ac255429755f7412a1a25a41ebc381f486c333a722c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/025-close-spark.json": {
+      "bytes": 506,
+      "sha256": "b0a92028ec508370c8547121526f6e2a494595ba0d2adf6137f26e058d2a7e55"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/025-close-spark.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/025-close-spark.stdout": {
+      "bytes": 115,
+      "sha256": "828b87e60adf79f29b967e0320d1547cc0ade840edb894d01400637608410ff5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/026-lock.json": {
+      "bytes": 501,
+      "sha256": "14eec743d8005d057e2bc0d125284b96f1933cd933c05b0eba22efd22a4ba5c6"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/026-lock.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/026-lock.stdout": {
+      "bytes": 115,
+      "sha256": "15c8c2b0361c7043c3d51a0ecab2ad609e54dacd73061bec79fed3c703cd0d2f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/027-baseline.json": {
+      "bytes": 494,
+      "sha256": "de7b22da29797cca029d46ced67a2efcf87b7568d93f3599ef2cead85b5ac309"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/027-baseline.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/027-baseline.stdout": {
+      "bytes": 115,
+      "sha256": "c4c5826199dde579ba50874c9e07102f179de41c13288f2ea8bd98398f4d8a0b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/028-x-plus.json": {
+      "bytes": 513,
+      "sha256": "41cbbab54cab3daf846bad00b7ac6fa6e676a2a450128dd11be2cae323883aec"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/028-x-plus.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/028-x-plus.stdout": {
+      "bytes": 115,
+      "sha256": "e268da785ea8cf45df77fc9cc74b7b3c9d86f507abf79864481f177fabd964ac"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/029-x-minus.json": {
+      "bytes": 514,
+      "sha256": "7f914a8698ea8187b51f9474abd23e40e54b26a888ea33533434063f7cf05538"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/029-x-minus.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/029-x-minus.stdout": {
+      "bytes": 115,
+      "sha256": "10e49ec570f2d10dbc2ce9b8567c5919365f657a498c17164e73223b3b618c33"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/030-y-plus.json": {
+      "bytes": 512,
+      "sha256": "1b0b11bc946221e8460f477c2949bacd81dd8f8afa4e5512587a6737f297b5da"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/030-y-plus.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/030-y-plus.stdout": {
+      "bytes": 115,
+      "sha256": "9eeba5af8fc47262d3483b1af5319aa2eab7aef74fbc1b72ce46b40f1c5f0120"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/031-y-minus.json": {
+      "bytes": 514,
+      "sha256": "b820da8d66f303ed9e525b85c443d03a997276375c707941ef3f1de697f598c6"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/031-y-minus.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/031-y-minus.stdout": {
+      "bytes": 115,
+      "sha256": "11d559d074f76e5dc8a617a6550edd7a838fc0fc60e6b657b32489be424fe854"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/032-calibration-final.json": {
+      "bytes": 496,
+      "sha256": "90793e50ccf4bf5a57f23d430fb1d64756038424e3f739370dc70fdd233c4f58"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/032-calibration-final.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/032-calibration-final.stdout": {
+      "bytes": 115,
+      "sha256": "2ffa29d2cca3bf38397213b164152d3d4b38d2d1c9e2c73b0618d049524e0e80"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/033-young-frame.json": {
+      "bytes": 492,
+      "sha256": "0e9ef13753788ca0258cca9fbed21776a1179011143ac9618187cbe34816b23b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/033-young-frame.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/033-young-frame.stdout": {
+      "bytes": 115,
+      "sha256": "869245858a01ed63804045c2645f1bde41571c62666987804e83a7e8ed02c2b6"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-00-snapshot.txt": {
+      "bytes": 4363,
+      "sha256": "f4e71275ef9cc89cf09cbfa3f48fa365caf8df567635fdaa32eef89956243168"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-00.json": {
+      "bytes": 495,
+      "sha256": "3f07526b0dc2067200a7d513be8c346940dd6685a67dae213d018ce4c34c6b4a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-00.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-00.stdout": {
+      "bytes": 115,
+      "sha256": "103f9bd40af3dfd0cd69d1e1c1133e0943d7d0441744ba8670037f3a78b5dafa"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-01-snapshot.txt": {
+      "bytes": 4369,
+      "sha256": "672aae92ea24c3c7d14d320d7c275b107d6b648e73599e0287ae5263e2bcb6a4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-01.json": {
+      "bytes": 496,
+      "sha256": "1ef7f76ceed6d3f66cc61a0b61378f379cdc74243e563dc436db22f248eb6882"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-01.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-01.stdout": {
+      "bytes": 115,
+      "sha256": "04e778bb99660a5b489da6ada261d21b31f06ada5c35ff4457a20a3d3a12c31d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-02-snapshot.txt": {
+      "bytes": 4356,
+      "sha256": "d67b6948ddf3b9257dcb5b7f2e630aa78dfb821b223a8a16bd1d1afe659df6f4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-02.json": {
+      "bytes": 496,
+      "sha256": "a5a812ef9af18c1744839e8d79deb45dfa18f3a91ec0e4684f1d5ca1f3e54b66"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-02.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-02.stdout": {
+      "bytes": 115,
+      "sha256": "7fa9e967fefee7d08132ba228c473915ea70cc081eba79329bc21f68fbbbfed5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-03-snapshot.txt": {
+      "bytes": 4396,
+      "sha256": "2af638d0ecac2b2b294f51ff630b5148d925f28d946245b10b34a2ad9814ce01"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-03.json": {
+      "bytes": 496,
+      "sha256": "2a06d0e2231b38ed59f031838183d209263f8bddf42308dbeb2ebf82eb840e72"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-03.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-03.stdout": {
+      "bytes": 115,
+      "sha256": "9192a7ec320cd73aeb67a3bb24d8807d84b856099d6d3679f3e733ceb7c4b31c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-04-snapshot.txt": {
+      "bytes": 4389,
+      "sha256": "8f2ecbf7a92e6f0c3387d22b5972eacc3eb09634e51f37069174fe7b8f38fed5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-04.json": {
+      "bytes": 496,
+      "sha256": "af8ac74fabb9f0b05d47969121763ffc625035cacff4d26b12d6e0ecb6abded0"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-04.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-04.stdout": {
+      "bytes": 115,
+      "sha256": "fefe63edf15a4660857441b37d4e7284b3a99c29774f0d5be3e4e33c30142fb9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-05-snapshot.txt": {
+      "bytes": 4387,
+      "sha256": "f2fcbb6bf0929b22edaf3954cef3b26ee9b22307f63ca6cdfd694bc0dee75df4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-05.json": {
+      "bytes": 496,
+      "sha256": "0599cc23f61aea751ba704e5a1b690c0ca794ad63300c9b459373c43e99939b5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-05.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-05.stdout": {
+      "bytes": 115,
+      "sha256": "af4e033960d21a4ce8ae70d7bfaf69e0eb5f59f0d6438104389d3612f337bcdf"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-06-snapshot.txt": {
+      "bytes": 4390,
+      "sha256": "7c082afe3381ac38c9e619a64ebdc8e6b8787ba11c8c4b2a768aa61bd867b99e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-06.json": {
+      "bytes": 496,
+      "sha256": "6c12f4ecb5e0ca644930ae4a5228c243cb21a689b262ff7ff02e49156b442a2f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-06.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-06.stdout": {
+      "bytes": 115,
+      "sha256": "8004fe1a7205de2cb643aa4f37202dad42b6222664754537a68e1c9f6a1e5ca9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-07-snapshot.txt": {
+      "bytes": 4390,
+      "sha256": "61c4554c25dd1740d24351586dbb139357f491f94251197356e8199892cd0b41"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-07.json": {
+      "bytes": 496,
+      "sha256": "8763f509b8c5186873436a295c7d84c0f6201e12e02c59688d9373c0d2ec0bdc"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-07.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-07.stdout": {
+      "bytes": 115,
+      "sha256": "92fd5796d18b802c50fbe4b91bb20dc3e7eb4ae98f2878994ebfad0df1698117"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-08-snapshot.txt": {
+      "bytes": 4404,
+      "sha256": "caab11aed4130f15ae46b2a174df1222e9f98c72136c6b511eb4d5f19749f3d1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-08.json": {
+      "bytes": 495,
+      "sha256": "2a98da202806ee315630d706cc67d719895a78ae246c5560ce0dceeaeaa40818"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-08.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-08.stdout": {
+      "bytes": 115,
+      "sha256": "d9b075d7c97e31162028833a1dbee2f62b37e87c7b555a91b52ed68732862681"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-09-snapshot.txt": {
+      "bytes": 4403,
+      "sha256": "a797ff4dc12c2aae7a3e8997b780e1510ba2b6ab6daa9294c3faa7aa6eb7f749"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-09.json": {
+      "bytes": 495,
+      "sha256": "f90d9bcfd016b251be6d6f7450dd633be7759cc65d1220ddb5b5ae353c3a8ac9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-09.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-09.stdout": {
+      "bytes": 115,
+      "sha256": "395841259bdb3cdb24d2a189203630c8933073f83ff3c8361d34580c2fae5ab6"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-10-snapshot.txt": {
+      "bytes": 4405,
+      "sha256": "1a5f97244b3e8e18cd951cb8f259ee4c3374194104d65e4148215ef881536658"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-10.json": {
+      "bytes": 496,
+      "sha256": "b67c368739c10444718393bfc067cce2f7480f8b1cc327c9a4749a996dfff318"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-10.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-10.stdout": {
+      "bytes": 115,
+      "sha256": "9fb9ff65efe37b8b17a7633dc0d0f3cc2b73958287d7e759422c3a7351763c4b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-11-snapshot.txt": {
+      "bytes": 4379,
+      "sha256": "94175f34bf051f5f94b0c4c5d05927bbf5781ae1d88c460a5ff414d9494ce984"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-11.json": {
+      "bytes": 496,
+      "sha256": "4051c4059747458b613628d49ab04a688b76686bafc4b5a93907a7bb78618e13"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-11.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-11.stdout": {
+      "bytes": 115,
+      "sha256": "eb0a34b047109c78059f4e18ef55289b70e67abf80a08d066af758c73a33de3d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-12-snapshot.txt": {
+      "bytes": 4386,
+      "sha256": "aafc756508f214e8e079d5726667ae08e53bd9ef7a10b0395cd39978bcfc2fd8"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-12.json": {
+      "bytes": 496,
+      "sha256": "fbd1d841713e14306044ca515bf2e844bf7e55c28bf41a42383853e719cdcc9c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-12.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-12.stdout": {
+      "bytes": 115,
+      "sha256": "f26ab508a5593a6b50a54f3b50dca95dfb0d756930ad0ea69a96b43a11891804"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-13-snapshot.txt": {
+      "bytes": 4385,
+      "sha256": "9e11d9a5f4e6b213285332bb31dc7ee025f31f77e44f249a8f1e76fea33aaddd"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-13.json": {
+      "bytes": 495,
+      "sha256": "697423ddb1e728c6189613f5d25bedd9239739a705edcfc6fb7869b47d86741e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-13.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-13.stdout": {
+      "bytes": 115,
+      "sha256": "f6889eb7d902b3b16bd1843ba3454655219186767880bec8a5cf2bae83092034"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-14-snapshot.txt": {
+      "bytes": 4381,
+      "sha256": "33d4225f6137a12b9e361e4b689a5b22f17cdcd9b69e3f719d228e4912686195"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-14.json": {
+      "bytes": 496,
+      "sha256": "06fdfd63ff537f73e45ba6a6574d63ef883ee418c6213c26faa3ac74a7f72d68"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-14.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-14.stdout": {
+      "bytes": 115,
+      "sha256": "af3b45f20e349e2f4506cb32179404e04a9aa4ddac995d96f08191241f7f8bce"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-15-snapshot.txt": {
+      "bytes": 4387,
+      "sha256": "4cf080eed32bd59ff80889c399801555817630978d1efb28196c77d2d7106020"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-15.json": {
+      "bytes": 495,
+      "sha256": "006f535459698a636f33b5e1b71caf280a4cbbd840d6f0410f6983d9392d1a25"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-15.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-15.stdout": {
+      "bytes": 115,
+      "sha256": "1d101edbba6c3a819195dd75432206eaea8654b703d8b947c024f950b7e9de9a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-16-snapshot.txt": {
+      "bytes": 4387,
+      "sha256": "73d6bd2583c94d84a5016ce68bdbfb62d143cb53c68bd6d0db7d8146aa1f4a77"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-16.json": {
+      "bytes": 496,
+      "sha256": "a31baa8cdd39c7963812dd88119a43df07bb414d8b0d25210d0c88711d6bebe3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-16.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-16.stdout": {
+      "bytes": 115,
+      "sha256": "3b80eea0ce277d60053764081052e57de9b6666bd14d06c71d4c8e1acfebfe81"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-17-snapshot.txt": {
+      "bytes": 4386,
+      "sha256": "edb6b0764508fa54de7efde93131808752e64cf2b5d8ce093d4cd98aa8f2e64f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-17.json": {
+      "bytes": 496,
+      "sha256": "1c3416199ea8081d47d55ac445b3e61da76cc52f497e660b0a33becda34b90e1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-17.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-17.stdout": {
+      "bytes": 115,
+      "sha256": "4d810c371aaafd0ac1b43fc142d93004240d021f4f820f7a9f4559ee5a9589f7"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-18-snapshot.txt": {
+      "bytes": 4443,
+      "sha256": "8214054287096ad80cb606d4adedf29145d1f498b0d740d91ea7973395a1c603"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-18.json": {
+      "bytes": 496,
+      "sha256": "9753f10bc8c7f3dd5d17f51bb23e21599bb7a9bf9d71a70ac0392bec1d31f6df"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-18.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-18.stdout": {
+      "bytes": 115,
+      "sha256": "3ad92cc2a5ce0f482cf375a82926bb677248b78c1c18c827676b010ca0052929"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-19-snapshot.txt": {
+      "bytes": 4432,
+      "sha256": "0846281a52cb2d84a86638682e1a19dd3a2f21f99be5b9c0ff22f9b4b07aad60"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-19.json": {
+      "bytes": 496,
+      "sha256": "be54feeaa186ef683496a02f9e57339cfa7d84955f716606f942c144fcb483cd"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-19.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-19.stdout": {
+      "bytes": 115,
+      "sha256": "77f7565f999d1fe26cb6f10cc8e388392989c3addbe0772eebfa9f16664e38da"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-20-snapshot.txt": {
+      "bytes": 20382,
+      "sha256": "03f6aa5cd783fe2d7eb67272e1a72307a358d062f7c831f63a4dc7a4f079989a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-20.json": {
+      "bytes": 495,
+      "sha256": "2908d18fad2e962028317993e6cf66edd99d540ce6e75b74ab5e8b8003c240ec"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-20.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-clients/poll-20.stdout": {
+      "bytes": 115,
+      "sha256": "545a644ac015a25119546830ff89ee5e415c5d0da08524dcd407e14fee4fa15f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/attempt-01-formation-poller.json": {
+      "bytes": 5158,
+      "sha256": "fa5f67dfe8cc28c3fe54dc94e9e443923b17f77bf4b847174d79a98221bb04f3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-attempt01-calibration-check.json": {
+      "bytes": 2770,
+      "sha256": "5f6cd83bd47f6743f91648f56c9b4342c35adeca19a7fc35691de7a1674b57d1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/root-execution-release.json": {
+      "bytes": 2995,
+      "sha256": "54f3794e076e0c43c518a22a41a2458962bf9e619813d359f7e391bc222a72dd"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/001-xvfb.stderr": {
+      "bytes": 1306,
+      "sha256": "b972e3ff8111fd126d92d036dd2788f5c96200b83f9bff3ec498dda4c3b2494b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/001-xvfb.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/002-runtime.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/002-runtime.stdout": {
+      "bytes": 151581,
+      "sha256": "d2c45401625f6d9d787339e1fc621118187a7bb0d76a25e5280e46ce3b55e7ea"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/003-snapshot-client.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/003-snapshot-client.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/004-window-id.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/004-window-id.stdout": {
+      "bytes": 8,
+      "sha256": "c2b401c52534ca4003a9ff1ed1aef38ffcea2021dae51b222c16208cc00a7fd4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/005-focus-owned-window.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/005-focus-owned-window.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/006-tap.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/006-tap.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/007-release-keys.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/007-release-keys.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/008-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/008-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/009-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/009-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/010-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/010-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/011-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/011-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/012-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/012-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/013-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/013-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/014-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/014-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/015-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/015-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/016-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/016-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/017-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/017-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/018-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/018-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/019-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/019-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/020-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/020-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/021-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/021-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/022-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/022-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/023-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/023-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/024-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/024-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/025-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/025-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/026-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/026-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/027-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/027-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/028-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/028-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/029-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/029-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/030-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/030-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/031-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/031-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/032-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/032-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/033-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/033-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/034-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/034-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/035-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/035-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/036-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/036-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/037-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/037-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/038-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/038-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/039-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/039-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/040-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/040-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/041-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/041-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/042-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/042-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/043-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/043-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/044-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/044-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/045-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/045-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/046-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/046-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/047-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/047-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/048-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/048-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/049-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/049-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/050-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/050-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/051-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/051-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/052-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/052-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/053-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/053-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/054-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/054-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/055-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/055-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/056-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/056-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/057-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/057-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/058-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/058-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/059-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/059-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/060-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/060-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/061-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/061-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/062-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/062-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/063-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/063-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/064-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/064-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/065-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/065-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/066-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/066-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/067-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/067-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/068-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/068-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/069-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/069-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/070-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/070-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/071-menu-position.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/071-menu-position.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/072-menu-press.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/072-menu-press.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/073-release-mouse.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/073-release-mouse.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/074-tap.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/074-tap.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/075-release-keys.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/075-release-keys.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/076-look.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/076-look.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/077-look.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/077-look.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/078-look.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/078-look.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/079-look.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/079-look.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/080-frame.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/080-frame.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/081-release-keys.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/081-release-keys.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/closed.json": {
+      "bytes": 2352,
+      "sha256": "ec54a7f3afdf72cf98c075b0953d0f8b77dfce04e8b014cb5e47c11049bad10a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/display.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/frame-1791376672959159265-ed8400ce.png": {
+      "bytes": 228589,
+      "sha256": "d740cc0c842b63bf6be88d4f57c211395aa694f19fa578b99c464e09263311a3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/operations.jsonl": {
+      "bytes": 201660,
+      "sha256": "8971f1333590a30a8c27f482b9520147564d3bd60fc1cd518549d42222d080cb"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/operator.lock": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/preparation-hashes.json": {
+      "bytes": 976,
+      "sha256": "04970f596525a244f30c1661b7a81b1dd105c4eb204dee6d00da76c983334593"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376618938661087-f4a3ef7e.json": {
+      "bytes": 127,
+      "sha256": "887b266ea831480f573953e0dc2d7cf01a422bb3cfd1c35c2688251394e8ade3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376619493566677-bcf65749.json": {
+      "bytes": 134,
+      "sha256": "84c9542f9ef89103773307421a2e3671690e713f6762d279b8605ae56f6b78ba"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376620882840509-c9c50b7b.json": {
+      "bytes": 140,
+      "sha256": "5e43a6e234411fb9b65d0670e8a9aeab4a91b9ff359b1447d1e71beb2a543c05"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376622458086457-faed1681.json": {
+      "bytes": 139,
+      "sha256": "7d7a6440400e38ce0fbd3ab00432d4300efc1f5a39c0a5530786640fa5990c97"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376623967104107-3c7a7d1a.json": {
+      "bytes": 141,
+      "sha256": "e9656da3d6cbd24c960ff1b3030b533affb4f872137e092ea91843e2c9c253f4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376625963340324-bd1d0a19.json": {
+      "bytes": 146,
+      "sha256": "696d5c5fe638397e08696f67d3238cd309df7408054cd9f8fdaf71b54a0d1da2"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376627543633018-78ffd524.json": {
+      "bytes": 147,
+      "sha256": "515f776b21c64efb2c13575d495fd611ebff8138d4269597a70fd1fb68e792c8"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376629342501170-2e891e31.json": {
+      "bytes": 147,
+      "sha256": "631937ecf5b21fdca72877f201126610ce31ad009981dcda213aa43ead6943dc"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376631160594882-2d945f81.json": {
+      "bytes": 147,
+      "sha256": "548443ef489ede1420ac273fedd06a16a6c3847771916fbe007d41c27860cf55"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376632849133094-bc95c356.json": {
+      "bytes": 147,
+      "sha256": "757d98af0f75c4119e3f9454add658d9031cc9599081922ec7f29e21f18337c8"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376635075779998-ff25ef79.json": {
+      "bytes": 147,
+      "sha256": "3cb1ba5b8f23064ff270cf3fe1e39af19596ee2d806ee5d56a581a066fb5787c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376636595000198-a6350d3d.json": {
+      "bytes": 147,
+      "sha256": "3d28bf66c64ce8c7cf7db9337d9a4000bcaaac486c18142bb8c3aa321f4546de"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376638063421937-b75b7439.json": {
+      "bytes": 147,
+      "sha256": "b26c4bc4146ef7f1bfd9dbd1bc74af8ec4637344eb528cdd86b16740a24a1c2f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376640356004870-bd597fd7.json": {
+      "bytes": 147,
+      "sha256": "183bde3d3e8efc7e6d227ecffc9309dee649ce7b3080db714cb7d51337b16467"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376642352484826-c8ba7025.json": {
+      "bytes": 147,
+      "sha256": "a6899f5a5ca475c40b2644a0ce00efda5bfd1e3e4059c6adeca5ff90883d6f8d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376644298248036-4005cf1e.json": {
+      "bytes": 147,
+      "sha256": "730f19a89b805bd1c79502ffc5e5f43df36b966163b81385dfb9b8a9ab2a4b78"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376646552603088-0f39bdca.json": {
+      "bytes": 147,
+      "sha256": "c401c523ca7c9f43c23670781d753c54006b599f6e57385706937419a2a138d3"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376649346024622-c2c7ca15.json": {
+      "bytes": 147,
+      "sha256": "c19a2595b0f5c1a0a22ad794d468fc0ec65217121a443b7b175bcb72de7c5bf9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376651393528711-5724a29c.json": {
+      "bytes": 147,
+      "sha256": "e5105801c61177b03b2e26e8b423bdb781e63fc093f7114a7a93027ea2d4f698"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376653027937180-405ed6d6.json": {
+      "bytes": 147,
+      "sha256": "ae74d08fc3a0e93fe4349ec855541006eaf24451fab8488034530d067529ce37"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376655850444282-3feb5cbb.json": {
+      "bytes": 147,
+      "sha256": "9392ac92c9bf5f794eb77c0c8aeaa125f9674ab0adad953f811f80aa988355e1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376658643128728-04f3e423.json": {
+      "bytes": 147,
+      "sha256": "d35ddbd3ccb07c179c3c825936870d5971d58851ad06d33bc5e197f825c22eb7"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376660548831174-02164c64.json": {
+      "bytes": 147,
+      "sha256": "f46e023cf55cb5a90bb503e0ecd7118e5854072f897238c42ef5d2aa87c888ca"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376662911802648-c2351123.json": {
+      "bytes": 140,
+      "sha256": "c4d4605d8dc93b60bcac2c74666c3a5afa911741139f485ba9eb4cebd1fa1bbc"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376664942727934-6dd1375e.json": {
+      "bytes": 136,
+      "sha256": "6b2c495c22f385ac5496f2b6fb9d01a5c2894ec609ae9b45fd86eec33b7ee4e4"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376666421515803-7e5ae4d5.json": {
+      "bytes": 127,
+      "sha256": "162b833a9aef1c625455d7bf4ab99835dc4696f215c3bbfc9fc97ef5d732e258"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376666972682074-1f736750.json": {
+      "bytes": 146,
+      "sha256": "87ddd0457bd1f66143d1defcdb62e63893ce0c95d681f971a99c8b4d563a4312"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376667778421517-e15a328b.json": {
+      "bytes": 147,
+      "sha256": "dae61f76d39c442fcf875849fe74fceb32a9bab275a17c8d74328589a5107289"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376669348563590-12ddb271.json": {
+      "bytes": 146,
+      "sha256": "2ef320ab082c8de7d7088023484a4f702440868c0719827d34f04a113512f822"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376671095601075-1bf5bb5d.json": {
+      "bytes": 147,
+      "sha256": "979f8a1080074e70f3c704fb1779bc6f5f69dc4e57826af6c022b0380ba1a98d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376671956699188-c27e6f6a.json": {
+      "bytes": 127,
+      "sha256": "7617556d5024d12fbcd201f475e7740cf3eac252c540bc39e14ea5ba68c029ab"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376672959159265-ed8400ce.json": {
+      "bytes": 125,
+      "sha256": "831cc907415a391e6246c5b8cbaff056415985e820c5c5a54e673277ebef92a2"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376761813187208-980b8c79.json": {
+      "bytes": 127,
+      "sha256": "f137f091e5e222ab9d1fbf179cde111760faadf8733d68d03d6abcb88fa0477e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376791624138171-4cbac15b.json": {
+      "bytes": 127,
+      "sha256": "b6293d2c519d8b4fa96e6879dfa8f35815fd1b65196fc60b6e8788ab3bd13b64"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376821914807783-ba541586.json": {
+      "bytes": 127,
+      "sha256": "239a219646731c9941c4a7c4223cade03d88c228f40d4a704272b3811e3c1e0e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376851665717790-9b1798f9.json": {
+      "bytes": 127,
+      "sha256": "9357d0b2ea85c4b4a5502a6e536919bb7795dd41cd10241f010bfeaff5b5ea4e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376882028177403-4fc18b01.json": {
+      "bytes": 127,
+      "sha256": "8344ae2486134d04840ef300471a5eaa150f5e7dc32309c81a15c062d2cfaf2e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376911610208621-a8d87693.json": {
+      "bytes": 127,
+      "sha256": "cea0522c149fd5745c5ba7f07f22db33781fcb27a1399a6d338040eb77b4697f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376941638792974-b7f52a66.json": {
+      "bytes": 127,
+      "sha256": "47d4f9600053c416899f5e33c5b2d64d80ff96926cfcfb4e8ba12f8b783f1cde"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791376971797912849-b2864759.json": {
+      "bytes": 127,
+      "sha256": "301251c1f5b1ec6fa83e4d219004e2fd8c4d88fd80fe4e2e0286ff6ca9cb71cb"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377001691407123-6a5357e3.json": {
+      "bytes": 127,
+      "sha256": "9a65b0355b19bb8dd28cc2aca6421d81683a907533e19afc404abbc4242fc97c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377031697843602-48e973b8.json": {
+      "bytes": 127,
+      "sha256": "ad52ee09c12052c5abdc698d369352e8ee9036d5a28b5639ec0e0c753d96188a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377061831922260-9a6ab76c.json": {
+      "bytes": 127,
+      "sha256": "f7f580f4d65de94c87d2539cb7ef702a3a895e4bcb25d614d9b05a4b0a2a29cb"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377091629076473-78774ee4.json": {
+      "bytes": 127,
+      "sha256": "b0a1983a3d292f0e0d5f206e8ec29249e2c4a5da97edfd6f3675d7ade5b11c73"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377121741175274-da7c15f8.json": {
+      "bytes": 127,
+      "sha256": "f3abc528d08c4d915a4a700f436f7aa76f10f0041effe3d93f71251814d7b537"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377151639772202-875086fc.json": {
+      "bytes": 127,
+      "sha256": "7106a800fc950c90157c26246579004c40e8428e68f74e3a7220344cbb1e545f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377182074160485-c85e8c21.json": {
+      "bytes": 127,
+      "sha256": "2dcd4293669fcef63476b5540bdc42f01d44f62490053d4da9266c9d9f8f0592"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377212047265991-f08909ec.json": {
+      "bytes": 127,
+      "sha256": "c795b3ecf8bebedae9631e12a66ecb4b5fcd861d9b7e3517a06b994d5ff9746d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377241649288485-f7e6a9de.json": {
+      "bytes": 127,
+      "sha256": "8bd7dae1aa14a1eaa95c10cfb6cbb14b76e6f2590cad54eddd833c43b596cbbf"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377272276500010-8d3da127.json": {
+      "bytes": 127,
+      "sha256": "bee92c721f225722f8afd466b361cbf0dc44734aca026557320533ee7f8d27be"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377301938197343-10b4e91c.json": {
+      "bytes": 127,
+      "sha256": "a632b99868f2905b5641e4aa3f70518765dd289a9e77bb44b26a86db61aee12a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377332319555037-5f1b8634.json": {
+      "bytes": 127,
+      "sha256": "9f94916e32509f04f92b92843a53c167ca700e9689d801c948ba5ef4ac7f1023"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/requests/1791377362099009274-b562fdf1.json": {
+      "bytes": 127,
+      "sha256": "8272a155e72ba10c32cc1a507c8a59279c814e5f52a46c1a3bcf3de1048726b9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376618938661087-f4a3ef7e.json": {
+      "bytes": 70,
+      "sha256": "2f388587171f8dbb27c812c264657d28748227af67f939a42db153d16268b4f6"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376619493566677-bcf65749.json": {
+      "bytes": 70,
+      "sha256": "5cdedfe97ef8910b1f78e5069ffa47517d293147523dc1004cc24c5a0e607826"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376620882840509-c9c50b7b.json": {
+      "bytes": 70,
+      "sha256": "db18193964e74d699effa294554cf21ca02bf52442a0fa62665717ea47119e9a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376622458086457-faed1681.json": {
+      "bytes": 70,
+      "sha256": "6135d1447b165f662b23d80a475a7778c294ee9f2dcf715921f5e7a369f8425d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376623967104107-3c7a7d1a.json": {
+      "bytes": 70,
+      "sha256": "8e6ac2bedf2cde5dfcf7b47a578a14e9b8576355b5589492c6fa2798140a3655"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376625963340324-bd1d0a19.json": {
+      "bytes": 70,
+      "sha256": "7f1b0203ebeea231bda5d0043fafc41e9bfe9c7f2fc8483a65ee83b8ae488e14"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376627543633018-78ffd524.json": {
+      "bytes": 70,
+      "sha256": "6966587d09f1eca0e9506019f438d40e06775fc40f17e504f7132803e825b1e8"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376629342501170-2e891e31.json": {
+      "bytes": 70,
+      "sha256": "507720631c9ad3e8599fc812555019e74c9e7a26e935e11394c472c16bd24cbd"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376631160594882-2d945f81.json": {
+      "bytes": 70,
+      "sha256": "4de9180daa3c4333f1bdf426548311078fe23161c889cc7403abfd87f0d1291e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376632849133094-bc95c356.json": {
+      "bytes": 70,
+      "sha256": "705adbb67e7ac1f3480e19c35dde8da0870e39b1b040d947c4bfb78474795772"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376635075779998-ff25ef79.json": {
+      "bytes": 70,
+      "sha256": "4e6c876332bae19d56392f339c62f590e2d9e31b8a63ea5683c26d8c354e7b08"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376636595000198-a6350d3d.json": {
+      "bytes": 70,
+      "sha256": "dbf9444c7ece97057752a885d2f075e2451982b03d86dd1ac743cc32d11850ac"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376638063421937-b75b7439.json": {
+      "bytes": 70,
+      "sha256": "97bea890a06a6c7c83e946e01b0badf001716f51254a43823b42a301ea09d078"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376640356004870-bd597fd7.json": {
+      "bytes": 70,
+      "sha256": "deebf8b0f4812bc4a59fe9178cdcc604dbed231febd9bab300be851f79ef739c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376642352484826-c8ba7025.json": {
+      "bytes": 70,
+      "sha256": "0401e1e66d421f27e606b4c499562caf2bac7d1576329a812432d99959aaf79a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376644298248036-4005cf1e.json": {
+      "bytes": 70,
+      "sha256": "563649b2f2ad75a0d3dd82c2d15d00784b40525be3a193e0af626a8a3b6f6a44"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376646552603088-0f39bdca.json": {
+      "bytes": 70,
+      "sha256": "27fd36f29c769499e872a73b6864f84d3ac6998b44261cc09ffa3a708b13489e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376649346024622-c2c7ca15.json": {
+      "bytes": 70,
+      "sha256": "8c145fcfc8624570b4f0df5b70fdcc12ed7f2aaa19a03ef83d745a1cfe772139"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376651393528711-5724a29c.json": {
+      "bytes": 70,
+      "sha256": "713ecbdaee672756c55174adf388c7b7ca0f76bf317af5b94c5bdcdfc48f81ef"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376653027937180-405ed6d6.json": {
+      "bytes": 70,
+      "sha256": "8d1a11115e9404aca375a6360e1a82388a90845c43a6f85f8d582488d68c1097"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376655850444282-3feb5cbb.json": {
+      "bytes": 70,
+      "sha256": "496c6578534eb91f341928737b9c6cbe41c7edb04ec6d4d63d8da2d063bbdf74"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376658643128728-04f3e423.json": {
+      "bytes": 70,
+      "sha256": "11097ae436a5a6c908510cc35aad7597a8cdb7045da685952ab11e0a982930a1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376660548831174-02164c64.json": {
+      "bytes": 70,
+      "sha256": "15a271fb591ca44f15b4de718728b9c5e98222b9d49e0ce56a403a2d8f2c8d85"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376662911802648-c2351123.json": {
+      "bytes": 70,
+      "sha256": "fa40671a485f47422e3bcf772d5f1cb9a480af24a10889ee244c066a85944e3d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376664942727934-6dd1375e.json": {
+      "bytes": 70,
+      "sha256": "e87c3a3adf944444ee3dc2dad2abd050f088a1320aeac2ae2a71b7ca2445c837"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376666421515803-7e5ae4d5.json": {
+      "bytes": 70,
+      "sha256": "0aa2d4f48af4eeb952f524fea4f76d7ac9da94971836c29f46636b7d61cfcb04"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376666972682074-1f736750.json": {
+      "bytes": 70,
+      "sha256": "ae484fcf6fcfe63936b0f5fb2ec6b34f9f650ce0d1022c0ccd876ab50c4b9e87"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376667778421517-e15a328b.json": {
+      "bytes": 70,
+      "sha256": "23c19fa622b01726561ac21f3f7d01793a77903f22d85b3e3b17fb8f1be0f87c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376669348563590-12ddb271.json": {
+      "bytes": 70,
+      "sha256": "9445044f380e8644436a4945d20480550c080a430060482ba8c141b96e1dd6e9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376671095601075-1bf5bb5d.json": {
+      "bytes": 70,
+      "sha256": "fc7d75dbe8f1caf45142c128aaedc5162d0ad27c8d6a915299f4c24a6a89abb0"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376671956699188-c27e6f6a.json": {
+      "bytes": 70,
+      "sha256": "f241ebf33731c4645bcdd237a34111f5ac68deb2f711197e835a1fd2fd00970c"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376672959159265-ed8400ce.json": {
+      "bytes": 70,
+      "sha256": "2be8b9182f0d9495d084a674028258eed8a60da76cf699a76c32e567f30761d7"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376761813187208-980b8c79.json": {
+      "bytes": 70,
+      "sha256": "61c0c0707871fd1db8a050be061efffdfee43e8ecdbb58574ff5adbc8cd15a42"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376791624138171-4cbac15b.json": {
+      "bytes": 70,
+      "sha256": "2d4c5c8b625dab0e6e991cb30de350dbc1bfc7d37119d5d04c2ac616ad833d96"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376821914807783-ba541586.json": {
+      "bytes": 70,
+      "sha256": "a1681a8a285ca94448b4503bc34793e456bfeea6ceb4ddd5ead4be30541ec3a5"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376851665717790-9b1798f9.json": {
+      "bytes": 70,
+      "sha256": "bf23b2bce8aac7974f7c002c9f67ce5ce678fdbb910f4d6fc1205b0927a6e761"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376882028177403-4fc18b01.json": {
+      "bytes": 70,
+      "sha256": "4a89d255c6245627e6d0d0b374ff3cf374da1971e17dc2d3d33d086bfa67fe60"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376911610208621-a8d87693.json": {
+      "bytes": 70,
+      "sha256": "88744c4f377a05f2d40875975ca775b33e28375c603abbcb6020f9ff1ad4f8a7"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376941638792974-b7f52a66.json": {
+      "bytes": 70,
+      "sha256": "4758353b5186c5e10e34c91fbedf8964899288826c031c1e94c2fd65c58f449d"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791376971797912849-b2864759.json": {
+      "bytes": 70,
+      "sha256": "bdd4690079edd569ec252a605cf86f763d52a8e53783724acc2df3da0dbe60c2"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377001691407123-6a5357e3.json": {
+      "bytes": 70,
+      "sha256": "64cd6468cf2ece0414adf2d04d1adb28a9f22cc69d325419538a9c7c9abd66c7"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377031697843602-48e973b8.json": {
+      "bytes": 70,
+      "sha256": "b9fdb90c15fc80d41d621bd42ba1de38586cbffaa7f0c75c57b91aa52cfcdd53"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377061831922260-9a6ab76c.json": {
+      "bytes": 70,
+      "sha256": "578ced58619ffb7ec24be7fd29567086ef139a947990476de3d6b891f9c3a115"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377091629076473-78774ee4.json": {
+      "bytes": 70,
+      "sha256": "10bb0f84b72df135a59b55dcd8dca1563563b6bea28e91f3159de5b3cd687be1"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377121741175274-da7c15f8.json": {
+      "bytes": 70,
+      "sha256": "6a708af20cfd44563c681fa66d1b7e2f4dd7414f56fb7e3edfa1e44190fe6be9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377151639772202-875086fc.json": {
+      "bytes": 70,
+      "sha256": "79d4424ecd0359f86398f022e89082cd8afc13bfadf8bc85d7a6e2c62533451e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377182074160485-c85e8c21.json": {
+      "bytes": 70,
+      "sha256": "7b43e8e95413412f6e908132ae7a67e24818b657b13092a85dfd367671b81dd7"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377212047265991-f08909ec.json": {
+      "bytes": 70,
+      "sha256": "bb7371bb7523188b15b11ba05f0de5758e0a25873c6809fdcac29b1b36185a6a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377241649288485-f7e6a9de.json": {
+      "bytes": 70,
+      "sha256": "350ce81c7ee0f12eabe2c242cc803acfa4c95d10ec44cf3b70a6d089b56129a9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377272276500010-8d3da127.json": {
+      "bytes": 70,
+      "sha256": "61a267c8ebcba2198f6b07a222e94031d8e6771343c187c6ac33a967809dbf63"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377301938197343-10b4e91c.json": {
+      "bytes": 70,
+      "sha256": "c9044098aabefe06fd8f74b64b62df1a311122aef1c1686cccfbb9f487d81abd"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377332319555037-5f1b8634.json": {
+      "bytes": 70,
+      "sha256": "a3302809c5a5f457787451ab7c2516c7f6ac76ce0727b78c488eedc1f2b8c56e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/results/1791377362099009274-b562fdf1.json": {
+      "bytes": 70,
+      "sha256": "b9c3effd7793234648a7b8c009621974f50f92535589a7cd7d01f87f183c525e"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-client-close": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-client-config.edn": {
+      "bytes": 203,
+      "sha256": "0b13ef64507ad8db6a8f50cb6ee0ade9b0277327d318730cc0029e60777814f8"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-client-ready": {
+      "bytes": 6,
+      "sha256": "ed1a545bb85e55816bbf9566b028b2a0bc456b88f49f6f266c0401048824194b"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-current-request.edn": {
+      "bytes": 31,
+      "sha256": "904b2641f203b45abcb7eb5de1648f473c3b9c2dc9f86d56191e01e33c04c83f"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-current.result": {
+      "bytes": 8,
+      "sha256": "643c94c65de7942f70b9afaf5798c9ca2149f2c773c59a2744b19a52094f1bf9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-current.stdout": {
+      "bytes": 20382,
+      "sha256": "03f6aa5cd783fe2d7eb67272e1a72307a358d062f7c831f63a4dc7a4f079989a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-messages.edn": {
+      "bytes": 1351941,
+      "sha256": "a9fc20caa806920bf4e10e19a52740734edcd9e5d1cceab06b7ed026b1bd5fd9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/snapshot-requests.edn": {
+      "bytes": 95961,
+      "sha256": "9e54cd773862cc158c5a421ed65719bd4a31d1aa9ee7e10a8800b0c97139e8c9"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/source-hashes.json": {
+      "bytes": 18753,
+      "sha256": "5a34c073bba9e50aa1298cee467bf226303864d3fffbdca92e1361a6ef5add61"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/state.json": {
+      "bytes": 2352,
+      "sha256": "ec54a7f3afdf72cf98c075b0953d0f8b77dfce04e8b014cb5e47c11049bad10a"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/supervisor-launch.json": {
+      "bytes": 482,
+      "sha256": "b08a1f4e00e8b73376f3dd02a55f0375a7f73fbb892167f2d7a7fb249a179871"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/supervisor.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".\u03b7\u03bc/diagnostics/bounded-damped-flight/runs/attempt-01/supervisor.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "journal": {
+    "all_global_commitment_zero": true,
+    "all_thrust_nil": true,
+    "exact_contiguous_spans_verified": true,
+    "first": {
+      "byte_end": 5203,
+      "byte_start": 0,
+      "consumed_at": "2026-10-07T12:36:26.004843+00:00",
+      "id": "0001",
+      "messages": 15,
+      "ready_ids": [],
+      "tick": 26
+    },
+    "last": {
+      "byte_end": 1351941,
+      "byte_start": 1329643,
+      "consumed_at": "2026-10-07T12:49:22.727686+00:00",
+      "id": "0132",
+      "messages": 26,
+      "ready_ids": [
+        "1010",
+        "1011",
+        "1012"
+      ],
+      "tick": 4145
+    },
+    "maximum_request_bytes": 22298,
+    "messages": 2306,
+    "reads": 132,
+    "sha256": "a9fc20caa806920bf4e10e19a52740734edcd9e5d1cceab06b7ed026b1bd5fd9",
+    "utf8_bytes": 1351941
+  },
+  "limits": [
+    "Ready bodies were observed; no-target means no supervisor-admitted target, not no planet or no ready body.",
+    "No post-poll snapshot exists; exact later planet readiness, tick and geometry at closure are unobserved.",
+    "No aim, thrust hold, physical approach, binding, commitment, sculpt, embodiment or Gate was measured.",
+    "This audit does not establish why the operator resumed late or predict a future flight outcome.",
+    "PID absence is an audit-time observation; saved start/boot identities and reap receipts supply ownership provenance."
+  ],
+  "operations": {
+    "all_requests_ok": true,
+    "child_exit_codes": {
+      "0": 80,
+      "143": 1
+    },
+    "events": 878,
+    "outer_clients_reaped_exit0": 54,
+    "request_counts": {
+      "click": 22,
+      "frame": 1,
+      "inspect": 24,
+      "look": 4,
+      "tap": 2
+    },
+    "requests": 53,
+    "spawned_and_reaped": 81
+  },
+  "operator_report": {
+    "evidence_tier": "parent agent report; not a saved run timestamp",
+    "poller_returncode": 0,
+    "poller_tool": 77820,
+    "root_resumed_at_UTC_approx": "2026-10-07T12:52:51Z"
+  },
+  "outcome": "PASS-evidence-integrity; missed operator handoff before admission deadline; flight unmeasured",
+  "owned_process_absence": {
+    "app": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "pid": 6798,
+      "proc_exists_at_audit": false,
+      "start": "4406743",
+      "state": "S"
+    },
+    "snapshot_client": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+      "pid": 8114,
+      "proc_exists_at_audit": false,
+      "start": "4407850",
+      "state": "S"
+    },
+    "supervisor": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/python3.12",
+      "pid": 6756,
+      "proc_exists_at_audit": false,
+      "start": "4406702",
+      "state": "R"
+    },
+    "xvfb": {
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+      "exe": "/usr/bin/Xvfb",
+      "pid": 6766,
+      "proc_exists_at_audit": false,
+      "start": "4406712",
+      "state": "S"
+    }
+  },
+  "poller": {
+    "count": 21,
+    "ended_at": "2026-10-07T12:49:22.799156+00:00",
+    "first_ready": {
+      "at": "2026-10-07T12:49:21.565440+00:00",
+      "candidate_rows": 12,
+      "client": "poll-20",
+      "commitment": "4145 0",
+      "elapsed": 795.8736907540006,
+      "ready_ids": [
+        "1010",
+        "1011",
+        "1012"
+      ],
+      "tick": 4145
+    },
+    "last_no_ready": {
+      "at": "2026-10-07T12:48:51.556662+00:00",
+      "candidate_rows": 0,
+      "client": "poll-19",
+      "commitment": "3990 0",
+      "elapsed": 765.8755905049984,
+      "ready_ids": [],
+      "tick": 3990
+    },
+    "poller_close_to_supervisor_cutoff_seconds": 164.134678,
+    "ready_read_elapsed_seconds": 795.8736907540006,
+    "remaining_admission_seconds_at_saved_read": 164.12630924599944,
+    "selected_target": false,
+    "start_gap_max_seconds": 30.016767,
+    "start_gap_min_seconds": 30.000239
+  },
+  "schema": "truth-damped-attempt01-offline-audit-v1",
+  "scope": "Closed files plus read-only /proc absence; no native contact, signals, game namespaces, tests or Git",
+  "source_checks": {
+    "all_equal": true,
+    "manifest_hashes": 68,
+    "preparation_pins": 11,
+    "production_hashes": 186
+  }
+}
