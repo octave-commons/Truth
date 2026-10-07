@@ -539,3 +539,12 @@
   spore: none
   receipt-refs: 9f055ce,PR41
   note: Budget the observation as part of a gesture. Root turn latency can consume a short native run; use a reviewed serialized controller that checks every response and reserves input time, never extend the live budget or reinterpret unobserved input as success. No new spore.
+- ts: 2026-10-07T06:40:17.525192904Z
+  session: /home/err/spaces/foresight/.worktrees/truth-native-input-probe
+  task: Initialized native look proof
+  p-efficiency: 0.5
+  p-friction: 0.5
+  p-skill-candidate: 0.0
+  spore: none
+  receipt-refs: 2863728,d703715
+  note: Firstcursor callback seeds baseline, so initialize through ordinary UI before relative-angle assertions. Serializedverifiedclients complete the same bounded smoke without perturn latency; never relax assertions to relabel a failed run. Keep rawfailedpredecessors and cleanupownership. No new spore.

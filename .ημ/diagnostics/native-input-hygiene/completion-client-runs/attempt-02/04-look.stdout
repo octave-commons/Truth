@@ -1,0 +1,6 @@
+{
+  "request": "1791354394029775800-65f06a8c",
+  "ok": false,
+  "error": "AssertionError('Input postcondition unconfirmed: look; gesture not retried')",
+  "finished_at": "2026-10-07T06:26:55.952486+00:00"
+}

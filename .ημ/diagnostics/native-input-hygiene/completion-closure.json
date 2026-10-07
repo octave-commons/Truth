@@ -1,0 +1,807 @@
+{
+  "at": "2026-10-07T06:40:17.380760+00:00",
+  "source": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "first_bundle_commit": "d703715bae567ef3681089bec3ab648783750031",
+  "first_bundle_pr": 42,
+  "independent_review": "runtime_scout auditedrawsource/prephashes, request/result/reap counts andactualangle/cursorstates; board_scoutandroot reviewedexactcontrollers beforeexecution",
+  "attempts": {
+    "attempt-02": {
+      "closed": {
+        "started_at": "2026-10-07T06:25:56.573619+00:00",
+        "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+        "port": 7898,
+        "budget_seconds": 300,
+        "work_budget_seconds": 270,
+        "supervisor": {
+          "pid": 2102846,
+          "start": "2185656",
+          "state": "R",
+          "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "exe": "/usr/bin/python3.12"
+        },
+        "stage": "closed",
+        "removed_inherited_jvm_option_keys": [
+          "JAVA_OPTS"
+        ],
+        "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+        "display": ":1",
+        "xvfb": {
+          "pid": 2102860,
+          "start": "2185665",
+          "state": "S",
+          "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "exe": "/usr/bin/Xvfb"
+        },
+        "app": {
+          "pid": 2102867,
+          "start": "2185676",
+          "state": "S",
+          "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+        },
+        "world": 780019812,
+        "window": 124960396428912,
+        "x-window": "2097159",
+        "outcome": "failed",
+        "cleanup_errors": [],
+        "ended_at": "2026-10-07T06:26:56.420691+00:00",
+        "elapsed_seconds": 59.84709634400133,
+        "budget_exceeded": false,
+        "mouse_pending": false,
+        "mouse_release_uncertain": false,
+        "unreaped_children": []
+      },
+      "requests": 3,
+      "successful_requests": 2,
+      "spawned_unique": 19,
+      "raw_reap_events": 19,
+      "source_count": 186,
+      "source_preparation_unchanged": true,
+      "owned_processes_absent": {
+        "2102846": true,
+        "2102867": true,
+        "2102860": true
+      },
+      "controller": {
+        "started_at": "2026-10-07T06:25:56.413148+00:00",
+        "run": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/runs/attempt-02",
+        "port": 7898,
+        "runner_sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+        "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "controller_sha256": "e9453242c7244c87d27b4f6cd23a143b066d7e3f44bd5bb1bb4b3a13e33e441c",
+        "total_seconds": 300,
+        "work_seconds": 270,
+        "minimum_work_seconds_before_input": 40,
+        "clock": "Controller monotonic start precedes supervisor; budget is conservative.",
+        "planned_sequence": [
+          [
+            "tap",
+            "r"
+          ],
+          [
+            "tap",
+            "Tab"
+          ],
+          [
+            "look",
+            "100",
+            "0"
+          ],
+          [
+            "look",
+            "-100",
+            "0"
+          ],
+          [
+            "look",
+            "0",
+            "100"
+          ],
+          [
+            "look",
+            "0",
+            "-100"
+          ],
+          [
+            "tap",
+            "Tab"
+          ],
+          [
+            "tap",
+            "Tab"
+          ]
+        ],
+        "completed": [
+          [
+            "tap",
+            "r"
+          ],
+          [
+            "tap",
+            "Tab"
+          ]
+        ],
+        "closed": {
+          "started_at": "2026-10-07T06:25:56.573619+00:00",
+          "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "port": 7898,
+          "budget_seconds": 300,
+          "work_budget_seconds": 270,
+          "supervisor": {
+            "pid": 2102846,
+            "start": "2185656",
+            "state": "R",
+            "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+            "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+            "exe": "/usr/bin/python3.12"
+          },
+          "stage": "closed",
+          "removed_inherited_jvm_option_keys": [
+            "JAVA_OPTS"
+          ],
+          "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+          "display": ":1",
+          "xvfb": {
+            "pid": 2102860,
+            "start": "2185665",
+            "state": "S",
+            "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+            "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+            "exe": "/usr/bin/Xvfb"
+          },
+          "app": {
+            "pid": 2102867,
+            "start": "2185676",
+            "state": "S",
+            "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+            "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+            "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+          },
+          "world": 780019812,
+          "window": 124960396428912,
+          "x-window": "2097159",
+          "outcome": "failed",
+          "cleanup_errors": [],
+          "ended_at": "2026-10-07T06:26:56.420691+00:00",
+          "elapsed_seconds": 59.84709634400133,
+          "budget_exceeded": false,
+          "mouse_pending": false,
+          "mouse_release_uncertain": false,
+          "unreaped_children": []
+        },
+        "ended_at": "2026-10-07T06:26:56.778035+00:00",
+        "errors": [
+          "AssertionError('Client 04-look exited 1; stop sequence and retain output')",
+          "AssertionError()"
+        ],
+        "outcome": "failed",
+        "elapsed_seconds": 60.36492671900123,
+        "controller_budget_exceeded": false,
+        "unreaped_client_pids": []
+      },
+      "input_observations": [
+        {
+          "at": "2026-10-07T06:26:22.739733+00:00",
+          "elapsed_seconds": 26.166155620998325,
+          "kind": "input-observation",
+          "label": "tap-r",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": null
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:26:33.712545+00:00",
+          "elapsed_seconds": 37.13895947600031,
+          "kind": "input-observation",
+          "label": "tap-Tab",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": null
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:26:44.306516+00:00",
+          "elapsed_seconds": 47.73292597099862,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              740.0,
+              360.0
+            ]
+          },
+          "matched": false
+        },
+        {
+          "at": "2026-10-07T06:26:50.319219+00:00",
+          "elapsed_seconds": 53.745647818999714,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 1,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              740.0,
+              360.0
+            ]
+          },
+          "matched": false
+        },
+        {
+          "at": "2026-10-07T06:26:55.952381+00:00",
+          "elapsed_seconds": 59.378799568999966,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 2,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              740.0,
+              360.0
+            ]
+          },
+          "matched": false
+        }
+      ]
+    },
+    "attempt-03": {
+      "closed": {
+        "started_at": "2026-10-07T06:30:34.930345+00:00",
+        "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+        "port": 7898,
+        "budget_seconds": 300,
+        "work_budget_seconds": 270,
+        "supervisor": {
+          "pid": 2127518,
+          "start": "2213484",
+          "state": "R",
+          "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "exe": "/usr/bin/python3.12"
+        },
+        "stage": "closed",
+        "removed_inherited_jvm_option_keys": [
+          "JAVA_OPTS"
+        ],
+        "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+        "display": ":1",
+        "xvfb": {
+          "pid": 2127526,
+          "start": "2213502",
+          "state": "S",
+          "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "exe": "/usr/bin/Xvfb"
+        },
+        "app": {
+          "pid": 2127530,
+          "start": "2213513",
+          "state": "S",
+          "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+        },
+        "world": 932536646,
+        "window": 140589916830816,
+        "x-window": "2097159",
+        "outcome": "operator-stop",
+        "cleanup_errors": [],
+        "ended_at": "2026-10-07T06:33:02.643388+00:00",
+        "elapsed_seconds": 147.71310283500134,
+        "budget_exceeded": false,
+        "mouse_pending": false,
+        "mouse_release_uncertain": false,
+        "unreaped_children": []
+      },
+      "requests": 10,
+      "successful_requests": 10,
+      "spawned_unique": 46,
+      "raw_reap_events": 46,
+      "source_count": 186,
+      "source_preparation_unchanged": true,
+      "owned_processes_absent": {
+        "2127518": true,
+        "2127530": true,
+        "2127526": true
+      },
+      "controller": {
+        "started_at": "2026-10-07T06:30:34.711121+00:00",
+        "run": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/runs/attempt-03",
+        "port": 7898,
+        "runner_sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+        "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "controller_sha256": "13f5feaad7bc117ca4a8541063f25212ecd71329ab8b1283859e8064c3adfd7b",
+        "total_seconds": 300,
+        "work_seconds": 270,
+        "minimum_work_seconds_before_input": 40,
+        "clock": "Controller monotonic start precedes supervisor; budget is conservative.",
+        "planned_sequence": [
+          [
+            "tap",
+            "r"
+          ],
+          [
+            "click",
+            "spark"
+          ],
+          [
+            "click",
+            "spark"
+          ],
+          [
+            "tap",
+            "Tab"
+          ],
+          [
+            "look",
+            "100",
+            "0"
+          ],
+          [
+            "look",
+            "-100",
+            "0"
+          ],
+          [
+            "look",
+            "0",
+            "100"
+          ],
+          [
+            "look",
+            "0",
+            "-100"
+          ],
+          [
+            "tap",
+            "Tab"
+          ],
+          [
+            "tap",
+            "Tab"
+          ]
+        ],
+        "completed": [
+          [
+            "tap",
+            "r"
+          ],
+          [
+            "click",
+            "spark"
+          ],
+          [
+            "click",
+            "spark"
+          ],
+          [
+            "tap",
+            "Tab"
+          ],
+          [
+            "look",
+            "100",
+            "0"
+          ],
+          [
+            "look",
+            "-100",
+            "0"
+          ],
+          [
+            "look",
+            "0",
+            "100"
+          ],
+          [
+            "look",
+            "0",
+            "-100"
+          ],
+          [
+            "tap",
+            "Tab"
+          ],
+          [
+            "tap",
+            "Tab"
+          ]
+        ],
+        "closed": {
+          "started_at": "2026-10-07T06:30:34.930345+00:00",
+          "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+          "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+          "port": 7898,
+          "budget_seconds": 300,
+          "work_budget_seconds": 270,
+          "supervisor": {
+            "pid": 2127518,
+            "start": "2213484",
+            "state": "R",
+            "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+            "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+            "exe": "/usr/bin/python3.12"
+          },
+          "stage": "closed",
+          "removed_inherited_jvm_option_keys": [
+            "JAVA_OPTS"
+          ],
+          "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+          "display": ":1",
+          "xvfb": {
+            "pid": 2127526,
+            "start": "2213502",
+            "state": "S",
+            "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+            "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+            "exe": "/usr/bin/Xvfb"
+          },
+          "app": {
+            "pid": 2127530,
+            "start": "2213513",
+            "state": "S",
+            "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+            "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+            "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+          },
+          "world": 932536646,
+          "window": 140589916830816,
+          "x-window": "2097159",
+          "outcome": "operator-stop",
+          "cleanup_errors": [],
+          "ended_at": "2026-10-07T06:33:02.643388+00:00",
+          "elapsed_seconds": 147.71310283500134,
+          "budget_exceeded": false,
+          "mouse_pending": false,
+          "mouse_release_uncertain": false,
+          "unreaped_children": []
+        },
+        "ended_at": "2026-10-07T06:33:03.092953+00:00",
+        "errors": [],
+        "outcome": "passed",
+        "elapsed_seconds": 148.381860305999,
+        "controller_budget_exceeded": false,
+        "unreaped_client_pids": []
+      },
+      "input_observations": [
+        {
+          "at": "2026-10-07T06:31:01.615362+00:00",
+          "elapsed_seconds": 26.685078777001763,
+          "kind": "input-observation",
+          "label": "tap-r",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": null
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:31:12.804102+00:00",
+          "elapsed_seconds": 37.87381719100085,
+          "kind": "input-observation",
+          "label": "menu-position",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:31:18.272932+00:00",
+          "elapsed_seconds": 43.34265432000029,
+          "kind": "input-observation",
+          "label": "spark-toggle",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "spark",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:31:28.412549+00:00",
+          "elapsed_seconds": 53.48226374099977,
+          "kind": "input-observation",
+          "label": "menu-position",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "spark",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:31:34.065876+00:00",
+          "elapsed_seconds": 59.13559504500154,
+          "kind": "input-observation",
+          "label": "spark-toggle",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:31:45.419808+00:00",
+          "elapsed_seconds": 70.48951892599871,
+          "kind": "input-observation",
+          "label": "tap-Tab",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:31:57.665595+00:00",
+          "elapsed_seconds": 82.73531155900127,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -89.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              374.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:32:11.285524+00:00",
+          "elapsed_seconds": 96.35523811099847,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:32:23.814544+00:00",
+          "elapsed_seconds": 108.88425556400034,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -21.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              113.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:32:36.136441+00:00",
+          "elapsed_seconds": 121.20615725899916,
+          "kind": "input-observation",
+          "label": "look",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:32:48.231204+00:00",
+          "elapsed_seconds": 133.30091589600124,
+          "kind": "input-observation",
+          "label": "tap-Tab",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": true,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": false,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        },
+        {
+          "at": "2026-10-07T06:33:01.293767+00:00",
+          "elapsed_seconds": 146.36353910300022,
+          "kind": "input-observation",
+          "label": "tap-Tab",
+          "attempt": 0,
+          "state": {
+            "mode": "manual",
+            "free": false,
+            "domain": "none",
+            "displacement": 300000000000000.0,
+            "yaw": -90.0,
+            "pitch": -20.0,
+            "sensitivity": 0.01,
+            "looking": true,
+            "pick_pending": false,
+            "cursor": [
+              274.0,
+              13.0
+            ]
+          },
+          "matched": true
+        }
+      ]
+    }
+  },
+  "primary": "not targeted;no freshhealthclaim",
+  "interpretation": "Initialized10gesturecheck passes; earlierfirst-event mismatch anddeadline failures retained. No physicalmovement/approach/commit/sculpt/Gate orperformanceclaim.",
+  "whitespace_check": {
+    "all_staged_exit": 2,
+    "original_raw_stop_stdout_extra_newlines": [
+      ".\u03b7\u03bc/diagnostics/native-input-hygiene/completion-client-runs/attempt-02/05-stop.stdout",
+      ".\u03b7\u03bc/diagnostics/native-input-hygiene/completion-client-runs/attempt-03/12-stop.stdout"
+    ],
+    "original_output_preserved": true,
+    "all_other_changed_paths_exit": 0
+  }
+}

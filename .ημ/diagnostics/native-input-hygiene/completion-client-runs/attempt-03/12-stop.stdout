@@ -1,0 +1,50 @@
+{
+  "started_at": "2026-10-07T06:30:34.930345+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+  "port": 7898,
+  "budget_seconds": 300,
+  "work_budget_seconds": 270,
+  "supervisor": {
+    "pid": 2127518,
+    "start": "2213484",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+    "exe": "/usr/bin/python3.12"
+  },
+  "stage": "closed",
+  "removed_inherited_jvm_option_keys": [
+    "JAVA_OPTS"
+  ],
+  "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "display": ":1",
+  "xvfb": {
+    "pid": 2127526,
+    "start": "2213502",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+    "exe": "/usr/bin/Xvfb"
+  },
+  "app": {
+    "pid": 2127530,
+    "start": "2213513",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "world": 932536646,
+  "window": 140589916830816,
+  "x-window": "2097159",
+  "outcome": "operator-stop",
+  "cleanup_errors": [],
+  "ended_at": "2026-10-07T06:33:02.643388+00:00",
+  "elapsed_seconds": 147.71310283500134,
+  "budget_exceeded": false,
+  "mouse_pending": false,
+  "mouse_release_uncertain": false,
+  "unreaped_children": []
+}
+

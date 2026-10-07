@@ -1,0 +1,118 @@
+{
+  "started_at": "2026-10-07T06:25:56.413148+00:00",
+  "run": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/runs/attempt-02",
+  "port": 7898,
+  "runner_sha256": "c9c8898fba76c40280e2d2b29180f2625358062393aa95b9f2578e1967ba1d17",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "controller_sha256": "e9453242c7244c87d27b4f6cd23a143b066d7e3f44bd5bb1bb4b3a13e33e441c",
+  "total_seconds": 300,
+  "work_seconds": 270,
+  "minimum_work_seconds_before_input": 40,
+  "clock": "Controller monotonic start precedes supervisor; budget is conservative.",
+  "planned_sequence": [
+    [
+      "tap",
+      "r"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "look",
+      "100",
+      "0"
+    ],
+    [
+      "look",
+      "-100",
+      "0"
+    ],
+    [
+      "look",
+      "0",
+      "100"
+    ],
+    [
+      "look",
+      "0",
+      "-100"
+    ],
+    [
+      "tap",
+      "Tab"
+    ],
+    [
+      "tap",
+      "Tab"
+    ]
+  ],
+  "completed": [
+    [
+      "tap",
+      "r"
+    ],
+    [
+      "tap",
+      "Tab"
+    ]
+  ],
+  "closed": {
+    "started_at": "2026-10-07T06:25:56.573619+00:00",
+    "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+    "port": 7898,
+    "budget_seconds": 300,
+    "work_budget_seconds": 270,
+    "supervisor": {
+      "pid": 2102846,
+      "start": "2185656",
+      "state": "R",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "exe": "/usr/bin/python3.12"
+    },
+    "stage": "closed",
+    "removed_inherited_jvm_option_keys": [
+      "JAVA_OPTS"
+    ],
+    "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "display": ":1",
+    "xvfb": {
+      "pid": 2102860,
+      "start": "2185665",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "exe": "/usr/bin/Xvfb"
+    },
+    "app": {
+      "pid": 2102867,
+      "start": "2185676",
+      "state": "S",
+      "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+      "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+      "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+    },
+    "world": 780019812,
+    "window": 124960396428912,
+    "x-window": "2097159",
+    "outcome": "failed",
+    "cleanup_errors": [],
+    "ended_at": "2026-10-07T06:26:56.420691+00:00",
+    "elapsed_seconds": 59.84709634400133,
+    "budget_exceeded": false,
+    "mouse_pending": false,
+    "mouse_release_uncertain": false,
+    "unreaped_children": []
+  },
+  "ended_at": "2026-10-07T06:26:56.778035+00:00",
+  "errors": [
+    "AssertionError('Client 04-look exited 1; stop sequence and retain output')",
+    "AssertionError()"
+  ],
+  "outcome": "failed",
+  "elapsed_seconds": 60.36492671900123,
+  "controller_budget_exceeded": false,
+  "unreaped_client_pids": []
+}

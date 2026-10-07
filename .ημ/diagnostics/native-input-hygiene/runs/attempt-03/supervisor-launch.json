@@ -1,0 +1,12 @@
+{
+  "pid": 2127518,
+  "at": "2026-10-07T06:30:34.791387+00:00",
+  "identity": {
+    "pid": 2127518,
+    "start": "2213484",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe",
+    "exe": "/usr/bin/python3.12"
+  }
+}
