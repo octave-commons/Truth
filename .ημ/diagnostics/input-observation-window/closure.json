@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-07T10:10:58.955911+00:00",
+  "parent_preparation": "51a35312290fb722740a21fd225c3227d9c8b12c",
+  "audit_sha256": "c43545d91c05d8789630b3f42f6193381722d1d471312b25953131aad4ccb4ae",
+  "root_original_input_hashes_rechecked": 731,
+  "root_source_files_rechecked": 186,
+  "canonical_comment": "Closed input-observation-window fullaudit c43545d91c05d8789630b3f42f6193381722d1d471312b25953131aad4ccb4ae:248 snapshots/5353maps/4155589UTF8bytes,119 successfulsupervisorrequests,35outerclients (aimexit1),87aimsubclients(finalinspectkilled-9),73ownedchildrenreaped. First12naturalplanets tick4182, selected1010 admittedT788.978;42lookacknowledgements. Lastcontroller6.520297degrees vs laterworker5.522050degrees, neither0.5. Finalcaller had0.112687s left andfailed at120s, queuedread stillcompleted; no remotecancellationclaim. Cleanownedoperator-stopT910.585,4principalPIDsabsent, release/cleanupflagsclear. NoW/media/sampledcommitment/overlap. All58ackgroups took1-3reads, so no actual extended-observation success established. Bounded20formationpolls near30s fixed earliercadence, but103.452s fromreadypoll toadmission preserved. All731originalinputhashes unchanged; source186/prep15match. Complete707run/clientfiles publishedas20direct plus687 losslessUTF8 archiveentries withindependentbyteverification, not omitted input; originalslocalunchanged. Audit excludespackaging, separatelyverified. Owner remainsInProgress3; no gameplayfeature/status promotion. Separatelyscoped200pixelprep awaitsmanifestformatrepairandindependentrefreeze, noactive runtime.",
+  "prior_ledger_bytes": 664320,
+  "prior_ledger_sha256": "3a131bc0d5a5f1857c2eacb0357cfd2148490bb8cb46f6f40cc4f19cd9d0752a",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "after_write_id": "1791367858198-0.rsnbbpy7f9mumz9j3sk",
+  "packaging_review": "PACKAGING-REVIEW.json; distinct fromnativeaudit",
+  "runtime_active": false
+}

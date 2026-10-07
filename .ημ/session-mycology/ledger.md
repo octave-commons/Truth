@@ -593,3 +593,12 @@
   spore: none
   receipt-refs: .ημ/diagnostics/commit-ready-approach/attempt-01-audit.json
   note: Three fast state samples can exhaust a poll count long before a declared wall deadline. Preserve untimestamped callback evidence without inventing latency; wait within the existing bound and never replay an uncertain gesture. Automated formation polls met cadence; manual gaps remain failures. No new spore.
+- ts: 2026-10-07T10:10:59.020405978Z
+  session: /home/err/spaces/foresight/.worktrees/truth-input-observation-window
+  task: truth-input-observation-window
+  p-efficiency: 0.56
+  p-friction: 0.52
+  p-skill-candidate: 0.38
+  spore: none
+  receipt-refs: 51a35312290fb722740a21fd225c3227d9c8b12c
+  note: Bounded30s readonlypolling removedmanualcadence drift; mature native100pixelgestures allacknowledged but couldnotfinish54.6deg within120s. Qualify slightlylargerordinarygesture before repeatedformationwait. Independent review caught envelope-vs-flat runtimehashmanifest contract beforelaunch. Preserve callerfailure vs supervisorclosure, sparseobservations, and rawbytes; no spore promoted.

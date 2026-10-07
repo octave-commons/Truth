@@ -1,0 +1,263 @@
+{
+  "at": "2026-10-07T09:53:47.842093+00:00",
+  "owned_process_checks": {
+    "supervisor": {
+      "saved": {
+        "pid": 3177307,
+        "start": "3334821",
+        "state": "R",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window",
+        "exe": "/usr/bin/python3.12"
+      },
+      "proc_exists": false
+    },
+    "xvfb": {
+      "saved": {
+        "pid": 3177317,
+        "start": "3334840",
+        "state": "S",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window",
+        "exe": "/usr/bin/Xvfb"
+      },
+      "proc_exists": false
+    },
+    "app": {
+      "saved": {
+        "pid": 3177338,
+        "start": "3334850",
+        "state": "S",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window",
+        "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+      },
+      "proc_exists": false
+    },
+    "snapshot_client": {
+      "saved": {
+        "pid": 3178488,
+        "start": "3336006",
+        "state": "S",
+        "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+        "cwd": "/home/err/spaces/foresight/.worktrees/truth-input-observation-window",
+        "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+      },
+      "proc_exists": false
+    }
+  },
+  "source_unchanged": true,
+  "preparation_checksums_verified": 15,
+  "production_files_verified": 186,
+  "outer_aim_client": {
+    "args": [
+      "python3",
+      ".\u03b7\u03bc/diagnostics/input-observation-window/aim-client.py",
+      ".\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01",
+      "1010"
+    ],
+    "pid": 3264440,
+    "started_at": "2026-10-07T09:50:36.235400+00:00",
+    "started_monotonic": 34136.29417144,
+    "state": "reaped",
+    "returncode": 1,
+    "elapsed_seconds": 122.59636054000293
+  },
+  "formation_poller": {
+    "pid": 3190431,
+    "started_at": "2026-10-07T09:39:22.564692+00:00",
+    "started_monotonic": 33462.623320111,
+    "original_no_target_deadline": 34308.20020547,
+    "maximum_polls": 32,
+    "cadence_seconds": 30,
+    "selects_target": false,
+    "state": "closed",
+    "observations": [
+      {
+        "at": "2026-10-07T09:39:22.564958+00:00",
+        "elapsed": 115.1127888780029,
+        "tick": 744,
+        "commitment": "744 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-00"
+      },
+      {
+        "at": "2026-10-07T09:39:52.637248+00:00",
+        "elapsed": 145.185487499999,
+        "tick": 939,
+        "commitment": "939 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-01"
+      },
+      {
+        "at": "2026-10-07T09:40:22.637595+00:00",
+        "elapsed": 175.10252342400054,
+        "tick": 1146,
+        "commitment": "1146 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-02"
+      },
+      {
+        "at": "2026-10-07T09:40:52.637903+00:00",
+        "elapsed": 205.17176334700343,
+        "tick": 1353,
+        "commitment": "1353 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-03"
+      },
+      {
+        "at": "2026-10-07T09:41:22.638373+00:00",
+        "elapsed": 235.1845467710009,
+        "tick": 1566,
+        "commitment": "1566 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-04"
+      },
+      {
+        "at": "2026-10-07T09:41:52.639040+00:00",
+        "elapsed": 265.3302231339985,
+        "tick": 1765,
+        "commitment": "1765 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-05"
+      },
+      {
+        "at": "2026-10-07T09:42:22.740403+00:00",
+        "elapsed": 295.0152796190014,
+        "tick": 1945,
+        "commitment": "1945 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-06"
+      },
+      {
+        "at": "2026-10-07T09:42:52.741387+00:00",
+        "elapsed": 325.1786620350031,
+        "tick": 2125,
+        "commitment": "2125 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-07"
+      },
+      {
+        "at": "2026-10-07T09:43:22.756311+00:00",
+        "elapsed": 355.56929689700337,
+        "tick": 2306,
+        "commitment": "2306 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-08"
+      },
+      {
+        "at": "2026-10-07T09:43:52.757431+00:00",
+        "elapsed": 385.11865728400153,
+        "tick": 2476,
+        "commitment": "2476 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-09"
+      },
+      {
+        "at": "2026-10-07T09:44:22.758401+00:00",
+        "elapsed": 415.4752022660032,
+        "tick": 2646,
+        "commitment": "2646 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-10"
+      },
+      {
+        "at": "2026-10-07T09:44:52.759784+00:00",
+        "elapsed": 445.5800888110025,
+        "tick": 2826,
+        "commitment": "2826 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-11"
+      },
+      {
+        "at": "2026-10-07T09:45:22.760408+00:00",
+        "elapsed": 475.2751336000001,
+        "tick": 3014,
+        "commitment": "3014 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-12"
+      },
+      {
+        "at": "2026-10-07T09:45:52.761407+00:00",
+        "elapsed": 505.4205348539981,
+        "tick": 3193,
+        "commitment": "3193 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-13"
+      },
+      {
+        "at": "2026-10-07T09:46:22.761655+00:00",
+        "elapsed": 535.4645007760046,
+        "tick": 3363,
+        "commitment": "3363 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-14"
+      },
+      {
+        "at": "2026-10-07T09:46:52.761865+00:00",
+        "elapsed": 565.2331755089981,
+        "tick": 3532,
+        "commitment": "3532 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-15"
+      },
+      {
+        "at": "2026-10-07T09:47:22.762120+00:00",
+        "elapsed": 595.247521340003,
+        "tick": 3700,
+        "commitment": "3700 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-16"
+      },
+      {
+        "at": "2026-10-07T09:47:52.762338+00:00",
+        "elapsed": 625.3503841089987,
+        "tick": 3871,
+        "commitment": "3871 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-17"
+      },
+      {
+        "at": "2026-10-07T09:48:22.763016+00:00",
+        "elapsed": 655.2825096380038,
+        "tick": 4041,
+        "commitment": "4041 0",
+        "ready_ids": [],
+        "candidate_rows": 0,
+        "client": "poll-18"
+      },
+      {
+        "at": "2026-10-07T09:48:52.763777+00:00",
+        "elapsed": 685.5259790120035,
+        "tick": 4182,
+        "commitment": "4182 0",
+        "ready_ids": [
+          "1010"
+        ],
+        "candidate_rows": 12,
+        "client": "poll-19"
+      }
+    ],
+    "ended_at": "2026-10-07T09:48:53.670260+00:00",
+    "elapsed": 571.1057360580016,
+    "reason": "stored-ready-observed-no-selection"
+  }
+}

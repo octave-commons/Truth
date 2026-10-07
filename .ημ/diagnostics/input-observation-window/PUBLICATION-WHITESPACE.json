@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-07T10:11:25.598427+00:00",
+  "full_diff": {
+    "exit": 2,
+    "stdout": ".\u03b7\u03bc/diagnostics/input-observation-window/pure-tests-red.stderr:10: trailing whitespace.\n+test_input_observation_clips_startup_phase_work_and_aim_deadlines (__main__.ProtocolChecks.test_input_observation_clips_startup_phase_work_and_aim_deadlines) ... \n.\u03b7\u03bc/diagnostics/input-observation-window/pure-tests-red.stderr:18: trailing whitespace.\n+test_matching_read_at_phase_or_aim_cutoff_is_rejected (__main__.ProtocolChecks.test_matching_read_at_phase_or_aim_cutoff_is_rejected) ... \n.\u03b7\u03bc/diagnostics/input-observation-window/root-formation-poller.py:35: new blank line at EOF.\n.\u03b7\u03bc/diagnostics/input-observation-window/root-setup.py:21: new blank line at EOF.\n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:188: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid1002  demanded 1003 demanded 7131 clamped 409614523 \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:339: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1002 1003 demandeddemanded 7139 clamped  409614589 \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:359: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1001 1002demanded  29737 demandedclamped  14582 clamped4096 \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:395: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid[kinematics-ws] K clamp binds: eid  1002 demanded 14601 clamped 10014096 \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:518: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1003 demanded 7176 clamped [kinematics-ws] K clamp binds: eid4096 \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:899: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 10021001 demanded 30047  demandedclamped  14746 4096clamped \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:1262: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1001 demanded 30224 clamped 1003 demanded 7270 clamped4096 \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:2282: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1001 demanded 30440 clamped 4096[kinematics-ws] K clamp binds: eid \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:2351: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid 1002 demanded 14925 clamped [kinematics-ws] K clamp binds: eid 40961001 demanded 30467 clamped \n.\u03b7\u03bc/diagnostics/input-observation-window/runs/attempt-01/002-runtime.stdout:3278: trailing whitespace.\n+[kinematics-ws] K clamp binds: eid [kinematics-ws] K clamp binds: eid 1001 demanded 30547 1002clamped  demanded 14968 4096clamped \n",
+    "stderr": ""
+  },
+  "authored_publication_subset": {
+    "paths": [
+      "RESULT.md",
+      "PACKAGING.md",
+      "PACKAGING-REVIEW.json",
+      "AUXILIARY-MAP.json",
+      "closure.json",
+      "attempt-01-audit.md",
+      "attempt-01-audit.json",
+      "root-target-screen-01.json",
+      "root-closure-observation.json"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "decision": "Preserve raw game/test outputs and exact recorded operator sourcecopies; noauthoredpublication whitespace findings."
+}

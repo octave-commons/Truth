@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-07T09:54:45.303540+00:00",
+  "parent_preparation": "51a35312290fb722740a21fd225c3227d9c8b12c",
+  "owner": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "scope": "Closed input-observation-window attempt01 after natural target1010 admission atT788.978:42 ordinary <=100px look gestures acknowledged, no W or frame, no observed commitment. Aim client exhausted original120s at about6.52degrees remaining in last complete geometry; controller failed then requested ownedstop, supervisor closed operator-stop T910.585 with allfour PIDs nowabsent, no outstanding input/cleanup/reap flags. This distinguishes clientfailure from clean supervisorstop. Full audit pending. Next preparation-only scope: separately copy frozen observation-window profile to bounded-look-200 and raise only diagnostic per-axis mouse cap100 to200pixels in runner and aim calculation, preferably one shared named constant. Actual0.01degree/pixel gain makes this at most2degrees peraxis; production sensitivity/input callbacks unchanged. Keep existing single-gesture acknowledgement, no retry,20s observation,360looks/3aims/20holds and original180/960/1470/1500/cleanup bounds unchanged. Add meaningful pure200-accepted/201-rejected and clamped direction/rounding tests without native or subprocess effects. Future execution must first qualify acknowledged +200/-200 camera motion in a young fresh ordinary world, returning to original orientation before formation; stop on any mismatch. This preparation authorizes no runtime now; root and independent review plus fresh release required. No source tuning, target injection, early seed-based pointing, world setter, priorrun continuation or retained-primary input. Scope remains existing InProgress3 measurement owner, no game feature admission or Gate claim.",
+  "prior_ledger_bytes": 662300,
+  "prior_ledger_sha256": "70b635b1847fac5961f429612e1d2d33cc727d2d5a627ad4c91d7b1b3bae5636",
+  "ledger_prefix_preserved": true,
+  "events_appended": 1,
+  "frontmatter_except_write_id_preserved": true,
+  "body_preserved": true,
+  "prior_comment_prefix_preserved": true,
+  "after_write_id": "1791366884676-0.n3ysitwwcom8b44wxno",
+  "author_scope": "Only new files in this directory except root-scope.json; source copies/minimal diagnostic pixel-cap change/pure static tests. No production/oldartifact/board/receipt/Git/publish/native/JVM."
+}
