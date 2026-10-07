@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-07T06:14:39.209344+00:00",
+  "ended": "2026-10-07T06:14:47.046241+00:00",
+  "exit": 0,
+  "reaped": true,
+  "source_hash_count": 186,
+  "source_preparation_unchanged": true,
+  "window_world_created": false,
+  "stdout": "/home/err/spaces/foresight/.worktrees/truth-native-input-probe/.\u03b7\u03bc/diagnostics/native-input-hygiene/callback-run-01/stdout.edn",
+  "stderr_bytes": 0
+}
