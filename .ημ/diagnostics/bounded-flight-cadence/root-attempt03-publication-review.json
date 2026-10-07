@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-07T12:19:52.248705+00:00",
+  "originals": 594,
+  "bytes": 6111533,
+  "published_paths": 42,
+  "unique_exact_partition": true,
+  "all_packed_bytes_match_original": true,
+  "frozen_preparation_references_match_current_and_PR56": true,
+  "map_sha256": "e6892441e38b02a58fdfcfdb5064367be214370e856c473007497a08ca11211a",
+  "audit_sha256": "086bf004a616ccfb8064fdc898199c2ee3205d16a3b8738bac2e24dee69bfaeb",
+  "verdict": "passed-independent-root-decoder",
+  "native_execution": false,
+  "decoder_preflight": "Initial inline decoder expected content; schema uses text. KeyError before any output writes. Corrected decoder verifies explicit encoding and actual text field."
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "truth-attempt03-lossless-packaging-proof-v1",
+  "result": "PASS",
+  "prior_failed_packaging_attempt": ".ημ/diagnostics/bounded-flight-cadence/attempt-03-package-attempt1.json",
+  "input_inventory_sha256": "da4390a26a73b2828942eba14fba6cb91845e1fd13db6e710b7bff772f053dae",
+  "map_sha256": "e6892441e38b02a58fdfcfdb5064367be214370e856c473007497a08ca11211a",
+  "archives": [
+    {
+      "path": ".ημ/diagnostics/bounded-flight-cadence/attempt-03-run-auxiliary.jsonl",
+      "bytes": 128838,
+      "sha256": "8d1bb21729b5eb4159a110c923911001ebdd728ec55d3acc3497bad86cd338e4",
+      "entries": 433
+    },
+    {
+      "path": ".ημ/diagnostics/bounded-flight-cadence/attempt-03-client-auxiliary.jsonl",
+      "bytes": 132109,
+      "sha256": "26b901eb0dff80c071a06674da80e9bc68010e5a283f9a6370a51d3aaa566de9",
+      "entries": 129
+    }
+  ],
+  "checks": {
+    "explicit_unique_safe_inventory": true,
+    "run_and_outer_tree_complete": true,
+    "fixed_record_schema": true,
+    "all_original_hashes_and_lengths_verified_before_and_after": true,
+    "all_packed_text_exact_UTF8_roundtrip": true,
+    "archive_byte_offsets_and_line_numbers_verified": true,
+    "direct_and_packed_disjoint_complete_bijection": true,
+    "all_empty_outputs_retained": true,
+    "all_nonUTF8_and_larger_than8192B_originals_direct": true,
+    "all583_offline_audit_input_refs_resolve": true,
+    "all_preparation_reference_hashes_match": true,
+    "no_original_delete_rename_or_write": true
+  },
+  "counts": {
+    "originals": 594,
+    "original_bytes": 6111533,
+    "direct": 32,
+    "packed": 562,
+    "empty_originals": 221,
+    "reference_files": 39
+  },
+  "limits": [
+    "Packaging supplies bytes, not native reviewer coverage or approval.",
+    "No board state, canonical ledger or receipt is packed; those remain their normal direct artifacts.",
+    "No review scope is omitted to meet a file-count ceiling. Large raw journals and every original above8KiB remain directly inspectable.",
+    "Only the explicitly defined closed03 scope is certified. Earlier runs and future runtime evidence are outside it."
+  ]
+}

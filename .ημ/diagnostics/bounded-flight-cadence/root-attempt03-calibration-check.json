@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-07T11:49:49.013574+00:00",
+  "setup_tool_exit_code": 0,
+  "setup_pid": 3872060,
+  "setup_pid_absent": true,
+  "baseline_tick": 947,
+  "final_tick": 984,
+  "baseline_controls": [
+    "manual",
+    "false",
+    "none",
+    "3.75E13",
+    "-90.0",
+    "-20.0",
+    "0.01",
+    "true",
+    "false"
+  ],
+  "final_controls": [
+    "manual",
+    "false",
+    "none",
+    "3.75E13",
+    "-90.0",
+    "-20.0",
+    "0.01",
+    "true",
+    "false"
+  ],
+  "returned_to_baseline": true,
+  "calibration_sha256": "55931b0f07f1c0e0bbabc8ab16847a72ff1c5aacaed42df019b47f6e5d297c10",
+  "native_looks": 4,
+  "frames": 1,
+  "holds": 0,
+  "latest_status": "Formationpoller86634 solecommandlane; calibrationisearlierobservation"
+}

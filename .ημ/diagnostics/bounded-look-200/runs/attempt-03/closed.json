@@ -1,0 +1,119 @@
+{
+  "started_at": "2026-10-07T11:39:34.754586+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+  "port": 7898,
+  "budget_seconds": 1500,
+  "work_budget_seconds": 1470,
+  "startup_budget_seconds": 180,
+  "startup_deadline": 40854.741921911,
+  "startup_origin": "Caller monotonic instant before preflight; shared by all processes",
+  "supervisor": {
+    "pid": 3864481,
+    "start": "4067475",
+    "state": "R",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "exe": "/usr/bin/python3.12"
+  },
+  "supervisor_monotonic_started": 40674.741921911,
+  "stage": "closed",
+  "removed_inherited_jvm_option_keys": [
+    "JAVA_OPTS"
+  ],
+  "java_executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "frames": 1,
+  "looks": 29,
+  "holds": 0,
+  "aim_invocations": 2,
+  "aim_target": 1010,
+  "active_aim": null,
+  "aim_deadline": null,
+  "successful_admission": {
+    "target": 1010,
+    "elapsed_seconds": 779.9569690110002,
+    "geometry": {
+      "target": 1010,
+      "stored_candidate": true,
+      "ready_to_commit": true,
+      "fresh_handoff": false,
+      "tick": 4545,
+      "dt": 3065696697.424829,
+      "sim_time": 55634359838405.766,
+      "spark_position": [
+        -3023010312852766.0,
+        -3332467712373624.5,
+        1313663199508550.2
+      ],
+      "target_position": [
+        5434987430321467.0,
+        1.9612115882766572e+16,
+        -1.0889644296189998e+16
+      ],
+      "spark_velocity": [
+        0.13643908821795073,
+        0.10994385037946657,
+        -0.038468479240152155
+      ],
+      "target_velocity": [
+        -1367.1353718119722,
+        1925.9330867484973,
+        -636.1125264658065
+      ],
+      "relative_position": [
+        8457997743174233.0,
+        2.2944583595140196e+16,
+        -1.2203307495698548e+16
+      ],
+      "relative_velocity": [
+        -1367.27181090019,
+        1925.8231428981178,
+        -636.0740579865663
+      ],
+      "distance_m": 2.7329697327495036e+16
+    },
+    "no_prior_commitment": true
+  },
+  "terminal_commitment": null,
+  "no_target_deadline": 41634.741921911,
+  "display": ":1",
+  "xvfb": {
+    "pid": 3864491,
+    "start": "4067482",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "exe": "/usr/bin/Xvfb"
+  },
+  "app": {
+    "pid": 3864495,
+    "start": "4067513",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "snapshot_client": {
+    "pid": 3865358,
+    "start": "4068446",
+    "state": "S",
+    "boot": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-bounded-look-200",
+    "exe": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"
+  },
+  "world": 1308072265,
+  "window": 134192227468400,
+  "x-window": "2097159",
+  "outcome": "operator-stop",
+  "cleanup_errors": [],
+  "ended_at": "2026-10-07T11:55:25.058211+00:00",
+  "elapsed_seconds": 950.3750772470012,
+  "budget_exceeded": false,
+  "cleanup_deadline": 41653.708163296,
+  "total_budget_exceeded": false,
+  "key_pending": null,
+  "key_release_uncertain": false,
+  "mouse_pending": false,
+  "mouse_release_uncertain": false,
+  "unreaped_children": []
+}
