@@ -467,3 +467,12 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,4f4eb63
   note: Empty-column merge semantics identify stale ownership, but lifecycle order determines whether the retained payload is nonzero: ordinary thermal expiry first writes zero ease, which still invokes a clamp. Trace actual control paths and consumers before claiming repeated force or heat. Preserve existing card owners and serialize comments after gated transitions. No new spore; existing audit discipline suffices.
+- ts: 2026-10-07T01:39:35.122446091Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Qualify an ancestry-preserving composition without rebinding historical native evidence
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,8487159
+  note: Merged developer aliases can require a separate suite even when src/test bytes are unchanged. Guard the exact composition before and after each sequential command, retain actual timeout behavior and raw nonblocking diagnostics, and keep old loaded-native evidence bound to its original source. No new spore; existing qualification discipline suffices.

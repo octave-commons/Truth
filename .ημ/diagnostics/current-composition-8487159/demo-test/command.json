@@ -1,0 +1,21 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-M:demo-test"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-current-composition",
+  "started_at": "2026-10-07T01:34:40.679259+00:00",
+  "pid": 470862,
+  "environment_overrides": {
+    "JAVA_TOOL_OPTIONS": "-Xms256m -Xmx2g",
+    "_JAVA_OPTIONS": "-Xms256m -Xmx2g"
+  },
+  "before": {
+    "head": "8487159bfcf6f7d805018e270174c9f3cd35e8ea",
+    "source_hashes_match": true,
+    "tracked_source_count": 342,
+    "source_diff_empty": true
+  }
+}

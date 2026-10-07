@@ -1,0 +1,9 @@
+{
+  "name": "demo-test",
+  "pid": 470862,
+  "exit_code": 0,
+  "reaped": true,
+  "finished_at": "2026-10-07T01:35:22.971787+00:00",
+  "stdout_sha256": "2171a9f5c3504c3fdc2a5a279f19434847959ad306b652e99f34daad2c203fc4",
+  "stderr_sha256": "1a0fce36442f6ad7e364559099e77fa7f5ba79561ba86a03f052c4a83e6a8c51"
+}
