@@ -1,0 +1,155 @@
+{
+  "at_utc": "2026-10-07T06:18:50.237920+00:00",
+  "base": "e2d6893df3fd1505587300cb9ea687350205c2b9",
+  "cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "before": {
+    "kanban/tasks/.events/ledger.edn": {
+      "bytes": 600792,
+      "sha256": "d1d2edee5dada03118a3e9ff62ec61d501e67088a2e22e61aed74f35a4b087c2",
+      "committed_prefix_preserved": true,
+      "committed_bytes": 599036,
+      "committed_sha256": "9485d8937fa0c37de41bd45a88a5c72dce0d15187fc52be3f62a4bba67aa5265"
+    },
+    ".ημ/receipts.edn": {
+      "bytes": 34640,
+      "sha256": "d20aa00316c31a99a7b96de0f27f70c3dd375783b26b737d8817bd1bb8bd27f0",
+      "committed_prefix_preserved": true,
+      "committed_bytes": 34640,
+      "committed_sha256": "d20aa00316c31a99a7b96de0f27f70c3dd375783b26b737d8817bd1bb8bd27f0"
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "bytes": 23777,
+      "sha256": "0ae149ea28a4e6a769a17d06818c999dbfe6bd265e61d569a267ecc908c0c61c",
+      "committed_prefix_preserved": true,
+      "committed_bytes": 23777,
+      "committed_sha256": "0ae149ea28a4e6a769a17d06818c999dbfe6bd265e61d569a267ecc908c0c61c"
+    }
+  },
+  "canonical_comment": {
+    "command_exit": 0,
+    "task": "life-to-represented-actor-spec",
+    "body_unchanged": true,
+    "frontmatter_except_write_id_unchanged": true,
+    "prior_comments_exact_prefix": true,
+    "events_appended": 1,
+    "ledger_prefix_preserved": true,
+    "comment": "2026-10-07 concrete proposed origin/account contract, superseding the previously unselected engineering options in the note while preserving historical proposals and comments. docs/notes/2026-10-07-first-represented-life-boundary.md sections 6–8 now select exact integer picogram-C accounting from actual final-parent bulk mass/composition, a versioned bounded habitat allocation/accessibility/origin prescription, one persisted-book lineage scope, retry-safe ordered operations, a sole serial lifecycle settlement and explicit terminal export to an unresolved physical boundary. Normalized ecology biomass never becomes kg C; no new gravitating mass or cross-history identity promise. Tuning values are prescriptions, not measured biology. Standard core/envelope births do not initially meet both positive H and the 225–375K guard: gas-free cores discard H, while positive envelopes beyond the 170K snowline start below 190.4975K under the current seed-temperature law. Later evolution is not ruled out; no complete natural final-parent admission or useful account lifetime has been observed. Retention-species labels cannot supply an elemental inventory. Guards remain unchanged. The note names finite later implementation slices and leaves the meaningful resource-action/rate producer unfinished; this does not complete the whole specification acceptance. Independent intent_research source/accounting/applicability review found no publication blocker at note SHA256 79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417; root accepted publication scope only. Same Incoming 3, original body and prior provenance preserved; no source/tests/native work, implementation admission or external review credit. Evidence: .ημ/diagnostics/life-actor-planning/origin-account-contract-audit.json and chemistry-prerequisite-audit.json; closure recorded in origin-contract-closure.json.",
+    "before_read_sha256": "03ca8cf815baef12fb6f0e6234c16d717a26555fec907734ef5ae0ddf5761742",
+    "after_read_sha256": "6fe04da2d3e08696920b1c07e72f474a9c8af4700225ed942f564c8b1c9ba297",
+    "event_sha256": "8789e5265f508fea25dbbbad2f48714cfbb6313ee3db2f6a3662d8a940772c89"
+  },
+  "closed_at_utc": "2026-10-07T06:22:07.392390+00:00",
+  "kind": "planning-publication-closure",
+  "owner": "life-to-represented-actor-spec",
+  "state": "incoming",
+  "points": "3",
+  "review": {
+    "independent_source_reviewer": "/root/intent_research",
+    "note_sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417",
+    "verdict": "No publication blocker in source/accounting/applicability review; no hosted approval or implementation admission",
+    "root_authorization": "Root accepted proposal publication and authorized canonical comment, provenance, explicit-path commit/push and PR body update. No reviewers/merge/tests/native/source actions."
+  },
+  "prefix_verification": {
+    "kanban/tasks/.events/ledger.edn": {
+      "pre_author_bytes": 600792,
+      "pre_author_sha256": "d1d2edee5dada03118a3e9ff62ec61d501e67088a2e22e61aed74f35a4b087c2",
+      "prefix_preserved": true,
+      "committed_prefix_preserved": true,
+      "appended_bytes": 2287,
+      "appended_lines": 1,
+      "total_appended_lines_since_base": 2
+    },
+    ".ημ/receipts.edn": {
+      "pre_author_bytes": 34640,
+      "pre_author_sha256": "d20aa00316c31a99a7b96de0f27f70c3dd375783b26b737d8817bd1bb8bd27f0",
+      "prefix_preserved": true,
+      "committed_prefix_preserved": true,
+      "appended_bytes": 1545,
+      "appended_lines": 1,
+      "total_appended_lines_since_base": 1
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "pre_author_bytes": 23777,
+      "pre_author_sha256": "0ae149ea28a4e6a769a17d06818c999dbfe6bd265e61d569a267ecc908c0c61c",
+      "prefix_preserved": true,
+      "committed_prefix_preserved": true,
+      "appended_bytes": 791,
+      "appended_lines": 9,
+      "total_appended_lines_since_base": 9
+    }
+  },
+  "staging_paths": [
+    "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    ".ημ/diagnostics/life-actor-planning/origin-account-contract-audit.json",
+    ".ημ/diagnostics/life-actor-planning/chemistry-prerequisite-audit.json",
+    ".ημ/diagnostics/life-actor-planning/origin-contract-scope.json",
+    "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+    "kanban/tasks/.events/ledger.edn",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md",
+    ".ημ/diagnostics/life-actor-planning/origin-contract-closure.json"
+  ],
+  "files": [
+    {
+      "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+      "bytes": 34930,
+      "sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/origin-account-contract-audit.json",
+      "bytes": 8060,
+      "sha256": "1df6504fd088c538c579384eb30a101faa091f2cfe4863e8d0a29eea1dab00d7"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/chemistry-prerequisite-audit.json",
+      "bytes": 16731,
+      "sha256": "8917606e52605c15e4e906cf6f5b31f53e1f93062f12db6d37efeebef33bf18c"
+    },
+    {
+      "path": ".ημ/diagnostics/life-actor-planning/origin-contract-scope.json",
+      "bytes": 2242,
+      "sha256": "7ef08d44cadf74c26579a3ac460d225c884dd0926be1cbe335ddfa9a2bf53739"
+    },
+    {
+      "path": "kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md",
+      "bytes": 10080,
+      "sha256": "53003158ff105b57d8ea31a96a6faca54084292ab92cbf1bd4c09b0fb50515aa"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 603079,
+      "sha256": "1d239f22e450328be06b2c582c2ab63e533fb985ae31c62c65b5a3af04486469"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 36185,
+      "sha256": "8cae446947723eb58cde2b3f2c1b0fe2771e60e4ca0139d103b1e1b85db5d23c"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 24568,
+      "sha256": "98d12a8bb874cbd8a89c3a15419f72740467a67f080bf63d4608f80ac3a54158"
+    }
+  ],
+  "self_hash": "Excluded to avoid self-reference; explicit inventory includes this closure.",
+  "verification": {
+    "source_test_dev_bin_deps_ci_equal_base": true,
+    "scoped_whitespace_check": true,
+    "local_links_and_anchors": 27,
+    "contract_audit_pinned_sources": 17,
+    "chemistry_audit_pinned_source_files": 23,
+    "unmodified_chemistry_audit_from_independent_author": true,
+    "jvm_test_numerical_native_runs": "none",
+    "pr_status_before_publication": {
+      "head": "e2d6893df3fd1505587300cb9ea687350205c2b9",
+      "exact_approvals": [
+        "mimo"
+      ],
+      "unresolved_threads": 0,
+      "passed_checks": 7,
+      "planning_rounds": 0,
+      "convergence": "blocked; successor requires fresh review"
+    },
+    "commit_push_pr_update": "pending at closure; verify actual remote successor independently after publication"
+  }
+}

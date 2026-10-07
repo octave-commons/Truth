@@ -1,0 +1,316 @@
+{
+  "schema": "truth.source-audit/v1",
+  "created_at": "2026-10-07T06:20:50.372412+00:00",
+  "author": "codex-intent-research",
+  "scope": "Source/corpus/canonical-owner audit. Only this new diagnostic is written. No board, source, configuration, runtime, JVM, fixture, threshold or admission mutation.",
+  "source": {
+    "worktree": "/home/err/spaces/foresight/.worktrees/truth-natural-approach",
+    "checkout_head_at_capture": "954a7498494fad76c0391c4178fce71131b080b4",
+    "production_source_commit": "b395c4049718f7ce015ddf25fc0a192d97821373",
+    "files": [
+      {
+        "path": "src/domain/planet_formation/composition.clj",
+        "sha256": "471d40398b15baf781a603bd95694c778809bff18da98f2a905c756601aa6630",
+        "anchors": "20-49: core grain filter, core/envelope blend",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/law/composition.clj",
+        "sha256": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615",
+        "anchors": "21-23: gas-former element set includes H",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/planet_formation/physics.clj",
+        "sha256": "e1493f37c5a1bf87c8a7e9edd7a1bb59ac2938c1cad1dc70f451aed420e523c6",
+        "anchors": "84-91,139-154: 170K snowline and captured-envelope gate",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/planet_formation/orbit.clj",
+        "sha256": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a",
+        "anchors": "12-23,58-63,94-105: seed temperature and :planet production",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/stellar/classifier/planet.clj",
+        "sha256": "9e0094be9e1876f1a1156f961f99c30cf6e3a7a7eb4e35e54acd953784eff55e",
+        "anchors": "239-250,301-317: retained-species capability projection",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/chemistry.clj",
+        "sha256": "91f0dcc38e9c97804928eaa1c59bb54a483ae724f4e5a8a76875bbd9ad58319f",
+        "anchors": "238-261,357-389,443-467: molecular diagnostic, material groups, volatile stripping",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/stellar/seeder.clj",
+        "sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884",
+        "anchors": "70-83,96-137: condensation seeds copy composition but are planetesimals",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/stellar/merge.clj",
+        "sha256": "05e3a4dd24cadbc49278066278772dce1b2b8a706057fbcd5637b5fe50e2c0ba",
+        "anchors": "52-107: composition packet, bigger survivor, gentle-merge branch",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/integrator/core.clj",
+        "sha256": "08cbb9a5adbec225476404efaf098980386db16947d09e65c5884549e2dd1489",
+        "anchors": "54-104,145-194,215-253: merge chemistry and mass/composition writers",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/integrator/temperature.clj",
+        "sha256": "75ade47ca2ceff9b5deee9575d900ebf4b54c8004ce364784591e56d73b2f55e",
+        "anchors": "12-49,86-129: merge heating and temperature fold",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/stellar/temperature.clj",
+        "sha256": "9095bd74434dc0004bb2db24200d0d6cb5e8fa452c5db91996014e246ab85cd4",
+        "anchors": "70-100: physical radiative evolution after birth",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/stellar/classifier/state.clj",
+        "sha256": "b79f901fcac5363fec522705062fdbf75713512551144d2828af812e3d3ffe2e",
+        "anchors": "191-231: :planet stays planet; no planetesimal-to-planet promotion",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/mass_transfer.clj",
+        "sha256": "b61cfeb8e62e6154bcf17039e01bd6e978a7c8032ed51c00387d5a7859f57b57",
+        "anchors": "169-186: gradual mass/momentum flux lacks composition transfer",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/atmosphere.clj",
+        "sha256": "1821620e67f2685892b7071e25f3e47044106279333c5e29482b7518d0e5f5d5",
+        "anchors": "43-84: XUV loss without inventory gate",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/ecology/system.clj",
+        "sha256": "73ea1fb125c9eb3d0e70746416f27979ab03f3f7fcbbf6513108b4e294ba8e04",
+        "anchors": "10-22: scalar adoption and life events",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/domain/ecology/state.clj",
+        "sha256": "33dda6125c32c64d909cd7fc006bde76abded97a4c0ddc09f9a42523425b6569",
+        "anchors": "26-64: scalar dynamics and spontaneous prebiotic progression",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/law/chemistry.clj",
+        "sha256": "640d47257a4157676232a94a981a41a1d9ad528c9c36eacf65c437565c4a5066",
+        "anchors": "38-54: 700K and1500K merger loss thresholds",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "src/law/stellar/orbital/constants.clj",
+        "sha256": "8fc73756e353e2595a72b90d7039ae6a7e923531651397bb72419c89793378a6",
+        "anchors": "139-153: shatter conditions include5km/s threshold",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "docs/research/physics/nebular-chemistry-metal-enrichment.md",
+        "sha256": "5fb46b3fc8942bfad5b716167c9fa811d812cb43fe37ec25a7199b9d5c95ba75",
+        "anchors": "94-113,563-569: water ice H/O and toy molecular-model limits",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "docs/research/atmosphere/planetary-atmosphere-retention-classifier.md",
+        "sha256": "d145198651f9d8021b750fc20e1a8664ebf28ca69bc32fcc8df4cc3beb07e67e",
+        "anchors": "230-250,570-604: chosen retention model and inventory gap",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "docs/designs/truth-phase-0-stellar-nebula-design.md",
+        "sha256": "51e5a5c4d408b3e09da04f529ccf74bc49258587d32b1cc00474cac3f64507e0",
+        "anchors": "225-232: physically grounded handoff",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "docs/designs/simulation-methods-research.md",
+        "sha256": "8e9d17d9cf93a9a0dc3dabf6cda9879e997020c4fcdd7f014b041dbc1e27634c",
+        "anchors": "179-199: sub-grid abiogenesis permitted",
+        "equal_to_source_commit": true
+      },
+      {
+        "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "sha256": "d8f5eb1db161e7d3ba94a382baff8bca497f77959bccf21d1e49b1ed3e881aa0",
+        "anchors": "61-95: nested inclusive resource budgets",
+        "equal_to_source_commit": true
+      }
+    ],
+    "preflight": "First attempted write stopped before file creation because checkout HEAD had advanced from b395c404 to evidence successor954a7498. Every cited file now passes exact byte equality against b395c404; actual HEAD is recorded separately."
+  },
+  "proposal": {
+    "head": "e2d6893df3fd1505587300cb9ea687350205c2b9",
+    "note": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+    "independently_reviewed_note_sha256": "79136b693aa6e6f49f57947dd08e63f2e963ee13215bef47d6a919dd4cc25417",
+    "status": "Proposed and unfinished; no implementation admission."
+  },
+  "canonical_owners": {
+    "cli": "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+    "config": "openhax.kanban.edn",
+    "cwd": "/home/err/spaces/foresight/.worktrees/truth-natural-approach",
+    "operations": "read-task/search-tasks only; no repository-local board parser",
+    "search_terms": [
+      "Chemistry",
+      "Nebular",
+      "water",
+      "atmosphere",
+      "hydrat",
+      "volatile",
+      "composition",
+      "Composition",
+      "inventory",
+      "Water"
+    ],
+    "cards": [
+      {
+        "uuid": "nebular-chemistry-and-composition-spec",
+        "status": "done",
+        "estimate": null,
+        "authority": "Sections6.5/9.1; July22 completion explicitly endorses accretable-condensate gas-former exclusion to remove sigmoid hydrogen leakage. Research: nebular-chemistry-metal-enrichment.md."
+      },
+      {
+        "uuid": "ecology-m5-phase3-atmosphere-retention",
+        "status": "done",
+        "estimate": 3,
+        "authority": "Accepted class/thermal species candidates and escape thresholds. Research section8.1 explicitly leaves volatile-inventory intersection open."
+      },
+      {
+        "uuid": "ecology-water-gate-snowline",
+        "status": "done",
+        "estimate": 21,
+        "authority": "Habitability handoff umbrella; actual atmosphere/prebiotic chemistry excluded. Completed output is not an available water inventory."
+      },
+      {
+        "uuid": "phase-0-chemistry-differentiation-spec",
+        "status": "done",
+        "estimate": null,
+        "authority": "Differentiation, impact loss and derived volatile budget, not writable local kg-carbon account."
+      },
+      {
+        "uuid": "roadmap-phase-0-physics-honesty-chemistry-disks-plasma-inspection",
+        "status": "breakdown",
+        "estimate": null,
+        "authority": "Canonical comment requires residual <=5-point children before implementation; D8 full molecular network deferred."
+      }
+    ],
+    "limit": "No dedicated Ready/Todo hydrated-solid or material-inventory-intersection owner found by these targeted searches. Not an exhaustive assertion about every card or branch."
+  },
+  "findings": [
+    {
+      "tier": "source-derived",
+      "claim": "Gas-free disk-seeded cores have H=0 because the normalized grain map excludes H. This includes outer icy cores; there is no distinction between free nebular H and H bound into solid compounds."
+    },
+    {
+      "tier": "source-derived",
+      "claim": "Positive envelope mass requires a sufficiently massive core beyond the snowline. With positive luminosity, birth T<170*(1-0.3)^0.25+35=190.49750726887805K, so ordinary core/envelope birth does not simultaneously meet positiveH and225<T<375. Later evolution is not ruled out."
+    },
+    {
+      "tier": "source-derived",
+      "claim": "Retained H2O is an escape-capability candidate selected by class/band. Current molecular diagnostic H2O=min(0.5H,2O) is zero whenH=0. The retained label proves neither molecular inventory nor accessible water."
+    },
+    {
+      "tier": "source-derived",
+      "claim": "Gradual mass accretion carries no elemental composition. Merge packets can add H-bearing material. A condensation seed carries H but remains a planetesimal/gas-giant-family object unless merged into an existing planet; classifier has no direct planetesimal-to-planet route."
+    },
+    {
+      "tier": "source-derived",
+      "claim": "Exact material equality rejects origin during representable mass/composition change; later change retires the account. XUV loss is a possible ordinary mass-changing route without inventory gating. No universal one-tick lifetime follows: below-ULP fluxes may not change stored M, and saved masses were stable across sparse samples."
+    }
+  ],
+  "historical_evidence": {
+    "commit": "5740c2783a5689752c7bed0d45f923081e8c2ce3",
+    "records": [
+      {
+        "path": ".ημ/diagnostics/playable-foundation/natural-seed42/observations.edn",
+        "sha256": "e58a686f80a36f5eb32a6a8ec70e6183901ce2a60c2bf2a5509d1d69dcd3a0f1",
+        "line": 154,
+        "tick": 11280,
+        "parents": [
+          {
+            "eid": 1012,
+            "mass_kg": 2.8936417655602653e+25,
+            "candidate_H": 0.0,
+            "candidate_C": 0.0062800071510291594,
+            "later_samples_with_same_mass": 9
+          }
+        ]
+      },
+      {
+        "path": ".ημ/diagnostics/playable-foundation/natural-seed43/observations.edn",
+        "sha256": "31cd378c665e1ed56cd64e5b5284dbc6d1969e492647d3dc8d044654bfa9538c",
+        "line": 152,
+        "tick": 11328,
+        "parents": [
+          {
+            "eid": 1012,
+            "mass_kg": 1.2015730746960704e+24,
+            "candidate_H": 0.0,
+            "candidate_C": 0.0062800071510291594,
+            "later_samples_with_same_mass": 8
+          },
+          {
+            "eid": 1024,
+            "mass_kg": 1.3796745475168735e+25,
+            "candidate_H": 0.0,
+            "candidate_C": 0.006280007151029159,
+            "later_samples_with_same_mass": 8
+          }
+        ]
+      }
+    ],
+    "observer": {
+      "path": ".ημ/diagnostics/playable-foundation/natural-seed43/observe.clj",
+      "sha256": "5c3a2a75e3aee1df76174c8ad402420f6f5d6ad1d4aa88356b51d942198dac36",
+      "lines": "34-62"
+    },
+    "limits": [
+      "Saved bulk compositions are historical planet-candidate values, not current composition. Current mass/ecology were captured; current physical temperature was not.",
+      "StoredH=0 for all three highlighted life-event parents establishes no currently eligible origin, but cannot prove current rejection fromH alone.",
+      "Later mass samples through12000 remain equal (9/8/8 samples); this is not every-fold stability or a useful account-lifetime test.",
+      "No new native observation, experiment, seed, tuning or current runtime snapshot occurred during this audit."
+    ]
+  },
+  "smallest_amendment_to_review": {
+    "tier": "proposal-not-admitted",
+    "ownership": "Refine existing nebular-chemistry-and-composition-spec under its Breakdown roadmap; separately refine existing ecology-m5-phase3-atmosphere-retention projection. Do not silently classify completed accepted filtering as a regression.",
+    "research_first": [
+      "Use current nebular water-iceH/O table and toy molecular partition limit, plus atmosphere section8.1. Verify a primary-source minimal stoichiometric condensed-water/hydrate prescription before choosing allocation/temperature rules.",
+      "Distinguish excluded free gas-formerH from boundedH allocated withO to solid compounds; specify elemental conservation, remaining gas, normalization and core/envelope weighting. Re-enabling sigmoidH leakage is not a solution.",
+      "Specify which material quantity bounds retained-species output, keeping thermal escape capability distinct from available inventory and accessible biological substrate. Preserve one elemental source of truth and pure derived projections."
+    ],
+    "later_verification_boundary": [
+      "Partition conserves elementalH/O and total fractions, never allocates the same stock twice; warm gas-free refractory control excludes freeH while cold water-bearing material is stoichiometrically bounded.",
+      "AbsentH or allocatableO yields noH2O inventory even when thermal escape permitsH2O; inventory does not imply confirmed atmosphere.",
+      "Actual seeding and later material changes must feed current final-parent reads before ordinary origin eligibility is claimed."
+    ],
+    "excluded": [
+      "No life-guard weakening",
+      "No full molecular network or general atmosphere simulation",
+      "No new biological rate/calibration law",
+      "No card creation/reopen/status transition or implementation in this audit"
+    ]
+  },
+  "finite_existing_path": {
+    "tier": "conditional-source-path-not-observed",
+    "description": "A naturally disk-created planet can survive a gentle collision with a smaller H-bearing condensation seed or envelope-bearing body. The existing merge packet carries composition; the integrator mass-weights it. Below700K it strips neither ice volatiles norH/He. A finite gentle encounter can introduce positiveH while a temperate larger survivor remains within225-375K. After the changed material has settled, a subsequent unchanged-material snapshot can pass the proposed signature gate if all event/ecology/temperature/removal checks also hold.",
+    "limits": [
+      "Cold hard impacts above5km/s can shatter; at700K the merger removesC/N and at1500K removesH/He.",
+      "The existing planet must be the larger survivor; standalone condensation is not a second planet-production route.",
+      "Later radiative warming of an envelope-bearing planet is another code-available thermal route, not a demonstrated full guard match.",
+      "This establishes a conditional finite material path, not an observed ordinary trajectory or guarantee of default-run eligibility. No input/world/tuning change was performed."
+    ]
+  },
+  "verification": "Source reads/hashes, canonical board reads and dimensional/arithmetic derivation only. JSON records evidence; it implements no board semantics."
+}

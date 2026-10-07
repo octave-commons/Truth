@@ -1,16 +1,19 @@
 # First represented life: cohort boundary and open contracts
 
 **Status:** proposed comparison and decision boundary, not an accepted biological
-law or implementation-ready specification. **Owner:**
+law or implementation admission. Sections 6–8 select an origin/account contract
+for review; rate-driven metabolism remains outside that bounded contract. **Owner:**
 [`life-to-represented-actor-spec`](../../kanban/tasks/ground-the-first-causal-life-to-represented-actor-boundary-tor-spec.md),
 Incoming, 3 points. Source audit: PR12 base
 `98b847ce75491bdccacf2ec3a7476d451270bf49`; primary texts accessed 2026-10-07.
 
 The proposed first representation is a persistent **microbial cohort** that
 consumes a local resource and retains causal history. It represents living stock,
-not one organism, a thinking character or an avatar. Its admission would expose
-already accounted life at finer resolution; it would not explain abiogenesis or
-turn a scalar phase flag into new matter. This narrows one prerequisite toward
+not one organism, a thinking character or an avatar. Its admission partitions
+accounted carbon at finer resolution. The selected
+origin prescription in §6 converts a bounded portion of substrate to living
+stock when recorded conditions qualify; it does not explain abiogenesis or turn
+a scalar phase flag into new matter. This narrows one prerequisite toward
 embodiment without claiming that embodiment or a Gate follows from it.
 
 ## 1. Authority and current source
@@ -70,11 +73,11 @@ total organism mass, in a closed accounting example:
 
 | Symbol | Proposed quantity and unit | Required provenance |
 | --- | --- | --- |
-| `U` | Unrepresented, already living carbon, kg C | A reviewed aggregate living-stock producer; no conversion from normalized biomass is currently defined |
-| `S` | Available limiting substrate carbon, kg C | A reviewed habitat resource inventory; not an infinite food source |
+| `U` | Unrepresented, already living carbon, kg C | Selected origin transfer in §6; never a conversion from normalized biomass |
+| `S` | Available limiting substrate carbon, kg C | Finite accessible partition selected in §6; not an infinite food source |
 | `B` | Carbon in the represented cohort, kg C | An admitted partition from `U`, then accounted resource use/loss |
 | `W` | Other accounted, unavailable carbon, kg C | Retains non-biomass products/lost cohort carbon; not an automatic recyclable-food pool |
-| `V` | Compartment volume, m³, finite and positive | A defined planet-local habitat geometry, not planet volume by default |
+| `V` | Compartment volume, m³, finite and positive | For a later concentration/rate model; not required by the selected extent-only origin transaction |
 
 All stocks `U/S/B/W` must be finite and nonnegative. A representation birth
 requires a finite partition `0 < b <= U`, debiting `U` and crediting the new
@@ -111,8 +114,8 @@ per-24-ticks biological rate, wall-second shortcut or new clock is introduced.
 ## 4. Producer, identity and lifecycle requirements
 
 The proposed producer is one pure `domain.biology` content layer, **not present
-today**, with named `law/` schemas and declared registry reads/writes. Its future
-single-writer allocation must cover the local budget and cohort state together;
+today**, with named `law/` schemas and declared registry reads/writes. Its proposed
+single-writer allocation covers the local budget and cohort state together;
 existing ecology keeps sole ownership of `c/ecology`. Physical boundary fluxes
 must use the existing uniform influence mechanism, not direct `c/mass` writes.
 No second ECS, render engine, mutable side ledger or bespoke tick loop is proposed.
@@ -122,8 +125,8 @@ validated component bundles without passing through `spawn-clump`. The proposed
 semantic contract is one accepted birth and one living-stock partition per
 admission key, or neither. A fan-out request is not a completed birth. An ECS ID
 may be allocated at materialization; a durable admission/lineage identity must
-survive retries, loss and LOD collapse independently of that transient ID. Exact
-key shape, incarnation rules and deterministic ordering remain review decisions.
+survive retries, loss and LOD collapse independently of that transient ID. Section 7 selects
+key shape, incarnation rules and deterministic ordering for review.
 Never reconstruct a new history from `:prokaryotic`, a reset scalar, or zoom alone.
 
 Current [tick ordering](../../src/domain/genesis/tick.clj), lines 167–196, folds
@@ -132,9 +135,9 @@ phase events. Admission cannot consume a same-tick event that has not been emitt
 The next eligible snapshot or an explicitly reviewed ordering is required.
 At materialization, `ecs/alive?` alone is insufficient: a parent carrying a reap
 marker is still alive before `reap-consumed`. Reject/cancel a pending birth whose
-habitat will be removed; do not leave an orphan or a stranded stock debit. How
-the uniform mechanism achieves this without a second budget writer is an
-**implementation-blocking lifecycle decision**, not solved by the event API.
+habitat will be removed; do not leave an orphan or a stranded stock debit. The selected serial
+settlement in §7 makes this an atomic lifecycle decision, not an assumption that
+the event API already supplies it.
 
 Budget origin/version, habitat identity, cause, modeled time interval, accepted
 flux and rejection/loss reason must remain inspectable. Event cause links use
@@ -162,153 +165,294 @@ Each row is a proposed contract example, not an executed test. Values are kg C;
 Materialization into a new entity remains invisible to other systems in the
 requesting frozen snapshot. Resource competition must resolve against one budget
 with deterministic allocation, not let several cohorts each spend the same `S`.
-Exact arbitration, failure-event deduplication and parent-loss settlement still
-need a single-writer-compatible design; the examples do not silently select one.
+The arbitration, deduplication and parent-loss rules selected in §7 apply;
+these earlier arithmetic examples remain illustrative rather than calibration.
 
-## 6. Decisions still required before implementation
+## 6. Selected origin/account prescription — proposed v1
 
-| Question | Existing authority / required decision |
-| --- | --- |
-| Where do living stock, substrate and habitat volume first come from? | The decided nested-budget design supplies the architecture, not quantities or a producer. Establish a conservative aggregate source and physical coupling; scalar biomass is insufficient. |
-| Which habitat and metabolism are supported? | Review the proposed carbon-limited compartment, additional required environmental inputs and applicability bounds. Neither the current scalar habitable band nor a paper's terrestrial parameters answers this. |
-| What elapsed time does the model consume? | Coordinate with [`committed-clock-executable-policy`](../../kanban/tasks/specify-the-executable-committed-world-clock-and-later-history-contract-e-policy.md). Define accumulated modeled seconds, skipped updates, variable-step integration and reproducible LOD behavior; do not require a new clock here. |
-| How are birth and budget settlement atomic? | Specify uniform component-bundle materialization, owner declarations, prior-state validation and removal ordering. No double debit/refund writer or stellar body disguise. |
-| When is a cohort lost, and what survives? | Select a resource/environment loss law, retained carbon compartments, lineage/admission keys and persistence rules. This note deliberately does not select death thresholds or new-epoch rebirth. |
-| What does the player see? | Propose an existing inspector/Narrator projection of cohort identity, habitat, carbon balance and causal changes. No new key, embodiment, creature mesh or phase unlock is implied. |
+This section replaces the unselected engineering options from planning commit
+`e2d6893df3fd1505587300cb9ea687350205c2b9`; that historical proposal and its
+review receipts remain in Git. The primary-source comparison above is unchanged.
+This is a concrete model for review, not a claim of biological validity or Ready
+status. No further user preference is required to select these mechanisms.
 
-Two **candidate boundaries for later sizing**, not admitted stories or new cards:
-(1) conservative local-budget/admission plus uniform non-stellar creation;
-(2) one resource-use/loss action plus a read-only existing-UI projection. Each must
-be refined to at most five points after the questions above close; if the first
-requires broad budget/lifecycle architecture, split its design before code rather
-than assigning it five points by assertion. This three-point continuation owns
-the comparison, candidate accounting and precise decision boundary only. It does
-not complete the card's implementation-level specification acceptance yet.
+The earlier [Phase-2 resolution limit](../designs/simulation-methods-research.md#the-honest-resolution-limit)
+already permits a conditions-driven sub-grid prescription. We therefore do not
+wait for first-principles abiogenesis. We retain [the decided nested-budget
+contract](../designs/resolution-regimes-and-scale-coupling.md#6-coupling-contract-aggregate--detail):
+one ECS, coarse matter constraining finer detail, no tiny debit from astronomical
+floating-point mass, and retained causal state through changes of resolution.
 
-Later RED evidence must exercise the real fan-out/fold/materialization path:
-valid/retried/rejected births, competing consumers, same-fold parent loss,
-conservation, nonfinite inputs, replay/LOD identity and variable elapsed time.
-Unit fixtures can establish these contracts but cannot establish native progress.
-Native acceptance must begin with an ordinary naturally formed living world and
-its actual budget producer, then observe the cohort's birth, resource action and
-history through the existing renderer/menu. No forced phase, direct world write,
-debug actor or research toy substitutes for that path. An individually represented
-organism, cognition, society, embodiment and earned Gate production remain later
-unspecified steps.
+### 6.1 Opening material and three distinct partitions
 
+Read the **final post-physics parent** at settlement, not a stale candidate or
+surface-enriched composition. Require an extant `:planet`, finite positive
+`c/mass`, and finite elemental `c/composition` entries satisfying the existing
+`law.composition/mass-fraction?` predicate, with keys in `element-set`. Select an
+additional origin guard `abs(sum(fractions)-1) <= 10^-6`, evaluated on the exact
+input rationals; this tolerance is a proposed input-quality bound, not a claim
+that the current composition schema enforces the sum. Reject rather than renormalize. Let `M` be that mass and
+`x_C` its bulk elemental carbon mass fraction, with `0 < x_C <= 1`.
+`M*x_C` is an upper bound on carbon represented by this parent. It is not proof
+of accessible food or a globally audited primordial-to-life carbon history.
+[Chemistry](../../src/domain/chemistry.clj) (lines 357–389) groups `:organics` as C plus
+bound O; that value and the refreshed volatile total are not a kg-C inventory.
+The original [composition research](../research/physics/nebular-chemistry-metal-enrichment.md#31-composition-mass-conservation)
+supplies the mass-fraction convention, not biological accessibility.
 
-## 7. Bounded accounting refinement (2026-10-07)
+**Selected arithmetic:** stock and transfers are nonnegative arbitrary-precision
+integer units, each `10^-15 kg C` (one picogram). This is an accounting resolution,
+not an indivisible organism or a carbon-atom claim. Convert each finite IEEE-754
+input to its exact binary rational, multiply exactly, then floor once into units;
+record the input bit patterns and discarded fractional unit. Do not round a
+double product, use a decimal display string as authority, or silently coerce an
+invalid value. All later arithmetic is exact integer arithmetic, including batch
+totals and bounds. Division floors explicitly and its residual stays in the
+source compartment. An origin below one unit is rejected; never round it up.
 
-**Proposed refinement, not Ready or an accepted biological producer.** Source-only
-audit: `77a962a5f21f097b74278e9e7cf3c2136170091a`. The smallest useful pure
-boundary is a **local inventory transaction**, given already-accounted stocks and
-admitted transfers. It need not choose a Monod integrator, create living stock or
-advance biological time. The preceding historical text and open decisions stand.
+The named model `:life-origin/v1` selects these **tunable prescription values**:
 
-### 7.1 Specify transfers independently of the law requesting them
-
-The proposed account holds `U/S/W` and living stock `B_i` per persistent cohort,
-all in kg C, with closed total `T = U+S+W+sum(B_i)`. Opening budget and provenance,
-habitat/account identity, revision, operation identity, cause and prior outcomes
-are supplied data. These remain ECS content, not a parallel mutable ledger.
-
-| Operation | Transfers of the same kg C quantity between compartments | Bounds |
+| Quantity | Selected rule in integer units | Meaning / limit |
 | --- | --- | --- |
-| Expose living stock as cohort `i` | `U -> B_i: b` | `0 < b <= U`; no second incarnation of a prior birth |
-| Resource use and justified loss | `S -> B_i: g`; `S -> W: q-g`; `B_i -> W: L` | `0 <= g <= q <= S`; `0 <= L <= B_i+g` |
+| `C` | `floor(exact(M*x_C) / 10^-15 kg)` | Parent carbon upper bound, not a spendable second copy |
+| `A` | `min(floor(C/1000000), 10^15)` | One reference habitat allocation: at most one millionth of bulk C and at most 1 kg C |
+| `S0` | `floor(A/100)` | 1% of that allocation is modeled as initially accessible substrate |
+| `W0` | `A-S0` | Remaining allocated carbon is unavailable; no recycling is implied |
+| `o` | `floor(S0/1000)` | One origin extent: 0.1% of accessible carbon becomes living stock |
 
-Growth precedes loss within one atomic settlement, as in §3. The action's signed
-change `(0,-q,g-L,q-g+L)` sums to zero. A future producer may derive `g=Y_c*q`;
-the kernel takes admitted `q/g/L`, without deriving them from elapsed time or
-choosing a yield. Explicit zero action makes no stock change; excessive requests
-are rejected, not silently clipped. The `q=0` example in §5 is an upstream
-resource-aware proposal when `S=0`, not permission to replace an invalid request.
-The producer must supply its modeled interval and rule version. The kernel
-preserves them; neither a 24-tick clock nor volume-to-rate conversion belongs here.
+These three fractions and cap are conservative *accounting bounds*, not measured
+surface distribution, chemical accessibility or abiogenesis probabilities.
+They keep the first compartment finite; they may be calibrated through a later
+versioned model change. A version change never opens another account or refills
+an existing one automatically. The reference habitat is a parent-local modeled
+compartment, not a claimed resolved ocean, voxel location or physical 1 m³ volume.
+A future concentration/rate model must supply that geometry rather than assuming it.
 
-### 7.2 Proposed finite transaction contract
+At opening, `U=0, B=0, S=S0, W=W0`. The origin transfer is `S -> U: o`;
+representation then transfers `U -> B: o` into the first cohort. Both transfers,
+the account, cohort and outcomes settle together, so the result is
+`U=0, B=o, S=S0-o, W=W0`, with exact total `A`. A failed birth leaves neither
+allocation nor debit. The rest of parent carbon stays unresolved and unallocated.
+`A` is **included** in parent material, not added to gravitating `c/mass`.
+For a sufficiently carbon-rich parent hitting the 1 kg cap, the chosen arithmetic
+gives 0.99 kg unavailable carbon, 0.00999 kg remaining substrate and 0.00001 kg
+living cohort carbon. This is an illustration of the selected prescription, not
+a measured native-world result or a microbial calibration.
 
-These are choices for design review, not recovered current runtime behavior:
+### 6.2 Conditions and cause; no scalar-to-mass conversion
 
-1. Validate finite nonnegative stocks/transfers, finite total, identity and account
-   revision. Validate intermediate and final results too. Invalid input, overflow
-   or unsupported numeric settlement returns a reason without partial stock or
-   entity writes.
-2. A persisted operation key identifies one immutable attempt, including its
-   account, payload and interval. Identical retry returns the prior outcome with
-   no additional debit, allocation or event. Conflicting reuse rejects without
-   replacing that outcome. Apply this to resource actions and rejected admissions,
-   not only births. Exact key encoding remains to be selected.
-3. For a new operation, reject stale revision and invalid/terminal habitat.
-   Commit accepted stock/entity effects and outcome together. New attempt needs
-   new persisted operation identity; loss, phase reset and zoom do not renew it.
-   Lineage identity remains distinct from operation key and transient ECS ID.
-4. Competing operations consume one running balance in an explicitly ordered
-   batch, never independently spending frozen `S`. Select/version that order;
-   hash-map traversal is not policy. Engineering order is not ecological fairness.
-5. Final habitat survival/removal must be known before committing a new birth.
-   Same-fold removal rejects it without partition/allocation. Retrying an older
-   accepted operation after removal returns history, never recreates the cohort.
+An origin request requires a retained production `:event/life-emergence` naming
+this parent, current ecology validated by the existing `ecology-contract` before
+its living-phase predicate is used, ecology moisture `> 0.25`, current physical
+parent temperature strictly between 225 and 375 K, and positive bulk H, O, C and
+N fractions. The moisture/temperature criteria are explicit toy proxies aligned
+with the existing ecology band; elemental presence does not establish liquid
+water, nutrient availability, oxygen supply or resolved habitat pressure.
+`c/pressure` is not substituted for a measured surface pressure.
 
-**Numeric acceptance remains a required decision.** Explicit transfers fix the
-conservation equation, not machine representation. Finite doubles and rounded
-sum equality can hide a positive debit that did not change its much larger source
-while the destination gained stock. The [decided precision boundary](../designs/resolution-regimes-and-scale-coupling.md#5-the-hard-limit-float-precision-not-lagrangian)
-already forbids tiny-from-huge bookkeeping, including within a local account.
-Choose an exact representation or a documented representability/error policy,
-verify actual source/destination changes, and reject unsupported settlement
-atomically. No mass quantum, epsilon, clamp or minimum biological cohort size is
-chosen here. Zero-sum algebra alone does not verify floating-point conservation.
+Use the earliest retained qualifying life-emergence event, breaking equal-tick
+ties by ledger position. The request records its event ID/cause, requesting tick,
+parent ID, source mass/composition values, model and source-rule version. Because
+phase events are emitted after lifecycle today, the earliest request can occur
+from the **next frozen snapshot**, never by consuming an event before it exists.
+Recheck all conditions and the exact mass/composition signature against the final
+parent before accepting. Changed source, any final consumed marker, unavailable
+cause, invalid data or zero `o` rejects without a partial account or entity.
+No zoom, selection, commitment, paid Grow or direct debug write supplies a cause.
+Native acceptance separately verifies the source event arose in ordinary genesis;
+unit fixtures establish laws only.
+No observed parent has yet been shown to satisfy this complete origin guard at
+its final settlement state. In the retained [seed42 observation at tick 11280](https://github.com/octave-commons/Truth/blob/5740c2783a5689752c7bed0d45f923081e8c2ce3/.%CE%B7%CE%BC/diagnostics/playable-foundation/natural-seed42/observations.edn#L154)
+and [seed43 observation at tick 11328](https://github.com/octave-commons/Truth/blob/5740c2783a5689752c7bed0d45f923081e8c2ce3/.%CE%B7%CE%BC/diagnostics/playable-foundation/natural-seed43/observations.edn#L152),
+the highlighted scalar-life parents' stored candidate compositions contain
+`H=0`. The [committed observer](https://github.com/octave-commons/Truth/blob/5740c2783a5689752c7bed0d45f923081e8c2ce3/.%CE%B7%CE%BC/diagnostics/playable-foundation/natural-seed43/observe.clj#L34)
+saves current mass/ecology and historical candidate data, but not current bulk
+composition or physical `c/temperature`. Those distinct snapshots cannot evaluate
+the proposed final-parent guard or establish an available substrate inventory.
+Keep the guard under model review and preserve an unsuccessful native observation
+instead of relaxing it to force a cohort.
 
-### 7.3 Terminal parent disposition is separate from birth cancellation
+There is also a **source-derived applicability gap at ordinary core/envelope
+planet birth**. [Planet composition](../../src/domain/planet_formation/composition.clj)
+(lines 43–49) removes the [gas-former set](../../src/law/composition.clj)
+(lines 21–23), including H, from every condensed core; a seed with `gas-m=0`
+therefore has `H=0`. In this path, [positive envelope mass](../../src/domain/planet_formation/physics.clj)
+(lines 139–154) requires a sufficiently massive core beyond the snowline.
+For positive stellar luminosity, that file's 170 K, zero-albedo snowline law
+and the [seed-temperature law](../../src/domain/planet_formation/orbit.clj)
+(lines 12–23 and 58–63) imply
+`T_seed < 170*(1-0.3)^(1/4)+35 = 190.4975 K` beyond the snowline.
+Thus this birth path does not initially supply both positive H and the proposed
+225–375 K guard. Later warming, transport or material exchange may change those
+conditions; this is not a proof that every later natural parent is ineligible.
+The [retention classifier](../../src/domain/stellar/classifier/planet.clj)
+(lines 239–250) selects candidate H2O from material class and thermal band, without
+an elemental inventory intersection. It cannot override the
+[chemical diagnostic](../../src/domain/chemistry.clj) (lines 254–261), which yields
+zero H2O when H is zero. The existing [atmosphere research limitation](../research/atmosphere/planetary-atmosphere-retention-classifier.md)
+(lines 572–581) already names that missing intersection. These are material-model
+applicability limits, not permission to infer accessible water or weaken the
+origin guard. In addition, the exact-signature closure below can end coverage
+on ordinary mass/composition evolution; neither an eligible origin nor a useful
+account lifetime has yet been demonstrated in a natural run.
 
-If an existing cohort's habitat is reaped, its inventory and retry/lineage state
-need durable disposition. [ECS despawn](../../src/domain/ecs/core.clj), lines 39–48,
-removes all components; placing the only account or deduplication evidence there
-would erase them. A historical event alone does not say where the carbon went.
+Normalized `:biomass` supplies **no kg conversion and no repeated credit**.
+After acceptance, `U` and cohort `B` are the only authority for this compartment's
+living carbon. Existing `c/ecology` remains its sole writer's coarse toy model;
+its biomass/complexity may continue to evolve but are labeled separately from
+accounted carbon. They do not refill, resize or reset this account. A later model
+may replace that coarse proxy with an account-derived projection, but v1 does not
+claim the two values are quantitatively equivalent. Continued growth needs an
+explicit resource transaction; a living scalar alone cannot fund it.
 
-Proposed requirement: close the removed habitat's account to new actions, retain
-its final inventory/identity/outcomes in durable causal state, and atomically
-account for transfer to a surviving aggregate/account or an explicitly modeled
-boundary export before integration discards active inventory. Distinguish the
-historical terminal inventory from destination stock to prevent double counting.
-This grants no ghost habitat, automatic food recycling or spontaneous loss law.
-The destination/export semantics and owner are **unselected**. Full parent-loss
-integration remains blocked until they are specified; rejecting pending birth
-alone is insufficient.
+## 7. Selected identity, transaction and lifecycle contract
 
-### 7.4 Resolve engineering choices without inventing a biology producer
+### 7.1 Durable keys and exact transaction interface
 
-The [decided resolution contract §§3–6](../designs/resolution-regimes-and-scale-coupling.md#3-principle-scale-separated-regimes-nested-as-ecs-content-layers)
-already settles one ECS, local budgets, conservation through detail changes and
-sufficient retained state for replay. [Promotion/demotion](../../src/domain/genesis/promotion.clj),
-lines 147–156 and 244–265, illustrates one owner combining debits/credits against
-its updated balance; it does not implement biological or generic admission.
+One persistent ECS bookkeeping entity holds the biology book and survives parent
+reaping. It has no physical mass, position, body-kind or renderer geometry. It is
+allocated once by the lifecycle settlement when it first observes a life-emergence
+event, even if admission rejects; this empty bookkeeping entity is not a partial
+birth or carbon allocation. The book is ECS content, not another mutable event
+store. Retain an event cursor and parent-to-first-cause index there: consume each
+new ledger event once in ledger order, then evaluate indexed parents/requests.
+Do not rescan the whole event history independently for every parent each tick.
 
-Existing [chemistry](../../src/domain/chemistry.clj), lines 357–389, counts
-`:organics` as carbon **plus bound oxygen** and volatiles include other elements.
-Neither is already available substrate kg C or living `U`. The [ecology schema](../../src/law/ecology/schema.clj),
-lines 57–67, supplies normalized scalars, not a conversion. A pure test account
-cannot establish budget origin, accessibility, habitat or biological applicability.
+Parent incarnation is the ECS allocation ID **within the current world**: `spawn`
+monotonically allocates `:next-id`, and this design forbids reusing an ID. The
+book retains the parent slot after removal. Account ID is
+`[:life-origin/v1 parent-id cause-event-id]`, where the cause is the persisted
+first life event. Keys and retries are scoped to **one persisted book/world
+lineage**, not universally distinct universes. A copied or rewound world can retain
+all these IDs: shared ancestry may share keys. V1 neither combines balances/outcomes
+from separate branches nor claims a cross-world identity policy; such import or
+reconciliation needs a later namespace/admission contract. Identity is not derived
+from title, phase or seed. While retaining this same book, the parent slot
+admits at most one account across ecological phase resets and model versions.
+Restoring an earlier whole-world snapshot restores its earlier book/allocator too;
+v1 does not promise deduplication across destructive rewind or divergent histories. Cohort lineage is `[account-id :cohort 0]`;
+its ECS ID is a replaceable representation ID, never the lineage identity.
 
-Identity encoding, retry semantics, deterministic ordering, numeric acceptance
-and the transaction/result interface are bounded engineering choices this spec
-can settle without new biological coefficients. The rules above are proposals for
-that review. Budget production, rates/loss, applicability and elapsed time remain
-producer/clock decisions. Cohort versus individual remains a project scope choice.
+An operation is portable data:
+`{:op-id [account-id producer-id sequence] :account account-id
+  :expected-revision n :kind k :amounts {...} :cause event-id
+  :interval nil-or-[start-seconds end-seconds] :rule-version v}`.
+The origin's producer is `:origin`, sequence is the requesting tick; later
+producers own monotonically persisted sequences. Origin has no elapsed-time rate
+and uses a nil interval. A timed producer must supply modeled seconds from the
+existing simulation clock; this account neither fabricates nor advances a clock.
 
-Integration still needs one declared owner and atomic settlement with the final
-removal set. Today's [lifecycle](../../src/domain/genesis/bootstrap.clj), lines
-299–317 and 341–352, sends every birth through `spawn-clump`, then reaps; its
-contract reserves continuous mass/momentum writes for the integrator. Do not debit
-in fan-out and add a refund writer after reaping. Generic validated component
-creation must settle account, entity and outcome together, without stellar
-components. This needs an explicit ownership/order amendment; the pure kernel
-proposal does not authorize an alternate writer or tick path.
+The pure transaction returns either `{:accepted? true :account next :outcome ...
+:entity-effects ...}` or `{:accepted? false :reason ... :outcome ...}`; no side
+effect occurs until the complete accepted result passes validation. Persist the
+immutable request and its outcome. Identical retry returns that prior outcome,
+including after closure, without another event, entity or stock write. Conflicting
+key reuse rejects without overwriting the original; a stale revision rejects.
+Malformed requests lacking a valid identity produce a diagnostic rejection but
+cannot claim a persisted/deduplicated operation. Exact integer validation excludes
+negative/nonintegral amounts, overflow into another numeric type and partial writes.
 
-Finite proof cases are §5's transfers; repeated success/rejection; conflicting
-key; stale revision; competing consumers; nonfinite, overflowing and unrepresentable
-settlement; same-fold birth cancellation; and terminal parent disposition without
-double counting or re-admission. These are specification cases, not executed
-tests. Resolving them can close the accounting boundary, while a real natural-world
-budget producer remains necessary for represented-life gameplay.
+Resource-use requests take admitted extents `q/g/L` in integer units, satisfying
+`0<=g<=q<=S` and `0<=L<=B+g`; growth precedes loss. Apply §3's transfer equations
+exactly. The kernel never clips an excessive request into a valid one. Zero action
+records a no-change outcome. A rate law, yield, death threshold or request source
+is not manufactured by this interface; the Monod candidate remains a separate
+producer choice. Representation birth and an initial living amount alone do not
+satisfy the later one-meaningful-resource-action acceptance.
+
+### 7.2 One owner in the existing lifecycle, not a debit/refund protocol
+
+Select **one serial biology settlement owner within the existing world-construction
+lifecycle**. Fan-out emits only its own immutable proposal component; it writes
+neither accounts, cohort stock nor an entity allocation. After all physics writes
+are folded, lifecycle obtains the complete consumed set. Its uniform validated
+component-bundle creation must support non-stellar entities as well as the current
+stellar constructor. It must not pass a cohort through `spawn-clump` or attach
+fictional stellar components. Existing stellar behavior stays on the same path.
+
+The serial owner is the sole writer of the biology book and biological cohort
+components, with a named registry/architecture ownership declaration and validated
+inputs/outputs. Extending those declarations to serial construction is part of
+the implementation contract; today's fan-out registry is not claimed to cover it.
+It alone settles accounts, creation/removal and outcomes as one pure world result.
+This is an explicit extension of lifecycle's present creation/removal-only contract
+for **local bookkeeping**, not permission to write physical mass/momentum there.
+Physical boundary fluxes remain owned by the existing integrator influences.
+
+Order at this existing boundary is: determine physical removal set; retire invalid
+existing accounts (§7.3); validate new requests against surviving final parents;
+settle requests and validated creations; reap physical and biological removals.
+Process parents by ascending ECS ID, then origins before other operations, then
+producer keyword text and sequence; use the running account balance and revision
+between operations. This is deterministic engineering order, not a claim of
+biological fairness. No independent consumers spend the same frozen balance.
+A rejected origin never reserves a parent slot; accepted origin permanently does.
+
+Persist operation outcomes in the book and append ordinary causal events once.
+Derive their UUIDv5 IDs with the standard URL namespace
+`6ba7b811-9dad-11d1-80b4-00c04fd430c8` and UTF-8 name
+`"truth/life-origin/v1:" + pr-str([op-id outcome-kind])`; those tuples contain no
+unordered maps/sets. Reject any same-ID/different-payload collision. Replaying persisted causes/operations is
+stable; existing random upstream life-event IDs mean this does not promise equal
+IDs for independent fresh same-seed universes.
+
+### 7.3 Parent changes close the bounded compartment without duplication
+
+V1 intentionally models **no transport of biological stock across material
+changes**. Before every settlement, compare actual final parent mass and the full
+bulk composition map to the recorded opening signature. Any change, invalid/missing
+physical data, consumed marker, non-planet state, loss of the stated habitat
+conditions, or loss of living ecology closes the compartment before any new action.
+A physical move or change of camera/LOD alone does not close it.
+
+Closure is one terminal transaction: export every active `U/S/W/B_i` amount out
+of this modeled compartment, set active stocks to zero, retire cohort entities,
+and retain the exact final pre-export inventory, parent signature/cause, operation
+outcomes, lineage and terminal reason in the surviving book. Its accounting is
+`opening A + accepted boundary imports(0 in v1) = active total + exported total`.
+A closed archive is **history**, not another active allocation; exports are never
+credited again by biology to a survivor, food pool or gravitating body.
+
+The export destination is explicitly `:unresolved-physical-boundary`, with the
+actual consumed/material-change cause when available. It records the limit of the
+local model; it is not a claim of known chemical fate, physical mass annihilation,
+biological extinction or globally traced carbon. Physics already owns the changed,
+merged, escaped or depleted parent. This conservative terminal policy may end a
+cohort after a small accretion change; that loss of modeling coverage is intentional
+and visible, not hidden under a claim of continuous biological simulation.
+
+No reopening, refill, new epoch or refund follows from phase reset, restored
+composition, a later model version or zoom. A distinct surviving parent may have
+its own origin/account, funded only from its then-current bulk state; the closed
+old account contributes no active carbon and no second credit. Boundary transport
+and re-admission require a later reviewed model. Pending births on a removed or
+changed parent are rejected before any partition. Retirement of an existing
+cohort is distinct from rejecting a pending one.
+
+## 8. Finite implementation boundaries and proof obligations
+
+These are **proposed** future slices under this existing specification, not new
+cards, current estimates accepted by review, or implementation admission:
+
+| Boundary | Target size | Completion evidence |
+| --- | --- | --- |
+| Pure integer account/origin laws | 3 | Actual exact input conversion, partitions, repeated success/rejection, conflicting key, stale revision, ordered competing transfers, zero/tiny/nonfinite inputs and exact conservation |
+| Uniform lifecycle settlement and retained book | 5 | Real fan-out/fold/materialization path; non-stellar bundles; atomic account/entity/outcome; unchanged stellar path; same-fold cancellation; retained terminal histories; explicit sole-writer checks |
+| Natural origin producer plus boundary closure | 5 | Actual life-event cause and final-parent checks; once-only origin; changed/reaped parent closes before later action; no refill/reset/LOD minting; scaling proportional to tracked parents/requests |
+| Existing inspector/Narrator projection | 3 | Read-only cohort/account/cause/terminal-state presentation, with a natural native origin observation; no new hotkey, creature mesh or avatar |
+
+If the lifecycle ownership generalization cannot fit five points, refine that
+slice before code; do not hide a new architecture inside an asserted estimate.
+The account and origin require no new biological rate or clock. A subsequent
+resource-use producer must select its extent/time/loss law and prove one real
+resource action; these four slices do not claim the whole represented-life card's
+acceptance or the eventual organism/individual milestone.
+
+Native proof starts from ordinary genesis and a naturally produced life event,
+with actual composition, account funding, birth and visible causal readback. No
+forced phase, world injection, debug actor or test account substitutes for it.
+Preserve negative observations: missing carbon, an unsatisfied proxy, too-small
+allocation or terminal material change must be shown as rejection/closure rather
+than adjusted until a cohort appears. No result in this note is an executed test,
+local review is not hosted approval, and Incoming remains Incoming until the
+canonical planning/admission process completes.

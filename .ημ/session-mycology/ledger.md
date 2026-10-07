@@ -387,3 +387,12 @@
   spore: none
   receipt-refs: Truth#38,77a962a5,review5437526683,life-to-represented-actor-spec
   note: Small biological accounting kernels need finite representable debits and durable terminal dispositions as well as balanced equations. Keep source budgets and runtime producers separate from those engineering invariants. Existing provenance and pure-boundary skills suffice; no spore.
+- ts: 2026-10-07T06:20:03.289064503Z
+  session: /home/err/spaces/foresight/.worktrees/truth-life-actor-plan
+  task: Select a concrete first-life account contract without hiding source applicability limits
+  p-efficiency: 0.87
+  p-friction: 0.22
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: Truth#38,life-to-represented-actor-spec,origin-contract-closure.json
+  note: Separate bulk material, modeled accessibility and living origin; a finite accounting prescription does not establish a reachable native habitat. Check the joint guards against actual seeding equations before calling a proposal implementable, preserve negative evidence, and scope dedupe to persisted history rather than universal identity. Existing source/provenance skills suffice; no spore created or promoted.
