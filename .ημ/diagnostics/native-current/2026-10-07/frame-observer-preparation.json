@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-07T00:45:27.097818+00:00",
+  "status": "prepared-not-installed",
+  "reader_forms": {
+    "frame-observer-install.clj": 3,
+    "frame-observer-restore.clj": 1
+  },
+  "clj_kondo": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "preflight_development": "Initial preparation parse/require issues corrected before freeze; no runtime evaluation occurred.",
+  "sha256": {
+    "frame-observer-install.clj": "f06bb4c26934fabfa35740b923e5c73f4c34933e5c8daad539d9be9b5f527d31",
+    "frame-observer-restore.clj": "773791ff9d50cd782a9b4a3b5c07a508f7c4c58d05e9182485321073c86b94ec",
+    "frame-observer-PLAN.md": "30b9af19d4ddfbc5e88e88f3a74ad999f41ebac78b45ca1053caea22f43aa3f3"
+  }
+}

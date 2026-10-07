@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-07T00:49:25.115066+00:00",
+  "status": "guard-io-repaired-not-installed",
+  "exact_bounded_mechanism_verified": "frame-bounded-proc-read-result.json and stdout; exit0;345statbytes; all identity guards pass",
+  "sha256": {
+    "frame-observer-install.clj": "c2f8ae400628588c603a4580ef904ede03ba73aa45ac806da6bafb38b88943ce",
+    "frame-observer-restore.clj": "773791ff9d50cd782a9b4a3b5c07a508f7c4c58d05e9182485321073c86b94ec",
+    "frame-observer-PLAN.md": "338b3bf25a487290825bd2de7e99183018592d59d67a6ffc2515a12717747834"
+  }
+}

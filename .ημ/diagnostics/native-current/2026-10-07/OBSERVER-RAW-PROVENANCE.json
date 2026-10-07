@@ -1,0 +1,150 @@
+{
+  "at": "2026-10-07T00:52:35.762681+00:00",
+  "policy": "Exact stdout/stderr bytes preserved with deterministic gzip. Raw originals remain untracked; growing runtime logs excluded.",
+  "files": [
+    {
+      "raw_untracked_path": "frame-bounded-proc-read.stderr",
+      "closed_path": "frame-bounded-proc-read.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-install.stderr",
+      "closed_path": "frame-install.stderr.gz",
+      "decoded_bytes": 265,
+      "decoded_sha256": "1529c9125860d80eadfc44ffc9281f18ed14088c3117d362ba1d5dc2f2254c49",
+      "gzip_sha256": "12363cd92cc06bb58d6bef54072f98a2f67a43ff6d16323b3d9a8d844a1636aa",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-bounded-proc-read.stdout",
+      "closed_path": "frame-bounded-proc-read.stdout.gz",
+      "decoded_bytes": 136,
+      "decoded_sha256": "289753ad3c328e137a98bdfbb4bd30d30ccfa2c5b089255fcaf2a860eca3f183",
+      "gzip_sha256": "67e1488af18234c8054f21a8cc84f2f180d68994dc2d26c07951178d8836de81",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-restore.stdout",
+      "closed_path": "frame-restore.stdout.gz",
+      "decoded_bytes": 1854,
+      "decoded_sha256": "a8fd9eef6b7bcc3c848161bc254e9a0bbdce149caf0c2eaba42206c127210557",
+      "gzip_sha256": "390762f5a39f9019a4f677905144b4f970b846d8af275805748c051414e2e10c",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-proc-read-probe.stderr",
+      "closed_path": "frame-proc-read-probe.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-install.stdout",
+      "closed_path": "frame-install.stdout.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "service-health-01.stderr",
+      "closed_path": "service-health-01.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "service-health-02.stderr",
+      "closed_path": "service-health-02.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-restore.stderr",
+      "closed_path": "frame-restore.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "service-health-02.stdout",
+      "closed_path": "service-health-02.stdout.gz",
+      "decoded_bytes": 844,
+      "decoded_sha256": "5feb96596973d087e5e9d4067238ef8b58a8a0485f30b6ae7e1607237ed72ec0",
+      "gzip_sha256": "e5d18b0bf6b7298799d24ca2bd2155409ce832d61eb331075b18cbb72990d60f",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-failure-audit.stdout",
+      "closed_path": "frame-failure-audit.stdout.gz",
+      "decoded_bytes": 415,
+      "decoded_sha256": "e8cd3224b1398868d65123e71941420216c2292da170658a3a91ac3f9907aa5a",
+      "gzip_sha256": "fb04c51ab3929798f108893df0553ab67c67aa310e26e355e782cab4df8479ed",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-failure-audit.stderr",
+      "closed_path": "frame-failure-audit.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-proc-read-probe.stdout",
+      "closed_path": "frame-proc-read-probe.stdout.gz",
+      "decoded_bytes": 498,
+      "decoded_sha256": "0884c50544e559abbab0a60dc9e590d34d8c7ddfc2c61fefbc99377b4e8b5743",
+      "gzip_sha256": "80a24ff260047106eff102c8a90a08f1902430add356400b8452a5207ca29e17",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-retry.stderr",
+      "closed_path": "frame-retry.stderr.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "service-health-01.stdout",
+      "closed_path": "service-health-01.stdout.gz",
+      "decoded_bytes": 844,
+      "decoded_sha256": "a0bceb6a044a8a8e2272f1eef0d9d853265736c375f96caf90a0184e8b4d714d",
+      "gzip_sha256": "1fa0ceb5a921c241a783fe533aefd8a3dcebba38b033ce139b60955f4ad48fb7",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-retry.stdout",
+      "closed_path": "frame-retry.stdout.gz",
+      "decoded_bytes": 222,
+      "decoded_sha256": "133300faef6cb8d3c0dbbb2d54c014bf49ace8283fbf465b6388cb0d2074d95c",
+      "gzip_sha256": "354b1506f033b240bd2a4fc414159e695c8f2024bd462b25a1e14d81d3fc8064",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-install-attempt1/frame-install.stderr",
+      "closed_path": "frame-install-attempt1/frame-install.stderr.gz",
+      "decoded_bytes": 265,
+      "decoded_sha256": "1529c9125860d80eadfc44ffc9281f18ed14088c3117d362ba1d5dc2f2254c49",
+      "gzip_sha256": "12363cd92cc06bb58d6bef54072f98a2f67a43ff6d16323b3d9a8d844a1636aa",
+      "gzip_mtime": 0
+    },
+    {
+      "raw_untracked_path": "frame-install-attempt1/frame-install.stdout",
+      "closed_path": "frame-install-attempt1/frame-install.stdout.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "gzip_mtime": 0
+    }
+  ]
+}

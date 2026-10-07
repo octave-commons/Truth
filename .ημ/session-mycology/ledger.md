@@ -422,3 +422,12 @@
   spore: none
   receipt-refs: perf-tick-residual-gap-to-60fps,6b160b2dc63e923be5badad7d2de846d74c99093,2026-10-07T00:01:15.005453Z
   note: Bind final composition checks to exact HEAD and immutable source hashes, retain earlier benchmark ancestry, and avoid treating correctness-run durations as fresh performance evidence. Keep raw captured patch whitespace explicit and prior closed bundles unchanged. Existing skills suffice; no new spore.
+- ts: 2026-10-07T01:01:25.553906+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-validation
+  task: Verify a fresh PM2 native world and retain exact observation boundaries
+  p-efficiency: 0.86
+  p-friction: 0.24
+  p-skill-candidate: 0.15
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,9c5c889,2026-10-07T01:01:25.553906+00:00
+  note: Rebind process, boot, world and GL context after reboot. A Java proc-file available failure is diagnostic I/O, not a game failure; preserve the failed no-install attempt and use a bounded verified read. Inspect actual frames, distinguish HUD time from later world reads, and preserve growing-log prefixes without calling them complete stopped logs. Existing skills suffice; no spore.

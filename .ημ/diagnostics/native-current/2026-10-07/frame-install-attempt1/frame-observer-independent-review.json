@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-07T00:46:54.054701+00:00",
+  "reviewer": "/root/runtime_scout",
+  "mode": "source-only; no edits/runtime/test calls",
+  "result": "No blockers",
+  "verified_sha256": {
+    "frame-observer-install.clj": "f06bb4c26934fabfa35740b923e5c73f4c34933e5c8daad539d9be9b5f527d31",
+    "frame-observer-restore.clj": "773791ff9d50cd782a9b4a3b5c07a508f7c4c58d05e9182485321073c86b94ec",
+    "frame-observer-PLAN.md": "30b9af19d4ddfbc5e88e88f3a74ad999f41ebac78b45ca1053caea22f43aa3f3"
+  },
+  "limits": "Later published state is unpaired; stalled GL or hung JVM cannot be preempted; no per-body trail, FPS, or gameplay claim."
+}

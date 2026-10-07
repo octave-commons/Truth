@@ -1,0 +1,23 @@
+{
+  "started_at": "2026-10-07T00:50:19.770357+00:00",
+  "command": [
+    "/usr/local/bin/clojure",
+    "-J-Xms64m",
+    "-J-Xmx256m",
+    "-M:demo-client",
+    "(load-file \"/home/err/spaces/foresight/.worktrees/truth-validation/.\u03b7\u03bc/diagnostics/native-current/2026-10-07/frame-observer-install.clj\")"
+  ],
+  "environment": {
+    "TRUTH_DEMO_PORT": "7896"
+  },
+  "pid": 131581,
+  "start_ticks": "125503",
+  "state": "S",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-validation",
+  "verified_hashes": {
+    "frame-observer-install.clj": "c2f8ae400628588c603a4580ef904ede03ba73aa45ac806da6bafb38b88943ce",
+    "frame-observer-restore.clj": "773791ff9d50cd782a9b4a3b5c07a508f7c4c58d05e9182485321073c86b94ec",
+    "frame-observer-PLAN.md": "338b3bf25a487290825bd2de7e99183018592d59d67a6ffc2515a12717747834"
+  }
+}

@@ -1,0 +1,1 @@
+(mapv (fn [path] {:path path :random-access-line (try (with-open [r (java.io.RandomAccessFile. path "r")] (.readLine r)) (catch Throwable t {:error (str t)}))}) ["/proc/sys/kernel/random/boot_id" "/proc/self/stat"])

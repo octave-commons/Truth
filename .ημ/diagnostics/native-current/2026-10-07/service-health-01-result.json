@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-10-07T00:43:42.648211+00:00",
+  "completed_at": "2026-10-07T00:43:46.296324+00:00",
+  "exit": 0,
+  "elapsed_seconds": 3.6481876299999385,
+  "expected_pid": 131581,
+  "expected_start_ticks": 125503
+}

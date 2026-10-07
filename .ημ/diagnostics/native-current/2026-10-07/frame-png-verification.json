@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-07T00:51:49.404999+00:00",
+  "path": "frame-capture/pid-131581-window-137768861339584-frame-01.png",
+  "bytes": 799810,
+  "sha256": "2194f32e5658e40d048cf00c9435dbbf29628eb48cadf56fc7a30eefb5665a98",
+  "png_signature_valid": true,
+  "width": 2536,
+  "height": 1490,
+  "visual_inspection": "Original PNG viewed, displayed resized by tool only; stored bytes unmodified. Visible HUD tick7975; later recorded world read7978 is separate.",
+  "image_edits": "none"
+}
