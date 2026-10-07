@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "uuid": "f369c598-279c-498d-a64f-45d2ce16ad34",
+  "comment": "Select! restoration review repair qualified after committed REDd550a516 (2tests26assertions,4expected config failures0errors). Candidate dev/demo.clj SHA d76a6420a7dfaf4e1d5c9fd96b424229d922d736af21bb4d2355ace0d3444220 reuses exact pure two-key restoration and wraps only enqueue/wait; sameThrowable rethrown, unrelated config retained, no queue cancellation/world rollback/success-policy change. Fresh sequential demo9/85,full948/16775,all6strict,devkondo0/0,devformat allPASS/exited0/reaped,319trackedinputhashes+REDbaseHEAD unchanged; last2026-10-07T02:52:40.147903Z. Evidence .ημ/diagnostics/demo-selection-restore/green/RESULT.md. Independent source review agrees. Prior queue test and historical sensitivity evidence retained. No live source change/native/GL/performance/newgameplay proof. Card staysInProgress3; ordinary approach/commit/sculpt/Gate and hosted review remain open."
+}

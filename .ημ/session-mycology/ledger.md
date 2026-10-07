@@ -494,3 +494,39 @@
   spore: none
   receipt-refs: focus-follows-pilot,47571e4,review5436893734,comment4202416214
   note: Verify the exact pinned blob before changing adjacent line references; preserve the behavioral statement and proposed status. Inspect the underlying hosted error before repeating a wrapper label as a code defect. Broad historical-note search was unnecessary once the review named the target; prefer exact paths. No new spore; existing review and evidence skills suffice.
+- ts: 2026-10-07T02:19:01.548058Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Characterize a failed asynchronous handoff without inventing cancellation
+  p-efficiency: 0.9
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,760ea79,review5436791462
+  note: A published-token timeout does not establish that an intent was never consumed. Recover the original restoration promise, use the real queue adapter in the regression, and separate configuration restoration from world cancellation. Keep source-derived timing corrections distinct from executed test evidence. No new spore; existing recovery and review-settlement skills suffice.
+- ts: 2026-10-07T02:32:45.679541494Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Qualify real queue semantics against historical restoration failure
+  p-efficiency: 0.93
+  p-friction: 0.12
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,review5436791462
+  note: Separate a review timing inference from its genuine coverage advisory. A historical single-file overlay can establish test sensitivity if namespace load order, current dependencies and exact hashes remain explicit. No new spore; existing regression and review skills suffice.
+- ts: 2026-10-07T02:36:44.473167Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Keep a preexisting selection failure open until its actual recovery contract is tested
+  p-efficiency: 0.95
+  p-friction: 0.1
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,c0c76ee,review5436791462
+  note: Preexisting behavior is provenance, not a reason to dismiss a concrete review concern. Isolate temporary pause restoration from queued-world cancellation, and inject a known read failure only after the real enqueue boundary. Keep already-qualified tests unchanged and mark expected RED counts as predictions until execution. No new spore; existing review and regression skills suffice.
+- ts: 2026-10-07T02:53:51.542812927Z
+  session: /home/err/spaces/foresight/.worktrees/truth-current-composition
+  task: Repair documented interactive scene-switch failure without widening rollback semantics
+  p-efficiency: 0.92
+  p-friction: 0.14
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34,d550a516,review5436791462
+  note: A preexisting review observation can still expose a real contract failure. Trace the standalone caller, commit the real queue RED, restore only temporary configuration, and preserve pending intent semantics. No new spore.

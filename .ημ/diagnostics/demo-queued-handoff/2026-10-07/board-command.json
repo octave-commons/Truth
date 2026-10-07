@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-07T02:31:58.570927+00:00",
+  "argv": [
+    "/home/err/.volta/tools/image/node/22.20.0/bin/node",
+    "/home/err/spaces/review-repair/rheos-comment-rendering/dist/cli.cjs",
+    "comment",
+    "f369c598-279c-498d-a64f-45d2ce16ad34",
+    "--text",
+    "Closed queued-handoff regression qualification on base760ea79 with test SHA88acbc55: historical0112e228 demo-file overlay/current production queue yields1test36assertions30pass6expected configuration-restoration failures0errors; current complete demo suite7tests59assertions0F/E including unchanged actual30s timeout. All6strict gates, toucheddev kondo0/0 and explicitformat pass; all5 historical/current subprocesses reaped with expected exit codes, HEAD and6pinned input hashes unchanged. Evidence .\u03b7\u03bc/diagnostics/demo-queued-handoff/2026-10-07/RESULT.md and SHA256SUMS. Test proves exact prior settings/camera restoration and inherited pending replacement plus later FIFO intent retention. No production edit, cancellation, world rollback or timing bound. Review5436791462 cadence inference corrected by source; unchanged select! observation under separate triage, not repaired here. Prior full948/16775 evidence remains separately pinned; no fresh full/native/benchmark/gameplay claim. Native game untouched. Card remains InProgress3; this is qualification, not hosted approval or Done.",
+    "--config",
+    "openhax.kanban.edn"
+  ]
+}
