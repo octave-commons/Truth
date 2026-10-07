@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-10-07T04:30:59.950183+00:00",
+  "ledgers": {
+    ".\u03b7\u03bc/receipts.edn": {
+      "old_prefix_preserved": true,
+      "appended_bytes": 1497,
+      "sha256": "505d30da5c8b910a7dd550d69eddb0ac5744ad226aa47e64de285ada9c2453c4"
+    },
+    ".\u03b7\u03bc/session-mycology/ledger.md": {
+      "old_prefix_preserved": true,
+      "appended_bytes": 796,
+      "sha256": "c87d8b8708f4d8ac3b2236185ad26a0a9447dd240210c39eef45880870d5c3b1"
+    },
+    "kanban/tasks/.events/ledger.edn": {
+      "old_prefix_preserved": true,
+      "appended_bytes": 0,
+      "sha256": "4cb53418c8696a89f5e3f5b10504b91948f17b0fade3fca93f360c750f8f4d65"
+    }
+  },
+  "no_board_mutation_by_agent": true
+}

@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-10-07T04:33:50.558100+00:00",
+  "scope": "Authoring-agent static checks; root owns distinct runtime outcomes under baseline/",
+  "checks": [
+    {
+      "argv": [
+        "clj-kondo",
+        "--lint",
+        "test/domain/spatial/grid_query_contract_test.clj",
+        ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj"
+      ],
+      "exit_code": 0,
+      "stdout": "linting took 53ms, errors: 0, warnings: 0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "b395c4049718f7ce015ddf25fc0a192d97821373",
+        "--",
+        "src",
+        "dev",
+        "bench",
+        "bin",
+        "deps.edn",
+        ".github"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "read_only_reader_forms": {
+    "test/domain/spatial/grid_query_contract_test.clj": 7,
+    ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj": 21
+  },
+  "first_lint_attempt": "One bytes-argument shadow warning corrected.",
+  "review_adjustment": "Preserved absent/nil observer column shape, so only :id is excluded.",
+  "root_format_observation": {
+    "initial_exit": 1,
+    "corrected_exit": 0,
+    "both_reaped": true,
+    "leading_indentation_proof": [
+      {
+        "old": ".\u03b7\u03bc/diagnostics/grid-collector/baseline/preflight/unformatted/grid.clj",
+        "current": ".\u03b7\u03bc/diagnostics/grid-collector/evidence/grid.clj",
+        "old_sha256": "6e1c3ce23617260ad8d7e94be00b6ff7fc15c82c3a23c547ee642abeea8b09c2",
+        "current_sha256": "0baaa761a1d343802b8a320870d9860ec53a24fda99956b0c43bbb1a8554be74",
+        "only_leading_indentation_changed": true
+      },
+      {
+        "old": ".\u03b7\u03bc/diagnostics/grid-collector/baseline/preflight/unformatted/grid_query_contract_test.clj",
+        "current": "test/domain/spatial/grid_query_contract_test.clj",
+        "old_sha256": "166a5085456ca3b509bc8dff2abf04c8a23412f406295281ebd63d4460097158",
+        "current_sha256": "ec50c5b77126e4f2f9d7e4658cc9fce833338f2c7c5837ee58a1c3764c0420d9",
+        "only_leading_indentation_changed": true
+      }
+    ]
+  },
+  "tests_and_cost_qualification": "Pending root handoff; no runtime result claimed by this preparation inventory.",
+  "jvm_or_native_execution_by_authoring_agent": false
+}

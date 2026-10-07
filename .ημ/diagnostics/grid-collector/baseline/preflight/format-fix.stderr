@@ -1,0 +1,4 @@
+Picked up JAVA_TOOL_OPTIONS: -Xms256m -Xmx2g
+Picked up _JAVA_OPTIONS: -Xms256m -Xmx2g
+Reformatted test/domain/spatial/grid_query_contract_test.clj
+Reformatted .ημ/diagnostics/grid-collector/evidence/grid.clj

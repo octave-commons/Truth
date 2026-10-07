@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-07T04:23:27.160065+00:00",
+  "head": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "canonical_frontmatter": {
+    "category": "specs",
+    "labels": [
+      "perf",
+      "phase0",
+      "spec"
+    ],
+    "write-id": "1791347006476-0.zjuuiprrbwn9e96qs72",
+    "source": "kanban/tasks/perf-tick-residual-gap-to-60fps.md",
+    "title": "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000",
+    "priority": "P1",
+    "status": "in_progress",
+    "estimate": "3",
+    "uuid": "perf-tick-residual-gap-to-60fps",
+    "created_at": "2026-07-10T00:00:00Z"
+  },
+  "comment": "2026-10-07 baseline preparation only for one proposed 3-point no-behavior-change grid radius collector optimization under this existing InProgress performance owner. Root authorized characterization and cost-adapter authoring on isolated b395c404; production remains unchanged and no new performance result is claimed. Candidate scope is private domain.spatial.index/collect-grid-range only: replace immediately realized nested lazy collection with eager vector accumulation while preserving x/y/z/bucket order, original item identity, predicate order and short-circuit, inclusive radius arithmetic, clamping, empty behavior, and every caller/cache/physics policy. Current spatial source SHA280941b79defe025dbdd7c1478940b956c1e0dc9bd270fa4c66f5170f1a94701 matches preserved profile source; 86/1858 Java samples contain this helper, an active-load observation rather than a speed estimate. New public-query behavioral characterization is expected GREEN on the baseline; RED is measured performance/budget evidence, never invented incorrect physics or implementation-mirroring call counts. Proposed six cost cases use existing seed-42 uniform/clustered factory inputs for two public-grid batches, actual neighbor-cache rebuilds at500/1000, and the existing Phase0 500/1000 tick closures. Freeze factory/seed/settings/source and compact ordered/numerical fingerprints before production edits; retain raw Criterium samples/options and allocation/CPU only for serial grid batches. Parent owns native quiescing and all JVM runs, baseline checkpoint before GREEN, source admission, and fresh gated review. No source implementation, board transition, new gameplay feature, FPS/budget success, or completed baseline is asserted by this preparation note.",
+  "body_unchanged": true,
+  "ledger_prefix_bytes": 634461,
+  "ledger_prefix_sha256": "1b3c25bdee52edc8026ab37403f47c81cf7f37fb0086dc2eaa0fd8dafe1fab8e",
+  "appended_event_lines": 1,
+  "scope": "Preparation only; no test execution, source change or completed baseline"
+}

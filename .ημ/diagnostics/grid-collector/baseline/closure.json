@@ -1,0 +1,50 @@
+{
+  "at": "2026-10-07T04:44:01.591072+00:00",
+  "base": "b395c4049718f7ce015ddf25fc0a192d97821373",
+  "canonical_frontmatter": {
+    "category": "specs",
+    "labels": [
+      "perf",
+      "phase0",
+      "spec"
+    ],
+    "write-id": "1791348240786-0.ebzz34i0naozv00sugh",
+    "source": "kanban/tasks/perf-tick-residual-gap-to-60fps.md",
+    "title": "Perf: residual tick-cost gap to the 16.6 ms 60 fps budget @1000",
+    "priority": "P1",
+    "status": "in_progress",
+    "estimate": "3",
+    "uuid": "perf-tick-residual-gap-to-60fps",
+    "created_at": "2026-07-10T00:00:00Z"
+  },
+  "canonical_body_unchanged": true,
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 636601,
+      "before_sha256": "4cb53418c8696a89f5e3f5b10504b91948f17b0fade3fca93f360c750f8f4d65",
+      "prefix_preserved": true,
+      "after_sha256": "0872f21a1eba869bec232598526b82545345ab6f61eb5ed13b66d2086f347627",
+      "appended_lines": 1
+    },
+    {
+      "path": ".\u03b7\u03bc/receipts.edn",
+      "before_bytes": 65289,
+      "before_sha256": "505d30da5c8b910a7dd550d69eddb0ac5744ad226aa47e64de285ada9c2453c4",
+      "prefix_preserved": true,
+      "after_sha256": "19cf72b80a9deda50e0b09baa9c2d06eb37e1a3be195f392ed8fca07c23e1453",
+      "appended_lines": 1
+    },
+    {
+      "path": ".\u03b7\u03bc/session-mycology/ledger.md",
+      "before_bytes": 35010,
+      "before_sha256": "c87d8b8708f4d8ac3b2236185ad26a0a9447dd240210c39eef45880870d5c3b1",
+      "prefix_preserved": true,
+      "after_sha256": "24ee7fcf8d6dfe939673341aa3369580b26fbb3a8ede49faa2221f1a4bd8107d",
+      "appended_lines": 10
+    }
+  ],
+  "fullsuite_or_strict": false,
+  "production_unchanged": true,
+  "performance_red": "Measured cost/budget, no intentionally failing physics characterization"
+}
