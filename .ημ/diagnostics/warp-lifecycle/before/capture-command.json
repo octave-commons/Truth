@@ -1,0 +1,18 @@
+{
+  "command": [
+    "clojure",
+    "-J-Xms256m",
+    "-J-Xmx2g",
+    "-Sdeps",
+    "{:paths [\"src\" \"resources\" \"test\" \"bench\" \".\u03b7\u03bc/diagnostics/warp-lifecycle\"] :deps {criterium/criterium {:mvn/version \"0.4.6\"}}}",
+    "-M",
+    "-m",
+    "evidence.warp",
+    "capture",
+    ".\u03b7\u03bc/diagnostics/warp-lifecycle/fixtures.edn",
+    "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle/.\u03b7\u03bc/diagnostics/warp-lifecycle/before"
+  ],
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-warp-lifecycle",
+  "started_at": "2026-10-07T00:35:04.236729+00:00",
+  "pid": 89724
+}

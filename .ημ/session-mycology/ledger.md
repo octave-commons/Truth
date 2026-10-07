@@ -431,3 +431,12 @@
   spore: none
   receipt-refs: fix-warp-disabled-stale-write,9c5c889,2026-10-07T00:30:08.413631+00:00
   note: Empty-emission tests do not verify removal in a merging ECS. Assert stored cells, archetypes and later integrated motion while retaining the legitimate delayed kick. Equivalent map and SoA fixtures need all production query components; preserve a failed fixture attempt before correcting it. Existing skills suffice; no new spore.
+- ts: 2026-10-07T00:42:16.192666+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-warp-lifecycle
+  task: Freeze paid warp lifecycle cost inputs before production repair
+  p-efficiency: 0.9
+  p-friction: 0.15
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: fix-warp-disabled-stale-write,e434a838,2026-10-07T00:42:16.192666+00:00
+  note: Ordinary world snapshots can contain registered callables. Preserve the rejected serialization and encode only an exact known handler with key, identity and source guards; keep ordinary EDN strict. Time finite clearing from the same frozen input, and never treat fast missing work as a correctness target. Existing skills suffice; no new spore.

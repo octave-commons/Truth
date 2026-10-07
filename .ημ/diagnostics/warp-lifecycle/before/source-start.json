@@ -1,0 +1,20 @@
+{
+  "head": "e434a8384e9e87342b0a1012b6b87b33acbb3a46",
+  "sha256": {
+    "src/domain/intervention.clj": "e541dd5df5ff208818d216c9083b73693216409c73599b6ab63be0f641c83dc0",
+    "src/domain/ecs/tick.clj": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8",
+    "src/domain/integrator.clj": "be47c760ea53e0fad1645ab21693be867a82430deef47981b7b71158abfbda88",
+    "src/domain/integrator/kinematics.clj": "d2ff250f0b1c7df1b6e05730161152d1a2bf1dd970fd1a306b3d4f5662161d61",
+    "src/domain/physics/cache/soa.clj": "8961060a036b1273e8eed5cfa734a63b82b8f8b167e719d4f49e29d0c1dece94",
+    "src/domain/ecs/registry.clj": "26de0e95a056b7ef944ae717a15938df6ac66cf1c68fa2cc7dabd0e897aa1fb2",
+    "test/domain/warp_lifecycle_test.clj": "2904ab8158f595ab22bf0638df0100784c9acb94989b42a659d13efbf0153b0c",
+    "bench/gates_of_truth/bench.clj": "df2abd5cc5270f6843e2e7d3d078402e46ecbe774af5eb74529bab219743b3a1",
+    "bench/gates_of_truth/bench/phase0.clj": "9d7d731106cb3161658c87546cf20125e48acb1610d2a472a8cbd93d94bef543",
+    ".\u03b7\u03bc/diagnostics/warp-lifecycle/evidence/warp.clj": "c8858f7b08ca57ed85fa41a8d5b3a2b5e2f99ba7ccc7d697c2971786f511dda1"
+  },
+  "source_diff": "",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "uname": "Linux err-Stealth-16-AI-Studio-A1VGG 7.0.0-38-generic #38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2 x86_64 x86_64 x86_64 GNU/Linux",
+  "time": "2026-10-07T00:35:04.207675+00:00",
+  "native_scope": "Parent verified former4070721 and2372912 absent after host reboot; no new owned native service or game launched."
+}

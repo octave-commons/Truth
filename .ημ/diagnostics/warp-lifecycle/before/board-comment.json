@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "uuid": "fix-warp-disabled-stale-write",
+  "comment": "BEFORE hot-path baseline completed on unchanged RED e434a8384e9e87342b0a1012b6b87b33acbb3a46: existing quick-bench / registered Phase0 closure plus four actual emitter+fold snapshots. Means: phase0-500 19.1907ms; clean324.551ns; active252.746us; expired290.280ns; partial204.208us. Expired/partial retain stale cells BEFORE; cheap broken clearing is not a performance target. Frozen fixture2c275009a46b8bc813bd1541e7b3bdb73d51e1e7d2112b8aa0a1962f3b6fa096; exact source/load/intervals and preserved failed callback serialization attempt are in .ημ/diagnostics/warp-lifecycle/before/RESULT.md. Retry capture and benchmark exited0/reaped; original RED15hashes unchanged. Narrow known-handler encoding independently reviewed; no generic coercion or reader eval. No source changes, GREEN/native/FPS claim or state transition. Root owns checkpoint and GREEN authorization."
+}

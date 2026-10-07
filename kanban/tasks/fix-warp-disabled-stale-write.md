@@ -1,7 +1,7 @@
 ---
 category: "specs"
 labels: "domain,physics,bug,hygiene"
-write-id: "1791331596664-0.qxsntza5d7wy4zpr8t"
+write-id: "1791333735848-0.qqjk3rheeib7ldeo71"
 source: "kanban/tasks/fix-warp-disabled-stale-write.md"
 title: "Fix stale-force bug when a fan-out force is disabled at runtime (:warp)"
 priority: "P2"
@@ -40,5 +40,7 @@ Small, isolated. Audit other `{ctype {}}` disabled branches while here.
 ---
 
 2026-10-07 root admits the existing one-point task as a mechanical lifecycle bug repair under PROCESS mechanical/hygiene exemption, with independent scope review. This restores an already-written removal contract; it is not a no-behavior-change refactor or a new force policy. Grounding: docs/notes/specs/2026.06.26-ecs-double-buffer-single-writer-spec.md section3 owner removal contract; current domain.ecs.tick/apply-write-set and contribution-write-set; working domain.gravity.dark-matter emitter; warp emitter documented auto-clearing and existing card acceptance. Use the established prior-eid removal mechanism for c/accel-warp, including no-active-wells, expiry and partial recipient loss. Preserve force calculation, costs, TTL, input, uniform influence registry, single-writer ownership and ordinary one-tick Jacobi carry. RED must exercise emit then fold then expire/remove then fold and subsequent integrator motion, rather than inspect an empty emitter map on a fresh world. Out-of-range recipients must clear while still-affected recipients retain their legitimate contribution. Other stale-emitter findings are audit results only, not added implementation scope. Existing TODO estimate1 fits the scoped repair. Root must commit observed RED before GREEN; full suite and all six strict gates required. No native paid-action or Gate completion claim.
+
+BEFORE hot-path baseline completed on unchanged RED e434a8384e9e87342b0a1012b6b87b33acbb3a46: existing quick-bench / registered Phase0 closure plus four actual emitter+fold snapshots. Means: phase0-500 19.1907ms; clean324.551ns; active252.746us; expired290.280ns; partial204.208us. Expired/partial retain stale cells BEFORE; cheap broken clearing is not a performance target. Frozen fixture2c275009a46b8bc813bd1541e7b3bdb73d51e1e7d2112b8aa0a1962f3b6fa096; exact source/load/intervals and preserved failed callback serialization attempt are in .ημ/diagnostics/warp-lifecycle/before/RESULT.md. Retry capture and benchmark exited0/reaped; original RED15hashes unchanged. Narrow known-handler encoding independently reviewed; no generic coercion or reader eval. No source changes, GREEN/native/FPS claim or state transition. Root owns checkpoint and GREEN authorization.
 
 ---

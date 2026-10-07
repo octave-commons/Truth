@@ -1,0 +1,67 @@
+{:clojure.main/message
+ "Execution error at evidence.warp/write-new!$fn (warp.clj:31).\nNo reader function for tag object\n",
+ :clojure.main/triage
+ {:clojure.error/class java.lang.RuntimeException,
+  :clojure.error/line 31,
+  :clojure.error/cause "No reader function for tag object",
+  :clojure.error/symbol evidence.warp/write-new!$fn,
+  :clojure.error/source "warp.clj",
+  :clojure.error/phase :execution},
+ :clojure.main/trace
+ {:via
+  [{:type clojure.lang.ExceptionInfo,
+    :message "Evidence failed exact EDN round-trip",
+    :data
+    {:rejected
+     ".ημ/diagnostics/warp-lifecycle/fixtures.edn.rejected-7c88e46c-e2e5-4676-9101-8c688d68e165.edn"},
+    :at [evidence.warp$write_new_BANG_ invokeStatic "warp.clj" 37]}
+   {:type java.lang.RuntimeException,
+    :message "No reader function for tag object",
+    :at
+    [clojure.lang.EdnReader$TaggedReader
+     readTagged
+     "EdnReader.java"
+     801]}],
+  :trace
+  [[clojure.lang.EdnReader$TaggedReader
+    readTagged
+    "EdnReader.java"
+    801]
+   [clojure.lang.EdnReader$TaggedReader invoke "EdnReader.java" 783]
+   [clojure.lang.EdnReader$DispatchReader invoke "EdnReader.java" 549]
+   [clojure.lang.EdnReader readDelimitedList "EdnReader.java" 757]
+   [clojure.lang.EdnReader$NamespaceMapReader
+    invoke
+    "EdnReader.java"
+    504]
+   [clojure.lang.EdnReader$DispatchReader invoke "EdnReader.java" 554]
+   [clojure.lang.EdnReader readDelimitedList "EdnReader.java" 757]
+   [clojure.lang.EdnReader$MapReader invoke "EdnReader.java" 680]
+   [clojure.lang.EdnReader readDelimitedList "EdnReader.java" 757]
+   [clojure.lang.EdnReader$MapReader invoke "EdnReader.java" 680]
+   [clojure.lang.EdnReader read "EdnReader.java" 145]
+   [clojure.lang.EdnReader read "EdnReader.java" 111]
+   [clojure.lang.EdnReader readString "EdnReader.java" 67]
+   [clojure.edn$read_string invokeStatic "edn.clj" 46]
+   [clojure.edn$read_string invokeStatic "edn.clj" 37]
+   [clojure.edn$read_string invoke "edn.clj" 37]
+   [evidence.warp$write_new_BANG_$fn__13027 invoke "warp.clj" 31]
+   [evidence.warp$write_new_BANG_ invokeStatic "warp.clj" 31]
+   [evidence.warp$write_new_BANG_ invoke "warp.clj" 27]
+   [evidence.warp$capture_BANG_ invokeStatic "warp.clj" 59]
+   [evidence.warp$capture_BANG_ invoke "warp.clj" 51]
+   [evidence.warp$_main invokeStatic "warp.clj" 151]
+   [evidence.warp$_main invoke "warp.clj" 146]
+   [clojure.lang.AFn applyToHelper "AFn.java" 160]
+   [clojure.lang.AFn applyTo "AFn.java" 144]
+   [clojure.lang.Var applyTo "Var.java" 705]
+   [clojure.core$apply invokeStatic "core.clj" 667]
+   [clojure.main$main_opt invokeStatic "main.clj" 514]
+   [clojure.main$main_opt invoke "main.clj" 510]
+   [clojure.main$main invokeStatic "main.clj" 664]
+   [clojure.main$main doInvoke "main.clj" 616]
+   [clojure.lang.RestFn applyTo "RestFn.java" 137]
+   [clojure.lang.Var applyTo "Var.java" 705]
+   [clojure.main main "main.java" 40]],
+  :cause "No reader function for tag object"}}
+
