@@ -1,0 +1,134 @@
+{
+  "at": "2026-10-07T13:42:37.245803+00:00",
+  "base_head": "392c7c293eed1e82a4b9270112c9f10364e24a9d",
+  "scope": "Planning-only first-fold initialization clarification; no source, tests, operational board state or estimates changed.",
+  "finding": {
+    "review_id": 5443091979,
+    "reviewed_head": "392c7c293eed1e82a4b9270112c9f10364e24a9d",
+    "submitted_at": "2026-10-07T13:34:19Z",
+    "thread": "PRRT_kwDOTDahac6p7YjW",
+    "comment": 4207539513,
+    "url": "https://github.com/octave-commons/Truth/pull/13#discussion_r4207539513",
+    "full_review_selected_files": 16,
+    "request": 6038941242,
+    "completion": 6038943492,
+    "completed_at": "2026-10-07T13:34:26Z",
+    "next_conservative_included_request": "2026-10-07T14:34:26Z",
+    "classification": "Valid P2 ambiguity between direct Manual decrease and all-transitions no-provenance baseline retention."
+  },
+  "decision": "Root-selected immediate valid first-fold decrease/equal against initialized/current legacy proposal as unverified comparison only. Unsupported upward retains baseline. Only completed folds publish actual consumed provenance; failed fold retains request/sticky state and publishes no applied outcome.",
+  "constructed_future_acceptance": [
+    {
+      "initialized_seconds": 300,
+      "manual_cap_seconds": 60,
+      "first_effective_seconds": 60,
+      "baseline_is_consumed_provenance": false,
+      "completed_fold_records_seconds": 60
+    },
+    {
+      "same_first_fold_fails": true,
+      "publishes_consumed_provenance": false,
+      "publishes_applied_outcome": false,
+      "retains_valid_request_and_sticky": true
+    }
+  ],
+  "historical_limits": "No executable test was added or run. These are future implementation acceptance criteria in a still-proposed design; previous source/audit bytes preserved. No safety/capture claim.",
+  "source_evidence": [
+    {
+      "path": "src/domain/genesis/bootstrap.clj",
+      "lines": "195-215",
+      "fact": "base-world installs supplied dt or initial pacing; no existing finite-positive dt validation inferred."
+    },
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "lines": "78-100,183-216",
+      "fact": "Actual input dt feeds physics and sim-time before pacing publishes next dt."
+    }
+  ],
+  "source_verification": {
+    "reference": ".ημ/diagnostics/flight-clock-design/design-audit.json",
+    "reference_sha256": "d97f7c60408112a62d1021eccc22c75aa86d7d9b9a7b1e332b6623da89713d1e",
+    "checked_count": 289,
+    "all_unchanged": true
+  },
+  "card_frontmatter_unchanged": true,
+  "local_link_checks": [
+    {
+      "from": "docs/designs/pre-capture-clock.md",
+      "target": "ux-architecture.md#view",
+      "exists": true
+    },
+    {
+      "from": "docs/designs/pre-capture-clock.md",
+      "target": "../research/physics/2026-10-07-pre-capture-clock-envelope.md",
+      "exists": true
+    },
+    {
+      "from": "docs/designs/pre-capture-clock.md",
+      "target": "../research/physics/2026-10-07-clock-up-transition-admission.md",
+      "exists": true
+    },
+    {
+      "from": "kanban/tasks/flight-clock-effective-fold.md",
+      "target": "../../docs/designs/pre-capture-clock.md",
+      "exists": true
+    },
+    {
+      "from": "kanban/tasks/flight-clock-effective-fold.md",
+      "target": "../../docs/research/physics/2026-10-07-pre-capture-clock-envelope.md",
+      "exists": true
+    },
+    {
+      "from": "kanban/tasks/flight-clock-effective-fold.md",
+      "target": "../../docs/research/physics/2026-10-07-clock-up-transition-admission.md",
+      "exists": true
+    }
+  ],
+  "prefixes_before_append": {
+    ".ημ/receipts.edn": {
+      "bytes": 38813,
+      "sha256": "22f85a146e5cf735a8d4e2c09b11972db0e176ee6139301ad2441277cfced887"
+    },
+    ".ημ/session-mycology/ledger.md": {
+      "bytes": 24379,
+      "sha256": "ea07eecf7b199250eb0c8033fec6726db2fdc2240ac9d883c0722a33e40e9307"
+    }
+  },
+  "prefixes_preserved": true,
+  "preexisting_unrelated_file": {
+    "path": ".ημ/diagnostics/pr7-recovery/2026-10-07-read-only-audit.md",
+    "sha256": "c18070b88b02e2a0bbf04c33844bfe801f13971466d91ac1d372641088d20c53",
+    "changed": false
+  },
+  "independent_review": {
+    "agent": "board_scout",
+    "scope": "local source/design only",
+    "verdict": "PASS",
+    "design_sha256": "df2d110d5ffe043c19beadfe85d4e6cd0f712926abf54f394abbadda6ab3dee7",
+    "card_sha256": "aa3eb281782eefea0104d01fd4d07a39177ac3d8544538e53edf5bd62a3bdb22",
+    "finding_resolved": "Changed unsupported existing invalid-world validator claim into explicit proposed named validation obligation."
+  },
+  "owned_paths": [
+    "docs/designs/pre-capture-clock.md",
+    "kanban/tasks/flight-clock-effective-fold.md",
+    ".ημ/diagnostics/flight-clock-design/review-fix-5443091979.json",
+    ".ημ/receipts.edn",
+    ".ημ/session-mycology/ledger.md"
+  ],
+  "current_hashes_excluding_self": {
+    "docs/designs/pre-capture-clock.md": "df2d110d5ffe043c19beadfe85d4e6cd0f712926abf54f394abbadda6ab3dee7",
+    "kanban/tasks/flight-clock-effective-fold.md": "aa3eb281782eefea0104d01fd4d07a39177ac3d8544538e53edf5bd62a3bdb22",
+    ".ημ/receipts.edn": "94249115ebaf6210ffafc3c4b1ec53c564af72522fa1ad75eb16bf5856039d7b",
+    ".ημ/session-mycology/ledger.md": "e4912ba045a04b61da68eb9f633e6ee6bf894a90bd660884218a079c84d16037"
+  },
+  "git_diff_check": "exit0 after all owned evidence append",
+  "no_jvm_runtime_or_tests": true,
+  "canonical_readback": {
+    "uuid": "flight-clock-effective-fold",
+    "status": "incoming",
+    "points": "5",
+    "parent": "flight-local-reference-assist-spec",
+    "dependency": "flight-clock-upward-admission-law",
+    "source": "Canonical Rheos read-task after correction; unchanged frontmatter confirmed byte-for-byte."
+  }
+}

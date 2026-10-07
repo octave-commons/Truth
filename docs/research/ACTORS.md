@@ -25,6 +25,7 @@ only write to `docs/research/` and never modify source code.
 
 ### Recent outputs
 
+- 2026-10-07 UTC — interactive Codex runtime scout (not a scheduled actor): [Local-reference flight-assist feasibility](physics/local-reference-flight-assist-feasibility.md) — derived delayed/finitely bounded motion and displacement-versus-final-velocity limits for the existing Incoming specification. Primary sources verified; no executable experiment, accepted controller or native capture claim.
 - 2026-10-06 — interactive Codex research/implementation scout (not a scheduled actor): [Spark rotation integration](physics/spark-rotation-integration.md) — primary-source convention and integration grounding for `spark-orientation-angular-momentum`; replaces the missing scratchpad citation for that slice. Runtime verification remains a separate implementation step.
 - 2026-07-22 — `truth-research-geology` (cratering): `docs/research/2026-07-22-crater-scaling-laws-for-voxel-carving.md` — selected + parameterized scaling-law set for Voxel 5 (`collision-shock-voxel-carving`), resolves design gap §7.6.
 
@@ -63,3 +64,27 @@ All research notebooks are written to `docs/research/<domain>/` and indexed in
 - A promotion path to `domain/` code
 
 See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
+
+### Interactive follow-up, 2026-10-07 UTC
+
+- Interactive Codex runtime scout appended [recovered pre-capture intent](physics/local-reference-flight-assist-feasibility.md#10-recovered-pre-capture-intent): living UX timing requirements, approved physical-body constraints with unverified capture acceptance, proposed local narrowing and superseded pacing/spring history remain distinct. Existing Incoming specification only; no controller, clock or implementation admission.
+
+
+### Interactive clock-envelope refinement, 2026-10-07 UTC
+
+- Interactive Codex intent/research scout (not a scheduled actor):
+  [Pre-capture clock envelope from closed ordinary-flight evidence](physics/2026-10-07-pre-capture-clock-envelope.md).
+  Draft source/math analysis pins closed attempts 02/03, separates compact
+  displacement from velocity proxies, and proposes a maximum-step range and
+  precedence. Pending-force transition admission remains explicitly unfinished;
+  Incoming 3 is unchanged. Offline arithmetic/source/reference checks only;
+  no new native observation, production test, clock or controller implementation.
+
+### 2026-10-07 — Finite pre-capture clock planning
+
+- Owner: `flight-local-reference-assist-spec`; actor: `intent_research`.
+- Grounding: [archived upward-step proposal](physics/2026-10-07-clock-up-transition-admission.md)
+  and [closed clock-envelope analysis](physics/2026-10-07-pre-capture-clock-envelope.md).
+- Output: [proposed clock design](../designs/pre-capture-clock.md), with three
+  Incoming 3/5/3 clock consumers; reference assist remains a separate unfinished
+  boundary. No source/test/native work, status transition or new calibration.

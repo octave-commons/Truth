@@ -350,3 +350,58 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
   note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-06T20:57:26.787471110Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Bound explicit local-reference flight-assist planning under the existing owner
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.22
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec
+  note: Distinguish absolute braking, body-frame thrust, translating navigation reference and camera tracking before claiming approach readiness. A pinned cross-PR proposal is evidence of intended scope, not a local file or admitted dependency. Reuse the existing FA owner with one Incoming specification child and retain candidate-law uncertainty. No spore created or promoted.
+- ts: 2026-10-07T00:44:57.780344Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Derive bounded local-reference feasibility without admitting a controller
+  p-efficiency: 0.87
+  p-friction: 0.21
+  p-skill-candidate: 0.43
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec, 2026-10-07T00:44:57.780344Z
+  note: Distinguish emission dt from consumption dt, final velocity from integrated displacement, and qualifying attention reads from elapsed folds. A constant-step stability result or successful velocity match cannot establish moving-target residence. Keep saturation and pre-capture clock assumptions explicit; resolve source retrieval failures honestly. No spore created or promoted.
+- ts: 2026-10-07T01:00:36.658061Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Recover pre-capture timing intent without promoting historical implementations
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.40
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec, 2026-10-07T01:00:36.658061Z
+  note: Missing executable policy does not imply missing user intent. Recover product requirements and explicit supersession separately, read status through Rheos, and distinguish a Done label from unverified live acceptance. Verify preserved canonical comment content without assuming section boundaries. No spore created or promoted.
+- ts: 2026-10-07T12:34:11.212442900Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Refine existing flight specification with closed endpoint and delayed-clock evidence
+  p-efficiency: 0.89
+  p-friction: 0.20
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec,0fce01b,ae5444b,93dc5b
+  note: Sparse endpoint chords cannot stand in for maximum composed displacement. Record the effective consumed step separately from next published dt, and include pending command state when reviewing clock transitions. Existing three-point planning scope remains unfinished; no spore, implementation or native result.
+
+- ts: 2026-10-07T13:11:34.023663+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Bound pre-capture clock implementation by exact consumed-step semantics
+  p-efficiency: 0.90
+  p-friction: 0.15
+  p-skill-candidate: 0.31
+  spore: none
+  receipt-refs: flight-local-reference-assist-spec, PR13, clock-upward-proposal-00a35964
+  note: A finite upward-step guard must consume the actual pending channels and cannot be switched off by a later Auto increase. Separate source characterization, clock-state integration and ordinary UI so a specification does not imply native capture or implementation admission. No spore created or promoted.
+- ts: 2026-10-07T13:42:37.241523537Z
+  session: /home/err/spaces/foresight/.worktrees/truth-flight-reference-plan
+  task: Clarify first-fold clock comparison without inventing consumed history
+  p-efficiency: 0.92
+  p-friction: 0.12
+  p-skill-candidate: 0.25
+  spore: none
+  receipt-refs: PR13,review5443091979,comment4207539513
+  note: A configured comparison baseline and a completed consumption record are different facts. Make first-player slowdown immediate when chosen while keeping upward admission and failed-fold publication explicit. Validate proposed contracts without claiming an existing validator. No spore created or promoted.

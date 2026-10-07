@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-07T16:05:24.818795+00:00",
+  "reviewed_head": "ff259ae4cd8467c30ee3573cd3fd46535bd13bb2",
+  "review": 5444825439,
+  "thread": "PRRT_kwDOTDahac6p-5pb",
+  "root_comment": 4208978610,
+  "item": "cr-comment:v1:2e6d131098cac14952ffb8d2",
+  "finding": "Envelope acceptance bullet incorrectly rejected every fractional step despite preserved legacy paths in the design.",
+  "fix": "Scope 0<h<1 rejection to upward requests after manual use; explicitly preserve never-manual Auto and equal/downward fractional steps as uncertified legacy paths. Manual-cap endpoints remain 1s and 1day.",
+  "path": "docs/research/physics/2026-10-07-pre-capture-clock-envelope.md",
+  "before_sha256": "33dca5ae40d5f18e6505bfe834d34f4d43c60a989f714039beb6750f354e9d2d",
+  "after_sha256": "4a121c4427a8650d7b32d98b4bb0ae9cd6a2c337f4c3805632300b4c8451ff77",
+  "source_pins_verified": 289,
+  "source_mismatches": [],
+  "validation": "One prose bullet changed; git diff --check passed; checked active clock design, admission notebook and three consumer cards. No source tests/JVM/native execution.",
+  "historical_evidence": "Original refinement-audit and all earlier review audits retained unchanged; historical Git object is the original version.",
+  "review_request": 6041422718,
+  "review_completion_ack": 6041425386,
+  "completion_at": "2026-10-07T15:51:52Z",
+  "next_coderabbit_not_before": "2026-10-07T16:51:52Z",
+  "claim_limits": "Planning fix only; no implementation admission, native success, merge or approval credit.",
+  "local_independent_review": {
+    "agent": "/root/runtime_scout",
+    "verdict": "PASS; no blocker",
+    "file_sha256": "4a121c4427a8650d7b32d98b4bb0ae9cd6a2c337f4c3805632300b4c8451ff77",
+    "basis": "Read-only one-line delta against clock design section3 and effective-fold fractional acceptance; preserves never-manual/equal/downward paths and q=max(1,h). No hosted approval credit."
+  }
+}

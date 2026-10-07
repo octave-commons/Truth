@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-07T14:55:44.724085+00:00",
+  "review": 5444052854,
+  "thread": "PRRT_kwDOTDahac6p9VTH",
+  "root_comment": 4208331780,
+  "item": "cr-comment:v1:cb3c8d6cfb440a691c63271e",
+  "reviewed_head": "a1cfb18fb2b128429c3c833e9164ff501293c241",
+  "finding": "Guarded Auto sentence described only finite positive h, omitting the already specified upward h>=1 support boundary.",
+  "fix": "Clarify guarded upward h>=1, unsupported0<h<1, noAuto86400cap, preserve nevermanual and equal/downward fractional legacy behavior. Link unchanged exact archived note and distinguish current copy from historical byte equality.",
+  "historical_archive": {
+    "commit": "a1cfb18fb2b128429c3c833e9164ff501293c241",
+    "path": "docs/research/physics/2026-10-07-clock-up-transition-admission.md",
+    "sha256": "00a35964a4637ebf7d36fddb7b85a2018504b740415293eb4d1473b3153c1c69",
+    "root_source_byte_equal": true,
+    "old_design_audit_unchanged": true
+  },
+  "source_pins_verified": 289,
+  "source_mismatches": [],
+  "current_files": {
+    "docs/research/physics/2026-10-07-clock-up-transition-admission.md": "7ef11e3cbd0540745a69dd5e2d7e4d80adc174d663be30e799a3ca0f753f3a3e",
+    "docs/designs/pre-capture-clock.md": "48ad83d8fee153d1f95b353cb105a5ab0f1041fae5158fd4beacb827994177c1"
+  },
+  "tests": "git diff --check passed; documentation-only; no runtime/JVM/native/tests executed",
+  "claim_limits": "No clock implementation, planning convergence or gameplay acceptance; approvals on prior head are not current approval after commit."
+}
