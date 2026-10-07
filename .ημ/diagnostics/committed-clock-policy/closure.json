@@ -1,0 +1,237 @@
+{
+  "at": "2026-10-07T04:24:53.078802+00:00",
+  "base": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "uuid": "committed-clock-executable-policy",
+  "scope": "Research/design only; no production implementation or admitted Ready scope",
+  "canonical_cli_sha256": "83c6b397278d418d69ce6509b8c3d9fe87e88cca9141b28143d9efb5d78a75a7",
+  "canonical_frontmatter": {
+    "category": "tasks",
+    "labels": "design, pacing, narrowing, playable-gate",
+    "parent": "narrowing-commitment-horizon",
+    "type": "task",
+    "write-id": "1791347092282-0.hv8j1qprcbbx87jo6cp",
+    "points": "3",
+    "title": "Specify the executable committed-world clock and later history contract",
+    "priority": "P1",
+    "status": "incoming",
+    "uuid": "committed-clock-executable-policy",
+    "created_at": "2026-10-06T20:19:08.597Z"
+  },
+  "body_unchanged": true,
+  "prior_comment_prefix_preserved": true,
+  "note": {
+    "path": "docs/notes/2026-10-07-committed-clock-accounting.md",
+    "sha256": "b715ff4878bc053621e44773640e21441fab84ae7b6d86127d9b343de9ccf4f4",
+    "prior_note_prefix_preserved": false,
+    "prior_bytes": 0
+  },
+  "append_only": [
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "before_bytes": 595354,
+      "before_sha256": "559edaf1f3031a20539e9fc198ad1a9925470fcf48596824d7effae437021401",
+      "after_bytes": 597295,
+      "after_sha256": "b26987dbf7ad01468146c32c5ddc52cd11a75e82c63275bab83dcaf960f77a2f",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "before_bytes": 29727,
+      "before_sha256": "fd2537bf125a96321cb06b83003c92acbb72202d589da5b4ce7b36229395ab1f",
+      "after_bytes": 30989,
+      "after_sha256": "9d5c1198300fb655463e33463836f6121e9c82f453d7af2ec947516ec9f1192f",
+      "original_prefix_preserved": true,
+      "appended_lines": 1
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "before_bytes": 22267,
+      "before_sha256": "dabd70d9cfcffba3c92476c552c0dd579c32ac4e0f167ddec56e5c22ca3ff08a",
+      "after_bytes": 22949,
+      "after_sha256": "25040abcb45924858af250c4f5ccbf255de8236de67ced2b70a1114e7dc9d338",
+      "original_prefix_preserved": true,
+      "appended_lines": 10
+    }
+  ],
+  "independent_review": [
+    {
+      "reviewer": "runtime_scout",
+      "note_sha256": "72d305b2bd35119199665076f454214b3dc97f2ef0af76dbd9c087165f3bd47b",
+      "result": "Two interface clarifications required: raw interval naming and committed-step feedback; isolated original probe reproduced exactly"
+    },
+    {
+      "reviewer": "runtime_scout",
+      "note_sha256": "b715ff4878bc053621e44773640e21441fab84ae7b6d86127d9b343de9ccf4f4",
+      "result": "Final delta passes; all three source/command hashes verified; not hosted approval"
+    }
+  ],
+  "local_path_and_line_checks": {
+    "count": 17,
+    "targets": [
+      "2026-10-06-playable-gate-route-audit.md#reopen-the-data-only-time-lock-then-define-its-consumer-precisely",
+      "../designs/commitment-and-resonance.md#5-post-commitment-lod-and-tick-rate",
+      "../designs/gates-of-truth-world-gen-phases.md",
+      "../designs/multi-timescale-integration.md",
+      "../research/physics/multi-timescale-integration-jacobi-ecs.md",
+      "../../src/domain/narrowing.clj#L290",
+      "../../src/infra/dev/window/loop.clj#L120",
+      "../../src/domain/genesis/tick.clj#L178",
+      "../../src/domain/arc.clj#L282",
+      "../../src/domain/lod.clj#L47",
+      "../../src/domain/integrator/base.clj#L75",
+      "../../src/domain/player/flight.clj#L79",
+      "../../src/domain/stellar/classifier/state.clj#L247",
+      "../../src/domain/planet_formation/seed.clj#L46",
+      "../../.ημ/diagnostics/committed-clock-policy/arithmetic.clj",
+      "../../.ημ/diagnostics/committed-clock-policy/arithmetic.stdout.edn",
+      "../../.ημ/diagnostics/committed-clock-policy/execution.json"
+    ],
+    "limits": "File existence and numerical line bounds checked; named fragments manually inspected, not a board validation."
+  },
+  "source_files_unchanged": [
+    {
+      "path": "src/domain/narrowing.clj",
+      "sha256": "19ff9b4f0b9d73b327f6602756ef6b8c10d79fa53838572ef2c964bc5c064d22"
+    },
+    {
+      "path": "src/law/narrowing.clj",
+      "sha256": "99637d7d05c58bb4c186f1bf153db7aa4bb59f9645dc0acf46c5d72dbc6a3bb2"
+    },
+    {
+      "path": "src/domain/genesis/tick.clj",
+      "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee"
+    },
+    {
+      "path": "src/domain/arc.clj",
+      "sha256": "34af0838056b4206e81281f75a1aee81e404782abd5b998dc73c950cac7c1759"
+    },
+    {
+      "path": "src/domain/pacing.clj",
+      "sha256": "bdda144e92b23d6b82c114e3dfd908b946cebfbe713a05699d839f5b7e020279"
+    },
+    {
+      "path": "src/domain/lod.clj",
+      "sha256": "73a7e501ba1a3e66aba640c4532d0cc972d59a13c1bed2ad76cf6c0bbb59b857"
+    },
+    {
+      "path": "src/domain/integrator/base.clj",
+      "sha256": "6b490386437788b5e6b7eae238900c25d93220082d7f9f11af3d7f01091691e6"
+    },
+    {
+      "path": "src/domain/player/flight.clj",
+      "sha256": "005b6f5bcb33093e93a76b26e4663af71358cd7535dc7022ff5c74bbe872a5b2"
+    },
+    {
+      "path": "src/infra/dev/window/loop.clj",
+      "sha256": "79683f0ee0ddc0319765b51a7186e57a04316caf4e9d56953fa6ba63533a1bf9"
+    },
+    {
+      "path": "src/domain/stellar/classifier/state.clj",
+      "sha256": "b79f901fcac5363fec522705062fdbf75713512551144d2828af812e3d3ffe2e"
+    },
+    {
+      "path": "src/domain/planet_formation/seed.clj",
+      "sha256": "47cbc999b09125fd576c56899ca68964e3d737e0aa552d1a7757340b6779e548"
+    }
+  ],
+  "closed_artifacts_excluding_inventory": [
+    {
+      "path": "docs/notes/2026-10-07-committed-clock-accounting.md",
+      "bytes": 14311,
+      "sha256": "b715ff4878bc053621e44773640e21441fab84ae7b6d86127d9b343de9ccf4f4"
+    },
+    {
+      "path": "kanban/tasks/specify-the-executable-committed-world-clock-and-later-history-contract-e-policy.md",
+      "bytes": 5734,
+      "sha256": "4a3135a93ff5bc8405ebc86eac4c0fc24864f62a5beaa392ee342030e4e4d0d1"
+    },
+    {
+      "path": "kanban/tasks/.events/ledger.edn",
+      "bytes": 597295,
+      "sha256": "b26987dbf7ad01468146c32c5ddc52cd11a75e82c63275bab83dcaf960f77a2f"
+    },
+    {
+      "path": ".ημ/receipts.edn",
+      "bytes": 30989,
+      "sha256": "9d5c1198300fb655463e33463836f6121e9c82f453d7af2ec947516ec9f1192f"
+    },
+    {
+      "path": ".ημ/session-mycology/ledger.md",
+      "bytes": 22949,
+      "sha256": "25040abcb45924858af250c4f5ccbf255de8236de67ced2b70a1114e7dc9d338"
+    },
+    {
+      "path": "docs/research/ACTORS.md",
+      "bytes": 4377,
+      "sha256": "4d6fecf8708dead894f2aab428a051f93437a9a82e2d3d877d49e0f4ac085a4f"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/README.md",
+      "bytes": 1515,
+      "sha256": "6ad5d9bcb7193ec59bbacad3dfa68e7d5a18f22a7e9a1743567af652eddbf126"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/arithmetic.clj",
+      "bytes": 2500,
+      "sha256": "507df102b453f7db5ebf5f8506e4f07f289e2ae215f286fd18d2ec0a5669d8f6"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/arithmetic.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/arithmetic.stdout.edn",
+      "bytes": 2610,
+      "sha256": "606ed16aea379948b33b1131a4e53a47a6152a091fae1d02508787f2adf36cd5"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/execution.json",
+      "bytes": 634,
+      "sha256": "9a0d319e4bb2f7745225303a0b9b948fb8ce5b4322d6f957581ecee1b03e4099"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/initial-arithmetic.clj",
+      "bytes": 2484,
+      "sha256": "96e5b0290d646a095bc56d400491058832cf168229ec2cd823c4ba4a1529f952"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/initial-arithmetic.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/initial-arithmetic.stdout.edn",
+      "bytes": 2598,
+      "sha256": "6130e39664b0e0dfd2b8c9ef4bede1a5832f1b4a3a5f458c9de9c4be70dbed46"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/initial-execution.json",
+      "bytes": 536,
+      "sha256": "422a473e55d3f6202d5a31c8e7f381c2721b753681c426ed26cda5460758717a"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/renamed-arithmetic.clj",
+      "bytes": 2502,
+      "sha256": "210c9940c56e25c86ab78d4c45726395208a7cd13a09783f4f35b93ae1bb7901"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/renamed-arithmetic.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/renamed-arithmetic.stdout.edn",
+      "bytes": 2612,
+      "sha256": "0b3e354ae7d3be6b4b37021176d1c668a2b23be12bd7349256347f2c519c1f52"
+    },
+    {
+      "path": ".ημ/diagnostics/committed-clock-policy/renamed-execution.json",
+      "bytes": 614,
+      "sha256": "5547f3030f2a3b7db6c947c3869c2161d1a6cd8f83dbb3dae8ffd998ba735f37"
+    }
+  ],
+  "verification": "Isolated bb arithmetic exits0 with empty stderr; original output independently reproduced byte-identically before naming fixes; final delta reviewed without blocker. All three execution source hashes match preserved scripts. Canonical body/non-write-id frontmatter and prior comments unchanged, three ledger prefixes preserved, local link targets/line bounds and git diff --check pass. No project namespace/native/test suite run.",
+  "limits": "Research/design only. Examples load no production namespaces; illustrative epoch/coordinates/quantum, no native measurement/RED/throughput claim. Numeric/host/stability/flight decisions remain before acceptance. Creation of separate law implementation cards is not implied."
+}

@@ -1,0 +1,13 @@
+{
+  "started_at": "2026-10-07T04:16:08.590929+00:00",
+  "finished_at": "2026-10-07T04:16:08.616205+00:00",
+  "command": [
+    "bb",
+    ".\u03b7\u03bc/diagnostics/committed-clock-policy/arithmetic.clj"
+  ],
+  "exit_code": 0,
+  "head": "98b847ce75491bdccacf2ec3a7476d451270bf49",
+  "probe_sha256": "210c9940c56e25c86ab78d4c45726395208a7cd13a09783f4f35b93ae1bb7901",
+  "reaped": true,
+  "scope": "All-success isolated arithmetic; input name corrected from active-wall-ns to raw wall-interval-ns after independent review. No project namespace, native call or production test. Initial outputs preserved separately."
+}

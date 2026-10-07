@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, pacing, narrowing, playable-gate"
 parent: "narrowing-commitment-horizon"
 type: "task"
-write-id: "1791318931233-0.lwwlem3454o4pvh5a9t"
+write-id: "1791347092282-0.hv8j1qprcbbx87jo6cp"
 points: "3"
 title: "Specify the executable committed-world clock and later history contract"
 priority: "P1"
@@ -42,5 +42,9 @@ Review against current production source and existing tests; provide executable 
 The existing 1e7-second pacing floor, assumed 60 Hz, dt>=1 flight clamp and LOD skipped-time behavior cannot be repaired by a flag reader alone. A local lock can accidentally make later civilization progression impossible unless the temporal relationship is explicit.
 
 ---
+
 Planning refinement from independent review, included while this card is Incoming: bound this three-point deliverable to the first safe consumer policy. If later asynchronous neighborhood causality needs a new solver or exceeds this size, state that boundary explicitly and propose separate research; do not absorb it into this card or claim the complete local lock is solved. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+
+2026-10-07 source and arithmetic continuation: docs/notes/2026-10-07-committed-clock-accounting.md (noteb715ff4878bc053621e44773640e21441fab84ae7b6d86127d9b343de9ccf4f4). At illustrative absolute age4e14s, sixty double additions of1/60s preserve no delta; arc/tick-genesis currently subtracts absolute timestamps for observer elapsed time. The tick tail already accounts for the input dt before installing the next pacing value. Proposed first boundary retains historical epoch separately from exact local elapsed/credit, admits raw monotonic intervals under the governing pause/rate state, permits k steps but consumes only j successfully tick/on-step/published steps, with revision-bound completion. Isolated bb trace conserves140ms active credit through load and9s pause; all-success arithmetic only, no project/native run. Initial ambiguous input naming and intermediate total-label correction are preserved with exact sources/outputs, then independently reviewed final. First consumer proposes shared physical time/full updates, not independent regional fast-forward; contradictory10s/s wording is explicitly proposed for later amendment. First-capture precedence, adaptive-off, slip suppression, pause/backlog and observer precision are stated. Numeric representation/rate changes, host long-stall policy, integration quantum, absolute-reader migration and subsecond flight remain unresolved; Incoming3 body/status unchanged and specification not complete. No productionclock, tests, native lock, save path or implementation admission.
+
 ---

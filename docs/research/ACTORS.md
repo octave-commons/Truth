@@ -25,6 +25,7 @@ only write to `docs/research/` and never modify source code.
 
 ### Recent outputs
 
+- 2026-10-07 — interactive Codex clock audit (not a scheduled actor): [Committed clock accounting](../notes/2026-10-07-committed-clock-accounting.md) — isolated double-precision and exact-credit arithmetic, source ownership and proposed first shared-clock boundary. No production timing or native acceptance.
 - 2026-10-06 — interactive Codex research/implementation scout (not a scheduled actor): [Spark rotation integration](physics/spark-rotation-integration.md) — primary-source convention and integration grounding for `spark-orientation-angular-momentum`; replaces the missing scratchpad citation for that slice. Runtime verification remains a separate implementation step.
 - 2026-07-22 — `truth-research-geology` (cratering): `docs/research/2026-07-22-crater-scaling-laws-for-voxel-carving.md` — selected + parameterized scaling-law set for Voxel 5 (`collision-shock-voxel-carving`), resolves design gap §7.6.
 

@@ -368,3 +368,13 @@
   spore: none
   receipt-refs: 2026-10-07T03:26:35.656948Z, review5437247456
   note: A resolving Markdown file link does not prove a line fragment still names the cited policy; inspect actual heading text after insertions. Bounded citation repair only, with original verification limits retained.
+
+- ts: 2026-10-07T04:24:53.078802+00:00
+  session: /home/err/spaces/foresight/.worktrees/truth-clock-policy
+  task: Ground committed-clock cutover in exact elapsed accounting and explicit successful publication
+  p-efficiency: 0.90
+  p-friction: 0.18
+  p-skill-candidate: 0.2
+  spore: none
+  receipt-refs: committed-clock-executable-policy,98b847ce,narrowing-commitment-horizon
+  note: An elapsed-time proposal must inspect floating precision and failure publication as well as dt units. A successful physics function is not a successful published tick; raw wall duration is not automatically active time. Keep all-success arithmetic and native clock acceptance distinct. No spore.
