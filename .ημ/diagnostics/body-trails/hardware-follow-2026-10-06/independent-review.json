@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-07T00:14:52.740503+00:00",
+  "reviewer": "/root/runtime_scout",
+  "mode": "source-only; no live calls, tests, or edits",
+  "findings": "No blockers",
+  "verified_sha256": {
+    "install.clj": "03ed9569028652e5703a5cbc24be727c95833b0a552a8d142655340253519236",
+    "restore.clj": "2d000da6dd7a1974ea1ea5a928cb3dfb20f07a0dabaae173ca691a8b270d17f5",
+    "PLAN.md": "e6e9e3fce710ca8de0ed70750261debbdc0e1a1753ecf92565392a6838dc17ad"
+  },
+  "reviewed_contracts": [
+    "fresh projection input consumed once per scene",
+    "original bodies and scene callbacks invoked once with unchanged result",
+    "owning render thread and current native context verified before intervention/capture",
+    "exact tagged production trail attribution",
+    "six attempts and 90-second deadline with documented nonpreemptive watchdog",
+    "exact owned config presence/value, camera boundary, and callable restoration",
+    "no-op cleanup before first intervention",
+    "attention and later world/camera evolution disclosed"
+  ]
+}

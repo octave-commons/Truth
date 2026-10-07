@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-10-07T00:32:20.391577+00:00",
+  "boot_time_epoch_seconds": 1791332499,
+  "boot_time_utc": "2026-10-07T00:21:39+00:00",
+  "boot_id": "b04f7fb6-ea65-4b47-8866-73e24a6887f6",
+  "uptime_seconds": 640.45,
+  "processes": {
+    "4070721": {
+      "proc_exists": false
+    },
+    "2372912": {
+      "proc_exists": false
+    }
+  },
+  "prior_fresh_game": {
+    "pid": 4070721,
+    "expected_start_ticks": 3869117,
+    "world_atom_identity": 275227937,
+    "display": ":0",
+    "port": 7896,
+    "launch_revision": "be832d7",
+    "production_byte_equivalent_to": "c79be1e957695505b48ea7f1905821927e7fb270"
+  },
+  "source_files": [
+    {
+      "source_path": ".\u03b7\u03bc/diagnostics/hardware-context/fresh-game/runtime.stdout",
+      "source_bytes": 13799424,
+      "source_sha256": "1d7516e990cdedf30fb74e230adcf414209af7e0b98dced7ebdd4d5edfc73080",
+      "source_mtime_ns": 1791332141284265367,
+      "source_mtime_utc": "2026-10-07T00:15:41.284265+00:00",
+      "closed_path": "runtime.stdout.gz",
+      "gzip_bytes": 566725,
+      "gzip_sha256": "4c78faa5e980a7e8d6fa076ef8e7abb18a15a918a0b6668b9db4c29aae33328f",
+      "decoded_bytes": 13799424,
+      "decoded_sha256": "1d7516e990cdedf30fb74e230adcf414209af7e0b98dced7ebdd4d5edfc73080",
+      "gzip_mtime": 0,
+      "source_stat_stable_during_read": true
+    },
+    {
+      "source_path": ".\u03b7\u03bc/diagnostics/hardware-context/fresh-game/runtime.stderr",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_mtime_ns": 1791328740152157554,
+      "source_mtime_utc": "2026-10-06T23:19:00.152158+00:00",
+      "closed_path": "runtime.stderr.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_mtime": 0,
+      "source_stat_stable_during_read": true
+    }
+  ]
+}

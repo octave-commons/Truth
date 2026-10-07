@@ -1,0 +1,16 @@
+{
+  "observed_utc": "2026-10-06T23:53:09.137224+00:00",
+  "kondo_exit": 0,
+  "kondo_stdout": "linting took 166ms, errors: 0, warnings: 0\n",
+  "kondo_stderr": "",
+  "reader_forms": {
+    "install.clj": 3,
+    "restore.clj": 1
+  },
+  "initial_shadowed_time_warning": "renamed local to sim-time before installation",
+  "source_head": "4805fae52bd6764e4cf01555bc1d7417dd373349",
+  "scripts_sha256": {
+    "install.clj": "dd61b6e012b085fe5e53469d327f93313d057eaa47f441022a4fb93891b8b95d",
+    "restore.clj": "d9f4ef56aec33cfba553878cfdb335c5e958cb5b38e121e4233994fca70d82be"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "format": "deterministic gzip; exact decoded bytes; original tails remain untracked",
+  "files": [
+    {
+      "raw_untracked_path": "runtime.stdout.last-65536-bytes",
+      "committed_path": "runtime.stdout.last-65536-bytes.gz",
+      "decoded_bytes": 65536,
+      "decoded_sha256": "e4249a940db774a185591a46d680fe6b44818e1b79a7d556f196b4659690c3fd",
+      "gzip_sha256": "f28d4002f6d8faca364450f9909d57575037cb68c77a93788dc95b78b9dd68f3",
+      "mtime": 0
+    },
+    {
+      "raw_untracked_path": "runtime.stderr.last-65536-bytes",
+      "committed_path": "runtime.stderr.last-65536-bytes.gz",
+      "decoded_bytes": 0,
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "mtime": 0
+    }
+  ]
+}

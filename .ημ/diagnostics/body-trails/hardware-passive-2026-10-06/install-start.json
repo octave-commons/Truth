@@ -1,0 +1,11 @@
+{
+  "started_utc": "2026-10-06T23:56:16.326344+00:00",
+  "form": "(load-file \"/home/err/spaces/foresight/.worktrees/truth-focus-cadence/.\u03b7\u03bc/diagnostics/body-trails/hardware-passive-2026-10-06/install.clj\")",
+  "pid": 4070721,
+  "proc_start_ticks": 3869117,
+  "process_state": "S",
+  "port": 7896,
+  "source_head": "4805fae52bd6764e4cf01555bc1d7417dd373349",
+  "source_matches_c79": true,
+  "script_sha256": "dd61b6e012b085fe5e53469d327f93313d057eaa47f441022a4fb93891b8b95d"
+}

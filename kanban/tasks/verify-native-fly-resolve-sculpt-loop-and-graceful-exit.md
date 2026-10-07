@@ -1,7 +1,7 @@
 ---
 labels: "research, verification, playable-loop"
 parent: "planet-orbit-circularization-blocker"
-write-id: "1791329796844-0.q606ttvvruhmdsqj1mx"
+write-id: "1791333280242-0.m71rn6pmwelws91pmw9"
 title: "Verify native fly-resolve-sculpt loop and graceful exit"
 priority: "P1"
 status: "in_progress"
@@ -39,5 +39,7 @@ Manual route remains open: no observed1-AU approach, binding/commitment, voxel b
 A NEW detached natural seed42/1000-gas game launched from production-equivalent headbe832d7 on hardware DISPLAY:0/port7896, PID4070721 start3869117, worldatom275227937. This is the ordinary genesis/arc pipeline with fixture=false. The existing hidden native line regression passed1test/9assertions on Intel Arc. Three actual full-scene/HUD frames from the new game also identified Intel Arc MTL/OpenGL4.6 Core; all9 sampled GL results were zero, read buffers restored, renderer Var restored, observer inactive. Fresh-game bundle has34 closed files/33 verified hashes; separate post-resume bundle has9 files/8 hashes. Active logs are explicitly excluded. Requested1280x720 became actual1264x1490 without resize input; cause is unproven, and capture dimensions/rate are not FPS.
 
 Read-only23:32:18 audit after the first measurement pause/resume confirmed the same world/window, both workers live, nil UI/service errors, tick10220 and24 naturally formed planets. The desktop still reports LockedHint=yes; no desktop input, unlock, forced phase, body injection or world migration occurred. This establishes a working hardware-rendered natural game, not manual flight/approach, one-AU binding, commitment, voxel sculpt, graceful window disposal or an earned Gate. A later short root-owned measurement pause is recorded separately; the audit is a timestamped observation, not a perpetual liveness claim. Keep this verification card InProgress.
+
+2026-10-07 native lifecycle correction. The fresh hardware world later naturally reached life-emergence with24planets, recorded during the passive trail observation. No manual approach, commitment, sculpt, embodiment or Gate was demonstrated. Before a closer diagnostic, PID4070721 was absent and port7896 closed, so no client/capture/camera action ran. Host /proc evidence at00:32:20UTC identifies boot00:21:39UTC, boot IDb04f7fb6-ea65-4b47-8866-73e24a6887f6; the older paused PID2372912 is also absent and must no longer be described as retained. This proves those preboot processes cannot still be live, not their exact prior exit cause/time or the cause of reboot. Full13,799,424-byte stopped stdout is preserved losslessly with SHA1d7516e990cdedf30fb74e230adcf414209af7e0b98dced7ebdd4d5edfc73080 in .ημ/diagnostics/native-service-loss/2026-10-07-host-reboot, plus empty stderr and boot/source provenance. No complete reloadable world snapshot exists. A future native launch will be a new natural world, not a recovery. No replacement process is running yet. Goal and card remain in progress.
 
 ---

@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-10-07T00:29:13.026929+00:00",
+  "pid": 4070721,
+  "expected_start_ticks": 3869117,
+  "proc_exists": false,
+  "nrepl_client_started": false,
+  "observer_installed": false,
+  "camera_changed": false,
+  "capture_attempts": 0,
+  "reason": "Pre-install process guard failed: /proc/4070721/stat absent",
+  "previous_successful_metadata_check": "preflight.json at2026-10-07T00:15:29.182669+00:00",
+  "files": {
+    "runtime.stdout": {
+      "source_bytes": 13799424,
+      "source_sha256": "1d7516e990cdedf30fb74e230adcf414209af7e0b98dced7ebdd4d5edfc73080",
+      "mtime_ns": 1791332141284265367,
+      "tail_file": "runtime.stdout.last-65536-bytes",
+      "tail_bytes": 65536,
+      "tail_sha256": "e4249a940db774a185591a46d680fe6b44818e1b79a7d556f196b4659690c3fd"
+    },
+    "runtime.stderr": {
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mtime_ns": 1791328740152157554,
+      "tail_file": "runtime.stderr.last-65536-bytes",
+      "tail_bytes": 0,
+      "tail_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "port_query": {
+    "argv": [
+      "ss",
+      "-ltnp",
+      "sport = :7896"
+    ],
+    "exit": 0
+  }
+}

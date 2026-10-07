@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-07T00:15:29.182669+00:00",
+  "pid": 4070721,
+  "start_ticks": 3869117,
+  "state": "S",
+  "cwd": "/home/err/spaces/foresight/.worktrees/truth-focus-cadence",
+  "executable": "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+  "source_revision": "c21c0f20855f3c312bdc7dfb8f92e21e2d23152b",
+  "production_byte_equivalent_to": "c79be1e957695505b48ea7f1905821927e7fb270",
+  "script_hashes": {
+    "install.clj": "03ed9569028652e5703a5cbc24be727c95833b0a552a8d142655340253519236",
+    "restore.clj": "2d000da6dd7a1974ea1ea5a928cb3dfb20f07a0dabaae173ca691a8b270d17f5"
+  },
+  "plan_sha256": "90f7540c68e7137f628d4c76855d3377bf51de22c04557d20132cdd934f734ec"
+}
