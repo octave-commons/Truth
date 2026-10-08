@@ -377,3 +377,12 @@
   spore: none
   receipt-refs: Truth#12,c21ccfec,fda36c77,9df54bf0,b2a92b21
   note: New accepted finite scope changes which prerequisites are necessary; preserve the larger historical design without forcing it into current completion. Explicitly label authored origin and local device response. For fan-out outcomes stored on entities, publish before lifecycle reaping or prove a surviving carrier; a later disappearance cannot retroactively change the earlier decision. No spore created or promoted.
+- ts: 2026-10-08T04:39:22.664794602Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Publish finite Gate implementation subdivisions after real full planning review
+  p-efficiency: 0.85
+  p-friction: 0.35
+  p-skill-candidate: 0.30
+  spore: none
+  receipt-refs: Truth#12,42cd8daa,6051683279,5451150481,f6c695c9,d21339f6
+  note: Separate approved design from pending implementation cards. Recorded applied UI state must join desired mode eligibility; local EID selection needs pick-time world/device provenance before a current revision can be consumed. A spec-backed GL repair still needs real error/pixel RED/GREEN; source review supplies no driver or final milestone proof. No spore created or promoted.

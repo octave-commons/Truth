@@ -4,6 +4,7 @@
 Owner: `59da3d85-c9b6-488f-b33b-5442c3e784a4`, under
 `embodied-character-voxel-mode`. Grounding:
 [finite-scope evidence](../notes/2026-10-08-finite-native-gate-scope.md), the
+[implementation source boundary](../notes/2026-10-08-finite-gate-implementation-base.md), the
 [Spark flight design](spark-flight-and-camera.md), and the independently reviewed
 [endpoint proposal](https://github.com/octave-commons/Truth/blob/01f0909b0c1cd5b86c274add98dfbf1b1146c2a4/docs/designs/gate-endpoint-provenance.md).
 That endpoint proposal remains planning-only and is not silently rewritten here.
@@ -113,6 +114,16 @@ instructions and input tests must cover that existing route, and keep scene
 zoom defaults intact through selection and deselection. Camera following is
 never counted as physical approach; no global camera policy change is proposed.
 
+The ordinary input route requires all three C presses to return from selection
+to manual mode and the existing applied cursor state to confirm capture. E is
+eligible only in manual mode with no active UI domain, cursor-free false and
+`:ui/applied-cursor = GLFW_CURSOR_DISABLED`; an unknown or pending capture
+enqueues nothing. This is UI eligibility, not a domain camera-distance rule.
+Preserve run/history/device-qualified identity from the actual pick. A new E
+press reads the current revision/tick only after matching that identity; it
+cannot silently adopt a replacement device occupying the same EID. Changes
+after a payload is queued are revalidated by the consuming domain snapshot.
+
 The request binds run/history identity, requesting Spark identity, Gate EID and
 immutable device identity, expected local revision, observed tick, operation
 identity and requested verb. A future observed tick refuses; old requests
@@ -192,6 +203,12 @@ and material paths; the appearance is a local field, without a destination view.
 Expose physical distance/range, E affordance and refusal reason through existing
 HUD surfaces. An absent Gate yields no device projection or stale success badge.
 
+The selected implementation source base is `42cd8daafc73c2e5f3a85033a44eac4ca372d463`.
+Its legacy line format is sufficient, but its actual line pass uses unsupported
+core-context width `1.5`; explicitly include width `1.0` and an actual GL error
+and visible-pixel regression in the input/projection scope. Do not inherit the
+held native branch's motion trails, opacity shader or unrelated source changes.
+
 The same native run must capture: declared initial manifest and identities;
 changing ECS ticks; Spark initially outside range; ordinary movement reducing
 physical separation; an outside-range refusal; one ordinary accepted E press;
@@ -209,30 +226,36 @@ not an admitted Gate input primitive or a retry authorization.
 
 ## Implementation breakdown after planning review
 
-These are proposed slices within the fixed scope, not admitted cards or work:
+These Incoming implementation cards refine the admitted design within the fixed
+scope. They require current planning admission and lawful In Progress before RED:
 
-1. **Gate domain contract and registered operation — 5 points.** Closed identity,
+1. **[Gate domain contract and registered operation](../../kanban/tasks/implement-gate-local-contract-and-registered-operation.md) — 5 points.** Closed identity,
    initial-provenance and local-state shapes; pure decision law; request adapter,
    actual registered owner, outcome publication and retirement. RED covers every
    row above, equal EIDs across runs, actor/device loss, replay, no duplicate
    ledger result and unchanged unrelated components. No native launch/rendering.
-2. **Supported scene and camera lifecycle — 5 points.** Consume the reviewed Gate
+2. **[Supported scene and camera lifecycle](../../kanban/tasks/implement-supported-live-gate-scene-and-camera-lifecycle.md) — 5 points.** Consume the reviewed Gate
    contract; share validated empty bootstrap, initialize the two physical entities,
    supply launch selection and real tick continuation, and preserve scene camera
    defaults. RED covers invalid manifests, repeated construction, registered
    map/SoA ticks, movement/release, no fake rewards, no silent world replacement,
    zoom/reset/deselection and unchanged default nebula behavior.
-3. **Ordinary input and visible Gate response — 3 points.** E press/selection/queue
+3. **[Ordinary input and visible Gate response](../../kanban/tasks/implement-ordinary-gate-input-and-visible-response.md) — 5 points.** E press/selection/queue
    wiring, visible selectable projection, physical range/refusal HUD and local
    energized effect. RED covers repeat/UI capture, stale selection, queued current
-   positions, projection identity and accepted/refused state-to-visual mapping.
+   positions, projection identity and accepted/refused state-to-visual mapping;
+   the existing line pass also needs the small portability repair and actual
+   GL error/pixel RED/GREEN. This concrete native boundary raises the initial
+   three-point estimate to five before implementation-card admission.
 4. **Native verification — existing 3-point owner**
    `f369c598-279c-498d-a64f-45d2ce16ad34`, after explicit scope reconciliation.
    Execute and capture the acceptance above; do not relabel fly-resolve-sculpt
    evidence as a Gate result.
 
-Planning references are `98b847ce` and native `5ce5deca`. Select and pin the actual
-implementation base before RED; account for their source differences explicitly.
+Historical planning references are `98b847ce` and native `5ce5deca`. The selected
+implementation source base is `42cd8daafc73c2e5f3a85033a44eac4ca372d463`;
+record each admitted candidate's exact source before RED and account for any
+further difference explicitly.
 No sibling fix is assumed merged. All production slices retain the full test
 suite, six strict static gates, registry/architecture checks, meaningful
 changed-path performance comparison and exact-head review. No source or runtime

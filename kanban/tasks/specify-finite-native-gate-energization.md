@@ -1,13 +1,14 @@
 ---
-uuid: "59da3d85-c9b6-488f-b33b-5442c3e784a4"
-title: "Specify the finite native Spark-to-Gate energization slice"
-status: "incoming"
-priority: "P1"
-points: "3"
+category: "tasks"
 labels: "design, gates, native, finite-milestone"
 parent: "embodied-character-voxel-mode"
-category: "tasks"
 type: "task"
+write-id: "1791434112632-0.mo9aotmr3nx6rlc0rb"
+points: "3"
+title: "Specify the finite native Spark-to-Gate energization slice"
+priority: "P1"
+status: "incoming"
+uuid: "59da3d85-c9b6-488f-b33b-5442c3e784a4"
 created_at: "2026-10-08"
 ---
 
@@ -75,3 +76,9 @@ An attractive static prop can conceal an absent Gate; fabricated prehistory can
 conceal absent producers; existing astronomical flight settings can make approach
 unplayable. Keep the slice honest and bounded, and expose any real extra dependency
 before implementation rather than silently resuming the entire historical ladder.
+
+---
+
+(己,p=1.0) Finite design admitted at42cd8daafc73c2e5f3a85033a44eac4ca372d463: canonical planningPASS7checks/CR+MiMo1availablecohort0unresolved. Native CR6051683279/6024761980 covers15of15; MiMo5451150481/37723650031 full15delivered+assessed pages,120956B diff independentlyreconstructed29db481a. No implementation/native result. New Incoming5 subdivisions: domain63cc75c2-70d5-4e2c-829d-38208e9714c0 -> scene32e1eaea-609b-4ba9-988c-3e51e85c384d -> input5e9eac68-7674-4318-bb8d-781b7736d0b6, within same fixed owner/threeworktree inventory. Current design refinements/newcards require exactheadplanningreview before Ready/InProgress/RED. Sourcebase42cd8 pinned; input estimate3->5 accounts only explicit GLwidth1.0/actualerror+pixel proof, desired+applied cursor capture and pick-time qualifiedidentity. Source note docs/notes/2026-10-08-finite-gate-implementation-base.md retains historicalapproved70d vsnewcandidate distinction. Native UUIDf369c598 remains separately rescope/review/release before Gateacceptance; priorfly/sculpt evidence doesnotqualify. No held32nativeimports, runtime, merge/automerge/rebase/historyrewrite or completion.
+
+---
