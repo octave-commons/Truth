@@ -1,0 +1,46 @@
+[
+  {
+    "argv": [
+      "gh",
+      "api",
+      "repos/octave-commons/Truth/pulls/comments/4213310122"
+    ],
+    "started_at": "2026-10-08T00:16:18.925943+00:00",
+    "completed_at": "2026-10-08T00:16:19.812892+00:00",
+    "exit": 0,
+    "path": "native-comment.json",
+    "bytes": 9546,
+    "sha256": "dcc17e5d8b795f9b29e078822bc564d72f742f91a679bc568baa27a623d502cb",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "repos/octave-commons/Truth/pulls/61/reviews/5449901670"
+    ],
+    "started_at": "2026-10-08T00:16:19.813125+00:00",
+    "completed_at": "2026-10-08T00:16:20.600676+00:00",
+    "exit": 0,
+    "path": "native-review.json",
+    "bytes": 5129,
+    "sha256": "2ecf4f794df0a6feea5c77f6e04317ab44722428bc09f280329cf88f4b6f9e75",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "graphql",
+      "-f",
+      "query=query { node(id: \"PRRT_kwDOTDahac6qJSzA\") { ... on PullRequestReviewThread { id isResolved isOutdated path line comments(first:100) { pageInfo { hasNextPage endCursor } nodes { databaseId id body url createdAt updatedAt author { login } commit { oid } pullRequestReview { databaseId } } } } } }"
+    ],
+    "started_at": "2026-10-08T00:16:20.600801+00:00",
+    "completed_at": "2026-10-08T00:16:21.601306+00:00",
+    "exit": 0,
+    "path": "native-thread.json",
+    "bytes": 6262,
+    "sha256": "ccb88f1e171fe7cf3fdd98fbd49a452a9be513d7325af4190ea2c77f4b16dd7b",
+    "stderr": ""
+  }
+]

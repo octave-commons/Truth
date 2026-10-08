@@ -1,0 +1,418 @@
+{
+  "schema": "append-only-citation-verification-scope-correction/v1",
+  "at_utc": "2026-10-08T00:17:37.506926+00:00",
+  "author": "/root/intent_research",
+  "status": "DRAFT_FOR_ROOT_REVIEW_NOT_PUBLISHED_OR_SETTLED",
+  "scope": "Fresh source-only assessment of one verified citation/provenance finding; not a replacement full planning review or implementation admission.",
+  "native": {
+    "head": "3160fada3f58ef468499a788e31ddd22412b8ea8",
+    "review_id": 5449901670,
+    "comment_id": 4213310122,
+    "thread_id": "PRRT_kwDOTDahac6qJSzA",
+    "item_id": "cr-comment:v1:d57c79783c7c963fd6211ccf",
+    "review_url": "https://github.com/octave-commons/Truth/pull/61#pullrequestreview-5449901670",
+    "comment_url": "https://github.com/octave-commons/Truth/pull/61#discussion_r4213310122",
+    "created_at": "2026-10-08T00:12:17Z",
+    "review_submitted_at": "2026-10-08T00:12:18Z",
+    "state": "COMMENTED",
+    "thread_resolved_at_read": false,
+    "complete_thread_comments": 1,
+    "full_body_scope": "One actionable inline comment, repeated in full body; no additional body-only findings found."
+  },
+  "supersedes_interpretation_only": {
+    "path": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/RECONCILIATION.json",
+    "sha256": "3aab0c822252b660dce97bc3ee4fa41842df52f5fab371fe3c84d29c7068b94f",
+    "line": 26,
+    "field": "authoritative_correction.written_verdict",
+    "replacement_interpretation": "The independent local planning review completed and wrote PASS at 17:00:51.223Z. Verification at 17:01:17.126Z checked the artifact hash, frozen-input and cited-grounding whole-file hashes, and that citation line numbers were in range. It did not validate citation content. Four of the 19 plan_evidence references resolved to blank lines, as its own printed plan_references output records. Whole-file hash equality does not certify that a chosen line supports a claim. The four fresh corrected anchors below were content-checked during this later assessment, not by that historical command."
+  },
+  "historical_evidence": {
+    "review": ".ημ/diagnostics/entity-construction-plan-review/local-independent-planning-review-ecf7877.json",
+    "review_sha256": "858c20b6eeceea149b45cb6a00a19b74580f6e55d7aa8dc885c69c5989880566",
+    "rollout": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/rollout-evidence.jsonl",
+    "row": 5,
+    "command_exit": 0,
+    "command_check": "1<=int(n)<=len(lines)",
+    "preserved_scope": "Written PASS/file-completion evidence remains valid. This correction does not manufacture a final chat delivery, hosted approval, new review round or implementation readiness."
+  },
+  "plan_citations": {
+    "total": 19,
+    "all_in_range": true,
+    "blank_count": 4,
+    "historical_blank_references": [
+      "kanban/tasks/validated-fresh-entity-construction.md:39",
+      "docs/notes/2026-10-07-first-represented-life-boundary.md:559",
+      "docs/notes/2026-10-07-first-represented-life-boundary.md:547",
+      ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md:10"
+    ],
+    "current_exact_line_readback": [
+      {
+        "subject": "Limited validation and opaque legacy extras",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:546",
+        "in_range": true,
+        "line_text": "#### Constructors and exact validation boundary"
+      },
+      {
+        "subject": "Limited validation and opaque legacy extras",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:39",
+        "in_range": true,
+        "line_text": ""
+      },
+      {
+        "subject": "Defaults, frame preparation and real producer compatibility",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:559",
+        "in_range": true,
+        "line_text": ""
+      },
+      {
+        "subject": "Defaults, frame preparation and real producer compatibility",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:654",
+        "in_range": true,
+        "line_text": "today; do not resolve every parent against a newly frozen batch snapshot."
+      },
+      {
+        "subject": "Defaults, frame preparation and real producer compatibility",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:91",
+        "in_range": true,
+        "line_text": "   known final fields in §8.2, including finite vectors/scalars and documented"
+      },
+      {
+        "subject": "Closed empty-book capability and singleton checks",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:608",
+        "in_range": true,
+        "line_text": "rule. Select a closed payload and exactly one component:"
+      },
+      {
+        "subject": "Closed empty-book capability and singleton checks",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:629",
+        "in_range": true,
+        "line_text": "A generic fresh ID is insufficient to establish a singleton. For an explicit"
+      },
+      {
+        "subject": "Closed empty-book capability and singleton checks",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:50",
+        "in_range": true,
+        "line_text": "  keys retain their current behavior; an explicit target ID on the new creation"
+      },
+      {
+        "subject": "Fresh IDs and pure-result atomicity",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:547",
+        "in_range": true,
+        "line_text": ""
+      },
+      {
+        "subject": "Fresh IDs and pure-result atomicity",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:645",
+        "in_range": true,
+        "line_text": "variant and its prepared result, check the next allocator ID is a nonnegative"
+      },
+      {
+        "subject": "Fresh IDs and pure-result atomicity",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:107",
+        "in_range": true,
+        "line_text": "4. Multiple valid creations allocate distinct unused IDs and consistent"
+      },
+      {
+        "subject": "Initialization, request consumption, reaping and ongoing ownership",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:666",
+        "in_range": true,
+        "line_text": "#### Explicit serial authority without an ongoing-writer exemption"
+      },
+      {
+        "subject": "Initialization, request consumption, reaping and ongoing ownership",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:112",
+        "in_range": true,
+        "line_text": "   exact seven request consumptions and six reap families. Its known output set"
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:67",
+        "in_range": true,
+        "line_text": "  A construction-stage descriptor must stay outside both fan-out selectors and"
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "reference": "kanban/tasks/validated-fresh-entity-construction.md:140",
+        "in_range": true,
+        "line_text": "a general schema/ownership redesign, re-estimate before RED instead of widening"
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:438",
+        "in_range": true,
+        "line_text": "## 8. Finite implementation boundaries and proof obligations"
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:706",
+        "in_range": true,
+        "line_text": "Three points is credible only for these two constructors, one reused installation"
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "reference": "docs/designs/resolution-regimes-and-scale-coupling.md:126",
+        "in_range": true,
+        "line_text": "### 6.2 Proposed fresh-construction prerequisite (2026-10-07)"
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "reference": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md:10",
+        "in_range": true,
+        "line_text": ""
+      }
+    ],
+    "fresh_corrected_anchors": [
+      {
+        "subject": "Limited validation and opaque legacy extras",
+        "historical_reference": "kanban/tasks/validated-fresh-entity-construction.md:39",
+        "historical_line_text": "",
+        "corrected_anchor": "kanban/tasks/validated-fresh-entity-construction.md:52",
+        "supporting_lines": [
+          52,
+          55
+        ],
+        "exact_excerpt": "- Preserve arbitrary legacy extra keys/values as explicitly unvalidated payloads.\n  Validate known-field overrides after overlay; do not recompute derived fields.\n  Reserve `:component/life-book` against all stellar extra payloads. New finite/\n  shape checks and this reservation are intentional rejection changes.",
+        "file_sha256": "d37fe9af55401580132f0b1f4ec67e63ae1f335cda786d5e38bdc52cdf3d99bc",
+        "content_assessment": "The replacement explicitly preserves arbitrary legacy extras as unvalidated, validates known-field overrides after overlay, and labels the reserved life-book key and finite/shape checks as intentional new rejections."
+      },
+      {
+        "subject": "Defaults, frame preparation and real producer compatibility",
+        "historical_reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:559",
+        "historical_line_text": "",
+        "corrected_anchor": "docs/notes/2026-10-07-first-represented-life-boundary.md:560",
+        "supporting_lines": [
+          560,
+          563
+        ],
+        "exact_excerpt": "For **`:stellar-seed`**, retain the existing frame resolver, defaults, arithmetic\nand overlay order: resolve in the running world, call the existing pure\n`seed-clump`, overlay `:extra-components` with the current last-value-wins\nsemantics, then validate the following final fields **before allocation**.",
+        "file_sha256": "bdb17400c622bde4278dff751ae4d2a067f5eff21c8c252008422a4ac1e8b292",
+        "content_assessment": "The replacement explicitly names retained frame resolution, defaults, arithmetic, running-world preparation and extras-after-seed overlay before final validation."
+      },
+      {
+        "subject": "Fresh IDs and pure-result atomicity",
+        "historical_reference": "docs/notes/2026-10-07-first-represented-life-boundary.md:547",
+        "historical_line_text": "",
+        "corrected_anchor": "docs/notes/2026-10-07-first-represented-life-boundary.md:553",
+        "supporting_lines": [
+          553,
+          558
+        ],
+        "exact_excerpt": "is the exact inner map below. A plan never selects an entity ID. Unknown\nconstructor tags, an explicit target-ID field on the plan, malformed required\nfields and a mismatched prepared result fail with a named construction error.\nThis is not a public arbitrary-component-map installer or a component-schema\nregistration framework. The low-level ECS primitives remain the sole allocator\nand installer; unrelated boot/player construction sites are not migrated here.",
+        "file_sha256": "bdb17400c622bde4278dff751ae4d2a067f5eff21c8c252008422a4ac1e8b292",
+        "content_assessment": "The replacement explicitly forbids plan-selected entity IDs and keeps allocation/installation at existing ECS primitives. The historical companion references at note645 and card107 still carry the running freshness/atomicity details; this replacement alone is not claimed to prove the entire rationale."
+      },
+      {
+        "subject": "Three-point scope and dependencies",
+        "historical_reference": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md:10",
+        "historical_line_text": "",
+        "corrected_anchor": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md:11",
+        "supporting_lines": [
+          11,
+          19
+        ],
+        "exact_excerpt": "(己, p=0.94) Split out a **proposed three-point validated lifecycle creation and\nownership boundary** before attempting the proposed five-point retained-book\nsettlement. Section 7.2 describes one coherent end-to-end invariant, but its\ncurrent five-point row combines two independently testable changes: replacing a\nstellar-only constructor boundary and introducing a persistent transaction owner.\nIt is unsafe to split an accepted birth's debit from entity/outcome publication;\nit is reasonable to qualify the general construction prerequisite separately.\nThis is a sizing recommendation for review, not a claim that either next slice\nis Ready.",
+        "file_sha256": "13743b0bb8c4e74e7835d49f921eb7f37735767989c8c6e3b20b594ef4e46a05",
+        "content_assessment": "The replacement explicitly proposes a three-point construction/ownership prerequisite before five-point settlement, while refusing to split a birth debit from entity/outcome publication and withholding Ready status."
+      }
+    ]
+  },
+  "preservation": {
+    "historical_manifest_rows_verified": 4,
+    "historical_owned_pins_verified": 10,
+    "historical_cited_grounding_pins_verified": 20,
+    "protected_files": [
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan-review/local-independent-planning-review-ecf7877.json",
+        "bytes": 28353,
+        "sha256": "858c20b6eeceea149b45cb6a00a19b74580f6e55d7aa8dc885c69c5989880566"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan-review/root-review-01.json",
+        "bytes": 2734,
+        "sha256": "93a66d15760d4d8928039de88c67ccbeb5bcf5f3b38a544a9178bc01d1a1d3cc"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan/design-audit.json",
+        "bytes": 77512,
+        "sha256": "ae60938c1287bc6732dcf8113dff0a3adfbec7acbe07392e68191431507ae8de"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan/initial-read.json",
+        "bytes": 3191,
+        "sha256": "ddc47b4e6e3bb41372feaa6b04919d69972156e36d642849cbc3d9353a2cfa29"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan/life-account-origin-kernel-initial-read.json",
+        "bytes": 14105,
+        "sha256": "1ac6643b7335b3b188aa901eaf398dd6e375eb5704b6453c554043f94417b749"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan/life-to-represented-actor-spec-initial-read.json",
+        "bytes": 11166,
+        "sha256": "ab695f00a676f7be62985703ebec7618d84e50365fbe317947d113ba23c7cc71"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-plan/new-child-read.json",
+        "bytes": 9248,
+        "sha256": "229da924177031a86afd953fe97310d83845ca541ce20a1cf8dd9a2404724a26"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/RECONCILIATION.json",
+        "bytes": 10777,
+        "sha256": "3aab0c822252b660dce97bc3ee4fa41842df52f5fab371fe3c84d29c7068b94f"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/SHA256SUMS",
+        "bytes": 348,
+        "sha256": "8717f4870f502d832648783cbc7753b140dbeed93ba73d56543b584840a91612"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/native-readback.jsonl",
+        "bytes": 14170,
+        "sha256": "15ad5e39c4e1295b2cad4c056e10570b557b00eee82e5995bfaefe3a15daf38c"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/rollout-evidence.jsonl",
+        "bytes": 60639,
+        "sha256": "5dc90f0a1a26ccf3e085b4faf2ca6bafd2c04342733e8e2d003a244f753f7a5b"
+      },
+      {
+        "path": ".ημ/diagnostics/entity-construction-review-provenance-5449439028/rollout-index.json",
+        "bytes": 4341,
+        "sha256": "1f34059a9cfcc6678efd2b2d8d4cd05be669481da0b5fb6ed08d097d0ac8bdd2"
+      },
+      {
+        "path": ".ημ/diagnostics/life-account-kernel-plan/next-boundary-assessment.md",
+        "bytes": 11637,
+        "sha256": "13743b0bb8c4e74e7835d49f921eb7f37735767989c8c6e3b20b594ef4e46a05"
+      },
+      {
+        "path": ".ημ/receipts.edn",
+        "bytes": 44945,
+        "sha256": "a1c71005941d4a203a9bba1c77ec9b08bcc701bcbce7b0714c05ca378cceb480"
+      },
+      {
+        "path": ".ημ/session-mycology/ledger.md",
+        "bytes": 28016,
+        "sha256": "d3d40b4a02ea37399c2a4ed7fb48a016b5fa023d6bedce23ed14d3be1e5f18b8"
+      },
+      {
+        "path": "docs/designs/multi-timescale-integration.md",
+        "bytes": 21197,
+        "sha256": "c768e6c40bf970a4239bd4f03eefe89d0505b368f4b032db4acad2a7c06ce1b2"
+      },
+      {
+        "path": "docs/designs/resolution-regimes-and-scale-coupling.md",
+        "bytes": 8873,
+        "sha256": "0fe3759d3017656657c459d26a8e017438757292dff2a1d40707071e73284def"
+      },
+      {
+        "path": "docs/notes/2026-10-07-first-represented-life-boundary.md",
+        "bytes": 54619,
+        "sha256": "bdb17400c622bde4278dff751ae4d2a067f5eff21c8c252008422a4ac1e8b292"
+      },
+      {
+        "path": "kanban/tasks/validated-fresh-entity-construction.md",
+        "bytes": 8762,
+        "sha256": "d37fe9af55401580132f0b1f4ec67e63ae1f335cda786d5e38bdc52cdf3d99bc"
+      },
+      {
+        "path": "src/domain/ecs/components.clj",
+        "bytes": 26487,
+        "sha256": "3c72ee71d368b1296434e22ae2870a3c661fcfc96f288f07b8be9156e03f2051"
+      },
+      {
+        "path": "src/domain/ecs/core.clj",
+        "bytes": 6649,
+        "sha256": "ed27a70001b77bad3ba2437ed38ef5b9bbf2ca8f1a7c4aa5a4b97ab10f2f0970"
+      },
+      {
+        "path": "src/domain/ecs/registry.clj",
+        "bytes": 33501,
+        "sha256": "de335cb32c29d14b2f2de90ceac4149331260d67379840089f2b5991652b9b5f"
+      },
+      {
+        "path": "src/domain/ecs/tick.clj",
+        "bytes": 12734,
+        "sha256": "e5077815d7c35739af8bc53ca57b2fbb4f0dffb588e6c3a1f57c44914855ffd8"
+      },
+      {
+        "path": "src/domain/genesis/bootstrap.clj",
+        "bytes": 17495,
+        "sha256": "15edc3ec5aee925ab80259c55cb11fa4f44308692f74e5ac18948380c68a2dd9"
+      },
+      {
+        "path": "src/domain/genesis/promotion.clj",
+        "bytes": 13327,
+        "sha256": "2526b21abd4c8e2f49a4d199b1513ff0a5ed82ac9cc0a09c238b8fc1a0b53af4"
+      },
+      {
+        "path": "src/domain/genesis/systems.clj",
+        "bytes": 5620,
+        "sha256": "277c975226f3e12fc15134df8129b237797f396fefc053c72d8759500bdb6225"
+      },
+      {
+        "path": "src/domain/genesis/tick.clj",
+        "bytes": 10517,
+        "sha256": "d2159f6416cab06048c0b3876e495578c1f61e2b4ac4a70d59eaa49113f2e4ee"
+      },
+      {
+        "path": "src/domain/planet_formation/orbit.clj",
+        "bytes": 4755,
+        "sha256": "f660159270df22b70a929473c2425c94e9cac2c1a2fd230053aba8c18645c35a"
+      },
+      {
+        "path": "src/domain/stellar/disc_evolution.clj",
+        "bytes": 28919,
+        "sha256": "a26ed34f6ba8c58ac37c5954d6938408d3b8469abef57635e19f4393ae8c8ceb"
+      },
+      {
+        "path": "src/domain/stellar/seeder.clj",
+        "bytes": 8046,
+        "sha256": "518b8d07f281a8df746e555d0d556f68da2232af2f569820fd04d5a777a7c884"
+      },
+      {
+        "path": "src/domain/stellar/wind.clj",
+        "bytes": 15534,
+        "sha256": "576e7ff0bf2213692c28f7d1bb523f165033cbcfc39163087b4cdb82155d328e"
+      },
+      {
+        "path": "src/law/composition.clj",
+        "bytes": 8500,
+        "sha256": "b90e5d32ec5b3f87f76f10108d94dfbf5c0dffacb05b51a8b18fdc9f7fff6615"
+      },
+      {
+        "path": "src/law/field/schema.clj",
+        "bytes": 11872,
+        "sha256": "5a97f4826f774f455c8e15f8bc9c15cd2a5975ceb09fca3f89c982390478f659"
+      },
+      {
+        "path": "src/law/stellar/schema.clj",
+        "bytes": 8657,
+        "sha256": "bd637a34f1a107d0cfeac445f66241cfcf5e08fcb0799faf2c474123d3be578e"
+      },
+      {
+        "path": "test/architecture_test.clj",
+        "bytes": 5478,
+        "sha256": "2c423f4714bc43c5ee6392459979ee3b8de2d7ff09dc2a352ce0183ee437ad44"
+      },
+      {
+        "path": "test/domain/disk_evolution_test.clj",
+        "bytes": 19726,
+        "sha256": "f848c33949da09197c3c1b2ee621964d90216d1c49df2738fdfda0d473b98d48"
+      },
+      {
+        "path": "test/domain/formation_test.clj",
+        "bytes": 23197,
+        "sha256": "ee88a17e3c63bc5cc91fa7a2aab9c65808f5a77e228d56a8fd28ea56b55e6322"
+      }
+    ],
+    "original_reconciliation_review_rollout_and_manifest_unchanged": true
+  },
+  "limits": [
+    "No historical record or checksum was edited; this sibling supplement and its own manifest are the proposed correction.",
+    "Fresh corrected passages support the named citation claims only; the remaining historical review conclusions are not requalified as a new full independent review.",
+    "No source/test/config edits, board operations, Git commands, JVM/native calls, reviewer requests, publication or settlement."
+  ],
+  "next": "Root reviews and publishes the append-only supplement, then settles the verified native finding against the resulting actual head."
+}
