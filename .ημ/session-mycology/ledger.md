@@ -350,3 +350,48 @@
   spore: none
   receipt-refs: f369c598-279c-498d-a64f-45d2ce16ad34, Truth PR10 hosted review runtime
   note: Sent native clicks are intent, not accepted state; verify knob readbacks under loaded software rendering. Coarse travel, fixed-dt pulse bounds, moving-target capture and historical eligibility are different claims. Closed capture manifests allow evidence checkpointing without staging active runtime logs. Pinned upstream review runtime now supplies hosted failure diagnostics and a complete native approval; missing other providers remain visible.
+- ts: 2026-10-07T02:51:45.388543096Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Ground one committed-world Grow proposal under the existing planning owner
+  p-efficiency: 0.9
+  p-friction: 0.35
+  p-skill-candidate: 0.32
+  spore: none
+  receipt-refs: 2026-10-07T02:51:37.172779747Z
+  note: Separate palette identity from price before treating two numbers as a conflict: Genesis Grow and planetary Biosphere are different unlocks. Follow canonical economy authority rather than a newer draft wholesale. An inert helper and post-fold event precedent do not prove a paid native interaction or atomic settlement. Keep missing price, clock and representation decisions explicit; preserve Incoming and append provenance. Independent review identified lifecycle reaping order, now recorded. No spore created or promoted.
+- ts: 2026-10-07T03:26:35.656948Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Repair two semantic source citations after Grow design expansion
+  p-efficiency: 0.85
+  p-friction: 0.25
+  p-skill-candidate: 0.3
+  spore: none
+  receipt-refs: 2026-10-07T03:26:35.656948Z, review5437247456
+  note: A resolving Markdown file link does not prove a line fragment still names the cited policy; inspect actual heading text after insertions. Bounded citation repair only, with original verification limits retained.
+- ts: 2026-10-08T03:36:54.608642351Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Truth finite Gate milestone design reconciliation
+  p-efficiency: 0.75
+  p-friction: 0.65
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: Truth#12,c21ccfec,fda36c77,9df54bf0,b2a92b21
+  note: New accepted finite scope changes which prerequisites are necessary; preserve the larger historical design without forcing it into current completion. Explicitly label authored origin and local device response. For fan-out outcomes stored on entities, publish before lifecycle reaping or prove a surviving carrier; a later disappearance cannot retroactively change the earlier decision. No spore created or promoted.
+- ts: 2026-10-08T04:39:22.664794602Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Publish finite Gate implementation subdivisions after real full planning review
+  p-efficiency: 0.85
+  p-friction: 0.35
+  p-skill-candidate: 0.30
+  spore: none
+  receipt-refs: Truth#12,42cd8daa,6051683279,5451150481,f6c695c9,d21339f6
+  note: Separate approved design from pending implementation cards. Recorded applied UI state must join desired mode eligibility; local EID selection needs pick-time world/device provenance before a current revision can be consumed. A spec-backed GL repair still needs real error/pixel RED/GREEN; source review supplies no driver or final milestone proof. No spore created or promoted.
+- ts: 2026-10-08T05:18:02.786449971Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Finite Gate planning findings corrected canonically
+  p-efficiency: 0.64
+  p-friction: 0.38
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: 7b7aad6e,22d35dd9
+  note: Effect proof must follow actual canonical comment grouping and configured physical ledger path. Preserve failed assumptions separately; never repeat a successful append. Full21page delivery verified despite native character count mislabeled bytes. No spore promotion.
