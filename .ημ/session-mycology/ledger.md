@@ -368,3 +368,12 @@
   spore: none
   receipt-refs: 2026-10-07T03:26:35.656948Z, review5437247456
   note: A resolving Markdown file link does not prove a line fragment still names the cited policy; inspect actual heading text after insertions. Bounded citation repair only, with original verification limits retained.
+- ts: 2026-10-08T03:36:54.608642351Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Truth finite Gate milestone design reconciliation
+  p-efficiency: 0.75
+  p-friction: 0.65
+  p-skill-candidate: 0.35
+  spore: none
+  receipt-refs: Truth#12,c21ccfec,fda36c77,9df54bf0,b2a92b21
+  note: New accepted finite scope changes which prerequisites are necessary; preserve the larger historical design without forcing it into current completion. Explicitly label authored origin and local device response. For fan-out outcomes stored on entities, publish before lifecycle reaping or prove a surviving carrier; a later disappearance cannot retroactively change the earlier decision. No spore created or promoted.
