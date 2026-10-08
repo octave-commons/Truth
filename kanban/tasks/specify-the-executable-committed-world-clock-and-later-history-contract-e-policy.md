@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, pacing, narrowing, playable-gate"
 parent: "narrowing-commitment-horizon"
 type: "task"
-write-id: "1791318931233-0.lwwlem3454o4pvh5a9t"
+write-id: "1791436601952-0.32f0hb9llz5s0qsiyhg"
 points: "3"
 title: "Specify the executable committed-world clock and later history contract"
 priority: "P1"
@@ -42,5 +42,11 @@ Review against current production source and existing tests; provide executable 
 The existing 1e7-second pacing floor, assumed 60 Hz, dt>=1 flight clamp and LOD skipped-time behavior cannot be repaired by a flag reader alone. A local lock can accidentally make later civilization progression impossible unless the temporal relationship is explicit.
 
 ---
+
 Planning refinement from independent review, included while this card is Incoming: bound this three-point deliverable to the first safe consumer policy. If later asynchronous neighborhood causality needs a new solver or exceeds this size, state that boundary explicitly and propose separate research; do not absorb it into this card or claim the complete local lock is solved. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+
+Canonical rendering correction (review 5451583235, comment 4214853378). The qualified Rheos comment operation normalizes legacy note/rule separators with blank lines, so the preserved refinement note renders as a paragraph rather than a setext heading.
+
+The earlier three-point first-safe-consumer boundary, separate research limit and unresolved complete local-lock claim remain unchanged. Original comment text and historical ledger events are preserved. This formatting correction does not resume the broader clock work or authorize implementation in the current finite Gate batch.
+
 ---

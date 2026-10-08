@@ -386,3 +386,12 @@
   spore: none
   receipt-refs: Truth#12,42cd8daa,6051683279,5451150481,f6c695c9,d21339f6
   note: Separate approved design from pending implementation cards. Recorded applied UI state must join desired mode eligibility; local EID selection needs pick-time world/device provenance before a current revision can be consumed. A spec-backed GL repair still needs real error/pixel RED/GREEN; source review supplies no driver or final milestone proof. No spore created or promoted.
+- ts: 2026-10-08T05:18:02.786449971Z
+  session: /home/err/spaces/foresight/.worktrees/truth-progression-plan
+  task: Finite Gate planning findings corrected canonically
+  p-efficiency: 0.64
+  p-friction: 0.38
+  p-skill-candidate: 0.10
+  spore: none
+  receipt-refs: 7b7aad6e,22d35dd9
+  note: Effect proof must follow actual canonical comment grouping and configured physical ledger path. Preserve failed assumptions separately; never repeat a successful append. Full21page delivery verified despite native character count mislabeled bytes. No spore promotion.

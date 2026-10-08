@@ -3,7 +3,7 @@ category: "tasks"
 labels: "design, gates, native, finite-milestone"
 parent: "embodied-character-voxel-mode"
 type: "task"
-write-id: "1791434112632-0.mo9aotmr3nx6rlc0rb"
+write-id: "1791436597913-0.1u508crnlz14riz2ql3"
 points: "3"
 title: "Specify the finite native Spark-to-Gate energization slice"
 priority: "P1"
@@ -80,5 +80,17 @@ before implementation rather than silently resuming the entire historical ladder
 ---
 
 (己,p=1.0) Finite design admitted at42cd8daafc73c2e5f3a85033a44eac4ca372d463: canonical planningPASS7checks/CR+MiMo1availablecohort0unresolved. Native CR6051683279/6024761980 covers15of15; MiMo5451150481/37723650031 full15delivered+assessed pages,120956B diff independentlyreconstructed29db481a. No implementation/native result. New Incoming5 subdivisions: domain63cc75c2-70d5-4e2c-829d-38208e9714c0 -> scene32e1eaea-609b-4ba9-988c-3e51e85c384d -> input5e9eac68-7674-4318-bb8d-781b7736d0b6, within same fixed owner/threeworktree inventory. Current design refinements/newcards require exactheadplanningreview before Ready/InProgress/RED. Sourcebase42cd8 pinned; input estimate3->5 accounts only explicit GLwidth1.0/actualerror+pixel proof, desired+applied cursor capture and pick-time qualifiedidentity. Source note docs/notes/2026-10-08-finite-gate-implementation-base.md retains historicalapproved70d vsnewcandidate distinction. Native UUIDf369c598 remains separately rescope/review/release before Gateacceptance; priorfly/sculpt evidence doesnotqualify. No held32nativeimports, runtime, merge/automerge/rebase/historyrewrite or completion.
+
+Readable review and subdivision record (review 5451583235, comment 4214853364). This restates the compressed record above with labeled fields; it preserves the original record and every identifier and value.
+
+- Admitted immutable design: 42cd8daafc73c2e5f3a85033a44eac4ca372d463. Canonical planning result: PASS; 7 passing checks; CodeRabbit and MiMo in 1 available completed cohort; 0 unresolved findings at that head.
+- Native CodeRabbit evidence: completion 6051683279 and summary 6024761980; all 15 of 15 selected paths covered.
+- Native MiMo evidence: review 5451150481 and run 37723650031; all 15 pages delivered and assessed. The 120,956-byte diff was independently reconstructed with SHA256 29db481ae4f992edce2b5d34748843f9e7bd536c0e3ad415a78b8e5bf6b7e9c2 (earlier abbreviation 29db481a).
+- Proposed current subdivisions: Incoming 5 domain 63cc75c2-70d5-4e2c-829d-38208e9714c0 -> Incoming 5 scene 32e1eaea-609b-4ba9-988c-3e51e85c384d -> Incoming 5 input 5e9eac68-7674-4318-bb8d-781b7736d0b6. Same fixed owner and three-worktree inventory.
+- Selected production source base: 42cd8daa, meaning the full admitted-design commit above. Input estimate changed from 3 to 5 for the explicit GL width 1.0 repair, actual GL error/pixel proof, desired and applied cursor capture, and pick-time qualified identity.
+- Source note: docs/notes/2026-10-08-finite-gate-implementation-base.md. It distinguishes historical approved design 70d4888511c751c2da46e6c535930a496d6579efad1409aa8a830fe935aecac8 (earlier abbreviation 70d) from the new candidate.
+- Native owner: f369c598-279c-498d-a64f-45d2ce16ad34 (earlier abbreviation f369c598). Separate scope reconciliation, review and release are required before Gate acceptance. Previous fly/sculpt evidence does not qualify, and the 32 held native source changes are not imported.
+
+The newer design refinements and implementation cards require their own exact-head planning review before Ready, In Progress or RED. This record claims no implementation, native result, new runtime, merge, auto-merge, rebase, history rewrite or milestone completion.
 
 ---

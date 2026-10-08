@@ -3,7 +3,7 @@ category: "tasks"
 labels: "research, design, ecology, actors, playable-gate"
 parent: "embodied-character-voxel-mode"
 type: "task"
-write-id: "1791318933567-0.jmkcf6yovpmj7tx5yi"
+write-id: "1791436604349-0.5shegcikydj7imm0iiv"
 points: "3"
 title: "Ground the first causal life-to-represented-actor boundary"
 priority: "P1"
@@ -42,5 +42,11 @@ Independent source/model review plus a small labeled derivation or disposable mo
 Anthropomorphic labels can conceal absent mechanism, and overly detailed biology can consume the whole project. Keep one causal, visible actor boundary as the deliverable; broader civilization and Gate rules remain later specifications.
 
 ---
+
 Planning refinement from independent review, included while this card is Incoming: coordinate modeled time units and update cadence with committed-clock-executable-policy; this is a semantic reference, not a fabricated blocking dependency on independent research. This append-only comment supplies supplemental provenance for the supported Markdown authoring step; creation history remains unchanged.
+
+Canonical rendering correction for the sibling site (review 5451583235, comment 4214853378). The qualified Rheos comment operation normalizes legacy note/rule separators with blank lines, so the preserved refinement note renders as a paragraph rather than a setext heading.
+
+The earlier coordination of modeled time units and cadence with committed-clock-executable-policy remains a semantic reference, not a fabricated blocking dependency. Original comment text and historical ledger events are preserved. This formatting correction does not resume broader life/actor work or admit it into the current finite Gate execution batch.
+
 ---
