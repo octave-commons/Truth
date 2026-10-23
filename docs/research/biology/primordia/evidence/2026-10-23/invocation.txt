@@ -1,0 +1,5 @@
+python3 experiment.py run --source /workspace/primordia-source --out /workspace/Truth/docs/research/biology/primordia/evidence/preflight-final
+exit=2
+BLOCKED: --source must be a clean git checkout at the pinned SHA; cargo/rustc unavailable on PATH
+
+Preflight artifacts relocated to evidence/2026-10-23; no simulations started.

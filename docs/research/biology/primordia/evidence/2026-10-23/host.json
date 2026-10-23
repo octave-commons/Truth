@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-23T20:41:44.046567+00:00",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "cpu": "",
+  "logical_cpus": 3,
+  "python": "3.12.14",
+  "harness_sha256": "b7116d3a97d263770dda19f717dd5948f413745b51f08461e7b25194dffbceb1",
+  "cargo": null,
+  "rustc": null,
+  "dri_devices": [],
+  "backend": "CPU requested; no GPU parity test"
+}

@@ -1,0 +1,112 @@
+{
+  "upstream": "https://github.com/Chokyotager/Primordia",
+  "commit": "1c93703ae33b0016d48ca59d22a5703835bfe1e6",
+  "truth_base": "58b0fd91ea65b7a4b3a1f571f22f3d394374a871",
+  "files": [
+    {
+      "path": "DESIGN.md",
+      "git_blob_sha1": "a355384b64be6c46f10ba4bdaa3240572afe4339",
+      "bytes": 8210
+    },
+    {
+      "path": "LICENSE",
+      "git_blob_sha1": "985ae3d1f9a9d3e14d39696155672cfb3b7a7086",
+      "bytes": 1068
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "595363ee47c51d43c82ad68570eb964d4048367e",
+      "bytes": 6123
+    },
+    {
+      "path": "crates/primordia-cli/Cargo.toml",
+      "git_blob_sha1": "62c55fff05bf17fd72bd1fdfe3bed843dd285c96",
+      "bytes": 534
+    },
+    {
+      "path": "crates/primordia-core/src/config.rs",
+      "git_blob_sha1": "2171bd6f03b4529373f184f346b51e60ff16c026",
+      "bytes": 26662
+    },
+    {
+      "path": "crates/primordia-core/src/events.rs",
+      "git_blob_sha1": "c83f93a179bb84aa18d26232dcbea0db2b88452f",
+      "bytes": 11168
+    },
+    {
+      "path": "crates/primordia-core/src/exec.rs",
+      "git_blob_sha1": "427ed96460d29bb5fb0b11d863839cf2a25dd037",
+      "bytes": 33296
+    },
+    {
+      "path": "crates/primordia-core/src/isa.rs",
+      "git_blob_sha1": "71679ec08c36a8500bf5a112711a40bf3b2eeede",
+      "bytes": 6809
+    },
+    {
+      "path": "crates/primordia-core/src/params.rs",
+      "git_blob_sha1": "02b479c7d2d4e188e2bcb21fb10ebada11070bc8",
+      "bytes": 12909
+    },
+    {
+      "path": "crates/primordia-core/src/phases.rs",
+      "git_blob_sha1": "5bd0aa57fd14eaaf0ebe2904a9f89094c2f2933a",
+      "bytes": 44484
+    },
+    {
+      "path": "crates/primordia-core/src/state.rs",
+      "git_blob_sha1": "d4d085afeade7ee7545c8b3af1c82a5bda221358",
+      "bytes": 19251
+    },
+    {
+      "path": "crates/primordia-core/src/world.rs",
+      "git_blob_sha1": "aff5da9aea48b0d76ca9b1ddad63ef15eecb5b40",
+      "bytes": 18068
+    },
+    {
+      "path": "crates/primordia-core/tests/golden.rs",
+      "git_blob_sha1": "999f763c7ec3676f54cf51e9bc92154c9f446c0b",
+      "bytes": 21120
+    },
+    {
+      "path": "crates/primordia-telemetry/src/analysis.rs",
+      "git_blob_sha1": "9e67a8fa0ab01931c338aca6a6733839ee46ab9f",
+      "bytes": 16954
+    },
+    {
+      "path": "crates/primordia-telemetry/src/lib.rs",
+      "git_blob_sha1": "bd4e5c66a2c823203145148ba7b4c554c8aa2ec5",
+      "bytes": 30492
+    },
+    {
+      "path": "primorida_spec.md",
+      "git_blob_sha1": "e0761e76879d834e512b08473ecaa91692c9a346",
+      "bytes": 54975
+    },
+    {
+      "path": "runs/live-m4.toml",
+      "git_blob_sha1": "77692646291949cb72fa9dea4dd88f62b3838ce8",
+      "bytes": 1200
+    },
+    {
+      "path": "runs/seed-501.jsonl",
+      "git_blob_sha1": "3cd1ed7a1cda266aa7ac89cc004e099bac73a510",
+      "bytes": 67008
+    },
+    {
+      "path": "runs/seed-small.jsonl",
+      "git_blob_sha1": "32f5e5ac8d9dcba59c818248abf07495fc83f486",
+      "bytes": 3975
+    },
+    {
+      "path": "runs/t10-sweep.toml",
+      "git_blob_sha1": "bf3accc78ae822252445afb73e8284d43a4f9a4f",
+      "bytes": 175
+    },
+    {
+      "path": "crates/primordia-cli/src/main.rs",
+      "git_blob_sha1": "76a0e6effe85833fee1c72192da82e5e4ca360b2",
+      "bytes": 32225
+    }
+  ]
+}

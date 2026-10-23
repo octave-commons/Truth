@@ -1,0 +1,4 @@
+bash bin/analyze --strict
+bash: bin/analyze: No such file or directory
+
+exit=127
