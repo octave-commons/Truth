@@ -242,6 +242,11 @@ so that humans and other agents can monitor them without reading the filesystem.
 
 ## Conventions
 
+Research: [Primordia replication under resource costs](docs/research/biology/primordia-replication-costs.md)
+records the pinned source audit, bounded acquisition commands, and runtime blockers
+for issue #63. No constrained emergence or sustained lineage has been verified.
+
 See `AGENTS.md` for the full house rules: threading macros over nested lets,
 `!`-suffixed names for impurity, docstrings on public vars, and tests as
 epistemic contracts (write the spec/test before the implementation).
+

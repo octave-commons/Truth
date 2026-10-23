@@ -314,3 +314,14 @@
   spore: none
   receipt-refs: none
   note: Two patterns worth spores: (1) a gate config in a conventionally-cached dir (.lsp/) is silently gitignored, so the gate passes locally and fails forever in CI -- check git check-ignore on every new config file before promoting a tool to blocking; (2) scoped symbol renames need a whole-scope re-audit, because a missed site does not error, it silently resolves to clojure.core (comp/count/name/field) and the test passes vacuously.
+
+- ts: 2026-10-23T20:40:52Z
+  session: codex-truth-issue-63
+  task: Audit Primordia resource-constrained replication evidence
+  p-efficiency: 0.65
+  p-friction: 0.7
+  p-skill-candidate: 0.6
+  spore: none
+  receipt-refs: Truth #63, docs/research/biology/primordia-replication-costs.md
+  note: A constrained config passed to an assay can still be replaced internally by a resource-free sandbox. Trace actual parameter construction and parentage semantics before inferring replication. API source reads do not prove shell Git or compiler availability; record runtime blockers separately from model non-detections. Replays must compare nonempty checkpoints.
+

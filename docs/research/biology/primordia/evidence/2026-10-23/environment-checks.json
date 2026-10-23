@@ -1,0 +1,39 @@
+[
+  {
+    "argv": [
+      "git",
+      "ls-remote",
+      "https://github.com/octave-commons/Truth.git",
+      "HEAD"
+    ],
+    "returncode": 128,
+    "stdout": "",
+    "stderr": "fatal: unable to access 'https://github.com/octave-commons/Truth.git/': CONNECT tunnel failed, response 503\n"
+  },
+  {
+    "argv": [
+      "cargo",
+      "--version"
+    ],
+    "returncode": null,
+    "error": "[Errno 2] No such file or directory: 'cargo'"
+  },
+  {
+    "argv": [
+      "rustc",
+      "--version"
+    ],
+    "returncode": null,
+    "error": "[Errno 2] No such file or directory: 'rustc'"
+  },
+  {
+    "argv": [
+      "bash",
+      "-c",
+      "test -d /dev/dri && ls /dev/dri"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  }
+]

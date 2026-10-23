@@ -1,6 +1,6 @@
 # Deep Research Index
 
-**Last updated:** 2026-07-23 (multi-timescale N-body integration notebook added)
+**Last updated:** 2026-10-23 (Primordia resource-cost audit and blocked pilot added)
 **Maintained by:** truth-research-coordinator actor
 
 This index catalogs all research notebooks produced by the deep research actor family.
@@ -58,7 +58,7 @@ New ECS component keywords added to `domain.ecs.components`:
 
 | Notebook | Status | Phase | Key Finding | Sources |
 |----------|--------|-------|-------------|---------|
-| *(no entries yet)* | | | | |
+| [primordia-replication-costs.md](biology/primordia-replication-costs.md) | draft — runtime blocked | research baseline | Built-in assay removes energy/matter costs; constrained emergence remains unknown (0 completed runs). Pinned acquisition harness and preflight evidence. | Primordia 1c93703; Truth #63 |
 
 **Actor:** truth-research-biology
 **Schedule:** Every 48h
@@ -151,3 +151,4 @@ New ECS component keywords added to `domain.ecs.components`:
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-culture
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-coordinator
 ```
+

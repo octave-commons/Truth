@@ -1,0 +1,11 @@
+{
+  "classification": "unknown",
+  "completed_simulations": 0,
+  "observed_replicators": null,
+  "frequency": null,
+  "confidence_interval": null,
+  "reasons": [
+    "--source must be a clean git checkout at the pinned SHA",
+    "cargo/rustc unavailable on PATH"
+  ]
+}

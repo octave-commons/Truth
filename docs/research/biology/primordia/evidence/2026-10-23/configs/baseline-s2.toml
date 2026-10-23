@@ -1,0 +1,47 @@
+preset = "primordia-2d-sun"
+seed = 2
+epochs = 1000
+[world]
+size = [51, 51]
+init_occupancy = 0.5
+[individual]
+interaction = "hybrid"
+l_init = 64
+l_max = 128
+step_budget = 512
+[energy]
+enabled = true
+mode = "normal"
+init_e = 600
+init_f = 500
+absorb_alpha = 0.05
+[energy.upkeep]
+base = 1.0
+per_byte = 0.02
+[energy.sun]
+enabled = true
+[energy.vents]
+enabled = false
+[chemistry]
+enabled = true
+[matter]
+enabled = true
+pool_l = 8
+pool_d = 8
+pool_a = 24
+[costs]
+CPY = 2
+[telemetry]
+hash_every = 10
+snapshot_every = 1000
+metrics_every = 50
+opcode_every = 50
+chirality_every = 50
+entropy_every = 50
+entropy_samples = 2601
+assay_every = 50
+census_every = 50
+ecology_every = 50
+cluster_every = 50
+[gpu]
+exec = false

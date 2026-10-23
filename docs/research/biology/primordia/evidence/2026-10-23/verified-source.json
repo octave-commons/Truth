@@ -1,0 +1,128 @@
+[
+  {
+    "path": "DESIGN.md",
+    "git_blob_sha1": "a355384b64be6c46f10ba4bdaa3240572afe4339",
+    "sha256": "ab92d14b31102b55ad56d67251768473221ba52077e5d6feb8056c27e8ea3696",
+    "bytes": 8210
+  },
+  {
+    "path": "LICENSE",
+    "git_blob_sha1": "985ae3d1f9a9d3e14d39696155672cfb3b7a7086",
+    "sha256": "4d2350c9f2cdc8baa41c9c11d5499508389dfb9fc3ff9ede83ae4d937d260592",
+    "bytes": 1068
+  },
+  {
+    "path": "README.md",
+    "git_blob_sha1": "595363ee47c51d43c82ad68570eb964d4048367e",
+    "sha256": "2ae72e8724676c51a2ef01e791c3b38de2ce7739a97bcf6dbcdc8f4ea4e85ae8",
+    "bytes": 6123
+  },
+  {
+    "path": "crates/primordia-cli/Cargo.toml",
+    "git_blob_sha1": "62c55fff05bf17fd72bd1fdfe3bed843dd285c96",
+    "sha256": "3ebf1f058b3ada78b2a80dae73a87e42271134902abd6c586777edb6b2e8ac6a",
+    "bytes": 534
+  },
+  {
+    "path": "crates/primordia-core/src/config.rs",
+    "git_blob_sha1": "2171bd6f03b4529373f184f346b51e60ff16c026",
+    "sha256": "1185ef02c6eff3ed869670e112524ff1c79c1e079a0794d6faf97083a43536d9",
+    "bytes": 26662
+  },
+  {
+    "path": "crates/primordia-core/src/events.rs",
+    "git_blob_sha1": "c83f93a179bb84aa18d26232dcbea0db2b88452f",
+    "sha256": "70e482591bd507dfaa6062a802d636e211bad7d00f950b8bc83984bb31eaa20d",
+    "bytes": 11168
+  },
+  {
+    "path": "crates/primordia-core/src/exec.rs",
+    "git_blob_sha1": "427ed96460d29bb5fb0b11d863839cf2a25dd037",
+    "sha256": "b8a1a066f7a11f91862eff965b8a65334f988f1cba9446efc2a6d31c5f0491d4",
+    "bytes": 33296
+  },
+  {
+    "path": "crates/primordia-core/src/isa.rs",
+    "git_blob_sha1": "71679ec08c36a8500bf5a112711a40bf3b2eeede",
+    "sha256": "e2d42cf668962b5dba5a11ede126c5b9527985693cce7ba2de082dcfecc0bf71",
+    "bytes": 6809
+  },
+  {
+    "path": "crates/primordia-core/src/params.rs",
+    "git_blob_sha1": "02b479c7d2d4e188e2bcb21fb10ebada11070bc8",
+    "sha256": "545a2a03a47c9bb809ee8e926cc78b1dbd8e25f5c4f1df73692713da84686a3f",
+    "bytes": 12909
+  },
+  {
+    "path": "crates/primordia-core/src/phases.rs",
+    "git_blob_sha1": "5bd0aa57fd14eaaf0ebe2904a9f89094c2f2933a",
+    "sha256": "462cb2d368e79793a37b85267055bc779806a03a1f3d8f1df6a370f659952ec0",
+    "bytes": 44484
+  },
+  {
+    "path": "crates/primordia-core/src/state.rs",
+    "git_blob_sha1": "d4d085afeade7ee7545c8b3af1c82a5bda221358",
+    "sha256": "8e94000ef53057064a2e2ed2cda264fe00e072463de6c2d1176e1e497102a2b6",
+    "bytes": 19251
+  },
+  {
+    "path": "crates/primordia-core/src/world.rs",
+    "git_blob_sha1": "aff5da9aea48b0d76ca9b1ddad63ef15eecb5b40",
+    "sha256": "7854bc3538e18be3c5d3b83ed5342e149e164a844bcc65b59151690617710002",
+    "bytes": 18068
+  },
+  {
+    "path": "crates/primordia-core/tests/golden.rs",
+    "git_blob_sha1": "999f763c7ec3676f54cf51e9bc92154c9f446c0b",
+    "sha256": "f5b60f2d24f5fc2f431bdf705327a95de118199e718ba32bf5ad71ac984dc044",
+    "bytes": 21120
+  },
+  {
+    "path": "crates/primordia-telemetry/src/analysis.rs",
+    "git_blob_sha1": "9e67a8fa0ab01931c338aca6a6733839ee46ab9f",
+    "sha256": "5cad83731921bff008a92a69e113397f440e022d48000393f534011abd0fec44",
+    "bytes": 16954
+  },
+  {
+    "path": "crates/primordia-telemetry/src/lib.rs",
+    "git_blob_sha1": "bd4e5c66a2c823203145148ba7b4c554c8aa2ec5",
+    "sha256": "01579b27109b3ce7d9aa53c1bdf107726e2030975ebcdd70fc4a0d9fb7b0c6a1",
+    "bytes": 30492
+  },
+  {
+    "path": "primorida_spec.md",
+    "git_blob_sha1": "e0761e76879d834e512b08473ecaa91692c9a346",
+    "sha256": "dad4a2104c4423971a676526ade7713bde3e6138f28409af6642c840cebd5450",
+    "bytes": 54975
+  },
+  {
+    "path": "runs/live-m4.toml",
+    "git_blob_sha1": "77692646291949cb72fa9dea4dd88f62b3838ce8",
+    "sha256": "a674c9f55a31aaeb374e404c522e0f579d7075c917d8683d0ef8f2ffcde17c32",
+    "bytes": 1200
+  },
+  {
+    "path": "runs/seed-501.jsonl",
+    "git_blob_sha1": "3cd1ed7a1cda266aa7ac89cc004e099bac73a510",
+    "sha256": "f7c14b2c7d1b6870e0c3418afbb01dfe6f28b31530c92f94ddba164630c92b4a",
+    "bytes": 67008
+  },
+  {
+    "path": "runs/seed-small.jsonl",
+    "git_blob_sha1": "32f5e5ac8d9dcba59c818248abf07495fc83f486",
+    "sha256": "9df60344b324e8ed95a8490d7b9bc31ae3367416eba7b3bcad703384904e16f3",
+    "bytes": 3975
+  },
+  {
+    "path": "runs/t10-sweep.toml",
+    "git_blob_sha1": "bf3accc78ae822252445afb73e8284d43a4f9a4f",
+    "sha256": "11294e4dc4f89e10a0a11477206ce5186acaae2480e1018c81100ad49938aabf",
+    "bytes": 175
+  },
+  {
+    "path": "crates/primordia-cli/src/main.rs",
+    "git_blob_sha1": "76a0e6effe85833fee1c72192da82e5e4ca360b2",
+    "sha256": "8f88ddeb0efc50dc7625f408708562c5105637f4b5c062f06e9c4cde5d82fdd1",
+    "bytes": 32225
+  }
+]
