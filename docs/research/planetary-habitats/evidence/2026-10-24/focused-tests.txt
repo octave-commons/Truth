@@ -1,0 +1,11 @@
+
+Testing domain.interior-test
+
+Testing domain.voxel-carve-test
+
+Testing domain.chemistry-system-test
+
+Testing domain.ecology-test
+
+Ran 60 tests containing 327 assertions.
+0 failures, 0 errors.

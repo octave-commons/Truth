@@ -151,3 +151,8 @@ New ECS component keywords added to `domain.ecs.components`:
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-culture
 ~/.agents/skills/eta-mu-actor-agent/scripts/actor-status.sh truth-research-coordinator
 ```
+
+
+### 2026-10-24 — physical habitat research (manual session)
+
+[Truth × Primordia planetary habitats](planetary-habitats/README.md): early geology, volatile origin, atmosphere/clouds, impacts and reactive chemistry; seven existing-model probes; 60 focused tests / 327 assertions passed. Dry-silicate moisture proxy limitation reproduced. Full strict gate unavailable (missing analyzers). No actor dispatch/timer verification, native run, new physical solver or coupled-life result.
