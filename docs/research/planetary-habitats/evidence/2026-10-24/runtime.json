@@ -1,0 +1,30 @@
+{
+  "observed_at_utc": "2026-10-24T18:30:31.583430+00:00",
+  "production_source": "58b0fd91ea65b7a4b3a1f571f22f3d394374a871",
+  "scope": "selected existing pure domain and ECS-fold probes, no native window or new physics",
+  "java": "OpenJDK 17.0.20",
+  "clojure": "1.11.1 (project pin)",
+  "malli": {
+    "version": "0.16.4",
+    "git_sha": "bf6d832b3138c1d504ee83e2af5a5a2c472ec132"
+  },
+  "dynaload": {
+    "version": "0.3.5",
+    "git_sha": "ad11c760fc5b9c7d8d7817f1433eecf09115b2d0"
+  },
+  "classpath": "Clojure/spec/core-spec jars fetched with curl from repo.maven.apache.org; exact tagged Malli/dynaload source roots; Truth src:test",
+  "normal_cli_attempt": "blocked resolving repo1.maven.org in JVM; no project dependency changes",
+  "selected_tests": {
+    "tests": 60,
+    "assertions": 327,
+    "failures": 0,
+    "errors": 0
+  },
+  "full_strict_gate": "unavailable: clj-kondo and clojure-lsp not installed",
+  "scenarios_exit": 0,
+  "jars_sha256": {
+    "truth-clojure-1.11.1.jar": "2381b6e9423ab465151455944903d13a56243d6006b9194afc1bf4f8710cb4de",
+    "truth-spec.jar": "67ec898eb55c66a957a55279dd85d1376bb994bd87668b2b0de1eb3b97e8aae0",
+    "truth-corespec.jar": "06eea8c070bbe45c158567e443439681bc8c46e9123414f81bfa32ba42d6cbc8"
+  }
+}

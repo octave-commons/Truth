@@ -62,3 +62,8 @@ All research notebooks are written to `docs/research/<domain>/` and indexed in
 - A promotion path to `domain/` code
 
 See `.agents/skills/deep-research/SKILL.md` for the full research protocol.
+
+
+### 2026-10-24 — physical habitat research (manual session)
+
+[Truth × Primordia planetary habitats](planetary-habitats/README.md): early geology, volatile origin, atmosphere/clouds, impacts and reactive chemistry; seven existing-model probes; 60 focused tests / 327 assertions passed. Dry-silicate moisture proxy limitation reproduced. Full strict gate unavailable (missing analyzers). No actor dispatch/timer verification, native run, new physical solver or coupled-life result.
