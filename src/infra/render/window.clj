@@ -162,6 +162,17 @@
         flipped (flip-rgba-vertical pixels width height)]
     (STBImageWrite/stbi_write_png path width height 4 flipped (* width 4))))
 
+(defn capture-framebuffer!
+  "Save the already rendered native back buffer without stepping the world.
+
+   Call on the window thread before swapping buffers. Reuses its current
+   context; creating an offscreen context here would disconnect the window."
+  [path width height]
+  (GL11/glReadBuffer GL11/GL_BACK)
+  (when-not (write-png-flipped path width height)
+    (throw (ex-info "Native framebuffer PNG write failed" {:path path})))
+  path)
+
 (defn- cleanup-offscreen [window]
   (GL30/glBindFramebuffer GL30/GL_FRAMEBUFFER 0)
   (rvolume/reset-volume-cache!)

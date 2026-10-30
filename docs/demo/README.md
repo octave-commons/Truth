@@ -1,5 +1,13 @@
 # Gates of Truth — watch the nebula become stars
 
+**Controlled impact, October 24:** [Compatible continuum refinement](continuum-impact-2026-10-24/README.md)
+compares coarse, fine and adaptive material at two timesteps, including an
+admitted return to coarse resolution and explicit energy/momentum budgets.
+
+**Material-first experiment, October 24:** [Finite material cells assemble and collide](material-debris-2026-10-24/README.md), with native animations, conservative regional quantization, controls and measured energy error.
+
+**New experiment, October 24:** [A fresh native run from nebula to planets](nebula-experiment-2026-10-24-live/README.md), with its formation ledger, closeups, physical input measurements, and a water-chemistry finding.
+
 **Start here: one continuous live run, from the starting cloud through
 contraction, core formation, ignition, and the surrounding gas afterward.**
 Everything is embedded on this page: **11 looping GIFs and 24 screenshots**.
@@ -412,3 +420,15 @@ Software/process documentation is GPL-3.0-or-later. Creative screenshot/video
 assets are CC-BY-SA-4.0 where applicable, following the project license policy.
 
 </details>
+
+The **adaptive material experiment (2026-10-24)** adds a smooth scalar surface,
+raw-cell comparison, quiet aggregate coarsening and approach-driven detailed
+reactivation. See `adaptive-material-2026-10-24/demo.html` and
+`../research/adaptive-material-experiment.md` for measured shadow error and
+limits. It is a local bounded prototype, with retained cell microstate.
+
+The **spin and resolution experiments (2026-10-24)** compare a rotating coarse
+packet with a translating cache and detailed cells. They also retain a failed
+32 m subdivision trial and paired 64 m / 32 m fresh-cloud assembly runs. The
+hosted Planetary Lab includes each experiment's native recordings and numerical
+limits. See `../research/rotating-material-experiment.md`.

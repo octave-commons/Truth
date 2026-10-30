@@ -53,7 +53,7 @@
             eid))
         (ecs/all-of world c/commitment-state c/voxel-band)))
 
-(defn voxel-cube-shapes
+(defn- band-cube-shapes
   "Render-space cube shapes for the committed world's resolved `c/voxel-band`,
    or `[]` when no committed world carries a band or the band is empty.
 
@@ -90,3 +90,28 @@
               voxels)
         []))
     []))
+
+
+(defn voxel-cube-shapes
+  "Existing band cubes plus moving finite-material cells through the same cube pass."
+  [ctx world]
+  (let [scale (double (:material/view-scale world (:scale ctx)))
+        local-ctx (assoc ctx :scale scale)
+        view (:material/view world :composition)]
+    (into (vec (band-cube-shapes ctx world))
+          (map (fn [eid]
+                 (let [cell (ecs/get-component world eid c/material-cell)
+                       mass (+ (:silicate-kg cell) (:iron-kg cell) (:water-kg cell))
+                       water (/ (:water-kg cell) mass) iron (/ (:iron-kg cell) mass)
+                       base (cond (> water 0.2) [0.30 0.70 0.95]
+                                  (> iron 0.5) [0.88 0.47 0.20] :else [0.56 0.52 0.44])
+                       damage (double (or (ecs/get-component world eid c/material-damage) 0.0))
+                       heat (min 1.0 (/ (max 0.0 (- (ecs/get-component world eid c/temperature) 205.0)) 0.01))
+                       color (case view
+                               :damage (mapv #(+ (* (- 1.0 damage) %1) (* damage %2)) base [1.0 0.14 0.05])
+                               :temperature [1.0 (- 0.8 (* 0.7 heat)) (- 0.5 (* 0.45 heat))]
+                               base)]
+                   {:entity eid :position (units/world->render local-ctx (ecs/get-component world eid c/position))
+                    :radius (/ (* 0.48 (:edge-m cell)) scale) :color color
+                    :material :material-cell :kind :voxel :render-mode :voxel-cube})))
+          (ecs/entities-with world c/material-cell c/position c/temperature))))

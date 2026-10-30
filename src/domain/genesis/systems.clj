@@ -3,6 +3,8 @@
    double-buffer tick fan-out runs each frame."
   (:require
    [domain.em :as em]
+   [domain.material :as material]
+   [domain.material.resolution :as resolution]
    [domain.intervention :as intervention]
    [domain.player :as player]
    [domain.integrator :as integ]
@@ -125,7 +127,10 @@
    tick-world) from every new position (spec §6)."
   [{:keys [sim/G sim/theta sim/dt sim/softening] :as _params}]
   (let [soft (or softening 1e14)]
-    (into [(orbital/gravity-acceleration G theta soft)
+    (into [(resolution/resolution-system)
+           (material/contact-system)
+           (material/aggregate-system)
+           (orbital/gravity-acceleration G theta soft)
            (mfd/merged-hydro-em-system dt)]
           (concat (physics-force-systems dt)
                   (physics-transform-systems)

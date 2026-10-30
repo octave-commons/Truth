@@ -20,6 +20,7 @@
 (def init-glfw "Initialize GLFW; required before creating windows." window/init-glfw)
 (def create-window "Create an OpenGL window and context." window/create-window)
 (def render-to-file "Render the current frame to an image file." window/render-to-file)
+(def capture-framebuffer! "Save the rendered native back buffer." window/capture-framebuffer!)
 ;; ---------------------------------------------------------------------------
 ;; Shader program constructors (backward-compatible wrappers)
 ;; ---------------------------------------------------------------------------
