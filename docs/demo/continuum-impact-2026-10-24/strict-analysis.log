@@ -1,0 +1,6 @@
+
+[1;36m━━━ verdict[0m
+[1;31m✘ cannot run the gate:[0m
+  - clj-kondo not found on PATH — gate cannot run
+  - clojure not found on PATH — gate cannot run
+  - clojure-lsp not found on PATH — gate cannot run

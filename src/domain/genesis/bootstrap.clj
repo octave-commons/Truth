@@ -3,6 +3,7 @@
    lifecycle materialization step that spawns and despawns entities between
    ticks. Pure data transformation; no rendering or IO."
   (:require
+   [domain.material.resolution :as material-resolution]
    [clojure.math :as math] [law.stellar :as law]
    [law.composition :as lcomp]
    [law.registry :as lreg]
@@ -349,4 +350,5 @@
   [world]
   (-> (reduce spawn-requested world spawn-request-components)
       emit-escape-threshold
-      reap-consumed))
+      reap-consumed
+      material-resolution/materialize-requests))

@@ -139,12 +139,13 @@
   "Request a screenshot and block until it has been written to `path`.
    The actual readback happens on the window thread, so this may take up
    to one frame plus file I/O time."
-  [path]
-  (when-let [config-atom (:config @service-state)]
-    (let [result (promise)]
-      (swap! config-atom assoc :screenshot-request {:path path :result result})
-      @result
-      path)))
+  ([path] (take-screenshot! path {}))
+  ([path opts]
+   (when-let [config-atom (:config @service-state)]
+     (let [result (promise)]
+       (swap! config-atom assoc :screenshot-request (merge opts {:path path :result result}))
+       (when-let [error (:error @result)] (throw error))
+       path))))
 
 (defn service-info
   "Return a read-only summary of the running service."

@@ -48,7 +48,7 @@
   "A unit-agnostic shape ready for the renderer. All positions/radii are in
    render units; color is unitless RGB."
   [:map
-   [:render-mode [:enum :body :sprite :particle :line :volume :hud]]
+   [:render-mode [:enum :body :sprite :particle :line :volume :hud :voxel-cube :material-surface]]
    [:position vec3]
    [:radius {:optional true} :double]
    [:color {:optional true} vec3]

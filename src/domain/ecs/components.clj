@@ -5,6 +5,13 @@
   (:refer-clojure :exclude [binding]))
 
 ;; --- Spatial ----------------------------------------------------------------
+(def material-cell :component/material-cell)
+(def internal-energy :component/internal-energy)
+(def material-thermal :component/material-thermal)
+(def accel-material :component/accel.material)
+(def heat-material :component/heat.material)
+(def material-damage :component/material-damage)
+(def material-aggregate :component/material-aggregate)
 (def position  :component/position)
 (def velocity  :component/velocity)
 (def mass      :component/mass)
@@ -366,3 +373,14 @@
 (def facet-vector :component/facet-vector)
 (def favor        :component/favor)
 (def scribe       :component/scribe)
+
+;; Adaptive material lifecycle packets and sole-owner validity classifier.
+(def material-packet :component/material-packet)
+(def material-source-id :component/material-source-id)
+(def material-quiet-time :component/material-quiet-time)
+(def material-resolution-request :component/material-resolution-request)
+
+(def material-orientation :component/material-orientation)
+
+;; Internal material field of a closed, localized plane-strain experiment region.
+(def continuum-region :component/continuum-region)

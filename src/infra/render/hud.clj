@@ -7,6 +7,8 @@
    [domain.player :as player]
    [domain.ecs.core :as ecs]
    [domain.ecs.components :as c]
+   [domain.material.resolution :as resolution]
+   [domain.continuum :as continuum]
    [domain.intervention :as intervention]
    [domain.gravity.dark-matter :as dark-matter]
    [domain.voxel.sculpt :as sculpt]
@@ -189,18 +191,53 @@
              (/ (dark-matter/halo-mass world) (double law/solar-mass))
              (/ (dark-matter/halo-scale-radius world) (double law/au)))])),
 
-(defn hud-text-from-world
+(defn- standard-hud-text-from-world
   "Top-left stats panel for a Phase 0 world: the adaptive clock (elapsed
    sim-time, current rate, phase) plus total mass, temperature, body counts,
    and the simulation tick counter. Reads the per-tick `:genesis/stats` cache.
    Empty for non-genesis/bare worlds."
   [world]
-  (if (:genesis/rate-yr world)
+  (if (or (seq (get-in world [:components c/material-cell]))
+          (seq (get-in world [:components c/material-packet])))
+    (let [observed (resolution/observed-cells world)
+          cells (into {} (map (juxt :source-id :cell)) observed)
+          active (count (get-in world [:components c/material-cell]))
+          coarse (count (get-in world [:components c/material-packet]))
+          groups (vals (into {} (map (fn [[_ label]] [(:aggregate-id label) label]))
+                              (get-in world [:components c/material-aggregate])))
+          lines [(str "MATERIAL EXPERIMENT / " (name (:material/scenario world :debris)))
+                 (format "t %.1f seconds   tick %d" (double (:genesis/sim-time world)) (long (:tick world)))
+                 (format "%d retained cells / %d active + %d coarse bodies" (count cells) active coarse)
+                 (format "water carrier %.3e kg" (reduce + (map :water-kg (vals cells))))
+                 (format "peak T %.6f K" (reduce max (vals (get-in world [:components c/temperature]))))
+                 (str "view: " (name (:material/view world :composition)))
+                 "blue: water-bearing   orange: iron   grey: silicate"
+                 (str "physical cell edges " (vec (sort (set (map :edge-m (vals cells)))))
+                      " m / surface grid " (:material/display-grid-m world 12.0) " m / no shock EOS")]]
+      (map-indexed (fn [i text] {:text text :x 16.0 :y (+ 38.0 (* i 22.0))
+                                 :scale 1.7 :color [0.86 0.94 1.0 0.95]}) lines))
+    (if (:genesis/rate-yr world)
     (map-indexed (fn [i s]
                    {:text s :x 16.0 :y (+ 38.0 (* i 22.0))
                     :scale 2.2 :color [0.86 0.94 1.0 0.95]})
                  (genesis-stat-lines world))
-    []))
+    [])))
+
+(defn hud-text-from-world
+  "Display native material or continuum observations from the actual ECS snapshot."
+  [world]
+  (if-let [region (first (vals (get-in world [:components c/continuum-region])))]
+    (let [o (continuum/observe region)
+          lines [(str "CONTINUUM IMPACT / " (name (:mode region)) " / " (name (:continuum/view world :pressure)))
+                 (format "t %.2f s / %d elements / %d nodes" (:time region) (:elements o) (:nodes o))
+                 (format "nominal mesh %d m / plane strain, 64 m extrusion" (if (zero? (:level region)) 64 32))
+                 (format "elastic %.3e J / heat %.3e J" (:elastic-J o) (:heat-J o))
+                 (format "contact %.3e J / max damage %.3f" (:contact-J o) (:maximum-damage o))
+                 (format "energy %.6e J / handoffs %d" (:energy-J o) (count (:transfers region)))
+                 "illustrative material / no gravity / no fracture or shock EOS"]]
+      (map-indexed (fn [i text] {:text text :x 16.0 :y (+ 38.0 (* i 22.0))
+                                 :scale 1.7 :color [0.86 0.94 1.0 0.95]}) lines))
+    (standard-hud-text-from-world world)))
 
 (defn- observer-base-text
   "The fixed bottom-left observer state lines: quanta, resonance, spark state, focus."

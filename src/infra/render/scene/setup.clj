@@ -10,6 +10,7 @@
    [infra.camera :as cam]
    [infra.render.math :as rmath]
    [infra.render.mesh :as rmesh]
+   [infra.render.material-surface :as surface]
    [infra.render.color :as rcolor]
    [infra.render.hud :as rhud]
    [infra.render.volume :as rvolume]
@@ -78,13 +79,15 @@
   (let [particles (filterv #(= :particle (:render-mode %)) bodies)
         lines     (filterv #(= :line (:render-mode %)) bodies)
         voxels    (filterv #(= :voxel-cube (:render-mode %)) bodies)
-        solids    (remove #(#{:particle :line :voxel-cube} (:render-mode %)) bodies)
+        surfaces (filterv #(= :material-surface (:render-mode %)) bodies)
+        solids    (remove #(#{:particle :line :voxel-cube :material-surface} (:render-mode %)) bodies)
         [solids-lod sprites] (bodies/classify-body-lod solids camera height nil)]
     {:particles particles
      :lines     lines
      :solids    solids-lod
      :sprites   sprites
-     :voxels    voxels}))
+     :voxels    voxels
+     :surfaces surfaces}))
 
 (defn- render-volume-pass
   "Full-screen volumetric fog pass."
@@ -243,12 +246,13 @@
         bodies' (shift-bodies bodies origin)
         volume' (shift-volume volume origin)
         {:keys [projection view]} (camera-matrices camera' width height)
-        {:keys [particles lines solids sprites voxels]} (partition-renderables bodies' camera' width height)]
+        {:keys [particles lines solids sprites voxels surfaces]} (partition-renderables bodies' camera' width height)]
     (render-volume-pass volume' camera' width height)
     (render-particles-pass particle-program projection view camera' t particles)
     (render-lines-pass line-program projection view lines)
     (render-solids-pass body-program mesh-world projection view camera' solids)
     (render-voxel-cubes-pass body-program cube-mesh projection view camera' voxels)
+    (surface/draw! projection view camera' surfaces)
     (render-sprites-pass sprite-program projection view sprites)
     (render-hud-pass hud-program hud hud-text width height)))
 

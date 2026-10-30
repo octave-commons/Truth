@@ -36,7 +36,19 @@
 (def systems
   "Declared systems with their reads/writes. Order is irrelevant to the
    invariant — it exists only to enumerate systems and validate disjointness."
-  [;; The Structure owner: shape + compactness. radius and density are one
+  [{:id :material-resolution :ns 'domain.material.resolution
+    :reads #{c/material-orientation c/material-cell c/material-packet c/material-aggregate c/position c/velocity
+             c/mass c/radius c/material-quiet-time c/material-source-id c/internal-energy
+             c/material-damage c/accel-gravity c/accel-material c/density c/temperature
+             c/composition c/material-thermal}
+    :writes #{c/material-quiet-time c/material-resolution-request}}
+   {:id :material-contact :ns 'domain.material
+    :reads #{c/material-cell c/position c/velocity c/mass c/radius c/material-damage}
+    :writes #{c/accel-material c/heat-material c/material-damage}}
+   {:id :material-aggregate :ns 'domain.material
+    :reads #{c/material-cell c/position c/velocity c/mass c/radius}
+    :writes #{c/material-aggregate}}
+   ;; The Structure owner: shape + compactness. radius and density are one
    ;; geometric fact, so one system owns the pair (branching on matter-state:
    ;; gas SPH / solid material density / KH oblate contraction — plus the
    ;; body-kind :spark resolve branch, spark-redesign card 4). Subsumes the
@@ -176,7 +188,7 @@
    ;; docs/notes/specs/2026.06.29-unified-physical-state-integrator-spec.md.
    {:id     :integrator
     :ns     'domain.integrator
-    :reads  #{c/position c/velocity c/mass c/radius c/body-kind
+    :reads  #{c/continuum-region c/position c/velocity c/mass c/radius c/body-kind
               c/accel-gravity c/accel-pressure c/accel-lorentz c/accel-observer
               c/accel-warp c/accel-dark-matter c/accel-thrust c/frame-offset
               c/matter-state c/density c/luminosity c/sed-bands c/composition
@@ -185,9 +197,9 @@
               c/mass-flux-flare c/mass-flux-xuv c/mass-flux-disk
               c/mass-flux-transfer c/mass-flux-condense
               c/absorb-merge c/absorb-accrete c/wind-heating
-              c/lod-tick-phase}
-    :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
-              c/angular-momentum c/spin c/consumed-transfer c/consumed-ablation}}
+              c/lod-tick-phase c/material-cell c/internal-energy c/heat-material c/accel-material c/material-packet c/material-orientation}
+    :writes #{c/continuum-region c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
+              c/angular-momentum c/spin c/consumed-transfer c/consumed-ablation c/internal-energy c/material-thermal c/material-orientation}}
 
    ;; The observer pull-toward-focus nudge: a fan-out emitter (was serial in
    ;; tick-world). Sole writer of accel.observer; the integrator sums it.
@@ -537,6 +549,11 @@
 ;; ---------------------------------------------------------------------------
 ;; Validation
 ;; ---------------------------------------------------------------------------
+
+(defn registry-reads
+  "Declared component reads of a registered system."
+  [system-id]
+  (:reads (first (filter #(= system-id (:id %)) systems))))
 
 (defn registry-writes
   "Return the declared :writes set for a system :id from the registry.

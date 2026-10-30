@@ -1,0 +1,6 @@
+=== Gates of Truth Benchmark Suite ===
+Date: Sat Oct 24 18:07:01 CDT 2026
+Host: f9b8719fb551
+
+Installing criterium dependency...
+bin/bench: line 27: clojure: command not found

@@ -5,7 +5,24 @@
    [domain.profile :as profile]
    [domain.integrator.core :as core]
    [domain.integrator.kinematics :as kinematics]
-   [domain.integrator.temperature :as temperature]))
+   [domain.integrator.temperature :as temperature]
+   [domain.integrator.base :as base]
+   [domain.ecs.core :as ecs]
+   [law.material :as material]
+   [domain.material.rotation :as material-rotation]
+   [domain.continuum :as continuum]))
+
+(defn- material-energy-ws [world]
+  (reduce (fn [ws eid]
+            (let [cell (ecs/get-component world eid c/material-cell)
+                  energy (+ (ecs/get-component world eid c/internal-energy)
+                            (base/sum-scalar-influences world eid
+                              (get-in base/influence-registry [:internal-energy :accumulate])))
+                  thermal (material/thermal-state cell energy)]
+              (-> ws (assoc-in [c/internal-energy eid] energy)
+                  (assoc-in [c/material-thermal eid] thermal)
+                  (assoc-in [c/temperature eid] (:temperature thermal)))))
+          {} (ecs/entities-with world c/material-cell c/internal-energy)))
 
 ;; ---------------------------------------------------------------------------
 ;; Re-exports from domain.integrator.base
@@ -61,7 +78,7 @@
               (fn [_world] (core/rotation-ws world)))
         profile (apply merge-with +
                        (map #(or (:genesis/_profile %) {}) [kin mass temp ion comp-ws cond-ws rot]))]
-    (cond-> (merge kin mass temp ion comp-ws cond-ws rot)
+    (cond-> (merge-with merge kin mass temp ion comp-ws cond-ws rot (material-energy-ws world) (material-rotation/orientation-ws world dt) (continuum/integrator-ws world dt))
       (seq profile) (assoc :genesis/_profile profile))))
 
 (defn integrator-system
@@ -72,7 +89,7 @@
    Uses the `:genesis/physics-soa` cache for kinematics when present.\n\n   Each major phase is wrapped with `profile/profile-section`; their\n   `:genesis/_profile` maps are merged into the returned write-set so the\n   benchmark harness can report subsystem timings."
   [dt]
   {:id     :integrator
-   :writes #{c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
-             c/angular-momentum c/spin c/consumed-transfer}
-   :reads  #{c/lod-tick-phase}
+   :writes #{c/continuum-region c/position c/velocity c/mass c/temperature c/ionization-fraction c/composition c/comp-condensed
+             c/angular-momentum c/spin c/consumed-transfer c/internal-energy c/material-thermal c/material-orientation}
+   :reads  #{c/continuum-region c/material-packet c/material-orientation c/lod-tick-phase c/material-cell c/internal-energy c/heat-material c/accel-material}
    :run    (fn [world] (run-integrator-phases world dt))})

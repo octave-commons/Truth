@@ -92,15 +92,18 @@
 ;; Intentional: `catch Throwable` — see the render-loop guard rationale in this
 ;; namespace's header.
 #_{:splint/disable [lint/catch-throwable]}
-(defn- handle-screenshot-request [world-atom config-atom]
-  (when-let [{:keys [path result opts]} (:screenshot-request @config-atom)]
+(defn- handle-screenshot-request [window config-atom drawn-world]
+  (when-let [{:keys [path result expected-world]} (:screenshot-request @config-atom)]
+    (when (or (nil? expected-world) (identical? expected-world drawn-world))
     (try
-      (render/render-to-file world-atom path (or opts {}))
+      (let [width (int-array 1) height (int-array 1)]
+        (GLFW/glfwGetFramebufferSize window width height)
+        (render/capture-framebuffer! path (aget width 0) (aget height 0)))
       (deliver result {:ok true :path path})
       (catch Throwable t
         (deliver result {:error t}))
       (finally
-        (swap! config-atom dissoc :screenshot-request)))))
+        (swap! config-atom dissoc :screenshot-request))))))
 
 (def ^:private default-tick-fn
   "Fallback per-tick world advance: pure gravity (the Sun/Earth/Moon demo).
@@ -428,8 +431,8 @@
                                 :bodies bodies
                                 :t @time-atom
                                 :render-origin render-origin})
-          (render/delete-volume volume))
-        (handle-screenshot-request world-atom config-atom)
+          (render/delete-volume volume)
+          (handle-screenshot-request window config-atom w))
         (GLFW/glfwSwapBuffers window)
         (Thread/sleep 16)
         (not (GLFW/glfwWindowShouldClose window))))

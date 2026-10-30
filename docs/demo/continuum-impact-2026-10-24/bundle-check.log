@@ -1,0 +1,68 @@
+
+Testing domain.continuum-test
+
+Testing architecture-test
+
+Testing domain.material-resolution-test
+
+Testing shape.rigid-test
+
+Testing domain.material-debris-test
+
+Testing infra.render.material-test
+
+Testing infra.dev.window-test
+clojure.lang.ExceptionInfo: boom {:x 1}
+	at infra.dev.window_test$fn__15414.invokeStatic(window_test.clj:116)
+	at infra.dev.window_test$fn__15414.invoke(window_test.clj:113)
+	at clojure.test$test_var$fn__9856.invoke(test.clj:717)
+	at clojure.test$test_var.invokeStatic(test.clj:717)
+	at clojure.test$test_var.invoke(test.clj:708)
+	at clojure.test$test_vars$fn__9882$fn__9887.invoke(test.clj:735)
+	at infra.dev.window_test$eval15320$fn__15321.invoke(window_test.clj:18)
+	at clojure.test$compose_fixtures$fn__9850$fn__9851.invoke(test.clj:694)
+	at clojure.test$default_fixture.invokeStatic(test.clj:687)
+	at clojure.test$default_fixture.invoke(test.clj:683)
+	at clojure.test$compose_fixtures$fn__9850.invoke(test.clj:694)
+	at clojure.test$test_vars$fn__9882.invoke(test.clj:735)
+	at clojure.test$default_fixture.invokeStatic(test.clj:687)
+	at clojure.test$default_fixture.invoke(test.clj:683)
+	at clojure.test$test_vars.invokeStatic(test.clj:731)
+	at clojure.test$test_all_vars.invokeStatic(test.clj:737)
+	at clojure.test$test_ns.invokeStatic(test.clj:758)
+	at clojure.test$test_ns.invoke(test.clj:743)
+	at clojure.core$map$fn__5935.invoke(core.clj:2772)
+	at clojure.lang.LazySeq.sval(LazySeq.java:42)
+	at clojure.lang.LazySeq.seq(LazySeq.java:51)
+	at clojure.lang.Cons.next(Cons.java:39)
+	at clojure.lang.RT.next(RT.java:713)
+	at clojure.core$next__5451.invokeStatic(core.clj:64)
+	at clojure.core$reduce1.invokeStatic(core.clj:946)
+	at clojure.core$reduce1.invokeStatic(core.clj:936)
+	at clojure.core$merge_with.invokeStatic(core.clj:3076)
+	at clojure.core$merge_with.doInvoke(core.clj:3068)
+	at clojure.lang.RestFn.applyTo(RestFn.java:139)
+	at clojure.core$apply.invokeStatic(core.clj:669)
+	at clojure.test$run_tests.invokeStatic(test.clj:768)
+	at clojure.test$run_tests.doInvoke(test.clj:768)
+	at clojure.lang.RestFn.invoke(RestFn.java:619)
+	at user$eval15509.invokeStatic(NO_SOURCE_FILE:1)
+	at user$eval15509.invoke(NO_SOURCE_FILE:1)
+	at clojure.lang.Compiler.eval(Compiler.java:7194)
+	at clojure.lang.Compiler.eval(Compiler.java:7149)
+	at clojure.core$eval.invokeStatic(core.clj:3215)
+	at clojure.main$eval_opt.invokeStatic(main.clj:488)
+	at clojure.main$eval_opt.invoke(main.clj:482)
+	at clojure.main$initialize.invokeStatic(main.clj:508)
+	at clojure.main$null_opt.invokeStatic(main.clj:542)
+	at clojure.main$null_opt.invoke(main.clj:539)
+	at clojure.main$main.invokeStatic(main.clj:664)
+	at clojure.main$main.doInvoke(main.clj:616)
+	at clojure.lang.RestFn.applyTo(RestFn.java:137)
+	at clojure.lang.Var.applyTo(Var.java:705)
+	at clojure.main.main(main.java:40)
+
+Testing law.render-test
+
+Ran 43 tests containing 157 assertions.
+0 failures, 0 errors.
