@@ -96,14 +96,16 @@ and emits a write-set for the component types it exclusively owns
 writes declared in `domain.ecs.registry`.
 
 - System order does not matter; writes are disjoint and fold at one barrier.
-  Forces propagate with one tick of Jacobi lag.
+  The integrator is itself a fan-out emitter: it sums the accel/influence
+  channels emitted the previous tick, so forces propagate with one tick of
+  Jacobi lag.
 - There is NO serial "barrier" tier and no exemptions: every system, including
   collision, sink formation and disk evolution, is a fan-out emitter. Do not
   reintroduce serial post-fold phases.
 - Entities are created and removed through lifecycle markers (`spawn-request.*`,
   `consumed.*`) materialized/reaped at world construction
-  (`materialize-lifecycle`). Each owner has its own `consumed.*` marker; never
-  emit another system's.
+  (`materialize-lifecycle`), which is Jacobi-consistent by construction. Each
+  owner has its own `consumed.*` marker; never emit another system's.
 - One writer per component type (`reg/write-conflicts` empty), tested. Declare
   every component a system writes in its registry `:writes` and every one it
   reads in `:reads`; undeclared access is a latent single-writer violation the
@@ -166,7 +168,7 @@ model matrix while `:particle`/`:line` use raw positions, so debug markers
 cannot validate body placement. `docs/designs/ux-architecture.md` is canonical
 for all user interaction; much current UX/render code is ad hoc, not design intent.
 
-## Conventions
+## Code Style (conventions)
 
 - New behavior: schema in `law/` → failing test in `test/` → minimal
   implementation in `domain/`. Tests are epistemic contracts: Red = provisional
@@ -266,9 +268,11 @@ in `.agents/skills/<name>/` (`SKILL.md` + `CONTRACT.edn`; the root
   never edit, delete, reorder or rewrite past lines. Expect entries from other
   owners (for example `:owner "opencode"`).
 - **Session mycology** (`~/.agents/skills/session-mycology/SKILL.md`): after a
-  hard or repetitive turn, log it with `sm-log.bb`; at candidate score ≥ 0.7
-  write a spore under `.ημ/session-mycology/spores/` with `sm-spore.bb`. History
-  so far is `.ημ/session-mycology/ledger.md`; never rewrite it. Never promote
+  hard or repetitive turn, append an entry to the existing
+  `.ημ/session-mycology/ledger.md` in its current format (`sm-log.bb` writes a
+  separate `ledger.edn`; whether to migrate is an open decision, so do not use
+  it yet). Never rewrite past entries. At candidate score ≥ 0.7 write a spore
+  under `.ημ/session-mycology/spores/` with `sm-spore.bb`. Never promote
   your own spore in the session that created it; the `spore-reviewer` actor
   (`.ημ/actors/spore-reviewer/`) decides.
 - **Fork tax (Π)** (`~/.agents/skills/fork-tax/SKILL.md`): on a request for a
